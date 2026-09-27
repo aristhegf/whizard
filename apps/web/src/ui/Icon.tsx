@@ -35,6 +35,8 @@ const PATHS = {
   pencil: "M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4",
   bolt: "M13 2 4 14h7l-1 8 9-12h-7z",
   chart: "M4 20h16M7 16v-5M12 16V6M17 16v-8",
+  sound: "M4 9h4l5-4v14l-5-4H4zM16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11",
+  muted: "M4 9h4l5-4v14l-5-4H4zM17 9.5l5 5M22 9.5l-5 5",
   star: "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z",
 } as const;
 

@@ -357,6 +357,10 @@ A dark, cozy game-night look: deep navy and purple with warm lamp glows behind e
 - **Layouts:** a top bar on the landing and games pages, a sidebar for app pages on wide screens, and a bottom tab bar (Home, Games, Create, Profile) on phones. Game screens drop the navigation to give the question room.
 - **Artwork** is plain image files in `apps/web/public/art/`: `mascot/`, `games/` (one per game), `topics/` (one per quiz category), `avatars/` (`a01` to `a12`), and the logo (`logo-mark.webp` for the crown W, `logo-lockup.webp` for the full logo). To update a picture, replace the file with one of the same name; transparent WebP works best. The favicon and app icons in `apps/web/public/` are made from the crown W.
 
+### Sound
+
+Sounds are made in the browser with the Web Audio API (`apps/web/src/sounds.ts`), so there are no audio files to download or license: a tick for each second of the countdown and a higher note as the question appears, a two-note chime for a right answer and a low slide for a wrong one, quiet ticks in the last five seconds of a Speed question, a short fanfare on the final results, and a soft pop when someone joins the lobby. Browsers only allow sound after a tap, so audio starts on the first one. A speaker button in the lobby and game bars mutes everything, remembered on the device.
+
 ## Canvas games (after launch)
 
 Jigsaw, Spot It, Reaction and Draw & Guess use **Phaser**, loaded only when one of those games starts.

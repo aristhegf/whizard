@@ -5,7 +5,7 @@ import {
   type QuizView,
 } from "@whizard/game-core";
 import { AVATAR_IDS } from "@whizard/protocol";
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useAccount } from "./account";
 import { PingFriends } from "./FriendsScreen";
 import { QuizScreen } from "./games/quiz/QuizScreen";
@@ -18,6 +18,8 @@ import { Avatar, avatarUrl } from "./ui/Avatar";
 import { Brand } from "./ui/Chrome";
 import { Icon } from "./ui/Icon";
 import { QrCode } from "./ui/QrCode";
+import { play } from "./sounds";
+import { MuteButton } from "./ui/MuteButton";
 import { useRoom } from "./useRoom";
 
 export function RoomScreen({ code }: { code: string }) {
@@ -195,6 +197,13 @@ function Lobby({
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
   const url = `${location.origin}${roomPath(room.code)}`;
 
+  // A soft pop when someone new arrives in the lobby.
+  const joined = useRef(connected.length);
+  useEffect(() => {
+    if (connected.length > joined.current) play("join");
+    joined.current = connected.length;
+  }, [connected.length]);
+
   return (
     <>
       <header className="room-bar">
@@ -216,6 +225,7 @@ function Lobby({
               <span>Settings</span>
             </button>
           )}
+          <MuteButton />
           <button className="bar-btn leave" onClick={() => onLeave("/")}>
             <Icon name="logout" size={20} />
             <span>Leave</span>

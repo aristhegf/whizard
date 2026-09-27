@@ -1336,3 +1336,7 @@ button.choice:disabled {
   font-size: 0.85rem;
   color: var(--ok);
 }
+
+.mute-btn[aria-pressed="false"] {
+  color: var(--dim);
+}
