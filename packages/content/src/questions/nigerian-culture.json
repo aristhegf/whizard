@@ -1,0 +1,557 @@
+[
+  {
+    "id": "nigerian-culture-001",
+    "category": "nigerian-culture",
+    "topic": "History",
+    "difficulty": "easy",
+    "prompt": "Which city became Nigeria's capital in 1991?",
+    "choices": ["Abuja", "Lagos", "Ibadan", "Kaduna"],
+    "explanation": "The federal capital officially moved from Lagos to Abuja in December 1991."
+  },
+  {
+    "id": "nigerian-culture-002",
+    "category": "nigerian-culture",
+    "topic": "History",
+    "difficulty": "easy",
+    "prompt": "In what year did Nigeria gain independence from Britain?",
+    "choices": ["1960", "1963", "1957", "1970"],
+    "explanation": "Nigeria became independent from British rule on 1 October 1960."
+  },
+  {
+    "id": "nigerian-culture-003",
+    "category": "nigerian-culture",
+    "topic": "Currency",
+    "difficulty": "easy",
+    "prompt": "What is one-hundredth of a naira called?",
+    "choices": ["Kobo", "Pesewa", "Cent", "Shilling"],
+    "explanation": "The naira is divided into 100 kobo."
+  },
+  {
+    "id": "nigerian-culture-004",
+    "category": "nigerian-culture",
+    "topic": "National Symbols",
+    "difficulty": "easy",
+    "prompt": "What two colours are on the Nigerian flag?",
+    "choices": ["Green and white", "Green and yellow", "Red and white", "Green and black"],
+    "explanation": "The flag has three vertical stripes: green, white and green."
+  },
+  {
+    "id": "nigerian-culture-005",
+    "category": "nigerian-culture",
+    "topic": "Food",
+    "difficulty": "easy",
+    "prompt": "Egusi soup gets its name from which ground seeds?",
+    "choices": ["Melon seeds", "Groundnuts", "Sesame seeds", "Locust beans"],
+    "explanation": "Egusi are protein-rich melon seeds, which are ground and used to thicken the soup."
+  },
+  {
+    "id": "nigerian-culture-006",
+    "category": "nigerian-culture",
+    "topic": "Food",
+    "difficulty": "easy",
+    "prompt": "Eba is made by mixing hot water with which food?",
+    "choices": ["Garri", "Yam flour", "Plantain flour", "Semolina"],
+    "explanation": "Eba is a swallow made by stirring garri, which comes from cassava, into hot water."
+  },
+  {
+    "id": "nigerian-culture-007",
+    "category": "nigerian-culture",
+    "topic": "Food",
+    "difficulty": "easy",
+    "prompt": "Zobo drink is made from the dried flowers of which plant?",
+    "choices": ["Hibiscus", "Rose", "Moringa", "Baobab"],
+    "explanation": "Zobo is brewed from dried roselle hibiscus, which gives it its deep red colour."
+  },
+  {
+    "id": "nigerian-culture-008",
+    "category": "nigerian-culture",
+    "topic": "Literature",
+    "difficulty": "easy",
+    "prompt": "Which Nigerian writer won the Nobel Prize in Literature in 1986?",
+    "choices": ["Wole Soyinka", "Chinua Achebe", "Chimamanda Ngozi Adichie", "Ben Okri"],
+    "explanation": "Wole Soyinka became the first Black African to win the Nobel Prize in Literature in 1986."
+  },
+  {
+    "id": "nigerian-culture-009",
+    "category": "nigerian-culture",
+    "topic": "Literature",
+    "difficulty": "easy",
+    "prompt": "Who wrote the classic novel 'Things Fall Apart'?",
+    "choices": ["Chinua Achebe", "Wole Soyinka", "Cyprian Ekwensi", "Buchi Emecheta"],
+    "explanation": "Chinua Achebe published Things Fall Apart in 1958."
+  },
+  {
+    "id": "nigerian-culture-010",
+    "category": "nigerian-culture",
+    "topic": "Literature",
+    "difficulty": "easy",
+    "prompt": "Who wrote the novel 'Half of a Yellow Sun'?",
+    "choices": ["Chimamanda Ngozi Adichie", "Buchi Emecheta", "Flora Nwapa", "Sefi Atta"],
+    "explanation": "Chimamanda Ngozi Adichie's Half of a Yellow Sun, set during the civil war, came out in 2006."
+  },
+  {
+    "id": "nigerian-culture-011",
+    "category": "nigerian-culture",
+    "topic": "Nollywood",
+    "difficulty": "easy",
+    "prompt": "What is Nigeria's film industry popularly called?",
+    "choices": ["Nollywood", "Bollywood", "Hollywood", "Riverwood"],
+    "explanation": "Nollywood is the popular name for Nigeria's film industry."
+  },
+  {
+    "id": "nigerian-culture-012",
+    "category": "nigerian-culture",
+    "topic": "Music",
+    "difficulty": "easy",
+    "prompt": "Which musician is credited as the pioneer of Afrobeat?",
+    "choices": ["Fela Anikulapo-Kuti", "King Sunny Ade", "Ebenezer Obey", "Osita Osadebe"],
+    "explanation": "Fela Anikulapo-Kuti created Afrobeat by blending highlife, jazz and funk with political lyrics."
+  },
+  {
+    "id": "nigerian-culture-013",
+    "category": "nigerian-culture",
+    "topic": "Landmarks",
+    "difficulty": "easy",
+    "prompt": "Which giant monolith by the Abuja–Kaduna road is called the 'Gateway to Abuja'?",
+    "choices": ["Zuma Rock", "Olumo Rock", "Aso Rock", "Idanre Hill"],
+    "explanation": "Zuma Rock rises near Madalla in Niger State, just outside the Federal Capital Territory."
+  },
+  {
+    "id": "nigerian-culture-014",
+    "category": "nigerian-culture",
+    "topic": "States",
+    "difficulty": "easy",
+    "prompt": "What is the capital of Lagos State?",
+    "choices": ["Ikeja", "Victoria Island", "Lagos Island", "Epe"],
+    "explanation": "Ikeja is the capital of Lagos State."
+  },
+  {
+    "id": "nigerian-culture-015",
+    "category": "nigerian-culture",
+    "topic": "Languages",
+    "difficulty": "easy",
+    "prompt": "'Na gode' means 'thank you' in which language?",
+    "choices": ["Hausa", "Yoruba", "Igbo", "Kanuri"],
+    "explanation": "'Na gode' is how you say thank you in Hausa."
+  },
+  {
+    "id": "nigerian-culture-016",
+    "category": "nigerian-culture",
+    "topic": "Attire",
+    "difficulty": "easy",
+    "prompt": "What is the Yoruba name for a woman's elaborate head-tie?",
+    "choices": ["Gele", "Agbada", "Iro", "Buba"],
+    "explanation": "A gele is the tied headwrap; iro is the wrapper, buba the blouse and agbada a man's robe."
+  },
+  {
+    "id": "nigerian-culture-017",
+    "category": "nigerian-culture",
+    "topic": "Festivals",
+    "difficulty": "easy",
+    "prompt": "Which festival in Kebbi State is famous for its fishing competition?",
+    "choices": ["Argungu Festival", "Eyo Festival", "Osun-Osogbo Festival", "Calabar Carnival"],
+    "explanation": "At the Argungu Fishing Festival, thousands of fishermen race into the river to catch the biggest fish."
+  },
+  {
+    "id": "nigerian-culture-018",
+    "category": "nigerian-culture",
+    "topic": "Festivals",
+    "difficulty": "easy",
+    "prompt": "The Igbo Iri Ji festival celebrates the harvest of which crop?",
+    "choices": ["Yam", "Cassava", "Cocoyam", "Maize"],
+    "explanation": "Iri Ji means 'eating new yam' and marks the start of the yam harvest."
+  },
+  {
+    "id": "nigerian-culture-019",
+    "category": "nigerian-culture",
+    "topic": "Languages",
+    "difficulty": "easy",
+    "prompt": "What is Nigeria's official language?",
+    "choices": ["English", "French", "Portuguese", "Arabic"],
+    "explanation": "English has been Nigeria's official language since colonial times."
+  },
+  {
+    "id": "nigerian-culture-020",
+    "category": "nigerian-culture",
+    "topic": "States",
+    "difficulty": "easy",
+    "prompt": "How many states does Nigeria have, not counting the FCT?",
+    "choices": ["36", "30", "37", "32"],
+    "explanation": "Nigeria has 36 states plus the Federal Capital Territory, Abuja."
+  },
+  {
+    "id": "nigerian-culture-021",
+    "category": "nigerian-culture",
+    "topic": "Festivals",
+    "difficulty": "medium",
+    "prompt": "Which city hosts a December carnival billed as 'Africa's biggest street party'?",
+    "choices": ["Calabar", "Uyo", "Enugu", "Owerri"],
+    "explanation": "The Calabar Carnival in Cross River State is held every December."
+  },
+  {
+    "id": "nigerian-culture-022",
+    "category": "nigerian-culture",
+    "topic": "Royalty",
+    "difficulty": "medium",
+    "prompt": "What title is held by the traditional ruler of Ile-Ife?",
+    "choices": ["Ooni", "Alaafin", "Awujale", "Olubadan"],
+    "explanation": "The Ooni rules Ile-Ife; the Alaafin rules Oyo, the Awujale Ijebuland and the Olubadan Ibadan."
+  },
+  {
+    "id": "nigerian-culture-023",
+    "category": "nigerian-culture",
+    "topic": "States",
+    "difficulty": "medium",
+    "prompt": "Which state is known as the 'Food Basket of the Nation'?",
+    "choices": ["Benue", "Kogi", "Niger", "Kwara"],
+    "explanation": "Benue State uses the slogan 'Food Basket of the Nation' for its rich farmland."
+  },
+  {
+    "id": "nigerian-culture-024",
+    "category": "nigerian-culture",
+    "topic": "National Symbols",
+    "difficulty": "medium",
+    "prompt": "What is Nigeria's national motto?",
+    "choices": [
+      "Unity and Faith, Peace and Progress",
+      "One Nation, One Destiny",
+      "Peace, Justice and Progress",
+      "Freedom and Unity"
+    ],
+    "explanation": "The motto 'Unity and Faith, Peace and Progress' appears on the coat of arms."
+  },
+  {
+    "id": "nigerian-culture-025",
+    "category": "nigerian-culture",
+    "topic": "Festivals",
+    "difficulty": "medium",
+    "prompt": "What is the horse-riding parade held in Kano, Katsina and Zaria at Sallah called?",
+    "choices": ["Durbar", "Argungu", "Eyo", "Egungun"],
+    "explanation": "Durbar festivals feature richly dressed horsemen saluting the emir during Sallah celebrations."
+  },
+  {
+    "id": "nigerian-culture-026",
+    "category": "nigerian-culture",
+    "topic": "Attire",
+    "difficulty": "medium",
+    "prompt": "Isiagu, the patterned top often showing lion heads, is traditional wear of which group?",
+    "choices": ["Igbo", "Yoruba", "Hausa", "Tiv"],
+    "explanation": "Isiagu is worn by Igbo men, especially titled chiefs, often with a red cap."
+  },
+  {
+    "id": "nigerian-culture-027",
+    "category": "nigerian-culture",
+    "topic": "Geography",
+    "difficulty": "medium",
+    "prompt": "Which river joins the River Niger at Lokoja?",
+    "choices": ["Benue", "Kaduna", "Sokoto", "Cross"],
+    "explanation": "The Niger and Benue meet at Lokoja in Kogi State, forming a Y-shaped confluence."
+  },
+  {
+    "id": "nigerian-culture-028",
+    "category": "nigerian-culture",
+    "topic": "Festivals",
+    "difficulty": "medium",
+    "prompt": "In which city is the Eyo festival, with masqueraders in white robes, held?",
+    "choices": ["Lagos", "Ibadan", "Abeokuta", "Ijebu-Ode"],
+    "explanation": "The Eyo festival is unique to Lagos, where masqueraders in white parade through Lagos Island."
+  },
+  {
+    "id": "nigerian-culture-029",
+    "category": "nigerian-culture",
+    "topic": "Landmarks",
+    "difficulty": "medium",
+    "prompt": "Yankari Game Reserve is in which state?",
+    "choices": ["Bauchi", "Plateau", "Gombe", "Taraba"],
+    "explanation": "Yankari, famous for its elephants and Wikki Warm Spring, is in Bauchi State."
+  },
+  {
+    "id": "nigerian-culture-030",
+    "category": "nigerian-culture",
+    "topic": "National Symbols",
+    "difficulty": "medium",
+    "prompt": "What colour is the eagle on top of Nigeria's coat of arms?",
+    "choices": ["Red", "Black", "Gold", "White"],
+    "explanation": "A red eagle stands on top of the shield, representing the nation's strength."
+  },
+  {
+    "id": "nigerian-culture-031",
+    "category": "nigerian-culture",
+    "topic": "States",
+    "difficulty": "medium",
+    "prompt": "What is the capital of Anambra State?",
+    "choices": ["Awka", "Onitsha", "Nnewi", "Enugu"],
+    "explanation": "Awka is the capital of Anambra State, though Onitsha is its best-known commercial city."
+  },
+  {
+    "id": "nigerian-culture-032",
+    "category": "nigerian-culture",
+    "topic": "Cities",
+    "difficulty": "medium",
+    "prompt": "Which Nigerian city is nicknamed the 'Garden City'?",
+    "choices": ["Port Harcourt", "Jos", "Enugu", "Ibadan"],
+    "explanation": "Port Harcourt, capital of Rivers State, has long been called the Garden City."
+  },
+  {
+    "id": "nigerian-culture-033",
+    "category": "nigerian-culture",
+    "topic": "Food",
+    "difficulty": "medium",
+    "prompt": "Tuwo shinkafa, popular in the North, is made from which grain?",
+    "choices": ["Rice", "Millet", "Maize", "Sorghum"],
+    "explanation": "Shinkafa is the Hausa word for rice, and tuwo shinkafa is a soft rice swallow."
+  },
+  {
+    "id": "nigerian-culture-034",
+    "category": "nigerian-culture",
+    "topic": "Food",
+    "difficulty": "medium",
+    "prompt": "Banga soup is made from the pulp of which fruit?",
+    "choices": ["Palm fruit", "Coconut", "African pear", "Breadfruit"],
+    "explanation": "Banga soup, loved by the Urhobo and Isoko, is cooked with the extract of palm fruits."
+  },
+  {
+    "id": "nigerian-culture-035",
+    "category": "nigerian-culture",
+    "topic": "Languages",
+    "difficulty": "medium",
+    "prompt": "'Ndewo' is a greeting in which Nigerian language?",
+    "choices": ["Igbo", "Yoruba", "Hausa", "Efik"],
+    "explanation": "'Ndewo' is a common Igbo greeting meaning hello."
+  },
+  {
+    "id": "nigerian-culture-036",
+    "category": "nigerian-culture",
+    "topic": "Literature",
+    "difficulty": "medium",
+    "prompt": "Who is the main character in Chinua Achebe's 'Things Fall Apart'?",
+    "choices": ["Okonkwo", "Ezeulu", "Obi", "Unoka"],
+    "explanation": "Okonkwo is the proud Umuofia wrestler and warrior at the heart of the novel."
+  },
+  {
+    "id": "nigerian-culture-037",
+    "category": "nigerian-culture",
+    "topic": "Nollywood",
+    "difficulty": "medium",
+    "prompt": "Which 1992 film is widely credited with launching Nollywood's home-video boom?",
+    "choices": ["Living in Bondage", "Osuofia in London", "Glamour Girls", "The Wedding Party"],
+    "explanation": "Living in Bondage, released on video in 1992, is widely seen as the film that launched modern Nollywood."
+  },
+  {
+    "id": "nigerian-culture-038",
+    "category": "nigerian-culture",
+    "topic": "Music",
+    "difficulty": "medium",
+    "prompt": "King Sunny Ade is a legend of which music genre?",
+    "choices": ["Juju", "Fuji", "Apala", "Afrobeat"],
+    "explanation": "King Sunny Ade is one of the biggest stars of juju music, known for his talking drums and guitars."
+  },
+  {
+    "id": "nigerian-culture-039",
+    "category": "nigerian-culture",
+    "topic": "History",
+    "difficulty": "medium",
+    "prompt": "In what year were the Northern and Southern Protectorates joined to form Nigeria?",
+    "choices": ["1914", "1900", "1922", "1885"],
+    "explanation": "Lord Lugard amalgamated the Northern and Southern Protectorates in 1914."
+  },
+  {
+    "id": "nigerian-culture-040",
+    "category": "nigerian-culture",
+    "topic": "Crafts",
+    "difficulty": "medium",
+    "prompt": "The famous Benin Bronzes come from a kingdom in which present-day state?",
+    "choices": ["Edo", "Delta", "Ondo", "Kogi"],
+    "explanation": "The Benin Bronzes were made by guild artists of the Benin Kingdom, centred in Benin City, Edo State."
+  },
+  {
+    "id": "nigerian-culture-041",
+    "category": "nigerian-culture",
+    "topic": "Literature",
+    "difficulty": "hard",
+    "prompt": "Which Wole Soyinka play centres on Elesin Oba, who must follow his dead king?",
+    "choices": [
+      "Death and the King's Horseman",
+      "The Lion and the Jewel",
+      "The Trials of Brother Jero",
+      "Kongi's Harvest"
+    ],
+    "explanation": "Death and the King's Horseman (1975) is based on a real 1946 incident in Oyo under colonial rule."
+  },
+  {
+    "id": "nigerian-culture-042",
+    "category": "nigerian-culture",
+    "topic": "Literature",
+    "difficulty": "hard",
+    "prompt": "Which Nigerian author won the Booker Prize in 1991 for 'The Famished Road'?",
+    "choices": ["Ben Okri", "Wole Soyinka", "Chinua Achebe", "Helon Habila"],
+    "explanation": "Ben Okri won the 1991 Booker Prize for The Famished Road."
+  },
+  {
+    "id": "nigerian-culture-043",
+    "category": "nigerian-culture",
+    "topic": "Music",
+    "difficulty": "hard",
+    "prompt": "Which highlife musician recorded the hit 'Osondi Owendi'?",
+    "choices": ["Osita Osadebe", "Oliver De Coque", "Rex Lawson", "Victor Uwaifo"],
+    "explanation": "Chief Stephen Osita Osadebe released Osondi Owendi in 1984."
+  },
+  {
+    "id": "nigerian-culture-044",
+    "category": "nigerian-culture",
+    "topic": "Music",
+    "difficulty": "hard",
+    "prompt": "Which musician is credited with creating Fuji music?",
+    "choices": ["Sikiru Ayinde Barrister", "I. K. Dairo", "Haruna Ishola", "Ebenezer Obey"],
+    "explanation": "Sikiru Ayinde Barrister is known as the father of Fuji music."
+  },
+  {
+    "id": "nigerian-culture-045",
+    "category": "nigerian-culture",
+    "topic": "History",
+    "difficulty": "hard",
+    "prompt": "Who is credited with suggesting the name 'Nigeria'?",
+    "choices": ["Flora Shaw", "Frederick Lugard", "Mungo Park", "Queen Victoria"],
+    "explanation": "Journalist Flora Shaw, later Lord Lugard's wife, proposed the name in The Times in 1897."
+  },
+  {
+    "id": "nigerian-culture-046",
+    "category": "nigerian-culture",
+    "topic": "History",
+    "difficulty": "hard",
+    "prompt": "Which Scottish explorer died on the River Niger at Bussa in 1806?",
+    "choices": ["Mungo Park", "Richard Lander", "Hugh Clapperton", "David Livingstone"],
+    "explanation": "Mungo Park drowned at the Bussa rapids during his second expedition down the Niger."
+  },
+  {
+    "id": "nigerian-culture-047",
+    "category": "nigerian-culture",
+    "topic": "History",
+    "difficulty": "hard",
+    "prompt": "In the Bayajidda legend, he killed a snake in a well in which town?",
+    "choices": ["Daura", "Kano", "Katsina", "Zaria"],
+    "explanation": "In the Hausa legend, Bayajidda slew the snake in the Kusugu well at Daura and married its queen."
+  },
+  {
+    "id": "nigerian-culture-048",
+    "category": "nigerian-culture",
+    "topic": "Crafts",
+    "difficulty": "hard",
+    "prompt": "The ancient Igbo-Ukwu bronzes were found in which present-day state?",
+    "choices": ["Anambra", "Enugu", "Imo", "Abia"],
+    "explanation": "The Igbo-Ukwu bronzes, dating to around the 9th century, were found in Anambra State."
+  },
+  {
+    "id": "nigerian-culture-049",
+    "category": "nigerian-culture",
+    "topic": "Crafts",
+    "difficulty": "hard",
+    "prompt": "The historic Kofar Mata dye pits are found in which city?",
+    "choices": ["Kano", "Zaria", "Katsina", "Sokoto"],
+    "explanation": "At Kofar Mata in Kano, cloth has been dyed with indigo in pits in the ground for centuries."
+  },
+  {
+    "id": "nigerian-culture-050",
+    "category": "nigerian-culture",
+    "topic": "Crafts",
+    "difficulty": "hard",
+    "prompt": "Akwete, a hand-woven cloth, is named after a town in which state?",
+    "choices": ["Abia", "Imo", "Rivers", "Anambra"],
+    "explanation": "Akwete cloth is hand-woven by women in the town of Akwete in Abia State."
+  },
+  {
+    "id": "nigerian-culture-051",
+    "category": "nigerian-culture",
+    "topic": "Languages",
+    "difficulty": "hard",
+    "prompt": "Nsibidi, from south-eastern Nigeria, is an ancient system of what?",
+    "choices": ["Written symbols", "Drum rhythms", "Weaving patterns", "Counting stones"],
+    "explanation": "Nsibidi is a set of symbols used for writing and communication among the Ekoi, Efik and Igbo."
+  },
+  {
+    "id": "nigerian-culture-052",
+    "category": "nigerian-culture",
+    "topic": "Languages",
+    "difficulty": "hard",
+    "prompt": "What is Hausa written in Arabic script called?",
+    "choices": ["Ajami", "Nsibidi", "Boko", "Tifinagh"],
+    "explanation": "Ajami is Hausa written in Arabic script, while Boko is Hausa written in the Latin alphabet."
+  },
+  {
+    "id": "nigerian-culture-053",
+    "category": "nigerian-culture",
+    "topic": "States",
+    "difficulty": "hard",
+    "prompt": "Which state was carved out of Rivers State in 1996?",
+    "choices": ["Bayelsa", "Akwa Ibom", "Ebonyi", "Delta"],
+    "explanation": "Bayelsa State was created from part of Rivers State on 1 October 1996."
+  },
+  {
+    "id": "nigerian-culture-054",
+    "category": "nigerian-culture",
+    "topic": "States",
+    "difficulty": "hard",
+    "prompt": "What is the capital of Zamfara State?",
+    "choices": ["Gusau", "Talata Mafara", "Kaura Namoda", "Birnin Kebbi"],
+    "explanation": "Gusau is the capital of Zamfara State."
+  },
+  {
+    "id": "nigerian-culture-055",
+    "category": "nigerian-culture",
+    "topic": "Landmarks",
+    "difficulty": "hard",
+    "prompt": "Which UNESCO World Heritage Site is in the Mandara Mountains of Adamawa State?",
+    "choices": [
+      "Sukur Cultural Landscape",
+      "Osun-Osogbo Sacred Grove",
+      "Yankari Game Reserve",
+      "Old Oyo National Park"
+    ],
+    "explanation": "Sukur Cultural Landscape became Nigeria's first UNESCO World Heritage Site in 1999."
+  },
+  {
+    "id": "nigerian-culture-056",
+    "category": "nigerian-culture",
+    "topic": "Landmarks",
+    "difficulty": "hard",
+    "prompt": "The Mambilla Plateau, known for its tea farms, is in which state?",
+    "choices": ["Taraba", "Plateau", "Adamawa", "Benue"],
+    "explanation": "The Mambilla Plateau in Taraba State sits high enough to have a cool climate that suits tea growing."
+  },
+  {
+    "id": "nigerian-culture-057",
+    "category": "nigerian-culture",
+    "topic": "Festivals",
+    "difficulty": "hard",
+    "prompt": "Sharo, where young men endure flogging to prove their manhood, is a tradition of which people?",
+    "choices": ["Fulani", "Tiv", "Ijaw", "Nupe"],
+    "explanation": "Sharo is a Fulani test of bravery in which young men take lashes without flinching."
+  },
+  {
+    "id": "nigerian-culture-058",
+    "category": "nigerian-culture",
+    "topic": "Festivals",
+    "difficulty": "hard",
+    "prompt": "The Ofala festival is famously held by the Obi of which city?",
+    "choices": ["Onitsha", "Owerri", "Enugu", "Aba"],
+    "explanation": "During Ofala, the Obi of Onitsha appears in full regalia to receive homage from his people."
+  },
+  {
+    "id": "nigerian-culture-059",
+    "category": "nigerian-culture",
+    "topic": "Food",
+    "difficulty": "hard",
+    "prompt": "Ewedu soup is made from the leaves of which plant?",
+    "choices": ["Jute", "Spinach", "Bitterleaf", "Waterleaf"],
+    "explanation": "Ewedu is made from jute leaves (Corchorus), which give the soup its slippery texture."
+  },
+  {
+    "id": "nigerian-culture-060",
+    "category": "nigerian-culture",
+    "topic": "Food",
+    "difficulty": "hard",
+    "prompt": "What is the spicy groundnut-based seasoning on suya called?",
+    "choices": ["Yaji", "Iru", "Ogiri", "Uziza"],
+    "explanation": "Yaji, or suya pepper, is a mix of ground groundnuts, chilli and spices."
+  }
+]

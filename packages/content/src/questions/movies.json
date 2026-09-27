@@ -1,0 +1,574 @@
+[
+  {
+    "id": "movies-001",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "easy",
+    "prompt": "Who directed the 1993 film Jurassic Park?",
+    "choices": ["Steven Spielberg", "James Cameron", "George Lucas", "Ridley Scott"],
+    "explanation": "Steven Spielberg directed Jurassic Park, based on Michael Crichton's novel."
+  },
+  {
+    "id": "movies-002",
+    "category": "movies",
+    "topic": "Characters",
+    "difficulty": "easy",
+    "prompt": "In The Wizard of Oz (1939), what is the name of Dorothy's little dog?",
+    "choices": ["Toto", "Rex", "Buster", "Scruffy"],
+    "explanation": "Dorothy's faithful dog Toto travels with her all the way to the Land of Oz."
+  },
+  {
+    "id": "movies-003",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "easy",
+    "prompt": "Which actor played Jack Dawson in the 1997 film Titanic?",
+    "choices": ["Leonardo DiCaprio", "Brad Pitt", "Matt Damon", "Johnny Depp"],
+    "explanation": "Leonardo DiCaprio starred as Jack Dawson opposite Kate Winslet's Rose."
+  },
+  {
+    "id": "movies-004",
+    "category": "movies",
+    "topic": "Animation",
+    "difficulty": "easy",
+    "prompt": "In Finding Nemo, what kind of fish is Nemo?",
+    "choices": ["A clownfish", "A goldfish", "A pufferfish", "A blue tang"],
+    "explanation": "Nemo and his father Marlin are clownfish who live in a sea anemone."
+  },
+  {
+    "id": "movies-005",
+    "category": "movies",
+    "topic": "Animation",
+    "difficulty": "easy",
+    "prompt": "What is the name of the lion cub who grows up to be king in The Lion King (1994)?",
+    "choices": ["Simba", "Mufasa", "Scar", "Nala"],
+    "explanation": "Simba is the young prince who returns to take his place as king of the Pride Lands."
+  },
+  {
+    "id": "movies-006",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "easy",
+    "prompt": "Which fictional British spy is known by the code number 007?",
+    "choices": ["James Bond", "Jason Bourne", "Jack Ryan", "Ethan Hunt"],
+    "explanation": "James Bond, created by Ian Fleming, is the secret agent known as 007."
+  },
+  {
+    "id": "movies-007",
+    "category": "movies",
+    "topic": "Characters",
+    "difficulty": "easy",
+    "prompt": "In the Star Wars films, which villain turns out to be Luke Skywalker's father?",
+    "choices": ["Darth Vader", "Emperor Palpatine", "Darth Maul", "Count Dooku"],
+    "explanation": "In The Empire Strikes Back, Darth Vader reveals that he is Luke's father."
+  },
+  {
+    "id": "movies-008",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "easy",
+    "prompt": "Which school of witchcraft and wizardry does Harry Potter attend?",
+    "choices": ["Hogwarts", "Beauxbatons", "Durmstrang", "Ilvermorny"],
+    "explanation": "Harry Potter studies at Hogwarts School of Witchcraft and Wizardry."
+  },
+  {
+    "id": "movies-009",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "easy",
+    "prompt": "Which actor played the title role in the 1994 film Forrest Gump?",
+    "choices": ["Tom Hanks", "Kevin Costner", "Robin Williams", "Jim Carrey"],
+    "explanation": "Tom Hanks played Forrest Gump and won the Oscar for Best Actor for the role."
+  },
+  {
+    "id": "movies-010",
+    "category": "movies",
+    "topic": "Animation",
+    "difficulty": "easy",
+    "prompt": "In Disney's Frozen (2013), what is the name of the friendly talking snowman?",
+    "choices": ["Olaf", "Sven", "Kristoff", "Hans"],
+    "explanation": "Olaf is the cheerful snowman brought to life by Elsa's magic."
+  },
+  {
+    "id": "movies-011",
+    "category": "movies",
+    "topic": "Animation",
+    "difficulty": "easy",
+    "prompt": "In Toy Story (1995), what is the name of the cowboy doll who is Andy's favourite toy?",
+    "choices": ["Woody", "Buzz Lightyear", "Rex", "Hamm"],
+    "explanation": "Woody the cowboy is Andy's favourite toy until Buzz Lightyear arrives."
+  },
+  {
+    "id": "movies-012",
+    "category": "movies",
+    "topic": "Nollywood",
+    "difficulty": "easy",
+    "prompt": "Nollywood is the name for the film industry of which country?",
+    "choices": ["Nigeria", "Ghana", "Kenya", "South Africa"],
+    "explanation": "Nollywood is Nigeria's film industry, one of the most prolific in the world."
+  },
+  {
+    "id": "movies-013",
+    "category": "movies",
+    "topic": "Classic Films",
+    "difficulty": "easy",
+    "prompt": "Which 1975 Steven Spielberg film is about a great white shark terrorising a beach town?",
+    "choices": ["Jaws", "Orca", "The Deep", "Piranha"],
+    "explanation": "Jaws follows police chief Brody's hunt for a man-eating shark off Amity Island."
+  },
+  {
+    "id": "movies-014",
+    "category": "movies",
+    "topic": "Characters",
+    "difficulty": "easy",
+    "prompt": "Billionaire Bruce Wayne secretly fights crime as which superhero?",
+    "choices": ["Batman", "Superman", "Iron Man", "Green Arrow"],
+    "explanation": "Bruce Wayne is the man behind Batman's mask, protecting Gotham City."
+  },
+  {
+    "id": "movies-015",
+    "category": "movies",
+    "topic": "Classic Films",
+    "difficulty": "easy",
+    "prompt": "Which New York skyscraper does the giant ape climb at the end of King Kong (1933)?",
+    "choices": [
+      "Empire State Building",
+      "Chrysler Building",
+      "Woolworth Building",
+      "Flatiron Building"
+    ],
+    "explanation": "King Kong climbs the Empire State Building before being attacked by planes."
+  },
+  {
+    "id": "movies-016",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "easy",
+    "prompt": "Which actor played Tony Stark in the Marvel Cinematic Universe's Iron Man films?",
+    "choices": ["Robert Downey Jr.", "Chris Evans", "Chris Hemsworth", "Mark Ruffalo"],
+    "explanation": "Robert Downey Jr. played Tony Stark, starting with Iron Man in 2008."
+  },
+  {
+    "id": "movies-017",
+    "category": "movies",
+    "topic": "Quotes",
+    "difficulty": "easy",
+    "prompt": "Complete the famous line from E.T. the Extra-Terrestrial: \"E.T. phone ___.\"",
+    "choices": ["Home", "Earth", "Elliott", "Now"],
+    "explanation": "The homesick alien's line \"E.T. phone home\" is one of cinema's best-known quotes."
+  },
+  {
+    "id": "movies-018",
+    "category": "movies",
+    "topic": "Animation",
+    "difficulty": "easy",
+    "prompt": "Which Pixar film is about a rat named Remy who dreams of becoming a chef in Paris?",
+    "choices": ["Ratatouille", "Flushed Away", "Chicken Run", "The Rescuers"],
+    "explanation": "In Ratatouille, Remy the rat secretly cooks at a Paris restaurant."
+  },
+  {
+    "id": "movies-019",
+    "category": "movies",
+    "topic": "Quotes",
+    "difficulty": "easy",
+    "prompt": "Which actor famously said \"I'll be back\" in The Terminator (1984)?",
+    "choices": [
+      "Arnold Schwarzenegger",
+      "Sylvester Stallone",
+      "Bruce Willis",
+      "Jean-Claude Van Damme"
+    ],
+    "explanation": "Arnold Schwarzenegger delivered the line as the cyborg assassin in The Terminator."
+  },
+  {
+    "id": "movies-020",
+    "category": "movies",
+    "topic": "Classic Films",
+    "difficulty": "easy",
+    "prompt": "In The Matrix (1999), what colour pill does Neo swallow to learn the truth?",
+    "choices": ["Red", "Blue", "Green", "White"],
+    "explanation": "Morpheus offers Neo a choice, and Neo takes the red pill to see the real world."
+  },
+
+  {
+    "id": "movies-021",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "medium",
+    "prompt": "Who directed the 1994 crime film Pulp Fiction?",
+    "choices": ["Quentin Tarantino", "Martin Scorsese", "Guy Ritchie", "Robert Rodriguez"],
+    "explanation": "Quentin Tarantino wrote and directed Pulp Fiction, which won the Palme d'Or."
+  },
+  {
+    "id": "movies-022",
+    "category": "movies",
+    "topic": "Best Picture",
+    "difficulty": "medium",
+    "prompt": "Which South Korean film was the first non-English-language film to win the Oscar for Best Picture?",
+    "choices": ["Parasite", "Oldboy", "The Handmaiden", "Burning"],
+    "explanation": "Bong Joon-ho's Parasite won Best Picture at the 2020 Academy Awards."
+  },
+  {
+    "id": "movies-023",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "medium",
+    "prompt": "Who played Hannibal Lecter in The Silence of the Lambs (1991)?",
+    "choices": ["Anthony Hopkins", "Gary Oldman", "Ralph Fiennes", "Jeremy Irons"],
+    "explanation": "Anthony Hopkins won the Best Actor Oscar for playing Dr. Hannibal Lecter."
+  },
+  {
+    "id": "movies-024",
+    "category": "movies",
+    "topic": "Nollywood",
+    "difficulty": "medium",
+    "prompt": "Which 2018 Nollywood film was directed by and starred Genevieve Nnaji?",
+    "choices": ["Lionheart", "The Wedding Party", "King of Boys", "Chief Daddy"],
+    "explanation": "Genevieve Nnaji directed and starred in Lionheart, which Netflix acquired in 2018."
+  },
+  {
+    "id": "movies-025",
+    "category": "movies",
+    "topic": "Film History",
+    "difficulty": "medium",
+    "prompt": "Which 1927 film is famed as the first feature-length \"talkie\" with synchronised dialogue?",
+    "choices": ["The Jazz Singer", "Metropolis", "Wings", "Sunrise"],
+    "explanation": "The Jazz Singer, starring Al Jolson, brought synchronised speech to feature films."
+  },
+  {
+    "id": "movies-026",
+    "category": "movies",
+    "topic": "Animation",
+    "difficulty": "medium",
+    "prompt": "Who directed the Oscar-winning 2001 animated film Spirited Away?",
+    "choices": ["Hayao Miyazaki", "Isao Takahata", "Makoto Shinkai", "Mamoru Hosoda"],
+    "explanation": "Hayao Miyazaki of Studio Ghibli directed Spirited Away, winner of Best Animated Feature."
+  },
+  {
+    "id": "movies-027",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "medium",
+    "prompt": "In the 1972 film The Godfather, who played Don Vito Corleone?",
+    "choices": ["Marlon Brando", "Al Pacino", "James Caan", "Robert Duvall"],
+    "explanation": "Marlon Brando won the Best Actor Oscar for playing Vito Corleone."
+  },
+  {
+    "id": "movies-028",
+    "category": "movies",
+    "topic": "Quotes",
+    "difficulty": "medium",
+    "prompt": "Which 1942 film features Humphrey Bogart saying \"Here's looking at you, kid\"?",
+    "choices": ["Casablanca", "The Maltese Falcon", "Gone with the Wind", "Citizen Kane"],
+    "explanation": "Bogart's Rick Blaine says the line to Ingrid Bergman's Ilsa in Casablanca."
+  },
+  {
+    "id": "movies-029",
+    "category": "movies",
+    "topic": "Classic Films",
+    "difficulty": "medium",
+    "prompt": "In Citizen Kane (1941), what is the last word Charles Foster Kane says before he dies?",
+    "choices": ["Rosebud", "Xanadu", "Mother", "Susan"],
+    "explanation": "Kane's dying word \"Rosebud\" sets off the reporter's search that drives the story."
+  },
+  {
+    "id": "movies-030",
+    "category": "movies",
+    "topic": "Best Picture",
+    "difficulty": "medium",
+    "prompt": "Which film won Best Picture at the Academy Awards ceremony held in March 2023?",
+    "choices": [
+      "Everything Everywhere All at Once",
+      "All Quiet on the Western Front",
+      "The Banshees of Inisherin",
+      "Top Gun: Maverick"
+    ],
+    "explanation": "Everything Everywhere All at Once won seven Oscars, including Best Picture, in 2023."
+  },
+  {
+    "id": "movies-031",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "medium",
+    "prompt": "Who played the wizard Gandalf in Peter Jackson's The Lord of the Rings films?",
+    "choices": ["Ian McKellen", "Christopher Lee", "Michael Gambon", "Patrick Stewart"],
+    "explanation": "Ian McKellen played Gandalf, while Christopher Lee played the wizard Saruman."
+  },
+  {
+    "id": "movies-032",
+    "category": "movies",
+    "topic": "Classic Films",
+    "difficulty": "medium",
+    "prompt": "In Stanley Kubrick's The Shining (1980), what is the name of the snowbound hotel?",
+    "choices": [
+      "The Overlook Hotel",
+      "The Bates Motel",
+      "The Grand Budapest Hotel",
+      "The Continental Hotel"
+    ],
+    "explanation": "Jack Torrance becomes winter caretaker of the isolated Overlook Hotel."
+  },
+  {
+    "id": "movies-033",
+    "category": "movies",
+    "topic": "Animation",
+    "difficulty": "medium",
+    "prompt": "What was Walt Disney's first full-length animated feature film?",
+    "choices": ["Snow White and the Seven Dwarfs", "Pinocchio", "Fantasia", "Bambi"],
+    "explanation": "Snow White and the Seven Dwarfs, released in 1937, was Disney's first animated feature."
+  },
+  {
+    "id": "movies-034",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "medium",
+    "prompt": "Who played the Joker in Christopher Nolan's The Dark Knight (2008)?",
+    "choices": ["Heath Ledger", "Joaquin Phoenix", "Jared Leto", "Jack Nicholson"],
+    "explanation": "Heath Ledger won a posthumous Oscar for his role as the Joker."
+  },
+  {
+    "id": "movies-035",
+    "category": "movies",
+    "topic": "Nollywood",
+    "difficulty": "medium",
+    "prompt": "Which actor played the title character in the 2003 Nollywood comedy Osuofia in London?",
+    "choices": ["Nkem Owoh", "Osita Iheme", "Ramsey Nouah", "Pete Edochie"],
+    "explanation": "Nkem Owoh starred as Osuofia, a villager who travels to London to claim an inheritance."
+  },
+  {
+    "id": "movies-036",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "medium",
+    "prompt": "Which 1960 Alfred Hitchcock film features the famous shower scene?",
+    "choices": ["Psycho", "Vertigo", "The Birds", "Rear Window"],
+    "explanation": "The shower scene in Psycho, set at the Bates Motel, is one of cinema's most famous."
+  },
+  {
+    "id": "movies-037",
+    "category": "movies",
+    "topic": "Classic Films",
+    "difficulty": "medium",
+    "prompt": "In Back to the Future (1985), what speed must the DeLorean reach to travel in time?",
+    "choices": ["88 mph", "77 mph", "99 mph", "121 mph"],
+    "explanation": "Doc Brown's DeLorean time machine travels through time when it hits 88 miles per hour."
+  },
+  {
+    "id": "movies-038",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "medium",
+    "prompt": "Who wrote and directed the 2017 horror film Get Out?",
+    "choices": ["Jordan Peele", "Spike Lee", "Ryan Coogler", "Barry Jenkins"],
+    "explanation": "Jordan Peele won the Oscar for Best Original Screenplay for Get Out."
+  },
+  {
+    "id": "movies-039",
+    "category": "movies",
+    "topic": "Best Picture",
+    "difficulty": "medium",
+    "prompt": "Which film about a young man from Mumbai's slums on a TV quiz show won Best Picture at the February 2009 Oscars?",
+    "choices": ["Slumdog Millionaire", "The Hurt Locker", "Life of Pi", "Lion"],
+    "explanation": "Danny Boyle's Slumdog Millionaire won eight Oscars at the 2009 ceremony, including Best Picture."
+  },
+  {
+    "id": "movies-040",
+    "category": "movies",
+    "topic": "Animation",
+    "difficulty": "medium",
+    "prompt": "Who provided the voice of Donkey in the 2001 animated film Shrek?",
+    "choices": ["Eddie Murphy", "Chris Rock", "Mike Myers", "Kevin Hart"],
+    "explanation": "Eddie Murphy voiced Donkey, while Mike Myers voiced Shrek."
+  },
+
+  {
+    "id": "movies-041",
+    "category": "movies",
+    "topic": "Film History",
+    "difficulty": "hard",
+    "prompt": "Which film won the top award, Outstanding Picture, at the first Academy Awards in 1929?",
+    "choices": ["Wings", "Sunrise", "The Jazz Singer", "7th Heaven"],
+    "explanation": "The World War I aviation film Wings is recognised as the first Best Picture winner."
+  },
+  {
+    "id": "movies-042",
+    "category": "movies",
+    "topic": "Nollywood",
+    "difficulty": "hard",
+    "prompt": "Which 1992 film is widely credited with launching Nigeria's home-video boom?",
+    "choices": ["Living in Bondage", "Glamour Girls", "Rattlesnake", "Domitilla"],
+    "explanation": "Living in Bondage, produced by Kenneth Nnebue, is often called the film that sparked Nollywood."
+  },
+  {
+    "id": "movies-043",
+    "category": "movies",
+    "topic": "Nollywood",
+    "difficulty": "hard",
+    "prompt": "Who directed the 2016 Nollywood romantic comedy The Wedding Party?",
+    "choices": ["Kemi Adetiba", "Kunle Afolayan", "Niyi Akinmolayan", "Tunde Kelani"],
+    "explanation": "Kemi Adetiba directed The Wedding Party; Niyi Akinmolayan directed its 2017 sequel."
+  },
+  {
+    "id": "movies-044",
+    "category": "movies",
+    "topic": "Nollywood",
+    "difficulty": "hard",
+    "prompt": "Which 2009 Kunle Afolayan thriller is also known by its Yoruba title, Araromire?",
+    "choices": ["The Figurine", "October 1", "Phone Swap", "Citation"],
+    "explanation": "The Figurine (Araromire) is a supernatural thriller about a cursed statue."
+  },
+  {
+    "id": "movies-045",
+    "category": "movies",
+    "topic": "Nollywood",
+    "difficulty": "hard",
+    "prompt": "Which actress played the powerful Alhaja Eniola Salami in King of Boys (2018)?",
+    "choices": ["Sola Sobowale", "Joke Silva", "Funke Akindele", "Toyin Abraham"],
+    "explanation": "Sola Sobowale starred as Eniola Salami in Kemi Adetiba's crime drama King of Boys."
+  },
+  {
+    "id": "movies-046",
+    "category": "movies",
+    "topic": "Nollywood",
+    "difficulty": "hard",
+    "prompt": "Which 2002 Nollywood comedy made Osita Iheme and Chinedu Ikedieze household names?",
+    "choices": ["Aki na Ukwa", "Glamour Girls", "Rattlesnake", "Domitilla"],
+    "explanation": "Aki na Ukwa made the duo famous as the mischievous Aki and Pawpaw."
+  },
+  {
+    "id": "movies-047",
+    "category": "movies",
+    "topic": "Nollywood",
+    "difficulty": "hard",
+    "prompt": "Which Nollywood actor was famous for playing the comic character Mr. Ibu?",
+    "choices": ["John Okafor", "Nkem Owoh", "Pete Edochie", "Zack Orji"],
+    "explanation": "John Okafor became famous for playing the bumbling Mr. Ibu in many Nollywood comedies."
+  },
+  {
+    "id": "movies-048",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "hard",
+    "prompt": "Who directed the 1927 silent science-fiction film Metropolis?",
+    "choices": ["Fritz Lang", "F. W. Murnau", "G. W. Pabst", "Robert Wiene"],
+    "explanation": "Fritz Lang directed Metropolis, a landmark of German silent cinema."
+  },
+  {
+    "id": "movies-049",
+    "category": "movies",
+    "topic": "Best Picture",
+    "difficulty": "hard",
+    "prompt": "Which was the first film to win all five major Oscars: Picture, Director, Actor, Actress and Screenplay?",
+    "choices": [
+      "It Happened One Night",
+      "One Flew Over the Cuckoo's Nest",
+      "The Silence of the Lambs",
+      "Gone with the Wind"
+    ],
+    "explanation": "Frank Capra's It Happened One Night swept all five major awards at the 1935 Oscars."
+  },
+  {
+    "id": "movies-050",
+    "category": "movies",
+    "topic": "Oscar Firsts",
+    "difficulty": "hard",
+    "prompt": "Who was the first woman to win the Academy Award for Best Director?",
+    "choices": ["Kathryn Bigelow", "Jane Campion", "Chloé Zhao", "Sofia Coppola"],
+    "explanation": "Kathryn Bigelow won Best Director for The Hurt Locker at the 2010 Oscars."
+  },
+  {
+    "id": "movies-051",
+    "category": "movies",
+    "topic": "Oscar Firsts",
+    "difficulty": "hard",
+    "prompt": "Who was the first Black actress to win the Oscar for Best Actress?",
+    "choices": ["Halle Berry", "Whoopi Goldberg", "Viola Davis", "Hattie McDaniel"],
+    "explanation": "Halle Berry won Best Actress for Monster's Ball at the 2002 Academy Awards."
+  },
+  {
+    "id": "movies-052",
+    "category": "movies",
+    "topic": "Characters",
+    "difficulty": "hard",
+    "prompt": "Which actor played the replicant Roy Batty in Blade Runner (1982)?",
+    "choices": ["Rutger Hauer", "Harrison Ford", "Edward James Olmos", "Brion James"],
+    "explanation": "Rutger Hauer played Roy Batty and delivered the famous \"tears in rain\" speech."
+  },
+  {
+    "id": "movies-053",
+    "category": "movies",
+    "topic": "Animation",
+    "difficulty": "hard",
+    "prompt": "Which Japanese studio produced the 1988 animated film Grave of the Fireflies?",
+    "choices": ["Studio Ghibli", "Toei Animation", "Madhouse", "Production I.G"],
+    "explanation": "Grave of the Fireflies was directed by Isao Takahata for Studio Ghibli."
+  },
+  {
+    "id": "movies-054",
+    "category": "movies",
+    "topic": "Animation",
+    "difficulty": "hard",
+    "prompt": "Which was the first animated film to be nominated for the Oscar for Best Picture?",
+    "choices": ["Beauty and the Beast", "The Lion King", "Up", "Toy Story 3"],
+    "explanation": "Disney's Beauty and the Beast (1991) was the first animated Best Picture nominee."
+  },
+  {
+    "id": "movies-055",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "hard",
+    "prompt": "What is the name of the commercial spaceship in the original 1979 film Alien?",
+    "choices": ["Nostromo", "Sulaco", "Prometheus", "Covenant"],
+    "explanation": "Ripley and her crew are aboard the towing ship Nostromo when they meet the alien."
+  },
+  {
+    "id": "movies-056",
+    "category": "movies",
+    "topic": "Quotes",
+    "difficulty": "hard",
+    "prompt": "Which war film contains the line \"I love the smell of napalm in the morning\"?",
+    "choices": ["Apocalypse Now", "Platoon", "Full Metal Jacket", "The Deer Hunter"],
+    "explanation": "Robert Duvall's Lieutenant Colonel Kilgore says the line in Apocalypse Now (1979)."
+  },
+  {
+    "id": "movies-057",
+    "category": "movies",
+    "topic": "Best Picture",
+    "difficulty": "hard",
+    "prompt": "Which 1959 epic became the first film to win 11 Academy Awards?",
+    "choices": ["Ben-Hur", "Gone with the Wind", "Lawrence of Arabia", "The Ten Commandments"],
+    "explanation": "Ben-Hur won 11 Oscars, a record later tied by Titanic and The Return of the King."
+  },
+  {
+    "id": "movies-058",
+    "category": "movies",
+    "topic": "Film History",
+    "difficulty": "hard",
+    "prompt": "In which city did the Lumière brothers hold their first public paid film screening in December 1895?",
+    "choices": ["Paris", "Lyon", "London", "Berlin"],
+    "explanation": "The Lumières screened their films to a paying audience at the Grand Café in Paris."
+  },
+  {
+    "id": "movies-059",
+    "category": "movies",
+    "topic": "Film History",
+    "difficulty": "hard",
+    "prompt": "Which 1902 Georges Méliès film shows a rocket landing in the eye of the Man in the Moon?",
+    "choices": [
+      "A Trip to the Moon",
+      "The Great Train Robbery",
+      "Nosferatu",
+      "The Birth of a Nation"
+    ],
+    "explanation": "Méliès's A Trip to the Moon is a pioneering early science-fiction film."
+  },
+  {
+    "id": "movies-060",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "hard",
+    "prompt": "Who directed the 1954 Japanese epic Seven Samurai?",
+    "choices": ["Akira Kurosawa", "Yasujirō Ozu", "Kenji Mizoguchi", "Masaki Kobayashi"],
+    "explanation": "Akira Kurosawa directed Seven Samurai, one of the most influential films ever made."
+  }
+]

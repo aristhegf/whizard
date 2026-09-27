@@ -1,0 +1,564 @@
+[
+  {
+    "id": "animals-001",
+    "category": "animals",
+    "topic": "Animal young",
+    "difficulty": "easy",
+    "prompt": "What is a baby kangaroo called?",
+    "choices": ["A joey", "A kid", "A cub", "A kit"],
+    "explanation": "Kangaroo babies are called joeys and grow in their mother's pouch."
+  },
+  {
+    "id": "animals-002",
+    "category": "animals",
+    "topic": "Animal groups",
+    "difficulty": "easy",
+    "prompt": "What is a group of lions called?",
+    "choices": ["A pride", "A pack", "A herd", "A flock"],
+    "explanation": "Lions live in family groups called prides, usually made up of related females, their cubs and a few males."
+  },
+  {
+    "id": "animals-003",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "easy",
+    "prompt": "What is the largest animal alive today?",
+    "choices": ["Blue whale", "Whale shark", "Sperm whale", "African elephant"],
+    "explanation": "The blue whale is the largest animal alive today, far bigger than any elephant or shark."
+  },
+  {
+    "id": "animals-004",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "easy",
+    "prompt": "What is the fastest land animal?",
+    "choices": ["Cheetah", "Lion", "Leopard", "Springbok"],
+    "explanation": "The cheetah is the fastest land animal, built for short, explosive sprints after prey."
+  },
+  {
+    "id": "animals-005",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "easy",
+    "prompt": "What is the tallest animal in the world?",
+    "choices": ["Giraffe", "African elephant", "Ostrich", "Moose"],
+    "explanation": "Giraffes are the tallest animals, and their long necks let them feed on leaves high up in trees."
+  },
+  {
+    "id": "animals-006",
+    "category": "animals",
+    "topic": "Animal young",
+    "difficulty": "easy",
+    "prompt": "What do we call a young frog that lives in water and swims with a tail?",
+    "choices": ["A tadpole", "A fry", "A cygnet", "A fawn"],
+    "explanation": "Frogs hatch as tadpoles, which breathe with gills and later grow legs and lose their tails."
+  },
+  {
+    "id": "animals-007",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "easy",
+    "prompt": "How many legs does an insect have?",
+    "choices": ["Six", "Four", "Eight", "Ten"],
+    "explanation": "Insects have six legs, all attached to the middle section of the body, called the thorax."
+  },
+  {
+    "id": "animals-008",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "easy",
+    "prompt": "Which of these sea animals is a mammal?",
+    "choices": ["Dolphin", "Shark", "Swordfish", "Octopus"],
+    "explanation": "Dolphins are mammals: they breathe air, are warm-blooded and feed their young on milk."
+  },
+  {
+    "id": "animals-009",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "easy",
+    "prompt": "What is the largest living bird?",
+    "choices": ["Ostrich", "Emu", "Andean condor", "Bald eagle"],
+    "explanation": "The ostrich of Africa is the largest and heaviest living bird, though it cannot fly."
+  },
+  {
+    "id": "animals-010",
+    "category": "animals",
+    "topic": "Diets",
+    "difficulty": "easy",
+    "prompt": "What does a herbivore eat?",
+    "choices": ["Plants", "Meat", "Insects", "Fish"],
+    "explanation": "Herbivores, such as cows and zebras, eat plants rather than other animals."
+  },
+  {
+    "id": "animals-011",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "easy",
+    "prompt": "Which African animal is famous for its black-and-white stripes?",
+    "choices": ["Zebra", "Warthog", "Wildebeest", "Impala"],
+    "explanation": "Zebras have bold black-and-white stripes, and no two zebras have exactly the same pattern."
+  },
+  {
+    "id": "animals-012",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "easy",
+    "prompt": "What sweet food do bees make from flower nectar?",
+    "choices": ["Honey", "Molasses", "Maple syrup", "Treacle"],
+    "explanation": "Bees collect nectar from flowers and turn it into honey, which they store in their hive."
+  },
+  {
+    "id": "animals-013",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "easy",
+    "prompt": "Which is the only mammal that can truly fly?",
+    "choices": ["Bat", "Flying squirrel", "Sugar glider", "Colugo"],
+    "explanation": "Bats are the only mammals capable of true flapping flight; flying squirrels and sugar gliders only glide."
+  },
+  {
+    "id": "animals-014",
+    "category": "animals",
+    "topic": "Habitats",
+    "difficulty": "easy",
+    "prompt": "In which region do polar bears live in the wild?",
+    "choices": ["The Arctic", "Antarctica", "The Himalayas", "Patagonia"],
+    "explanation": "Polar bears live around the Arctic, far from Antarctica, where they hunt seals from the sea ice."
+  },
+  {
+    "id": "animals-015",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "easy",
+    "prompt": "Which of these birds cannot fly?",
+    "choices": ["Penguin", "Puffin", "Pelican", "Albatross"],
+    "explanation": "Penguins cannot fly, but their flipper-like wings make them superb swimmers."
+  },
+  {
+    "id": "animals-016",
+    "category": "animals",
+    "topic": "Animal young",
+    "difficulty": "easy",
+    "prompt": "What is a baby cow called?",
+    "choices": ["A calf", "A foal", "A lamb", "A kid"],
+    "explanation": "A young cow is called a calf; a foal is a young horse, a lamb a young sheep and a kid a young goat."
+  },
+  {
+    "id": "animals-017",
+    "category": "animals",
+    "topic": "Reptiles",
+    "difficulty": "easy",
+    "prompt": "Which lizard is famous for changing its skin colour?",
+    "choices": ["Chameleon", "Iguana", "Komodo dragon", "Gila monster"],
+    "explanation": "Chameleons are famous for changing colour, which they use to signal to other chameleons and to control their temperature."
+  },
+  {
+    "id": "animals-018",
+    "category": "animals",
+    "topic": "Diets",
+    "difficulty": "easy",
+    "prompt": "What does the giant panda mainly eat?",
+    "choices": ["Bamboo", "Eucalyptus leaves", "Fish", "Berries"],
+    "explanation": "Bamboo makes up almost all of a giant panda's diet, and it spends much of the day eating."
+  },
+  {
+    "id": "animals-019",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "easy",
+    "prompt": "Which animal is known as the 'ship of the desert'?",
+    "choices": ["Camel", "Horse", "Donkey", "Llama"],
+    "explanation": "Camels are called ships of the desert because they can carry heavy loads across deserts with little water."
+  },
+  {
+    "id": "animals-020",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "easy",
+    "prompt": "Which is the heaviest land animal on Earth?",
+    "choices": ["African elephant", "White rhinoceros", "Hippopotamus", "Giraffe"],
+    "explanation": "The African bush elephant is the heaviest land animal, with large males weighing several tonnes."
+  },
+
+  {
+    "id": "animals-021",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "medium",
+    "prompt": "What is the largest species of big cat?",
+    "choices": ["Tiger", "Lion", "Jaguar", "Leopard"],
+    "explanation": "The tiger is the largest big cat, with the biggest tigers outweighing even large male lions."
+  },
+  {
+    "id": "animals-022",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "medium",
+    "prompt": "How many hearts does an octopus have?",
+    "choices": ["Three", "One", "Two", "Four"],
+    "explanation": "An octopus has three hearts: two pump blood through the gills and one pumps it around the body."
+  },
+  {
+    "id": "animals-023",
+    "category": "animals",
+    "topic": "Animal groups",
+    "difficulty": "medium",
+    "prompt": "What is a group of crows traditionally called?",
+    "choices": ["A murder", "A pride", "A pod", "A gaggle"],
+    "explanation": "A group of crows is traditionally called a murder, one of many colourful collective nouns for birds."
+  },
+  {
+    "id": "animals-024",
+    "category": "animals",
+    "topic": "Animal young",
+    "difficulty": "medium",
+    "prompt": "What is a baby swan called?",
+    "choices": ["A cygnet", "A gosling", "A duckling", "A poult"],
+    "explanation": "Young swans are called cygnets; goslings are young geese and poults are young turkeys."
+  },
+  {
+    "id": "animals-025",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "medium",
+    "prompt": "Which bird is the fastest animal on Earth when diving on its prey?",
+    "choices": ["Peregrine falcon", "Bald eagle", "Osprey", "Barn owl"],
+    "explanation": "When a peregrine falcon dives, or stoops, onto prey it reaches speeds faster than any other animal."
+  },
+  {
+    "id": "animals-026",
+    "category": "animals",
+    "topic": "Fish",
+    "difficulty": "medium",
+    "prompt": "What is the largest fish in the sea?",
+    "choices": ["Whale shark", "Basking shark", "Great white shark", "Giant manta ray"],
+    "explanation": "The whale shark is the largest fish, yet it is a gentle filter feeder that eats plankton and small fish."
+  },
+  {
+    "id": "animals-027",
+    "category": "animals",
+    "topic": "Diets",
+    "difficulty": "medium",
+    "prompt": "What do koalas mainly eat?",
+    "choices": ["Eucalyptus leaves", "Bamboo shoots", "Acacia leaves", "Grass seeds"],
+    "explanation": "Koalas feed almost entirely on eucalyptus leaves, which are tough and low in energy."
+  },
+  {
+    "id": "animals-028",
+    "category": "animals",
+    "topic": "Reptiles",
+    "difficulty": "medium",
+    "prompt": "The Komodo dragon lives in the wild in which country?",
+    "choices": ["Indonesia", "Australia", "Philippines", "Malaysia"],
+    "explanation": "Komodo dragons live on a few Indonesian islands, including Komodo, the island they are named after."
+  },
+  {
+    "id": "animals-029",
+    "category": "animals",
+    "topic": "Animal behaviour",
+    "difficulty": "medium",
+    "prompt": "What word describes animals that are mainly active at night?",
+    "choices": ["Nocturnal", "Diurnal", "Crepuscular", "Migratory"],
+    "explanation": "Nocturnal animals, such as owls and bush babies, are active at night and rest during the day."
+  },
+  {
+    "id": "animals-030",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "medium",
+    "prompt": "Which of these mammals lays eggs?",
+    "choices": ["Platypus", "Beaver", "Otter", "Wombat"],
+    "explanation": "The platypus is one of the few mammals that lay eggs, along with the echidnas."
+  },
+  {
+    "id": "animals-031",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "medium",
+    "prompt": "What kind of animal is a flying fox?",
+    "choices": ["A bat", "A fox", "A squirrel", "A lemur"],
+    "explanation": "Flying foxes are large fruit bats, named for their fox-like faces."
+  },
+  {
+    "id": "animals-032",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "medium",
+    "prompt": "Which animal makes up most of the Great Migration across the Serengeti and Maasai Mara?",
+    "choices": ["Wildebeest", "Zebra", "Cape buffalo", "Impala"],
+    "explanation": "Over a million wildebeest, joined by zebras and gazelles, make the yearly Great Migration in East Africa."
+  },
+  {
+    "id": "animals-033",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "medium",
+    "prompt": "Which African predator is famous for its whooping, laugh-like calls?",
+    "choices": ["Spotted hyena", "Black-backed jackal", "African wild dog", "Leopard"],
+    "explanation": "Spotted hyenas are known as laughing hyenas because of their giggling calls, along with their loud whoops."
+  },
+  {
+    "id": "animals-034",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "medium",
+    "prompt": "In seahorses, which parent carries the eggs in a pouch until they hatch?",
+    "choices": ["The male", "The female", "Both parents in turn", "Neither of them"],
+    "explanation": "Female seahorses place their eggs in the male's pouch, and he carries them until the babies are born."
+  },
+  {
+    "id": "animals-035",
+    "category": "animals",
+    "topic": "Animal groups",
+    "difficulty": "medium",
+    "prompt": "What is a group of dolphins called?",
+    "choices": ["A pod", "A pack", "A troop", "A pride"],
+    "explanation": "Dolphins live and travel in groups called pods, which help them hunt and stay safe."
+  },
+  {
+    "id": "animals-036",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "medium",
+    "prompt": "What is the name for the change from caterpillar to butterfly?",
+    "choices": ["Metamorphosis", "Hibernation", "Migration", "Pollination"],
+    "explanation": "Metamorphosis is the process in which a caterpillar transforms inside a chrysalis into an adult butterfly."
+  },
+  {
+    "id": "animals-037",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "medium",
+    "prompt": "How many compartments does a cow's stomach have?",
+    "choices": ["Four", "Two", "Three", "Six"],
+    "explanation": "A cow's stomach has four compartments: the rumen, reticulum, omasum and abomasum."
+  },
+  {
+    "id": "animals-038",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "medium",
+    "prompt": "Which mammal has the longest pregnancy, lasting close to two years?",
+    "choices": ["The elephant", "The blue whale", "The giraffe", "The rhinoceros"],
+    "explanation": "Elephants are pregnant for about 22 months, the longest of any mammal."
+  },
+  {
+    "id": "animals-039",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "medium",
+    "prompt": "What is the largest rodent in the world?",
+    "choices": ["Capybara", "Beaver", "Porcupine", "Groundhog"],
+    "explanation": "The capybara of South America is the world's largest rodent and spends much of its time in water."
+  },
+  {
+    "id": "animals-040",
+    "category": "animals",
+    "topic": "Habitats",
+    "difficulty": "medium",
+    "prompt": "Lemurs are found naturally on which large island?",
+    "choices": ["Madagascar", "Borneo", "Sri Lanka", "New Guinea"],
+    "explanation": "Lemurs evolved on Madagascar, off the coast of south-east Africa, and almost all lemur species live nowhere else."
+  },
+
+  {
+    "id": "animals-041",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "hard",
+    "prompt": "Which animals are the hippopotamus's closest living relatives?",
+    "choices": ["Whales and dolphins", "Pigs and warthogs", "Elephants", "Rhinoceroses"],
+    "explanation": "DNA studies show hippos are more closely related to whales and dolphins than to any other living animals."
+  },
+  {
+    "id": "animals-042",
+    "category": "animals",
+    "topic": "Animal young",
+    "difficulty": "hard",
+    "prompt": "What is a baby hare called?",
+    "choices": ["A leveret", "A cria", "A squab", "An elver"],
+    "explanation": "A young hare is a leveret; a cria is a baby alpaca or llama, a squab a young pigeon and an elver a young eel."
+  },
+  {
+    "id": "animals-043",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "hard",
+    "prompt": "Which is the world's largest antelope?",
+    "choices": ["The eland", "The greater kudu", "The sable antelope", "The gemsbok"],
+    "explanation": "Elands, which live in Africa, are the largest of all the antelopes."
+  },
+  {
+    "id": "animals-044",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "hard",
+    "prompt": "Which bird has the largest wingspan of any living bird?",
+    "choices": [
+      "The wandering albatross",
+      "The Andean condor",
+      "The golden eagle",
+      "The white stork"
+    ],
+    "explanation": "The wandering albatross has the longest wingspan of any living bird, letting it glide over the ocean for hours."
+  },
+  {
+    "id": "animals-045",
+    "category": "animals",
+    "topic": "Animal groups",
+    "difficulty": "hard",
+    "prompt": "What is a huge, swirling flock of starlings called?",
+    "choices": ["A murmuration", "A parliament", "A gaggle", "A murder"],
+    "explanation": "A murmuration is a vast flock of starlings twisting and turning through the sky together, often at dusk."
+  },
+  {
+    "id": "animals-046",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "hard",
+    "prompt": "What does the African aardvark mainly eat?",
+    "choices": ["Ants and termites", "Roots and bulbs", "Small birds", "Fruit and seeds"],
+    "explanation": "Aardvarks dig into ant and termite nests at night with strong claws and lick up the insects with a long sticky tongue."
+  },
+  {
+    "id": "animals-047",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "hard",
+    "prompt": "Which stripe-legged forest animal of Central Africa is the giraffe's closest living relative?",
+    "choices": ["Okapi", "Bongo", "Zebra duiker", "Tapir"],
+    "explanation": "The okapi of the Congo rainforest looks part zebra, but it and the giraffe are the only living members of the giraffe family."
+  },
+  {
+    "id": "animals-048",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "hard",
+    "prompt": "How does a pistol shrimp stun its prey?",
+    "choices": [
+      "By snapping its claw shut",
+      "With an electric shock",
+      "By injecting venom",
+      "By squirting ink"
+    ],
+    "explanation": "A pistol shrimp snaps its claw so fast it fires a bubble that bursts with a loud crack, stunning nearby prey."
+  },
+  {
+    "id": "animals-049",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "hard",
+    "prompt": "Which long-legged African bird of prey kills snakes by stamping on them?",
+    "choices": ["Secretary bird", "Martial eagle", "Bateleur eagle", "Marabou stork"],
+    "explanation": "The secretary bird hunts on foot across the grasslands and kills snakes and other prey with powerful kicks."
+  },
+  {
+    "id": "animals-050",
+    "category": "animals",
+    "topic": "Reptiles",
+    "difficulty": "hard",
+    "prompt": "What is the longest venomous snake in the world?",
+    "choices": ["King cobra", "Black mamba", "Inland taipan", "Gaboon viper"],
+    "explanation": "The king cobra of South and South-East Asia is the world's longest venomous snake."
+  },
+  {
+    "id": "animals-051",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "hard",
+    "prompt": "What colour is a polar bear's skin under its fur?",
+    "choices": ["Black", "White", "Pink", "Yellow"],
+    "explanation": "Polar bears have black skin under their fur, which is made of hollow, see-through hairs that look white."
+  },
+  {
+    "id": "animals-052",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "hard",
+    "prompt": "How does a starfish usually eat a mussel?",
+    "choices": [
+      "It pushes its stomach out of its body",
+      "It crushes the shell with its teeth",
+      "It drills a hole in the shell",
+      "It stings it with venom"
+    ],
+    "explanation": "A starfish pulls the mussel's shell open slightly, then pushes its stomach inside to digest the soft body."
+  },
+  {
+    "id": "animals-053",
+    "category": "animals",
+    "topic": "Amphibians",
+    "difficulty": "hard",
+    "prompt": "Which salamander keeps its feathery gills as an adult and is native to lakes near Mexico City?",
+    "choices": ["Axolotl", "Hellbender", "Mudpuppy", "Fire salamander"],
+    "explanation": "The axolotl keeps its young features, including external gills, all its life and comes from the Xochimilco area."
+  },
+  {
+    "id": "animals-054",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "hard",
+    "prompt": "Which scaly mammal of Africa and Asia can roll into a tight ball when threatened?",
+    "choices": ["Pangolin", "Armadillo", "Aardvark", "Rock hyrax"],
+    "explanation": "Pangolins are covered in tough overlapping scales and curl into an armoured ball to protect themselves."
+  },
+  {
+    "id": "animals-055",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "hard",
+    "prompt": "How do honeybees show hive mates the direction and distance to food?",
+    "choices": [
+      "By doing a waggle dance",
+      "By leaving scent trails",
+      "By humming at different pitches",
+      "By tapping antennae in code"
+    ],
+    "explanation": "A returning honeybee performs a waggle dance whose angle and length tell other bees where to find the flowers."
+  },
+  {
+    "id": "animals-056",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "hard",
+    "prompt": "What is the largest species of penguin alive today?",
+    "choices": ["Emperor penguin", "King penguin", "Gentoo penguin", "Macaroni penguin"],
+    "explanation": "The emperor penguin of Antarctica is the tallest and heaviest penguin, with the king penguin second."
+  },
+  {
+    "id": "animals-057",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "hard",
+    "prompt": "What is a rhinoceros horn made of?",
+    "choices": ["Keratin", "Bone", "Ivory", "Cartilage"],
+    "explanation": "Rhino horn is made of keratin, the same protein found in human hair and fingernails."
+  },
+  {
+    "id": "animals-058",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "hard",
+    "prompt": "How many toes does an ostrich have on each foot?",
+    "choices": ["Two", "Three", "Four", "One"],
+    "explanation": "The ostrich is the only bird with just two toes on each foot, which helps it run fast."
+  },
+  {
+    "id": "animals-059",
+    "category": "animals",
+    "topic": "Fish",
+    "difficulty": "hard",
+    "prompt": "The electric eel isn't a true eel. What kind of fish is it?",
+    "choices": ["A knifefish", "A lungfish", "A pufferfish", "A stingray"],
+    "explanation": "Despite its name, the electric eel of South America is a knifefish, more closely related to catfish than to true eels."
+  },
+  {
+    "id": "animals-060",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "hard",
+    "prompt": "Each autumn, monarch butterflies from eastern North America fly to forests in which country?",
+    "choices": ["Mexico", "Brazil", "Cuba", "Colombia"],
+    "explanation": "Eastern monarchs migrate thousands of kilometres to spend the winter in the mountain forests of central Mexico."
+  }
+]

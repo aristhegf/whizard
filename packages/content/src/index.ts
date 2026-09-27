@@ -1,7 +1,5 @@
 // Server-only: this package contains the answers, so the web app must never import it.
 import {
-  QUIZ_CATEGORIES,
-  QUIZ_DIFFICULTIES,
   seededRng,
   shuffled,
   type ContentRequest,
@@ -9,23 +7,40 @@ import {
   type QuizDifficulty,
 } from "@whizard/game-core";
 import { z } from "zod";
+import animals from "./questions/animals.json";
 import bible from "./questions/bible.json";
+import football from "./questions/football.json";
+import generalKnowledge from "./questions/general-knowledge.json";
+import geography from "./questions/geography.json";
+import history from "./questions/history.json";
+import movies from "./questions/movies.json";
+import music from "./questions/music.json";
+import nigerianCulture from "./questions/nigerian-culture.json";
+import popCulture from "./questions/pop-culture.json";
+import science from "./questions/science.json";
+import { storedQuestionSchema, type StoredQuestion } from "./schema";
 
-export const storedQuestionSchema = z.object({
-  id: z.string().min(1),
-  category: z.enum(QUIZ_CATEGORIES.map((c) => c.id) as [QuizCategory, ...QuizCategory[]]),
-  topic: z.string().min(1),
-  difficulty: z.enum(QUIZ_DIFFICULTIES),
-  prompt: z.string().min(1).max(120),
-  choices: z.array(z.string().min(1).max(40)).length(4),
-  explanation: z.string().min(1).max(160),
-  reference: z.string().min(1),
-});
+export * from "./quality";
+export * from "./schema";
 
-export type StoredQuestion = z.infer<typeof storedQuestionSchema>;
+/** One file per category. They ship with the Worker until reports and history need D1. */
+export const QUESTION_FILES: Record<QuizCategory, unknown> = {
+  bible,
+  geography,
+  history,
+  science,
+  animals,
+  football,
+  movies,
+  music,
+  "nigerian-culture": nigerianCulture,
+  "general-knowledge": generalKnowledge,
+  "pop-culture": popCulture,
+};
 
-/** Until the content pipeline moves questions into D1, they ship with the Worker. */
-export const QUESTIONS: readonly StoredQuestion[] = z.array(storedQuestionSchema).parse(bible);
+export const QUESTIONS: readonly StoredQuestion[] = Object.values(QUESTION_FILES).flatMap((file) =>
+  z.array(storedQuestionSchema).parse(file),
+);
 
 export type QuestionCounts = Partial<Record<QuizCategory, Record<QuizDifficulty, number>>>;
 

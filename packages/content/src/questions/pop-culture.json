@@ -1,0 +1,554 @@
+[
+  {
+    "id": "pop-culture-001",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "easy",
+    "prompt": "Which company makes the PlayStation consoles?",
+    "choices": ["Sony", "Nintendo", "Microsoft", "Sega"],
+    "explanation": "Sony released the first PlayStation in Japan in December 1994."
+  },
+  {
+    "id": "pop-culture-002",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "easy",
+    "prompt": "In which game do players jump from a flying 'Battle Bus' onto an island?",
+    "choices": ["Fortnite", "PUBG", "Apex Legends", "Call of Duty: Warzone"],
+    "explanation": "Every Fortnite Battle Royale match starts with players dropping out of the Battle Bus."
+  },
+  {
+    "id": "pop-culture-003",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "easy",
+    "prompt": "What is Batman's secret identity?",
+    "choices": ["Bruce Wayne", "Clark Kent", "Peter Parker", "Tony Stark"],
+    "explanation": "Billionaire Bruce Wayne fights crime in Gotham City as Batman."
+  },
+  {
+    "id": "pop-culture-004",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "easy",
+    "prompt": "Which billionaire genius wears the Iron Man suit in Marvel stories?",
+    "choices": ["Tony Stark", "Steve Rogers", "Reed Richards", "Stephen Strange"],
+    "explanation": "Tony Stark, heir to Stark Industries, built the first Iron Man armour."
+  },
+  {
+    "id": "pop-culture-005",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "easy",
+    "prompt": "What is the name of Mario's brother, who wears green?",
+    "choices": ["Luigi", "Wario", "Toad", "Yoshi"],
+    "explanation": "Luigi is Mario's younger brother and usually dresses in green."
+  },
+  {
+    "id": "pop-culture-006",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "easy",
+    "prompt": "In SpongeBob SquarePants, what is the name of SpongeBob's starfish best friend?",
+    "choices": ["Patrick", "Squidward", "Sandy", "Plankton"],
+    "explanation": "Patrick Star lives under a rock near SpongeBob in Bikini Bottom."
+  },
+  {
+    "id": "pop-culture-007",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "easy",
+    "prompt": "In The Simpsons, what is the name of Bart's dad?",
+    "choices": ["Homer", "Ned", "Moe", "Abe"],
+    "explanation": "Homer Simpson is Bart's father; Abe is his grandfather."
+  },
+  {
+    "id": "pop-culture-008",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "easy",
+    "prompt": "Which yellow Electric-type Pokémon is Ash's partner in the anime?",
+    "choices": ["Pikachu", "Raichu", "Jigglypuff", "Togepi"],
+    "explanation": "Ash gets Pikachu from Professor Oak in the very first episode."
+  },
+  {
+    "id": "pop-culture-009",
+    "category": "pop-culture",
+    "topic": "Toys",
+    "difficulty": "easy",
+    "prompt": "Which toy company makes Barbie dolls?",
+    "choices": ["Mattel", "Hasbro", "LEGO", "Bandai"],
+    "explanation": "Mattel introduced Barbie in 1959."
+  },
+  {
+    "id": "pop-culture-010",
+    "category": "pop-culture",
+    "topic": "Nollywood",
+    "difficulty": "easy",
+    "prompt": "'Nollywood' is the nickname for which country's film industry?",
+    "choices": ["Nigeria", "Ghana", "Kenya", "South Africa"],
+    "explanation": "Nollywood is the name for Nigeria's huge film industry."
+  },
+  {
+    "id": "pop-culture-011",
+    "category": "pop-culture",
+    "topic": "TV",
+    "difficulty": "easy",
+    "prompt": "In Friends, what is the name of the coffee shop where the gang hangs out?",
+    "choices": ["Central Perk", "Java Joe's", "The Daily Grind", "Monk's Café"],
+    "explanation": "The six friends spend much of the show on the orange sofa at Central Perk."
+  },
+  {
+    "id": "pop-culture-012",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "easy",
+    "prompt": "Which social media app has a ghost on a yellow background as its logo?",
+    "choices": ["Snapchat", "Instagram", "TikTok", "WhatsApp"],
+    "explanation": "Snapchat's ghost logo is nicknamed Ghostface Chillah."
+  },
+  {
+    "id": "pop-culture-013",
+    "category": "pop-culture",
+    "topic": "Movies",
+    "difficulty": "easy",
+    "prompt": "Which Hogwarts house is Harry Potter sorted into?",
+    "choices": ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"],
+    "explanation": "The Sorting Hat puts Harry in Gryffindor, along with Ron and Hermione."
+  },
+  {
+    "id": "pop-culture-014",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "easy",
+    "prompt": "Which blocky video game features Creepers, Endermen and the Nether?",
+    "choices": ["Minecraft", "Roblox", "Fortnite", "Terraria"],
+    "explanation": "Creepers, Endermen and the Nether are all part of Minecraft."
+  },
+  {
+    "id": "pop-culture-015",
+    "category": "pop-culture",
+    "topic": "Movies",
+    "difficulty": "easy",
+    "prompt": "In Disney's The Lion King, who is Simba's father?",
+    "choices": ["Mufasa", "Scar", "Rafiki", "Zazu"],
+    "explanation": "Mufasa is Simba's father; Scar is his jealous uncle."
+  },
+  {
+    "id": "pop-culture-016",
+    "category": "pop-culture",
+    "topic": "Movies",
+    "difficulty": "easy",
+    "prompt": "What is the name of the cowboy doll in Toy Story?",
+    "choices": ["Woody", "Buzz", "Rex", "Slinky"],
+    "explanation": "Sheriff Woody is Andy's favourite toy until Buzz Lightyear arrives."
+  },
+  {
+    "id": "pop-culture-017",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "easy",
+    "prompt": "What was the social network X called before its 2023 rebrand?",
+    "choices": ["Twitter", "Vine", "Tumblr", "Threads"],
+    "explanation": "Twitter was renamed X in July 2023."
+  },
+  {
+    "id": "pop-culture-018",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "easy",
+    "prompt": "Who launched Facebook from his Harvard dorm room in 2004?",
+    "choices": ["Mark Zuckerberg", "Jack Dorsey", "Larry Page", "Evan Spiegel"],
+    "explanation": "Mark Zuckerberg launched 'TheFacebook' for Harvard students in February 2004."
+  },
+  {
+    "id": "pop-culture-019",
+    "category": "pop-culture",
+    "topic": "Fashion",
+    "difficulty": "easy",
+    "prompt": "Which sportswear brand has a logo called the 'Swoosh'?",
+    "choices": ["Nike", "Adidas", "Puma", "Reebok"],
+    "explanation": "Student Carolyn Davidson designed the Nike Swoosh in 1971."
+  },
+  {
+    "id": "pop-culture-020",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "easy",
+    "prompt": "In the cartoon Tom and Jerry, what kind of animal is Jerry?",
+    "choices": ["A mouse", "A cat", "A dog", "A duck"],
+    "explanation": "Tom is the cat who is forever chasing Jerry the mouse."
+  },
+
+  {
+    "id": "pop-culture-021",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "medium",
+    "prompt": "Which company created Sonic the Hedgehog?",
+    "choices": ["Sega", "Nintendo", "Capcom", "Atari"],
+    "explanation": "Sega introduced Sonic in 1991 as its speedy blue mascot."
+  },
+  {
+    "id": "pop-culture-022",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "medium",
+    "prompt": "Which company bought YouTube in 2006?",
+    "choices": ["Google", "Yahoo", "Microsoft", "Facebook"],
+    "explanation": "Google agreed to buy YouTube in October 2006 for $1.65 billion."
+  },
+  {
+    "id": "pop-culture-023",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "medium",
+    "prompt": "Who hosted every season of Big Brother Naija from 2017 to 2023?",
+    "choices": ["Ebuka Obi-Uchendu", "Denrele Edun", "Toke Makinwa", "IK Osakioduwa"],
+    "explanation": "Ebuka Obi-Uchendu hosted every season from 2017's 'See Gobbe' to the 2023 All Stars edition."
+  },
+  {
+    "id": "pop-culture-024",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "medium",
+    "prompt": "Who won Big Brother Naija 'Lockdown' in 2020?",
+    "choices": ["Laycon", "Erica", "Nengi", "Dorathy"],
+    "explanation": "Laycon won the fifth season, with Dorathy as runner-up."
+  },
+  {
+    "id": "pop-culture-025",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "medium",
+    "prompt": "What is the name of Superman's home planet?",
+    "choices": ["Krypton", "Apokolips", "Asgard", "Xandar"],
+    "explanation": "Baby Kal-El was sent to Earth just before the planet Krypton exploded."
+  },
+  {
+    "id": "pop-culture-026",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "medium",
+    "prompt": "Black Panther is the king of which fictional African nation?",
+    "choices": ["Wakanda", "Zamunda", "Genovia", "Latveria"],
+    "explanation": "T'Challa, the best-known Black Panther, is king of Wakanda, a hidden nation rich in vibranium."
+  },
+  {
+    "id": "pop-culture-027",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "medium",
+    "prompt": "What name does Wonder Woman use in her everyday life?",
+    "choices": ["Diana Prince", "Selina Kyle", "Barbara Gordon", "Kara Danvers"],
+    "explanation": "Princess Diana of Themyscira goes by Diana Prince in the outside world."
+  },
+  {
+    "id": "pop-culture-028",
+    "category": "pop-culture",
+    "topic": "TV",
+    "difficulty": "medium",
+    "prompt": "What alias does Walter White use in Breaking Bad?",
+    "choices": ["Heisenberg", "Einstein", "Oppenheimer", "Schrödinger"],
+    "explanation": "Walter White names his drug-kingpin persona after physicist Werner Heisenberg."
+  },
+  {
+    "id": "pop-culture-029",
+    "category": "pop-culture",
+    "topic": "TV",
+    "difficulty": "medium",
+    "prompt": "In Stranger Things, what is the dark parallel dimension called?",
+    "choices": ["The Upside Down", "The Nether", "The Phantom Zone", "The Shadow Realm"],
+    "explanation": "Will Byers goes missing in the Upside Down in the first season."
+  },
+  {
+    "id": "pop-culture-030",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "medium",
+    "prompt": "In most Legend of Zelda games, what is the name of the hero dressed in green?",
+    "choices": ["Link", "Zelda", "Ganon", "Epona"],
+    "explanation": "Link is the hero; Zelda is the princess and Epona is his horse."
+  },
+  {
+    "id": "pop-culture-031",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "medium",
+    "prompt": "Tetris was created in 1984 in which country?",
+    "choices": ["Soviet Union", "Japan", "United States", "United Kingdom"],
+    "explanation": "Alexey Pajitnov created Tetris at a computer centre in Moscow in 1984."
+  },
+  {
+    "id": "pop-culture-032",
+    "category": "pop-culture",
+    "topic": "Nollywood",
+    "difficulty": "medium",
+    "prompt": "Which actor played Aki alongside Osita Iheme's Pawpaw in Nollywood comedies?",
+    "choices": ["Chinedu Ikedieze", "Nkem Owoh", "John Okafor", "Zubby Michael"],
+    "explanation": "Chinedu Ikedieze and Osita Iheme became famous as the mischievous duo in Aki na Ukwa."
+  },
+  {
+    "id": "pop-culture-033",
+    "category": "pop-culture",
+    "topic": "Nigerian music",
+    "difficulty": "medium",
+    "prompt": "Which producer founded Mavin Records in 2012?",
+    "choices": ["Don Jazzy", "D'banj", "Olamide", "2Baba"],
+    "explanation": "Don Jazzy started Mavin Records in 2012 after the Mo' Hits label split up."
+  },
+  {
+    "id": "pop-culture-034",
+    "category": "pop-culture",
+    "topic": "Celebrities",
+    "difficulty": "medium",
+    "prompt": "Beyoncé first found fame as a member of which girl group?",
+    "choices": ["Destiny's Child", "TLC", "Spice Girls", "En Vogue"],
+    "explanation": "Beyoncé was the lead singer of Destiny's Child before her 2003 solo album Dangerously in Love."
+  },
+  {
+    "id": "pop-culture-035",
+    "category": "pop-culture",
+    "topic": "Fashion",
+    "difficulty": "medium",
+    "prompt": "Which fashion house's logo is two interlocking, back-to-back letter Cs?",
+    "choices": ["Chanel", "Gucci", "Versace", "Prada"],
+    "explanation": "The double-C logo of Chanel comes from the name of its founder, Coco Chanel."
+  },
+  {
+    "id": "pop-culture-036",
+    "category": "pop-culture",
+    "topic": "TV",
+    "difficulty": "medium",
+    "prompt": "In Squid Game season one, what is the first of the six deadly games?",
+    "choices": ["Red Light, Green Light", "Tug of war", "Marbles", "Glass bridge"],
+    "explanation": "The contestants first face a giant doll in a deadly round of Red Light, Green Light."
+  },
+  {
+    "id": "pop-culture-037",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "medium",
+    "prompt": "The original Big Brother reality show first aired in 1999 in which country?",
+    "choices": ["Netherlands", "United Kingdom", "United States", "Sweden"],
+    "explanation": "Created by Dutch producer John de Mol, Big Brother first aired on Dutch TV in September 1999."
+  },
+  {
+    "id": "pop-culture-038",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "medium",
+    "prompt": "What does the image format GIF stand for?",
+    "choices": [
+      "Graphics Interchange Format",
+      "Graphic Image File",
+      "General Image Format",
+      "Graphics Internet Format"
+    ],
+    "explanation": "CompuServe introduced the Graphics Interchange Format in 1987."
+  },
+  {
+    "id": "pop-culture-039",
+    "category": "pop-culture",
+    "topic": "Movies",
+    "difficulty": "medium",
+    "prompt": "Lupita Nyong'o won her Oscar for which film?",
+    "choices": ["12 Years a Slave", "Black Panther", "Us", "Queen of Katwe"],
+    "explanation": "She won Best Supporting Actress in 2014 for playing Patsey in 12 Years a Slave."
+  },
+  {
+    "id": "pop-culture-040",
+    "category": "pop-culture",
+    "topic": "Nigerian music",
+    "difficulty": "medium",
+    "prompt": "Which Nigerian singer is nicknamed 'Starboy'?",
+    "choices": ["Wizkid", "Davido", "Burna Boy", "Olamide"],
+    "explanation": "Wizkid is known as Starboy and named his record label Starboy Entertainment."
+  },
+
+  {
+    "id": "pop-culture-041",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "hard",
+    "prompt": "Who won the first Big Brother Nigeria, in 2006?",
+    "choices": ["Katung Aduwak", "Efe Ejeba", "Miracle Ikechukwu", "Mercy Eke"],
+    "explanation": "Katung Aduwak won the 2006 edition; the show returned as Big Brother Naija in 2017."
+  },
+  {
+    "id": "pop-culture-042",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "hard",
+    "prompt": "Who became the first woman to win Big Brother Naija, in 2019?",
+    "choices": ["Mercy Eke", "Tacha", "Cee-C", "Erica"],
+    "explanation": "Mercy Eke won the 'Pepper Dem' season in 2019, the first female winner."
+  },
+  {
+    "id": "pop-culture-043",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "hard",
+    "prompt": "Who won Big Brother Naija 'Shine Ya Eye' in 2021?",
+    "choices": ["Whitemoney", "Liquorose", "Pere", "Angel"],
+    "explanation": "Whitemoney won the sixth season of Big Brother Naija in October 2021."
+  },
+  {
+    "id": "pop-culture-044",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "hard",
+    "prompt": "Nintendo was founded in 1889. What did it make first?",
+    "choices": ["Playing cards", "Toy trains", "Radios", "Sewing machines"],
+    "explanation": "Nintendo began in Kyoto making hanafuda playing cards."
+  },
+  {
+    "id": "pop-culture-045",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "hard",
+    "prompt": "In North America, Sega's Mega Drive console was sold under what name?",
+    "choices": ["Genesis", "Saturn", "Dreamcast", "Master System"],
+    "explanation": "Sega sold the Mega Drive as the Sega Genesis in North America from 1989."
+  },
+  {
+    "id": "pop-culture-046",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "hard",
+    "prompt": "What was the Nintendo Entertainment System called in Japan?",
+    "choices": ["Famicom", "Super Famicom", "GameCube", "Virtual Boy"],
+    "explanation": "Famicom, short for Family Computer, launched in Japan in 1983."
+  },
+  {
+    "id": "pop-culture-047",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "hard",
+    "prompt": "Which Pokémon is number 001 in the National Pokédex?",
+    "choices": ["Bulbasaur", "Pikachu", "Mew", "Charmander"],
+    "explanation": "Bulbasaur comes first, followed by Ivysaur and Venusaur."
+  },
+  {
+    "id": "pop-culture-048",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "hard",
+    "prompt": "What is Wolverine's birth name in Marvel comics?",
+    "choices": ["James Howlett", "Victor Creed", "Scott Summers", "Remy LeBeau"],
+    "explanation": "The 2001 comic series Origin revealed that Logan was born James Howlett."
+  },
+  {
+    "id": "pop-culture-049",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "hard",
+    "prompt": "Spider-Man first appeared in 1962 in issue #15 of which comic?",
+    "choices": ["Amazing Fantasy", "Action Comics", "Detective Comics", "Tales of Suspense"],
+    "explanation": "Stan Lee and Steve Ditko introduced Spider-Man in Amazing Fantasy #15."
+  },
+  {
+    "id": "pop-culture-050",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "hard",
+    "prompt": "The Simpsons began in 1987 as short cartoons on which TV show?",
+    "choices": [
+      "The Tracey Ullman Show",
+      "Saturday Night Live",
+      "In Living Color",
+      "The Arsenio Hall Show"
+    ],
+    "explanation": "The family appeared in shorts on The Tracey Ullman Show before getting their own series in 1989."
+  },
+  {
+    "id": "pop-culture-051",
+    "category": "pop-culture",
+    "topic": "TV",
+    "difficulty": "hard",
+    "prompt": "In Friends, what is the name of Ross's pet monkey?",
+    "choices": ["Marcel", "Maurice", "Bubbles", "Chester"],
+    "explanation": "Ross adopts Marcel, a capuchin monkey, in the first season."
+  },
+  {
+    "id": "pop-culture-052",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "hard",
+    "prompt": "What was the first video ever uploaded to YouTube, in April 2005?",
+    "choices": ["Me at the zoo", "Charlie Bit My Finger", "Evolution of Dance", "Hello YouTube"],
+    "explanation": "Co-founder Jawed Karim uploaded the short clip 'Me at the zoo' on 23 April 2005."
+  },
+  {
+    "id": "pop-culture-053",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "hard",
+    "prompt": "Who posted the very first tweet, in March 2006?",
+    "choices": ["Jack Dorsey", "Biz Stone", "Evan Williams", "Noah Glass"],
+    "explanation": "Jack Dorsey wrote 'just setting up my twttr' on 21 March 2006."
+  },
+  {
+    "id": "pop-culture-054",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "hard",
+    "prompt": "What was Google's search engine called before it got the name Google?",
+    "choices": ["BackRub", "Googol", "PageRank", "AltaVista"],
+    "explanation": "Larry Page and Sergey Brin called their Stanford search project BackRub in 1996."
+  },
+  {
+    "id": "pop-culture-055",
+    "category": "pop-culture",
+    "topic": "Nollywood",
+    "difficulty": "hard",
+    "prompt": "Which 1992 film is widely credited with launching Nigeria's home-video movie boom?",
+    "choices": ["Living in Bondage", "Osuofia in London", "The Wedding Party", "King of Boys"],
+    "explanation": "Kenneth Nnebue's Living in Bondage sold widely on VHS and kick-started Nollywood."
+  },
+  {
+    "id": "pop-culture-056",
+    "category": "pop-culture",
+    "topic": "Nollywood",
+    "difficulty": "hard",
+    "prompt": "Which actor played Okonkwo in the 1987 TV adaptation of Things Fall Apart?",
+    "choices": ["Pete Edochie", "Olu Jacobs", "Richard Mofe-Damijo", "Nkem Owoh"],
+    "explanation": "Pete Edochie's role as Okonkwo in the NTA series made him a household name."
+  },
+  {
+    "id": "pop-culture-057",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "hard",
+    "prompt": "Who founded the Nigerian online forum Nairaland in 2005?",
+    "choices": ["Seun Osewa", "Linda Ikeji", "Jason Njoku", "Iyinoluwa Aboyeji"],
+    "explanation": "Seun Osewa launched Nairaland in 2005 as a forum for Nigerians at home and abroad."
+  },
+  {
+    "id": "pop-culture-058",
+    "category": "pop-culture",
+    "topic": "Toys",
+    "difficulty": "hard",
+    "prompt": "The name LEGO comes from Danish words meaning what?",
+    "choices": ["Play well", "Build together", "Little bricks", "Good toys"],
+    "explanation": "LEGO comes from 'leg godt', which is Danish for 'play well'."
+  },
+  {
+    "id": "pop-culture-059",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "hard",
+    "prompt": "In the 1981 arcade game Donkey Kong, what was Mario called?",
+    "choices": ["Jumpman", "Plumber Pete", "Hammer Man", "Kong Kid"],
+    "explanation": "Mario first appeared as a carpenter called Jumpman before he was renamed."
+  },
+  {
+    "id": "pop-culture-060",
+    "category": "pop-culture",
+    "topic": "Toys",
+    "difficulty": "hard",
+    "prompt": "Which US toy company launched Transformers in 1984?",
+    "choices": ["Hasbro", "Mattel", "Kenner", "Tonka"],
+    "explanation": "Hasbro rebranded robot toys from Japan's Takara as Transformers in 1984."
+  }
+]

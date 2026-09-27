@@ -1,0 +1,552 @@
+[
+  {
+    "id": "geography-001",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of Nigeria?",
+    "choices": ["Abuja", "Lagos", "Kano", "Ibadan"],
+    "explanation": "Abuja has been Nigeria's capital since 1991, when the government moved there from Lagos."
+  },
+  {
+    "id": "geography-002",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of Japan?",
+    "choices": ["Tokyo", "Osaka", "Kyoto", "Hiroshima"],
+    "explanation": "Tokyo is the capital of Japan and the seat of its government and emperor."
+  },
+  {
+    "id": "geography-003",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "easy",
+    "prompt": "Which river flows through Cairo?",
+    "choices": ["The Nile", "The Congo", "The Niger", "The Zambezi"],
+    "explanation": "Cairo sits on the banks of the Nile, just south of where the river fans out into its delta."
+  },
+  {
+    "id": "geography-004",
+    "category": "geography",
+    "topic": "Continents",
+    "difficulty": "easy",
+    "prompt": "On which continent is Kenya?",
+    "choices": ["Africa", "Asia", "South America", "Europe"],
+    "explanation": "Kenya is in East Africa, on the coast of the Indian Ocean."
+  },
+  {
+    "id": "geography-005",
+    "category": "geography",
+    "topic": "Oceans",
+    "difficulty": "easy",
+    "prompt": "Which is the largest ocean on Earth?",
+    "choices": ["The Pacific Ocean", "The Atlantic Ocean", "The Indian Ocean", "The Arctic Ocean"],
+    "explanation": "The Pacific is by far the largest ocean, covering about a third of the Earth's surface."
+  },
+  {
+    "id": "geography-006",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "easy",
+    "prompt": "Which is the highest mountain above sea level in the world?",
+    "choices": ["Mount Everest", "K2", "Kangchenjunga", "Mount Kilimanjaro"],
+    "explanation": "Mount Everest in the Himalayas rises about 8,849 metres above sea level, higher than any other peak."
+  },
+  {
+    "id": "geography-007",
+    "category": "geography",
+    "topic": "Deserts",
+    "difficulty": "easy",
+    "prompt": "Which desert covers much of North Africa?",
+    "choices": ["The Sahara", "The Kalahari", "The Gobi", "The Namib"],
+    "explanation": "The Sahara stretches across North Africa from the Atlantic coast to the Red Sea."
+  },
+  {
+    "id": "geography-008",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "easy",
+    "prompt": "In which city is the Eiffel Tower?",
+    "choices": ["Paris", "Rome", "London", "Madrid"],
+    "explanation": "The Eiffel Tower was built in Paris for the 1889 World's Fair."
+  },
+  {
+    "id": "geography-009",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "easy",
+    "prompt": "In which country is the Great Pyramid of Giza?",
+    "choices": ["Egypt", "Sudan", "Morocco", "Libya"],
+    "explanation": "The Great Pyramid stands at Giza, on the west bank of the Nile near Cairo in Egypt."
+  },
+  {
+    "id": "geography-010",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of Canada?",
+    "choices": ["Ottawa", "Toronto", "Vancouver", "Montreal"],
+    "explanation": "Ottawa, in the province of Ontario, is Canada's capital and home to its Parliament."
+  },
+  {
+    "id": "geography-011",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "easy",
+    "prompt": "What is the name of the imaginary line at 0 degrees latitude?",
+    "choices": ["The Equator", "The Prime Meridian", "The Tropic of Cancer", "The Arctic Circle"],
+    "explanation": "The Equator circles the Earth at 0 degrees latitude, halfway between the North and South Poles."
+  },
+  {
+    "id": "geography-012",
+    "category": "geography",
+    "topic": "Countries",
+    "difficulty": "easy",
+    "prompt": "Which European country is famously shaped like a boot?",
+    "choices": ["Italy", "Greece", "Spain", "Portugal"],
+    "explanation": "The Italian peninsula looks like a boot kicking the island of Sicily."
+  },
+  {
+    "id": "geography-013",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "easy",
+    "prompt": "Nigeria's southern coastline lies on which ocean?",
+    "choices": ["The Atlantic Ocean", "The Indian Ocean", "The Pacific Ocean", "The Arctic Ocean"],
+    "explanation": "Nigeria's coast faces the Gulf of Guinea, which is part of the Atlantic Ocean."
+  },
+  {
+    "id": "geography-014",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "easy",
+    "prompt": "In which city does the Statue of Liberty stand?",
+    "choices": ["New York City", "Washington, D.C.", "Boston", "Philadelphia"],
+    "explanation": "The Statue of Liberty stands on Liberty Island in New York Harbor."
+  },
+  {
+    "id": "geography-015",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "easy",
+    "prompt": "Which is the largest island in the world?",
+    "choices": ["Greenland", "Madagascar", "Borneo", "New Guinea"],
+    "explanation": "Greenland is the world's largest island; Australia is bigger but counts as a continent."
+  },
+  {
+    "id": "geography-016",
+    "category": "geography",
+    "topic": "Forests",
+    "difficulty": "easy",
+    "prompt": "Most of the Amazon rainforest lies in which country?",
+    "choices": ["Brazil", "Peru", "Colombia", "Venezuela"],
+    "explanation": "About 60 percent of the Amazon rainforest is in Brazil, with Peru holding the next largest share."
+  },
+  {
+    "id": "geography-017",
+    "category": "geography",
+    "topic": "Continents",
+    "difficulty": "easy",
+    "prompt": "On which continent is the South Pole?",
+    "choices": ["Antarctica", "South America", "Australia", "Africa"],
+    "explanation": "The geographic South Pole lies on the ice sheet of Antarctica."
+  },
+  {
+    "id": "geography-018",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "easy",
+    "prompt": "In which country is the Great Wall?",
+    "choices": ["China", "Japan", "Vietnam", "South Korea"],
+    "explanation": "The Great Wall winds across northern China and was built over many centuries."
+  },
+  {
+    "id": "geography-019",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "easy",
+    "prompt": "In which region of Africa is Nigeria?",
+    "choices": ["West Africa", "East Africa", "North Africa", "Southern Africa"],
+    "explanation": "Nigeria is part of West Africa, a region that also includes Ghana, Senegal and Mali."
+  },
+  {
+    "id": "geography-020",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of Ghana?",
+    "choices": ["Accra", "Kumasi", "Tamale", "Lomé"],
+    "explanation": "Accra, on the Gulf of Guinea coast, is the capital of Ghana."
+  },
+  {
+    "id": "geography-021",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "medium",
+    "prompt": "What is the capital city of Australia?",
+    "choices": ["Canberra", "Sydney", "Melbourne", "Perth"],
+    "explanation": "Canberra was purpose-built as Australia's capital, partly as a compromise between Sydney and Melbourne."
+  },
+  {
+    "id": "geography-022",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "medium",
+    "prompt": "In which country is Mount Kilimanjaro?",
+    "choices": ["Tanzania", "Kenya", "Uganda", "Ethiopia"],
+    "explanation": "Kilimanjaro lies in northern Tanzania, close to the border with Kenya."
+  },
+  {
+    "id": "geography-023",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "medium",
+    "prompt": "The Prime Meridian at 0 degrees longitude passes through which part of London?",
+    "choices": ["Greenwich", "Westminster", "Camden", "Kensington"],
+    "explanation": "The Prime Meridian is marked at the Royal Observatory in Greenwich, south-east London."
+  },
+  {
+    "id": "geography-024",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "At the city of Lokoja, the Niger is joined by which river?",
+    "choices": ["The Benue", "The Kaduna", "The Sokoto", "The Ogun"],
+    "explanation": "The Niger and the Benue, Nigeria's two largest rivers, meet at Lokoja in Kogi State."
+  },
+  {
+    "id": "geography-025",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "medium",
+    "prompt": "What is the capital city of Brazil?",
+    "choices": ["Brasília", "Rio de Janeiro", "São Paulo", "Salvador"],
+    "explanation": "Brasília was built in the country's interior and replaced Rio de Janeiro as capital in 1960."
+  },
+  {
+    "id": "geography-026",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "medium",
+    "prompt": "Which mountain range runs down the western side of South America?",
+    "choices": ["The Andes", "The Rockies", "The Alps", "The Atlas Mountains"],
+    "explanation": "The Andes run for about 7,000 kilometres along South America's west coast, from Venezuela to Patagonia."
+  },
+  {
+    "id": "geography-027",
+    "category": "geography",
+    "topic": "Borders",
+    "difficulty": "medium",
+    "prompt": "Which small country lies in the Pyrenees between France and Spain?",
+    "choices": ["Andorra", "Monaco", "Liechtenstein", "San Marino"],
+    "explanation": "Andorra is a tiny landlocked country high in the Pyrenees, bordered only by France and Spain."
+  },
+  {
+    "id": "geography-028",
+    "category": "geography",
+    "topic": "Lakes",
+    "difficulty": "medium",
+    "prompt": "Which is the largest lake in Africa by area?",
+    "choices": ["Lake Victoria", "Lake Tanganyika", "Lake Malawi", "Lake Chad"],
+    "explanation": "Lake Victoria, shared by Uganda, Kenya and Tanzania, is Africa's largest lake by surface area."
+  },
+  {
+    "id": "geography-029",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "medium",
+    "prompt": "The Equator passes through which of these Asian countries?",
+    "choices": ["Indonesia", "India", "Thailand", "The Philippines"],
+    "explanation": "The Equator crosses several Indonesian islands, including Sumatra, Borneo and Sulawesi."
+  },
+  {
+    "id": "geography-030",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "medium",
+    "prompt": "Which stretch of water separates Madagascar from mainland Africa?",
+    "choices": [
+      "The Mozambique Channel",
+      "The Gulf of Aden",
+      "The Strait of Hormuz",
+      "The Bab-el-Mandeb"
+    ],
+    "explanation": "The Mozambique Channel, part of the Indian Ocean, lies between Madagascar and Mozambique."
+  },
+  {
+    "id": "geography-031",
+    "category": "geography",
+    "topic": "Deserts",
+    "difficulty": "medium",
+    "prompt": "The Gobi Desert stretches across northern China and which other country?",
+    "choices": ["Mongolia", "Kazakhstan", "Nepal", "Afghanistan"],
+    "explanation": "The Gobi covers large parts of southern Mongolia and northern China."
+  },
+  {
+    "id": "geography-032",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "medium",
+    "prompt": "What is the capital city of Morocco?",
+    "choices": ["Rabat", "Casablanca", "Marrakesh", "Fez"],
+    "explanation": "Rabat, on the Atlantic coast, is Morocco's capital, even though Casablanca is better known abroad."
+  },
+  {
+    "id": "geography-033",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "medium",
+    "prompt": "In which country is the Inca site of Machu Picchu?",
+    "choices": ["Peru", "Bolivia", "Chile", "Ecuador"],
+    "explanation": "Machu Picchu sits high in the Andes above the Urubamba valley, near Cusco in Peru."
+  },
+  {
+    "id": "geography-034",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "medium",
+    "prompt": "Victoria Falls is on which river?",
+    "choices": ["The Zambezi", "The Limpopo", "The Orange", "The Congo"],
+    "explanation": "Victoria Falls is on the Zambezi River, where it forms the border between Zambia and Zimbabwe."
+  },
+  {
+    "id": "geography-035",
+    "category": "geography",
+    "topic": "Seas",
+    "difficulty": "medium",
+    "prompt": "The Strait of Gibraltar links the Atlantic Ocean to which sea?",
+    "choices": ["The Mediterranean Sea", "The Black Sea", "The Red Sea", "The North Sea"],
+    "explanation": "The narrow Strait of Gibraltar, between Spain and Morocco, is the Mediterranean's opening to the Atlantic."
+  },
+  {
+    "id": "geography-036",
+    "category": "geography",
+    "topic": "Time zones",
+    "difficulty": "medium",
+    "prompt": "Which imaginary line, roughly along 180 degrees longitude, marks where the calendar day changes?",
+    "choices": [
+      "The International Date Line",
+      "The Prime Meridian",
+      "The Tropic of Capricorn",
+      "The Equator"
+    ],
+    "explanation": "Crossing the International Date Line in the Pacific moves you a day forward or back on the calendar."
+  },
+  {
+    "id": "geography-037",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "Which country borders Nigeria to the west?",
+    "choices": ["Benin", "Togo", "Ghana", "Niger"],
+    "explanation": "Benin lies along Nigeria's western border; Niger is to the north and Cameroon to the east."
+  },
+  {
+    "id": "geography-038",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "medium",
+    "prompt": "Which country is completely surrounded by South Africa?",
+    "choices": ["Lesotho", "Eswatini", "Botswana", "Namibia"],
+    "explanation": "Lesotho is a mountain kingdom entirely enclosed by South Africa."
+  },
+  {
+    "id": "geography-039",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "Which city is the capital of Nigeria's Oyo State?",
+    "choices": ["Ibadan", "Ogbomosho", "Oyo", "Osogbo"],
+    "explanation": "Ibadan is the capital of Oyo State; the town of Oyo is in the state but is not its capital."
+  },
+  {
+    "id": "geography-040",
+    "category": "geography",
+    "topic": "Time zones",
+    "difficulty": "medium",
+    "prompt": "Which large country uses a single official time zone, though it spans about five?",
+    "choices": ["China", "Russia", "The United States", "Brazil"],
+    "explanation": "All of China officially runs on Beijing Time, even though the country is wide enough for about five zones."
+  },
+  {
+    "id": "geography-041",
+    "category": "geography",
+    "topic": "Lakes",
+    "difficulty": "hard",
+    "prompt": "Which is the deepest lake in the world?",
+    "choices": ["Lake Baikal", "Lake Tanganyika", "The Caspian Sea", "Lake Superior"],
+    "explanation": "Lake Baikal in Siberia reaches about 1,640 metres deep, deeper than any other lake."
+  },
+  {
+    "id": "geography-042",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "hard",
+    "prompt": "The Danube flows into which sea?",
+    "choices": ["The Black Sea", "The Adriatic Sea", "The Caspian Sea", "The Baltic Sea"],
+    "explanation": "After crossing ten countries, the Danube reaches the Black Sea through a large delta in Romania and Ukraine."
+  },
+  {
+    "id": "geography-043",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "hard",
+    "prompt": "Mount Elbrus in Russia belongs to which mountain range?",
+    "choices": ["The Caucasus", "The Urals", "The Alps", "The Carpathians"],
+    "explanation": "Elbrus is a dormant volcano in the Caucasus Mountains, rising about 5,642 metres."
+  },
+  {
+    "id": "geography-044",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "Lake Chad is shared by Chad, Cameroon, Niger and which other country?",
+    "choices": ["Nigeria", "Sudan", "Mali", "Central African Republic"],
+    "explanation": "Lake Chad is shared by four countries: Chad, Cameroon, Niger and Nigeria, whose Borno State borders the lake."
+  },
+  {
+    "id": "geography-045",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "What is the highest point in Nigeria?",
+    "choices": ["Chappal Waddi", "Zuma Rock", "Aso Rock", "Olumo Rock"],
+    "explanation": "Chappal Waddi, about 2,419 metres high in Taraba State near the Cameroon border, is Nigeria's highest point."
+  },
+  {
+    "id": "geography-046",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "In which Nigerian city is Olumo Rock?",
+    "choices": ["Abeokuta", "Ibadan", "Ilorin", "Osogbo"],
+    "explanation": "Olumo Rock is a famous granite outcrop in Abeokuta, the capital of Ogun State."
+  },
+  {
+    "id": "geography-047",
+    "category": "geography",
+    "topic": "Lakes",
+    "difficulty": "hard",
+    "prompt": "Lake Titicaca lies on the border between Peru and which country?",
+    "choices": ["Bolivia", "Chile", "Ecuador", "Brazil"],
+    "explanation": "Lake Titicaca, high in the Andes, is split between Peru and Bolivia."
+  },
+  {
+    "id": "geography-048",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "hard",
+    "prompt": "What is the capital city of Burkina Faso?",
+    "choices": ["Ouagadougou", "Bamako", "Niamey", "Bobo-Dioulasso"],
+    "explanation": "Ouagadougou is the capital of Burkina Faso; Bamako and Niamey are the capitals of Mali and Niger."
+  },
+  {
+    "id": "geography-049",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "hard",
+    "prompt": "What is the capital city of Bhutan?",
+    "choices": ["Thimphu", "Kathmandu", "Paro", "Dhaka"],
+    "explanation": "Thimphu, in a Himalayan valley, is Bhutan's capital; Kathmandu is Nepal's and Dhaka is Bangladesh's."
+  },
+  {
+    "id": "geography-050",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "hard",
+    "prompt": "What is the capital city of Malawi?",
+    "choices": ["Lilongwe", "Blantyre", "Zomba", "Lusaka"],
+    "explanation": "Lilongwe has been Malawi's capital since 1975, taking over from Zomba; Lusaka is the capital of Zambia."
+  },
+  {
+    "id": "geography-051",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "hard",
+    "prompt": "Which country is crossed by both the Equator and the Tropic of Capricorn?",
+    "choices": ["Brazil", "Argentina", "Australia", "Kenya"],
+    "explanation": "The Equator crosses northern Brazil and the Tropic of Capricorn passes near São Paulo in the south."
+  },
+  {
+    "id": "geography-052",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "hard",
+    "prompt": "Which African country has coastlines on both the Atlantic and the Indian Ocean?",
+    "choices": ["South Africa", "Namibia", "Mozambique", "Angola"],
+    "explanation": "South Africa's west coast faces the Atlantic and its east coast faces the Indian Ocean."
+  },
+  {
+    "id": "geography-053",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "hard",
+    "prompt": "In which country are the rock-cut churches of Lalibela?",
+    "choices": ["Ethiopia", "Eritrea", "Sudan", "Egypt"],
+    "explanation": "Lalibela's churches, carved out of solid rock around 800 years ago, are in northern Ethiopia."
+  },
+  {
+    "id": "geography-054",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "hard",
+    "prompt": "How many times does the Congo River cross the Equator?",
+    "choices": ["Twice", "Once", "Three times", "Never"],
+    "explanation": "The Congo flows north across the Equator, curves west, then turns south-west and crosses it again."
+  },
+  {
+    "id": "geography-055",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "hard",
+    "prompt": "Which strait separates Tasmania from mainland Australia?",
+    "choices": ["Bass Strait", "Cook Strait", "Torres Strait", "Strait of Malacca"],
+    "explanation": "Bass Strait lies between Tasmania and Victoria; Cook Strait is in New Zealand and Torres Strait is north of Australia."
+  },
+  {
+    "id": "geography-056",
+    "category": "geography",
+    "topic": "Seas",
+    "difficulty": "hard",
+    "prompt": "The Bosporus strait in Istanbul connects the Black Sea to which sea?",
+    "choices": ["The Sea of Marmara", "The Caspian Sea", "The Sea of Azov", "The Adriatic Sea"],
+    "explanation": "The Bosporus runs from the Black Sea to the Sea of Marmara, which then joins the Aegean through the Dardanelles."
+  },
+  {
+    "id": "geography-057",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "hard",
+    "prompt": "The Atlas Mountains run through Morocco, Algeria and which other country?",
+    "choices": ["Tunisia", "Libya", "Egypt", "Mauritania"],
+    "explanation": "The Atlas range stretches about 2,500 kilometres across Morocco, Algeria and Tunisia."
+  },
+  {
+    "id": "geography-058",
+    "category": "geography",
+    "topic": "Hemispheres",
+    "difficulty": "hard",
+    "prompt": "Which of these African capital cities is in the Southern Hemisphere?",
+    "choices": ["Nairobi", "Abuja", "Addis Ababa", "Accra"],
+    "explanation": "Nairobi lies just over 1 degree south of the Equator, while Abuja, Addis Ababa and Accra are all north of it."
+  },
+  {
+    "id": "geography-059",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "The Obudu Mountain Resort is in which Nigerian state?",
+    "choices": ["Cross River", "Plateau", "Taraba", "Akwa Ibom"],
+    "explanation": "The Obudu Mountain Resort, once called the Obudu Cattle Ranch, sits on the Obudu Plateau in Cross River State."
+  },
+  {
+    "id": "geography-060",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "hard",
+    "prompt": "The Orange River forms part of South Africa's border with which country?",
+    "choices": ["Namibia", "Botswana", "Zimbabwe", "Mozambique"],
+    "explanation": "The lower Orange River marks much of the border between South Africa and Namibia before reaching the Atlantic."
+  }
+]

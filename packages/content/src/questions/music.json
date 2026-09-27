@@ -1,0 +1,569 @@
+[
+  {
+    "id": "music-001",
+    "category": "music",
+    "topic": "Afrobeat",
+    "difficulty": "easy",
+    "prompt": "Which Nigerian musician is known as the pioneer of Afrobeat?",
+    "choices": ["Fela Kuti", "King Sunny Adé", "Ebenezer Obey", "Oliver De Coque"],
+    "explanation": "Fela Kuti blended jazz, funk and highlife to create Afrobeat in the late 1960s."
+  },
+  {
+    "id": "music-002",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "easy",
+    "prompt": "How many keys does a standard modern piano have?",
+    "choices": ["88", "76", "92", "64"],
+    "explanation": "A standard piano has 88 keys: 52 white and 36 black."
+  },
+  {
+    "id": "music-003",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "easy",
+    "prompt": "Which singer released the 1982 album 'Thriller'?",
+    "choices": ["Michael Jackson", "Prince", "Stevie Wonder", "Lionel Richie"],
+    "explanation": "'Thriller' was Michael Jackson's sixth studio album, released in November 1982."
+  },
+  {
+    "id": "music-004",
+    "category": "music",
+    "topic": "Rock",
+    "difficulty": "easy",
+    "prompt": "John Lennon and Paul McCartney were members of which band?",
+    "choices": ["The Beatles", "The Rolling Stones", "The Who", "The Kinks"],
+    "explanation": "Lennon and McCartney were the main songwriting pair in the Beatles, from Liverpool."
+  },
+  {
+    "id": "music-005",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "easy",
+    "prompt": "How many strings does a standard acoustic guitar have?",
+    "choices": ["Six", "Four", "Five", "Eight"],
+    "explanation": "A standard guitar has six strings, usually tuned E, A, D, G, B, E."
+  },
+  {
+    "id": "music-006",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "easy",
+    "prompt": "The trumpet belongs to which family of instruments?",
+    "choices": ["Brass", "Woodwind", "Percussion", "Strings"],
+    "explanation": "The trumpet is a brass instrument: the player buzzes their lips into a cup-shaped mouthpiece."
+  },
+  {
+    "id": "music-007",
+    "category": "music",
+    "topic": "Rock",
+    "difficulty": "easy",
+    "prompt": "Which band recorded the 1975 song 'Bohemian Rhapsody'?",
+    "choices": ["Queen", "Led Zeppelin", "Pink Floyd", "The Who"],
+    "explanation": "'Bohemian Rhapsody' by Queen appeared on their 1975 album 'A Night at the Opera'."
+  },
+  {
+    "id": "music-008",
+    "category": "music",
+    "topic": "Afrobeats",
+    "difficulty": "easy",
+    "prompt": "Which country is the singer Burna Boy from?",
+    "choices": ["Nigeria", "Ghana", "South Africa", "Kenya"],
+    "explanation": "Burna Boy was born and raised in Port Harcourt, Nigeria."
+  },
+  {
+    "id": "music-009",
+    "category": "music",
+    "topic": "Afrobeats",
+    "difficulty": "easy",
+    "prompt": "Which Nigerian singer released the 2020 hit 'Essence' featuring Tems?",
+    "choices": ["Wizkid", "Davido", "Burna Boy", "Rema"],
+    "explanation": "'Essence' by Wizkid featuring Tems is on his 2020 album 'Made in Lagos'."
+  },
+  {
+    "id": "music-010",
+    "category": "music",
+    "topic": "Genres",
+    "difficulty": "easy",
+    "prompt": "Reggae music originated in which country?",
+    "choices": ["Jamaica", "Trinidad and Tobago", "Cuba", "Barbados"],
+    "explanation": "Reggae developed in Jamaica in the late 1960s, growing out of ska and rocksteady."
+  },
+  {
+    "id": "music-011",
+    "category": "music",
+    "topic": "Reggae",
+    "difficulty": "easy",
+    "prompt": "Which reggae legend sang 'No Woman, No Cry'?",
+    "choices": ["Bob Marley", "Peter Tosh", "Jimmy Cliff", "Burning Spear"],
+    "explanation": "Bob Marley and the Wailers recorded 'No Woman, No Cry', famously in a 1975 live version."
+  },
+  {
+    "id": "music-012",
+    "category": "music",
+    "topic": "Music terms",
+    "difficulty": "easy",
+    "prompt": "How many performers make up a quartet?",
+    "choices": ["Four", "Three", "Five", "Six"],
+    "explanation": "A quartet is a group of four performers, such as a string quartet of two violins, a viola and a cello."
+  },
+  {
+    "id": "music-013",
+    "category": "music",
+    "topic": "Classical",
+    "difficulty": "easy",
+    "prompt": "Which composer kept writing music after becoming almost completely deaf?",
+    "choices": [
+      "Ludwig van Beethoven",
+      "Wolfgang Amadeus Mozart",
+      "Johann Sebastian Bach",
+      "Frédéric Chopin"
+    ],
+    "explanation": "Beethoven lost most of his hearing yet wrote some of his greatest works, including his Ninth Symphony."
+  },
+  {
+    "id": "music-014",
+    "category": "music",
+    "topic": "Rock and roll",
+    "difficulty": "easy",
+    "prompt": "Which singer is known as the 'King of Rock and Roll'?",
+    "choices": ["Elvis Presley", "Chuck Berry", "Little Richard", "Buddy Holly"],
+    "explanation": "Elvis Presley became known as the King of Rock and Roll after his rise to fame in the 1950s."
+  },
+  {
+    "id": "music-015",
+    "category": "music",
+    "topic": "Orchestra",
+    "difficulty": "easy",
+    "prompt": "What is the person who leads an orchestra with a baton called?",
+    "choices": ["Conductor", "Composer", "Soloist", "Arranger"],
+    "explanation": "The conductor directs the orchestra, setting the tempo and shaping the performance with a baton."
+  },
+  {
+    "id": "music-016",
+    "category": "music",
+    "topic": "African instruments",
+    "difficulty": "easy",
+    "prompt": "Which drum, squeezed under the arm, can imitate the tones of Yoruba speech?",
+    "choices": ["Talking drum", "Djembe", "Conga", "Bongo"],
+    "explanation": "Squeezing the cords of the talking drum (dùndún) changes its pitch, letting it copy the tones of Yoruba."
+  },
+  {
+    "id": "music-017",
+    "category": "music",
+    "topic": "Afrobeats",
+    "difficulty": "easy",
+    "prompt": "Which Nigerian singer is known by the nickname 'OBO'?",
+    "choices": ["Davido", "Wizkid", "Olamide", "Burna Boy"],
+    "explanation": "Davido calls himself OBO, short for Omo Baba Olowo, meaning 'son of a rich man'."
+  },
+  {
+    "id": "music-018",
+    "category": "music",
+    "topic": "Music theory",
+    "difficulty": "easy",
+    "prompt": "How many lines does a standard musical staff have?",
+    "choices": ["Five", "Four", "Six", "Seven"],
+    "explanation": "Music is written on a staff (or stave) of five horizontal lines and the four spaces between them."
+  },
+  {
+    "id": "music-019",
+    "category": "music",
+    "topic": "Afrobeats",
+    "difficulty": "easy",
+    "prompt": "Which Nigerian singer released the 2022 hit 'Calm Down'?",
+    "choices": ["Rema", "CKay", "Fireboy DML", "Omah Lay"],
+    "explanation": "Rema released 'Calm Down' in 2022 and later that year put out a remix with Selena Gomez."
+  },
+  {
+    "id": "music-020",
+    "category": "music",
+    "topic": "Soul",
+    "difficulty": "easy",
+    "prompt": "Which singer is known as the 'Queen of Soul'?",
+    "choices": ["Aretha Franklin", "Diana Ross", "Whitney Houston", "Tina Turner"],
+    "explanation": "Aretha Franklin, famous for songs like 'Respect', has long been called the Queen of Soul."
+  },
+
+  {
+    "id": "music-021",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "medium",
+    "prompt": "Which artist released the 1984 album and film 'Purple Rain'?",
+    "choices": ["Prince", "Michael Jackson", "Stevie Wonder", "Rick James"],
+    "explanation": "'Purple Rain' was the soundtrack to the 1984 film of the same name, starring Prince."
+  },
+  {
+    "id": "music-022",
+    "category": "music",
+    "topic": "Music terms",
+    "difficulty": "medium",
+    "prompt": "In sheet music, what does 'forte' tell a musician to do?",
+    "choices": ["Play loudly", "Play softly", "Play faster", "Play slower"],
+    "explanation": "Forte is Italian for 'strong' and tells the player to play loudly; piano means softly."
+  },
+  {
+    "id": "music-023",
+    "category": "music",
+    "topic": "Highlife",
+    "difficulty": "medium",
+    "prompt": "Highlife music first developed in which West African country?",
+    "choices": ["Ghana", "Senegal", "Mali", "Guinea"],
+    "explanation": "Highlife grew up in Ghana, then called the Gold Coast, in the early 1900s and later spread to Nigeria."
+  },
+  {
+    "id": "music-024",
+    "category": "music",
+    "topic": "Nigerian gospel",
+    "difficulty": "medium",
+    "prompt": "Which Nigerian gospel singer wrote and first recorded 'Way Maker'?",
+    "choices": ["Sinach", "Frank Edwards", "Nathaniel Bassey", "Tope Alabi"],
+    "explanation": "Sinach wrote and first recorded 'Way Maker', which churches around the world now sing."
+  },
+  {
+    "id": "music-025",
+    "category": "music",
+    "topic": "Hip hop",
+    "difficulty": "medium",
+    "prompt": "Hip hop was born in the 1970s in which US city?",
+    "choices": ["New York City", "Los Angeles", "Chicago", "Atlanta"],
+    "explanation": "Hip hop began at block parties in the Bronx, New York City, with DJs like Kool Herc."
+  },
+  {
+    "id": "music-026",
+    "category": "music",
+    "topic": "Afrobeats",
+    "difficulty": "medium",
+    "prompt": "Which Nigerian singer recorded the song 'Love Nwantiti'?",
+    "choices": ["CKay", "Joeboy", "Fireboy DML", "Omah Lay"],
+    "explanation": "CKay released 'Love Nwantiti' in 2019, and remixes helped it spread around the world."
+  },
+  {
+    "id": "music-027",
+    "category": "music",
+    "topic": "Juju",
+    "difficulty": "medium",
+    "prompt": "King Sunny Adé is a star of which Nigerian music genre?",
+    "choices": ["Juju", "Fuji", "Apala", "Highlife"],
+    "explanation": "King Sunny Adé is a juju bandleader known for talking drums and layered electric guitars."
+  },
+  {
+    "id": "music-028",
+    "category": "music",
+    "topic": "Classical",
+    "difficulty": "medium",
+    "prompt": "Who composed the opera 'The Magic Flute'?",
+    "choices": ["Wolfgang Amadeus Mozart", "Giuseppe Verdi", "Richard Wagner", "Giacomo Puccini"],
+    "explanation": "Mozart wrote 'The Magic Flute' in 1791, the year he died."
+  },
+  {
+    "id": "music-029",
+    "category": "music",
+    "topic": "Classical",
+    "difficulty": "medium",
+    "prompt": "Which composer wrote the violin concertos known as 'The Four Seasons'?",
+    "choices": [
+      "Antonio Vivaldi",
+      "Johann Sebastian Bach",
+      "George Frideric Handel",
+      "Joseph Haydn"
+    ],
+    "explanation": "Antonio Vivaldi, a Baroque composer from Venice, published 'The Four Seasons' in 1725."
+  },
+  {
+    "id": "music-030",
+    "category": "music",
+    "topic": "Music terms",
+    "difficulty": "medium",
+    "prompt": "In music, what does the word 'tempo' describe?",
+    "choices": [
+      "How fast the music is",
+      "How loud the music is",
+      "How high the notes are",
+      "How many players there are"
+    ],
+    "explanation": "Tempo is the speed of a piece of music, often measured in beats per minute."
+  },
+  {
+    "id": "music-031",
+    "category": "music",
+    "topic": "Afrobeat",
+    "difficulty": "medium",
+    "prompt": "What name did Fela Kuti give his Lagos commune, which he declared independent of Nigeria?",
+    "choices": ["Kalakuta Republic", "Afrika Shrine", "Zombie Republic", "Ikeja Commune"],
+    "explanation": "Fela declared his home the Kalakuta Republic; soldiers raided and burned it in 1977."
+  },
+  {
+    "id": "music-032",
+    "category": "music",
+    "topic": "Rock",
+    "difficulty": "medium",
+    "prompt": "Who was the frontman of the grunge band behind 'Smells Like Teen Spirit'?",
+    "choices": ["Kurt Cobain", "Eddie Vedder", "Chris Cornell", "Layne Staley"],
+    "explanation": "Kurt Cobain sang and played guitar in Nirvana, whose 'Smells Like Teen Spirit' came out in 1991."
+  },
+  {
+    "id": "music-033",
+    "category": "music",
+    "topic": "Music theory",
+    "difficulty": "medium",
+    "prompt": "What is the interval from one C up to the next C above it?",
+    "choices": ["Octave", "Fifth", "Semitone", "Third"],
+    "explanation": "An octave spans eight notes of a scale, for example from one C to the next C."
+  },
+  {
+    "id": "music-034",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "medium",
+    "prompt": "The sitar is most closely linked with the classical music of which country?",
+    "choices": ["India", "Japan", "Iran", "Turkey"],
+    "explanation": "The sitar is a long-necked plucked instrument central to Hindustani classical music of India."
+  },
+  {
+    "id": "music-035",
+    "category": "music",
+    "topic": "African instruments",
+    "difficulty": "medium",
+    "prompt": "The kora, a 21-string harp-lute, comes from which part of Africa?",
+    "choices": ["West Africa", "East Africa", "North Africa", "Southern Africa"],
+    "explanation": "The kora is played by griots of the Mandinka people in countries such as Mali, Senegal and the Gambia."
+  },
+  {
+    "id": "music-036",
+    "category": "music",
+    "topic": "African music",
+    "difficulty": "medium",
+    "prompt": "Which South African singer was nicknamed 'Mama Africa'?",
+    "choices": ["Miriam Makeba", "Brenda Fassie", "Yvonne Chaka Chaka", "Letta Mbulu"],
+    "explanation": "Miriam Makeba, known for 'Pata Pata', was called Mama Africa and campaigned against apartheid."
+  },
+  {
+    "id": "music-037",
+    "category": "music",
+    "topic": "Jazz",
+    "difficulty": "medium",
+    "prompt": "Jazz first developed in the early 1900s in which US city?",
+    "choices": ["New Orleans", "Chicago", "Memphis", "Nashville"],
+    "explanation": "Jazz grew out of New Orleans, mixing blues, ragtime and brass band music."
+  },
+  {
+    "id": "music-038",
+    "category": "music",
+    "topic": "Afrobeats",
+    "difficulty": "medium",
+    "prompt": "Which artist released the 2019 album 'African Giant'?",
+    "choices": ["Burna Boy", "Wizkid", "Davido", "Tiwa Savage"],
+    "explanation": "'African Giant' was Burna Boy's fourth studio album, released in July 2019."
+  },
+  {
+    "id": "music-039",
+    "category": "music",
+    "topic": "Nigerian pop",
+    "difficulty": "medium",
+    "prompt": "Which Nigerian singer released the 2004 love song 'African Queen'?",
+    "choices": ["2Face Idibia", "D'banj", "Wande Coal", "Timaya"],
+    "explanation": "'African Queen' was on 2Face Idibia's 2004 debut album 'Face 2 Face'; he now goes by 2Baba."
+  },
+  {
+    "id": "music-040",
+    "category": "music",
+    "topic": "Genres",
+    "difficulty": "medium",
+    "prompt": "Amapiano music originated in which country?",
+    "choices": ["South Africa", "Nigeria", "Ghana", "Angola"],
+    "explanation": "Amapiano grew out of South Africa's townships in the mid-2010s, mixing house, jazz and log drum bass."
+  },
+
+  {
+    "id": "music-041",
+    "category": "music",
+    "topic": "Fuji",
+    "difficulty": "hard",
+    "prompt": "Which musician is credited with creating Fuji music?",
+    "choices": ["Sikiru Ayinde Barrister", "Haruna Ishola", "Ebenezer Obey", "Yusuf Olatunji"],
+    "explanation": "Sikiru Ayinde Barrister developed Fuji in the 1960s and 70s from Yoruba were music."
+  },
+  {
+    "id": "music-042",
+    "category": "music",
+    "topic": "Afrobeat",
+    "difficulty": "hard",
+    "prompt": "What was the band Fela Kuti led in the 1960s, before renaming it Nigeria 70?",
+    "choices": ["Koola Lobitos", "Egypt 80", "The Cool Cats", "The Ramblers"],
+    "explanation": "Fela formed Koola Lobitos in the early 1960s; it later became Nigeria 70, then Africa 70."
+  },
+  {
+    "id": "music-043",
+    "category": "music",
+    "topic": "Afrobeat",
+    "difficulty": "hard",
+    "prompt": "Fela Kuti said Afrobeat would not exist without which drummer?",
+    "choices": ["Tony Allen", "Ginger Baker", "Femi Kuti", "Lekan Babalola"],
+    "explanation": "Fela famously said, 'Without Tony Allen, there would be no Afrobeat.'"
+  },
+  {
+    "id": "music-044",
+    "category": "music",
+    "topic": "Afrobeat",
+    "difficulty": "hard",
+    "prompt": "Fela Kuti's mother was which famous Nigerian women's rights activist?",
+    "choices": ["Funmilayo Ransome-Kuti", "Margaret Ekpo", "Gambo Sawaba", "Alimotu Pelewura"],
+    "explanation": "Funmilayo Ransome-Kuti led the Abeokuta Women's Union and campaigned for women's rights and independence."
+  },
+  {
+    "id": "music-045",
+    "category": "music",
+    "topic": "Juju",
+    "difficulty": "hard",
+    "prompt": "Which juju bandleader was made an MBE by the British Crown in 1963?",
+    "choices": ["I.K. Dairo", "King Sunny Adé", "Ebenezer Obey", "Tunde Nightingale"],
+    "explanation": "I.K. Dairo, a juju star with his Blue Spots band, was made an MBE in 1963."
+  },
+  {
+    "id": "music-046",
+    "category": "music",
+    "topic": "Highlife",
+    "difficulty": "hard",
+    "prompt": "Which highlife star recorded the 1984 song 'Osondi Owendi'?",
+    "choices": ["Osita Osadebe", "Oliver De Coque", "Rex Lawson", "Celestine Ukwu"],
+    "explanation": "Chief Stephen Osita Osadebe released 'Osondi Owendi' in 1984, one of his best-known songs."
+  },
+  {
+    "id": "music-047",
+    "category": "music",
+    "topic": "Highlife",
+    "difficulty": "hard",
+    "prompt": "Which Nigerian bandleader was nicknamed 'the Evil Genius of Highlife'?",
+    "choices": ["Victor Olaiya", "Bobby Benson", "Rex Lawson", "Roy Chicago"],
+    "explanation": "Trumpeter Victor Olaiya, leader of the Cool Cats, was known as the Evil Genius of Highlife."
+  },
+  {
+    "id": "music-048",
+    "category": "music",
+    "topic": "Classical",
+    "difficulty": "hard",
+    "prompt": "Whose ballet 'The Rite of Spring' caused an uproar at its 1913 Paris premiere?",
+    "choices": ["Igor Stravinsky", "Claude Debussy", "Maurice Ravel", "Sergei Rachmaninoff"],
+    "explanation": "Stravinsky's wild rhythms and clashing harmonies in 'The Rite of Spring' shocked the 1913 audience."
+  },
+  {
+    "id": "music-049",
+    "category": "music",
+    "topic": "Rock",
+    "difficulty": "hard",
+    "prompt": "Before forming Led Zeppelin, Jimmy Page played guitar in which band?",
+    "choices": ["The Yardbirds", "The Animals", "Cream", "The Zombies"],
+    "explanation": "Page joined the Yardbirds in 1966; after they split in 1968 his new band was first billed as the New Yardbirds."
+  },
+  {
+    "id": "music-050",
+    "category": "music",
+    "topic": "Music theory",
+    "difficulty": "hard",
+    "prompt": "How many sharps are in the key signature of D major?",
+    "choices": ["Two", "One", "Three", "Four"],
+    "explanation": "D major has two sharps, F sharp and C sharp."
+  },
+  {
+    "id": "music-051",
+    "category": "music",
+    "topic": "Music theory",
+    "difficulty": "hard",
+    "prompt": "What is the relative minor key of C major?",
+    "choices": ["A minor", "E minor", "D minor", "F minor"],
+    "explanation": "A minor shares C major's key signature, with no sharps or flats."
+  },
+  {
+    "id": "music-052",
+    "category": "music",
+    "topic": "Music terms",
+    "difficulty": "hard",
+    "prompt": "In sheet music, what does the tempo marking 'largo' tell a musician?",
+    "choices": [
+      "Play slowly and broadly",
+      "Play fast and lively",
+      "Play at a walking pace",
+      "Play extremely fast"
+    ],
+    "explanation": "Largo, Italian for 'broad', is one of the slowest tempo markings; andante means at a walking pace and presto very fast."
+  },
+  {
+    "id": "music-053",
+    "category": "music",
+    "topic": "Music theory",
+    "difficulty": "hard",
+    "prompt": "The treble clef is also known as which clef?",
+    "choices": ["G clef", "F clef", "C clef", "Neutral clef"],
+    "explanation": "The treble clef curls around the second line of the staff, marking it as the note G."
+  },
+  {
+    "id": "music-054",
+    "category": "music",
+    "topic": "Jazz",
+    "difficulty": "hard",
+    "prompt": "Which jazz saxophonist released the album 'A Love Supreme'?",
+    "choices": ["John Coltrane", "Charlie Parker", "Sonny Rollins", "Cannonball Adderley"],
+    "explanation": "John Coltrane recorded 'A Love Supreme' with his quartet in 1964, and it was released in 1965."
+  },
+  {
+    "id": "music-055",
+    "category": "music",
+    "topic": "Nigerian gospel",
+    "difficulty": "hard",
+    "prompt": "Which Nigerian gospel singer released the song 'Excess Love'?",
+    "choices": ["Mercy Chinwo", "Ada Ehi", "Sinach", "Tope Alabi"],
+    "explanation": "'Excess Love' is one of Mercy Chinwo's best-known worship songs."
+  },
+  {
+    "id": "music-056",
+    "category": "music",
+    "topic": "African instruments",
+    "difficulty": "hard",
+    "prompt": "What is a shekere?",
+    "choices": [
+      "A gourd rattle wrapped in beads",
+      "A drum with two heads",
+      "A thumb piano",
+      "A one-string fiddle"
+    ],
+    "explanation": "The shekere is a dried gourd covered in a net of beads or cowries, shaken or struck for rhythm."
+  },
+  {
+    "id": "music-057",
+    "category": "music",
+    "topic": "African instruments",
+    "difficulty": "hard",
+    "prompt": "The mbira, or thumb piano, is most closely linked with which people of Zimbabwe?",
+    "choices": ["Shona", "Yoruba", "Zulu", "Maasai"],
+    "explanation": "The mbira has been played for centuries by the Shona people of Zimbabwe, often in spiritual ceremonies."
+  },
+  {
+    "id": "music-058",
+    "category": "music",
+    "topic": "Classical",
+    "difficulty": "hard",
+    "prompt": "Which Romantic composer, famed for his piano music, was born in Poland in 1810?",
+    "choices": ["Frédéric Chopin", "Franz Liszt", "Sergei Rachmaninoff", "Edvard Grieg"],
+    "explanation": "Chopin was born near Warsaw in 1810 and later settled in Paris, writing mostly for solo piano."
+  },
+  {
+    "id": "music-059",
+    "category": "music",
+    "topic": "Nigerian pop",
+    "difficulty": "hard",
+    "prompt": "Which Nigerian singer-songwriter recorded the 2007 song 'Jailer'?",
+    "choices": ["Asa", "Nneka", "Simi", "Waje"],
+    "explanation": "'Jailer' was on Asa's self-titled debut album, released in 2007."
+  },
+  {
+    "id": "music-060",
+    "category": "music",
+    "topic": "Nigerian pop",
+    "difficulty": "hard",
+    "prompt": "Which Nigerian singer is known as 'the Elegant Stallion'?",
+    "choices": ["Onyeka Onwenu", "Christy Essien-Igbokwe", "Stella Monye", "Salawa Abeni"],
+    "explanation": "Onyeka Onwenu, a singer, actress and journalist, was widely known as the Elegant Stallion."
+  }
+]

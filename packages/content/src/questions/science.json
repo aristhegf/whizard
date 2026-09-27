@@ -1,0 +1,554 @@
+[
+  {
+    "id": "science-001",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "easy",
+    "prompt": "What is the chemical symbol for gold?",
+    "choices": ["Au", "Ag", "Gd", "Go"],
+    "explanation": "Gold's symbol Au comes from its Latin name, aurum."
+  },
+  {
+    "id": "science-002",
+    "category": "science",
+    "topic": "Plants",
+    "difficulty": "easy",
+    "prompt": "Which gas do plants take in from the air to make their food?",
+    "choices": ["Carbon dioxide", "Oxygen", "Nitrogen", "Hydrogen"],
+    "explanation": "In photosynthesis, plants use sunlight to turn carbon dioxide and water into sugar, giving off oxygen."
+  },
+  {
+    "id": "science-003",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "easy",
+    "prompt": "Which planet is known as the Red Planet?",
+    "choices": ["Mars", "Jupiter", "Venus", "Mercury"],
+    "explanation": "Mars looks red because its surface is covered in dust rich in iron oxide, or rust."
+  },
+  {
+    "id": "science-004",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "easy",
+    "prompt": "What is the chemical formula for water?",
+    "choices": ["H2O", "CO2", "O2", "H2O2"],
+    "explanation": "Each water molecule is made of two hydrogen atoms bonded to one oxygen atom."
+  },
+  {
+    "id": "science-005",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "easy",
+    "prompt": "Which organ pumps blood around the body?",
+    "choices": ["Heart", "Lungs", "Liver", "Kidneys"],
+    "explanation": "The heart is a muscular pump that pushes blood through the arteries and veins."
+  },
+  {
+    "id": "science-006",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "easy",
+    "prompt": "Which planet is closest to the Sun?",
+    "choices": ["Mercury", "Venus", "Earth", "Mars"],
+    "explanation": "Mercury is the innermost planet, orbiting the Sun once every 88 Earth days."
+  },
+  {
+    "id": "science-007",
+    "category": "science",
+    "topic": "Physics",
+    "difficulty": "easy",
+    "prompt": "At sea level, at what temperature in Celsius does pure water freeze?",
+    "choices": ["0 °C", "32 °C", "100 °C", "-10 °C"],
+    "explanation": "Pure water freezes at 0 °C at sea level, which is the same as 32 °F."
+  },
+  {
+    "id": "science-008",
+    "category": "science",
+    "topic": "Scientists",
+    "difficulty": "easy",
+    "prompt": "Which scientist developed the theory of relativity?",
+    "choices": ["Albert Einstein", "Isaac Newton", "Galileo Galilei", "Niels Bohr"],
+    "explanation": "Albert Einstein published special relativity in 1905 and general relativity in 1915."
+  },
+  {
+    "id": "science-009",
+    "category": "science",
+    "topic": "Physics",
+    "difficulty": "easy",
+    "prompt": "Which force makes a dropped ball fall to the ground?",
+    "choices": ["Gravity", "Magnetism", "Friction", "Buoyancy"],
+    "explanation": "Gravity is the pull between masses, and Earth's gravity pulls objects toward its center."
+  },
+  {
+    "id": "science-010",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "easy",
+    "prompt": "What is the largest organ of the human body?",
+    "choices": ["Skin", "Brain", "Heart", "Stomach"],
+    "explanation": "The skin covers the whole body and is its largest organ by both area and weight."
+  },
+  {
+    "id": "science-011",
+    "category": "science",
+    "topic": "Atoms",
+    "difficulty": "easy",
+    "prompt": "Which particle in an atom has a negative electric charge?",
+    "choices": ["Electron", "Proton", "Neutron", "Nucleus"],
+    "explanation": "Electrons are negative, protons are positive and neutrons have no charge."
+  },
+  {
+    "id": "science-012",
+    "category": "science",
+    "topic": "Biology",
+    "difficulty": "easy",
+    "prompt": "What sweet liquid do bees collect from flowers to make honey?",
+    "choices": ["Nectar", "Pollen", "Sap", "Dew"],
+    "explanation": "Bees gather nectar from flowers and turn it into honey back in the hive."
+  },
+  {
+    "id": "science-013",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "easy",
+    "prompt": "What is the closest star to Earth?",
+    "choices": ["The Sun", "Proxima Centauri", "Sirius", "Polaris"],
+    "explanation": "The Sun is a star, and it is far closer to us than Proxima Centauri, the next nearest one."
+  },
+  {
+    "id": "science-014",
+    "category": "science",
+    "topic": "Animals",
+    "difficulty": "easy",
+    "prompt": "What type of animal is a frog?",
+    "choices": ["Amphibian", "Reptile", "Mammal", "Fish"],
+    "explanation": "Frogs are amphibians: most start life in water as tadpoles and later live on land."
+  },
+  {
+    "id": "science-015",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "easy",
+    "prompt": "What do we call molten rock once it pours out of a volcano onto the surface?",
+    "choices": ["Lava", "Magma", "Basalt", "Ash"],
+    "explanation": "Molten rock is called magma underground and lava once it reaches the surface."
+  },
+  {
+    "id": "science-016",
+    "category": "science",
+    "topic": "Measurement",
+    "difficulty": "easy",
+    "prompt": "Which instrument is used to measure temperature?",
+    "choices": ["Thermometer", "Barometer", "Hygrometer", "Anemometer"],
+    "explanation": "A thermometer measures temperature; a barometer measures air pressure."
+  },
+  {
+    "id": "science-017",
+    "category": "science",
+    "topic": "Weather",
+    "difficulty": "easy",
+    "prompt": "What appears when sunlight shines through raindrops and splits into bands of color?",
+    "choices": ["A rainbow", "An aurora", "A mirage", "Lightning"],
+    "explanation": "Raindrops bend and reflect sunlight, splitting it into its colors to form a rainbow."
+  },
+  {
+    "id": "science-018",
+    "category": "science",
+    "topic": "States of matter",
+    "difficulty": "easy",
+    "prompt": "What is it called when a liquid slowly turns into a gas at its surface?",
+    "choices": ["Evaporation", "Condensation", "Freezing", "Melting"],
+    "explanation": "Evaporation is when liquid turns to gas; condensation is the reverse, gas turning to liquid."
+  },
+  {
+    "id": "science-019",
+    "category": "science",
+    "topic": "Plants",
+    "difficulty": "easy",
+    "prompt": "Which part of a plant takes in water from the soil?",
+    "choices": ["Roots", "Leaves", "Flowers", "Seeds"],
+    "explanation": "Roots absorb water and minerals from the soil, which then travel up the stem."
+  },
+  {
+    "id": "science-020",
+    "category": "science",
+    "topic": "Scientists",
+    "difficulty": "easy",
+    "prompt": "Which naturalist wrote On the Origin of Species?",
+    "choices": ["Charles Darwin", "Gregor Mendel", "Louis Pasteur", "Carl Linnaeus"],
+    "explanation": "Charles Darwin published On the Origin of Species in 1859, setting out evolution by natural selection."
+  },
+
+  {
+    "id": "science-021",
+    "category": "science",
+    "topic": "Units",
+    "difficulty": "medium",
+    "prompt": "What is the SI unit of electric current?",
+    "choices": ["Ampere", "Volt", "Ohm", "Watt"],
+    "explanation": "Current is measured in amperes (amps); volts measure voltage and ohms measure resistance."
+  },
+  {
+    "id": "science-022",
+    "category": "science",
+    "topic": "Cells",
+    "difficulty": "medium",
+    "prompt": "Which part of a cell is often called its powerhouse because it releases energy?",
+    "choices": ["Mitochondria", "Nucleus", "Ribosome", "Golgi apparatus"],
+    "explanation": "Mitochondria carry out respiration, releasing energy from food for the cell to use."
+  },
+  {
+    "id": "science-023",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "medium",
+    "prompt": "Which element has the chemical symbol Na?",
+    "choices": ["Sodium", "Nitrogen", "Neon", "Nickel"],
+    "explanation": "Na comes from natrium, the Latin name for sodium."
+  },
+  {
+    "id": "science-024",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "medium",
+    "prompt": "Which gas makes up most of Earth's atmosphere?",
+    "choices": ["Nitrogen", "Oxygen", "Carbon dioxide", "Argon"],
+    "explanation": "Nitrogen makes up about 78% of the air, while oxygen makes up about 21%."
+  },
+  {
+    "id": "science-025",
+    "category": "science",
+    "topic": "Discoveries",
+    "difficulty": "medium",
+    "prompt": "Who discovered penicillin in 1928?",
+    "choices": ["Alexander Fleming", "Louis Pasteur", "Joseph Lister", "Edward Jenner"],
+    "explanation": "Alexander Fleming noticed that a mold killed bacteria growing in one of his lab dishes."
+  },
+  {
+    "id": "science-026",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "medium",
+    "prompt": "What is the pH of pure water at 25 °C?",
+    "choices": ["7", "0", "10", "14"],
+    "explanation": "Pure water is neutral with a pH of 7; lower values are acidic and higher values are alkaline."
+  },
+  {
+    "id": "science-027",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "medium",
+    "prompt": "Which layer of the Earth is the thickest?",
+    "choices": ["Mantle", "Crust", "Outer core", "Inner core"],
+    "explanation": "The mantle is about 2,900 km thick and makes up most of Earth's volume."
+  },
+  {
+    "id": "science-028",
+    "category": "science",
+    "topic": "Rocks",
+    "difficulty": "medium",
+    "prompt": "Which of these is an igneous rock, formed from cooled magma?",
+    "choices": ["Granite", "Limestone", "Marble", "Sandstone"],
+    "explanation": "Granite forms from slowly cooled magma; limestone and sandstone are sedimentary and marble is metamorphic."
+  },
+  {
+    "id": "science-029",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "medium",
+    "prompt": "Which planet has the hottest surface in our solar system?",
+    "choices": ["Venus", "Mercury", "Mars", "Earth"],
+    "explanation": "Venus's thick atmosphere traps heat, keeping its surface around 465 °C, hotter than Mercury even though it is farther from the Sun."
+  },
+  {
+    "id": "science-030",
+    "category": "science",
+    "topic": "Physics",
+    "difficulty": "medium",
+    "prompt": "Roughly how fast does light travel in a vacuum?",
+    "choices": [
+      "About 300,000 km/s",
+      "About 30,000 km/s",
+      "About 3,000 km/s",
+      "About 3,000,000 km/s"
+    ],
+    "explanation": "Light travels at 299,792 km per second in a vacuum, fast enough to circle Earth over seven times a second."
+  },
+  {
+    "id": "science-031",
+    "category": "science",
+    "topic": "Genetics",
+    "difficulty": "medium",
+    "prompt": "Whose experiments with pea plants laid the foundations of genetics?",
+    "choices": ["Gregor Mendel", "Charles Darwin", "Louis Pasteur", "Rosalind Franklin"],
+    "explanation": "Gregor Mendel bred pea plants in the 1850s and 1860s and worked out the basic rules of inheritance."
+  },
+  {
+    "id": "science-032",
+    "category": "science",
+    "topic": "Genetics",
+    "difficulty": "medium",
+    "prompt": "What shape is the DNA molecule famously described as?",
+    "choices": ["Double helix", "Triple helix", "Flat ring", "Branched chain"],
+    "explanation": "DNA is two strands twisted around each other, a shape described by Watson and Crick in 1953."
+  },
+  {
+    "id": "science-033",
+    "category": "science",
+    "topic": "Units",
+    "difficulty": "medium",
+    "prompt": "Which unit is used to measure frequency?",
+    "choices": ["Hertz", "Joule", "Pascal", "Tesla"],
+    "explanation": "One hertz means one cycle per second; joules measure energy and pascals measure pressure."
+  },
+  {
+    "id": "science-034",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "medium",
+    "prompt": "What is the longest bone in the human body?",
+    "choices": ["Femur", "Tibia", "Humerus", "Fibula"],
+    "explanation": "The femur, or thigh bone, runs from the hip to the knee and is the body's longest bone."
+  },
+  {
+    "id": "science-035",
+    "category": "science",
+    "topic": "Plants",
+    "difficulty": "medium",
+    "prompt": "Which pigment gives leaves their green color?",
+    "choices": ["Chlorophyll", "Carotene", "Melanin", "Hemoglobin"],
+    "explanation": "Chlorophyll absorbs red and blue light for photosynthesis and reflects green light."
+  },
+  {
+    "id": "science-036",
+    "category": "science",
+    "topic": "Scientists",
+    "difficulty": "medium",
+    "prompt": "Which scientist set out the three laws of motion in 1687?",
+    "choices": ["Isaac Newton", "Galileo Galilei", "Johannes Kepler", "Albert Einstein"],
+    "explanation": "Isaac Newton published his three laws of motion in his book Principia in 1687."
+  },
+  {
+    "id": "science-037",
+    "category": "science",
+    "topic": "Weather",
+    "difficulty": "medium",
+    "prompt": "Which towering type of cloud brings thunderstorms?",
+    "choices": ["Cumulonimbus", "Cirrus", "Stratus", "Altostratus"],
+    "explanation": "Cumulonimbus clouds can tower many kilometers high and produce thunder, lightning and heavy rain."
+  },
+  {
+    "id": "science-038",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "medium",
+    "prompt": "Which organ produces the hormone insulin?",
+    "choices": ["Pancreas", "Liver", "Kidney", "Thyroid"],
+    "explanation": "Cells in the pancreas release insulin, which helps control the level of sugar in the blood."
+  },
+  {
+    "id": "science-039",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "medium",
+    "prompt": "Which element makes up most of the Sun's mass?",
+    "choices": ["Hydrogen", "Helium", "Oxygen", "Carbon"],
+    "explanation": "The Sun is mostly hydrogen, which it fuses into helium in its core to make energy."
+  },
+  {
+    "id": "science-040",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "medium",
+    "prompt": "What does a light-year measure?",
+    "choices": ["Distance", "Time", "Speed", "Brightness"],
+    "explanation": "A light-year is the distance light travels in one year, about 9.46 trillion kilometers."
+  },
+
+  {
+    "id": "science-041",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "hard",
+    "prompt": "Which element has the chemical symbol W?",
+    "choices": ["Tungsten", "Vanadium", "Xenon", "Titanium"],
+    "explanation": "Tungsten's symbol W comes from wolfram, its other name."
+  },
+  {
+    "id": "science-042",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "hard",
+    "prompt": "Which element has the atomic number 26?",
+    "choices": ["Iron", "Cobalt", "Nickel", "Manganese"],
+    "explanation": "Iron atoms have 26 protons; manganese is 25, cobalt is 27 and nickel is 28."
+  },
+  {
+    "id": "science-043",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "hard",
+    "prompt": "Which planet is tilted so far that it spins almost on its side?",
+    "choices": ["Uranus", "Neptune", "Saturn", "Venus"],
+    "explanation": "Uranus's axis is tilted about 98 degrees, so it rolls around the Sun on its side."
+  },
+  {
+    "id": "science-044",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "hard",
+    "prompt": "Which nonmetal element is a liquid at normal room temperature?",
+    "choices": ["Bromine", "Iodine", "Chlorine", "Sulfur"],
+    "explanation": "Bromine is a red-brown liquid; at 25 °C the only other liquid element is the metal mercury."
+  },
+  {
+    "id": "science-045",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "hard",
+    "prompt": "Which element is the most abundant in Earth's crust by mass?",
+    "choices": ["Oxygen", "Silicon", "Aluminum", "Iron"],
+    "explanation": "Oxygen makes up nearly half of the crust's mass, mostly locked in silicate minerals."
+  },
+  {
+    "id": "science-046",
+    "category": "science",
+    "topic": "Discoveries",
+    "difficulty": "hard",
+    "prompt": "Which physicist discovered the electron in 1897?",
+    "choices": ["J. J. Thomson", "Ernest Rutherford", "Niels Bohr", "James Chadwick"],
+    "explanation": "J. J. Thomson found the electron using cathode ray tubes and won the 1906 Nobel Prize in Physics."
+  },
+  {
+    "id": "science-047",
+    "category": "science",
+    "topic": "Scientists",
+    "difficulty": "hard",
+    "prompt": "Who was the first person to win Nobel Prizes in two different sciences?",
+    "choices": ["Marie Curie", "Linus Pauling", "Frederick Sanger", "John Bardeen"],
+    "explanation": "Marie Curie won the Nobel Prize in Physics in 1903 and in Chemistry in 1911."
+  },
+  {
+    "id": "science-048",
+    "category": "science",
+    "topic": "Units",
+    "difficulty": "hard",
+    "prompt": "What is the SI unit of magnetic flux density?",
+    "choices": ["Tesla", "Weber", "Henry", "Gauss"],
+    "explanation": "The tesla is the SI unit of magnetic flux density; the gauss is an older non-SI unit."
+  },
+  {
+    "id": "science-049",
+    "category": "science",
+    "topic": "Cells",
+    "difficulty": "hard",
+    "prompt": "Which cell structures are the sites where proteins are built?",
+    "choices": ["Ribosomes", "Lysosomes", "Vacuoles", "Centrioles"],
+    "explanation": "Ribosomes read messenger RNA and join amino acids together into proteins."
+  },
+  {
+    "id": "science-050",
+    "category": "science",
+    "topic": "Genetics",
+    "difficulty": "hard",
+    "prompt": "How many chromosomes does a typical human body cell contain?",
+    "choices": ["46", "23", "44", "48"],
+    "explanation": "Human body cells have 23 pairs of chromosomes, 46 in all; egg and sperm cells have 23."
+  },
+  {
+    "id": "science-051",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "hard",
+    "prompt": "Which gas makes up most of the atmosphere of Venus?",
+    "choices": ["Carbon dioxide", "Nitrogen", "Methane", "Sulfur dioxide"],
+    "explanation": "Venus's thick atmosphere is about 96% carbon dioxide, trapping heat in a runaway greenhouse effect."
+  },
+  {
+    "id": "science-052",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "hard",
+    "prompt": "Which blood vessel carries blood from the heart to the lungs?",
+    "choices": ["Pulmonary artery", "Pulmonary vein", "Aorta", "Vena cava"],
+    "explanation": "The pulmonary artery takes oxygen-poor blood to the lungs; pulmonary veins bring it back."
+  },
+  {
+    "id": "science-053",
+    "category": "science",
+    "topic": "Rocks",
+    "difficulty": "hard",
+    "prompt": "Which mineral is the softest on the Mohs hardness scale?",
+    "choices": ["Talc", "Gypsum", "Calcite", "Quartz"],
+    "explanation": "Talc sits at 1 on the Mohs scale, followed by gypsum at 2 and calcite at 3; quartz is 7."
+  },
+  {
+    "id": "science-054",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "hard",
+    "prompt": "What is the boundary between Earth's crust and mantle called?",
+    "choices": [
+      "Mohorovičić discontinuity",
+      "Gutenberg discontinuity",
+      "Lehmann discontinuity",
+      "Conrad discontinuity"
+    ],
+    "explanation": "The Moho, found by Andrija Mohorovičić in 1909, is where seismic waves speed up entering the mantle."
+  },
+  {
+    "id": "science-055",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "hard",
+    "prompt": "What is the boundary around a black hole beyond which nothing can escape?",
+    "choices": ["Event horizon", "Photon sphere", "Accretion disk", "Singularity"],
+    "explanation": "Inside the event horizon, not even light can travel fast enough to escape the black hole's gravity."
+  },
+  {
+    "id": "science-056",
+    "category": "science",
+    "topic": "Physics",
+    "difficulty": "hard",
+    "prompt": "What is absolute zero on the Celsius scale?",
+    "choices": ["-273.15 °C", "-459.67 °C", "-100 °C", "-373.15 °C"],
+    "explanation": "Absolute zero, 0 kelvin, equals -273.15 °C; -459.67 is its value in Fahrenheit."
+  },
+  {
+    "id": "science-057",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "hard",
+    "prompt": "Who proposed the idea of continental drift in 1912?",
+    "choices": ["Alfred Wegener", "Charles Lyell", "James Hutton", "Arthur Holmes"],
+    "explanation": "Alfred Wegener argued the continents were once joined in a supercontinent he called Pangaea."
+  },
+  {
+    "id": "science-058",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "hard",
+    "prompt": "Which element is the most electronegative?",
+    "choices": ["Fluorine", "Oxygen", "Chlorine", "Nitrogen"],
+    "explanation": "Fluorine has the highest electronegativity of any element, 3.98 on the Pauling scale."
+  },
+  {
+    "id": "science-059",
+    "category": "science",
+    "topic": "Genetics",
+    "difficulty": "hard",
+    "prompt": "In DNA, which base pairs with adenine?",
+    "choices": ["Thymine", "Uracil", "Guanine", "Cytosine"],
+    "explanation": "In DNA adenine pairs with thymine and guanine with cytosine; uracil replaces thymine in RNA."
+  },
+  {
+    "id": "science-060",
+    "category": "science",
+    "topic": "Cells",
+    "difficulty": "hard",
+    "prompt": "Who coined the word cell after seeing tiny compartments in cork?",
+    "choices": ["Robert Hooke", "Antonie van Leeuwenhoek", "Robert Brown", "Matthias Schleiden"],
+    "explanation": "Robert Hooke described cork cells in his 1665 book Micrographia, naming them after small rooms."
+  }
+]

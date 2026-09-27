@@ -1,0 +1,554 @@
+[
+  {
+    "id": "general-knowledge-001",
+    "category": "general-knowledge",
+    "topic": "Animals",
+    "difficulty": "easy",
+    "prompt": "What is a baby kangaroo called?",
+    "choices": ["Joey", "Kid", "Cub", "Calf"],
+    "explanation": "Baby kangaroos, like other young marsupials, are called joeys."
+  },
+  {
+    "id": "general-knowledge-002",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "easy",
+    "prompt": "How many sides does an octagon have?",
+    "choices": ["Eight", "Six", "Seven", "Ten"],
+    "explanation": "An octagon has eight sides; the prefix octa- means eight."
+  },
+  {
+    "id": "general-knowledge-003",
+    "category": "general-knowledge",
+    "topic": "Science",
+    "difficulty": "easy",
+    "prompt": "Which gas do plants take in from the air to make their food?",
+    "choices": ["Carbon dioxide", "Oxygen", "Nitrogen", "Hydrogen"],
+    "explanation": "In photosynthesis, plants use sunlight to turn carbon dioxide and water into sugar, releasing oxygen."
+  },
+  {
+    "id": "general-knowledge-004",
+    "category": "general-knowledge",
+    "topic": "Science",
+    "difficulty": "easy",
+    "prompt": "At what temperature does pure water freeze at sea level?",
+    "choices": ["0°C", "32°C", "100°C", "-10°C"],
+    "explanation": "Pure water freezes at 0°C (32°F) at normal sea-level pressure."
+  },
+  {
+    "id": "general-knowledge-005",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "easy",
+    "prompt": "Who painted the Mona Lisa?",
+    "choices": ["Leonardo da Vinci", "Michelangelo", "Raphael", "Vincent van Gogh"],
+    "explanation": "Leonardo da Vinci painted the Mona Lisa in the early 1500s; it hangs in the Louvre in Paris."
+  },
+  {
+    "id": "general-knowledge-006",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "easy",
+    "prompt": "Who wrote the play 'Romeo and Juliet'?",
+    "choices": ["William Shakespeare", "Charles Dickens", "Christopher Marlowe", "Jane Austen"],
+    "explanation": "William Shakespeare wrote Romeo and Juliet in the 1590s."
+  },
+  {
+    "id": "general-knowledge-007",
+    "category": "general-knowledge",
+    "topic": "Calendar",
+    "difficulty": "easy",
+    "prompt": "How many days are there in a leap year?",
+    "choices": ["366", "365", "364", "367"],
+    "explanation": "A leap year adds 29 February, giving 366 days instead of the usual 365."
+  },
+  {
+    "id": "general-knowledge-008",
+    "category": "general-knowledge",
+    "topic": "Buildings",
+    "difficulty": "easy",
+    "prompt": "In which city does the Eiffel Tower stand?",
+    "choices": ["Paris", "Lyon", "Brussels", "Rome"],
+    "explanation": "The Eiffel Tower was built in Paris for the 1889 World's Fair."
+  },
+  {
+    "id": "general-knowledge-009",
+    "category": "general-knowledge",
+    "topic": "Currency",
+    "difficulty": "easy",
+    "prompt": "What is the currency of Japan?",
+    "choices": ["Yen", "Won", "Yuan", "Ringgit"],
+    "explanation": "Japan uses the yen; the won is Korean, the yuan Chinese and the ringgit Malaysian."
+  },
+  {
+    "id": "general-knowledge-010",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "easy",
+    "prompt": "In Greek mythology, who is the king of the gods?",
+    "choices": ["Zeus", "Poseidon", "Hades", "Apollo"],
+    "explanation": "Zeus rules the gods from Mount Olympus and wields the thunderbolt."
+  },
+  {
+    "id": "general-knowledge-011",
+    "category": "general-knowledge",
+    "topic": "Flags",
+    "difficulty": "easy",
+    "prompt": "Which country's flag shows a red maple leaf?",
+    "choices": ["Canada", "United States", "Switzerland", "Denmark"],
+    "explanation": "Canada's flag has a red maple leaf on a white square between two red bands."
+  },
+  {
+    "id": "general-knowledge-012",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "easy",
+    "prompt": "How many players does each team have on the pitch at the start of a football (soccer) match?",
+    "choices": ["Eleven", "Ten", "Nine", "Twelve"],
+    "explanation": "Each side starts with eleven players, one of whom is the goalkeeper."
+  },
+  {
+    "id": "general-knowledge-013",
+    "category": "general-knowledge",
+    "topic": "Food",
+    "difficulty": "easy",
+    "prompt": "Guacamole is made mainly from which fruit?",
+    "choices": ["Avocado", "Lime", "Tomato", "Mango"],
+    "explanation": "Guacamole is a Mexican dip made from mashed avocado."
+  },
+  {
+    "id": "general-knowledge-014",
+    "category": "general-knowledge",
+    "topic": "Science",
+    "difficulty": "easy",
+    "prompt": "Which scientist discovered penicillin in 1928?",
+    "choices": ["Alexander Fleming", "Louis Pasteur", "Marie Curie", "Joseph Lister"],
+    "explanation": "Alexander Fleming noticed mould killing bacteria in a dish in 1928, leading to penicillin."
+  },
+  {
+    "id": "general-knowledge-015",
+    "category": "general-knowledge",
+    "topic": "Geography",
+    "difficulty": "easy",
+    "prompt": "What is the longest river in Africa?",
+    "choices": ["Nile", "Congo", "Niger", "Zambezi"],
+    "explanation": "The Nile flows north for over 6,600 km to the Mediterranean, making it Africa's longest river."
+  },
+  {
+    "id": "general-knowledge-016",
+    "category": "general-knowledge",
+    "topic": "Buildings",
+    "difficulty": "easy",
+    "prompt": "In which country are the Pyramids of Giza?",
+    "choices": ["Egypt", "Sudan", "Morocco", "Libya"],
+    "explanation": "The Pyramids of Giza stand on the Giza plateau, just outside Cairo in Egypt."
+  },
+  {
+    "id": "general-knowledge-017",
+    "category": "general-knowledge",
+    "topic": "Space",
+    "difficulty": "easy",
+    "prompt": "What is the largest planet in our solar system?",
+    "choices": ["Jupiter", "Saturn", "Neptune", "Earth"],
+    "explanation": "Jupiter is by far the largest planet, more than twice as massive as all the others combined."
+  },
+  {
+    "id": "general-knowledge-018",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "easy",
+    "prompt": "What do we call a word that means the opposite of another word?",
+    "choices": ["Antonym", "Synonym", "Homonym", "Acronym"],
+    "explanation": "An antonym has the opposite meaning, like hot and cold; a synonym has the same meaning."
+  },
+  {
+    "id": "general-knowledge-019",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "easy",
+    "prompt": "What is 12 multiplied by 12?",
+    "choices": ["144", "124", "132", "156"],
+    "explanation": "12 × 12 = 144, a number also known as a gross."
+  },
+  {
+    "id": "general-knowledge-020",
+    "category": "general-knowledge",
+    "topic": "Human body",
+    "difficulty": "easy",
+    "prompt": "Which organ pumps blood around the human body?",
+    "choices": ["Heart", "Lungs", "Liver", "Kidneys"],
+    "explanation": "The heart is a muscle that pumps blood through the arteries and veins."
+  },
+
+  {
+    "id": "general-knowledge-021",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "medium",
+    "prompt": "What is the collective noun for a group of crows?",
+    "choices": ["A murder", "A pod", "A pride", "A gaggle"],
+    "explanation": "A group of crows is a murder; a pod is dolphins, a pride is lions and a gaggle is geese."
+  },
+  {
+    "id": "general-knowledge-022",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "medium",
+    "prompt": "What does the Latin phrase 'carpe diem' mean?",
+    "choices": ["Seize the day", "Remember death", "Time flies", "Know yourself"],
+    "explanation": "Carpe diem, from the Roman poet Horace, means seize the day."
+  },
+  {
+    "id": "general-knowledge-023",
+    "category": "general-knowledge",
+    "topic": "Geography",
+    "difficulty": "medium",
+    "prompt": "In which country is Mount Kilimanjaro?",
+    "choices": ["Tanzania", "Kenya", "Uganda", "Ethiopia"],
+    "explanation": "Mount Kilimanjaro is in northern Tanzania, close to the border with Kenya."
+  },
+  {
+    "id": "general-knowledge-024",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "medium",
+    "prompt": "What is the only even prime number?",
+    "choices": ["2", "4", "6", "8"],
+    "explanation": "Two is prime because its only factors are 1 and itself; every other even number divides by 2."
+  },
+  {
+    "id": "general-knowledge-025",
+    "category": "general-knowledge",
+    "topic": "Science",
+    "difficulty": "medium",
+    "prompt": "What is the chemical symbol for gold?",
+    "choices": ["Au", "Ag", "Gd", "Pb"],
+    "explanation": "Gold's symbol Au comes from its Latin name aurum; Ag is silver and Pb is lead."
+  },
+  {
+    "id": "general-knowledge-026",
+    "category": "general-knowledge",
+    "topic": "Science",
+    "difficulty": "medium",
+    "prompt": "Which gas makes up most of the Earth's atmosphere?",
+    "choices": ["Nitrogen", "Oxygen", "Argon", "Carbon dioxide"],
+    "explanation": "Nitrogen makes up about 78% of the air; oxygen is about 21%."
+  },
+  {
+    "id": "general-knowledge-027",
+    "category": "general-knowledge",
+    "topic": "Inventions",
+    "difficulty": "medium",
+    "prompt": "Who invented the World Wide Web in 1989?",
+    "choices": ["Tim Berners-Lee", "Bill Gates", "Steve Jobs", "Vint Cerf"],
+    "explanation": "Tim Berners-Lee proposed the World Wide Web in 1989 while working at CERN."
+  },
+  {
+    "id": "general-knowledge-028",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "medium",
+    "prompt": "Who painted 'The Starry Night' in 1889?",
+    "choices": ["Vincent van Gogh", "Claude Monet", "Paul Gauguin", "Paul Cézanne"],
+    "explanation": "Vincent van Gogh painted The Starry Night while staying at an asylum in Saint-Rémy, France."
+  },
+  {
+    "id": "general-knowledge-029",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "medium",
+    "prompt": "Who painted the Sistine Chapel ceiling frescoes between 1508 and 1512?",
+    "choices": ["Michelangelo", "Raphael", "Leonardo da Vinci", "Titian"],
+    "explanation": "Michelangelo spent four years painting the Sistine Chapel ceiling for Pope Julius II."
+  },
+  {
+    "id": "general-knowledge-030",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "medium",
+    "prompt": "Who wrote the 1958 novel 'Things Fall Apart'?",
+    "choices": ["Chinua Achebe", "Wole Soyinka", "Ngũgĩ wa Thiong'o", "Ben Okri"],
+    "explanation": "Nigerian author Chinua Achebe wrote Things Fall Apart, one of the most widely read African novels."
+  },
+  {
+    "id": "general-knowledge-031",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "medium",
+    "prompt": "In which novel does Captain Ahab hunt a great white whale?",
+    "choices": ["Moby-Dick", "Treasure Island", "The Old Man and the Sea", "Robinson Crusoe"],
+    "explanation": "Herman Melville's 1851 novel Moby-Dick follows Captain Ahab's hunt for the white whale."
+  },
+  {
+    "id": "general-knowledge-032",
+    "category": "general-knowledge",
+    "topic": "Flags",
+    "difficulty": "medium",
+    "prompt": "Which country's flag has three vertical stripes: green, white and green?",
+    "choices": ["Nigeria", "Ireland", "Italy", "Ghana"],
+    "explanation": "Nigeria's flag is green, white and green; Ireland's and Italy's have an orange or red stripe."
+  },
+  {
+    "id": "general-knowledge-033",
+    "category": "general-knowledge",
+    "topic": "Calendar",
+    "difficulty": "medium",
+    "prompt": "Which month is named after Julius Caesar?",
+    "choices": ["July", "June", "August", "March"],
+    "explanation": "July honours Julius Caesar; August is named after his successor, Augustus."
+  },
+  {
+    "id": "general-knowledge-034",
+    "category": "general-knowledge",
+    "topic": "Currency",
+    "difficulty": "medium",
+    "prompt": "What is the currency of South Africa?",
+    "choices": ["Rand", "Naira", "Shilling", "Cedi"],
+    "explanation": "South Africa uses the rand, named after the Witwatersrand gold-mining ridge."
+  },
+  {
+    "id": "general-knowledge-035",
+    "category": "general-knowledge",
+    "topic": "Currency",
+    "difficulty": "medium",
+    "prompt": "What is the currency of Switzerland?",
+    "choices": ["Franc", "Euro", "Krone", "Mark"],
+    "explanation": "Switzerland is not in the eurozone and uses the Swiss franc."
+  },
+  {
+    "id": "general-knowledge-036",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "medium",
+    "prompt": "In tennis, what is a score of zero called?",
+    "choices": ["Love", "Nil", "Duck", "Blank"],
+    "explanation": "Zero in tennis is called love, as in 15-love; a duck is a zero score in cricket."
+  },
+  {
+    "id": "general-knowledge-037",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "medium",
+    "prompt": "How many points is a touchdown worth in American football, before any extra points?",
+    "choices": ["Six", "Three", "Seven", "Two"],
+    "explanation": "A touchdown scores six points; the team can then try for one or two more."
+  },
+  {
+    "id": "general-knowledge-038",
+    "category": "general-knowledge",
+    "topic": "Buildings",
+    "difficulty": "medium",
+    "prompt": "In which Indian city does the Taj Mahal stand?",
+    "choices": ["Agra", "Delhi", "Jaipur", "Mumbai"],
+    "explanation": "Emperor Shah Jahan built the Taj Mahal in Agra as a tomb for his wife Mumtaz Mahal."
+  },
+  {
+    "id": "general-knowledge-039",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "medium",
+    "prompt": "In Norse mythology, what is the name of Thor's hammer?",
+    "choices": ["Mjölnir", "Gungnir", "Draupnir", "Gram"],
+    "explanation": "Thor's hammer is Mjölnir; Gungnir is Odin's spear and Draupnir is Odin's gold ring."
+  },
+  {
+    "id": "general-knowledge-040",
+    "category": "general-knowledge",
+    "topic": "Food",
+    "difficulty": "medium",
+    "prompt": "The rice dish paella comes from which country?",
+    "choices": ["Spain", "Italy", "Portugal", "Mexico"],
+    "explanation": "Paella comes from the Valencia region on Spain's east coast."
+  },
+
+  {
+    "id": "general-knowledge-041",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "hard",
+    "prompt": "What does the word 'sesquipedalian' describe?",
+    "choices": [
+      "Using long words",
+      "Walking long distances",
+      "Having many feet",
+      "Speaking in rhyme"
+    ],
+    "explanation": "Sesquipedalian, from Latin for a foot and a half long, describes long words or people who use them."
+  },
+  {
+    "id": "general-knowledge-042",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "hard",
+    "prompt": "Which letter of the alphabet does not appear in the name of any US state?",
+    "choices": ["Q", "J", "X", "Z"],
+    "explanation": "Q is in no state name; J is in New Jersey, X in Texas and Z in Arizona."
+  },
+  {
+    "id": "general-knowledge-043",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "hard",
+    "prompt": "What is the value of zero factorial (0!)?",
+    "choices": ["1", "0", "Undefined", "Infinity"],
+    "explanation": "By definition 0! equals 1, since there is exactly one way to arrange no objects."
+  },
+  {
+    "id": "general-knowledge-044",
+    "category": "general-knowledge",
+    "topic": "Science",
+    "difficulty": "hard",
+    "prompt": "What is the chemical symbol for tungsten?",
+    "choices": ["W", "Tu", "Tg", "Tn"],
+    "explanation": "Tungsten's symbol W comes from its other name, wolfram."
+  },
+  {
+    "id": "general-knowledge-045",
+    "category": "general-knowledge",
+    "topic": "Space",
+    "difficulty": "hard",
+    "prompt": "Roughly how long does light from the Sun take to reach Earth?",
+    "choices": ["About 8 minutes", "About 8 seconds", "About 1 hour", "About 1 day"],
+    "explanation": "Sunlight travels about 150 million km to Earth, a trip of roughly 8 minutes and 20 seconds."
+  },
+  {
+    "id": "general-knowledge-046",
+    "category": "general-knowledge",
+    "topic": "Inventions",
+    "difficulty": "hard",
+    "prompt": "Which Italian scientist announced his electric 'pile' of stacked metal discs in 1800?",
+    "choices": ["Alessandro Volta", "Luigi Galvani", "Guglielmo Marconi", "Enrico Fermi"],
+    "explanation": "Alessandro Volta's pile of metal discs and brine-soaked cloth gave a steady electric current; the volt is named after him."
+  },
+  {
+    "id": "general-knowledge-047",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "hard",
+    "prompt": "Which Dutch artist painted 'Girl with a Pearl Earring'?",
+    "choices": ["Johannes Vermeer", "Rembrandt", "Frans Hals", "Jan Steen"],
+    "explanation": "Johannes Vermeer painted Girl with a Pearl Earring in Delft around 1665."
+  },
+  {
+    "id": "general-knowledge-048",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "hard",
+    "prompt": "The painter of 'The Scream', Edvard Munch, came from which country?",
+    "choices": ["Norway", "Sweden", "Denmark", "Finland"],
+    "explanation": "Edvard Munch was Norwegian and painted The Scream in 1893."
+  },
+  {
+    "id": "general-knowledge-049",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "hard",
+    "prompt": "Which Nigerian writer won the Nobel Prize in Literature in 1986?",
+    "choices": ["Wole Soyinka", "Chinua Achebe", "Ben Okri", "Chimamanda Ngozi Adichie"],
+    "explanation": "Playwright and poet Wole Soyinka won the 1986 Nobel Prize in Literature."
+  },
+  {
+    "id": "general-knowledge-050",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "hard",
+    "prompt": "Who wrote the novel 'One Hundred Years of Solitude'?",
+    "choices": [
+      "Gabriel García Márquez",
+      "Mario Vargas Llosa",
+      "Jorge Luis Borges",
+      "Isabel Allende"
+    ],
+    "explanation": "Colombian author Gabriel García Márquez published One Hundred Years of Solitude in 1967."
+  },
+  {
+    "id": "general-knowledge-051",
+    "category": "general-knowledge",
+    "topic": "Flags",
+    "difficulty": "hard",
+    "prompt": "Which country's flag is shaped like two stacked triangles instead of a rectangle?",
+    "choices": ["Nepal", "Bhutan", "Sri Lanka", "Bangladesh"],
+    "explanation": "Nepal has the only national flag that is not a rectangle or square: two stacked pennants."
+  },
+  {
+    "id": "general-knowledge-052",
+    "category": "general-knowledge",
+    "topic": "Flags",
+    "difficulty": "hard",
+    "prompt": "Which African country's flag features an AK-47 rifle?",
+    "choices": ["Mozambique", "Angola", "Zimbabwe", "Eritrea"],
+    "explanation": "Mozambique's flag shows an AK-47 crossed with a hoe on an open book."
+  },
+  {
+    "id": "general-knowledge-053",
+    "category": "general-knowledge",
+    "topic": "Calendar",
+    "difficulty": "hard",
+    "prompt": "In the Gregorian calendar, which of these years was not a leap year?",
+    "choices": ["1900", "2000", "1996", "2004"],
+    "explanation": "Century years are leap years only if divisible by 400, so 1900 was not but 2000 was."
+  },
+  {
+    "id": "general-knowledge-054",
+    "category": "general-knowledge",
+    "topic": "Food",
+    "difficulty": "hard",
+    "prompt": "Which spice comes from the dried stigmas of a crocus flower?",
+    "choices": ["Saffron", "Turmeric", "Paprika", "Cardamom"],
+    "explanation": "Saffron is the hand-picked stigmas of the saffron crocus, which is why it is so costly."
+  },
+  {
+    "id": "general-knowledge-055",
+    "category": "general-knowledge",
+    "topic": "Food",
+    "difficulty": "hard",
+    "prompt": "The Ethiopian flatbread injera is traditionally made from which grain?",
+    "choices": ["Teff", "Quinoa", "Rye", "Rice"],
+    "explanation": "Injera is a spongy, sour flatbread made from fermented teff flour."
+  },
+  {
+    "id": "general-knowledge-056",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "hard",
+    "prompt": "In golf, what is a score of three under par on a single hole called?",
+    "choices": ["Albatross", "Eagle", "Birdie", "Condor"],
+    "explanation": "An albatross (or double eagle) is three under par; an eagle is two under and a birdie one under."
+  },
+  {
+    "id": "general-knowledge-057",
+    "category": "general-knowledge",
+    "topic": "Buildings",
+    "difficulty": "hard",
+    "prompt": "The Great Mosque of Djenné, a famous mud-brick building, is in which country?",
+    "choices": ["Mali", "Niger", "Senegal", "Burkina Faso"],
+    "explanation": "The Great Mosque of Djenné in Mali is traditionally replastered with fresh mud by the townspeople each year."
+  },
+  {
+    "id": "general-knowledge-058",
+    "category": "general-knowledge",
+    "topic": "Currency",
+    "difficulty": "hard",
+    "prompt": "Which country's currency is the pula, the Setswana word for rain?",
+    "choices": ["Botswana", "Lesotho", "Zambia", "Namibia"],
+    "explanation": "Botswana's currency is the pula, meaning rain, which is precious in the dry country."
+  },
+  {
+    "id": "general-knowledge-059",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "hard",
+    "prompt": "Which ancient Egyptian god is usually shown with the head of a jackal?",
+    "choices": ["Anubis", "Horus", "Thoth", "Sobek"],
+    "explanation": "Anubis, god of embalming, has a jackal's head; Horus is a falcon, Thoth an ibis, Sobek a crocodile."
+  },
+  {
+    "id": "general-knowledge-060",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "hard",
+    "prompt": "Which Yoruba orisha is the god of thunder and lightning?",
+    "choices": ["Shango", "Ogun", "Eshu", "Obatala"],
+    "explanation": "Shango (Ṣàngó) is the Yoruba orisha of thunder and lightning; Ogun is the orisha of iron."
+  }
+]

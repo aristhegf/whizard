@@ -1,0 +1,572 @@
+[
+  {
+    "id": "history-001",
+    "category": "history",
+    "topic": "Nigeria",
+    "difficulty": "easy",
+    "prompt": "In which year did Nigeria gain independence from Britain?",
+    "choices": ["1960", "1957", "1963", "1966"],
+    "explanation": "Nigeria became independent from Britain on 1 October 1960."
+  },
+  {
+    "id": "history-002",
+    "category": "history",
+    "topic": "Famous Leaders",
+    "difficulty": "easy",
+    "prompt": "Who was the first President of the United States?",
+    "choices": ["George Washington", "Thomas Jefferson", "John Adams", "Abraham Lincoln"],
+    "explanation": "George Washington took office as the first US President in 1789."
+  },
+  {
+    "id": "history-003",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "easy",
+    "prompt": "In which year did World War II end?",
+    "choices": ["1945", "1944", "1946", "1939"],
+    "explanation": "World War II ended in 1945, with Germany surrendering in May and Japan in September."
+  },
+  {
+    "id": "history-004",
+    "category": "history",
+    "topic": "Ancient Egypt",
+    "difficulty": "easy",
+    "prompt": "Which ancient civilisation built the Great Pyramid of Giza?",
+    "choices": ["Ancient Egyptians", "Ancient Romans", "Ancient Greeks", "Ancient Persians"],
+    "explanation": "The Great Pyramid was built for the Egyptian pharaoh Khufu around 4,500 years ago."
+  },
+  {
+    "id": "history-005",
+    "category": "history",
+    "topic": "Space Race",
+    "difficulty": "easy",
+    "prompt": "Who was the first person to walk on the Moon?",
+    "choices": ["Neil Armstrong", "Buzz Aldrin", "Yuri Gagarin", "John Glenn"],
+    "explanation": "Neil Armstrong stepped onto the Moon on 20 July 1969 during the Apollo 11 mission."
+  },
+  {
+    "id": "history-006",
+    "category": "history",
+    "topic": "20th Century",
+    "difficulty": "easy",
+    "prompt": "Which ocean liner sank on its maiden voyage in 1912 after hitting an iceberg?",
+    "choices": ["Titanic", "Lusitania", "Olympic", "Britannic"],
+    "explanation": "RMS Titanic struck an iceberg in the North Atlantic and sank on 15 April 1912."
+  },
+  {
+    "id": "history-007",
+    "category": "history",
+    "topic": "South Africa",
+    "difficulty": "easy",
+    "prompt": "Who became South Africa's first Black president in 1994?",
+    "choices": ["Nelson Mandela", "Desmond Tutu", "Thabo Mbeki", "Jacob Zuma"],
+    "explanation": "Nelson Mandela became president after South Africa's first fully democratic election in 1994."
+  },
+  {
+    "id": "history-008",
+    "category": "history",
+    "topic": "Cold War",
+    "difficulty": "easy",
+    "prompt": "In which year did the Berlin Wall fall?",
+    "choices": ["1989", "1991", "1987", "1961"],
+    "explanation": "The Berlin Wall was opened on 9 November 1989, ahead of German reunification in 1990."
+  },
+  {
+    "id": "history-009",
+    "category": "history",
+    "topic": "Ancient Rome",
+    "difficulty": "easy",
+    "prompt": "Which Roman town was buried when Mount Vesuvius erupted in AD 79?",
+    "choices": ["Pompeii", "Naples", "Florence", "Ravenna"],
+    "explanation": "The eruption of Vesuvius in AD 79 buried Pompeii under thick layers of volcanic ash."
+  },
+  {
+    "id": "history-010",
+    "category": "history",
+    "topic": "United States",
+    "difficulty": "easy",
+    "prompt": "Which country gave the Statue of Liberty to the United States?",
+    "choices": ["France", "Britain", "Spain", "Italy"],
+    "explanation": "The Statue of Liberty was a gift from the people of France and was dedicated in 1886."
+  },
+  {
+    "id": "history-011",
+    "category": "history",
+    "topic": "Inventions and Firsts",
+    "difficulty": "easy",
+    "prompt": "Which brothers made the first powered aeroplane flights near Kitty Hawk in 1903?",
+    "choices": [
+      "The Wright brothers",
+      "The Montgolfier brothers",
+      "The Lumière brothers",
+      "The Dodge brothers"
+    ],
+    "explanation": "Orville and Wilbur Wright flew their Flyer at Kill Devil Hills, near Kitty Hawk, North Carolina, on 17 December 1903."
+  },
+  {
+    "id": "history-012",
+    "category": "history",
+    "topic": "Space Race",
+    "difficulty": "easy",
+    "prompt": "Who became the first human to travel into space, in 1961?",
+    "choices": ["Yuri Gagarin", "Neil Armstrong", "Alan Shepard", "John Glenn"],
+    "explanation": "Soviet cosmonaut Yuri Gagarin orbited Earth aboard Vostok 1 on 12 April 1961."
+  },
+  {
+    "id": "history-013",
+    "category": "history",
+    "topic": "Napoleonic Wars",
+    "difficulty": "easy",
+    "prompt": "Which French leader was finally defeated at the Battle of Waterloo in 1815?",
+    "choices": ["Napoleon Bonaparte", "Louis XIV", "Louis XVI", "Charles de Gaulle"],
+    "explanation": "Napoleon was defeated at Waterloo in June 1815 and then exiled to the island of Saint Helena."
+  },
+  {
+    "id": "history-014",
+    "category": "history",
+    "topic": "Civil Rights",
+    "difficulty": "easy",
+    "prompt": "Who gave the famous \"I Have a Dream\" speech in Washington in 1963?",
+    "choices": ["Martin Luther King Jr.", "Malcolm X", "Rosa Parks", "Frederick Douglass"],
+    "explanation": "Martin Luther King Jr. gave the speech at the March on Washington on 28 August 1963."
+  },
+  {
+    "id": "history-015",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "easy",
+    "prompt": "Who was the British prime minister for most of World War II?",
+    "choices": ["Winston Churchill", "Neville Chamberlain", "Clement Attlee", "Margaret Thatcher"],
+    "explanation": "Winston Churchill led Britain as prime minister from May 1940 until July 1945."
+  },
+  {
+    "id": "history-016",
+    "category": "history",
+    "topic": "Colonial Era",
+    "difficulty": "easy",
+    "prompt": "Which European country ruled Nigeria as a colony until 1960?",
+    "choices": ["Britain", "France", "Portugal", "Germany"],
+    "explanation": "Nigeria was a British colony and protectorate until it became independent in 1960."
+  },
+  {
+    "id": "history-017",
+    "category": "history",
+    "topic": "Ancient Egypt",
+    "difficulty": "easy",
+    "prompt": "Which queen of ancient Egypt had famous relationships with Julius Caesar and Mark Antony?",
+    "choices": ["Cleopatra", "Nefertiti", "Hatshepsut", "Nefertari"],
+    "explanation": "Cleopatra VII, the last active ruler of Ptolemaic Egypt, allied with both Caesar and Mark Antony."
+  },
+  {
+    "id": "history-018",
+    "category": "history",
+    "topic": "World War I",
+    "difficulty": "easy",
+    "prompt": "In which year did World War I begin?",
+    "choices": ["1914", "1912", "1916", "1918"],
+    "explanation": "World War I began in the summer of 1914 and ended with the armistice of November 1918."
+  },
+  {
+    "id": "history-019",
+    "category": "history",
+    "topic": "Cold War",
+    "difficulty": "easy",
+    "prompt": "Which two countries were the main rivals during the Cold War?",
+    "choices": [
+      "USA and Soviet Union",
+      "USA and China",
+      "UK and Soviet Union",
+      "France and Germany"
+    ],
+    "explanation": "The Cold War was a long rivalry between the United States and the Soviet Union from the late 1940s to 1991."
+  },
+  {
+    "id": "history-020",
+    "category": "history",
+    "topic": "Independence Movements",
+    "difficulty": "easy",
+    "prompt": "Who led India's non-violent independence movement and was known as \"Mahatma\"?",
+    "choices": [
+      "Mohandas Gandhi",
+      "Jawaharlal Nehru",
+      "Muhammad Ali Jinnah",
+      "Subhas Chandra Bose"
+    ],
+    "explanation": "Mohandas Gandhi led India's non-violent campaign for independence from Britain, won in 1947."
+  },
+  {
+    "id": "history-021",
+    "category": "history",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "Who was Nigeria's Prime Minister when the country gained independence?",
+    "choices": ["Abubakar Tafawa Balewa", "Nnamdi Azikiwe", "Obafemi Awolowo", "Ahmadu Bello"],
+    "explanation": "Sir Abubakar Tafawa Balewa was Nigeria's Prime Minister at independence in 1960."
+  },
+  {
+    "id": "history-022",
+    "category": "history",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "Who became Nigeria's first President when the country became a republic in 1963?",
+    "choices": ["Nnamdi Azikiwe", "Obafemi Awolowo", "Ahmadu Bello", "Yakubu Gowon"],
+    "explanation": "Nnamdi Azikiwe became Nigeria's first President when it became a republic on 1 October 1963."
+  },
+  {
+    "id": "history-023",
+    "category": "history",
+    "topic": "Space Race",
+    "difficulty": "medium",
+    "prompt": "What was the name of the first artificial satellite, launched by the Soviet Union in 1957?",
+    "choices": ["Sputnik 1", "Explorer 1", "Vostok 1", "Luna 1"],
+    "explanation": "Sputnik 1 was launched on 4 October 1957, starting the Space Race."
+  },
+  {
+    "id": "history-024",
+    "category": "history",
+    "topic": "Oyo Empire",
+    "difficulty": "medium",
+    "prompt": "The Oyo Empire of West Africa was built by which people?",
+    "choices": ["Yoruba", "Igbo", "Hausa", "Fulani"],
+    "explanation": "The Oyo Empire was a powerful Yoruba state centred in what is now south-western Nigeria."
+  },
+  {
+    "id": "history-025",
+    "category": "history",
+    "topic": "Benin Kingdom",
+    "difficulty": "medium",
+    "prompt": "What title is held by the traditional ruler of the Benin Kingdom?",
+    "choices": ["Oba", "Alaafin", "Ooni", "Emir"],
+    "explanation": "The ruler of the Benin Kingdom, based in Benin City, is known as the Oba of Benin."
+  },
+  {
+    "id": "history-026",
+    "category": "history",
+    "topic": "Mali Empire",
+    "difficulty": "medium",
+    "prompt": "Which Mali emperor made a famously lavish pilgrimage to Mecca in 1324?",
+    "choices": ["Mansa Musa", "Sundiata Keita", "Askia Muhammad", "Sunni Ali"],
+    "explanation": "Mansa Musa's 1324 pilgrimage was so rich in gold that it became famous across the Mediterranean world."
+  },
+  {
+    "id": "history-027",
+    "category": "history",
+    "topic": "Explorers",
+    "difficulty": "medium",
+    "prompt": "Which Portuguese explorer was the first European to reach India by sea, in 1498?",
+    "choices": ["Vasco da Gama", "Bartolomeu Dias", "Ferdinand Magellan", "Christopher Columbus"],
+    "explanation": "Vasco da Gama sailed around Africa and reached Calicut in India in May 1498."
+  },
+  {
+    "id": "history-028",
+    "category": "history",
+    "topic": "Explorers",
+    "difficulty": "medium",
+    "prompt": "Which explorer led the first expedition to sail around the world, though he died on the way?",
+    "choices": ["Ferdinand Magellan", "Francis Drake", "James Cook", "Abel Tasman"],
+    "explanation": "Magellan was killed in the Philippines in 1521; his expedition completed the voyage in 1522."
+  },
+  {
+    "id": "history-029",
+    "category": "history",
+    "topic": "French Revolution",
+    "difficulty": "medium",
+    "prompt": "In which year did the French Revolution begin with the storming of the Bastille?",
+    "choices": ["1789", "1776", "1799", "1815"],
+    "explanation": "Crowds in Paris stormed the Bastille prison on 14 July 1789."
+  },
+  {
+    "id": "history-030",
+    "category": "history",
+    "topic": "World War I",
+    "difficulty": "medium",
+    "prompt": "Which 1919 treaty formally ended the war between Germany and the Allied Powers?",
+    "choices": [
+      "Treaty of Versailles",
+      "Treaty of Brest-Litovsk",
+      "Treaty of Utrecht",
+      "Treaty of Ghent"
+    ],
+    "explanation": "The Treaty of Versailles was signed on 28 June 1919 and set the peace terms for Germany."
+  },
+  {
+    "id": "history-031",
+    "category": "history",
+    "topic": "American Civil War",
+    "difficulty": "medium",
+    "prompt": "Which US president issued the Emancipation Proclamation in 1863?",
+    "choices": ["Abraham Lincoln", "Ulysses S. Grant", "Andrew Jackson", "Thomas Jefferson"],
+    "explanation": "Abraham Lincoln issued the Emancipation Proclamation on 1 January 1863, during the Civil War."
+  },
+  {
+    "id": "history-032",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "medium",
+    "prompt": "Which country's forces attacked Pearl Harbor in December 1941?",
+    "choices": ["Japan", "Germany", "Italy", "Soviet Union"],
+    "explanation": "Japan attacked the US naval base at Pearl Harbor on 7 December 1941, bringing the US into the war."
+  },
+  {
+    "id": "history-033",
+    "category": "history",
+    "topic": "Cold War",
+    "difficulty": "medium",
+    "prompt": "Who led the Soviet Union during the Cuban Missile Crisis of 1962?",
+    "choices": ["Nikita Khrushchev", "Joseph Stalin", "Leonid Brezhnev", "Mikhail Gorbachev"],
+    "explanation": "Nikita Khrushchev led the Soviet Union during the October 1962 stand-off with the United States."
+  },
+  {
+    "id": "history-034",
+    "category": "history",
+    "topic": "Independence Movements",
+    "difficulty": "medium",
+    "prompt": "Who led Ghana to independence in 1957 and became its first leader?",
+    "choices": ["Kwame Nkrumah", "Jomo Kenyatta", "Julius Nyerere", "Patrice Lumumba"],
+    "explanation": "Kwame Nkrumah led Ghana to independence from Britain on 6 March 1957."
+  },
+  {
+    "id": "history-035",
+    "category": "history",
+    "topic": "Inventions and Firsts",
+    "difficulty": "medium",
+    "prompt": "Who is credited with introducing movable-type printing to Europe around 1440?",
+    "choices": ["Johannes Gutenberg", "William Caxton", "Galileo Galilei", "Leonardo da Vinci"],
+    "explanation": "Johannes Gutenberg's press in Mainz, Germany, printed the famous Gutenberg Bible in the mid-1450s."
+  },
+  {
+    "id": "history-036",
+    "category": "history",
+    "topic": "Empires",
+    "difficulty": "medium",
+    "prompt": "Which empire was ruled from Constantinople for over a thousand years until 1453?",
+    "choices": ["Byzantine Empire", "Ottoman Empire", "Persian Empire", "Holy Roman Empire"],
+    "explanation": "The Byzantine (Eastern Roman) Empire ruled from Constantinople until the city fell to the Ottomans in 1453."
+  },
+  {
+    "id": "history-037",
+    "category": "history",
+    "topic": "Ancient Rome",
+    "difficulty": "medium",
+    "prompt": "Which Roman leader was assassinated on the Ides of March in 44 BC?",
+    "choices": ["Julius Caesar", "Augustus", "Nero", "Mark Antony"],
+    "explanation": "Julius Caesar was stabbed to death by a group of senators on 15 March 44 BC."
+  },
+  {
+    "id": "history-038",
+    "category": "history",
+    "topic": "Space Race",
+    "difficulty": "medium",
+    "prompt": "What was the name of the Apollo 11 lunar module that landed on the Moon?",
+    "choices": ["Eagle", "Columbia", "Falcon", "Aquarius"],
+    "explanation": "The lunar module Eagle landed in 1969, while Michael Collins orbited in the command module Columbia."
+  },
+  {
+    "id": "history-039",
+    "category": "history",
+    "topic": "Ancient Americas",
+    "difficulty": "medium",
+    "prompt": "Which civilisation built the mountain citadel of Machu Picchu?",
+    "choices": ["Inca", "Aztec", "Maya", "Olmec"],
+    "explanation": "Machu Picchu was built by the Inca in the Andes of Peru in the 1400s."
+  },
+  {
+    "id": "history-040",
+    "category": "history",
+    "topic": "Inventions and Firsts",
+    "difficulty": "medium",
+    "prompt": "Who was the first woman to win a Nobel Prize?",
+    "choices": ["Marie Curie", "Florence Nightingale", "Rosalind Franklin", "Ada Lovelace"],
+    "explanation": "Marie Curie shared the 1903 Nobel Prize in Physics and later won the 1911 prize in Chemistry."
+  },
+  {
+    "id": "history-041",
+    "category": "history",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "In which year did Nigeria's capital officially move from Lagos to Abuja?",
+    "choices": ["1991", "1976", "1986", "1999"],
+    "explanation": "The decision was made in 1976, but the capital officially moved to Abuja on 12 December 1991."
+  },
+  {
+    "id": "history-042",
+    "category": "history",
+    "topic": "Benin Kingdom",
+    "difficulty": "hard",
+    "prompt": "In which year did British forces capture Benin City and carry off the Benin Bronzes?",
+    "choices": ["1897", "1885", "1914", "1861"],
+    "explanation": "A British punitive expedition took Benin City in February 1897 and looted its royal artworks."
+  },
+  {
+    "id": "history-043",
+    "category": "history",
+    "topic": "Colonial Era",
+    "difficulty": "hard",
+    "prompt": "In which year were the Northern and Southern Protectorates joined to form a single Nigeria?",
+    "choices": ["1914", "1900", "1906", "1922"],
+    "explanation": "Frederick Lugard oversaw the amalgamation of the two protectorates on 1 January 1914."
+  },
+  {
+    "id": "history-044",
+    "category": "history",
+    "topic": "Songhai Empire",
+    "difficulty": "hard",
+    "prompt": "Which country's army invaded and defeated the Songhai Empire in 1591?",
+    "choices": ["Morocco", "Portugal", "Egypt", "Ottoman Empire"],
+    "explanation": "A Moroccan army armed with guns defeated Songhai at the Battle of Tondibi in 1591."
+  },
+  {
+    "id": "history-045",
+    "category": "history",
+    "topic": "Mali Empire",
+    "difficulty": "hard",
+    "prompt": "Who is traditionally regarded as the founder of the Mali Empire in the 1200s?",
+    "choices": ["Sundiata Keita", "Mansa Musa", "Sunni Ali", "Askia Muhammad"],
+    "explanation": "According to tradition, Sundiata Keita founded Mali after defeating the Sosso king Sumanguru around 1235."
+  },
+  {
+    "id": "history-046",
+    "category": "history",
+    "topic": "Oyo Empire",
+    "difficulty": "hard",
+    "prompt": "The military strength of the Oyo Empire rested mainly on which kind of force?",
+    "choices": ["Cavalry", "War elephants", "Chariots", "Canoe fleets"],
+    "explanation": "Oyo's power was built on a strong cavalry, helped by its location in the open savanna."
+  },
+  {
+    "id": "history-047",
+    "category": "history",
+    "topic": "Sokoto Caliphate",
+    "difficulty": "hard",
+    "prompt": "Who led the jihad that began in 1804 and created the Sokoto Caliphate?",
+    "choices": ["Usman dan Fodio", "Muhammad al-Kanemi", "Ahmadu Bello", "Samori Touré"],
+    "explanation": "Usman dan Fodio's jihad, begun in 1804, united much of northern Nigeria into the Sokoto Caliphate."
+  },
+  {
+    "id": "history-048",
+    "category": "history",
+    "topic": "Space Race",
+    "difficulty": "hard",
+    "prompt": "Which Soviet dog became the first animal to orbit Earth, in November 1957?",
+    "choices": ["Laika", "Belka", "Strelka", "Zvezdochka"],
+    "explanation": "Laika orbited Earth aboard Sputnik 2 on 3 November 1957."
+  },
+  {
+    "id": "history-049",
+    "category": "history",
+    "topic": "Early Modern Europe",
+    "difficulty": "hard",
+    "prompt": "The Peace of Westphalia in 1648 ended which major European war?",
+    "choices": [
+      "Thirty Years' War",
+      "Hundred Years' War",
+      "Seven Years' War",
+      "War of the Spanish Succession"
+    ],
+    "explanation": "The Peace of Westphalia, signed in 1648, brought the Thirty Years' War to an end."
+  },
+  {
+    "id": "history-050",
+    "category": "history",
+    "topic": "Ancient Egypt",
+    "difficulty": "hard",
+    "prompt": "Which pharaoh promoted worship of the sun disc Aten above all other Egyptian gods?",
+    "choices": ["Akhenaten", "Ramesses II", "Tutankhamun", "Khufu"],
+    "explanation": "Akhenaten put the Aten at the centre of Egyptian religion; the old gods were restored after his death."
+  },
+  {
+    "id": "history-051",
+    "category": "history",
+    "topic": "Mesopotamia",
+    "difficulty": "hard",
+    "prompt": "Which Babylonian king is famous for one of the earliest written law codes?",
+    "choices": ["Hammurabi", "Nebuchadnezzar II", "Sargon of Akkad", "Ashurbanipal"],
+    "explanation": "The Code of Hammurabi, from around 1750 BC, was carved on a stone stele that survives today."
+  },
+  {
+    "id": "history-052",
+    "category": "history",
+    "topic": "Mongol Empire",
+    "difficulty": "hard",
+    "prompt": "Which Mongol ruler founded the Yuan dynasty in China?",
+    "choices": ["Kublai Khan", "Genghis Khan", "Ögedei Khan", "Tamerlane"],
+    "explanation": "Kublai Khan, a grandson of Genghis Khan, proclaimed the Yuan dynasty in 1271."
+  },
+  {
+    "id": "history-053",
+    "category": "history",
+    "topic": "Revolutions",
+    "difficulty": "hard",
+    "prompt": "Which country declared independence in 1804 after a revolution led by formerly enslaved people?",
+    "choices": ["Haiti", "Jamaica", "Cuba", "Brazil"],
+    "explanation": "Haiti declared independence from France on 1 January 1804 after the Haitian Revolution."
+  },
+  {
+    "id": "history-054",
+    "category": "history",
+    "topic": "Zulu Kingdom",
+    "difficulty": "hard",
+    "prompt": "Which Zulu king's army defeated the British at the Battle of Isandlwana in 1879?",
+    "choices": ["Cetshwayo", "Shaka", "Dingane", "Mpande"],
+    "explanation": "Cetshwayo was king when the Zulu army defeated a British force at Isandlwana in January 1879."
+  },
+  {
+    "id": "history-055",
+    "category": "history",
+    "topic": "Ethiopia",
+    "difficulty": "hard",
+    "prompt": "Which Ethiopian emperor defeated Italy at the Battle of Adwa in 1896?",
+    "choices": ["Menelik II", "Haile Selassie", "Tewodros II", "Yohannes IV"],
+    "explanation": "Menelik II's victory at Adwa in March 1896 kept Ethiopia independent from Italian rule."
+  },
+  {
+    "id": "history-056",
+    "category": "history",
+    "topic": "Colonial Era",
+    "difficulty": "hard",
+    "prompt": "Which city hosted the 1884–85 conference where European powers set rules for claiming Africa?",
+    "choices": ["Berlin", "Paris", "London", "Vienna"],
+    "explanation": "The Berlin Conference of 1884–85 set rules for European claims to African territory."
+  },
+  {
+    "id": "history-057",
+    "category": "history",
+    "topic": "Cold War",
+    "difficulty": "hard",
+    "prompt": "What type of American spy plane was shot down over the Soviet Union in May 1960?",
+    "choices": ["U-2", "SR-71", "B-52", "F-4"],
+    "explanation": "A U-2 flown by Francis Gary Powers was shot down over the Soviet Union on 1 May 1960."
+  },
+  {
+    "id": "history-058",
+    "category": "history",
+    "topic": "Imperial China",
+    "difficulty": "hard",
+    "prompt": "Which Chinese dynasty built most of the Great Wall that survives today?",
+    "choices": ["Ming", "Qin", "Han", "Tang"],
+    "explanation": "Most of the Great Wall standing today was built or rebuilt during the Ming dynasty (1368–1644)."
+  },
+  {
+    "id": "history-059",
+    "category": "history",
+    "topic": "Explorers",
+    "difficulty": "hard",
+    "prompt": "Which Scottish explorer died at the Bussa rapids on the River Niger in 1806?",
+    "choices": ["Mungo Park", "David Livingstone", "Richard Lander", "Henry Morton Stanley"],
+    "explanation": "Mungo Park drowned at Bussa, in present-day Nigeria, while trying to trace the course of the Niger."
+  },
+  {
+    "id": "history-060",
+    "category": "history",
+    "topic": "Ancient Egypt",
+    "difficulty": "hard",
+    "prompt": "Who announced the decipherment of Egyptian hieroglyphs in 1822, using the Rosetta Stone?",
+    "choices": [
+      "Jean-François Champollion",
+      "Howard Carter",
+      "Flinders Petrie",
+      "Heinrich Schliemann"
+    ],
+    "explanation": "French scholar Jean-François Champollion announced his breakthrough in deciphering hieroglyphs in 1822."
+  }
+]

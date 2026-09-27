@@ -1,41 +1,50 @@
+import { QUIZ_CATEGORIES, QUIZ_DIFFICULTIES } from "@whizard/game-core";
 import { describe, expect, it } from "vitest";
-import { QUESTIONS, drawQuestions, questionCounts } from "./index";
+import { QUESTIONS, QUESTION_FILES, drawQuestions, questionCounts } from "./index";
+import { isDuplicate, problemsWith } from "./quality";
 
-const normalize = (text: string) =>
-  text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
+/** Enough for the longest game (20 questions) at every level. */
+const MIN_PER_LEVEL = 20;
 
 describe("question bank", () => {
+  it("has a file for every category, holding only that category", () => {
+    for (const { id } of QUIZ_CATEGORIES) {
+      const file = QUESTION_FILES[id] as { category: string; id: string }[];
+      expect(file.length, id).toBeGreaterThan(0);
+      for (const question of file) {
+        expect(question.category, question.id).toBe(id);
+        expect(question.id.startsWith(`${id}-`), question.id).toBe(true);
+      }
+    }
+  });
+
   it("has unique ids", () => {
     const ids = QUESTIONS.map((q) => q.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it("has no repeated prompts", () => {
-    const prompts = QUESTIONS.map((q) => normalize(q.prompt));
-    expect(new Set(prompts).size).toBe(prompts.length);
+  it("passes every quality check", () => {
+    const failures = QUESTIONS.flatMap((q) => problemsWith(q).map((p) => `${q.id}: ${p}`));
+    expect(failures).toEqual([]);
   });
 
-  it("gives every question four distinct choices", () => {
-    for (const q of QUESTIONS) {
-      expect(new Set(q.choices.map(normalize)).size, q.id).toBe(4);
+  it("has no duplicate questions within a category", () => {
+    const duplicates: string[] = [];
+    QUESTIONS.forEach((a, i) => {
+      for (const b of QUESTIONS.slice(i + 1)) {
+        if (a.category === b.category && isDuplicate(a, b)) duplicates.push(`${a.id} ~ ${b.id}`);
+      }
+    });
+    expect(duplicates).toEqual([]);
+  });
+
+  it("has enough questions for a full game at every level of every category", () => {
+    const counts = questionCounts();
+    for (const { id } of QUIZ_CATEGORIES) {
+      for (const level of QUIZ_DIFFICULTIES) {
+        expect(counts[id]?.[level] ?? 0, `${id} ${level}`).toBeGreaterThanOrEqual(MIN_PER_LEVEL);
+      }
     }
-  });
-
-  it("never puts the answer in the question", () => {
-    for (const q of QUESTIONS) {
-      const answer = normalize(q.choices[0]!);
-      expect(` ${normalize(q.prompt)} `.includes(` ${answer} `), q.id).toBe(false);
-    }
-  });
-
-  it("has enough Bible questions for the longest game at every difficulty", () => {
-    const bible = questionCounts().bible!;
-    expect(bible.easy).toBeGreaterThanOrEqual(20);
-    expect(bible.medium).toBeGreaterThanOrEqual(20);
-    expect(bible.hard).toBeGreaterThanOrEqual(20);
   });
 });
 
@@ -53,7 +62,7 @@ describe("drawQuestions", () => {
     expect(ids(5)).not.toEqual(ids(6));
   });
 
-  it("returns what it has when a category is short", () => {
-    expect(drawQuestions("football", "easy", 10, 1)).toEqual([]);
+  it("returns what it has when a pool is short", () => {
+    expect(drawQuestions("bible", "easy", 10, 1, [])).toEqual([]);
   });
 });

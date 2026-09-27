@@ -1,0 +1,547 @@
+[
+  {
+    "id": "football-001",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "easy",
+    "prompt": "Which country won the 2022 FIFA World Cup?",
+    "choices": ["Argentina", "France", "Croatia", "Morocco"],
+    "explanation": "Argentina beat France on penalties after a 3–3 draw in the final in Qatar."
+  },
+  {
+    "id": "football-002",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "easy",
+    "prompt": "Which country won the 2014 FIFA World Cup in Brazil?",
+    "choices": ["Germany", "Argentina", "Netherlands", "Spain"],
+    "explanation": "Mario Götze's extra-time goal gave Germany a 1–0 win over Argentina in the final."
+  },
+  {
+    "id": "football-003",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "easy",
+    "prompt": "Which country hosted the 2010 World Cup, the first one held in Africa?",
+    "choices": ["South Africa", "Nigeria", "Egypt", "Morocco"],
+    "explanation": "South Africa hosted the 2010 World Cup, the first played on African soil."
+  },
+  {
+    "id": "football-004",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "easy",
+    "prompt": "How many players does each team have on the pitch at kick-off, including the goalkeeper?",
+    "choices": ["11", "10", "12", "9"],
+    "explanation": "Each team starts a match with 11 players, one of whom is the goalkeeper."
+  },
+  {
+    "id": "football-005",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "easy",
+    "prompt": "How long is a standard professional match, not counting added time or extra time?",
+    "choices": ["90 minutes", "80 minutes", "100 minutes", "120 minutes"],
+    "explanation": "A match is two halves of 45 minutes each, plus any time the referee adds on."
+  },
+  {
+    "id": "football-006",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "easy",
+    "prompt": "What colour card does a referee show to send a player off?",
+    "choices": ["Red", "Yellow", "Green", "Orange"],
+    "explanation": "A red card sends a player off; a yellow card is a caution."
+  },
+  {
+    "id": "football-007",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "easy",
+    "prompt": "Lionel Messi has played international football for which country?",
+    "choices": ["Argentina", "Uruguay", "Chile", "Colombia"],
+    "explanation": "Messi was born in Rosario and has always represented Argentina."
+  },
+  {
+    "id": "football-008",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "easy",
+    "prompt": "In which country was Cristiano Ronaldo born?",
+    "choices": ["Portugal", "Spain", "Brazil", "Italy"],
+    "explanation": "Cristiano Ronaldo was born in Funchal, on the Portuguese island of Madeira."
+  },
+  {
+    "id": "football-009",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "easy",
+    "prompt": "What is the nickname of Nigeria's men's national football team?",
+    "choices": ["Super Eagles", "Black Stars", "Indomitable Lions", "Bafana Bafana"],
+    "explanation": "Nigeria are the Super Eagles; Black Stars is Ghana, Indomitable Lions is Cameroon."
+  },
+  {
+    "id": "football-010",
+    "category": "football",
+    "topic": "Olympics",
+    "difficulty": "easy",
+    "prompt": "Which country won the men's football gold medal at the 1996 Atlanta Olympics?",
+    "choices": ["Nigeria", "Brazil", "Spain", "Italy"],
+    "explanation": "Nigeria's 'Dream Team' won gold, the first Olympic football title for an African nation."
+  },
+  {
+    "id": "football-011",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "easy",
+    "prompt": "Old Trafford is the home stadium of which club?",
+    "choices": ["Manchester United", "Manchester City", "Liverpool", "Arsenal"],
+    "explanation": "Old Trafford, nicknamed the Theatre of Dreams, is Manchester United's home."
+  },
+  {
+    "id": "football-012",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "easy",
+    "prompt": "The Santiago Bernabéu is the home stadium of which club?",
+    "choices": ["Real Madrid", "Atlético Madrid", "Barcelona", "Sevilla"],
+    "explanation": "The stadium is named after Santiago Bernabéu, Real Madrid's longtime president."
+  },
+  {
+    "id": "football-013",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "easy",
+    "prompt": "Jay-Jay Okocha starred internationally for which country?",
+    "choices": ["Nigeria", "Ghana", "Cameroon", "Senegal"],
+    "explanation": "Augustine 'Jay-Jay' Okocha was a skilful playmaker for Nigeria's Super Eagles."
+  },
+  {
+    "id": "football-014",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "easy",
+    "prompt": "Pelé won three World Cups with which country?",
+    "choices": ["Brazil", "Argentina", "Uruguay", "Italy"],
+    "explanation": "Pelé was part of Brazil's World Cup-winning squads in 1958, 1962 and 1970."
+  },
+  {
+    "id": "football-015",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "easy",
+    "prompt": "Which rule stops attackers from lurking behind the defence waiting for a pass?",
+    "choices": ["Offside", "Handball", "Advantage", "Back-pass rule"],
+    "explanation": "A player is penalised for being involved in play from nearer the opponents' goal line than both the ball and the second-last opponent."
+  },
+  {
+    "id": "football-016",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "easy",
+    "prompt": "How is play restarted after the ball goes out over the sideline?",
+    "choices": ["Throw-in", "Corner kick", "Goal kick", "Dropped ball"],
+    "explanation": "When the ball crosses the touchline, the other team takes a throw-in."
+  },
+  {
+    "id": "football-017",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "easy",
+    "prompt": "How far from the goal line is the penalty mark?",
+    "choices": ["12 yards (11 m)", "10 yards (9 m)", "18 yards (16.5 m)", "6 yards (5.5 m)"],
+    "explanation": "Penalty kicks are taken from a spot 11 metres, or 12 yards, from the goal line."
+  },
+  {
+    "id": "football-018",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "easy",
+    "prompt": "Which player is allowed to handle the ball inside their own penalty area?",
+    "choices": ["Goalkeeper", "Captain", "Sweeper", "Centre-back"],
+    "explanation": "Outfield players may not handle the ball in play; the goalkeeper may, but only inside their own penalty area."
+  },
+  {
+    "id": "football-019",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "easy",
+    "prompt": "Mohamed Salah is from which country?",
+    "choices": ["Egypt", "Morocco", "Tunisia", "Algeria"],
+    "explanation": "Mohamed Salah was born in the Egyptian village of Nagrig, in the Nile Delta."
+  },
+  {
+    "id": "football-020",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "easy",
+    "prompt": "What is it called when one player scores three goals in a single match?",
+    "choices": ["Hat-trick", "Brace", "Treble", "Double"],
+    "explanation": "Three goals is a hat-trick; two goals is a brace, and a treble means three trophies."
+  },
+  {
+    "id": "football-021",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "medium",
+    "prompt": "Which club scored twice in stoppage time to beat Bayern Munich in the 1999 Champions League final?",
+    "choices": ["Manchester United", "Real Madrid", "Juventus", "Barcelona"],
+    "explanation": "Teddy Sheringham and Ole Gunnar Solskjær scored late for a 2–1 win at the Camp Nou."
+  },
+  {
+    "id": "football-022",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "medium",
+    "prompt": "Against which country did Diego Maradona score his 'Hand of God' goal in 1986?",
+    "choices": ["England", "West Germany", "Italy", "Belgium"],
+    "explanation": "It came in the quarter-final against England, minutes before his famous solo goal."
+  },
+  {
+    "id": "football-023",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "medium",
+    "prompt": "Liverpool came back from 3–0 down at half-time to win the 2005 Champions League final against whom?",
+    "choices": ["AC Milan", "Juventus", "Inter Milan", "Chelsea"],
+    "explanation": "Liverpool drew 3–3 with AC Milan in Istanbul and won the penalty shootout."
+  },
+  {
+    "id": "football-024",
+    "category": "football",
+    "topic": "Olympics",
+    "difficulty": "medium",
+    "prompt": "Nigeria beat which country 3–2 in the 1996 Olympic men's football final?",
+    "choices": ["Argentina", "Brazil", "Mexico", "Portugal"],
+    "explanation": "Nigeria came from behind twice, and Emmanuel Amunike scored a late winner against Argentina."
+  },
+  {
+    "id": "football-025",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "medium",
+    "prompt": "Which country hosted the 1994 FIFA World Cup?",
+    "choices": ["United States", "Mexico", "France", "Italy"],
+    "explanation": "The USA hosted in 1994, and Brazil beat Italy on penalties in the final at the Rose Bowl."
+  },
+  {
+    "id": "football-026",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "medium",
+    "prompt": "Which country won the 2018 FIFA World Cup in Russia?",
+    "choices": ["France", "Croatia", "Belgium", "England"],
+    "explanation": "France beat Croatia 4–2 in the final in Moscow."
+  },
+  {
+    "id": "football-027",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "medium",
+    "prompt": "Which country won the very first World Cup in 1930?",
+    "choices": ["Uruguay", "Argentina", "Brazil", "Italy"],
+    "explanation": "Hosts Uruguay beat Argentina 4–2 in the final in Montevideo."
+  },
+  {
+    "id": "football-028",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "medium",
+    "prompt": "In the 2006 World Cup final, Zinedine Zidane was sent off for headbutting which player?",
+    "choices": ["Marco Materazzi", "Fabio Cannavaro", "Gennaro Gattuso", "Andrea Pirlo"],
+    "explanation": "Zidane headbutted Materazzi in extra time, and Italy went on to beat France on penalties."
+  },
+  {
+    "id": "football-029",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "medium",
+    "prompt": "Fierce rivals Boca Juniors and River Plate are both from which city?",
+    "choices": ["Buenos Aires", "Montevideo", "Rosario", "São Paulo"],
+    "explanation": "Their Buenos Aires derby is known as the Superclásico."
+  },
+  {
+    "id": "football-030",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "medium",
+    "prompt": "Which German club plays its home games at the Allianz Arena?",
+    "choices": ["Bayern Munich", "Borussia Dortmund", "Bayer Leverkusen", "Schalke 04"],
+    "explanation": "The Allianz Arena in Munich opened in 2005 and is Bayern Munich's home ground."
+  },
+  {
+    "id": "football-031",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "medium",
+    "prompt": "What does VAR stand for?",
+    "choices": [
+      "Video Assistant Referee",
+      "Video Action Review",
+      "Virtual Assistant Referee",
+      "Video Assessment Ruling"
+    ],
+    "explanation": "The Video Assistant Referee reviews clear errors on goals, penalties, red cards and mistaken identity."
+  },
+  {
+    "id": "football-032",
+    "category": "football",
+    "topic": "AFCON",
+    "difficulty": "medium",
+    "prompt": "Hosts Ivory Coast won the AFCON final in February 2024 against which country?",
+    "choices": ["Nigeria", "South Africa", "DR Congo", "Morocco"],
+    "explanation": "Ivory Coast came from behind to beat Nigeria 2–1 in the final in Abidjan."
+  },
+  {
+    "id": "football-033",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "In which year did Nigeria play at its first FIFA World Cup?",
+    "choices": ["1994", "1990", "1998", "1982"],
+    "explanation": "Nigeria debuted at USA 1994 and reached the last 16, losing to Italy in extra time."
+  },
+  {
+    "id": "football-034",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "Who scored Nigeria's first-ever World Cup goal, against Bulgaria?",
+    "choices": ["Rashidi Yekini", "Daniel Amokachi", "Emmanuel Amunike", "Finidi George"],
+    "explanation": "Yekini scored in a 3–0 win in 1994 and celebrated by clutching the net in tears."
+  },
+  {
+    "id": "football-035",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "medium",
+    "prompt": "Which restart is given when an attacker last touches the ball over the goal line without scoring?",
+    "choices": ["Goal kick", "Corner kick", "Throw-in", "Dropped ball"],
+    "explanation": "If the attacking side last touched it, the defending team restarts with a goal kick."
+  },
+  {
+    "id": "football-036",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "medium",
+    "prompt": "At a free kick, how far must opponents normally stand from the ball?",
+    "choices": ["10 yards (9.15 m)", "5 yards (4.6 m)", "12 yards (11 m)", "15 yards (13.7 m)"],
+    "explanation": "Opponents must be at least 9.15 metres (10 yards) away until the ball is in play."
+  },
+  {
+    "id": "football-037",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "medium",
+    "prompt": "Johan Cruyff starred at the 1974 World Cup for which country?",
+    "choices": ["Netherlands", "Belgium", "West Germany", "Sweden"],
+    "explanation": "Cruyff led the Netherlands to the 1974 final, which they lost to West Germany."
+  },
+  {
+    "id": "football-038",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "medium",
+    "prompt": "George Weah, the 1995 Ballon d'Or winner, later became president of which country?",
+    "choices": ["Liberia", "Sierra Leone", "Ghana", "Ivory Coast"],
+    "explanation": "Weah, the first African to win the Ballon d'Or, was elected president of Liberia in 2017."
+  },
+  {
+    "id": "football-039",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "medium",
+    "prompt": "Roger Milla danced at the corner flag at the 1990 World Cup while playing for which country?",
+    "choices": ["Cameroon", "Nigeria", "Ghana", "Senegal"],
+    "explanation": "Milla's goals and celebrations helped Cameroon become the first African side to reach a quarter-final."
+  },
+  {
+    "id": "football-040",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "medium",
+    "prompt": "The 2002 World Cup was co-hosted by South Korea and which other country?",
+    "choices": ["Japan", "China", "Australia", "Thailand"],
+    "explanation": "Japan and South Korea shared the 2002 tournament, the first World Cup held in Asia."
+  },
+  {
+    "id": "football-041",
+    "category": "football",
+    "topic": "Olympics",
+    "difficulty": "hard",
+    "prompt": "Who scored the golden goal as Nigeria beat Brazil 4–3 in the 1996 Olympic semi-final?",
+    "choices": ["Nwankwo Kanu", "Jay-Jay Okocha", "Daniel Amokachi", "Celestine Babayaro"],
+    "explanation": "Kanu equalised at the end of normal time and then won it with a golden goal in extra time."
+  },
+  {
+    "id": "football-042",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "Which coach led Nigeria to the 2013 Africa Cup of Nations title?",
+    "choices": ["Stephen Keshi", "Clemens Westerhof", "Samson Siasia", "Shaibu Amodu"],
+    "explanation": "Keshi, Nigeria's captain when they won AFCON in 1994, coached the Super Eagles to the 2013 title."
+  },
+  {
+    "id": "football-043",
+    "category": "football",
+    "topic": "AFCON",
+    "difficulty": "hard",
+    "prompt": "Nigeria won its first Africa Cup of Nations, as hosts, in which year?",
+    "choices": ["1980", "1976", "1984", "1988"],
+    "explanation": "Nigeria beat Algeria 3–0 in the 1980 final in Lagos, with Segun Odegbami scoring twice."
+  },
+  {
+    "id": "football-044",
+    "category": "football",
+    "topic": "AFCON",
+    "difficulty": "hard",
+    "prompt": "Nigeria beat which country in the 1994 AFCON final in Tunisia?",
+    "choices": ["Zambia", "Ivory Coast", "Mali", "Egypt"],
+    "explanation": "Emmanuel Amunike scored twice as Nigeria came from behind to beat Zambia 2–1 in Tunis."
+  },
+  {
+    "id": "football-045",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "hard",
+    "prompt": "Which French club won the first final played under the Champions League name, in 1993?",
+    "choices": ["Marseille", "Paris Saint-Germain", "Monaco", "Lyon"],
+    "explanation": "Basile Boli's header gave Marseille a 1–0 win over AC Milan in Munich."
+  },
+  {
+    "id": "football-046",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "hard",
+    "prompt": "In 1967, which club became the first British side to win the European Cup?",
+    "choices": ["Celtic", "Rangers", "Manchester United", "Liverpool"],
+    "explanation": "Celtic's 'Lisbon Lions' beat Inter Milan 2–1 in the final in Lisbon."
+  },
+  {
+    "id": "football-047",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "hard",
+    "prompt": "Which team beat Brazil at the Maracanã in the deciding match of the 1950 World Cup?",
+    "choices": ["Uruguay", "Argentina", "Sweden", "Italy"],
+    "explanation": "Uruguay came from behind to win 2–1 in Rio, a shock known as the Maracanazo."
+  },
+  {
+    "id": "football-048",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "hard",
+    "prompt": "Just Fontaine scored 13 goals at the 1958 World Cup playing for which country?",
+    "choices": ["France", "Belgium", "Switzerland", "Sweden"],
+    "explanation": "Fontaine scored 13 times for France in Sweden in 1958, helping them finish third."
+  },
+  {
+    "id": "football-049",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "hard",
+    "prompt": "Who scored a hat-trick in the 1966 World Cup final?",
+    "choices": ["Geoff Hurst", "Bobby Charlton", "Roger Hunt", "Martin Peters"],
+    "explanation": "Hurst scored three as England beat West Germany 4–2 after extra time at Wembley."
+  },
+  {
+    "id": "football-050",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "hard",
+    "prompt": "Apart from Lionel Messi, who scored for Argentina in the 2022 World Cup final?",
+    "choices": ["Ángel Di María", "Julián Álvarez", "Lautaro Martínez", "Enzo Fernández"],
+    "explanation": "Messi scored twice and Di María once in the 3–3 draw, before Argentina won on penalties."
+  },
+  {
+    "id": "football-051",
+    "category": "football",
+    "topic": "Euros",
+    "difficulty": "hard",
+    "prompt": "Which country won Euro 1992 after being called up late to replace Yugoslavia?",
+    "choices": ["Denmark", "Sweden", "Netherlands", "Germany"],
+    "explanation": "Denmark beat Germany 2–0 in the final in Gothenburg."
+  },
+  {
+    "id": "football-052",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "hard",
+    "prompt": "In which stadium was the 2014 World Cup final played?",
+    "choices": ["Maracanã", "Mineirão", "Morumbi", "Arena Corinthians"],
+    "explanation": "Germany beat Argentina 1–0 in the final at the Maracanã in Rio de Janeiro."
+  },
+  {
+    "id": "football-053",
+    "category": "football",
+    "topic": "AFCON",
+    "difficulty": "hard",
+    "prompt": "Which country won the first Africa Cup of Nations in 1957?",
+    "choices": ["Egypt", "Ethiopia", "Sudan", "Ghana"],
+    "explanation": "Egypt beat Ethiopia 4–0 in the final in Khartoum; only three teams took part."
+  },
+  {
+    "id": "football-054",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "Nigerian winger Finidi George won the 1995 Champions League with which Dutch club?",
+    "choices": ["Ajax", "PSV Eindhoven", "Feyenoord", "AZ Alkmaar"],
+    "explanation": "Ajax beat AC Milan 1–0 in the final in Vienna, with Finidi George in the side."
+  },
+  {
+    "id": "football-055",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "In 1985 Nigeria won the first FIFA under-16 world championship, held in which country?",
+    "choices": ["China", "Mexico", "Scotland", "Japan"],
+    "explanation": "Nigeria beat West Germany 2–0 in the final in Beijing."
+  },
+  {
+    "id": "football-056",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "Nigeria beat which European side 3–2 in their opening match of the 1998 World Cup?",
+    "choices": ["Spain", "Italy", "France", "Germany"],
+    "explanation": "Sunday Oliseh's long-range strike sealed a famous 3–2 comeback win over Spain in Nantes."
+  },
+  {
+    "id": "football-057",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "hard",
+    "prompt": "How wide is a regulation goal, measured between the inside of the posts?",
+    "choices": ["8 yards (7.32 m)", "7 yards (6.4 m)", "10 yards (9.15 m)", "6 yards (5.5 m)"],
+    "explanation": "A goal is 7.32 m (8 yards) wide and 2.44 m (8 feet) high."
+  },
+  {
+    "id": "football-058",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "hard",
+    "prompt": "Along with goal kicks and corner kicks, from which restart can a player not be offside?",
+    "choices": ["Throw-in", "Direct free kick", "Indirect free kick", "Dropped ball"],
+    "explanation": "There is no offside offence if a player receives the ball directly from a throw-in, goal kick or corner."
+  },
+  {
+    "id": "football-059",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "hard",
+    "prompt": "Which Soviet goalkeeper won the Ballon d'Or in 1963?",
+    "choices": ["Lev Yashin", "Rinat Dasayev", "Oleg Blokhin", "Igor Belanov"],
+    "explanation": "Lev Yashin, the 'Black Spider', won the 1963 Ballon d'Or playing in goal for Dynamo Moscow."
+  },
+  {
+    "id": "football-060",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "hard",
+    "prompt": "Real Madrid won the first European Cup final in 1956 against which club?",
+    "choices": ["Stade de Reims", "AC Milan", "Benfica", "Fiorentina"],
+    "explanation": "Real Madrid beat Reims 4–3 in the final in Paris."
+  }
+]
