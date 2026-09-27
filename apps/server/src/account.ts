@@ -103,6 +103,13 @@ export async function deleteMe(context: RequestContext): Promise<Response> {
         "UPDATE match_players SET user_id = NULL, nickname = 'Former player' WHERE user_id = ?",
       )
       .bind(user.id),
+    db.prepare("DELETE FROM seen_questions WHERE viewer = ?").bind(`u:${user.id}`),
+    // Their reports still count, but no longer point at them.
+    db
+      .prepare(
+        "UPDATE question_reports SET reporter = 'x:' || lower(hex(randomblob(8))) WHERE reporter = ?",
+      )
+      .bind(`u:${user.id}`),
     db.prepare("DELETE FROM users WHERE id = ?").bind(user.id),
   ]);
   return Response.json({ ok: true }, { headers: { "Set-Cookie": clearedSessionCookie } });
@@ -118,6 +125,13 @@ export async function exportMe(context: RequestContext): Promise<Response> {
     passkeys,
     matches: await exportMatches(context.env, user.id),
     ...(await exportSocial(context.env, user.id)),
+    questionsSeen: (
+      await context.env.DB.prepare(
+        "SELECT question_id, seen_at FROM seen_questions WHERE viewer = ? ORDER BY seen_at DESC",
+      )
+        .bind(`u:${user.id}`)
+        .all<{ question_id: string; seen_at: number }>()
+    ).results.map((r) => ({ question: r.question_id, seenAt: new Date(r.seen_at).toISOString() })),
   };
   return new Response(JSON.stringify(data, null, 2), {
     headers: {

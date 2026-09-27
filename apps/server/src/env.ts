@@ -8,4 +8,5 @@ export interface Env {
   /** Per address: presence connections, and rooms created. */
   PRESENCE_LIMIT: RateLimit;
   ROOM_LIMIT: RateLimit;
+  REPORT_LIMIT: RateLimit;
 }

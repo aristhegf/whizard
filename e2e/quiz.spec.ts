@@ -54,6 +54,14 @@ test("plays a solo quiz with explanations and a review", async ({ browser }) => 
   await expect(page.locator(".review li")).toHaveCount(5);
   await expect(page.locator(".review .explanation")).toHaveCount(5);
 
+  // Any question in the review can be reported.
+  const first = page.locator(".review li").first();
+  await first.getByRole("button", { name: "Report this question" }).click();
+  await expect(first.getByRole("button", { name: "Send report" })).toBeDisabled();
+  await first.getByLabel("It’s unclear or has a typo").check();
+  await first.getByRole("button", { name: "Send report" }).click();
+  await expect(first.getByRole("status")).toHaveText(/Thanks for the report/);
+
   await page.getByRole("button", { name: "Change Game" }).click();
   await expect(page.getByLabel("Questions")).toHaveValue("5");
 });
@@ -214,4 +222,28 @@ test("a long game with friends ends on the final rankings", async ({ browser }) 
   // Reloading keeps the results.
   await guest.reload();
   await expect(guest.getByRole("heading", { name: "Final Rankings" })).toBeVisible();
+});
+
+test("playing again doesn't repeat questions", async ({ browser }) => {
+  const page = await newPlayer(browser);
+  await openRoom(page);
+  await page.getByLabel("Questions").selectOption("5");
+
+  const play = async () => {
+    const prompts: string[] = [];
+    for (let i = 1; i <= 5; i++) {
+      await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
+      prompts.push(await page.locator(".prompt").innerText());
+      await answerFirstChoice(page, i, 5);
+      await page.getByRole("button", { name: "Skip" }).click();
+    }
+    await expect(page.getByText("Your score")).toBeVisible();
+    return prompts;
+  };
+
+  await page.getByRole("button", { name: "Play solo" }).click();
+  const first = await play();
+  await page.getByRole("button", { name: "Play again" }).click();
+  const second = await play();
+  expect(second.filter((prompt) => first.includes(prompt))).toEqual([]);
 });

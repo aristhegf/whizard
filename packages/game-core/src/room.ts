@@ -61,6 +61,8 @@ export interface RoomState {
   session: GameSession | null;
   /** Missing from rooms saved before room settings existed. */
   settings?: RoomSettings;
+  /** IDs of content (such as questions) this room has used, newest first, so games don't repeat. */
+  recentContent?: string[];
 }
 
 export interface PlayerSnapshot {

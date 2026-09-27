@@ -29,7 +29,14 @@ import {
   updateFriend,
   updateGroup,
 } from "./friends";
-import { HttpError, isSameOrigin, jsonError, type Handler, type RequestContext } from "./http";
+import {
+  HttpError,
+  isSameOrigin,
+  jsonError,
+  withinLimit,
+  type Handler,
+  type RequestContext,
+} from "./http";
 import { cleanUp, getMatches, getStats } from "./matches";
 import {
   addPasskeyOptions,
@@ -42,6 +49,7 @@ import {
 import { addSubscription, getPushKey, pingFriend, removeSubscription } from "./push";
 import { COUNTRY_HEADER, NETWORK_HEADER } from "./presence";
 import { ACCOUNT_HEADER } from "./room";
+import { reportQuestion } from "./reports";
 import { getSiteStats } from "./stats";
 import { currentSession, hasSessionCookie } from "./sessions";
 
@@ -49,17 +57,6 @@ export { Presence } from "./presence";
 export { Room } from "./room";
 
 const CREATE_ATTEMPTS = 5;
-
-/**
- * Checks a per-address rate limit. Local development and tests share one private address, so
- * only public addresses are limited.
- */
-async function withinLimit(limiter: RateLimit, request: Request): Promise<boolean> {
-  const network = networkPrefix(request.headers.get("CF-Connecting-IP"));
-  if (!network) return true;
-  const { success } = await limiter.limit({ key: network });
-  return success;
-}
 
 async function health(): Promise<Response> {
   return Response.json({ ok: true, protocolVersion: PROTOCOL_VERSION });
@@ -170,6 +167,7 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/rooms\/([^/]+)\/ws$/, roomSocket],
   ["GET", /^\/api\/presence$/, presenceSocket],
   ["GET", /^\/api\/stats$/, getSiteStats],
+  ["POST", /^\/api\/questions\/([^/]+)\/report$/, reportQuestion],
 
   ["POST", /^\/api\/auth\/signup\/options$/, signUpOptions],
   ["POST", /^\/api\/auth\/signup\/verify$/, signUpVerify],

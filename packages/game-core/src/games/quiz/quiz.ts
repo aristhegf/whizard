@@ -89,6 +89,8 @@ export interface QuizStanding {
 
 export interface QuizReviewItem {
   index: number;
+  /** The bank's ID for the question, so a player can report it. */
+  questionId: string;
   prompt: string;
   choices: string[];
   myChoice: number | null;
@@ -280,6 +282,7 @@ function reviewItem(state: QuizState, player: QuizPlayer, index: number): QuizRe
   const record = answerFor(player, index);
   return {
     index,
+    questionId: question.id,
     prompt: question.prompt,
     choices: question.choices,
     myChoice: record?.choice ?? null,

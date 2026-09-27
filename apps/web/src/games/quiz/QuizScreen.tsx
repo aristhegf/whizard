@@ -14,6 +14,9 @@ import { Avatar } from "../../ui/Avatar";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { parseQuizSettings } from "./QuizSettingsPanel";
+import { ReportQuestion } from "./ReportQuestion";
+import { play } from "../../sounds";
+import { MuteButton } from "../../ui/MuteButton";
 
 type QuestionStage = Extract<QuizStage, { kind: "question" }>;
 type AnswerStage = Extract<QuizStage, { kind: "answer" }>;
@@ -102,6 +105,7 @@ function GameBar({
         <span className="bar-end">
           {latency}
           {timer}
+          <MuteButton />
           <button className="btn quit-btn" onClick={onQuit}>
             Quit
           </button>
@@ -122,6 +126,23 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
   const [visible, setVisible] = useState(() => client.serverNow() >= stage.startsAt);
   const shownAt = useRef<number | null>(null);
   const [picked, setPicked] = useState<number | null>(null);
+  const hadCountdown = useRef(!visible);
+  const countdown = Math.max(1, Math.ceil((stage.startsAt - now) / 1000));
+  const secondsLeft = Math.ceil(Math.max(0, stage.deadline - now) / 1000);
+
+  // A tick for each second of the countdown, then "go" as the question appears.
+  useEffect(() => {
+    if (!visible) play("tick");
+  }, [visible, countdown]);
+  useEffect(() => {
+    if (visible && hadCountdown.current) play("go");
+  }, [visible]);
+  // In Speed, a quiet tick for each of the last five seconds.
+  useEffect(() => {
+    if (visible && view.timed && picked === null && secondsLeft > 0 && secondsLeft <= 5) {
+      play("hurry");
+    }
+  }, [visible, view.timed, picked, secondsLeft]);
 
   // Everyone’s first question appears at the same server moment; answers are timed from then.
   useEffect(() => {
@@ -143,9 +164,7 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
         <div className="countdown" aria-live="polite">
           <img src="/art/mascot/run.webp" alt="" width={441} height={480} />
           <p className="countdown-label">Get ready</p>
-          <p className="countdown-number">
-            {Math.max(1, Math.ceil((stage.startsAt - now) / 1000))}
-          </p>
+          <p className="countdown-number">{countdown}</p>
           <span className="pill pill-glow">{context.categoryName}</span>
         </div>
       </div>
@@ -218,6 +237,7 @@ function Answer({ context, stage }: { context: GameContext; stage: AnswerStage }
     client.act({ type: "next" });
   };
   const left = useCountdown(explained ? EXPLAINED_RESULT_MS : QUICK_RESULT_MS, next);
+  useEffect(() => play(stage.correct ? "correct" : "wrong"), [stage.correct]);
 
   const verdict = stage.myChoice === null ? "Time’s up" : stage.correct ? "Correct" : "Wrong";
 
@@ -294,6 +314,9 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
   const solo = view.playerCount === 1;
   const podium = view.final && !solo ? view.standings.filter((s) => !s.left).slice(0, 3) : [];
   const usernames = room.players.flatMap((p) => (p.username ? [p.username] : []));
+  useEffect(() => {
+    if (view.final) play("fanfare");
+  }, [view.final]);
 
   const share = async () => {
     const text = view.me
@@ -408,6 +431,7 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
                 )}
                 <p className="line good">✓ {item.choices[item.correctChoice]}</p>
                 {item.explanation && <Explanation item={item} />}
+                <ReportQuestion questionId={item.questionId} />
               </li>
             ))}
           </ol>

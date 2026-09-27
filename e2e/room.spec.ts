@@ -142,3 +142,17 @@ test("a host who goes back can return to the same room", async ({ browser }) => 
   await expect(playerRow(guest, "Ada")).not.toContainText("Offline");
   await expect(host.getByRole("button", { name: "Start game" })).toBeVisible();
 });
+
+test("the sound setting is remembered", async ({ browser }) => {
+  const host = await newPlayer(browser);
+  await createRoom(host, "Ada");
+  const sound = host.getByRole("button", { name: "Sound" });
+  await expect(sound).toHaveAttribute("aria-pressed", "true");
+  await sound.click();
+  await expect(sound).toHaveAttribute("aria-pressed", "false");
+  await host.reload();
+  await expect(host.getByRole("button", { name: "Sound" })).toHaveAttribute(
+    "aria-pressed",
+    "false",
+  );
+});

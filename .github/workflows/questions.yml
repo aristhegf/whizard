@@ -1,0 +1,35 @@
+name: Keep a reported question
+
+# A question three people report is taken out of play. If you've checked it and it's fine as it
+# is, run this with its ID (shown in the Site stats report) to put it back.
+on:
+  workflow_dispatch:
+    inputs:
+      question:
+        description: Question ID, e.g. bible-042
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  keep:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Keep the question
+        working-directory: apps/server
+        env:
+          QUESTION: ${{ inputs.question }}
+        run: |
+          ./scripts/use-remote-db.sh
+          node scripts/keep-question.mjs "$QUESTION"

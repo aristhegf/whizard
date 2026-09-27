@@ -53,20 +53,80 @@ export function questionCounts(questions: readonly StoredQuestion[] = QUESTIONS)
   return counts;
 }
 
+/** Who in a game has seen a question before, from their history across rooms. */
+const BY_ID = new Map(QUESTIONS.map((q) => [q.id, q]));
+
+export function findQuestion(id: string): StoredQuestion | undefined {
+  return BY_ID.get(id);
+}
+
+/**
+ * A short fingerprint of a question's wording and answers. Reports are tied to it, so once a
+ * reported question is fixed, the old reports no longer count against it.
+ */
+export function questionVersion(q: Pick<StoredQuestion, "prompt" | "choices">): string {
+  let hash = 0x811c9dc5;
+  for (const char of JSON.stringify([q.prompt, q.choices])) {
+    hash ^= char.codePointAt(0)!;
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash.toString(16).padStart(8, "0");
+}
+
+export interface QuestionSeen {
+  /** How many of the players have seen it. */
+  players: number;
+  /** When the most recent of them saw it. */
+  lastSeenAt: number;
+}
+
+export interface DrawOptions {
+  /** Question IDs this room used, newest first. */
+  recent?: readonly string[];
+  /** The players' own history. */
+  seen?: ReadonlyMap<string, QuestionSeen>;
+  /** Questions taken out of play, e.g. after reports. */
+  retired?: ReadonlySet<string>;
+}
+
+/**
+ * Picks a game's questions, avoiding repeats as far as the bank allows: first questions this
+ * room hasn't used and none of the players has seen, then ones fewer players have seen, then
+ * the ones seen longest ago. Ties are broken by the seed, and the chosen set is shuffled.
+ */
 export function drawQuestions(
   category: QuizCategory,
   difficulty: QuizDifficulty,
   count: number,
   seed: number,
+  options: DrawOptions = {},
   questions: readonly StoredQuestion[] = QUESTIONS,
 ): StoredQuestion[] {
-  const pool = questions.filter((q) => q.category === category && q.difficulty === difficulty);
-  return shuffled(pool, seededRng(seed)).slice(0, count);
+  const rng = seededRng(seed);
+  const recent = new Map((options.recent ?? []).map((id, i, all) => [id, all.length - i]));
+  const pool = questions
+    .filter((q) => q.category === category && q.difficulty === difficulty)
+    .filter((q) => !options.retired?.has(q.id));
+  const ranked = shuffled(pool, rng)
+    .map((q) => {
+      const seen = options.seen?.get(q.id);
+      // Higher is worse: used in this room lately, seen by more players, seen more recently.
+      return { q, key: [recent.get(q.id) ?? 0, seen?.players ?? 0, seen?.lastSeenAt ?? 0] };
+    })
+    .sort((a, b) => a.key[0]! - b.key[0]! || a.key[1]! - b.key[1]! || a.key[2]! - b.key[2]!);
+  return shuffled(
+    ranked.slice(0, count).map((r) => r.q),
+    rng,
+  );
 }
 
-export function drawContent(request: ContentRequest, seed: number): unknown[] {
+export function drawContent(
+  request: ContentRequest,
+  seed: number,
+  options: DrawOptions = {},
+): unknown[] {
   switch (request.kind) {
     case "quiz-questions":
-      return drawQuestions(request.category, request.difficulty, request.count, seed);
+      return drawQuestions(request.category, request.difficulty, request.count, seed, options);
   }
 }
