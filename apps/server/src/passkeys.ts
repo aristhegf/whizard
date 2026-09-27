@@ -215,6 +215,10 @@ export async function signUpVerify(context: RequestContext): Promise<Response> {
     username: data.username,
     display_name: data.displayName,
     show_explanations: 0,
+    pings: 1,
+    quiet_start: null,
+    quiet_end: null,
+    time_zone: null,
     created_at: now,
   };
   try {

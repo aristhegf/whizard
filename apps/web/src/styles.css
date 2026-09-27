@@ -991,3 +991,71 @@ fieldset {
   border: 1.5px solid var(--line);
   background: var(--surface);
 }
+
+.device-row,
+.quiet-range {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quiet-range select {
+  min-height: 40px;
+  flex: 1;
+  padding: 0 8px;
+}
+
+.ok-text {
+  color: var(--ok);
+  font-weight: 700;
+}
+
+.more {
+  position: relative;
+}
+
+.more summary {
+  list-style: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.more summary::-webkit-details-marker {
+  display: none;
+}
+
+.more[open] summary {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.more .menu {
+  position: absolute;
+  right: 0;
+  top: 44px;
+  z-index: 2;
+  display: grid;
+  justify-items: start;
+  min-width: 10rem;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 12%);
+}
+
+.ping-toggle {
+  align-self: flex-start;
+  padding-left: 0;
+}
+
+.people.compact li {
+  min-height: 48px;
+  padding: 4px 0;
+}

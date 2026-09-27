@@ -41,6 +41,11 @@ export function PrivacyScreen() {
             got right. Other players see your placing and score, never which answers you got right.
           </li>
           <li>
+            If you turn on pings: the address your browser gives Whizard for sending you
+            notifications, your quiet hours and your time zone. Turning pings off on a device, or
+            signing out, removes that device’s address.
+          </li>
+          <li>
             Your friends, friend requests and groups. Friends and fellow group members can see your
             record against them and your place on group leaderboards.
           </li>

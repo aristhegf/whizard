@@ -6,9 +6,11 @@ import {
   type FriendGroup,
   type PublicUser,
 } from "@whizard/protocol";
-import { useCallback, useState, type FormEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useAccount } from "./account";
-import { linkTo, navigate } from "./router";
+import { createRoom } from "./api";
+import { pingFriend } from "./pings";
+import { linkTo, navigate, roomPath } from "./router";
 import {
   addFriend,
   createGroup,
@@ -18,6 +20,7 @@ import {
   fetchUser,
   inviteLink,
   leaveGroup,
+  muteFriend,
   removeFriend,
   updateGroup,
 } from "./social";
@@ -222,19 +225,44 @@ function Friends({ username }: { username: string }) {
             <ul className="people">
               {list.friends.map((f) => (
                 <li key={f.username}>
-                  <Person user={f} detail={record(f)} />
-                  <button
-                    className="btn-link"
-                    disabled={action.busy}
-                    aria-label={`Remove ${f.displayName}`}
-                    onClick={() => {
-                      if (window.confirm(`Remove ${f.displayName} from your friends?`)) {
-                        act(() => removeFriend(f.username));
+                  <Person user={f} detail={f.muted ? `${record(f)} · Muted` : record(f)} />
+                  <div className="row-actions">
+                    <button
+                      className="btn btn-small"
+                      disabled={action.busy}
+                      onClick={() =>
+                        act(async () => {
+                          const code = await createRoom();
+                          navigate(`${roomPath(code)}?ping=${encodeURIComponent(f.username)}`);
+                        })
                       }
-                    }}
-                  >
-                    Remove
-                  </button>
+                    >
+                      Ping
+                    </button>
+                    <details className="more">
+                      <summary aria-label={`More for ${f.displayName}`}>⋯</summary>
+                      <div className="menu">
+                        <button
+                          className="btn-link"
+                          disabled={action.busy}
+                          onClick={() => act(() => muteFriend(f.username, !f.muted))}
+                        >
+                          {f.muted ? "Unmute pings" : "Mute pings"}
+                        </button>
+                        <button
+                          className="btn-link danger"
+                          disabled={action.busy}
+                          onClick={() => {
+                            if (window.confirm(`Remove ${f.displayName} from your friends?`)) {
+                              act(() => removeFriend(f.username));
+                            }
+                          }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </details>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -671,6 +699,94 @@ function AddFromGameList({ usernames }: { usernames: string[] }) {
         ))}
       </ul>
       <ErrorLine error={action.error} />
+    </section>
+  );
+}
+
+// Pings from the lobby ---------------------------------------------------------------------------
+
+type PingStatus = "sending" | "sent" | "held" | string;
+
+/** In a room's lobby: ping friends to join. `?ping=username` in the URL pings them straight away. */
+export function PingFriends({ code }: { code: string }) {
+  const account = useAccount();
+  if (account.status !== "ready" || !account.user) return null;
+  return <PingFriendsList code={code} />;
+}
+
+function PingFriendsList({ code }: { code: string }) {
+  const [autoPing] = useState(() => new URLSearchParams(location.search).get("ping"));
+  const [open, setOpen] = useState(autoPing !== null);
+  const [status, setStatus] = useState<Map<string, PingStatus>>(new Map());
+  const friends = useLoaded(fetchFriends);
+
+  const ping = useCallback(
+    async (username: string) => {
+      const set = (value: PingStatus) => setStatus((s) => new Map(s).set(username, value));
+      set("sending");
+      try {
+        const { sent } = await pingFriend(username, code);
+        set(sent ? "sent" : "held");
+      } catch (error) {
+        set(error instanceof Error ? error.message : "Couldn’t ping them.");
+      }
+    },
+    [code],
+  );
+
+  // A ref, so a remount (React's strict mode does one in development) can't ping twice.
+  const autoPinged = useRef(false);
+  useEffect(() => {
+    if (!autoPing || autoPinged.current) return;
+    autoPinged.current = true;
+    history.replaceState(null, "", location.pathname);
+    void ping(autoPing);
+  }, [autoPing, ping]);
+
+  if (!open) {
+    return (
+      <button className="btn-link ping-toggle" onClick={() => setOpen(true)}>
+        Ping a friend to join
+      </button>
+    );
+  }
+
+  const list = friends.data?.friends ?? [];
+  return (
+    <section className="stack" aria-labelledby="ping-title">
+      <h2 className="label" id="ping-title">
+        Ping a friend
+      </h2>
+      {friends.data && list.length === 0 && (
+        <p className="muted small">
+          Add friends first on your <a {...linkTo("/friends")}>friends page</a>.
+        </p>
+      )}
+      <ul className="people compact">
+        {list.map((f) => {
+          const state = status.get(f.username);
+          return (
+            <li key={f.username}>
+              <span className="person-name">{f.displayName}</span>
+              {state === undefined ? (
+                <button className="btn btn-small" onClick={() => void ping(f.username)}>
+                  Ping
+                </button>
+              ) : (
+                <span className={`small ${state === "sent" ? "ok-text" : "muted"}`} role="status">
+                  {state === "sending"
+                    ? "Pinging…"
+                    : state === "sent"
+                      ? "Pinged"
+                      : state === "held"
+                        ? "Can’t get pings now"
+                        : state}
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
     </section>
   );
 }

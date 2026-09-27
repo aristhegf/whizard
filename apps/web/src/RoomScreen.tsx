@@ -1,6 +1,7 @@
 import { NICKNAME_MAX_LENGTH, type QuizView } from "@whizard/game-core";
 import { useState, type FormEvent } from "react";
 import { useAccount } from "./account";
+import { PingFriends } from "./FriendsScreen";
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsPanel, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { Notice } from "./Notice";
@@ -189,6 +190,8 @@ function Lobby({
           </li>
         ))}
       </ul>
+
+      <PingFriends code={room.code} />
 
       {settings && (
         <QuizSettingsPanel

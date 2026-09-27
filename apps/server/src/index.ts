@@ -38,6 +38,7 @@ import {
   signUpOptions,
   signUpVerify,
 } from "./passkeys";
+import { addSubscription, getPushKey, pingFriend, removeSubscription } from "./push";
 import { ACCOUNT_HEADER } from "./room";
 import { currentSession, hasSessionCookie } from "./sessions";
 
@@ -125,6 +126,10 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["POST", /^\/api\/friends$/, addFriend],
   ["PATCH", /^\/api\/friends\/([^/]+)$/, updateFriend],
   ["DELETE", /^\/api\/friends\/([^/]+)$/, removeFriend],
+  ["POST", /^\/api\/friends\/([^/]+)\/ping$/, pingFriend],
+  ["GET", /^\/api\/push\/key$/, getPushKey],
+  ["POST", /^\/api\/push\/subscriptions$/, addSubscription],
+  ["DELETE", /^\/api\/push\/subscriptions$/, removeSubscription],
   ["GET", /^\/api\/groups$/, getGroups],
   ["POST", /^\/api\/groups$/, createGroup],
   ["PATCH", /^\/api\/groups\/([^/]+)$/, updateGroup],

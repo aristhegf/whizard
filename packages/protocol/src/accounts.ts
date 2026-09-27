@@ -45,7 +45,16 @@ export interface AccountUser {
   displayName: string;
   /** Show the answer's explanation during group games too, not only when playing solo. */
   showExplanations: boolean;
+  /** Whether friends can ping this account at all. */
+  pings: boolean;
+  /** No pings between these times, in minutes after midnight in `timeZone`. */
+  quietHours: QuietHours | null;
   createdAt: number;
+}
+
+export interface QuietHours {
+  start: number;
+  end: number;
 }
 
 export interface AccountPasskey {
@@ -62,12 +71,29 @@ export const signUpRequestSchema = z.object({
   agreed: z.literal(true),
 });
 
+const minuteOfDay = z
+  .number()
+  .int()
+  .min(0)
+  .max(24 * 60 - 1);
+
 export const accountUpdateSchema = z
   .object({
     displayName: z.string().max(100),
     showExplanations: z.boolean(),
+    pings: z.boolean(),
+    quietHours: z.object({ start: minuteOfDay, end: minuteOfDay }).nullable(),
+    /** IANA time zone for quiet hours, e.g. "Africa/Lagos". */
+    timeZone: z.string().max(64),
   })
   .partial();
+
+export const pushSubscriptionSchema = z.object({
+  endpoint: z.url({ protocol: /^https$/ }).max(2048),
+  keys: z.object({ p256dh: z.string().max(256), auth: z.string().max(64) }),
+});
+
+export const pingRequestSchema = z.object({ room: z.string().max(16) });
 
 export type AccountUpdate = z.infer<typeof accountUpdateSchema>;
 

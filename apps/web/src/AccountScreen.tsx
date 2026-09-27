@@ -25,6 +25,7 @@ import {
 } from "./account";
 import { linkTo, navigate } from "./router";
 import { PageBar, useAction, useLoaded } from "./ui";
+import { disablePings, enablePings, localTimeZone, pingSupport, pingsOnThisDevice } from "./pings";
 import { loadNickname } from "./storage";
 
 export function AccountScreen() {
@@ -206,6 +207,7 @@ function Profile({ user }: { user: AccountUser }) {
       <Stats />
       <History />
       <Settings user={user} />
+      <Pings user={user} />
       <Passkeys />
       <Data />
     </div>
@@ -404,6 +406,165 @@ function Settings({ user }: { user: AccountUser }) {
   );
 }
 
+const HOURS = Array.from({ length: 24 }, (_, h) => h * 60);
+const DEFAULT_QUIET = { start: 22 * 60, end: 8 * 60 };
+const hourLabel = (minutes: number) =>
+  new Intl.DateTimeFormat(undefined, { hour: "numeric" }).format(
+    new Date(2000, 0, 1, Math.floor(minutes / 60), minutes % 60),
+  );
+
+function Pings({ user }: { user: AccountUser }) {
+  const support = pingSupport();
+  const device = useLoaded(pingsOnThisDevice);
+  const action = useAction();
+  const quiet = user.quietHours;
+
+  const setQuiet = (next: { start: number; end: number } | null) =>
+    void action.run(() => updateAccount({ quietHours: next, timeZone: localTimeZone() }));
+
+  return (
+    <section className="stack" aria-labelledby="pings-title">
+      <h2 id="pings-title" className="section-title">
+        Pings
+      </h2>
+      <p className="muted small">
+        Friends can ping you when they’re in a room and want you to join. You get a notification
+        with a link straight in.
+      </p>
+
+      <div className="settings wide">
+        <div className="setting">
+          <span className="setting-name" id="pings-label">
+            Get pings
+          </span>
+          <div className="segmented" role="group" aria-labelledby="pings-label">
+            {[false, true].map((value) => (
+              <button
+                key={String(value)}
+                type="button"
+                aria-pressed={user.pings === value}
+                disabled={action.busy}
+                onClick={() => void action.run(() => updateAccount({ pings: value }))}
+              >
+                {value ? "On" : "Off"}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {user.pings && (
+          <>
+            <div className="setting">
+              <span className="setting-name">This device</span>
+              {support === "ready" ? (
+                device.data === null ? (
+                  <span />
+                ) : device.data ? (
+                  <div className="device-row">
+                    <span className="ok-text">On</span>
+                    <button
+                      className="btn-link"
+                      disabled={action.busy}
+                      onClick={() =>
+                        void action.run(async () => {
+                          await disablePings();
+                          device.reload();
+                        })
+                      }
+                    >
+                      Turn off
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="btn btn-small"
+                    disabled={action.busy}
+                    onClick={() =>
+                      void action.run(async () => {
+                        await enablePings();
+                        device.reload();
+                      })
+                    }
+                  >
+                    Turn on
+                  </button>
+                )
+              ) : (
+                <span className="muted small">
+                  {support === "needs-install"
+                    ? "Add Whizard to your Home Screen (Share, then Add to Home Screen) and open it from there to turn pings on."
+                    : "This browser can’t get notifications."}
+                </span>
+              )}
+            </div>
+
+            <div className="setting">
+              <span className="setting-name" id="quiet-label">
+                Quiet hours
+              </span>
+              <div className="segmented" role="group" aria-labelledby="quiet-label">
+                {[false, true].map((on) => (
+                  <button
+                    key={String(on)}
+                    type="button"
+                    aria-pressed={(quiet !== null) === on}
+                    disabled={action.busy}
+                    onClick={() => setQuiet(on ? (quiet ?? DEFAULT_QUIET) : null)}
+                  >
+                    {on ? "On" : "Off"}
+                  </button>
+                ))}
+              </div>
+              {quiet && (
+                <div className="setting-hint quiet-range">
+                  <label className="sr-only" htmlFor="quiet-start">
+                    Quiet from
+                  </label>
+                  <select
+                    id="quiet-start"
+                    name="quiet-start"
+                    value={quiet.start}
+                    disabled={action.busy}
+                    onChange={(event) => setQuiet({ ...quiet, start: Number(event.target.value) })}
+                  >
+                    {HOURS.map((m) => (
+                      <option key={m} value={m}>
+                        {hourLabel(m)}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="muted">to</span>
+                  <label className="sr-only" htmlFor="quiet-end">
+                    Quiet until
+                  </label>
+                  <select
+                    id="quiet-end"
+                    name="quiet-end"
+                    value={quiet.end}
+                    disabled={action.busy}
+                    onChange={(event) => setQuiet({ ...quiet, end: Number(event.target.value) })}
+                  >
+                    {HOURS.map((m) => (
+                      <option key={m} value={m}>
+                        {hourLabel(m)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+      {action.error && (
+        <p className="error small" role="alert">
+          {action.error}
+        </p>
+      )}
+    </section>
+  );
+}
+
 const longDate = new Intl.DateTimeFormat(undefined, {
   day: "numeric",
   month: "short",
@@ -507,6 +668,8 @@ function Data() {
           disabled={action.busy}
           onClick={() =>
             void action.run(async () => {
+              // Don't leave pings for this account arriving on a signed-out browser.
+              await disablePings().catch(() => undefined);
               await signOut();
               navigate("/");
             })

@@ -17,7 +17,7 @@ The full list is in [docs/GAMES.md](docs/GAMES.md).
 
 Early development. The quiz is playable in all 11 categories: play solo or invite friends with a link or code, pick Classic or Speed, a level and the number of questions. Everyone starts together and plays at their own pace, then sees a points leaderboard and a private review of their own answers.
 
-Optional accounts sign in with a passkey (no passwords) and keep your game history and stats, including games you played as a guest just before signing up. Add friends by username, invite link or straight from a game's results to see your record against each of them, and save groups with their own leaderboards. Pings are next. See the [architecture and build plan](docs/ARCHITECTURE.md).
+Optional accounts sign in with a passkey (no passwords) and keep your game history and stats, including games you played as a guest just before signing up. Add friends by username, invite link or straight from a game's results to see your record against each of them, and save groups with their own leaderboards. Ping a friend and they get a notification that opens your room, with mute and quiet hours on their side. See the [architecture and build plan](docs/ARCHITECTURE.md).
 
 ## Tech stack
 
@@ -25,6 +25,7 @@ Optional accounts sign in with a passkey (no passwords) and keep your game histo
 - **Server:** Cloudflare Workers and Durable Objects (one per game room), WebSockets
 - **Data:** Cloudflare D1 (accounts, match history), R2 (images, later)
 - **Sign-in:** passkeys (WebAuthn, verified with SimpleWebAuthn)
+- **Notifications:** Web Push, encrypted in the Worker with PushForge
 - **Testing:** Vitest, Playwright
 
 ## Running locally

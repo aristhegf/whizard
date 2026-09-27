@@ -13,6 +13,10 @@ export interface UserRow {
   username: string;
   display_name: string;
   show_explanations: number;
+  pings: number;
+  quiet_start: number | null;
+  quiet_end: number | null;
+  time_zone: string | null;
   created_at: number;
 }
 
@@ -28,6 +32,11 @@ export function toAccountUser(row: UserRow): AccountUser {
     username: row.username,
     displayName: row.display_name,
     showExplanations: row.show_explanations === 1,
+    pings: row.pings === 1,
+    quietHours:
+      row.quiet_start === null || row.quiet_end === null
+        ? null
+        : { start: row.quiet_start, end: row.quiet_end },
     createdAt: row.created_at,
   };
 }

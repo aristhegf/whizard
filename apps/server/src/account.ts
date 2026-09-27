@@ -9,6 +9,7 @@ import {
   deleteSession,
   toAccountUser,
   type SignedIn,
+  type UserRow,
 } from "./sessions";
 
 /** The signed-in user, or a 401. */
@@ -38,23 +39,45 @@ export async function updateMe(context: RequestContext): Promise<Response> {
     }
     displayName = normalized;
   }
-  const showExplanations =
-    update.showExplanations === undefined
-      ? user.show_explanations
-      : Number(update.showExplanations);
+  const next: UserRow = {
+    ...user,
+    display_name: displayName,
+    show_explanations:
+      update.showExplanations === undefined
+        ? user.show_explanations
+        : Number(update.showExplanations),
+    pings: update.pings === undefined ? user.pings : Number(update.pings),
+    quiet_start:
+      update.quietHours === undefined ? user.quiet_start : (update.quietHours?.start ?? null),
+    quiet_end: update.quietHours === undefined ? user.quiet_end : (update.quietHours?.end ?? null),
+    time_zone: update.timeZone === undefined ? user.time_zone : validTimeZone(update.timeZone),
+  };
 
   await context.env.DB.prepare(
-    "UPDATE users SET display_name = ?, show_explanations = ? WHERE id = ?",
+    `UPDATE users SET display_name = ?, show_explanations = ?, pings = ?,
+                      quiet_start = ?, quiet_end = ?, time_zone = ?
+      WHERE id = ?`,
   )
-    .bind(displayName, showExplanations, user.id)
+    .bind(
+      next.display_name,
+      next.show_explanations,
+      next.pings,
+      next.quiet_start,
+      next.quiet_end,
+      next.time_zone,
+      user.id,
+    )
     .run();
-  return Response.json({
-    user: toAccountUser({
-      ...user,
-      display_name: displayName,
-      show_explanations: showExplanations,
-    }),
-  });
+  return Response.json({ user: toAccountUser(next) });
+}
+
+function validTimeZone(timeZone: string): string {
+  try {
+    new Intl.DateTimeFormat("en", { timeZone });
+    return timeZone;
+  } catch {
+    throw new HttpError(400, "bad_time_zone", "That time zone isn’t recognised.");
+  }
 }
 
 export async function signOut(context: RequestContext): Promise<Response> {

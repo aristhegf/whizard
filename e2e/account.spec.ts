@@ -229,3 +229,40 @@ test("offers to add signed-in players after a game", async ({ browser }) => {
   await offer.getByRole("button", { name: "Add" }).click();
   await expect(offer).toContainText("Request sent");
 });
+
+test("pings a friend from the friends page and the lobby", async ({ browser }) => {
+  const ada = await browser.newPage();
+  await withPasskeys(ada);
+  const adaName = uniqueUsername();
+  await signUp(ada, adaName, "Ada");
+  const tolu = await browser.newPage();
+  await withPasskeys(tolu);
+  const toluName = uniqueUsername();
+  await signUp(tolu, toluName, "Tolu");
+  await tolu.goto(`/add/${adaName}`);
+  await tolu.getByRole("button", { name: "Add friend" }).click();
+  await ada.goto(`/add/${toluName}`);
+  await ada.getByRole("button", { name: "Accept friend request" }).click();
+
+  // Tolu has no device with pings turned on, so the ping is held back.
+  await ada.goto("/friends");
+  await ada.getByRole("button", { name: "Ping", exact: true }).click();
+  await expect(ada).toHaveURL(/\/r\/[A-Z0-9]{6}/);
+  await ada.getByRole("button", { name: "Join", exact: true }).click();
+  const pings = ada.getByRole("region", { name: "Ping a friend" });
+  await expect(pings.getByRole("status")).toHaveText("Can’t get pings now");
+
+  // Tolu can mute Ada, and turn on quiet hours.
+  await tolu.goto("/friends");
+  await tolu.getByLabel("More for Ada").click();
+  await tolu.getByRole("button", { name: "Mute pings" }).click();
+  await expect(tolu.locator(".people li").filter({ hasText: `@${adaName}` })).toContainText(
+    "Muted",
+  );
+  await tolu.goto("/account");
+  const quiet = tolu.getByRole("group", { name: "Quiet hours" });
+  await quiet.getByRole("button", { name: "On" }).click();
+  await expect(tolu.getByLabel("Quiet from")).toBeVisible();
+  await tolu.reload();
+  await expect(quiet.getByRole("button", { name: "On" })).toHaveAttribute("aria-pressed", "true");
+});
