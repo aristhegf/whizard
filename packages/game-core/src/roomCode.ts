@@ -1,3 +1,5 @@
+import { cryptoRandomBytes, type RandomBytes } from "./ids";
+
 // No 0/O or 1/I/L, so codes read cleanly aloud and on small screens.
 export const ROOM_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 export const ROOM_CODE_LENGTH = 6;
@@ -5,10 +7,6 @@ export const ROOM_CODE_LENGTH = 6;
 // Largest multiple of the alphabet size that fits in a byte; bytes above it are
 // discarded so every character is equally likely.
 const UNBIASED_LIMIT = 256 - (256 % ROOM_CODE_ALPHABET.length);
-
-type RandomBytes = (buffer: Uint8Array<ArrayBuffer>) => Uint8Array<ArrayBuffer>;
-
-const cryptoRandomBytes: RandomBytes = (buffer) => crypto.getRandomValues(buffer);
 
 export function generateRoomCode(randomBytes: RandomBytes = cryptoRandomBytes): string {
   let code = "";

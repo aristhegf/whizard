@@ -5,9 +5,20 @@ import type { Env } from "./env";
 export { Room } from "./room";
 
 const ROOM_SOCKET_PATH = /^\/api\/rooms\/([^/]+)\/ws$/;
+const CREATE_ATTEMPTS = 5;
 
 function jsonError(status: number, code: string, message: string): Response {
   return Response.json({ error: { code, message } }, { status });
+}
+
+async function createRoom(env: Env): Promise<Response> {
+  for (let attempt = 0; attempt < CREATE_ATTEMPTS; attempt++) {
+    const code = generateRoomCode();
+    if (await env.ROOMS.getByName(code).create(code)) {
+      return Response.json({ code }, { status: 201 });
+    }
+  }
+  return jsonError(503, "no_room_code", "Couldn't find a free room code. Try again.");
 }
 
 export default {
@@ -20,7 +31,7 @@ export default {
 
     if (url.pathname === "/api/rooms") {
       if (request.method !== "POST") return jsonError(405, "method_not_allowed", "Use POST");
-      return Response.json({ code: generateRoomCode() }, { status: 201 });
+      return createRoom(env);
     }
 
     const socketMatch = ROOM_SOCKET_PATH.exec(url.pathname);

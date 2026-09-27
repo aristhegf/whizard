@@ -1,27 +1,33 @@
 import { normalizeRoomCode, ROOM_CODE_LENGTH } from "@whizard/game-core";
 import { useState, type FormEvent } from "react";
 import { createRoom } from "./api";
-import { useRoomConnection } from "./useRoomConnection";
+import { Notice } from "./Notice";
+import { navigate, roomPath, useRoute } from "./router";
+import { RoomScreen } from "./RoomScreen";
 
 export function App() {
-  const [roomCode, setRoomCode] = useState<string | null>(null);
+  const route = useRoute();
 
   return (
     <main className="shell">
       <header className="brand">
-        <h1>Whizard</h1>
+        <a href="/" onClick={(event) => (event.preventDefault(), navigate("/"))}>
+          <h1>Whizard</h1>
+        </a>
         <p>Play quiz games with friends, wherever they are.</p>
       </header>
-      {roomCode ? (
-        <RoomScreen code={roomCode} onLeave={() => setRoomCode(null)} />
-      ) : (
-        <HomeScreen onEnterRoom={setRoomCode} />
-      )}
+      {route.name === "room" ? <RoomRoute code={route.code} /> : <HomeScreen />}
     </main>
   );
 }
 
-function HomeScreen({ onEnterRoom }: { onEnterRoom: (code: string) => void }) {
+function RoomRoute({ code }: { code: string }) {
+  const normalized = normalizeRoomCode(code);
+  if (!normalized) return <Notice message="That isn't a valid room link." />;
+  return <RoomScreen key={normalized} code={normalized} />;
+}
+
+function HomeScreen() {
   const [joinInput, setJoinInput] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
@@ -30,7 +36,7 @@ function HomeScreen({ onEnterRoom }: { onEnterRoom: (code: string) => void }) {
     setCreating(true);
     setError(null);
     try {
-      onEnterRoom(await createRoom());
+      navigate(roomPath(await createRoom()));
     } catch {
       setError("Couldn't create a room. Check your connection and try again.");
       setCreating(false);
@@ -40,7 +46,7 @@ function HomeScreen({ onEnterRoom }: { onEnterRoom: (code: string) => void }) {
   const handleJoin = (event: FormEvent) => {
     event.preventDefault();
     const code = normalizeRoomCode(joinInput);
-    if (code) onEnterRoom(code);
+    if (code) navigate(roomPath(code));
     else setError(`Room codes are ${ROOM_CODE_LENGTH} letters and numbers.`);
   };
 
@@ -50,8 +56,9 @@ function HomeScreen({ onEnterRoom }: { onEnterRoom: (code: string) => void }) {
         {creating ? "Creating…" : "Create a room"}
       </button>
       <div className="divider">or join one</div>
-      <form className="join" onSubmit={handleJoin}>
+      <form className="inline-form" onSubmit={handleJoin}>
         <input
+          className="code-input"
           aria-label="Room code"
           placeholder="Room code"
           value={joinInput}
@@ -68,25 +75,6 @@ function HomeScreen({ onEnterRoom }: { onEnterRoom: (code: string) => void }) {
           {error}
         </p>
       )}
-    </section>
-  );
-}
-
-function RoomScreen({ code, onLeave }: { code: string; onLeave: () => void }) {
-  const connection = useRoomConnection(code);
-
-  return (
-    <section className="card">
-      <p className="label">Room code</p>
-      <p className="room-code">{code}</p>
-      <p className={`status status-${connection.status}`} aria-live="polite">
-        {connection.status === "connected"
-          ? `Connected${connection.latencyMs === null ? "" : ` · ${connection.latencyMs} ms`}`
-          : connection.status === "connecting"
-            ? "Connecting…"
-            : "Reconnecting…"}
-      </p>
-      <button onClick={onLeave}>Leave room</button>
     </section>
   );
 }
