@@ -548,5 +548,1115 @@
     "prompt": "The Orange River forms part of South Africa's border with which country?",
     "choices": ["Namibia", "Botswana", "Zimbabwe", "Mozambique"],
     "explanation": "The lower Orange River marks much of the border between South Africa and Namibia before reaching the Atlantic."
+  },
+  {
+    "id": "geography-061",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of the United States?",
+    "choices": ["Washington, D.C.", "New York City", "Los Angeles", "Chicago"],
+    "explanation": "Washington, D.C. has been the US capital since 1800 and is home to the White House and Congress."
+  },
+  {
+    "id": "geography-062",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of Germany?",
+    "choices": ["Berlin", "Munich", "Hamburg", "Frankfurt"],
+    "explanation": "Berlin became the capital of reunified Germany in 1990."
+  },
+  {
+    "id": "geography-063",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of India?",
+    "choices": ["New Delhi", "Mumbai", "Kolkata", "Chennai"],
+    "explanation": "New Delhi, part of the city of Delhi, is the seat of India's government."
+  },
+  {
+    "id": "geography-064",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of China?",
+    "choices": ["Beijing", "Shanghai", "Hong Kong", "Guangzhou"],
+    "explanation": "Beijing, in the north of the country, is China's capital."
+  },
+  {
+    "id": "geography-065",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of Russia?",
+    "choices": ["Moscow", "St Petersburg", "Kazan", "Novosibirsk"],
+    "explanation": "Moscow, on the Moskva River in western Russia, is the country's capital and home to the Kremlin."
+  },
+  {
+    "id": "geography-066",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of South Korea?",
+    "choices": ["Seoul", "Busan", "Pyongyang", "Incheon"],
+    "explanation": "Seoul is South Korea's capital; Pyongyang is the capital of North Korea."
+  },
+  {
+    "id": "geography-067",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of Kenya?",
+    "choices": ["Nairobi", "Mombasa", "Kisumu", "Nakuru"],
+    "explanation": "Nairobi, in south-central Kenya, is the country's capital; Mombasa is its main port."
+  },
+  {
+    "id": "geography-068",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "easy",
+    "prompt": "What is the capital city of Egypt?",
+    "choices": ["Cairo", "Alexandria", "Luxor", "Aswan"],
+    "explanation": "Cairo, on the Nile just south of the delta, is Egypt's capital."
+  },
+  {
+    "id": "geography-069",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "easy",
+    "prompt": "Johannesburg and Durban are cities in which country?",
+    "choices": ["South Africa", "Zimbabwe", "Namibia", "Botswana"],
+    "explanation": "Johannesburg is South Africa's main business centre and Durban is its busy port on the Indian Ocean."
+  },
+  {
+    "id": "geography-070",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "easy",
+    "prompt": "Which river gave Nigeria its name?",
+    "choices": ["The Niger", "The Benue", "The Congo", "The Volta"],
+    "explanation": "The name Nigeria was formed from the River Niger, which flows through the country to the sea."
+  },
+  {
+    "id": "geography-071",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "easy",
+    "prompt": "What is the capital of Rivers State?",
+    "choices": ["Port Harcourt", "Warri", "Calabar", "Uyo"],
+    "explanation": "Port Harcourt, a major oil city in the Niger Delta, is the capital of Rivers State."
+  },
+  {
+    "id": "geography-072",
+    "category": "geography",
+    "topic": "Borders",
+    "difficulty": "easy",
+    "prompt": "Which country borders Nigeria to the east?",
+    "choices": ["Cameroon", "Ghana", "Togo", "Sierra Leone"],
+    "explanation": "Cameroon lies along Nigeria's long eastern border, from Lake Chad down to the Gulf of Guinea."
+  },
+  {
+    "id": "geography-073",
+    "category": "geography",
+    "topic": "Borders",
+    "difficulty": "easy",
+    "prompt": "Which country borders Nigeria to the north?",
+    "choices": ["Niger", "Mali", "Burkina Faso", "Algeria"],
+    "explanation": "Niger lies along Nigeria's long northern border; both countries take their names from the River Niger."
+  },
+  {
+    "id": "geography-074",
+    "category": "geography",
+    "topic": "Borders",
+    "difficulty": "easy",
+    "prompt": "Which country shares a land border with the southern United States?",
+    "choices": ["Mexico", "Cuba", "Guatemala", "Canada"],
+    "explanation": "Mexico borders the US states of California, Arizona, New Mexico and Texas."
+  },
+  {
+    "id": "geography-075",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "easy",
+    "prompt": "Which is the highest mountain in Africa?",
+    "choices": ["Mount Kilimanjaro", "Mount Kenya", "Mount Cameroon", "Mount Stanley"],
+    "explanation": "Kilimanjaro rises to about 5,895 metres, higher than any other peak in Africa."
+  },
+  {
+    "id": "geography-076",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "easy",
+    "prompt": "In which country is Mount Fuji?",
+    "choices": ["Japan", "China", "South Korea", "The Philippines"],
+    "explanation": "Mount Fuji, a volcano near Tokyo, is Japan's highest mountain."
+  },
+  {
+    "id": "geography-077",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "easy",
+    "prompt": "Mount Everest is part of which mountain range?",
+    "choices": ["The Himalayas", "The Andes", "The Alps", "The Rockies"],
+    "explanation": "Everest stands in the Himalayas on the border between Nepal and China."
+  },
+  {
+    "id": "geography-078",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "easy",
+    "prompt": "Which mountain range runs across Switzerland and Austria?",
+    "choices": ["The Alps", "The Andes", "The Urals", "The Himalayas"],
+    "explanation": "The Alps stretch across several European countries, including Switzerland and Austria."
+  },
+  {
+    "id": "geography-079",
+    "category": "geography",
+    "topic": "Oceans",
+    "difficulty": "easy",
+    "prompt": "Which ocean lies between Africa and Australia?",
+    "choices": ["The Indian Ocean", "The Pacific Ocean", "The Atlantic Ocean", "The Arctic Ocean"],
+    "explanation": "The Indian Ocean washes the east coast of Africa and the west coast of Australia."
+  },
+  {
+    "id": "geography-080",
+    "category": "geography",
+    "topic": "Oceans",
+    "difficulty": "easy",
+    "prompt": "Which ocean separates the Americas from Europe and Africa?",
+    "choices": ["The Atlantic Ocean", "The Pacific Ocean", "The Indian Ocean", "The Arctic Ocean"],
+    "explanation": "The Atlantic lies between the Americas to the west and Europe and Africa to the east."
+  },
+  {
+    "id": "geography-081",
+    "category": "geography",
+    "topic": "Oceans",
+    "difficulty": "easy",
+    "prompt": "Which ocean surrounds the North Pole?",
+    "choices": [
+      "The Arctic Ocean",
+      "The Southern Ocean",
+      "The Atlantic Ocean",
+      "The Pacific Ocean"
+    ],
+    "explanation": "The North Pole lies in the middle of the Arctic Ocean, which is usually covered by floating sea ice."
+  },
+  {
+    "id": "geography-082",
+    "category": "geography",
+    "topic": "Continents",
+    "difficulty": "easy",
+    "prompt": "Which is the largest continent by area?",
+    "choices": ["Asia", "Africa", "North America", "Europe"],
+    "explanation": "Asia covers about a third of the world's land, more than any other continent."
+  },
+  {
+    "id": "geography-083",
+    "category": "geography",
+    "topic": "Continents",
+    "difficulty": "easy",
+    "prompt": "On which continent is Argentina?",
+    "choices": ["South America", "North America", "Africa", "Europe"],
+    "explanation": "Argentina covers much of the southern part of South America."
+  },
+  {
+    "id": "geography-084",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "easy",
+    "prompt": "In which city is the Colosseum?",
+    "choices": ["Rome", "Athens", "Paris", "Istanbul"],
+    "explanation": "The Colosseum is an ancient Roman amphitheatre in the centre of Rome."
+  },
+  {
+    "id": "geography-085",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "easy",
+    "prompt": "In which country is the Sydney Opera House?",
+    "choices": ["Australia", "New Zealand", "The United Kingdom", "The United States"],
+    "explanation": "The Sydney Opera House sits on Sydney Harbour in Australia."
+  },
+  {
+    "id": "geography-086",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "easy",
+    "prompt": "The Christ the Redeemer statue overlooks which city?",
+    "choices": ["Rio de Janeiro", "São Paulo", "Buenos Aires", "Lima"],
+    "explanation": "The statue stands on Corcovado mountain above Rio de Janeiro in Brazil."
+  },
+  {
+    "id": "geography-087",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "easy",
+    "prompt": "In which city is Big Ben, the great bell in the clock tower of the Houses of Parliament?",
+    "choices": ["London", "Paris", "Berlin", "Dublin"],
+    "explanation": "Big Ben is the bell in the Elizabeth Tower at the Houses of Parliament in London; the name is often used for the whole tower."
+  },
+  {
+    "id": "geography-088",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "easy",
+    "prompt": "Hawaii is a group of islands belonging to which country?",
+    "choices": ["The United States", "Japan", "Australia", "Mexico"],
+    "explanation": "Hawaii, in the middle of the Pacific Ocean, is one of the 50 US states."
+  },
+  {
+    "id": "geography-089",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "easy",
+    "prompt": "Which European island country is famous for its volcanoes, glaciers and geysers?",
+    "choices": ["Iceland", "Ireland", "Malta", "Cyprus"],
+    "explanation": "Iceland sits on a volcanic hot spot in the North Atlantic, giving it volcanoes and geysers."
+  },
+  {
+    "id": "geography-090",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "easy",
+    "prompt": "What are the imaginary lines running from the North Pole to the South Pole called?",
+    "choices": ["Lines of longitude", "Lines of latitude", "The tropics", "Contour lines"],
+    "explanation": "Lines of longitude, or meridians, run from pole to pole; lines of latitude run east to west."
+  },
+  {
+    "id": "geography-091",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "easy",
+    "prompt": "On most maps, which direction is at the top?",
+    "choices": ["North", "South", "East", "West"],
+    "explanation": "By long custom, most maps are drawn with north at the top."
+  },
+  {
+    "id": "geography-092",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "easy",
+    "prompt": "What is a book of maps called?",
+    "choices": ["An atlas", "An almanac", "An encyclopaedia", "A dictionary"],
+    "explanation": "An atlas is a collection of maps bound together in a book."
+  },
+  {
+    "id": "geography-093",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "easy",
+    "prompt": "Which instrument has a magnetic needle that points north?",
+    "choices": ["A compass", "A barometer", "A thermometer", "A telescope"],
+    "explanation": "A compass needle lines up with the Earth's magnetic field, so it points roughly north."
+  },
+  {
+    "id": "geography-094",
+    "category": "geography",
+    "topic": "Climate",
+    "difficulty": "easy",
+    "prompt": "What is the dry, dusty wind that blows from the Sahara over West Africa in the dry season?",
+    "choices": ["The Harmattan", "The monsoon", "The Mistral", "The Chinook"],
+    "explanation": "The Harmattan is a dry north-easterly wind that carries Sahara dust over West Africa."
+  },
+  {
+    "id": "geography-095",
+    "category": "geography",
+    "topic": "Climate",
+    "difficulty": "easy",
+    "prompt": "What name is given to the hot, wet forests found near the Equator?",
+    "choices": ["Tropical rainforests", "Taiga", "Tundra", "Savannah"],
+    "explanation": "Tropical rainforests grow near the Equator, where it is hot and rains heavily all year."
+  },
+  {
+    "id": "geography-096",
+    "category": "geography",
+    "topic": "Climate",
+    "difficulty": "easy",
+    "prompt": "What is the grassland with scattered trees found across much of northern Nigeria and East Africa?",
+    "choices": ["Savannah", "Tundra", "Taiga", "Rainforest"],
+    "explanation": "Savannah is tropical grassland dotted with trees, with a long dry season each year."
+  },
+  {
+    "id": "geography-097",
+    "category": "geography",
+    "topic": "Countries",
+    "difficulty": "easy",
+    "prompt": "Which is the largest country in the world by area?",
+    "choices": ["Russia", "Canada", "China", "The United States"],
+    "explanation": "Russia stretches across eastern Europe and northern Asia and is by far the largest country."
+  },
+  {
+    "id": "geography-098",
+    "category": "geography",
+    "topic": "Countries",
+    "difficulty": "easy",
+    "prompt": "Barcelona and Seville are cities in which country?",
+    "choices": ["Spain", "Portugal", "Italy", "France"],
+    "explanation": "Barcelona lies on Spain's north-east coast and Seville in the south, in Andalusia."
+  },
+  {
+    "id": "geography-099",
+    "category": "geography",
+    "topic": "Countries",
+    "difficulty": "easy",
+    "prompt": "Which is the smallest country in the world by area?",
+    "choices": ["Vatican City", "Monaco", "San Marino", "Liechtenstein"],
+    "explanation": "Vatican City, inside Rome, covers less than half a square kilometre."
+  },
+  {
+    "id": "geography-100",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "easy",
+    "prompt": "Which river flows through London?",
+    "choices": ["The Thames", "The Seine", "The Severn", "The Mersey"],
+    "explanation": "The Thames flows through the heart of London on its way to the North Sea."
+  },
+  {
+    "id": "geography-101",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "medium",
+    "prompt": "Which river flows through Baghdad?",
+    "choices": ["The Tigris", "The Euphrates", "The Jordan", "The Nile"],
+    "explanation": "Baghdad was built on the Tigris, which flows through the heart of the Iraqi capital."
+  },
+  {
+    "id": "geography-102",
+    "category": "geography",
+    "topic": "Borders",
+    "difficulty": "medium",
+    "prompt": "Which river forms much of the border between the United States and Mexico?",
+    "choices": ["The Rio Grande", "The Colorado", "The Mississippi", "The Missouri"],
+    "explanation": "The Rio Grande, called the Río Bravo in Mexico, marks the border along Texas."
+  },
+  {
+    "id": "geography-103",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "medium",
+    "prompt": "Which is the longest river in Europe?",
+    "choices": ["The Volga", "The Danube", "The Rhine", "The Dnieper"],
+    "explanation": "The Volga flows about 3,500 kilometres through Russia to the Caspian Sea."
+  },
+  {
+    "id": "geography-104",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "medium",
+    "prompt": "Which river carved the Grand Canyon?",
+    "choices": ["The Colorado", "The Mississippi", "The Rio Grande", "The Columbia"],
+    "explanation": "Over millions of years the Colorado River cut the Grand Canyon in Arizona."
+  },
+  {
+    "id": "geography-105",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "medium",
+    "prompt": "The Ganges flows into which bay?",
+    "choices": ["The Bay of Bengal", "The Bay of Biscay", "Hudson Bay", "The Bay of Fundy"],
+    "explanation": "The Ganges crosses northern India and Bangladesh and empties into the Bay of Bengal."
+  },
+  {
+    "id": "geography-106",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "medium",
+    "prompt": "What is the capital city of Portugal?",
+    "choices": ["Lisbon", "Porto", "Coimbra", "Faro"],
+    "explanation": "Lisbon, on a wide estuary on the Atlantic coast, is Portugal's capital."
+  },
+  {
+    "id": "geography-107",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "medium",
+    "prompt": "What is the capital city of New Zealand?",
+    "choices": ["Wellington", "Auckland", "Christchurch", "Queenstown"],
+    "explanation": "Wellington, at the southern tip of the North Island, is New Zealand's capital."
+  },
+  {
+    "id": "geography-108",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "medium",
+    "prompt": "What is the capital city of Pakistan?",
+    "choices": ["Islamabad", "Karachi", "Lahore", "Peshawar"],
+    "explanation": "Islamabad was purpose-built as Pakistan's capital in the 1960s; Karachi had been the first capital."
+  },
+  {
+    "id": "geography-109",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "medium",
+    "prompt": "What is the capital city of Vietnam?",
+    "choices": ["Hanoi", "Ho Chi Minh City", "Da Nang", "Hue"],
+    "explanation": "Hanoi, in the north of the country, is Vietnam's capital."
+  },
+  {
+    "id": "geography-110",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "medium",
+    "prompt": "What is the capital city of Ethiopia?",
+    "choices": ["Addis Ababa", "Dire Dawa", "Gondar", "Bahir Dar"],
+    "explanation": "Addis Ababa, high in the Ethiopian Highlands, is Ethiopia's capital and home to the African Union."
+  },
+  {
+    "id": "geography-111",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "medium",
+    "prompt": "What is the capital city of Cameroon?",
+    "choices": ["Yaoundé", "Douala", "Bamenda", "Garoua"],
+    "explanation": "Yaoundé is Cameroon's capital; Douala is its main port and business centre."
+  },
+  {
+    "id": "geography-112",
+    "category": "geography",
+    "topic": "Borders",
+    "difficulty": "medium",
+    "prompt": "Not counting sea borders, how many countries border Nigeria?",
+    "choices": ["Four", "Three", "Five", "Six"],
+    "explanation": "Nigeria borders Benin, Niger, Chad and Cameroon; its short border with Chad runs through Lake Chad."
+  },
+  {
+    "id": "geography-113",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "medium",
+    "prompt": "Which is the longest river in Asia?",
+    "choices": ["The Yangtze", "The Yellow River", "The Mekong", "The Ganges"],
+    "explanation": "The Yangtze flows about 6,300 kilometres across China to the East China Sea."
+  },
+  {
+    "id": "geography-114",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "medium",
+    "prompt": "The Galápagos Islands belong to which country?",
+    "choices": ["Ecuador", "Peru", "Chile", "Colombia"],
+    "explanation": "The Galápagos lie in the Pacific nearly 1,000 kilometres west of mainland Ecuador."
+  },
+  {
+    "id": "geography-115",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "medium",
+    "prompt": "In which country is the rock-cut city of Petra?",
+    "choices": ["Jordan", "Egypt", "Syria", "Lebanon"],
+    "explanation": "Petra, carved into pink sandstone cliffs by the Nabataeans, is in southern Jordan."
+  },
+  {
+    "id": "geography-116",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "Which Nigerian state capital sits high on a plateau and is known for its cool climate?",
+    "choices": ["Jos", "Kaduna", "Minna", "Makurdi"],
+    "explanation": "Jos lies about 1,200 metres up on the Jos Plateau, giving it a cooler climate than most of Nigeria."
+  },
+  {
+    "id": "geography-117",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "Which Nigerian state capital is nicknamed the Coal City?",
+    "choices": ["Enugu", "Owerri", "Awka", "Umuahia"],
+    "explanation": "Enugu grew up around coal mining in the early 1900s, earning the name Coal City."
+  },
+  {
+    "id": "geography-118",
+    "category": "geography",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "The Kainji Dam in Nigeria is built across which river?",
+    "choices": ["The Niger", "The Benue", "The Kaduna", "The Sokoto"],
+    "explanation": "Kainji Dam, completed in 1968 in Niger State, holds back the River Niger to generate power."
+  },
+  {
+    "id": "geography-119",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "medium",
+    "prompt": "Which north-south mountain range is seen as a boundary between Europe and Asia?",
+    "choices": ["The Urals", "The Caucasus", "The Carpathians", "The Alps"],
+    "explanation": "The Ural Mountains run north to south across Russia and mark the traditional line between Europe and Asia."
+  },
+  {
+    "id": "geography-120",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "medium",
+    "prompt": "Mount Olympus is the highest mountain in which country?",
+    "choices": ["Greece", "Italy", "Bulgaria", "Albania"],
+    "explanation": "Mount Olympus, home of the gods in Greek myth, is the highest peak in Greece."
+  },
+  {
+    "id": "geography-121",
+    "category": "geography",
+    "topic": "Volcanoes",
+    "difficulty": "medium",
+    "prompt": "Mount Vesuvius, which buried Pompeii, overlooks which Italian city?",
+    "choices": ["Naples", "Rome", "Florence", "Milan"],
+    "explanation": "Vesuvius rises above the Bay of Naples; its eruption in 79 AD buried Pompeii."
+  },
+  {
+    "id": "geography-122",
+    "category": "geography",
+    "topic": "Deserts",
+    "difficulty": "medium",
+    "prompt": "The Atacama, one of the driest places on Earth, is mainly in which country?",
+    "choices": ["Chile", "Peru", "Mexico", "Egypt"],
+    "explanation": "The Atacama Desert stretches along northern Chile between the Pacific and the Andes."
+  },
+  {
+    "id": "geography-123",
+    "category": "geography",
+    "topic": "Deserts",
+    "difficulty": "medium",
+    "prompt": "The Kalahari Desert covers most of which country?",
+    "choices": ["Botswana", "Kenya", "Ethiopia", "Tanzania"],
+    "explanation": "The Kalahari covers most of Botswana and stretches into Namibia and South Africa."
+  },
+  {
+    "id": "geography-124",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "medium",
+    "prompt": "Which large island lies just off the 'toe' of Italy's boot?",
+    "choices": ["Sicily", "Sardinia", "Corsica", "Malta"],
+    "explanation": "Sicily is separated from the toe of mainland Italy by a narrow strait."
+  },
+  {
+    "id": "geography-125",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "medium",
+    "prompt": "The island of Zanzibar is part of which country?",
+    "choices": ["Tanzania", "Kenya", "Mozambique", "Madagascar"],
+    "explanation": "Zanzibar joined Tanganyika in 1964 to form the United Republic of Tanzania."
+  },
+  {
+    "id": "geography-126",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "medium",
+    "prompt": "Kingston is the capital of which Caribbean island country?",
+    "choices": ["Jamaica", "Trinidad and Tobago", "Barbados", "The Bahamas"],
+    "explanation": "Kingston, on Jamaica's south coast, is the island's capital."
+  },
+  {
+    "id": "geography-127",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "medium",
+    "prompt": "The Canary Islands belong to which country?",
+    "choices": ["Spain", "Portugal", "Morocco", "France"],
+    "explanation": "The Canary Islands lie off the coast of north-west Africa but are part of Spain."
+  },
+  {
+    "id": "geography-128",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "medium",
+    "prompt": "Haiti shares the island of Hispaniola with which country?",
+    "choices": ["The Dominican Republic", "Cuba", "Jamaica", "Puerto Rico"],
+    "explanation": "Haiti covers the western third of Hispaniola and the Dominican Republic the rest."
+  },
+  {
+    "id": "geography-129",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "medium",
+    "prompt": "The Gambia is almost entirely surrounded by which country?",
+    "choices": ["Senegal", "Guinea", "Mali", "Guinea-Bissau"],
+    "explanation": "The Gambia is a narrow strip along the Gambia River, enclosed by Senegal except for its short coast."
+  },
+  {
+    "id": "geography-130",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "medium",
+    "prompt": "In which country is the temple complex of Angkor Wat?",
+    "choices": ["Cambodia", "Thailand", "Laos", "Vietnam"],
+    "explanation": "Angkor Wat, near Siem Reap in Cambodia, appears on the country's flag."
+  },
+  {
+    "id": "geography-131",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "medium",
+    "prompt": "Flat-topped Table Mountain overlooks which city?",
+    "choices": ["Cape Town", "Durban", "Nairobi", "Johannesburg"],
+    "explanation": "Table Mountain rises above Cape Town at the south-western tip of Africa."
+  },
+  {
+    "id": "geography-132",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "medium",
+    "prompt": "Which line of latitude lies about 23.5 degrees north of the Equator?",
+    "choices": [
+      "The Tropic of Cancer",
+      "The Tropic of Capricorn",
+      "The Arctic Circle",
+      "The Antarctic Circle"
+    ],
+    "explanation": "The Tropic of Cancer is the most northerly line where the sun can be directly overhead."
+  },
+  {
+    "id": "geography-133",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "medium",
+    "prompt": "What are the lines on a map that join places of equal height called?",
+    "choices": ["Contour lines", "Isobars", "Meridians", "Parallels"],
+    "explanation": "Contour lines link points at the same height, so close lines show steep ground."
+  },
+  {
+    "id": "geography-134",
+    "category": "geography",
+    "topic": "Climate",
+    "difficulty": "medium",
+    "prompt": "What is the seasonal wind that brings heavy summer rain to India called?",
+    "choices": ["The monsoon", "The Harmattan", "The Mistral", "The Sirocco"],
+    "explanation": "The south-west monsoon brings most of India's yearly rain between June and September."
+  },
+  {
+    "id": "geography-135",
+    "category": "geography",
+    "topic": "Climate",
+    "difficulty": "medium",
+    "prompt": "What is the cold, treeless plain of the far north, with frozen ground beneath, called?",
+    "choices": ["Tundra", "Taiga", "Steppe", "Savannah"],
+    "explanation": "Tundra has permanently frozen subsoil, so only mosses, grasses and small shrubs can grow."
+  },
+  {
+    "id": "geography-136",
+    "category": "geography",
+    "topic": "Climate",
+    "difficulty": "medium",
+    "prompt": "A Mediterranean climate has hot, dry summers and what kind of winters?",
+    "choices": ["Mild and wet", "Cold and dry", "Hot and dry", "Freezing and snowy"],
+    "explanation": "Mediterranean climates have mild, rainy winters and hot, dry summers."
+  },
+  {
+    "id": "geography-137",
+    "category": "geography",
+    "topic": "Climate",
+    "difficulty": "medium",
+    "prompt": "Which warm Atlantic current flows past Florida and on towards north-west Europe?",
+    "choices": [
+      "The Gulf Stream",
+      "The Labrador Current",
+      "The Canary Current",
+      "The Benguela Current"
+    ],
+    "explanation": "The Gulf Stream carries warm water north-east across the Atlantic, keeping north-west Europe mild."
+  },
+  {
+    "id": "geography-138",
+    "category": "geography",
+    "topic": "Climate",
+    "difficulty": "medium",
+    "prompt": "El Niño is a periodic warming of surface waters in which ocean?",
+    "choices": ["The Pacific Ocean", "The Atlantic Ocean", "The Indian Ocean", "The Arctic Ocean"],
+    "explanation": "El Niño warms the surface of the central and eastern tropical Pacific every few years."
+  },
+  {
+    "id": "geography-139",
+    "category": "geography",
+    "topic": "Seas",
+    "difficulty": "medium",
+    "prompt": "Which sea lies between Italy and the Balkan Peninsula?",
+    "choices": ["The Adriatic Sea", "The Aegean Sea", "The Black Sea", "The Baltic Sea"],
+    "explanation": "The Adriatic separates Italy's east coast from the Balkan coasts of Croatia, Montenegro and Albania."
+  },
+  {
+    "id": "geography-140",
+    "category": "geography",
+    "topic": "Seas",
+    "difficulty": "medium",
+    "prompt": "Which sea, bordered by Kazakhstan, Iran and Azerbaijan, has no outlet to the ocean?",
+    "choices": ["The Caspian Sea", "The Black Sea", "The Aral Sea", "The Red Sea"],
+    "explanation": "The Caspian is an enclosed body of water with no natural link to the open ocean."
+  },
+  {
+    "id": "geography-141",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "hard",
+    "prompt": "What is the capital city of Mongolia?",
+    "choices": ["Ulaanbaatar", "Erdenet", "Darkhan", "Choibalsan"],
+    "explanation": "Ulaanbaatar, on the Tuul River, is Mongolia's capital."
+  },
+  {
+    "id": "geography-142",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "hard",
+    "prompt": "What is the capital city of Albania?",
+    "choices": ["Tirana", "Durrës", "Shkodër", "Vlorë"],
+    "explanation": "Tirana has been Albania's capital since 1920."
+  },
+  {
+    "id": "geography-143",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "hard",
+    "prompt": "What is the capital city of Slovenia?",
+    "choices": ["Ljubljana", "Maribor", "Koper", "Celje"],
+    "explanation": "Ljubljana, in the centre of the country, is Slovenia's capital."
+  },
+  {
+    "id": "geography-144",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "hard",
+    "prompt": "What is the capital city of Uzbekistan?",
+    "choices": ["Tashkent", "Samarkand", "Bukhara", "Namangan"],
+    "explanation": "Tashkent is Uzbekistan's capital; Samarkand and Bukhara are its famous Silk Road cities."
+  },
+  {
+    "id": "geography-145",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "hard",
+    "prompt": "What is the official capital city of Tanzania?",
+    "choices": ["Dodoma", "Dar es Salaam", "Arusha", "Mwanza"],
+    "explanation": "Dodoma was chosen as Tanzania's capital in 1973, though Dar es Salaam remains its main port."
+  },
+  {
+    "id": "geography-146",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "hard",
+    "prompt": "The island of Bioko in the Gulf of Guinea belongs to which country?",
+    "choices": ["Equatorial Guinea", "Cameroon", "Gabon", "São Tomé and Príncipe"],
+    "explanation": "Bioko, off the coast of Cameroon, is part of Equatorial Guinea; the city of Malabo is on the island."
+  },
+  {
+    "id": "geography-147",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "hard",
+    "prompt": "Which country was known as Dahomey until 1975?",
+    "choices": ["Benin", "Togo", "Burkina Faso", "Niger"],
+    "explanation": "Dahomey, named after an old kingdom, changed its name to Benin in 1975."
+  },
+  {
+    "id": "geography-148",
+    "category": "geography",
+    "topic": "Africa",
+    "difficulty": "hard",
+    "prompt": "What is the official capital city of Benin?",
+    "choices": ["Porto-Novo", "Cotonou", "Parakou", "Abomey"],
+    "explanation": "Porto-Novo is Benin's official capital, though most government offices are in Cotonou."
+  },
+  {
+    "id": "geography-149",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "hard",
+    "prompt": "What is the capital city of Eritrea?",
+    "choices": ["Asmara", "Massawa", "Keren", "Assab"],
+    "explanation": "Asmara, high on the plateau above the Red Sea coast, is Eritrea's capital; Massawa is its main port."
+  },
+  {
+    "id": "geography-150",
+    "category": "geography",
+    "topic": "Capitals",
+    "difficulty": "hard",
+    "prompt": "What is the capital city of Madagascar?",
+    "choices": ["Antananarivo", "Toamasina", "Mahajanga", "Toliara"],
+    "explanation": "Antananarivo, in the central highlands, is Madagascar's capital; Toamasina is its main port."
+  },
+  {
+    "id": "geography-151",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "hard",
+    "prompt": "The Rwenzori Mountains lie on the border between Uganda and which country?",
+    "choices": ["The DR Congo", "Kenya", "Rwanda", "Tanzania"],
+    "explanation": "The Rwenzori, the 'Mountains of the Moon', run along the border between western Uganda and the DR Congo."
+  },
+  {
+    "id": "geography-152",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "hard",
+    "prompt": "The Tibesti Mountains, a volcanic range in the Sahara, are mainly in which country?",
+    "choices": ["Chad", "Niger", "Algeria", "Sudan"],
+    "explanation": "The Tibesti Mountains rise in northern Chad, with a small part reaching into southern Libya."
+  },
+  {
+    "id": "geography-153",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "hard",
+    "prompt": "The Mekong River reaches the sea through a delta in which country?",
+    "choices": ["Vietnam", "Cambodia", "Thailand", "Myanmar"],
+    "explanation": "The Mekong ends in a vast delta in southern Vietnam before entering the South China Sea."
+  },
+  {
+    "id": "geography-154",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "hard",
+    "prompt": "In which country does the River Rhine rise?",
+    "choices": ["Switzerland", "Austria", "Germany", "France"],
+    "explanation": "The Rhine begins in the Swiss Alps and flows to the North Sea in the Netherlands."
+  },
+  {
+    "id": "geography-155",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "hard",
+    "prompt": "Which river flows into the Atlantic Ocean at Lisbon?",
+    "choices": ["The Tagus", "The Douro", "The Ebro", "The Guadalquivir"],
+    "explanation": "The Tagus, the longest river in the Iberian Peninsula, widens into an estuary at Lisbon."
+  },
+  {
+    "id": "geography-156",
+    "category": "geography",
+    "topic": "Rivers",
+    "difficulty": "hard",
+    "prompt": "In which country does the River Niger rise?",
+    "choices": ["Guinea", "Mali", "Niger", "Senegal"],
+    "explanation": "The Niger rises in the Guinea Highlands, close to the Sierra Leone border, and arcs through Mali."
+  },
+  {
+    "id": "geography-157",
+    "category": "geography",
+    "topic": "Lakes",
+    "difficulty": "hard",
+    "prompt": "Which is the longest freshwater lake in the world?",
+    "choices": ["Lake Tanganyika", "Lake Baikal", "Lake Malawi", "Lake Superior"],
+    "explanation": "Lake Tanganyika stretches about 670 kilometres along the East African Rift."
+  },
+  {
+    "id": "geography-158",
+    "category": "geography",
+    "topic": "Lakes",
+    "difficulty": "hard",
+    "prompt": "Lake Balaton, a popular summer resort, is in which country?",
+    "choices": ["Hungary", "Austria", "Poland", "Romania"],
+    "explanation": "Lake Balaton in western Hungary is a favourite summer holiday spot for Hungarians and visitors."
+  },
+  {
+    "id": "geography-159",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "hard",
+    "prompt": "Aconcagua, the highest mountain in the Americas, is in which country?",
+    "choices": ["Argentina", "Chile", "Peru", "Bolivia"],
+    "explanation": "Aconcagua rises about 6,960 metres in Argentina's Mendoza province, near the Chilean border."
+  },
+  {
+    "id": "geography-160",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "hard",
+    "prompt": "Mount Kosciuszko is the highest peak on the mainland of which country?",
+    "choices": ["Australia", "New Zealand", "South Africa", "Canada"],
+    "explanation": "Mount Kosciuszko, in New South Wales' Snowy Mountains, is the highest point of mainland Australia."
+  },
+  {
+    "id": "geography-161",
+    "category": "geography",
+    "topic": "Mountains",
+    "difficulty": "hard",
+    "prompt": "Which is the highest mountain in the Alps?",
+    "choices": ["Mont Blanc", "The Matterhorn", "Monte Rosa", "The Eiger"],
+    "explanation": "Mont Blanc, in the Alps where France and Italy meet, rises about 4,800 metres."
+  },
+  {
+    "id": "geography-162",
+    "category": "geography",
+    "topic": "Deserts",
+    "difficulty": "hard",
+    "prompt": "The Thar Desert lies mainly in India and which other country?",
+    "choices": ["Pakistan", "Afghanistan", "Nepal", "Bangladesh"],
+    "explanation": "The Thar, or Great Indian Desert, straddles north-western India and eastern Pakistan."
+  },
+  {
+    "id": "geography-163",
+    "category": "geography",
+    "topic": "Deserts",
+    "difficulty": "hard",
+    "prompt": "The Taklamakan Desert is in which country?",
+    "choices": ["China", "Mongolia", "Kazakhstan", "Iran"],
+    "explanation": "The Taklamakan fills the Tarim Basin in Xinjiang, in north-western China."
+  },
+  {
+    "id": "geography-164",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "hard",
+    "prompt": "The Azores, in the mid-Atlantic, belong to which country?",
+    "choices": ["Portugal", "Spain", "France", "The United Kingdom"],
+    "explanation": "The Azores are an autonomous region of Portugal, far out in the Atlantic west of Lisbon."
+  },
+  {
+    "id": "geography-165",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "hard",
+    "prompt": "Which island is divided between Indonesia, Malaysia and Brunei?",
+    "choices": ["Borneo", "Sumatra", "New Guinea", "Sulawesi"],
+    "explanation": "Borneo is split between Indonesia, Malaysia and the small nation of Brunei."
+  },
+  {
+    "id": "geography-166",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "hard",
+    "prompt": "The Faroe Islands are a self-governing part of which kingdom?",
+    "choices": ["Denmark", "Norway", "Sweden", "The United Kingdom"],
+    "explanation": "The Faroe Islands, between Iceland and Scotland, belong to the Kingdom of Denmark."
+  },
+  {
+    "id": "geography-167",
+    "category": "geography",
+    "topic": "Islands",
+    "difficulty": "hard",
+    "prompt": "The Arctic archipelago of Svalbard belongs to which country?",
+    "choices": ["Norway", "Russia", "Denmark", "Finland"],
+    "explanation": "Svalbard, far north of mainland Europe, has been part of Norway since the 1920s."
+  },
+  {
+    "id": "geography-168",
+    "category": "geography",
+    "topic": "Straits",
+    "difficulty": "hard",
+    "prompt": "Which strait separates Sicily from mainland Italy?",
+    "choices": [
+      "The Strait of Messina",
+      "The Strait of Otranto",
+      "The Bosporus",
+      "The Strait of Gibraltar"
+    ],
+    "explanation": "The narrow Strait of Messina lies between Sicily and Calabria, at the toe of Italy."
+  },
+  {
+    "id": "geography-169",
+    "category": "geography",
+    "topic": "Straits",
+    "difficulty": "hard",
+    "prompt": "The Strait of Malacca separates the Malay Peninsula from which island?",
+    "choices": ["Sumatra", "Java", "Borneo", "Sri Lanka"],
+    "explanation": "The Strait of Malacca runs between Malaysia and the Indonesian island of Sumatra."
+  },
+  {
+    "id": "geography-170",
+    "category": "geography",
+    "topic": "Straits",
+    "difficulty": "hard",
+    "prompt": "The Bab-el-Mandeb strait connects the Red Sea with which gulf?",
+    "choices": ["The Gulf of Aden", "The Gulf of Oman", "The Gulf of Suez", "The Gulf of Guinea"],
+    "explanation": "Bab-el-Mandeb lies between Yemen and the Horn of Africa and opens into the Gulf of Aden."
+  },
+  {
+    "id": "geography-171",
+    "category": "geography",
+    "topic": "Borders",
+    "difficulty": "hard",
+    "prompt": "Which is the only Central American country with no Caribbean coastline?",
+    "choices": ["El Salvador", "Honduras", "Guatemala", "Nicaragua"],
+    "explanation": "El Salvador faces only the Pacific; all other Central American countries touch the Caribbean."
+  },
+  {
+    "id": "geography-172",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "hard",
+    "prompt": "In which Spanish city is the Alhambra palace?",
+    "choices": ["Granada", "Seville", "Córdoba", "Toledo"],
+    "explanation": "The Alhambra, built by the Moorish Nasrid rulers, stands on a hill above Granada."
+  },
+  {
+    "id": "geography-173",
+    "category": "geography",
+    "topic": "Landmarks",
+    "difficulty": "hard",
+    "prompt": "Uluru, the great sandstone rock, is in which part of Australia?",
+    "choices": ["The Northern Territory", "Queensland", "Western Australia", "South Australia"],
+    "explanation": "Uluru stands in the red centre of Australia, in the south of the Northern Territory."
+  },
+  {
+    "id": "geography-174",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "hard",
+    "prompt": "The Arctic Circle passes through which of these countries?",
+    "choices": ["Finland", "Estonia", "Poland", "Ireland"],
+    "explanation": "The Arctic Circle crosses northern Finland, just north of the city of Rovaniemi."
+  },
+  {
+    "id": "geography-175",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "hard",
+    "prompt": "The Prime Meridian passes through which of these West African countries?",
+    "choices": ["Ghana", "Nigeria", "Senegal", "Côte d'Ivoire"],
+    "explanation": "The Prime Meridian crosses eastern Ghana and reaches the coast near the port of Tema."
+  },
+  {
+    "id": "geography-176",
+    "category": "geography",
+    "topic": "Map knowledge",
+    "difficulty": "hard",
+    "prompt": "The Equator and the Prime Meridian cross in which body of water?",
+    "choices": [
+      "The Gulf of Guinea",
+      "The Gulf of Aden",
+      "The Mediterranean Sea",
+      "The Arabian Sea"
+    ],
+    "explanation": "The point at 0 degrees latitude and 0 degrees longitude lies in the Gulf of Guinea, off West Africa."
+  },
+  {
+    "id": "geography-177",
+    "category": "geography",
+    "topic": "Climate",
+    "difficulty": "hard",
+    "prompt": "What is the warm, dry wind that sweeps down Alpine slopes into the valleys below?",
+    "choices": ["The Föhn", "The Mistral", "The Bora", "The Sirocco"],
+    "explanation": "The Föhn warms and dries as it descends the mountains, and can melt snow very quickly."
+  },
+  {
+    "id": "geography-178",
+    "category": "geography",
+    "topic": "Climate",
+    "difficulty": "hard",
+    "prompt": "Which cold ocean current flows north along the coasts of Chile and Peru?",
+    "choices": [
+      "The Humboldt Current",
+      "The Benguela Current",
+      "The Canary Current",
+      "The Gulf Stream"
+    ],
+    "explanation": "The Humboldt Current brings cold water north from the Southern Ocean, helping keep the Atacama dry."
+  },
+  {
+    "id": "geography-179",
+    "category": "geography",
+    "topic": "Climate",
+    "difficulty": "hard",
+    "prompt": "What is the vast belt of coniferous forest across northern Russia and Canada called?",
+    "choices": ["Taiga", "Tundra", "Steppe", "Pampas"],
+    "explanation": "The taiga, or boreal forest, lies between the tundra to the north and grasslands to the south."
+  },
+  {
+    "id": "geography-180",
+    "category": "geography",
+    "topic": "Seas",
+    "difficulty": "hard",
+    "prompt": "The Sargasso Sea, a sea with no coastline, is in which ocean?",
+    "choices": ["The Atlantic Ocean", "The Pacific Ocean", "The Indian Ocean", "The Arctic Ocean"],
+    "explanation": "The Sargasso Sea lies in the North Atlantic, bounded by ocean currents instead of land."
   }
 ]

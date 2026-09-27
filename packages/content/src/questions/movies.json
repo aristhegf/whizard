@@ -189,7 +189,6 @@
     "choices": ["Red", "Blue", "Green", "White"],
     "explanation": "Morpheus offers Neo a choice, and Neo takes the red pill to see the real world."
   },
-
   {
     "id": "movies-021",
     "category": "movies",
@@ -380,7 +379,6 @@
     "choices": ["Eddie Murphy", "Chris Rock", "Mike Myers", "Kevin Hart"],
     "explanation": "Eddie Murphy voiced Donkey, while Mike Myers voiced Shrek."
   },
-
   {
     "id": "movies-041",
     "category": "movies",
@@ -570,5 +568,1115 @@
     "prompt": "Who directed the 1954 Japanese epic Seven Samurai?",
     "choices": ["Akira Kurosawa", "Yasujirō Ozu", "Kenji Mizoguchi", "Masaki Kobayashi"],
     "explanation": "Akira Kurosawa directed Seven Samurai, one of the most influential films ever made."
+  },
+  {
+    "id": "movies-061",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "easy",
+    "prompt": "Who directed the 1997 film Titanic?",
+    "choices": ["James Cameron", "Steven Spielberg", "Ridley Scott", "Christopher Nolan"],
+    "explanation": "James Cameron wrote and directed Titanic and won the Oscar for Best Director for it."
+  },
+  {
+    "id": "movies-062",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "easy",
+    "prompt": "Which film-maker created Star Wars and directed the first film in 1977?",
+    "choices": ["George Lucas", "Steven Spielberg", "Ridley Scott", "James Cameron"],
+    "explanation": "George Lucas created the Star Wars saga and wrote and directed the original 1977 film."
+  },
+  {
+    "id": "movies-063",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "easy",
+    "prompt": "Which director was famously nicknamed the \"Master of Suspense\"?",
+    "choices": ["Alfred Hitchcock", "Orson Welles", "Stanley Kubrick", "Billy Wilder"],
+    "explanation": "Alfred Hitchcock earned the nickname with thrillers such as Rear Window, Vertigo and Psycho."
+  },
+  {
+    "id": "movies-064",
+    "category": "movies",
+    "topic": "Characters",
+    "difficulty": "easy",
+    "prompt": "In The Lion King (1994), what is the name of Simba's wicked uncle?",
+    "choices": ["Scar", "Mufasa", "Rafiki", "Zazu"],
+    "explanation": "Scar kills his brother Mufasa and takes the throne, until Simba returns to claim it."
+  },
+  {
+    "id": "movies-065",
+    "category": "movies",
+    "topic": "Disney",
+    "difficulty": "easy",
+    "prompt": "In Frozen (2013), what is the name of Elsa's younger sister?",
+    "choices": ["Anna", "Belle", "Ariel", "Rapunzel"],
+    "explanation": "Princess Anna sets out to find her older sister Elsa after Elsa's powers freeze the kingdom."
+  },
+  {
+    "id": "movies-066",
+    "category": "movies",
+    "topic": "Pixar",
+    "difficulty": "easy",
+    "prompt": "Which Toy Story character's catchphrase is \"To infinity and beyond!\"?",
+    "choices": ["Buzz Lightyear", "Woody", "Rex", "Hamm"],
+    "explanation": "Space ranger action figure Buzz Lightyear says \"To infinity and beyond!\" throughout the Toy Story films."
+  },
+  {
+    "id": "movies-067",
+    "category": "movies",
+    "topic": "DreamWorks",
+    "difficulty": "easy",
+    "prompt": "In Shrek (2001), which princess does Shrek rescue from a castle guarded by a dragon?",
+    "choices": ["Fiona", "Aurora", "Jasmine", "Tiana"],
+    "explanation": "Shrek rescues Princess Fiona for Lord Farquaad, then falls in love with her himself."
+  },
+  {
+    "id": "movies-068",
+    "category": "movies",
+    "topic": "Disney",
+    "difficulty": "easy",
+    "prompt": "In Disney's The Jungle Book, what kind of animal is Baloo?",
+    "choices": ["A bear", "A panther", "A tiger", "An orangutan"],
+    "explanation": "Baloo is the easy-going bear who sings \"The Bare Necessities\" with Mowgli."
+  },
+  {
+    "id": "movies-069",
+    "category": "movies",
+    "topic": "Disney",
+    "difficulty": "easy",
+    "prompt": "In Beauty and the Beast (1991), what household object is Mrs. Potts?",
+    "choices": ["A teapot", "A candlestick", "A clock", "A wardrobe"],
+    "explanation": "Mrs. Potts is the enchanted teapot; her son Chip is a teacup."
+  },
+  {
+    "id": "movies-070",
+    "category": "movies",
+    "topic": "Pixar",
+    "difficulty": "easy",
+    "prompt": "In Pixar's Up (2009), what lifts Carl's house into the sky?",
+    "choices": ["Balloons", "A rocket", "A tornado", "Giant birds"],
+    "explanation": "Carl ties thousands of helium balloons to his house so it floats away towards South America."
+  },
+  {
+    "id": "movies-071",
+    "category": "movies",
+    "topic": "Pixar",
+    "difficulty": "easy",
+    "prompt": "Which Pixar film follows a lonely trash-compacting robot left behind on Earth?",
+    "choices": ["WALL-E", "Big Hero 6", "Robots", "The Iron Giant"],
+    "explanation": "WALL-E (2008) follows a small cleaning robot who has spent centuries tidying an abandoned Earth."
+  },
+  {
+    "id": "movies-072",
+    "category": "movies",
+    "topic": "DreamWorks",
+    "difficulty": "easy",
+    "prompt": "In DreamWorks' Madagascar (2005), what kind of animal is Marty?",
+    "choices": ["A zebra", "A giraffe", "A hippo", "A lion"],
+    "explanation": "Marty is the zebra whose longing for the wild leads his zoo friends to Madagascar."
+  },
+  {
+    "id": "movies-073",
+    "category": "movies",
+    "topic": "Disney",
+    "difficulty": "easy",
+    "prompt": "Which Disney film is about a baby elephant who learns to fly with his huge ears?",
+    "choices": ["Dumbo", "Bambi", "Babar", "Tarzan"],
+    "explanation": "Dumbo (1941) tells of a circus elephant mocked for his big ears until he learns they let him fly."
+  },
+  {
+    "id": "movies-074",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "easy",
+    "prompt": "Which actress played Hermione Granger in the Harry Potter films?",
+    "choices": ["Emma Watson", "Emma Stone", "Keira Knightley", "Kristen Stewart"],
+    "explanation": "Emma Watson played Hermione in all eight Harry Potter films, from 2001 to 2011."
+  },
+  {
+    "id": "movies-075",
+    "category": "movies",
+    "topic": "Characters",
+    "difficulty": "easy",
+    "prompt": "In the Harry Potter films, who is the half-giant gamekeeper at Hogwarts?",
+    "choices": ["Hagrid", "Dobby", "Filch", "Dumbledore"],
+    "explanation": "Rubeus Hagrid, played by Robbie Coltrane, is the half-giant Keeper of Keys and Grounds at Hogwarts."
+  },
+  {
+    "id": "movies-076",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "easy",
+    "prompt": "In The Lord of the Rings, what must Frodo destroy in the fires of Mount Doom?",
+    "choices": ["The One Ring", "The Elder Wand", "The Arkenstone", "The Sword of Gryffindor"],
+    "explanation": "The One Ring can only be destroyed in the fires of Mount Doom, where it was made."
+  },
+  {
+    "id": "movies-077",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "easy",
+    "prompt": "In Star Wars, what is the glowing sword carried by the Jedi called?",
+    "choices": ["A lightsaber", "A blaster", "A phaser", "A plasma rifle"],
+    "explanation": "Jedi and Sith fight with lightsabers, swords with blades of glowing energy."
+  },
+  {
+    "id": "movies-078",
+    "category": "movies",
+    "topic": "Characters",
+    "difficulty": "easy",
+    "prompt": "Which Jedi Master trains Luke Skywalker on the swamp planet Dagobah?",
+    "choices": ["Yoda", "Obi-Wan Kenobi", "Mace Windu", "Qui-Gon Jinn"],
+    "explanation": "In The Empire Strikes Back, Luke travels to Dagobah to be trained by the small green Jedi Master Yoda."
+  },
+  {
+    "id": "movies-079",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "easy",
+    "prompt": "In the Twilight films, what kind of creature is Edward Cullen?",
+    "choices": ["A vampire", "A werewolf", "A ghost", "A zombie"],
+    "explanation": "Edward Cullen, played by Robert Pattinson, is a vampire who falls in love with Bella Swan."
+  },
+  {
+    "id": "movies-080",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "easy",
+    "prompt": "Which science-fiction film series follows the crew of the starship Enterprise?",
+    "choices": ["Star Trek", "Star Wars", "Alien", "Guardians of the Galaxy"],
+    "explanation": "Captain Kirk, Spock and the crew of the USS Enterprise are the heart of Star Trek."
+  },
+  {
+    "id": "movies-081",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "easy",
+    "prompt": "Which actor played the archaeologist Indiana Jones?",
+    "choices": ["Harrison Ford", "Kevin Costner", "Mel Gibson", "Tom Selleck"],
+    "explanation": "Harrison Ford first played Indiana Jones in Raiders of the Lost Ark (1981)."
+  },
+  {
+    "id": "movies-082",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "easy",
+    "prompt": "Which actor played Neo in The Matrix (1999)?",
+    "choices": ["Keanu Reeves", "Laurence Fishburne", "Hugo Weaving", "Brad Pitt"],
+    "explanation": "Keanu Reeves played Neo; Laurence Fishburne was Morpheus and Hugo Weaving was Agent Smith."
+  },
+  {
+    "id": "movies-083",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "easy",
+    "prompt": "Which actor played Wolverine in the X-Men films?",
+    "choices": ["Hugh Jackman", "Russell Crowe", "Chris Hemsworth", "Ryan Reynolds"],
+    "explanation": "Hugh Jackman first played Wolverine in X-Men (2000) and kept the role for many years."
+  },
+  {
+    "id": "movies-084",
+    "category": "movies",
+    "topic": "Characters",
+    "difficulty": "easy",
+    "prompt": "Which child actor played Kevin McCallister in Home Alone (1990)?",
+    "choices": ["Macaulay Culkin", "Elijah Wood", "Haley Joel Osment", "Jonathan Lipnicki"],
+    "explanation": "Macaulay Culkin became a star playing Kevin, the boy accidentally left home at Christmas."
+  },
+  {
+    "id": "movies-085",
+    "category": "movies",
+    "topic": "Characters",
+    "difficulty": "easy",
+    "prompt": "Which actor played Agent J in Men in Black (1997)?",
+    "choices": ["Will Smith", "Eddie Murphy", "Chris Rock", "Jamie Foxx"],
+    "explanation": "Will Smith played Agent J alongside Tommy Lee Jones as Agent K."
+  },
+  {
+    "id": "movies-086",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "easy",
+    "prompt": "Which actor wrote and starred in Rocky (1976) as the boxer Rocky Balboa?",
+    "choices": [
+      "Sylvester Stallone",
+      "Arnold Schwarzenegger",
+      "Jean-Claude Van Damme",
+      "Dolph Lundgren"
+    ],
+    "explanation": "Sylvester Stallone wrote the script for Rocky and insisted on playing the lead himself."
+  },
+  {
+    "id": "movies-087",
+    "category": "movies",
+    "topic": "Characters",
+    "difficulty": "easy",
+    "prompt": "In The Wizard of Oz (1939), which character hopes the Wizard will give him a brain?",
+    "choices": ["The Scarecrow", "The Tin Man", "The Cowardly Lion", "Toto"],
+    "explanation": "The Scarecrow wants a brain, the Tin Man a heart and the Cowardly Lion courage."
+  },
+  {
+    "id": "movies-088",
+    "category": "movies",
+    "topic": "Disney",
+    "difficulty": "easy",
+    "prompt": "In Disney's Aladdin (1992), what kind of animal is Abu?",
+    "choices": ["A monkey", "A parrot", "A tiger", "A camel"],
+    "explanation": "Abu is Aladdin's thieving pet monkey; Iago is Jafar's parrot and Rajah is Jasmine's tiger."
+  },
+  {
+    "id": "movies-089",
+    "category": "movies",
+    "topic": "Disney",
+    "difficulty": "easy",
+    "prompt": "In Disney's The Little Mermaid (1989), what is the name of the mermaid princess?",
+    "choices": ["Ariel", "Aurora", "Belle", "Jasmine"],
+    "explanation": "Ariel, youngest daughter of King Triton, trades her voice to the sea witch Ursula for human legs."
+  },
+  {
+    "id": "movies-090",
+    "category": "movies",
+    "topic": "Disney",
+    "difficulty": "easy",
+    "prompt": "Which Disney film is about a young Chinese woman who disguises herself as a man to fight in the army?",
+    "choices": ["Mulan", "Pocahontas", "Moana", "Brave"],
+    "explanation": "In Mulan (1998), she takes her father's place in the Imperial Army by disguising herself as a man."
+  },
+  {
+    "id": "movies-091",
+    "category": "movies",
+    "topic": "Characters",
+    "difficulty": "easy",
+    "prompt": "In Disney's 101 Dalmatians, which villain wants a coat made from the puppies' spotted fur?",
+    "choices": ["Cruella de Vil", "Ursula", "Maleficent", "Lady Tremaine"],
+    "explanation": "Cruella de Vil has the Dalmatian puppies stolen because she wants to make a coat from their fur."
+  },
+  {
+    "id": "movies-092",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "easy",
+    "prompt": "Which film series follows Dominic Toretto and his crew of street racers?",
+    "choices": ["Fast & Furious", "Transformers", "Need for Speed", "Mad Max"],
+    "explanation": "Vin Diesel's Dominic Toretto leads the street-racing crew in the Fast & Furious films, which began in 2001."
+  },
+  {
+    "id": "movies-093",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "easy",
+    "prompt": "Which actor played police officer John McClane in Die Hard (1988)?",
+    "choices": ["Bruce Willis", "Mel Gibson", "Sylvester Stallone", "Arnold Schwarzenegger"],
+    "explanation": "Bruce Willis played New York cop John McClane, who takes on a gang of thieves in a Los Angeles tower."
+  },
+  {
+    "id": "movies-094",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "easy",
+    "prompt": "Which actor played Captain Jack Sparrow in the Pirates of the Caribbean films?",
+    "choices": ["Johnny Depp", "Orlando Bloom", "Geoffrey Rush", "Javier Bardem"],
+    "explanation": "Johnny Depp played Jack Sparrow and was Oscar-nominated for the first film, The Curse of the Black Pearl."
+  },
+  {
+    "id": "movies-095",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "easy",
+    "prompt": "Which actor played secret agent Ethan Hunt in the Mission: Impossible films?",
+    "choices": ["Tom Cruise", "Matt Damon", "Brad Pitt", "Jeremy Renner"],
+    "explanation": "Tom Cruise has played Ethan Hunt since the first Mission: Impossible film in 1996."
+  },
+  {
+    "id": "movies-096",
+    "category": "movies",
+    "topic": "Film History",
+    "difficulty": "easy",
+    "prompt": "Which silent film star created the famous character known as the Tramp?",
+    "choices": ["Charlie Chaplin", "Buster Keaton", "Harold Lloyd", "Stan Laurel"],
+    "explanation": "Charlie Chaplin's Tramp, with bowler hat, cane and moustache, first appeared in 1914."
+  },
+  {
+    "id": "movies-097",
+    "category": "movies",
+    "topic": "Film History",
+    "difficulty": "easy",
+    "prompt": "What word does a film director traditionally call out to start the acting in a scene?",
+    "choices": ["Action!", "Cut!", "That's a wrap!", "Curtain!"],
+    "explanation": "\"Action!\" starts a take, \"Cut!\" stops it, and \"That's a wrap!\" ends filming."
+  },
+  {
+    "id": "movies-098",
+    "category": "movies",
+    "topic": "Oscars",
+    "difficulty": "easy",
+    "prompt": "The Academy Awards are better known by which nickname?",
+    "choices": ["The Oscars", "The Emmys", "The Grammys", "The Tonys"],
+    "explanation": "The Academy Awards are called the Oscars after the golden statuette; the Emmys are for television."
+  },
+  {
+    "id": "movies-099",
+    "category": "movies",
+    "topic": "Genres",
+    "difficulty": "easy",
+    "prompt": "Films about cowboys, sheriffs and outlaws on the American frontier belong to which genre?",
+    "choices": ["The western", "Film noir", "The musical", "Science fiction"],
+    "explanation": "Westerns are set in the American Old West, usually in the second half of the 1800s."
+  },
+  {
+    "id": "movies-100",
+    "category": "movies",
+    "topic": "Genres",
+    "difficulty": "easy",
+    "prompt": "What is a \"biopic\"?",
+    "choices": [
+      "A film about a real person's life",
+      "A film with no dialogue",
+      "A very short film",
+      "A film about nature"
+    ],
+    "explanation": "Biopic is short for biographical picture, a film telling the life story of a real person."
+  },
+  {
+    "id": "movies-101",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "medium",
+    "prompt": "Who directed Inception (2010), the thriller about stealing secrets from dreams?",
+    "choices": ["Christopher Nolan", "Denis Villeneuve", "David Fincher", "Ridley Scott"],
+    "explanation": "Christopher Nolan wrote and directed Inception, starring Leonardo DiCaprio."
+  },
+  {
+    "id": "movies-102",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "medium",
+    "prompt": "Who directed Taxi Driver (1976), starring Robert De Niro as Travis Bickle?",
+    "choices": ["Martin Scorsese", "Francis Ford Coppola", "Brian De Palma", "Sidney Lumet"],
+    "explanation": "Martin Scorsese directed Taxi Driver, which won the Palme d'Or at Cannes in 1976."
+  },
+  {
+    "id": "movies-103",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "medium",
+    "prompt": "Who directed The Godfather (1972)?",
+    "choices": ["Francis Ford Coppola", "Martin Scorsese", "Sergio Leone", "Brian De Palma"],
+    "explanation": "Francis Ford Coppola directed The Godfather and co-wrote it with novelist Mario Puzo."
+  },
+  {
+    "id": "movies-104",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "medium",
+    "prompt": "Which director made both Alien (1979) and Blade Runner (1982)?",
+    "choices": ["Ridley Scott", "James Cameron", "John Carpenter", "Tony Scott"],
+    "explanation": "British director Ridley Scott made both science-fiction classics, and later Gladiator."
+  },
+  {
+    "id": "movies-105",
+    "category": "movies",
+    "topic": "Directors",
+    "difficulty": "medium",
+    "prompt": "Who directed the 2018 Marvel film Black Panther?",
+    "choices": ["Ryan Coogler", "Jordan Peele", "Spike Lee", "Steve McQueen"],
+    "explanation": "Ryan Coogler directed and co-wrote Black Panther, having made Creed with Michael B. Jordan."
+  },
+  {
+    "id": "movies-106",
+    "category": "movies",
+    "topic": "Classic Films",
+    "difficulty": "medium",
+    "prompt": "Who directed Citizen Kane (1941) and also played its title role?",
+    "choices": ["Orson Welles", "Charlie Chaplin", "Humphrey Bogart", "John Huston"],
+    "explanation": "Orson Welles was just 25 when he co-wrote, directed and starred in Citizen Kane."
+  },
+  {
+    "id": "movies-107",
+    "category": "movies",
+    "topic": "Classic Films",
+    "difficulty": "medium",
+    "prompt": "In 2001: A Space Odyssey (1968), what is the name of the spaceship's computer?",
+    "choices": ["HAL 9000", "Skynet", "MU-TH-UR", "Joshua"],
+    "explanation": "HAL 9000 is the calm-voiced computer aboard the Discovery One that turns against its crew."
+  },
+  {
+    "id": "movies-108",
+    "category": "movies",
+    "topic": "Musicals",
+    "difficulty": "medium",
+    "prompt": "Which 1952 musical features Gene Kelly singing and dancing through a downpour?",
+    "choices": ["Singin' in the Rain", "An American in Paris", "On the Town", "Anchors Aweigh"],
+    "explanation": "Gene Kelly splashes through puddles in a downpour as he sings and dances to the film's title song."
+  },
+  {
+    "id": "movies-109",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "medium",
+    "prompt": "Which actor played Red in The Shawshank Redemption (1994)?",
+    "choices": ["Morgan Freeman", "Denzel Washington", "Samuel L. Jackson", "Danny Glover"],
+    "explanation": "Morgan Freeman played Ellis \"Red\" Redding, who also narrates the film."
+  },
+  {
+    "id": "movies-110",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "medium",
+    "prompt": "Which actress played the magical nanny in Mary Poppins (1964)?",
+    "choices": ["Julie Andrews", "Audrey Hepburn", "Judy Garland", "Doris Day"],
+    "explanation": "Julie Andrews won the Oscar for Best Actress for her very first film role, Mary Poppins."
+  },
+  {
+    "id": "movies-111",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "medium",
+    "prompt": "Which British-Nigerian actor played Finn in Star Wars: The Force Awakens (2015)?",
+    "choices": ["John Boyega", "David Oyelowo", "Chiwetel Ejiofor", "Daniel Kaluuya"],
+    "explanation": "John Boyega, born in London to Nigerian parents, played the stormtrooper-turned-hero Finn."
+  },
+  {
+    "id": "movies-112",
+    "category": "movies",
+    "topic": "Actors",
+    "difficulty": "medium",
+    "prompt": "Which British-Nigerian actor played Solomon Northup in 12 Years a Slave (2013)?",
+    "choices": ["Chiwetel Ejiofor", "David Oyelowo", "John Boyega", "Idris Elba"],
+    "explanation": "Chiwetel Ejiofor, whose parents are Nigerian, was Oscar-nominated for playing Solomon Northup."
+  },
+  {
+    "id": "movies-113",
+    "category": "movies",
+    "topic": "Oscars",
+    "difficulty": "medium",
+    "prompt": "Which actor won Best Actor for playing Maximus in Gladiator (2000)?",
+    "choices": ["Russell Crowe", "Joaquin Phoenix", "Mel Gibson", "Tom Hanks"],
+    "explanation": "Russell Crowe won Best Actor as Maximus; Joaquin Phoenix played the emperor Commodus."
+  },
+  {
+    "id": "movies-114",
+    "category": "movies",
+    "topic": "Oscars",
+    "difficulty": "medium",
+    "prompt": "Forest Whitaker won Best Actor for playing which African leader in The Last King of Scotland (2006)?",
+    "choices": ["Idi Amin", "Mobutu Sese Seko", "Jean-Bédel Bokassa", "Muammar Gaddafi"],
+    "explanation": "Forest Whitaker won the Oscar for Best Actor for playing Uganda's military ruler Idi Amin."
+  },
+  {
+    "id": "movies-115",
+    "category": "movies",
+    "topic": "Oscars",
+    "difficulty": "medium",
+    "prompt": "For which film did Leonardo DiCaprio win his first Oscar for Best Actor?",
+    "choices": ["The Revenant", "The Wolf of Wall Street", "The Aviator", "Titanic"],
+    "explanation": "DiCaprio won Best Actor in 2016 for The Revenant, after several earlier nominations."
+  },
+  {
+    "id": "movies-116",
+    "category": "movies",
+    "topic": "Oscars",
+    "difficulty": "medium",
+    "prompt": "Which actor won Best Actor for playing Freddie Mercury in Bohemian Rhapsody (2018)?",
+    "choices": ["Rami Malek", "Taron Egerton", "Austin Butler", "Eddie Redmayne"],
+    "explanation": "Rami Malek won the Oscar for playing the Queen singer Freddie Mercury."
+  },
+  {
+    "id": "movies-117",
+    "category": "movies",
+    "topic": "Oscars",
+    "difficulty": "medium",
+    "prompt": "Which film earned Steven Spielberg his first Oscar for Best Director?",
+    "choices": ["Schindler's List", "Saving Private Ryan", "E.T. the Extra-Terrestrial", "Jaws"],
+    "explanation": "Spielberg won Best Director for Schindler's List (1993), which also won Best Picture."
+  },
+  {
+    "id": "movies-118",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "medium",
+    "prompt": "What was the first official James Bond film, released in 1962?",
+    "choices": ["Dr. No", "Goldfinger", "From Russia with Love", "Thunderball"],
+    "explanation": "Dr. No (1962), starring Sean Connery, began the long-running series of Bond films."
+  },
+  {
+    "id": "movies-119",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "medium",
+    "prompt": "The first Star Wars film (1977) was later given which subtitle?",
+    "choices": [
+      "A New Hope",
+      "The Phantom Menace",
+      "Return of the Jedi",
+      "The Empire Strikes Back"
+    ],
+    "explanation": "The 1977 film was retitled Star Wars: Episode IV – A New Hope for its 1981 re-release."
+  },
+  {
+    "id": "movies-120",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "medium",
+    "prompt": "In the Marvel films, how many Infinity Stones does Thanos collect for his gauntlet?",
+    "choices": ["Six", "Five", "Seven", "Nine"],
+    "explanation": "Thanos gathers all six Infinity Stones: Space, Mind, Reality, Power, Time and Soul."
+  },
+  {
+    "id": "movies-121",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "medium",
+    "prompt": "Which creature is Indiana Jones famously afraid of?",
+    "choices": ["Snakes", "Spiders", "Rats", "Bats"],
+    "explanation": "In Raiders of the Lost Ark, Indy faces a pit full of snakes, the one thing he truly fears."
+  },
+  {
+    "id": "movies-122",
+    "category": "movies",
+    "topic": "Pixar",
+    "difficulty": "medium",
+    "prompt": "Which 1995 film was the first feature film made entirely with computer animation?",
+    "choices": ["Toy Story", "A Bug's Life", "Shrek", "Antz"],
+    "explanation": "Pixar's Toy Story was the first fully computer-animated feature film."
+  },
+  {
+    "id": "movies-123",
+    "category": "movies",
+    "topic": "Pixar",
+    "difficulty": "medium",
+    "prompt": "In Pixar's Inside Out (2015), which emotion is coloured blue?",
+    "choices": ["Sadness", "Fear", "Disgust", "Anger"],
+    "explanation": "Sadness is blue, Joy is yellow, Anger is red, Disgust is green and Fear is purple."
+  },
+  {
+    "id": "movies-124",
+    "category": "movies",
+    "topic": "Pixar",
+    "difficulty": "medium",
+    "prompt": "Pixar's Coco (2017) is built around which Mexican holiday?",
+    "choices": ["The Day of the Dead", "Cinco de Mayo", "Independence Day", "Las Posadas"],
+    "explanation": "Miguel crosses into the Land of the Dead on Día de Muertos, when families honour their ancestors."
+  },
+  {
+    "id": "movies-125",
+    "category": "movies",
+    "topic": "DreamWorks",
+    "difficulty": "medium",
+    "prompt": "Who provides the voice of Po in DreamWorks' Kung Fu Panda?",
+    "choices": ["Jack Black", "Seth Rogen", "Ben Stiller", "Adam Sandler"],
+    "explanation": "Jack Black voices Po, the noodle-loving panda who becomes the Dragon Warrior."
+  },
+  {
+    "id": "movies-126",
+    "category": "movies",
+    "topic": "Disney",
+    "difficulty": "medium",
+    "prompt": "Which comedian voiced the Genie in Disney's Aladdin (1992)?",
+    "choices": ["Robin Williams", "Eddie Murphy", "Jim Carrey", "Steve Martin"],
+    "explanation": "Robin Williams improvised much of the Genie's fast-talking dialogue."
+  },
+  {
+    "id": "movies-127",
+    "category": "movies",
+    "topic": "Disney",
+    "difficulty": "medium",
+    "prompt": "Which singer wrote the music for the songs in The Lion King (1994) with lyricist Tim Rice?",
+    "choices": ["Elton John", "Phil Collins", "Sting", "Billy Joel"],
+    "explanation": "Elton John and Tim Rice wrote the songs, including the Oscar-winning \"Can You Feel the Love Tonight\"."
+  },
+  {
+    "id": "movies-128",
+    "category": "movies",
+    "topic": "Studio Ghibli",
+    "difficulty": "medium",
+    "prompt": "Which Studio Ghibli character appears in the studio's logo?",
+    "choices": ["Totoro", "Chihiro", "Kiki", "Ponyo"],
+    "explanation": "The big grey forest spirit from My Neighbor Totoro (1988) is Studio Ghibli's emblem."
+  },
+  {
+    "id": "movies-129",
+    "category": "movies",
+    "topic": "Soundtracks",
+    "difficulty": "medium",
+    "prompt": "Who composed the music for the original Star Wars films?",
+    "choices": ["John Williams", "Hans Zimmer", "Howard Shore", "Jerry Goldsmith"],
+    "explanation": "John Williams scored the Star Wars films and won an Oscar for the music of the 1977 original."
+  },
+  {
+    "id": "movies-130",
+    "category": "movies",
+    "topic": "Soundtracks",
+    "difficulty": "medium",
+    "prompt": "Which composer won an Oscar for the score of The Lion King (1994)?",
+    "choices": ["Hans Zimmer", "James Horner", "Alan Menken", "John Williams"],
+    "explanation": "Hans Zimmer won Best Original Score for The Lion King."
+  },
+  {
+    "id": "movies-131",
+    "category": "movies",
+    "topic": "Settings",
+    "difficulty": "medium",
+    "prompt": "The Lord of the Rings films were shot mainly in which country?",
+    "choices": ["New Zealand", "Ireland", "Scotland", "Canada"],
+    "explanation": "Director Peter Jackson filmed Middle-earth across the landscapes of his native New Zealand."
+  },
+  {
+    "id": "movies-132",
+    "category": "movies",
+    "topic": "Settings",
+    "difficulty": "medium",
+    "prompt": "The Sound of Music (1965) is set in and around which Austrian city?",
+    "choices": ["Salzburg", "Vienna", "Innsbruck", "Graz"],
+    "explanation": "The von Trapp family story unfolds in Salzburg, where much of the film was shot."
+  },
+  {
+    "id": "movies-133",
+    "category": "movies",
+    "topic": "Settings",
+    "difficulty": "medium",
+    "prompt": "In Coming to America (1988), Prince Akeem is heir to the throne of which fictional African country?",
+    "choices": ["Zamunda", "Wakanda", "Sokovia", "Genovia"],
+    "explanation": "Eddie Murphy's Prince Akeem leaves the rich kingdom of Zamunda to find a bride in Queens, New York."
+  },
+  {
+    "id": "movies-134",
+    "category": "movies",
+    "topic": "Settings",
+    "difficulty": "medium",
+    "prompt": "The 2009 science-fiction film District 9 is set in which South African city?",
+    "choices": ["Johannesburg", "Cape Town", "Durban", "Pretoria"],
+    "explanation": "District 9 shows stranded aliens forced into a camp in Johannesburg."
+  },
+  {
+    "id": "movies-135",
+    "category": "movies",
+    "topic": "World Cinema",
+    "difficulty": "medium",
+    "prompt": "The 2002 Brazilian film City of God is set in a poor neighbourhood of which city?",
+    "choices": ["Rio de Janeiro", "São Paulo", "Salvador", "Brasília"],
+    "explanation": "City of God (Cidade de Deus) is named after a real housing area in the west of Rio de Janeiro."
+  },
+  {
+    "id": "movies-136",
+    "category": "movies",
+    "topic": "World Cinema",
+    "difficulty": "medium",
+    "prompt": "What is the top prize at the Cannes Film Festival called?",
+    "choices": ["The Palme d'Or", "The Golden Lion", "The Golden Bear", "The Golden Globe"],
+    "explanation": "Cannes awards the Palme d'Or; the Golden Lion is Venice's prize and the Golden Bear is Berlin's."
+  },
+  {
+    "id": "movies-137",
+    "category": "movies",
+    "topic": "World Cinema",
+    "difficulty": "medium",
+    "prompt": "Who directed the Oscar-winning South Korean film Parasite (2019)?",
+    "choices": ["Bong Joon-ho", "Park Chan-wook", "Kim Jee-woon", "Lee Chang-dong"],
+    "explanation": "Bong Joon-ho won Best Director, Best Picture and more for Parasite in 2020."
+  },
+  {
+    "id": "movies-138",
+    "category": "movies",
+    "topic": "World Cinema",
+    "difficulty": "medium",
+    "prompt": "Who directed the Spanish-language fantasy Pan's Labyrinth (2006)?",
+    "choices": ["Guillermo del Toro", "Alfonso Cuarón", "Pedro Almodóvar", "Alejandro G. Iñárritu"],
+    "explanation": "Mexican film-maker Guillermo del Toro wrote and directed Pan's Labyrinth, set in 1944 Spain."
+  },
+  {
+    "id": "movies-139",
+    "category": "movies",
+    "topic": "World Cinema",
+    "difficulty": "medium",
+    "prompt": "Train to Busan (2016) is a South Korean film about passengers fighting what?",
+    "choices": ["Zombies", "Aliens", "Vampires", "Giant spiders"],
+    "explanation": "Train to Busan follows passengers on a high-speed train as a zombie outbreak sweeps South Korea."
+  },
+  {
+    "id": "movies-140",
+    "category": "movies",
+    "topic": "Genres",
+    "difficulty": "medium",
+    "prompt": "Which French term describes the dark, cynical Hollywood crime dramas of the 1940s and 1950s?",
+    "choices": ["Film noir", "Nouvelle vague", "Cinéma vérité", "Grand Guignol"],
+    "explanation": "French critics named these shadowy crime films \"film noir\", meaning black film."
+  },
+  {
+    "id": "movies-141",
+    "category": "movies",
+    "topic": "Oscars",
+    "difficulty": "hard",
+    "prompt": "Which 2003 film won all 11 Academy Awards it was nominated for?",
+    "choices": [
+      "The Return of the King",
+      "Master and Commander",
+      "Lost in Translation",
+      "Mystic River"
+    ],
+    "explanation": "The Lord of the Rings: The Return of the King went 11 for 11 at the 2004 Oscars, including Best Picture."
+  },
+  {
+    "id": "movies-142",
+    "category": "movies",
+    "topic": "Oscars",
+    "difficulty": "hard",
+    "prompt": "Which was the first sequel to win the Oscar for Best Picture?",
+    "choices": [
+      "The Godfather Part II",
+      "The Empire Strikes Back",
+      "Aliens",
+      "Terminator 2: Judgment Day"
+    ],
+    "explanation": "The Godfather Part II won Best Picture in 1975, two years after the original also won it."
+  },
+  {
+    "id": "movies-143",
+    "category": "movies",
+    "topic": "Oscars",
+    "difficulty": "hard",
+    "prompt": "Which 1975 film won all five major Oscars: Picture, Director, Actor, Actress and Screenplay?",
+    "choices": ["One Flew Over the Cuckoo's Nest", "Jaws", "Taxi Driver", "Dog Day Afternoon"],
+    "explanation": "It won all five at the 1976 Oscars, with Jack Nicholson and Louise Fletcher taking the acting awards."
+  },
+  {
+    "id": "movies-144",
+    "category": "movies",
+    "topic": "Oscar Firsts",
+    "difficulty": "hard",
+    "prompt": "Who became the first African American to win an Oscar, for her role in Gone with the Wind (1939)?",
+    "choices": ["Hattie McDaniel", "Butterfly McQueen", "Dorothy Dandridge", "Ethel Waters"],
+    "explanation": "Hattie McDaniel won Best Supporting Actress in 1940 for playing Mammy."
+  },
+  {
+    "id": "movies-145",
+    "category": "movies",
+    "topic": "Oscar Firsts",
+    "difficulty": "hard",
+    "prompt": "Who became the first Black man to win Best Actor, for Lilies of the Field (1963)?",
+    "choices": ["Sidney Poitier", "Harry Belafonte", "James Earl Jones", "Denzel Washington"],
+    "explanation": "Sidney Poitier won Best Actor at the 1964 Oscars for Lilies of the Field."
+  },
+  {
+    "id": "movies-146",
+    "category": "movies",
+    "topic": "Oscar Firsts",
+    "difficulty": "hard",
+    "prompt": "Who became the second woman to win the Oscar for Best Director, for Nomadland (2020)?",
+    "choices": ["Chloé Zhao", "Jane Campion", "Greta Gerwig", "Sofia Coppola"],
+    "explanation": "Chloé Zhao won in 2021, following Kathryn Bigelow; Jane Campion became the third a year later."
+  },
+  {
+    "id": "movies-147",
+    "category": "movies",
+    "topic": "Oscar Firsts",
+    "difficulty": "hard",
+    "prompt": "Who became the first Latin American to win the Oscar for Best Director, for Gravity (2013)?",
+    "choices": [
+      "Alfonso Cuarón",
+      "Guillermo del Toro",
+      "Alejandro G. Iñárritu",
+      "Fernando Meirelles"
+    ],
+    "explanation": "Mexican director Alfonso Cuarón won Best Director for Gravity at the 2014 Oscars."
+  },
+  {
+    "id": "movies-148",
+    "category": "movies",
+    "topic": "Best Picture",
+    "difficulty": "hard",
+    "prompt": "Which mostly silent, black-and-white French film won Best Picture at the 2012 Oscars?",
+    "choices": ["The Artist", "Amour", "Hugo", "The Intouchables"],
+    "explanation": "The Artist, a love letter to the silent era, won Best Picture for the year 2011."
+  },
+  {
+    "id": "movies-149",
+    "category": "movies",
+    "topic": "Best Picture",
+    "difficulty": "hard",
+    "prompt": "Which Hollywood producer made Gone with the Wind (1939)?",
+    "choices": ["David O. Selznick", "Samuel Goldwyn", "Irving Thalberg", "Darryl F. Zanuck"],
+    "explanation": "David O. Selznick produced Gone with the Wind, which won Best Picture at the 1940 Oscars."
+  },
+  {
+    "id": "movies-150",
+    "category": "movies",
+    "topic": "Film History",
+    "difficulty": "hard",
+    "prompt": "Who directed the 1903 silent western The Great Train Robbery?",
+    "choices": ["Edwin S. Porter", "D. W. Griffith", "Georges Méliès", "Cecil B. DeMille"],
+    "explanation": "Edwin S. Porter made The Great Train Robbery for the Edison company in 1903."
+  },
+  {
+    "id": "movies-151",
+    "category": "movies",
+    "topic": "Film History",
+    "difficulty": "hard",
+    "prompt": "Which silent comedian starred in and co-directed The General (1926), a comedy set during the US Civil War?",
+    "choices": ["Buster Keaton", "Charlie Chaplin", "Harold Lloyd", "Harry Langdon"],
+    "explanation": "Buster Keaton plays a train engineer chasing his stolen locomotive in The General."
+  },
+  {
+    "id": "movies-152",
+    "category": "movies",
+    "topic": "Film History",
+    "difficulty": "hard",
+    "prompt": "Which actor played the monster in the 1931 film Frankenstein?",
+    "choices": ["Boris Karloff", "Bela Lugosi", "Lon Chaney Jr.", "Peter Lorre"],
+    "explanation": "Boris Karloff's flat-headed monster became iconic; Bela Lugosi played Dracula that same year."
+  },
+  {
+    "id": "movies-153",
+    "category": "movies",
+    "topic": "Film History",
+    "difficulty": "hard",
+    "prompt": "Who directed the 1922 German silent vampire film Nosferatu?",
+    "choices": ["F. W. Murnau", "Fritz Lang", "Robert Wiene", "G. W. Pabst"],
+    "explanation": "F. W. Murnau's Nosferatu was an unofficial adaptation of Bram Stoker's Dracula."
+  },
+  {
+    "id": "movies-154",
+    "category": "movies",
+    "topic": "Film History",
+    "difficulty": "hard",
+    "prompt": "What did the famous Hollywood sign originally spell when it was put up in 1923?",
+    "choices": ["Hollywoodland", "Hollywood Hills", "Hollywood Studios", "Hollywood Heights"],
+    "explanation": "The sign advertised a housing estate called Hollywoodland; the last four letters were removed in 1949."
+  },
+  {
+    "id": "movies-155",
+    "category": "movies",
+    "topic": "Disney",
+    "difficulty": "hard",
+    "prompt": "Which 1928 cartoon, among the first with synchronised sound, made Mickey Mouse a star?",
+    "choices": ["Steamboat Willie", "Plane Crazy", "The Skeleton Dance", "Flowers and Trees"],
+    "explanation": "Steamboat Willie premiered in New York in November 1928 with a fully synchronised soundtrack."
+  },
+  {
+    "id": "movies-156",
+    "category": "movies",
+    "topic": "Soundtracks",
+    "difficulty": "hard",
+    "prompt": "Who composed the shrieking, strings-only score for Alfred Hitchcock's Psycho (1960)?",
+    "choices": ["Bernard Herrmann", "Max Steiner", "Miklós Rózsa", "Dimitri Tiomkin"],
+    "explanation": "Bernard Herrmann scored Psycho for strings alone, and worked on several other Hitchcock films."
+  },
+  {
+    "id": "movies-157",
+    "category": "movies",
+    "topic": "Soundtracks",
+    "difficulty": "hard",
+    "prompt": "Which Greek composer won the Oscar for his synthesiser score for Chariots of Fire (1981)?",
+    "choices": ["Vangelis", "Mikis Theodorakis", "Yanni", "Jean-Michel Jarre"],
+    "explanation": "Vangelis won Best Original Score for Chariots of Fire, whose theme became world-famous."
+  },
+  {
+    "id": "movies-158",
+    "category": "movies",
+    "topic": "Soundtracks",
+    "difficulty": "hard",
+    "prompt": "Who composed the music for Sergio Leone's westerns, including The Good, the Bad and the Ugly?",
+    "choices": ["Ennio Morricone", "Nino Rota", "Bernard Herrmann", "Elmer Bernstein"],
+    "explanation": "Ennio Morricone's scores for Leone's westerns, with whistles and electric guitar, are instantly recognisable."
+  },
+  {
+    "id": "movies-159",
+    "category": "movies",
+    "topic": "Soundtracks",
+    "difficulty": "hard",
+    "prompt": "Which Rocky film features the song \"Eye of the Tiger\" by Survivor?",
+    "choices": ["Rocky III", "Rocky", "Rocky II", "Rocky IV"],
+    "explanation": "Survivor wrote \"Eye of the Tiger\" for Rocky III (1982) at Sylvester Stallone's request."
+  },
+  {
+    "id": "movies-160",
+    "category": "movies",
+    "topic": "Soundtracks",
+    "difficulty": "hard",
+    "prompt": "Which Indian composer won two Oscars for the music of Slumdog Millionaire (2008)?",
+    "choices": ["A. R. Rahman", "M. M. Keeravani", "Ilaiyaraaja", "Vishal Bhardwaj"],
+    "explanation": "A. R. Rahman won Best Original Score and, with lyricist Gulzar, Best Original Song for \"Jai Ho\"."
+  },
+  {
+    "id": "movies-161",
+    "category": "movies",
+    "topic": "Soundtracks",
+    "difficulty": "hard",
+    "prompt": "Who composed the Oscar-winning score for The Lord of the Rings film trilogy?",
+    "choices": ["Howard Shore", "Hans Zimmer", "James Horner", "Danny Elfman"],
+    "explanation": "Canadian composer Howard Shore won Oscars for The Fellowship of the Ring and The Return of the King."
+  },
+  {
+    "id": "movies-162",
+    "category": "movies",
+    "topic": "DreamWorks",
+    "difficulty": "hard",
+    "prompt": "In How to Train Your Dragon (2010), what species of dragon is Toothless?",
+    "choices": ["A Night Fury", "A Deadly Nadder", "A Monstrous Nightmare", "A Gronckle"],
+    "explanation": "Toothless is a rare Night Fury that Hiccup shoots down and then befriends."
+  },
+  {
+    "id": "movies-163",
+    "category": "movies",
+    "topic": "DreamWorks",
+    "difficulty": "hard",
+    "prompt": "Which film won the first Oscar for Best Animated Feature, presented in 2002?",
+    "choices": ["Shrek", "Monsters, Inc.", "Jimmy Neutron: Boy Genius", "Ice Age"],
+    "explanation": "Shrek beat Monsters, Inc. and Jimmy Neutron to win the new award at the 2002 ceremony."
+  },
+  {
+    "id": "movies-164",
+    "category": "movies",
+    "topic": "Pixar",
+    "difficulty": "hard",
+    "prompt": "Which Pixar film became the second animated film ever nominated for Best Picture?",
+    "choices": ["Up", "WALL-E", "Toy Story 3", "Ratatouille"],
+    "explanation": "Up (2009) was nominated after Beauty and the Beast; Toy Story 3 became the third a year later."
+  },
+  {
+    "id": "movies-165",
+    "category": "movies",
+    "topic": "Pixar",
+    "difficulty": "hard",
+    "prompt": "What is the surname of the superhero family in The Incredibles (2004)?",
+    "choices": ["Parr", "Best", "Stone", "Kent"],
+    "explanation": "Mr. Incredible is Bob Parr, Elastigirl is Helen Parr, and their children are Violet, Dash and Jack-Jack."
+  },
+  {
+    "id": "movies-166",
+    "category": "movies",
+    "topic": "Disney",
+    "difficulty": "hard",
+    "prompt": "In Lilo & Stitch (2002), what is Stitch's experiment number?",
+    "choices": ["626", "221", "316", "101"],
+    "explanation": "Stitch was created by Dr. Jumba Jookiba as Experiment 626 before escaping to Hawaii."
+  },
+  {
+    "id": "movies-167",
+    "category": "movies",
+    "topic": "Animation",
+    "difficulty": "hard",
+    "prompt": "Which British animation studio created Wallace & Gromit?",
+    "choices": ["Aardman Animations", "Cosgrove Hall", "Laika", "Blue Sky Studios"],
+    "explanation": "Nick Park's Wallace & Gromit films were made at Aardman Animations in Bristol, England."
+  },
+  {
+    "id": "movies-168",
+    "category": "movies",
+    "topic": "Studio Ghibli",
+    "difficulty": "hard",
+    "prompt": "In Spirited Away (2001), what is the real name of the girl who works at the spirits' bathhouse?",
+    "choices": ["Chihiro", "Kiki", "Satsuki", "Sophie"],
+    "explanation": "Chihiro is renamed Sen by the witch Yubaba and must hold on to her real name to get home."
+  },
+  {
+    "id": "movies-169",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "hard",
+    "prompt": "In Jurassic Park (1993), on which fictional island is the dinosaur park built?",
+    "choices": ["Isla Nublar", "Isla Sorna", "Skull Island", "Amity Island"],
+    "explanation": "The park is on Isla Nublar off Costa Rica; Isla Sorna is the \"Site B\" island of the sequels."
+  },
+  {
+    "id": "movies-170",
+    "category": "movies",
+    "topic": "Franchises",
+    "difficulty": "hard",
+    "prompt": "In Die Hard (1988), what is the name of the Los Angeles skyscraper seized by Hans Gruber's gang?",
+    "choices": ["Nakatomi Plaza", "Wayne Tower", "Oscorp Tower", "Stark Tower"],
+    "explanation": "John McClane battles Hans Gruber's gang inside Nakatomi Plaza on Christmas Eve."
+  },
+  {
+    "id": "movies-171",
+    "category": "movies",
+    "topic": "Settings",
+    "difficulty": "hard",
+    "prompt": "In The Shawshank Redemption (1994), Shawshank State Prison is in which US state?",
+    "choices": ["Maine", "Texas", "Vermont", "Oregon"],
+    "explanation": "Like Stephen King's original novella, the film places Shawshank prison in Maine."
+  },
+  {
+    "id": "movies-172",
+    "category": "movies",
+    "topic": "Settings",
+    "difficulty": "hard",
+    "prompt": "In Amélie (2001), in which district of Paris does Amélie work as a waitress?",
+    "choices": ["Montmartre", "Montparnasse", "Le Marais", "Saint-Germain"],
+    "explanation": "Amélie works at the Café des 2 Moulins in Montmartre, where much of the film was shot."
+  },
+  {
+    "id": "movies-173",
+    "category": "movies",
+    "topic": "Genres",
+    "difficulty": "hard",
+    "prompt": "Which 1984 \"mockumentary\" follows a rock band whose amplifiers go up to eleven?",
+    "choices": ["This Is Spinal Tap", "Almost Famous", "The Commitments", "Wayne's World"],
+    "explanation": "Rob Reiner's This Is Spinal Tap follows a fictional British heavy metal band on tour."
+  },
+  {
+    "id": "movies-174",
+    "category": "movies",
+    "topic": "Genres",
+    "difficulty": "hard",
+    "prompt": "Crouching Tiger, Hidden Dragon (2000) belongs to which Chinese genre of martial-arts heroes?",
+    "choices": ["Wuxia", "Kaiju", "Giallo", "Jidaigeki"],
+    "explanation": "Wuxia films tell of wandering martial-arts heroes; kaiju and jidaigeki are Japanese and giallo is Italian."
+  },
+  {
+    "id": "movies-175",
+    "category": "movies",
+    "topic": "World Cinema",
+    "difficulty": "hard",
+    "prompt": "Film-maker Ousmane Sembène, often called the father of African cinema, came from which country?",
+    "choices": ["Senegal", "Mali", "Burkina Faso", "Ghana"],
+    "explanation": "Senegal's Ousmane Sembène made Black Girl (1966), one of the first feature films by a sub-Saharan African."
+  },
+  {
+    "id": "movies-176",
+    "category": "movies",
+    "topic": "World Cinema",
+    "difficulty": "hard",
+    "prompt": "The pan-African film festival FESPACO is held in which city?",
+    "choices": ["Ouagadougou", "Dakar", "Bamako", "Accra"],
+    "explanation": "FESPACO, founded in 1969, is held in Ouagadougou, the capital of Burkina Faso."
+  },
+  {
+    "id": "movies-177",
+    "category": "movies",
+    "topic": "World Cinema",
+    "difficulty": "hard",
+    "prompt": "Which 2005 South African film won the Oscar for Best Foreign Language Film?",
+    "choices": ["Tsotsi", "Yesterday", "Sarafina!", "Life, Above All"],
+    "explanation": "Gavin Hood's Tsotsi, about a young Johannesburg gangster, won the award at the 2006 Oscars."
+  },
+  {
+    "id": "movies-178",
+    "category": "movies",
+    "topic": "World Cinema",
+    "difficulty": "hard",
+    "prompt": "Which Italian actor won Best Actor for Life Is Beautiful (1997), a film he also directed?",
+    "choices": ["Roberto Benigni", "Marcello Mastroianni", "Giancarlo Giannini", "Toni Servillo"],
+    "explanation": "Roberto Benigni won Best Actor, and the film also won Best Foreign Language Film, at the 1999 Oscars."
+  },
+  {
+    "id": "movies-179",
+    "category": "movies",
+    "topic": "World Cinema",
+    "difficulty": "hard",
+    "prompt": "Who directed The Seventh Seal (1957), in which a knight plays chess with Death?",
+    "choices": ["Ingmar Bergman", "Carl Theodor Dreyer", "Andrei Tarkovsky", "Federico Fellini"],
+    "explanation": "Swedish director Ingmar Bergman made The Seventh Seal, starring Max von Sydow as the knight."
+  },
+  {
+    "id": "movies-180",
+    "category": "movies",
+    "topic": "Indian Cinema",
+    "difficulty": "hard",
+    "prompt": "Who directed Pather Panchali (1955), the first film of the Apu Trilogy?",
+    "choices": ["Satyajit Ray", "Raj Kapoor", "Guru Dutt", "Mrinal Sen"],
+    "explanation": "Bengali film-maker Satyajit Ray made Pather Panchali, and received an honorary Oscar in 1992."
   }
 ]

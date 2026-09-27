@@ -1,14 +1,5 @@
 [
   {
-    "id": "general-knowledge-001",
-    "category": "general-knowledge",
-    "topic": "Animals",
-    "difficulty": "easy",
-    "prompt": "What is a baby kangaroo called?",
-    "choices": ["Joey", "Kid", "Cub", "Calf"],
-    "explanation": "Baby kangaroos, like other young marsupials, are called joeys."
-  },
-  {
     "id": "general-knowledge-002",
     "category": "general-knowledge",
     "topic": "Maths",
@@ -16,24 +7,6 @@
     "prompt": "How many sides does an octagon have?",
     "choices": ["Eight", "Six", "Seven", "Ten"],
     "explanation": "An octagon has eight sides; the prefix octa- means eight."
-  },
-  {
-    "id": "general-knowledge-003",
-    "category": "general-knowledge",
-    "topic": "Science",
-    "difficulty": "easy",
-    "prompt": "Which gas do plants take in from the air to make their food?",
-    "choices": ["Carbon dioxide", "Oxygen", "Nitrogen", "Hydrogen"],
-    "explanation": "In photosynthesis, plants use sunlight to turn carbon dioxide and water into sugar, releasing oxygen."
-  },
-  {
-    "id": "general-knowledge-004",
-    "category": "general-knowledge",
-    "topic": "Science",
-    "difficulty": "easy",
-    "prompt": "At what temperature does pure water freeze at sea level?",
-    "choices": ["0°C", "32°C", "100°C", "-10°C"],
-    "explanation": "Pure water freezes at 0°C (32°F) at normal sea-level pressure."
   },
   {
     "id": "general-knowledge-005",
@@ -61,15 +34,6 @@
     "prompt": "How many days are there in a leap year?",
     "choices": ["366", "365", "364", "367"],
     "explanation": "A leap year adds 29 February, giving 366 days instead of the usual 365."
-  },
-  {
-    "id": "general-knowledge-008",
-    "category": "general-knowledge",
-    "topic": "Buildings",
-    "difficulty": "easy",
-    "prompt": "In which city does the Eiffel Tower stand?",
-    "choices": ["Paris", "Lyon", "Brussels", "Rome"],
-    "explanation": "The Eiffel Tower was built in Paris for the 1889 World's Fair."
   },
   {
     "id": "general-knowledge-009",
@@ -117,15 +81,6 @@
     "explanation": "Guacamole is a Mexican dip made from mashed avocado."
   },
   {
-    "id": "general-knowledge-014",
-    "category": "general-knowledge",
-    "topic": "Science",
-    "difficulty": "easy",
-    "prompt": "Which scientist discovered penicillin in 1928?",
-    "choices": ["Alexander Fleming", "Louis Pasteur", "Marie Curie", "Joseph Lister"],
-    "explanation": "Alexander Fleming noticed mould killing bacteria in a dish in 1928, leading to penicillin."
-  },
-  {
     "id": "general-knowledge-015",
     "category": "general-knowledge",
     "topic": "Geography",
@@ -133,15 +88,6 @@
     "prompt": "What is the longest river in Africa?",
     "choices": ["Nile", "Congo", "Niger", "Zambezi"],
     "explanation": "The Nile flows north for over 6,600 km to the Mediterranean, making it Africa's longest river."
-  },
-  {
-    "id": "general-knowledge-016",
-    "category": "general-knowledge",
-    "topic": "Buildings",
-    "difficulty": "easy",
-    "prompt": "In which country are the Pyramids of Giza?",
-    "choices": ["Egypt", "Sudan", "Morocco", "Libya"],
-    "explanation": "The Pyramids of Giza stand on the Giza plateau, just outside Cairo in Egypt."
   },
   {
     "id": "general-knowledge-017",
@@ -171,16 +117,6 @@
     "explanation": "12 × 12 = 144, a number also known as a gross."
   },
   {
-    "id": "general-knowledge-020",
-    "category": "general-knowledge",
-    "topic": "Human body",
-    "difficulty": "easy",
-    "prompt": "Which organ pumps blood around the human body?",
-    "choices": ["Heart", "Lungs", "Liver", "Kidneys"],
-    "explanation": "The heart is a muscle that pumps blood through the arteries and veins."
-  },
-
-  {
     "id": "general-knowledge-021",
     "category": "general-knowledge",
     "topic": "Language",
@@ -199,15 +135,6 @@
     "explanation": "Carpe diem, from the Roman poet Horace, means seize the day."
   },
   {
-    "id": "general-knowledge-023",
-    "category": "general-knowledge",
-    "topic": "Geography",
-    "difficulty": "medium",
-    "prompt": "In which country is Mount Kilimanjaro?",
-    "choices": ["Tanzania", "Kenya", "Uganda", "Ethiopia"],
-    "explanation": "Mount Kilimanjaro is in northern Tanzania, close to the border with Kenya."
-  },
-  {
     "id": "general-knowledge-024",
     "category": "general-knowledge",
     "topic": "Maths",
@@ -215,24 +142,6 @@
     "prompt": "What is the only even prime number?",
     "choices": ["2", "4", "6", "8"],
     "explanation": "Two is prime because its only factors are 1 and itself; every other even number divides by 2."
-  },
-  {
-    "id": "general-knowledge-025",
-    "category": "general-knowledge",
-    "topic": "Science",
-    "difficulty": "medium",
-    "prompt": "What is the chemical symbol for gold?",
-    "choices": ["Au", "Ag", "Gd", "Pb"],
-    "explanation": "Gold's symbol Au comes from its Latin name aurum; Ag is silver and Pb is lead."
-  },
-  {
-    "id": "general-knowledge-026",
-    "category": "general-knowledge",
-    "topic": "Science",
-    "difficulty": "medium",
-    "prompt": "Which gas makes up most of the Earth's atmosphere?",
-    "choices": ["Nitrogen", "Oxygen", "Argon", "Carbon dioxide"],
-    "explanation": "Nitrogen makes up about 78% of the air; oxygen is about 21%."
   },
   {
     "id": "general-knowledge-027",
@@ -260,15 +169,6 @@
     "prompt": "Who painted the Sistine Chapel ceiling frescoes between 1508 and 1512?",
     "choices": ["Michelangelo", "Raphael", "Leonardo da Vinci", "Titian"],
     "explanation": "Michelangelo spent four years painting the Sistine Chapel ceiling for Pope Julius II."
-  },
-  {
-    "id": "general-knowledge-030",
-    "category": "general-knowledge",
-    "topic": "Literature",
-    "difficulty": "medium",
-    "prompt": "Who wrote the 1958 novel 'Things Fall Apart'?",
-    "choices": ["Chinua Achebe", "Wole Soyinka", "Ngũgĩ wa Thiong'o", "Ben Okri"],
-    "explanation": "Nigerian author Chinua Achebe wrote Things Fall Apart, one of the most widely read African novels."
   },
   {
     "id": "general-knowledge-031",
@@ -360,7 +260,6 @@
     "choices": ["Spain", "Italy", "Portugal", "Mexico"],
     "explanation": "Paella comes from the Valencia region on Spain's east coast."
   },
-
   {
     "id": "general-knowledge-041",
     "category": "general-knowledge",
@@ -437,15 +336,6 @@
     "prompt": "The painter of 'The Scream', Edvard Munch, came from which country?",
     "choices": ["Norway", "Sweden", "Denmark", "Finland"],
     "explanation": "Edvard Munch was Norwegian and painted The Scream in 1893."
-  },
-  {
-    "id": "general-knowledge-049",
-    "category": "general-knowledge",
-    "topic": "Literature",
-    "difficulty": "hard",
-    "prompt": "Which Nigerian writer won the Nobel Prize in Literature in 1986?",
-    "choices": ["Wole Soyinka", "Chinua Achebe", "Ben Okri", "Chimamanda Ngozi Adichie"],
-    "explanation": "Playwright and poet Wole Soyinka won the 1986 Nobel Prize in Literature."
   },
   {
     "id": "general-knowledge-050",
@@ -550,5 +440,1228 @@
     "prompt": "Which Yoruba orisha is the god of thunder and lightning?",
     "choices": ["Shango", "Ogun", "Eshu", "Obatala"],
     "explanation": "Shango (Ṣàngó) is the Yoruba orisha of thunder and lightning; Ogun is the orisha of iron."
+  },
+  {
+    "id": "general-knowledge-061",
+    "category": "general-knowledge",
+    "topic": "Grammar",
+    "difficulty": "easy",
+    "prompt": "What type of word names an action, such as 'run', 'eat' or 'sing'?",
+    "choices": ["Verb", "Noun", "Adjective", "Pronoun"],
+    "explanation": "Verbs are doing words that name actions or states, such as run, eat and sing."
+  },
+  {
+    "id": "general-knowledge-062",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "easy",
+    "prompt": "What is the name for a flat shape with five straight sides?",
+    "choices": ["Pentagon", "Hexagon", "Heptagon", "Octagon"],
+    "explanation": "A pentagon has five sides; a hexagon has six, a heptagon seven and an octagon eight."
+  },
+  {
+    "id": "general-knowledge-063",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "easy",
+    "prompt": "How many degrees are there in a right angle?",
+    "choices": ["90", "45", "180", "360"],
+    "explanation": "A right angle, like the corner of a square, measures exactly 90 degrees."
+  },
+  {
+    "id": "general-knowledge-064",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "easy",
+    "prompt": "The three angles inside any triangle always add up to how many degrees?",
+    "choices": ["180", "90", "270", "360"],
+    "explanation": "The interior angles of every flat triangle add up to 180 degrees."
+  },
+  {
+    "id": "general-knowledge-065",
+    "category": "general-knowledge",
+    "topic": "Numbers",
+    "difficulty": "easy",
+    "prompt": "Which Roman numeral stands for 10?",
+    "choices": ["X", "V", "L", "C"],
+    "explanation": "In Roman numerals X is 10, V is 5, L is 50 and C is 100."
+  },
+  {
+    "id": "general-knowledge-066",
+    "category": "general-knowledge",
+    "topic": "Games",
+    "difficulty": "easy",
+    "prompt": "How many small squares make up a standard chessboard?",
+    "choices": ["64", "36", "81", "100"],
+    "explanation": "A chessboard is a grid of 8 by 8 squares, which makes 64."
+  },
+  {
+    "id": "general-knowledge-067",
+    "category": "general-knowledge",
+    "topic": "Games",
+    "difficulty": "easy",
+    "prompt": "How many cards are in a standard deck, not counting jokers?",
+    "choices": ["52", "48", "54", "56"],
+    "explanation": "A standard deck has four suits of 13 cards each, making 52."
+  },
+  {
+    "id": "general-knowledge-068",
+    "category": "general-knowledge",
+    "topic": "Numbers",
+    "difficulty": "easy",
+    "prompt": "How many zeros are there in one million, written as a number?",
+    "choices": ["Six", "Five", "Seven", "Nine"],
+    "explanation": "One million is written 1,000,000, which has six zeros."
+  },
+  {
+    "id": "general-knowledge-069",
+    "category": "general-knowledge",
+    "topic": "Calendar",
+    "difficulty": "easy",
+    "prompt": "How many years are there in a century?",
+    "choices": ["100", "10", "50", "1,000"],
+    "explanation": "A century is 100 years; a decade is 10 and a millennium is 1,000."
+  },
+  {
+    "id": "general-knowledge-070",
+    "category": "general-knowledge",
+    "topic": "Calendar",
+    "difficulty": "easy",
+    "prompt": "Which month of the year has the fewest days?",
+    "choices": ["February", "April", "June", "November"],
+    "explanation": "February has 28 days, or 29 in a leap year; every other month has 30 or 31."
+  },
+  {
+    "id": "general-knowledge-071",
+    "category": "general-knowledge",
+    "topic": "Calendar",
+    "difficulty": "easy",
+    "prompt": "What is a period of 1,000 years called?",
+    "choices": ["Millennium", "Century", "Decade", "Jubilee"],
+    "explanation": "A millennium is 1,000 years; a century is 100 and a decade is 10."
+  },
+  {
+    "id": "general-knowledge-072",
+    "category": "general-knowledge",
+    "topic": "Colours",
+    "difficulty": "easy",
+    "prompt": "What colour do you get by mixing blue and yellow paint?",
+    "choices": ["Green", "Purple", "Orange", "Brown"],
+    "explanation": "Blue and yellow paint mix to make green."
+  },
+  {
+    "id": "general-knowledge-073",
+    "category": "general-knowledge",
+    "topic": "Colours",
+    "difficulty": "easy",
+    "prompt": "What colour do you get by mixing red and white paint?",
+    "choices": ["Pink", "Purple", "Orange", "Brown"],
+    "explanation": "Adding white to red paint lightens it to pink."
+  },
+  {
+    "id": "general-knowledge-074",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "easy",
+    "prompt": "How many players does each basketball team have on the court at one time?",
+    "choices": ["Five", "Six", "Seven", "Eleven"],
+    "explanation": "A basketball team has five players on court at once."
+  },
+  {
+    "id": "general-knowledge-075",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "easy",
+    "prompt": "How many rings are on the Olympic flag?",
+    "choices": ["Five", "Four", "Six", "Seven"],
+    "explanation": "The Olympic flag shows five interlocking rings on a white background."
+  },
+  {
+    "id": "general-knowledge-076",
+    "category": "general-knowledge",
+    "topic": "Games",
+    "difficulty": "easy",
+    "prompt": "In chess, how many pawns does each player have at the start of a game?",
+    "choices": ["Eight", "Six", "Ten", "Twelve"],
+    "explanation": "Each player starts with eight pawns lined up in front of their other pieces."
+  },
+  {
+    "id": "general-knowledge-077",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "easy",
+    "prompt": "Which fraction is the same as 25%?",
+    "choices": ["One quarter", "One half", "One third", "One fifth"],
+    "explanation": "25% means 25 out of 100, which equals one quarter."
+  },
+  {
+    "id": "general-knowledge-078",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "easy",
+    "prompt": "What do we call a word that means the same as another word, like 'big' and 'large'?",
+    "choices": ["Synonym", "Antonym", "Homophone", "Acronym"],
+    "explanation": "A synonym has the same or nearly the same meaning as another word; an antonym means the opposite."
+  },
+  {
+    "id": "general-knowledge-079",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "easy",
+    "prompt": "What do we call a word formed from the first letters of other words, such as NASA?",
+    "choices": ["Acronym", "Anagram", "Synonym", "Palindrome"],
+    "explanation": "An acronym is built from initial letters and said as a word, like NASA or UNESCO."
+  },
+  {
+    "id": "general-knowledge-080",
+    "category": "general-knowledge",
+    "topic": "Grammar",
+    "difficulty": "easy",
+    "prompt": "In the phrase 'a beautiful house', what type of word is 'beautiful'?",
+    "choices": ["Adjective", "Verb", "Adverb", "Noun"],
+    "explanation": "Adjectives describe nouns; here beautiful describes the house."
+  },
+  {
+    "id": "general-knowledge-081",
+    "category": "general-knowledge",
+    "topic": "Grammar",
+    "difficulty": "easy",
+    "prompt": "Which punctuation mark shows that something belongs to someone, as in 'Ada's book'?",
+    "choices": ["Apostrophe", "Comma", "Hyphen", "Colon"],
+    "explanation": "The apostrophe before the s in Ada's shows that the book belongs to Ada."
+  },
+  {
+    "id": "general-knowledge-082",
+    "category": "general-knowledge",
+    "topic": "Grammar",
+    "difficulty": "easy",
+    "prompt": "What is the plural of 'mouse', the small animal?",
+    "choices": ["Mice", "Mouses", "Meese", "Mousen"],
+    "explanation": "Mouse has an irregular plural: one mouse, two mice."
+  },
+  {
+    "id": "general-knowledge-083",
+    "category": "general-knowledge",
+    "topic": "Word origins",
+    "difficulty": "easy",
+    "prompt": "On an invitation, what does 'RSVP' ask the guest to do?",
+    "choices": ["Reply", "Bring a gift", "Dress formally", "Arrive early"],
+    "explanation": "RSVP stands for the French 'répondez s'il vous plaît', which means please reply."
+  },
+  {
+    "id": "general-knowledge-084",
+    "category": "general-knowledge",
+    "topic": "Currency",
+    "difficulty": "easy",
+    "prompt": "What is the currency of the United Kingdom?",
+    "choices": ["Pound sterling", "Euro", "Krone", "Franc"],
+    "explanation": "The United Kingdom uses the pound sterling, divided into 100 pence."
+  },
+  {
+    "id": "general-knowledge-085",
+    "category": "general-knowledge",
+    "topic": "Currency",
+    "difficulty": "easy",
+    "prompt": "Which currency do Germany, France and Italy all use?",
+    "choices": ["Euro", "Dollar", "Pound", "Rouble"],
+    "explanation": "Germany, France and Italy are among the European Union countries that use the euro."
+  },
+  {
+    "id": "general-knowledge-086",
+    "category": "general-knowledge",
+    "topic": "Flags",
+    "difficulty": "easy",
+    "prompt": "Which country's flag is white with a red circle in the middle?",
+    "choices": ["Japan", "China", "South Korea", "Bangladesh"],
+    "explanation": "Japan's flag shows a red disc for the sun on a white field; Bangladesh has a red disc on green."
+  },
+  {
+    "id": "general-knowledge-087",
+    "category": "general-knowledge",
+    "topic": "Flags",
+    "difficulty": "easy",
+    "prompt": "Which country's flag has 13 red and white stripes and a blue corner filled with white stars?",
+    "choices": ["United States", "Australia", "Brazil", "Liberia"],
+    "explanation": "The US flag has 13 stripes for the original colonies and one star for each state."
+  },
+  {
+    "id": "general-knowledge-088",
+    "category": "general-knowledge",
+    "topic": "Food",
+    "difficulty": "easy",
+    "prompt": "Sushi is a traditional dish from which country?",
+    "choices": ["Japan", "China", "Thailand", "India"],
+    "explanation": "Sushi, vinegared rice served with fish or vegetables, is a traditional Japanese food."
+  },
+  {
+    "id": "general-knowledge-089",
+    "category": "general-knowledge",
+    "topic": "Food",
+    "difficulty": "easy",
+    "prompt": "Pizza as we know it today comes from which country?",
+    "choices": ["Italy", "France", "Greece", "Spain"],
+    "explanation": "Modern pizza developed in Naples, in southern Italy."
+  },
+  {
+    "id": "general-knowledge-090",
+    "category": "general-knowledge",
+    "topic": "Food",
+    "difficulty": "easy",
+    "prompt": "Popcorn is made by heating the kernels of which grain?",
+    "choices": ["Maize", "Wheat", "Rice", "Barley"],
+    "explanation": "Popcorn is a type of maize whose kernels burst open when the water inside turns to steam."
+  },
+  {
+    "id": "general-knowledge-091",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "easy",
+    "prompt": "Who wrote the Harry Potter books?",
+    "choices": ["J. K. Rowling", "Roald Dahl", "C. S. Lewis", "Enid Blyton"],
+    "explanation": "British author J. K. Rowling wrote the seven Harry Potter novels, starting in 1997."
+  },
+  {
+    "id": "general-knowledge-092",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "easy",
+    "prompt": "In J. M. Barrie's story, which boy refuses to grow up?",
+    "choices": ["Peter Pan", "Oliver Twist", "Tom Sawyer", "Pinocchio"],
+    "explanation": "Peter Pan, the boy who never grows up, lives in Neverland with the Lost Boys."
+  },
+  {
+    "id": "general-knowledge-093",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "easy",
+    "prompt": "In Greek myth, which monster had snakes for hair and could turn people to stone with a look?",
+    "choices": ["Medusa", "The Sphinx", "The Hydra", "The Cyclops"],
+    "explanation": "Medusa, a Gorgon with snakes for hair, turned to stone anyone who looked at her."
+  },
+  {
+    "id": "general-knowledge-094",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "easy",
+    "prompt": "In Greek mythology, who is the god of the sea?",
+    "choices": ["Poseidon", "Hades", "Apollo", "Hermes"],
+    "explanation": "Poseidon rules the sea and carries a three-pronged trident."
+  },
+  {
+    "id": "general-knowledge-095",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "easy",
+    "prompt": "Which hero of Greek myth had to complete twelve great labours?",
+    "choices": ["Heracles (Hercules)", "Perseus", "Theseus", "Jason"],
+    "explanation": "Heracles, called Hercules by the Romans, performed twelve labours as a penance."
+  },
+  {
+    "id": "general-knowledge-096",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "easy",
+    "prompt": "In Greek myth, King Midas turned everything he touched into what?",
+    "choices": ["Gold", "Silver", "Stone", "Salt"],
+    "explanation": "Midas was granted the golden touch, but even his food turned to gold."
+  },
+  {
+    "id": "general-knowledge-097",
+    "category": "general-knowledge",
+    "topic": "Festivals",
+    "difficulty": "easy",
+    "prompt": "Which festival do many Christians celebrate on 25 December?",
+    "choices": ["Christmas", "Easter", "Pentecost", "Lent"],
+    "explanation": "Christmas, which marks the birth of Jesus, is celebrated by many Christians on 25 December."
+  },
+  {
+    "id": "general-knowledge-098",
+    "category": "general-knowledge",
+    "topic": "Festivals",
+    "difficulty": "easy",
+    "prompt": "Which Christian festival celebrates the resurrection of Jesus?",
+    "choices": ["Easter", "Christmas", "Pentecost", "Advent"],
+    "explanation": "Easter Sunday celebrates Christians' belief that Jesus rose from the dead."
+  },
+  {
+    "id": "general-knowledge-099",
+    "category": "general-knowledge",
+    "topic": "Festivals",
+    "difficulty": "easy",
+    "prompt": "Eid al-Fitr marks the end of which month of fasting?",
+    "choices": ["Ramadan", "Muharram", "Rajab", "Sha'ban"],
+    "explanation": "Muslims celebrate Eid al-Fitr when the fasting month of Ramadan ends."
+  },
+  {
+    "id": "general-knowledge-100",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "easy",
+    "prompt": "In which sport would a player perform a slam dunk?",
+    "choices": ["Basketball", "Volleyball", "Tennis", "Netball"],
+    "explanation": "A slam dunk is when a basketball player jumps and forces the ball down through the hoop."
+  },
+  {
+    "id": "general-knowledge-101",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "easy",
+    "prompt": "In boxing, what does 'KO' stand for?",
+    "choices": ["Knockout", "Keep out", "Kick off", "Knock over"],
+    "explanation": "A KO, or knockout, is when a boxer is knocked down and cannot get up before the count of ten."
+  },
+  {
+    "id": "general-knowledge-102",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "easy",
+    "prompt": "In badminton, what is the feathered object that players hit over the net called?",
+    "choices": ["Shuttlecock", "Puck", "Discus", "Baton"],
+    "explanation": "Badminton is played with a shuttlecock, a cork base with a skirt of feathers or plastic."
+  },
+  {
+    "id": "general-knowledge-103",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "easy",
+    "prompt": "What is a painting or photograph of a person, especially their face, called?",
+    "choices": ["Portrait", "Landscape", "Still life", "Mural"],
+    "explanation": "A portrait shows a particular person; a landscape shows scenery and a still life shows objects."
+  },
+  {
+    "id": "general-knowledge-104",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "easy",
+    "prompt": "What is the stand an artist uses to hold a painting upright while working called?",
+    "choices": ["Easel", "Palette", "Lectern", "Plinth"],
+    "explanation": "An easel holds the canvas upright; the palette is the board on which paints are mixed."
+  },
+  {
+    "id": "general-knowledge-105",
+    "category": "general-knowledge",
+    "topic": "Colours",
+    "difficulty": "easy",
+    "prompt": "In traditional painting, which are the three primary colours?",
+    "choices": [
+      "Red, yellow and blue",
+      "Orange, green and purple",
+      "Red, orange and yellow",
+      "Blue, green and purple"
+    ],
+    "explanation": "Painters have long treated red, yellow and blue as primaries; orange, green and purple are made from them."
+  },
+  {
+    "id": "general-knowledge-106",
+    "category": "general-knowledge",
+    "topic": "Currency",
+    "difficulty": "easy",
+    "prompt": "What is the currency of Ghana?",
+    "choices": ["Cedi", "Dalasi", "Leone", "Franc"],
+    "explanation": "Ghana's currency is the cedi."
+  },
+  {
+    "id": "general-knowledge-107",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "easy",
+    "prompt": "Which instrument in a school maths set is used to measure angles?",
+    "choices": ["Protractor", "Pair of compasses", "Ruler", "Pair of dividers"],
+    "explanation": "A protractor is marked in degrees for measuring angles; compasses draw circles."
+  },
+  {
+    "id": "general-knowledge-108",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "medium",
+    "prompt": "What do we call a triangle whose three sides are all the same length?",
+    "choices": ["Equilateral", "Isosceles", "Scalene", "Right-angled"],
+    "explanation": "An equilateral triangle has three equal sides; an isosceles has two and a scalene none."
+  },
+  {
+    "id": "general-knowledge-109",
+    "category": "general-knowledge",
+    "topic": "Numbers",
+    "difficulty": "medium",
+    "prompt": "What number does the Roman numeral M stand for?",
+    "choices": ["1,000", "500", "100", "50"],
+    "explanation": "M is 1,000 in Roman numerals; D is 500, C is 100 and L is 50."
+  },
+  {
+    "id": "general-knowledge-110",
+    "category": "general-knowledge",
+    "topic": "Grammar",
+    "difficulty": "medium",
+    "prompt": "In grammar, what type of word are 'and', 'but' and 'or'?",
+    "choices": ["Conjunction", "Preposition", "Pronoun", "Adverb"],
+    "explanation": "Conjunctions are joining words that link words, phrases or clauses together."
+  },
+  {
+    "id": "general-knowledge-111",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "medium",
+    "prompt": "What is the name of the '&' symbol?",
+    "choices": ["Ampersand", "Asterisk", "Tilde", "Caret"],
+    "explanation": "The & sign, meaning 'and', is called an ampersand; an asterisk is *."
+  },
+  {
+    "id": "general-knowledge-112",
+    "category": "general-knowledge",
+    "topic": "Grammar",
+    "difficulty": "medium",
+    "prompt": "What is a comparison that uses 'like' or 'as', such as 'as brave as a lion'?",
+    "choices": ["Simile", "Metaphor", "Idiom", "Proverb"],
+    "explanation": "A simile compares using like or as; a metaphor says one thing is another."
+  },
+  {
+    "id": "general-knowledge-113",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "medium",
+    "prompt": "What is a word that reads the same forwards and backwards, such as 'level'?",
+    "choices": ["Palindrome", "Anagram", "Homophone", "Acronym"],
+    "explanation": "A palindrome reads the same in both directions, like level, radar or noon."
+  },
+  {
+    "id": "general-knowledge-114",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "medium",
+    "prompt": "What is a word made by rearranging the letters of another word, like 'listen' into 'silent'?",
+    "choices": ["Anagram", "Palindrome", "Homophone", "Acronym"],
+    "explanation": "An anagram uses exactly the same letters in a new order."
+  },
+  {
+    "id": "general-knowledge-115",
+    "category": "general-knowledge",
+    "topic": "Measurement",
+    "difficulty": "medium",
+    "prompt": "How many centimetres are in one inch?",
+    "choices": ["2.54", "2.45", "3.54", "1.54"],
+    "explanation": "One inch is defined as exactly 2.54 centimetres."
+  },
+  {
+    "id": "general-knowledge-116",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "medium",
+    "prompt": "What is the value of pi to two decimal places?",
+    "choices": ["3.14", "3.16", "3.41", "3.12"],
+    "explanation": "Pi, the ratio of a circle's circumference to its diameter, is about 3.14159."
+  },
+  {
+    "id": "general-knowledge-117",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "medium",
+    "prompt": "Which sequence begins 1, 1, 2, 3, 5, 8, with each number the sum of the two before it?",
+    "choices": ["Fibonacci sequence", "Triangular numbers", "Prime numbers", "Square numbers"],
+    "explanation": "The Fibonacci sequence is named after the Italian mathematician Leonardo of Pisa, known as Fibonacci."
+  },
+  {
+    "id": "general-knowledge-118",
+    "category": "general-knowledge",
+    "topic": "Calendar",
+    "difficulty": "medium",
+    "prompt": "Which day of the week is named after Thor, the Norse god of thunder?",
+    "choices": ["Thursday", "Tuesday", "Wednesday", "Saturday"],
+    "explanation": "Thursday comes from 'Thor's day'."
+  },
+  {
+    "id": "general-knowledge-119",
+    "category": "general-knowledge",
+    "topic": "Calendar",
+    "difficulty": "medium",
+    "prompt": "Which month takes its name from the two-faced Roman god of doorways and beginnings?",
+    "choices": ["January", "March", "June", "September"],
+    "explanation": "January is named after Janus, who looks both back to the old year and forward to the new."
+  },
+  {
+    "id": "general-knowledge-120",
+    "category": "general-knowledge",
+    "topic": "Games",
+    "difficulty": "medium",
+    "prompt": "Which chess piece can only ever move diagonally?",
+    "choices": ["Bishop", "Rook", "Knight", "Queen"],
+    "explanation": "The bishop moves only diagonally, so it stays on squares of one colour all game."
+  },
+  {
+    "id": "general-knowledge-121",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "medium",
+    "prompt": "How many players does each team have on court in indoor volleyball?",
+    "choices": ["Six", "Five", "Seven", "Nine"],
+    "explanation": "Indoor volleyball is played six-a-side."
+  },
+  {
+    "id": "general-knowledge-122",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "medium",
+    "prompt": "In tennis, what is the score called when both players have reached 40?",
+    "choices": ["Deuce", "Advantage", "Love-all", "Let"],
+    "explanation": "At 40-40 the score is called deuce; the player who wins the next point has the advantage."
+  },
+  {
+    "id": "general-knowledge-123",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "medium",
+    "prompt": "In golf, what is a score of one under par on a hole called?",
+    "choices": ["Birdie", "Eagle", "Bogey", "Albatross"],
+    "explanation": "A birdie is one under par, an eagle two under, and a bogey one over."
+  },
+  {
+    "id": "general-knowledge-124",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "medium",
+    "prompt": "In cricket, how many legal balls make up a standard over?",
+    "choices": ["Six", "Five", "Eight", "Ten"],
+    "explanation": "A standard over is six legal deliveries from one bowler."
+  },
+  {
+    "id": "general-knowledge-125",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "medium",
+    "prompt": "Who wrote the novel 'Pride and Prejudice'?",
+    "choices": ["Jane Austen", "Charlotte Brontë", "George Eliot", "Virginia Woolf"],
+    "explanation": "Jane Austen published Pride and Prejudice in 1813."
+  },
+  {
+    "id": "general-knowledge-126",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "medium",
+    "prompt": "Who wrote the 1818 novel 'Frankenstein'?",
+    "choices": ["Mary Shelley", "Bram Stoker", "Emily Brontë", "Edgar Allan Poe"],
+    "explanation": "Mary Shelley wrote Frankenstein, about a scientist who builds a living creature."
+  },
+  {
+    "id": "general-knowledge-127",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "medium",
+    "prompt": "Who wrote the novels 'Nineteen Eighty-Four' and 'Animal Farm'?",
+    "choices": ["George Orwell", "Aldous Huxley", "H. G. Wells", "Ray Bradbury"],
+    "explanation": "George Orwell published Animal Farm in 1945 and Nineteen Eighty-Four in 1949."
+  },
+  {
+    "id": "general-knowledge-128",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "medium",
+    "prompt": "Which Russian author wrote 'War and Peace'?",
+    "choices": ["Leo Tolstoy", "Fyodor Dostoevsky", "Anton Chekhov", "Alexander Pushkin"],
+    "explanation": "Leo Tolstoy's War and Peace follows Russian families through the Napoleonic Wars."
+  },
+  {
+    "id": "general-knowledge-129",
+    "category": "general-knowledge",
+    "topic": "Inventions",
+    "difficulty": "medium",
+    "prompt": "Which Swedish chemist patented dynamite in 1867 and later left his fortune to fund famous prizes?",
+    "choices": ["Alfred Nobel", "Anders Celsius", "Carl Linnaeus", "Jöns Jacob Berzelius"],
+    "explanation": "Alfred Nobel invented dynamite, and his will set up the Nobel Prizes."
+  },
+  {
+    "id": "general-knowledge-130",
+    "category": "general-knowledge",
+    "topic": "Inventions",
+    "difficulty": "medium",
+    "prompt": "Which American inventor created the phonograph, a machine that recorded and played back sound, in 1877?",
+    "choices": ["Thomas Edison", "Alexander Graham Bell", "Emile Berliner", "Nikola Tesla"],
+    "explanation": "Thomas Edison built the phonograph in 1877; Emile Berliner later invented the gramophone."
+  },
+  {
+    "id": "general-knowledge-131",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "medium",
+    "prompt": "Which artist painted 'The Persistence of Memory', with its melting clocks?",
+    "choices": ["Salvador Dalí", "René Magritte", "Joan Miró", "Pablo Picasso"],
+    "explanation": "Spanish Surrealist Salvador Dalí painted The Persistence of Memory in 1931."
+  },
+  {
+    "id": "general-knowledge-132",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "medium",
+    "prompt": "Which Spanish artist painted 'Guernica' in 1937?",
+    "choices": ["Pablo Picasso", "Salvador Dalí", "Joan Miró", "Francisco Goya"],
+    "explanation": "Picasso painted Guernica in response to the bombing of the Basque town during the Spanish Civil War."
+  },
+  {
+    "id": "general-knowledge-133",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "medium",
+    "prompt": "The French painter Claude Monet was a leading figure in which art movement?",
+    "choices": ["Impressionism", "Cubism", "Surrealism", "Baroque"],
+    "explanation": "Impressionism took its name from Monet's painting Impression, Sunrise."
+  },
+  {
+    "id": "general-knowledge-134",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "medium",
+    "prompt": "Which Mexican painter, famous for her self-portraits, was married to the artist Diego Rivera?",
+    "choices": ["Frida Kahlo", "Georgia O'Keeffe", "Tamara de Lempicka", "Mary Cassatt"],
+    "explanation": "Frida Kahlo painted many self-portraits and was twice married to Diego Rivera."
+  },
+  {
+    "id": "general-knowledge-135",
+    "category": "general-knowledge",
+    "topic": "Currency",
+    "difficulty": "medium",
+    "prompt": "What is the currency of Russia?",
+    "choices": ["Rouble", "Krone", "Lira", "Forint"],
+    "explanation": "Russia's currency is the rouble, divided into 100 kopecks."
+  },
+  {
+    "id": "general-knowledge-136",
+    "category": "general-knowledge",
+    "topic": "Currency",
+    "difficulty": "medium",
+    "prompt": "What is the currency of India?",
+    "choices": ["Rupee", "Taka", "Ringgit", "Baht"],
+    "explanation": "India uses the rupee; the taka is Bangladesh's currency."
+  },
+  {
+    "id": "general-knowledge-137",
+    "category": "general-knowledge",
+    "topic": "Flags",
+    "difficulty": "medium",
+    "prompt": "Which country's flag has saffron, white and green stripes with a navy blue wheel in the centre?",
+    "choices": ["India", "Niger", "Ireland", "Ivory Coast"],
+    "explanation": "India's flag has a 24-spoke blue wheel called the Ashoka Chakra; Niger's has an orange circle."
+  },
+  {
+    "id": "general-knowledge-138",
+    "category": "general-knowledge",
+    "topic": "Flags",
+    "difficulty": "medium",
+    "prompt": "Which country has a square red flag with a white cross in the middle?",
+    "choices": ["Switzerland", "Denmark", "Austria", "Norway"],
+    "explanation": "Switzerland's flag is square with a white cross; Denmark's is oblong with the cross set off-centre."
+  },
+  {
+    "id": "general-knowledge-139",
+    "category": "general-knowledge",
+    "topic": "Flags",
+    "difficulty": "medium",
+    "prompt": "Which country's flag has a black star in the middle of red, gold and green stripes?",
+    "choices": ["Ghana", "Senegal", "Cameroon", "Mali"],
+    "explanation": "Ghana's flag has a black star on its central gold stripe; Senegal's and Cameroon's stars are green and yellow."
+  },
+  {
+    "id": "general-knowledge-140",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "medium",
+    "prompt": "Who is the Greek goddess of wisdom?",
+    "choices": ["Athena", "Aphrodite", "Hera", "Artemis"],
+    "explanation": "Athena is the goddess of wisdom and was the patron goddess of the city of Athens."
+  },
+  {
+    "id": "general-knowledge-141",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "medium",
+    "prompt": "In Greek myth, who flew too close to the Sun on wings made of feathers and wax?",
+    "choices": ["Icarus", "Daedalus", "Perseus", "Theseus"],
+    "explanation": "Icarus ignored his father Daedalus's warning; the wax melted and he fell into the sea."
+  },
+  {
+    "id": "general-knowledge-142",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "medium",
+    "prompt": "In Norse mythology, who is the chief of the gods and the father of Thor?",
+    "choices": ["Odin", "Loki", "Baldur", "Tyr"],
+    "explanation": "Odin, the one-eyed Allfather, rules the gods from Asgard."
+  },
+  {
+    "id": "general-knowledge-143",
+    "category": "general-knowledge",
+    "topic": "Brands",
+    "difficulty": "medium",
+    "prompt": "The sportswear brand Nike is named after the Greek goddess of what?",
+    "choices": ["Victory", "Speed", "Strength", "Wisdom"],
+    "explanation": "Nike is the winged goddess of victory in Greek mythology."
+  },
+  {
+    "id": "general-knowledge-144",
+    "category": "general-knowledge",
+    "topic": "Brands",
+    "difficulty": "medium",
+    "prompt": "What does the car maker's name 'Volkswagen' mean in English?",
+    "choices": ["People's car", "Fast wagon", "Wolf's car", "German motor"],
+    "explanation": "Volkswagen is German for people's car."
+  },
+  {
+    "id": "general-knowledge-145",
+    "category": "general-knowledge",
+    "topic": "Word origins",
+    "difficulty": "medium",
+    "prompt": "The word 'alphabet' comes from the names of the first two letters of which alphabet?",
+    "choices": ["Greek", "Latin", "Arabic", "Cyrillic"],
+    "explanation": "Alphabet comes from alpha and beta, the first two letters of the Greek alphabet."
+  },
+  {
+    "id": "general-knowledge-146",
+    "category": "general-knowledge",
+    "topic": "Word origins",
+    "difficulty": "medium",
+    "prompt": "The word 'kindergarten' comes from which language?",
+    "choices": ["German", "Dutch", "Danish", "French"],
+    "explanation": "Kindergarten is German for 'children's garden', a name chosen by educator Friedrich Fröbel."
+  },
+  {
+    "id": "general-knowledge-147",
+    "category": "general-knowledge",
+    "topic": "Word origins",
+    "difficulty": "medium",
+    "prompt": "The word 'safari', meaning a journey, came into English from which African language?",
+    "choices": ["Swahili", "Zulu", "Yoruba", "Amharic"],
+    "explanation": "English took safari from Swahili, which had borrowed it from the Arabic word for travel."
+  },
+  {
+    "id": "general-knowledge-148",
+    "category": "general-knowledge",
+    "topic": "Spelling",
+    "difficulty": "medium",
+    "prompt": "Which is the correct spelling of the word for a place to stay?",
+    "choices": ["Accommodation", "Accomodation", "Acommodation", "Accommadation"],
+    "explanation": "Accommodation has a double c and a double m."
+  },
+  {
+    "id": "general-knowledge-149",
+    "category": "general-knowledge",
+    "topic": "Food",
+    "difficulty": "medium",
+    "prompt": "Hummus is made mainly from which food?",
+    "choices": ["Chickpeas", "Lentils", "Black-eyed beans", "Peanuts"],
+    "explanation": "Hummus is a dip of mashed chickpeas mixed with sesame paste, lemon juice and garlic."
+  },
+  {
+    "id": "general-knowledge-150",
+    "category": "general-knowledge",
+    "topic": "Festivals",
+    "difficulty": "medium",
+    "prompt": "What is the Christian season of fasting and prayer in the weeks before Easter called?",
+    "choices": ["Lent", "Advent", "Pentecost", "Epiphany"],
+    "explanation": "Lent is a season of about 40 days of fasting and prayer leading up to Easter."
+  },
+  {
+    "id": "general-knowledge-151",
+    "category": "general-knowledge",
+    "topic": "Festivals",
+    "difficulty": "medium",
+    "prompt": "Diwali, the festival of lights, is a major festival in which of these religions?",
+    "choices": ["Hinduism", "Judaism", "Islam", "Christianity"],
+    "explanation": "Diwali is one of the biggest Hindu festivals, marked with lamps, sweets and fireworks."
+  },
+  {
+    "id": "general-knowledge-152",
+    "category": "general-knowledge",
+    "topic": "Numbers",
+    "difficulty": "hard",
+    "prompt": "Which year is written as MCMXCIX in Roman numerals?",
+    "choices": ["1999", "1989", "2001", "1949"],
+    "explanation": "M is 1000, CM is 900, XC is 90 and IX is 9, which makes 1999."
+  },
+  {
+    "id": "general-knowledge-153",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "hard",
+    "prompt": "What do the interior angles of a hexagon add up to?",
+    "choices": ["720°", "540°", "360°", "1,080°"],
+    "explanation": "A hexagon splits into four triangles of 180° each, which makes 720°."
+  },
+  {
+    "id": "general-knowledge-154",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "hard",
+    "prompt": "How many faces does an icosahedron have?",
+    "choices": ["20", "12", "8", "24"],
+    "explanation": "An icosahedron has 20 triangular faces; the name comes from the Greek for twenty."
+  },
+  {
+    "id": "general-knowledge-155",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "hard",
+    "prompt": "What is a number like 6 or 28, equal to the sum of its smaller factors, called?",
+    "choices": ["Perfect number", "Prime number", "Square number", "Irrational number"],
+    "explanation": "6 = 1 + 2 + 3 and 28 = 1 + 2 + 4 + 7 + 14, so both are perfect numbers."
+  },
+  {
+    "id": "general-knowledge-156",
+    "category": "general-knowledge",
+    "topic": "Maths",
+    "difficulty": "hard",
+    "prompt": "A googol is the number 1 followed by how many zeros?",
+    "choices": ["100", "1,000", "10", "One million"],
+    "explanation": "A googol is 10 to the power of 100, a name coined by a young nephew of mathematician Edward Kasner."
+  },
+  {
+    "id": "general-knowledge-157",
+    "category": "general-knowledge",
+    "topic": "Calendar",
+    "difficulty": "hard",
+    "prompt": "How many years does a sesquicentennial celebrate?",
+    "choices": ["150", "125", "175", "200"],
+    "explanation": "Sesqui means one and a half, so a sesquicentennial marks 150 years."
+  },
+  {
+    "id": "general-knowledge-158",
+    "category": "general-knowledge",
+    "topic": "Measurement",
+    "difficulty": "hard",
+    "prompt": "How many feet are in one mile?",
+    "choices": ["5,280", "1,760", "5,000", "3,280"],
+    "explanation": "A mile is 5,280 feet, or 1,760 yards."
+  },
+  {
+    "id": "general-knowledge-159",
+    "category": "general-knowledge",
+    "topic": "Word origins",
+    "difficulty": "hard",
+    "prompt": "The abbreviation 'i.e.' stands for Latin words meaning what?",
+    "choices": ["That is", "For example", "And so on", "Note well"],
+    "explanation": "I.e. is short for id est, 'that is'; e.g. means for example and etc. means and so on."
+  },
+  {
+    "id": "general-knowledge-160",
+    "category": "general-knowledge",
+    "topic": "Calendar",
+    "difficulty": "hard",
+    "prompt": "Tuesday is named after which Germanic god?",
+    "choices": ["Tiw (Týr)", "Thor", "Odin", "Frigg"],
+    "explanation": "Tuesday comes from Old English Tiwesdæg, the day of Tiw, known in Norse myth as Týr."
+  },
+  {
+    "id": "general-knowledge-161",
+    "category": "general-knowledge",
+    "topic": "Calendar",
+    "difficulty": "hard",
+    "prompt": "The name 'October' comes from the Latin word for which number?",
+    "choices": ["Eight", "Ten", "Six", "Nine"],
+    "explanation": "October was the eighth month of the early Roman calendar, which began in March."
+  },
+  {
+    "id": "general-knowledge-162",
+    "category": "general-knowledge",
+    "topic": "Calendar",
+    "difficulty": "hard",
+    "prompt": "The calendar most of the world uses today was introduced in 1582 by which pope?",
+    "choices": ["Gregory XIII", "Pius V", "Sixtus V", "Leo X"],
+    "explanation": "Pope Gregory XIII brought in the Gregorian calendar to replace the Julian calendar."
+  },
+  {
+    "id": "general-knowledge-163",
+    "category": "general-knowledge",
+    "topic": "Colours",
+    "difficulty": "hard",
+    "prompt": "In heraldry, what colour is 'gules'?",
+    "choices": ["Red", "Blue", "Green", "Black"],
+    "explanation": "In heraldry gules is red, azure is blue, vert is green and sable is black."
+  },
+  {
+    "id": "general-knowledge-164",
+    "category": "general-knowledge",
+    "topic": "Brands",
+    "difficulty": "hard",
+    "prompt": "What do the letters BMW stand for in English?",
+    "choices": [
+      "Bavarian Motor Works",
+      "Berlin Motor Works",
+      "British Motor Works",
+      "Bremen Machine Works"
+    ],
+    "explanation": "BMW stands for Bayerische Motoren Werke, German for Bavarian Motor Works."
+  },
+  {
+    "id": "general-knowledge-165",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "hard",
+    "prompt": "In rugby union, how many points is a try worth?",
+    "choices": ["Five", "Three", "Four", "Six"],
+    "explanation": "A try in rugby union scores five points, and the conversion kick that follows can add two more."
+  },
+  {
+    "id": "general-knowledge-166",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "hard",
+    "prompt": "How many players does each netball team have on court?",
+    "choices": ["Seven", "Five", "Six", "Nine"],
+    "explanation": "Netball is played seven-a-side, and each player has a set position."
+  },
+  {
+    "id": "general-knowledge-167",
+    "category": "general-knowledge",
+    "topic": "Currency",
+    "difficulty": "hard",
+    "prompt": "What is the currency of Poland?",
+    "choices": ["Złoty", "Forint", "Koruna", "Lev"],
+    "explanation": "Poland uses the złoty; the forint is Hungary's and the lev is Bulgaria's."
+  },
+  {
+    "id": "general-knowledge-168",
+    "category": "general-knowledge",
+    "topic": "Currency",
+    "difficulty": "hard",
+    "prompt": "What is the currency of Ethiopia?",
+    "choices": ["Birr", "Shilling", "Nakfa", "Dinar"],
+    "explanation": "Ethiopia uses the birr; the nakfa is the currency of neighbouring Eritrea."
+  },
+  {
+    "id": "general-knowledge-169",
+    "category": "general-knowledge",
+    "topic": "Currency",
+    "difficulty": "hard",
+    "prompt": "What is the currency of Brazil?",
+    "choices": ["Real", "Peso", "Sol", "Bolívar"],
+    "explanation": "Brazil has used the real since 1994; the sol is Peru's currency and the bolívar Venezuela's."
+  },
+  {
+    "id": "general-knowledge-170",
+    "category": "general-knowledge",
+    "topic": "Flags",
+    "difficulty": "hard",
+    "prompt": "Which country's flag shows a white dragon?",
+    "choices": ["Bhutan", "Nepal", "China", "Thailand"],
+    "explanation": "Bhutan's flag shows the white Thunder Dragon, or Druk, on yellow and orange."
+  },
+  {
+    "id": "general-knowledge-171",
+    "category": "general-knowledge",
+    "topic": "Flags",
+    "difficulty": "hard",
+    "prompt": "Which country's flag shows a green cedar tree?",
+    "choices": ["Lebanon", "Cyprus", "Syria", "Jordan"],
+    "explanation": "Lebanon's flag has a green cedar on a white band between two red stripes."
+  },
+  {
+    "id": "general-knowledge-172",
+    "category": "general-knowledge",
+    "topic": "Flags",
+    "difficulty": "hard",
+    "prompt": "Which country's flag has a gold diagonal cross dividing green and black triangles?",
+    "choices": ["Jamaica", "Barbados", "Trinidad and Tobago", "Grenada"],
+    "explanation": "Jamaica's flag has a gold saltire with green triangles at top and bottom and black at the sides."
+  },
+  {
+    "id": "general-knowledge-173",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "hard",
+    "prompt": "Which Dutch painter created 'The Night Watch' in 1642?",
+    "choices": ["Rembrandt van Rijn", "Johannes Vermeer", "Frans Hals", "Vincent van Gogh"],
+    "explanation": "Rembrandt painted The Night Watch, a huge group portrait now in Amsterdam's Rijksmuseum."
+  },
+  {
+    "id": "general-knowledge-174",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "hard",
+    "prompt": "Which Japanese artist made the woodblock print 'The Great Wave off Kanagawa'?",
+    "choices": ["Katsushika Hokusai", "Utagawa Hiroshige", "Kitagawa Utamaro", "Yayoi Kusama"],
+    "explanation": "Hokusai made The Great Wave around 1831 as part of a series of views of Mount Fuji."
+  },
+  {
+    "id": "general-knowledge-175",
+    "category": "general-knowledge",
+    "topic": "Art",
+    "difficulty": "hard",
+    "prompt": "Who painted 'The Birth of Venus' in the 1480s?",
+    "choices": ["Sandro Botticelli", "Titian", "Raphael", "Caravaggio"],
+    "explanation": "Botticelli's Birth of Venus, showing the goddess on a shell, hangs in the Uffizi in Florence."
+  },
+  {
+    "id": "general-knowledge-176",
+    "category": "general-knowledge",
+    "topic": "Buildings",
+    "difficulty": "hard",
+    "prompt": "Which architect designed the Sagrada Família church in Barcelona?",
+    "choices": ["Antoni Gaudí", "Le Corbusier", "Frank Gehry", "Oscar Niemeyer"],
+    "explanation": "Antoni Gaudí worked on the Sagrada Família from 1883 until his death in 1926."
+  },
+  {
+    "id": "general-knowledge-177",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "hard",
+    "prompt": "Who wrote the Spanish novel 'Don Quixote'?",
+    "choices": [
+      "Miguel de Cervantes",
+      "Lope de Vega",
+      "Federico García Lorca",
+      "Jorge Luis Borges"
+    ],
+    "explanation": "Miguel de Cervantes published Don Quixote in two parts, in 1605 and 1615."
+  },
+  {
+    "id": "general-knowledge-178",
+    "category": "general-knowledge",
+    "topic": "Literature",
+    "difficulty": "hard",
+    "prompt": "What was the real name of the American author known as Mark Twain?",
+    "choices": ["Samuel Clemens", "William Porter", "Eric Blair", "Washington Irving"],
+    "explanation": "Samuel Langhorne Clemens wrote as Mark Twain; William Porter was O. Henry and Eric Blair was George Orwell."
+  },
+  {
+    "id": "general-knowledge-179",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "hard",
+    "prompt": "In Greek myth, which Titan stole fire from the gods and gave it to humans?",
+    "choices": ["Prometheus", "Epimetheus", "Atlas", "Cronus"],
+    "explanation": "Zeus punished Prometheus by chaining him to a rock where an eagle ate his liver each day."
+  },
+  {
+    "id": "general-knowledge-180",
+    "category": "general-knowledge",
+    "topic": "Mythology",
+    "difficulty": "hard",
+    "prompt": "Which Egyptian goddess is often shown as a cat or with the head of a cat?",
+    "choices": ["Bastet", "Isis", "Hathor", "Nut"],
+    "explanation": "Bastet was a protective goddess shown as a cat, an animal much loved in ancient Egypt."
+  },
+  {
+    "id": "general-knowledge-181",
+    "category": "general-knowledge",
+    "topic": "Inventions",
+    "difficulty": "hard",
+    "prompt": "Which Scottish inventor demonstrated a working television system in London in 1926?",
+    "choices": [
+      "John Logie Baird",
+      "Guglielmo Marconi",
+      "Alexander Graham Bell",
+      "Philo Farnsworth"
+    ],
+    "explanation": "John Logie Baird showed moving television pictures to scientists in London in January 1926."
+  },
+  {
+    "id": "general-knowledge-182",
+    "category": "general-knowledge",
+    "topic": "Inventions",
+    "difficulty": "hard",
+    "prompt": "The American engineer Percy Spencer invented which kitchen appliance in the 1940s?",
+    "choices": ["Microwave oven", "Electric kettle", "Toaster", "Dishwasher"],
+    "explanation": "Percy Spencer found that radar microwaves could heat food and patented the microwave oven."
+  },
+  {
+    "id": "general-knowledge-183",
+    "category": "general-knowledge",
+    "topic": "Inventions",
+    "difficulty": "hard",
+    "prompt": "In Morse code, what does the distress signal SOS consist of?",
+    "choices": [
+      "Three dots, three dashes, three dots",
+      "Three dashes, three dots, three dashes",
+      "Two dots, two dashes, two dots",
+      "One dot, one dash, one dot"
+    ],
+    "explanation": "In Morse code S is three dots and O is three dashes, so SOS is dot-dot-dot, dash-dash-dash, dot-dot-dot."
+  },
+  {
+    "id": "general-knowledge-184",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "hard",
+    "prompt": "What is a sentence that uses every letter of the alphabet at least once called?",
+    "choices": ["Pangram", "Palindrome", "Anagram", "Acrostic"],
+    "explanation": "A pangram uses every letter, as in 'The quick brown fox jumps over the lazy dog'."
+  },
+  {
+    "id": "general-knowledge-185",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "hard",
+    "prompt": "What is the small dot above a lowercase 'i' or 'j' called?",
+    "choices": ["Tittle", "Cedilla", "Macron", "Umlaut"],
+    "explanation": "The dot over i and j is a tittle; a cedilla is the hook under ç and a macron is a bar over a letter."
+  },
+  {
+    "id": "general-knowledge-186",
+    "category": "general-knowledge",
+    "topic": "Language",
+    "difficulty": "hard",
+    "prompt": "The interrobang, a punctuation mark invented in 1962, combines which two marks?",
+    "choices": [
+      "Question mark and exclamation mark",
+      "Comma and full stop",
+      "Colon and dash",
+      "Hyphen and apostrophe"
+    ],
+    "explanation": "The interrobang merges ? and ! into one symbol for excited questions."
+  },
+  {
+    "id": "general-knowledge-187",
+    "category": "general-knowledge",
+    "topic": "Word origins",
+    "difficulty": "hard",
+    "prompt": "The word 'robot' comes from a 1920 play by a writer from which modern-day country?",
+    "choices": ["Czech Republic", "Poland", "Russia", "Hungary"],
+    "explanation": "Karel Čapek's play R.U.R. introduced 'robot', from the Czech word robota, meaning forced labour."
+  },
+  {
+    "id": "general-knowledge-188",
+    "category": "general-knowledge",
+    "topic": "Word origins",
+    "difficulty": "hard",
+    "prompt": "The word 'shampoo' came into English from which language?",
+    "choices": ["Hindi", "Arabic", "Portuguese", "Malay"],
+    "explanation": "Shampoo comes from the Hindi word chāmpo, meaning press or massage."
+  },
+  {
+    "id": "general-knowledge-189",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "hard",
+    "prompt": "In ten-pin bowling, what is the highest possible score in a single game?",
+    "choices": ["300", "200", "250", "360"],
+    "explanation": "A perfect game is twelve strikes in a row, which scores 300."
+  },
+  {
+    "id": "general-knowledge-190",
+    "category": "general-knowledge",
+    "topic": "Word origins",
+    "difficulty": "hard",
+    "prompt": "The word 'algebra' comes from which language?",
+    "choices": ["Arabic", "Greek", "Latin", "Hindi"],
+    "explanation": "Algebra comes from al-jabr, Arabic for 'restoring', in the title of a 9th-century maths book by al-Khwarizmi."
+  },
+  {
+    "id": "general-knowledge-191",
+    "category": "general-knowledge",
+    "topic": "Sport",
+    "difficulty": "hard",
+    "prompt": "In cricket, what does the term 'LBW' stand for?",
+    "choices": [
+      "Leg before wicket",
+      "Left behind wicket",
+      "Long ball wide",
+      "Line between wickets"
+    ],
+    "explanation": "A batter is out leg before wicket if the ball hits their body, usually the leg, when it would otherwise have hit the stumps."
+  },
+  {
+    "id": "general-knowledge-192",
+    "category": "general-knowledge",
+    "topic": "Food",
+    "difficulty": "hard",
+    "prompt": "Feta cheese traditionally comes from which country?",
+    "choices": ["Greece", "Italy", "France", "Switzerland"],
+    "explanation": "Feta is a brined white cheese from Greece, made mainly from sheep's milk."
   }
 ]

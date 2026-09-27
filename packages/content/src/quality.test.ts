@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { findDuplicate, isDuplicate, normalize, problemsWith, similarity } from "./quality";
+import {
+  findDuplicate,
+  isDuplicate,
+  normalize,
+  problemsWith,
+  repeatsAcrossCategories,
+  similarity,
+} from "./quality";
 import type { StoredQuestion } from "./schema";
 
 const q = (
@@ -80,5 +87,35 @@ describe("problemsWith", () => {
     });
     expect(problemsWith(bible)).toContain("Bible questions need a verse reference");
     expect(problemsWith({ ...bible, reference: "Genesis 6:14" })).toEqual([]);
+  });
+});
+
+describe("repeatsAcrossCategories", () => {
+  const base: StoredQuestion = {
+    id: "a",
+    category: "general-knowledge",
+    topic: "Literature",
+    difficulty: "easy",
+    prompt: "Who wrote the 1958 novel 'Things Fall Apart'?",
+    choices: ["Chinua Achebe", "Wole Soyinka", "Ben Okri", "Buchi Emecheta"],
+    explanation: "Achebe's novel follows Okonkwo.",
+  };
+  const elsewhere = (prompt: string): StoredQuestion => ({
+    ...base,
+    id: "b",
+    category: "nigerian-culture",
+    prompt,
+  });
+
+  it("catches the same fact asked in another category", () => {
+    expect(
+      repeatsAcrossCategories(base, elsewhere("Who wrote the classic novel 'Things Fall Apart'?")),
+    ).toBe(true);
+  });
+
+  it("leaves different facts with the same answer alone", () => {
+    const other = elsewhere("Which author's first novel was published in London in 1958?");
+    expect(repeatsAcrossCategories(base, other)).toBe(false);
+    expect(repeatsAcrossCategories(base, { ...base, id: "c" })).toBe(false);
   });
 });

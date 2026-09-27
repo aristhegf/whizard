@@ -568,5 +568,1150 @@
       "Heinrich Schliemann"
     ],
     "explanation": "French scholar Jean-François Champollion announced his breakthrough in deciphering hieroglyphs in 1822."
+  },
+  {
+    "id": "history-061",
+    "category": "history",
+    "topic": "Ancient Egypt",
+    "difficulty": "easy",
+    "prompt": "What title was given to the kings of ancient Egypt?",
+    "choices": ["Pharaoh", "Sultan", "Tsar", "Shogun"],
+    "explanation": "Egyptian kings were called pharaohs, from a word that first meant \"great house\", the royal palace."
+  },
+  {
+    "id": "history-062",
+    "category": "history",
+    "topic": "Ancient Egypt",
+    "difficulty": "easy",
+    "prompt": "Which river's yearly floods made farming possible in ancient Egypt?",
+    "choices": ["The Nile", "The Tigris", "The Niger", "The Jordan"],
+    "explanation": "Each year the Nile flooded and left rich black soil along its banks, which fed Egypt's farms."
+  },
+  {
+    "id": "history-063",
+    "category": "history",
+    "topic": "Ancient Rome",
+    "difficulty": "easy",
+    "prompt": "What was the main language of the ancient Romans?",
+    "choices": ["Latin", "Greek", "Aramaic", "Etruscan"],
+    "explanation": "The Romans spoke Latin, which later grew into Italian, French, Spanish, Portuguese and Romanian."
+  },
+  {
+    "id": "history-064",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "easy",
+    "prompt": "Which country did Germany invade on 1 September 1939, starting World War II in Europe?",
+    "choices": ["Poland", "France", "Belgium", "Norway"],
+    "explanation": "Germany invaded Poland on 1 September 1939, and Britain and France declared war two days later."
+  },
+  {
+    "id": "history-065",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "easy",
+    "prompt": "On D-Day in June 1944, Allied troops landed on the beaches of which region of France?",
+    "choices": ["Normandy", "Brittany", "Provence", "Alsace"],
+    "explanation": "On 6 June 1944 Allied forces landed on five beaches in Normandy to begin freeing Western Europe."
+  },
+  {
+    "id": "history-066",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "easy",
+    "prompt": "Which Japanese city was the first to be hit by an atomic bomb, in August 1945?",
+    "choices": ["Hiroshima", "Nagasaki", "Tokyo", "Osaka"],
+    "explanation": "An atomic bomb was dropped on Hiroshima on 6 August 1945, and a second on Nagasaki three days later."
+  },
+  {
+    "id": "history-067",
+    "category": "history",
+    "topic": "Ancient Greece",
+    "difficulty": "easy",
+    "prompt": "Which king of Macedonia built an empire stretching from Greece to India?",
+    "choices": ["Alexander the Great", "Philip II", "Darius III", "Xerxes I"],
+    "explanation": "Alexander the Great conquered the Persian Empire and led his army into north-west India before his death in 323 BC."
+  },
+  {
+    "id": "history-068",
+    "category": "history",
+    "topic": "Explorers",
+    "difficulty": "easy",
+    "prompt": "Which explorer sailed for Spain and reached the Americas in 1492?",
+    "choices": ["Christopher Columbus", "Amerigo Vespucci", "John Cabot", "Hernán Cortés"],
+    "explanation": "Christopher Columbus, sailing for the Spanish crown, reached the Caribbean islands in October 1492."
+  },
+  {
+    "id": "history-069",
+    "category": "history",
+    "topic": "United States",
+    "difficulty": "easy",
+    "prompt": "In which year did the United States declare its independence from Britain?",
+    "choices": ["1776", "1783", "1789", "1765"],
+    "explanation": "The Declaration of Independence was adopted on 4 July 1776, now celebrated as Independence Day."
+  },
+  {
+    "id": "history-070",
+    "category": "history",
+    "topic": "Colonial America",
+    "difficulty": "easy",
+    "prompt": "On which ship did the Pilgrims sail from England to North America in 1620?",
+    "choices": ["The Mayflower", "The Santa María", "The Endeavour", "The Golden Hind"],
+    "explanation": "The Pilgrims crossed the Atlantic on the Mayflower in 1620 and founded Plymouth Colony in what is now Massachusetts."
+  },
+  {
+    "id": "history-071",
+    "category": "history",
+    "topic": "United States",
+    "difficulty": "easy",
+    "prompt": "Which US president was assassinated in Dallas, Texas, in 1963?",
+    "choices": ["John F. Kennedy", "Abraham Lincoln", "William McKinley", "Richard Nixon"],
+    "explanation": "President John F. Kennedy was shot and killed while riding in a motorcade in Dallas on 22 November 1963."
+  },
+  {
+    "id": "history-072",
+    "category": "history",
+    "topic": "Civil Rights",
+    "difficulty": "easy",
+    "prompt": "Who was arrested in December 1955 for refusing to give up her bus seat in Montgomery, Alabama?",
+    "choices": ["Rosa Parks", "Harriet Tubman", "Coretta Scott King", "Sojourner Truth"],
+    "explanation": "Rosa Parks's arrest on 1 December 1955 sparked the Montgomery bus boycott."
+  },
+  {
+    "id": "history-073",
+    "category": "history",
+    "topic": "United States",
+    "difficulty": "easy",
+    "prompt": "Who became the first Black president of the United States, in 2009?",
+    "choices": ["Barack Obama", "Colin Powell", "Jesse Jackson", "Condoleezza Rice"],
+    "explanation": "Barack Obama was elected in 2008 and took office in January 2009, serving two terms."
+  },
+  {
+    "id": "history-074",
+    "category": "history",
+    "topic": "Ancient Egypt",
+    "difficulty": "easy",
+    "prompt": "Whose nearly intact tomb did Howard Carter find in Egypt's Valley of the Kings in 1922?",
+    "choices": ["Tutankhamun", "Ramesses II", "Khufu", "Cleopatra"],
+    "explanation": "Howard Carter found the tomb of the boy king Tutankhamun, still full of treasure, in November 1922."
+  },
+  {
+    "id": "history-075",
+    "category": "history",
+    "topic": "French Revolution",
+    "difficulty": "easy",
+    "prompt": "Which queen of France was executed by guillotine in 1793?",
+    "choices": ["Marie Antoinette", "Catherine de' Medici", "Joséphine", "Anne of Austria"],
+    "explanation": "Marie Antoinette, wife of Louis XVI, was guillotined in Paris in October 1793."
+  },
+  {
+    "id": "history-076",
+    "category": "history",
+    "topic": "British History",
+    "difficulty": "easy",
+    "prompt": "Which British monarch reigned from 1837 to 1901?",
+    "choices": ["Queen Victoria", "Queen Anne", "George III", "Elizabeth I"],
+    "explanation": "Queen Victoria came to the throne in 1837 and reigned for over 63 years until her death in 1901."
+  },
+  {
+    "id": "history-077",
+    "category": "history",
+    "topic": "British History",
+    "difficulty": "easy",
+    "prompt": "Which English king had six wives?",
+    "choices": ["Henry VIII", "Henry VII", "Edward VI", "Richard III"],
+    "explanation": "Henry VIII married six times, and his break with Rome began the Church of England."
+  },
+  {
+    "id": "history-078",
+    "category": "history",
+    "topic": "Ancient Greece",
+    "difficulty": "easy",
+    "prompt": "Which ancient Greek city-state was famous for its strict military training?",
+    "choices": ["Sparta", "Athens", "Corinth", "Argos"],
+    "explanation": "Spartan boys began hard military training at about age seven, making Sparta's army feared across Greece."
+  },
+  {
+    "id": "history-079",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "easy",
+    "prompt": "Which Jewish teenager wrote a famous diary while hiding from the Nazis in Amsterdam?",
+    "choices": ["Anne Frank", "Golda Meir", "Hannah Arendt", "Irena Sendler"],
+    "explanation": "Anne Frank kept her diary in a hidden annexe from 1942 to 1944; it was published after her death."
+  },
+  {
+    "id": "history-080",
+    "category": "history",
+    "topic": "Explorers",
+    "difficulty": "easy",
+    "prompt": "Which Venetian merchant wrote of his travels to the court of Kublai Khan?",
+    "choices": ["Marco Polo", "Ibn Battuta", "Vasco da Gama", "Zheng He"],
+    "explanation": "Marco Polo's account of his years in China under Kublai Khan made him famous across Europe."
+  },
+  {
+    "id": "history-081",
+    "category": "history",
+    "topic": "Russia",
+    "difficulty": "easy",
+    "prompt": "Who led the Bolsheviks when they seized power in Russia in 1917?",
+    "choices": ["Vladimir Lenin", "Joseph Stalin", "Nikita Khrushchev", "Mikhail Gorbachev"],
+    "explanation": "Vladimir Lenin led the Bolshevik takeover of October 1917 and became the first Soviet leader."
+  },
+  {
+    "id": "history-082",
+    "category": "history",
+    "topic": "Cold War",
+    "difficulty": "easy",
+    "prompt": "Who was the last leader of the Soviet Union?",
+    "choices": ["Mikhail Gorbachev", "Boris Yeltsin", "Leonid Brezhnev", "Yuri Andropov"],
+    "explanation": "Mikhail Gorbachev led the Soviet Union from 1985 until it broke up in December 1991."
+  },
+  {
+    "id": "history-083",
+    "category": "history",
+    "topic": "Ancient Rome",
+    "difficulty": "easy",
+    "prompt": "Which gladiator led a great slave revolt against Rome from 73 BC?",
+    "choices": ["Spartacus", "Hannibal", "Vercingetorix", "Boudica"],
+    "explanation": "Spartacus escaped a gladiator school in Capua in 73 BC and led a slave army until his defeat in 71 BC."
+  },
+  {
+    "id": "history-084",
+    "category": "history",
+    "topic": "Modern China",
+    "difficulty": "easy",
+    "prompt": "Who proclaimed the People's Republic of China in 1949?",
+    "choices": ["Mao Zedong", "Chiang Kai-shek", "Sun Yat-sen", "Deng Xiaoping"],
+    "explanation": "Mao Zedong proclaimed the People's Republic in Beijing on 1 October 1949."
+  },
+  {
+    "id": "history-085",
+    "category": "history",
+    "topic": "Independence Movements",
+    "difficulty": "easy",
+    "prompt": "In which year did India gain independence from Britain?",
+    "choices": ["1947", "1950", "1945", "1957"],
+    "explanation": "India became independent on 15 August 1947; it became a republic in 1950."
+  },
+  {
+    "id": "history-086",
+    "category": "history",
+    "topic": "Mongol Empire",
+    "difficulty": "easy",
+    "prompt": "Who founded the Mongol Empire in the early 1200s?",
+    "choices": ["Genghis Khan", "Kublai Khan", "Tamerlane", "Attila the Hun"],
+    "explanation": "Genghis Khan united the Mongol tribes in 1206 and began the conquests that built the empire."
+  },
+  {
+    "id": "history-087",
+    "category": "history",
+    "topic": "Reformation",
+    "difficulty": "easy",
+    "prompt": "Whose Ninety-five Theses of 1517 sparked the Protestant Reformation?",
+    "choices": ["Martin Luther", "John Calvin", "John Knox", "Thomas Cranmer"],
+    "explanation": "The German monk Martin Luther wrote the Ninety-five Theses in 1517, attacking the sale of indulgences."
+  },
+  {
+    "id": "history-088",
+    "category": "history",
+    "topic": "Vikings",
+    "difficulty": "easy",
+    "prompt": "The Vikings came mainly from which part of Europe?",
+    "choices": ["Scandinavia", "The Balkans", "Iberia", "Greece"],
+    "explanation": "The Vikings were seafarers from what are now Norway, Sweden and Denmark."
+  },
+  {
+    "id": "history-089",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "easy",
+    "prompt": "Who was the US president when Japan attacked Pearl Harbor in 1941?",
+    "choices": [
+      "Franklin D. Roosevelt",
+      "Harry S. Truman",
+      "Herbert Hoover",
+      "Dwight D. Eisenhower"
+    ],
+    "explanation": "Franklin D. Roosevelt called 7 December 1941 \"a date which will live in infamy\"."
+  },
+  {
+    "id": "history-090",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "easy",
+    "prompt": "Who led the Soviet Union during World War II?",
+    "choices": ["Joseph Stalin", "Vladimir Lenin", "Leon Trotsky", "Nikita Khrushchev"],
+    "explanation": "Joseph Stalin ruled the Soviet Union from the 1920s until his death in 1953, including the whole war."
+  },
+  {
+    "id": "history-091",
+    "category": "history",
+    "topic": "World War I",
+    "difficulty": "easy",
+    "prompt": "In which year did the armistice end the fighting of World War I?",
+    "choices": ["1918", "1916", "1917", "1920"],
+    "explanation": "The fighting stopped when the armistice took effect at 11 am on 11 November 1918."
+  },
+  {
+    "id": "history-092",
+    "category": "history",
+    "topic": "Russia",
+    "difficulty": "easy",
+    "prompt": "Who was the last tsar of Russia?",
+    "choices": ["Nicholas II", "Alexander III", "Peter the Great", "Ivan the Terrible"],
+    "explanation": "Nicholas II gave up the throne in 1917 and was killed with his family by the Bolsheviks in 1918."
+  },
+  {
+    "id": "history-093",
+    "category": "history",
+    "topic": "Cold War",
+    "difficulty": "easy",
+    "prompt": "Who led the revolution that took power in Cuba in 1959?",
+    "choices": ["Fidel Castro", "Fulgencio Batista", "Hugo Chávez", "Daniel Ortega"],
+    "explanation": "Fidel Castro's rebels overthrew the dictator Fulgencio Batista in January 1959."
+  },
+  {
+    "id": "history-094",
+    "category": "history",
+    "topic": "Inventions and Firsts",
+    "difficulty": "easy",
+    "prompt": "Which American inventor gave his name to a dot-and-dash telegraph code?",
+    "choices": ["Samuel Morse", "Thomas Edison", "Alexander Graham Bell", "Benjamin Franklin"],
+    "explanation": "Morse code, named after Samuel Morse, was used to send messages over his electric telegraph from the 1840s."
+  },
+  {
+    "id": "history-095",
+    "category": "history",
+    "topic": "Crimean War",
+    "difficulty": "easy",
+    "prompt": "Which British nurse was called \"the Lady with the Lamp\" during the Crimean War?",
+    "choices": ["Florence Nightingale", "Mary Seacole", "Edith Cavell", "Clara Barton"],
+    "explanation": "Florence Nightingale earned the name by checking on wounded soldiers at night in the military hospital at Scutari."
+  },
+  {
+    "id": "history-096",
+    "category": "history",
+    "topic": "Mesopotamia",
+    "difficulty": "easy",
+    "prompt": "Ancient Mesopotamia lay between which two rivers?",
+    "choices": ["Tigris and Euphrates", "Nile and Jordan", "Indus and Ganges", "Danube and Rhine"],
+    "explanation": "Mesopotamia means \"land between rivers\", the Tigris and Euphrates in modern Iraq."
+  },
+  {
+    "id": "history-097",
+    "category": "history",
+    "topic": "Nigerian Civil War",
+    "difficulty": "easy",
+    "prompt": "What was the name of the breakaway state in Nigeria's civil war of 1967–1970?",
+    "choices": ["Biafra", "Katanga", "Transkei", "Eritrea"],
+    "explanation": "The Eastern Region declared itself the Republic of Biafra in May 1967, and Biafra surrendered in January 1970."
+  },
+  {
+    "id": "history-098",
+    "category": "history",
+    "topic": "Nigeria",
+    "difficulty": "easy",
+    "prompt": "Who became Nigeria's president when civilian rule returned in May 1999?",
+    "choices": [
+      "Olusegun Obasanjo",
+      "Umaru Musa Yar'Adua",
+      "Abdulsalami Abubakar",
+      "Goodluck Jonathan"
+    ],
+    "explanation": "Olusegun Obasanjo was sworn in on 29 May 1999, ending years of military rule."
+  },
+  {
+    "id": "history-099",
+    "category": "history",
+    "topic": "Nigeria",
+    "difficulty": "easy",
+    "prompt": "Who became Nigeria's president in 2010 after Umaru Musa Yar'Adua died in office?",
+    "choices": ["Goodluck Jonathan", "Olusegun Obasanjo", "Muhammadu Buhari", "Atiku Abubakar"],
+    "explanation": "Vice President Goodluck Jonathan was sworn in as president in May 2010 after Yar'Adua's death."
+  },
+  {
+    "id": "history-100",
+    "category": "history",
+    "topic": "Nigerian Civil War",
+    "difficulty": "easy",
+    "prompt": "Who was Nigeria's head of state throughout the civil war of 1967–1970?",
+    "choices": ["Yakubu Gowon", "Murtala Mohammed", "Olusegun Obasanjo", "Johnson Aguiyi-Ironsi"],
+    "explanation": "General Yakubu Gowon led Nigeria's federal military government from 1966 to 1975, through the whole civil war."
+  },
+  {
+    "id": "history-101",
+    "category": "history",
+    "topic": "Nigerian Civil War",
+    "difficulty": "medium",
+    "prompt": "Which military officer declared the Republic of Biafra in May 1967?",
+    "choices": ["Odumegwu Ojukwu", "Yakubu Gowon", "Johnson Aguiyi-Ironsi", "Philip Effiong"],
+    "explanation": "Lieutenant Colonel Odumegwu Ojukwu, military governor of the Eastern Region, declared Biafra on 30 May 1967."
+  },
+  {
+    "id": "history-102",
+    "category": "history",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "Who became Nigeria's first military head of state, in January 1966?",
+    "choices": ["Johnson Aguiyi-Ironsi", "Yakubu Gowon", "Chukwuma Nzeogwu", "Murtala Mohammed"],
+    "explanation": "Major General Johnson Aguiyi-Ironsi, the army commander, took power after the coup of January 1966 and was killed that July."
+  },
+  {
+    "id": "history-103",
+    "category": "history",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "Which Nigerian head of state was killed in a failed coup attempt in February 1976?",
+    "choices": ["Murtala Mohammed", "Johnson Aguiyi-Ironsi", "Yakubu Gowon", "Sani Abacha"],
+    "explanation": "General Murtala Mohammed was killed in Lagos on 13 February 1976 during a coup attempt that failed."
+  },
+  {
+    "id": "history-104",
+    "category": "history",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "Which candidate was leading the results of Nigeria's 12 June 1993 presidential election when it was annulled?",
+    "choices": ["Moshood Abiola", "Bashir Tofa", "Ernest Shonekan", "Olu Falae"],
+    "explanation": "Early results showed Moshood Abiola ahead of Bashir Tofa, but Ibrahim Babangida's military government annulled the election."
+  },
+  {
+    "id": "history-105",
+    "category": "history",
+    "topic": "Colonial Era",
+    "difficulty": "medium",
+    "prompt": "Who became the first Governor-General of Nigeria after the 1914 amalgamation?",
+    "choices": ["Frederick Lugard", "George Goldie", "Hugh Clifford", "Arthur Richards"],
+    "explanation": "Frederick Lugard oversaw the joining of the North and South and served as Governor-General until 1919."
+  },
+  {
+    "id": "history-106",
+    "category": "history",
+    "topic": "South Africa",
+    "difficulty": "medium",
+    "prompt": "Nelson Mandela spent 18 of his 27 years in prison on which island?",
+    "choices": ["Robben Island", "Gorée Island", "Zanzibar", "Saint Helena"],
+    "explanation": "Mandela was held on Robben Island, off Cape Town, from 1964 until 1982, and was finally freed in 1990."
+  },
+  {
+    "id": "history-107",
+    "category": "history",
+    "topic": "Kanem-Bornu",
+    "difficulty": "medium",
+    "prompt": "The Kanem-Bornu Empire grew up around which African lake?",
+    "choices": ["Lake Chad", "Lake Victoria", "Lake Volta", "Lake Tanganyika"],
+    "explanation": "Kanem-Bornu was centred on the lands around Lake Chad, covering parts of modern Chad, Niger and Nigeria."
+  },
+  {
+    "id": "history-108",
+    "category": "history",
+    "topic": "West African Kingdoms",
+    "difficulty": "medium",
+    "prompt": "Which West African kingdom was famous for its regiments of women soldiers?",
+    "choices": ["Dahomey", "Asante", "Oyo", "Benin"],
+    "explanation": "The Kingdom of Dahomey, in what is now the Republic of Benin, had all-female regiments that Europeans called Amazons."
+  },
+  {
+    "id": "history-109",
+    "category": "history",
+    "topic": "Colonial Era",
+    "difficulty": "medium",
+    "prompt": "Which Scottish missionary campaigned against the killing of twins in Calabar?",
+    "choices": ["Mary Slessor", "Mary Kingsley", "Florence Nightingale", "Flora Shaw"],
+    "explanation": "Mary Slessor worked in the Calabar area from 1876 and rescued many twins who would have been abandoned."
+  },
+  {
+    "id": "history-110",
+    "category": "history",
+    "topic": "Songhai Empire",
+    "difficulty": "medium",
+    "prompt": "What was the capital of the Songhai Empire?",
+    "choices": ["Gao", "Timbuktu", "Niani", "Kumbi Saleh"],
+    "explanation": "Gao, on the River Niger in modern Mali, was the capital of Songhai; Timbuktu was its great centre of learning."
+  },
+  {
+    "id": "history-111",
+    "category": "history",
+    "topic": "Zulu Kingdom",
+    "difficulty": "medium",
+    "prompt": "Which ruler built the Zulu into a powerful kingdom in the 1810s and 1820s?",
+    "choices": ["Shaka", "Cetshwayo", "Dingane", "Mzilikazi"],
+    "explanation": "Shaka reorganised the Zulu army and built a strong kingdom before he was killed in 1828."
+  },
+  {
+    "id": "history-112",
+    "category": "history",
+    "topic": "Independence Movements",
+    "difficulty": "medium",
+    "prompt": "Who became Kenya's first president, in 1964?",
+    "choices": ["Jomo Kenyatta", "Daniel arap Moi", "Tom Mboya", "Julius Nyerere"],
+    "explanation": "Jomo Kenyatta led Kenya from independence in 1963, first as prime minister and then as president from 1964 until 1978."
+  },
+  {
+    "id": "history-113",
+    "category": "history",
+    "topic": "Independence Movements",
+    "difficulty": "medium",
+    "prompt": "Who became the first prime minister of the independent Congo in 1960?",
+    "choices": ["Patrice Lumumba", "Mobutu Sese Seko", "Joseph Kasa-Vubu", "Moïse Tshombe"],
+    "explanation": "Patrice Lumumba became prime minister at independence in June 1960, while Joseph Kasa-Vubu was president."
+  },
+  {
+    "id": "history-114",
+    "category": "history",
+    "topic": "Ancient Rome",
+    "difficulty": "medium",
+    "prompt": "Who became the first Roman emperor, in 27 BC?",
+    "choices": ["Augustus", "Julius Caesar", "Nero", "Tiberius"],
+    "explanation": "Octavian, Julius Caesar's adopted heir, took the name Augustus in 27 BC and became Rome's first emperor."
+  },
+  {
+    "id": "history-115",
+    "category": "history",
+    "topic": "World War I",
+    "difficulty": "medium",
+    "prompt": "Whose assassination in Sarajevo in June 1914 helped trigger World War I?",
+    "choices": [
+      "Archduke Franz Ferdinand",
+      "Kaiser Wilhelm II",
+      "Tsar Nicholas II",
+      "Emperor Franz Joseph"
+    ],
+    "explanation": "Archduke Franz Ferdinand, heir to Austria-Hungary's throne, was shot in Sarajevo on 28 June 1914."
+  },
+  {
+    "id": "history-116",
+    "category": "history",
+    "topic": "Mesopotamia",
+    "difficulty": "medium",
+    "prompt": "Which wedge-shaped writing system was developed in ancient Mesopotamia?",
+    "choices": ["Cuneiform", "Hieroglyphs", "Linear B", "Runes"],
+    "explanation": "Cuneiform was made by pressing a reed into wet clay, leaving wedge-shaped marks."
+  },
+  {
+    "id": "history-117",
+    "category": "history",
+    "topic": "Ancient Greece",
+    "difficulty": "medium",
+    "prompt": "Which Athenian philosopher was sentenced to death in 399 BC and drank hemlock?",
+    "choices": ["Socrates", "Plato", "Aristotle", "Diogenes"],
+    "explanation": "Socrates was found guilty of impiety and corrupting the young, and died by drinking hemlock in 399 BC."
+  },
+  {
+    "id": "history-118",
+    "category": "history",
+    "topic": "Ancient Greece",
+    "difficulty": "medium",
+    "prompt": "Which philosopher was the tutor of the young Alexander the Great?",
+    "choices": ["Aristotle", "Plato", "Pythagoras", "Homer"],
+    "explanation": "King Philip II of Macedon hired Aristotle to teach his son Alexander."
+  },
+  {
+    "id": "history-119",
+    "category": "history",
+    "topic": "Ancient Rome",
+    "difficulty": "medium",
+    "prompt": "Which river did Julius Caesar cross with his army in 49 BC, starting a civil war?",
+    "choices": ["The Rubicon", "The Tiber", "The Rhine", "The Po"],
+    "explanation": "Crossing the Rubicon into Italy with an army broke Roman law, so \"crossing the Rubicon\" means a point of no return."
+  },
+  {
+    "id": "history-120",
+    "category": "history",
+    "topic": "Ancient China",
+    "difficulty": "medium",
+    "prompt": "The Terracotta Army was buried to guard the tomb of which Chinese emperor?",
+    "choices": ["Qin Shi Huang", "Emperor Wu of Han", "The Kangxi Emperor", "The Hongwu Emperor"],
+    "explanation": "Thousands of clay soldiers were buried near the tomb of Qin Shi Huang, the first emperor of a united China."
+  },
+  {
+    "id": "history-121",
+    "category": "history",
+    "topic": "Imperial China",
+    "difficulty": "medium",
+    "prompt": "Which Chinese dynasty was overthrown by the revolution of 1911?",
+    "choices": ["Qing", "Ming", "Han", "Song"],
+    "explanation": "The 1911 revolution ended the Qing dynasty, and China's last emperor, Puyi, gave up the throne in 1912."
+  },
+  {
+    "id": "history-122",
+    "category": "history",
+    "topic": "Mughal Empire",
+    "difficulty": "medium",
+    "prompt": "Which Mughal emperor built the Taj Mahal in memory of his wife?",
+    "choices": ["Shah Jahan", "Akbar", "Aurangzeb", "Babur"],
+    "explanation": "Shah Jahan built the Taj Mahal in Agra as a tomb for his wife Mumtaz Mahal, who died in 1631."
+  },
+  {
+    "id": "history-123",
+    "category": "history",
+    "topic": "Ancient Americas",
+    "difficulty": "medium",
+    "prompt": "Which Spanish conquistador led the conquest of the Aztec Empire?",
+    "choices": ["Hernán Cortés", "Francisco Pizarro", "Vasco Núñez de Balboa", "Hernando de Soto"],
+    "explanation": "Hernán Cortés landed in Mexico in 1519 and captured the Aztec capital in 1521."
+  },
+  {
+    "id": "history-124",
+    "category": "history",
+    "topic": "Medieval Europe",
+    "difficulty": "medium",
+    "prompt": "Who won the Battle of Hastings in 1066 and became King of England?",
+    "choices": [
+      "William the Conqueror",
+      "Harold Godwinson",
+      "Harald Hardrada",
+      "Edward the Confessor"
+    ],
+    "explanation": "Duke William of Normandy defeated King Harold at Hastings and was crowned King of England on Christmas Day 1066."
+  },
+  {
+    "id": "history-125",
+    "category": "history",
+    "topic": "Medieval Europe",
+    "difficulty": "medium",
+    "prompt": "Which English king agreed to Magna Carta in 1215?",
+    "choices": ["King John", "Henry II", "Richard I", "Edward I"],
+    "explanation": "Rebel barons forced King John to accept Magna Carta at Runnymede in June 1215."
+  },
+  {
+    "id": "history-126",
+    "category": "history",
+    "topic": "Crusades",
+    "difficulty": "medium",
+    "prompt": "Which sultan captured Jerusalem from the Crusaders in 1187?",
+    "choices": ["Saladin", "Suleiman the Magnificent", "Mehmed II", "Baibars"],
+    "explanation": "Saladin defeated the Crusaders at Hattin and took Jerusalem in October 1187."
+  },
+  {
+    "id": "history-127",
+    "category": "history",
+    "topic": "Medieval Europe",
+    "difficulty": "medium",
+    "prompt": "Joan of Arc fought for France in which long conflict with England?",
+    "choices": [
+      "The Hundred Years' War",
+      "The Thirty Years' War",
+      "The Wars of the Roses",
+      "The Seven Years' War"
+    ],
+    "explanation": "Joan of Arc helped end the siege of Orléans in 1429, during the Hundred Years' War."
+  },
+  {
+    "id": "history-128",
+    "category": "history",
+    "topic": "Ottoman Empire",
+    "difficulty": "medium",
+    "prompt": "Who founded the Republic of Turkey in 1923?",
+    "choices": ["Mustafa Kemal Atatürk", "Enver Pasha", "İsmet İnönü", "Abdul Hamid II"],
+    "explanation": "Mustafa Kemal, later called Atatürk, declared the Republic of Turkey in 1923 and became its first president."
+  },
+  {
+    "id": "history-129",
+    "category": "history",
+    "topic": "Renaissance",
+    "difficulty": "medium",
+    "prompt": "Which banking family ruled Florence for much of the Renaissance?",
+    "choices": ["The Medici", "The Borgia", "The Sforza", "The Visconti"],
+    "explanation": "The Medici banking family dominated Florence and paid for artists such as Michelangelo and Botticelli."
+  },
+  {
+    "id": "history-130",
+    "category": "history",
+    "topic": "Industrial Revolution",
+    "difficulty": "medium",
+    "prompt": "Which Scottish engineer greatly improved the steam engine in the 1760s and 1770s?",
+    "choices": ["James Watt", "George Stephenson", "Isambard Kingdom Brunel", "Richard Arkwright"],
+    "explanation": "James Watt's separate condenser made steam engines far more efficient and helped power the Industrial Revolution."
+  },
+  {
+    "id": "history-131",
+    "category": "history",
+    "topic": "United States",
+    "difficulty": "medium",
+    "prompt": "Who was the main author of the Declaration of Independence?",
+    "choices": ["Thomas Jefferson", "John Adams", "Benjamin Franklin", "Alexander Hamilton"],
+    "explanation": "Thomas Jefferson wrote the first draft of the Declaration in 1776, which the committee and Congress then edited."
+  },
+  {
+    "id": "history-132",
+    "category": "history",
+    "topic": "American Civil War",
+    "difficulty": "medium",
+    "prompt": "Which Confederate general surrendered at Appomattox Court House in April 1865?",
+    "choices": ["Robert E. Lee", "Stonewall Jackson", "Jefferson Davis", "Joseph E. Johnston"],
+    "explanation": "Robert E. Lee surrendered his army to Ulysses S. Grant at Appomattox on 9 April 1865."
+  },
+  {
+    "id": "history-133",
+    "category": "history",
+    "topic": "Slavery and Abolition",
+    "difficulty": "medium",
+    "prompt": "Which escaped slave guided many others to freedom on the Underground Railroad?",
+    "choices": ["Harriet Tubman", "Sojourner Truth", "Rosa Parks", "Phillis Wheatley"],
+    "explanation": "Harriet Tubman escaped slavery in 1849 and returned south many times to lead others to freedom."
+  },
+  {
+    "id": "history-134",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "medium",
+    "prompt": "Which Soviet city saw the surrender of a German army in early 1943 after a long battle?",
+    "choices": ["Stalingrad", "Leningrad", "Moscow", "Kursk"],
+    "explanation": "The German Sixth Army surrendered at Stalingrad in February 1943 after months of fighting."
+  },
+  {
+    "id": "history-135",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "medium",
+    "prompt": "What was the code name for Germany's invasion of the Soviet Union in June 1941?",
+    "choices": [
+      "Operation Barbarossa",
+      "Operation Overlord",
+      "Operation Sea Lion",
+      "Operation Market Garden"
+    ],
+    "explanation": "Operation Barbarossa began on 22 June 1941; Overlord was the Allied invasion of Normandy in 1944."
+  },
+  {
+    "id": "history-136",
+    "category": "history",
+    "topic": "Cold War",
+    "difficulty": "medium",
+    "prompt": "Which Western military alliance was founded in 1949?",
+    "choices": ["NATO", "The Warsaw Pact", "SEATO", "The Commonwealth"],
+    "explanation": "The North Atlantic Treaty Organization was set up in April 1949; the rival Warsaw Pact followed in 1955."
+  },
+  {
+    "id": "history-137",
+    "category": "history",
+    "topic": "Cold War",
+    "difficulty": "medium",
+    "prompt": "What name is given to the failed 1961 invasion of Cuba by US-backed exiles?",
+    "choices": ["The Bay of Pigs", "Operation Mongoose", "The Tet Offensive", "Operation Condor"],
+    "explanation": "Cuban exiles trained by the CIA landed at the Bay of Pigs in April 1961 and were defeated within days."
+  },
+  {
+    "id": "history-138",
+    "category": "history",
+    "topic": "Modern Africa",
+    "difficulty": "medium",
+    "prompt": "Which Egyptian leader nationalised the Suez Canal in 1956?",
+    "choices": ["Gamal Abdel Nasser", "Anwar Sadat", "Hosni Mubarak", "King Farouk"],
+    "explanation": "President Gamal Abdel Nasser took over the canal company in July 1956, leading to the Suez Crisis with Britain, France and Israel."
+  },
+  {
+    "id": "history-139",
+    "category": "history",
+    "topic": "Scientific Revolution",
+    "difficulty": "medium",
+    "prompt": "Which astronomer was put on trial by the Roman Inquisition in 1633?",
+    "choices": ["Galileo Galilei", "Nicolaus Copernicus", "Johannes Kepler", "Giordano Bruno"],
+    "explanation": "Galileo was tried for teaching that the Earth moves around the Sun and spent his last years under house arrest."
+  },
+  {
+    "id": "history-140",
+    "category": "history",
+    "topic": "Explorers",
+    "difficulty": "medium",
+    "prompt": "Who led the first expedition to reach the South Pole, in December 1911?",
+    "choices": ["Roald Amundsen", "Robert Falcon Scott", "Ernest Shackleton", "Richard Byrd"],
+    "explanation": "Roald Amundsen's Norwegian team reached the Pole on 14 December 1911, about five weeks before Scott."
+  },
+  {
+    "id": "history-141",
+    "category": "history",
+    "topic": "Colonial Era",
+    "difficulty": "hard",
+    "prompt": "Which Oba of Lagos was driven out when British forces attacked the town in 1851?",
+    "choices": ["Kosoko", "Akitoye", "Dosunmu", "Adele"],
+    "explanation": "The British attacked Lagos in December 1851, drove out Oba Kosoko and put his rival Akitoye back on the throne."
+  },
+  {
+    "id": "history-142",
+    "category": "history",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "Who was Premier of Nigeria's Northern Region from 1954 until he was killed in January 1966?",
+    "choices": ["Ahmadu Bello", "Abubakar Tafawa Balewa", "Aminu Kano", "Shehu Shagari"],
+    "explanation": "Ahmadu Bello, the Sardauna of Sokoto, led the Northern Region government and was killed in the coup of 15 January 1966."
+  },
+  {
+    "id": "history-143",
+    "category": "history",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "Which nationalist founded the West African Pilot newspaper in Lagos in 1937?",
+    "choices": ["Nnamdi Azikiwe", "Herbert Macaulay", "Obafemi Awolowo", "Ernest Ikoli"],
+    "explanation": "Nnamdi Azikiwe started the West African Pilot in 1937 and used it to campaign for Nigerian independence."
+  },
+  {
+    "id": "history-144",
+    "category": "history",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "In 1967, Nigeria's regions were replaced by how many states?",
+    "choices": ["12", "19", "21", "36"],
+    "explanation": "In May 1967 Yakubu Gowon's government divided Nigeria's four regions into 12 states."
+  },
+  {
+    "id": "history-145",
+    "category": "history",
+    "topic": "Sokoto Caliphate",
+    "difficulty": "hard",
+    "prompt": "Which son of Usman dan Fodio succeeded him as leader of the Sokoto Caliphate in 1817?",
+    "choices": ["Muhammad Bello", "Abdullahi dan Fodio", "Ahmadu Bello", "Aliyu Babba"],
+    "explanation": "Muhammad Bello, who founded the city of Sokoto, led the caliphate from 1817 until his death in 1837."
+  },
+  {
+    "id": "history-146",
+    "category": "history",
+    "topic": "Benin Kingdom",
+    "difficulty": "hard",
+    "prompt": "Which Oba of Benin was sent into exile in Calabar by the British after 1897?",
+    "choices": ["Ovonramwen", "Ewuare", "Akenzua II", "Eweka II"],
+    "explanation": "Oba Ovonramwen was exiled to Calabar after the British expedition of 1897 and died there in 1914."
+  },
+  {
+    "id": "history-147",
+    "category": "history",
+    "topic": "Niger Delta",
+    "difficulty": "hard",
+    "prompt": "Which former slave rose to become a king and founded the trading state of Opobo in 1869?",
+    "choices": ["Jaja", "Nana Olomu", "William Dappa Pepple", "King Koko"],
+    "explanation": "Jaja, once enslaved in Bonny, founded Opobo in 1869 and dominated its palm oil trade until the British exiled him in 1887."
+  },
+  {
+    "id": "history-148",
+    "category": "history",
+    "topic": "Songhai Empire",
+    "difficulty": "hard",
+    "prompt": "Which ruler turned Songhai into a great empire in the 1460s, capturing Timbuktu?",
+    "choices": ["Sonni Ali", "Askia Muhammad", "Askia Daoud", "Mansa Musa"],
+    "explanation": "Sonni Ali expanded Songhai and captured Timbuktu in 1468; Askia Muhammad later took power in 1493."
+  },
+  {
+    "id": "history-149",
+    "category": "history",
+    "topic": "Asante Kingdom",
+    "difficulty": "hard",
+    "prompt": "Which West African people fought the British in the War of the Golden Stool in 1900?",
+    "choices": ["The Asante", "The Fante", "The Ewe", "The Yoruba"],
+    "explanation": "Led by Yaa Asantewaa, the Asante rose up in 1900 when the British governor demanded the sacred Golden Stool."
+  },
+  {
+    "id": "history-150",
+    "category": "history",
+    "topic": "Mesopotamia",
+    "difficulty": "hard",
+    "prompt": "Which Babylonian king destroyed Jerusalem and its temple in the 580s BC?",
+    "choices": ["Nebuchadnezzar II", "Ashurbanipal", "Sennacherib", "Cyrus the Great"],
+    "explanation": "Nebuchadnezzar II captured Jerusalem, destroyed the First Temple and took many people into exile in Babylon."
+  },
+  {
+    "id": "history-151",
+    "category": "history",
+    "topic": "Ancient Rome",
+    "difficulty": "hard",
+    "prompt": "Which Germanic leader deposed Romulus Augustulus, the last Western Roman emperor, in 476?",
+    "choices": ["Odoacer", "Alaric", "Attila", "Theodoric"],
+    "explanation": "Odoacer removed the boy emperor Romulus Augustulus in 476, the date often given for the fall of the West."
+  },
+  {
+    "id": "history-152",
+    "category": "history",
+    "topic": "Imperial China",
+    "difficulty": "hard",
+    "prompt": "Which 1842 treaty ended the First Opium War and gave Hong Kong Island to Britain?",
+    "choices": [
+      "Treaty of Nanking",
+      "Treaty of Tianjin",
+      "Treaty of Shimonoseki",
+      "Treaty of Aigun"
+    ],
+    "explanation": "The Treaty of Nanking ended the First Opium War, opened five ports to trade and gave Hong Kong Island to Britain."
+  },
+  {
+    "id": "history-153",
+    "category": "history",
+    "topic": "Japan",
+    "difficulty": "hard",
+    "prompt": "In which year did the Meiji Restoration return power to Japan's emperor?",
+    "choices": ["1868", "1853", "1889", "1905"],
+    "explanation": "In 1868 the last shogun lost power and rule was restored to the young Emperor Meiji."
+  },
+  {
+    "id": "history-154",
+    "category": "history",
+    "topic": "Japan",
+    "difficulty": "hard",
+    "prompt": "Which US naval officer's arrival in 1853 pushed Japan to open to foreign trade?",
+    "choices": ["Matthew Perry", "George Dewey", "David Farragut", "Chester Nimitz"],
+    "explanation": "Commodore Matthew Perry sailed into Edo Bay in 1853, and Japan signed a treaty with the US the next year."
+  },
+  {
+    "id": "history-155",
+    "category": "history",
+    "topic": "Ancient India",
+    "difficulty": "hard",
+    "prompt": "Which Mauryan emperor turned to Buddhism after his bloody conquest of Kalinga?",
+    "choices": ["Ashoka", "Chandragupta Maurya", "Bindusara", "Harsha"],
+    "explanation": "Horrified by the slaughter at Kalinga, Ashoka embraced Buddhism and carved his edicts on rocks and pillars."
+  },
+  {
+    "id": "history-156",
+    "category": "history",
+    "topic": "Ancient Americas",
+    "difficulty": "hard",
+    "prompt": "What was the name of the Aztec capital, on whose site Mexico City now stands?",
+    "choices": ["Tenochtitlan", "Teotihuacan", "Tula", "Cusco"],
+    "explanation": "Tenochtitlan was built on an island in Lake Texcoco; the Spanish built Mexico City on its ruins."
+  },
+  {
+    "id": "history-157",
+    "category": "history",
+    "topic": "Medieval Europe",
+    "difficulty": "hard",
+    "prompt": "What name was given to the Muslim-ruled lands of medieval Spain and Portugal?",
+    "choices": ["Al-Andalus", "The Maghreb", "The Levant", "Castile"],
+    "explanation": "Al-Andalus was the Arabic name for the parts of Iberia under Muslim rule from 711 until 1492."
+  },
+  {
+    "id": "history-158",
+    "category": "history",
+    "topic": "Civil Rights",
+    "difficulty": "hard",
+    "prompt": "Which 1954 US Supreme Court case ruled segregated public schools unconstitutional?",
+    "choices": [
+      "Brown v. Board of Education",
+      "Plessy v. Ferguson",
+      "Roe v. Wade",
+      "Miranda v. Arizona"
+    ],
+    "explanation": "Brown v. Board of Education overturned the \"separate but equal\" rule for public schools."
+  },
+  {
+    "id": "history-159",
+    "category": "history",
+    "topic": "Civil Rights",
+    "difficulty": "hard",
+    "prompt": "The 1965 voting rights marches from Selma ended in which Alabama city?",
+    "choices": ["Montgomery", "Birmingham", "Mobile", "Huntsville"],
+    "explanation": "Marchers led by Martin Luther King Jr. reached the state capital, Montgomery, in March 1965."
+  },
+  {
+    "id": "history-160",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "hard",
+    "prompt": "At which English country house did codebreakers work on Germany's Enigma messages?",
+    "choices": ["Bletchley Park", "Chequers", "Blenheim Palace", "Chartwell"],
+    "explanation": "Codebreakers including Alan Turing worked at Bletchley Park, in Buckinghamshire, to read Enigma traffic."
+  },
+  {
+    "id": "history-161",
+    "category": "history",
+    "topic": "World War II",
+    "difficulty": "hard",
+    "prompt": "Which 1942 naval battle in the Pacific saw Japan lose four aircraft carriers?",
+    "choices": ["Midway", "Coral Sea", "Leyte Gulf", "Guadalcanal"],
+    "explanation": "At Midway in June 1942, US aircraft sank four of the Japanese fleet carriers that had attacked Pearl Harbor."
+  },
+  {
+    "id": "history-162",
+    "category": "history",
+    "topic": "World War I",
+    "difficulty": "hard",
+    "prompt": "Which major battle began on 1 July 1916 in northern France?",
+    "choices": ["The Somme", "Verdun", "Passchendaele", "The Marne"],
+    "explanation": "The Battle of the Somme opened on 1 July 1916; Verdun had begun in February that year."
+  },
+  {
+    "id": "history-163",
+    "category": "history",
+    "topic": "World War I",
+    "difficulty": "hard",
+    "prompt": "Which British ocean liner was sunk by a German U-boat in May 1915?",
+    "choices": ["Lusitania", "Britannic", "Olympic", "Mauretania"],
+    "explanation": "The Lusitania was torpedoed off Ireland on 7 May 1915, and Americans were among those killed."
+  },
+  {
+    "id": "history-164",
+    "category": "history",
+    "topic": "Cold War",
+    "difficulty": "hard",
+    "prompt": "What name is given to the 1968 reforms in Czechoslovakia crushed by Warsaw Pact troops?",
+    "choices": [
+      "The Prague Spring",
+      "The Velvet Revolution",
+      "The Hungarian Uprising",
+      "Solidarity"
+    ],
+    "explanation": "Alexander Dubček's Prague Spring reforms were ended when Warsaw Pact armies invaded in August 1968."
+  },
+  {
+    "id": "history-165",
+    "category": "history",
+    "topic": "Cold War",
+    "difficulty": "hard",
+    "prompt": "Who led Poland's Solidarity trade union in the 1980s?",
+    "choices": ["Lech Wałęsa", "Wojciech Jaruzelski", "Václav Havel", "Karol Wojtyła"],
+    "explanation": "Lech Wałęsa, a shipyard electrician from Gdańsk, led Solidarity and later became Poland's president."
+  },
+  {
+    "id": "history-166",
+    "category": "history",
+    "topic": "Explorers",
+    "difficulty": "hard",
+    "prompt": "Which Portuguese navigator sailed around the Cape of Good Hope in 1488?",
+    "choices": ["Bartolomeu Dias", "Vasco da Gama", "Pedro Álvares Cabral", "Henry the Navigator"],
+    "explanation": "Bartolomeu Dias rounded the southern tip of Africa in 1488, opening the sea route later used by Vasco da Gama."
+  },
+  {
+    "id": "history-167",
+    "category": "history",
+    "topic": "Explorers",
+    "difficulty": "hard",
+    "prompt": "Which Ming dynasty admiral led great treasure voyages as far as East Africa?",
+    "choices": ["Zheng He", "Koxinga", "Yi Sun-sin", "Wang Zhi"],
+    "explanation": "Between 1405 and 1433 Zheng He led seven great fleets that reached India, Arabia and the East African coast."
+  },
+  {
+    "id": "history-168",
+    "category": "history",
+    "topic": "Explorers",
+    "difficulty": "hard",
+    "prompt": "Which Moroccan traveller described his journeys across Africa and Asia in the 1300s?",
+    "choices": ["Ibn Battuta", "Ibn Khaldun", "Leo Africanus", "Al-Idrisi"],
+    "explanation": "Ibn Battuta of Tangier travelled for about 30 years, visiting places from Mali to China, and told his story in the Rihla."
+  },
+  {
+    "id": "history-169",
+    "category": "history",
+    "topic": "Revolutions",
+    "difficulty": "hard",
+    "prompt": "Which priest's 1810 \"Cry of Dolores\" began Mexico's war of independence?",
+    "choices": ["Miguel Hidalgo", "José María Morelos", "Benito Juárez", "Agustín de Iturbide"],
+    "explanation": "Father Miguel Hidalgo called for revolt against Spain from the town of Dolores on 16 September 1810."
+  },
+  {
+    "id": "history-170",
+    "category": "history",
+    "topic": "Revolutions",
+    "difficulty": "hard",
+    "prompt": "Which Haitian revolutionary leader was captured by the French in 1802 and died in a French prison?",
+    "choices": [
+      "Toussaint Louverture",
+      "Jean-Jacques Dessalines",
+      "Henri Christophe",
+      "Alexandre Pétion"
+    ],
+    "explanation": "Toussaint Louverture was seized by the French in 1802 and died in a fortress in France in 1803."
+  },
+  {
+    "id": "history-171",
+    "category": "history",
+    "topic": "Revolutions",
+    "difficulty": "hard",
+    "prompt": "Who was the first president of Gran Colombia?",
+    "choices": [
+      "Simón Bolívar",
+      "José de San Martín",
+      "Francisco de Miranda",
+      "Antonio José de Sucre"
+    ],
+    "explanation": "Simón Bolívar led the fight against Spanish rule and was president of Gran Colombia from its founding in 1819."
+  },
+  {
+    "id": "history-172",
+    "category": "history",
+    "topic": "British History",
+    "difficulty": "hard",
+    "prompt": "Which Dutch prince took the English throne in the Glorious Revolution of 1688?",
+    "choices": ["William of Orange", "Maurice of Nassau", "Frederick Henry", "George of Hanover"],
+    "explanation": "William of Orange landed in England in 1688 and was crowned William III, ruling jointly with his wife Mary II."
+  },
+  {
+    "id": "history-173",
+    "category": "history",
+    "topic": "British History",
+    "difficulty": "hard",
+    "prompt": "Which English king was killed at the Battle of Bosworth Field in 1485?",
+    "choices": ["Richard III", "Henry VII", "Edward IV", "Richard II"],
+    "explanation": "Richard III died at Bosworth, and the winner, Henry Tudor, became King Henry VII."
+  },
+  {
+    "id": "history-174",
+    "category": "history",
+    "topic": "British History",
+    "difficulty": "hard",
+    "prompt": "Which Scottish king defeated the English at the Battle of Bannockburn in 1314?",
+    "choices": ["Robert the Bruce", "William Wallace", "David I", "James IV"],
+    "explanation": "Robert the Bruce beat Edward II's army at Bannockburn, securing Scotland's independence for a time."
+  },
+  {
+    "id": "history-175",
+    "category": "history",
+    "topic": "Ancient Egypt",
+    "difficulty": "hard",
+    "prompt": "Which pharaoh built the great rock temples at Abu Simbel?",
+    "choices": ["Ramesses II", "Tutankhamun", "Khufu", "Thutmose III"],
+    "explanation": "Ramesses II had the Abu Simbel temples carved into a cliff in Nubia in the 1200s BC."
+  },
+  {
+    "id": "history-176",
+    "category": "history",
+    "topic": "Ancient Egypt",
+    "difficulty": "hard",
+    "prompt": "Which woman ruled Egypt as pharaoh and built a great temple at Deir el-Bahari?",
+    "choices": ["Hatshepsut", "Nefertiti", "Cleopatra VII", "Nefertari"],
+    "explanation": "Hatshepsut ruled as pharaoh in the 1400s BC, and her temple at Deir el-Bahari still stands near Luxor."
+  },
+  {
+    "id": "history-177",
+    "category": "history",
+    "topic": "Ancient Greece",
+    "difficulty": "hard",
+    "prompt": "Which statesman led Athens in its golden age, when the Parthenon was built?",
+    "choices": ["Pericles", "Solon", "Cleisthenes", "Themistocles"],
+    "explanation": "Pericles led Athens in the mid-400s BC and backed the building of the Parthenon on the Acropolis."
+  },
+  {
+    "id": "history-178",
+    "category": "history",
+    "topic": "Explorers",
+    "difficulty": "hard",
+    "prompt": "Which 1494 treaty divided newly found lands outside Europe between Spain and Portugal?",
+    "choices": [
+      "Treaty of Tordesillas",
+      "Treaty of Utrecht",
+      "Treaty of Paris",
+      "Peace of Westphalia"
+    ],
+    "explanation": "The Treaty of Tordesillas drew a line west of the Cape Verde islands, giving lands on each side to Spain or Portugal."
+  },
+  {
+    "id": "history-179",
+    "category": "history",
+    "topic": "Ottoman Empire",
+    "difficulty": "hard",
+    "prompt": "The naval Battle of Lepanto in 1571 was a defeat for which empire?",
+    "choices": [
+      "The Ottoman Empire",
+      "The Spanish Empire",
+      "The Venetian Republic",
+      "The Portuguese Empire"
+    ],
+    "explanation": "A Holy League fleet led by Spain and Venice destroyed most of the Ottoman fleet at Lepanto, off Greece."
+  },
+  {
+    "id": "history-180",
+    "category": "history",
+    "topic": "Ancient Rome",
+    "difficulty": "hard",
+    "prompt": "Which Roman general defeated Hannibal at the Battle of Zama in 202 BC?",
+    "choices": ["Scipio Africanus", "Fabius Maximus", "Marcus Claudius Marcellus", "Gaius Marius"],
+    "explanation": "Scipio beat Hannibal at Zama in North Africa, ending the Second Punic War in Rome's favour."
   }
 ]

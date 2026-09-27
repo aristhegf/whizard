@@ -1413,5 +1413,405 @@
     "choices": ["Laodicea", "Ephesus", "Smyrna", "Sardis"],
     "explanation": "Jesus told the church in Laodicea that because it was lukewarm, he would spit it out of his mouth.",
     "reference": "Revelation 3:14-16"
+  },
+  {
+    "id": "bible-141",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "For how many days did Jesus fast in the wilderness before the devil tempted him?",
+    "choices": ["Forty", "Seven", "Twelve", "Three"],
+    "explanation": "Jesus fasted forty days and forty nights, and then the tempter came to him.",
+    "reference": "Matthew 4:1-3"
+  },
+  {
+    "id": "bible-142",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "To which country did Joseph take Mary and the young Jesus to escape King Herod?",
+    "choices": ["Egypt", "Syria", "Babylon", "Moab"],
+    "explanation": "An angel warned Joseph in a dream, so he took the child and his mother by night and fled to Egypt.",
+    "reference": "Matthew 2:13-14"
+  },
+  {
+    "id": "bible-143",
+    "category": "bible",
+    "topic": "Deuteronomy",
+    "difficulty": "easy",
+    "prompt": "Who took over leading Israel after Moses died?",
+    "choices": ["Joshua", "Caleb", "Aaron", "Eleazar"],
+    "explanation": "Moses had laid his hands on Joshua son of Nun, and after Moses died the Israelites listened to Joshua.",
+    "reference": "Deuteronomy 34:9"
+  },
+  {
+    "id": "bible-144",
+    "category": "bible",
+    "topic": "Deuteronomy",
+    "difficulty": "easy",
+    "prompt": "How many commandments did God write on the tablets of stone?",
+    "choices": ["Ten", "Twelve", "Seven", "Five"],
+    "explanation": "Moses recalls that the Lord wrote the Ten Commandments on the tablets and gave them to him.",
+    "reference": "Deuteronomy 10:4"
+  },
+  {
+    "id": "bible-145",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "Jesus told his followers they are the salt of the earth and the what of the world?",
+    "choices": ["The light", "The hope", "The bread", "The strength"],
+    "explanation": "In the Sermon on the Mount Jesus said, \"You are the salt of the earth\" and \"You are the light of the world.\"",
+    "reference": "Matthew 5:13-14"
+  },
+  {
+    "id": "bible-146",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "Which of these was one of the gifts the wise men gave to the child Jesus?",
+    "choices": ["Frankincense", "Silver", "Pearls", "Olive oil"],
+    "explanation": "The wise men opened their treasures and gave him gold, frankincense and myrrh.",
+    "reference": "Matthew 2:11"
+  },
+  {
+    "id": "bible-147",
+    "category": "bible",
+    "topic": "Isaiah",
+    "difficulty": "easy",
+    "prompt": "In Isaiah 9:6, the promised child is called the Prince of what?",
+    "choices": ["Peace", "Glory", "Light", "Life"],
+    "explanation": "Isaiah says he will be called Wonderful Counsellor, Mighty God, Everlasting Father, Prince of Peace.",
+    "reference": "Isaiah 9:6"
+  },
+  {
+    "id": "bible-148",
+    "category": "bible",
+    "topic": "2 Samuel",
+    "difficulty": "easy",
+    "prompt": "Which king danced before the Lord with all his might as the ark was brought into Jerusalem?",
+    "choices": ["David", "Saul", "Solomon", "Hezekiah"],
+    "explanation": "As the ark of the Lord was brought into the city of David, David danced before the Lord with all his might.",
+    "reference": "2 Samuel 6:14-16"
+  },
+  {
+    "id": "bible-149",
+    "category": "bible",
+    "topic": "Ephesians",
+    "difficulty": "easy",
+    "prompt": "Ephesians 6:1 tells children to obey whom in the Lord, because this is right?",
+    "choices": ["Their parents", "Their teachers", "Their rulers", "Their elders"],
+    "explanation": "Paul writes, \"Children, obey your parents in the Lord, for this is right.\"",
+    "reference": "Ephesians 6:1"
+  },
+  {
+    "id": "bible-150",
+    "category": "bible",
+    "topic": "Revelation",
+    "difficulty": "easy",
+    "prompt": "In Revelation 1:8, the Lord says, \"I am the Alpha and the...\" what?",
+    "choices": ["Omega", "Beta", "Delta", "Sigma"],
+    "explanation": "Alpha and Omega are the first and last letters of the Greek alphabet, meaning the beginning and the end.",
+    "reference": "Revelation 1:8"
+  },
+  {
+    "id": "bible-151",
+    "category": "bible",
+    "topic": "2 Samuel",
+    "difficulty": "medium",
+    "prompt": "Which prophet told David a story about a rich man who took a poor man's only lamb?",
+    "choices": ["Nathan", "Gad", "Samuel", "Elijah"],
+    "explanation": "Nathan told David the story, then said to him, \"You are the man,\" about his sin with Bathsheba.",
+    "reference": "2 Samuel 12:1-7"
+  },
+  {
+    "id": "bible-152",
+    "category": "bible",
+    "topic": "Esther",
+    "difficulty": "medium",
+    "prompt": "Which queen refused to come when the king sent for her during his feast?",
+    "choices": ["Vashti", "Jezebel", "Michal", "Athaliah"],
+    "explanation": "Queen Vashti refused to come at the king's command, and he later chose Esther to be queen in her place.",
+    "reference": "Esther 1:10-12"
+  },
+  {
+    "id": "bible-153",
+    "category": "bible",
+    "topic": "Job",
+    "difficulty": "medium",
+    "prompt": "When Job was struck with painful sores, what did his wife tell him to do?",
+    "choices": ["Curse God and die", "Pray for healing", "Offer a sacrifice", "Go to his friends"],
+    "explanation": "Job's wife asked if he was still holding on to his integrity and told him to curse God and die.",
+    "reference": "Job 2:7-9"
+  },
+  {
+    "id": "bible-154",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "medium",
+    "prompt": "Which prophet made an iron axe head float after it fell into the water?",
+    "choices": ["Elisha", "Elijah", "Isaiah", "Nathan"],
+    "explanation": "Elisha cut a stick and threw it where the borrowed axe head had sunk, and the iron floated.",
+    "reference": "2 Kings 6:5-7"
+  },
+  {
+    "id": "bible-155",
+    "category": "bible",
+    "topic": "Nehemiah",
+    "difficulty": "medium",
+    "prompt": "What was Nehemiah's job in the palace of the king of Persia?",
+    "choices": ["Cupbearer", "Baker", "Scribe", "Gatekeeper"],
+    "explanation": "Nehemiah says, \"I was the king's cupbearer,\" and served wine to King Artaxerxes.",
+    "reference": "Nehemiah 1:11; 2:1"
+  },
+  {
+    "id": "bible-156",
+    "category": "bible",
+    "topic": "Isaiah",
+    "difficulty": "medium",
+    "prompt": "Who answered God's call by saying, \"Here am I. Send me!\"?",
+    "choices": ["Isaiah", "Jeremiah", "Samuel", "Moses"],
+    "explanation": "When the Lord asked whom he should send, Isaiah answered, \"Here am I. Send me!\"",
+    "reference": "Isaiah 6:8"
+  },
+  {
+    "id": "bible-157",
+    "category": "bible",
+    "topic": "Romans",
+    "difficulty": "medium",
+    "prompt": "Romans 3:23 says all have sinned and fall short of the what of God?",
+    "choices": ["Glory", "Kingdom", "Mercy", "Law"],
+    "explanation": "Romans 3:23 says all have sinned and fall short of the glory of God.",
+    "reference": "Romans 3:23"
+  },
+  {
+    "id": "bible-158",
+    "category": "bible",
+    "topic": "Philippians",
+    "difficulty": "medium",
+    "prompt": "Philippians 2:10 says that at the name of Jesus every what should bow?",
+    "choices": ["Knee", "Head", "Nation", "Heart"],
+    "explanation": "Paul writes that at the name of Jesus every knee should bow, in heaven and on earth and under the earth.",
+    "reference": "Philippians 2:10"
+  },
+  {
+    "id": "bible-159",
+    "category": "bible",
+    "topic": "Hebrews",
+    "difficulty": "medium",
+    "prompt": "Which book says \"Jesus Christ is the same yesterday and today and forever\"?",
+    "choices": ["Hebrews", "James", "1 John", "Colossians"],
+    "explanation": "The line comes near the end of the letter to the Hebrews, in chapter 13.",
+    "reference": "Hebrews 13:8"
+  },
+  {
+    "id": "bible-160",
+    "category": "bible",
+    "topic": "2 Chronicles",
+    "difficulty": "medium",
+    "prompt": "Which book contains \"If my people, who are called by my name, will humble themselves and pray\"?",
+    "choices": ["2 Chronicles", "1 Kings", "Deuteronomy", "Isaiah"],
+    "explanation": "God spoke these words to Solomon at night after the temple was dedicated, in 2 Chronicles 7:14.",
+    "reference": "2 Chronicles 7:14"
+  },
+  {
+    "id": "bible-161",
+    "category": "bible",
+    "topic": "Obadiah",
+    "difficulty": "hard",
+    "prompt": "The book of Obadiah is a prophecy against which nation?",
+    "choices": ["Edom", "Moab", "Assyria", "Egypt"],
+    "explanation": "Obadiah opens, \"Thus says the Lord God concerning Edom.\"",
+    "reference": "Obadiah 1:1"
+  },
+  {
+    "id": "bible-162",
+    "category": "bible",
+    "topic": "Job",
+    "difficulty": "hard",
+    "prompt": "In which land did Job live?",
+    "choices": ["Uz", "Ur", "Moab", "Goshen"],
+    "explanation": "The book opens by saying there was a man in the land of Uz whose name was Job.",
+    "reference": "Job 1:1"
+  },
+  {
+    "id": "bible-163",
+    "category": "bible",
+    "topic": "2 Samuel",
+    "difficulty": "hard",
+    "prompt": "Who was struck dead after he reached out and took hold of the ark of God to steady it?",
+    "choices": ["Uzzah", "Ahio", "Obed-edom", "Abinadab"],
+    "explanation": "When the oxen stumbled, Uzzah took hold of the ark, and God struck him down there.",
+    "reference": "2 Samuel 6:6-7"
+  },
+  {
+    "id": "bible-164",
+    "category": "bible",
+    "topic": "Nehemiah",
+    "difficulty": "hard",
+    "prompt": "How long did it take to finish rebuilding Jerusalem's wall under Nehemiah?",
+    "choices": ["Fifty-two days", "Forty days", "Seven months", "Three years"],
+    "explanation": "The wall was finished on the twenty-fifth day of the month Elul, in fifty-two days.",
+    "reference": "Nehemiah 6:15"
+  },
+  {
+    "id": "bible-165",
+    "category": "bible",
+    "topic": "Jeremiah",
+    "difficulty": "hard",
+    "prompt": "Which scribe wrote down on a scroll the words the Lord had spoken to Jeremiah?",
+    "choices": ["Baruch", "Ezra", "Shaphan", "Hilkiah"],
+    "explanation": "Jeremiah called Baruch son of Neriah, who wrote on a scroll all the words Jeremiah dictated.",
+    "reference": "Jeremiah 36:4"
+  },
+  {
+    "id": "bible-166",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "hard",
+    "prompt": "In which town did a woman make a room for Elisha, whose son he later raised to life?",
+    "choices": ["Shunem", "Zarephath", "Nain", "Bethel"],
+    "explanation": "A woman of Shunem made a room for Elisha, and he later raised her dead son to life.",
+    "reference": "2 Kings 4:8-37"
+  },
+  {
+    "id": "bible-167",
+    "category": "bible",
+    "topic": "Ezra",
+    "difficulty": "hard",
+    "prompt": "Which two prophets urged the Jews to get back to rebuilding the temple in the book of Ezra?",
+    "choices": ["Haggai and Zechariah", "Nahum and Habakkuk", "Joel and Amos", "Micah and Obadiah"],
+    "explanation": "Haggai and Zechariah prophesied to the Jews, and the leaders began again to rebuild the house of God.",
+    "reference": "Ezra 5:1-2"
+  },
+  {
+    "id": "bible-168",
+    "category": "bible",
+    "topic": "2 Chronicles",
+    "difficulty": "hard",
+    "prompt": "Which king of Judah was struck with leprosy for burning incense in the temple?",
+    "choices": ["Uzziah", "Hezekiah", "Asa", "Jehoshaphat"],
+    "explanation": "Uzziah grew proud and burned incense in the temple, and leprosy broke out on his forehead.",
+    "reference": "2 Chronicles 26:16-21"
+  },
+  {
+    "id": "bible-169",
+    "category": "bible",
+    "topic": "Revelation",
+    "difficulty": "hard",
+    "prompt": "In John's vision of heaven, how many elders sat on thrones around God's throne?",
+    "choices": ["Twenty-four", "Twelve", "Seventy", "Seven"],
+    "explanation": "John saw twenty-four thrones around the throne, with twenty-four elders in white seated on them.",
+    "reference": "Revelation 4:4"
+  },
+  {
+    "id": "bible-170",
+    "category": "bible",
+    "topic": "1 Peter",
+    "difficulty": "hard",
+    "prompt": "According to 1 Peter, how many people were saved through water in Noah's ark?",
+    "choices": ["Eight", "Seven", "Twelve", "Six"],
+    "explanation": "Peter writes that in the ark a few people, eight in all, were saved through water.",
+    "reference": "1 Peter 3:20"
+  },
+  {
+    "id": "bible-171",
+    "category": "bible",
+    "topic": "James",
+    "difficulty": "hard",
+    "prompt": "According to James, how long did it not rain after Elijah prayed?",
+    "choices": ["Three and a half years", "Seven years", "Forty days", "One year"],
+    "explanation": "James says Elijah prayed earnestly and it did not rain on the land for three years and six months.",
+    "reference": "James 5:17"
+  },
+  {
+    "id": "bible-172",
+    "category": "bible",
+    "topic": "Deuteronomy",
+    "difficulty": "hard",
+    "prompt": "Jesus answered the devil, \"Man shall not live by bread alone.\" Which book was he quoting?",
+    "choices": ["Deuteronomy", "Leviticus", "Psalms", "Isaiah"],
+    "explanation": "Jesus quoted Moses' words in Deuteronomy 8:3, that man lives by every word from the mouth of God.",
+    "reference": "Deuteronomy 8:3"
+  },
+  {
+    "id": "bible-173",
+    "category": "bible",
+    "topic": "Habakkuk",
+    "difficulty": "hard",
+    "prompt": "Which prophet wrote that though the fig tree does not blossom, yet he will rejoice in the Lord?",
+    "choices": ["Habakkuk", "Obadiah", "Haggai", "Zephaniah"],
+    "explanation": "Habakkuk ends his book saying that even with no fruit or flocks, he will rejoice in the God of his salvation.",
+    "reference": "Habakkuk 3:17-18"
+  },
+  {
+    "id": "bible-174",
+    "category": "bible",
+    "topic": "Zechariah",
+    "difficulty": "hard",
+    "prompt": "Which prophet foretold Jerusalem's king coming to her lowly and riding on a donkey?",
+    "choices": ["Zechariah", "Malachi", "Micah", "Joel"],
+    "explanation": "Zechariah 9:9 says, \"Behold, your king comes to you... lowly and riding on a donkey.\"",
+    "reference": "Zechariah 9:9"
+  },
+  {
+    "id": "bible-175",
+    "category": "bible",
+    "topic": "Ezekiel",
+    "difficulty": "hard",
+    "prompt": "When Ezekiel ate the scroll God gave him, what did it taste like in his mouth?",
+    "choices": ["Honey", "Vinegar", "Salt", "Ashes"],
+    "explanation": "Ezekiel ate the scroll, and it was as sweet as honey in his mouth.",
+    "reference": "Ezekiel 3:1-3"
+  },
+  {
+    "id": "bible-176",
+    "category": "bible",
+    "topic": "Philippians",
+    "difficulty": "hard",
+    "prompt": "Which tribe of Israel does Paul say he came from?",
+    "choices": ["Benjamin", "Judah", "Levi", "Ephraim"],
+    "explanation": "Paul describes himself as of the people of Israel, of the tribe of Benjamin, a Hebrew of Hebrews.",
+    "reference": "Philippians 3:5"
+  },
+  {
+    "id": "bible-177",
+    "category": "bible",
+    "topic": "Lamentations",
+    "difficulty": "hard",
+    "prompt": "Which book says the Lord's mercies never fail and are new every morning?",
+    "choices": ["Lamentations", "Ecclesiastes", "Proverbs", "Job"],
+    "explanation": "Lamentations 3 says his compassions fail not; they are new every morning; great is his faithfulness.",
+    "reference": "Lamentations 3:22-23"
+  },
+  {
+    "id": "bible-178",
+    "category": "bible",
+    "topic": "Psalms",
+    "difficulty": "hard",
+    "prompt": "Which psalm begins \"The earth is the Lord's, and everything in it\"?",
+    "choices": ["Psalm 24", "Psalm 19", "Psalm 8", "Psalm 100"],
+    "explanation": "Psalm 24, a psalm of David, opens by declaring that the earth and all who live in it belong to the Lord.",
+    "reference": "Psalm 24:1"
+  },
+  {
+    "id": "bible-179",
+    "category": "bible",
+    "topic": "Amos",
+    "difficulty": "hard",
+    "prompt": "Which prophet came from Tekoa, where he tended flocks, before God sent him to prophesy?",
+    "choices": ["Amos", "Micah", "Hosea", "Joel"],
+    "explanation": "Amos was from Tekoa and says the Lord took him from following the flock to prophesy to Israel.",
+    "reference": "Amos 1:1; 7:14-15"
+  },
+  {
+    "id": "bible-180",
+    "category": "bible",
+    "topic": "Revelation",
+    "difficulty": "hard",
+    "prompt": "Which church in Revelation was told to be faithful even to death to receive the crown of life?",
+    "choices": ["Smyrna", "Ephesus", "Sardis", "Thyatira"],
+    "explanation": "Jesus told the suffering church in Smyrna, \"Be faithful unto death, and I will give you the crown of life.\"",
+    "reference": "Revelation 2:8-10"
   }
 ]

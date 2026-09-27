@@ -184,7 +184,6 @@
     "choices": ["Aretha Franklin", "Diana Ross", "Whitney Houston", "Tina Turner"],
     "explanation": "Aretha Franklin, famous for songs like 'Respect', has long been called the Queen of Soul."
   },
-
   {
     "id": "music-021",
     "category": "music",
@@ -375,7 +374,6 @@
     "choices": ["South Africa", "Nigeria", "Ghana", "Angola"],
     "explanation": "Amapiano grew out of South Africa's townships in the mid-2010s, mixing house, jazz and log drum bass."
   },
-
   {
     "id": "music-041",
     "category": "music",
@@ -565,5 +563,1145 @@
     "prompt": "Which Nigerian singer is known as 'the Elegant Stallion'?",
     "choices": ["Onyeka Onwenu", "Christy Essien-Igbokwe", "Stella Monye", "Salawa Abeni"],
     "explanation": "Onyeka Onwenu, a singer, actress and journalist, was widely known as the Elegant Stallion."
+  },
+  {
+    "id": "music-061",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "easy",
+    "prompt": "Which of these bowed string instruments is the smallest?",
+    "choices": ["Violin", "Viola", "Cello", "Double bass"],
+    "explanation": "The violin is the smallest and highest-pitched of the family, followed by the viola, cello and double bass."
+  },
+  {
+    "id": "music-062",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "easy",
+    "prompt": "Which instrument has strings stretched across a tall triangular frame and is played by plucking?",
+    "choices": ["Harp", "Cello", "Double bass", "Banjo"],
+    "explanation": "The harp's strings run across a large triangular frame and are plucked with the fingers."
+  },
+  {
+    "id": "music-063",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "easy",
+    "prompt": "Which brass instrument has a slide that the player moves to change the note?",
+    "choices": ["Trombone", "Trumpet", "Tuba", "French horn"],
+    "explanation": "The trombone changes pitch with a sliding tube instead of the valves used on most brass instruments."
+  },
+  {
+    "id": "music-064",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "easy",
+    "prompt": "Which round, flat metal percussion instrument is struck to make a loud crash?",
+    "choices": ["Cymbal", "Tambourine", "Triangle", "Snare drum"],
+    "explanation": "A cymbal is a thin round metal plate that gives a crash when struck."
+  },
+  {
+    "id": "music-065",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "easy",
+    "prompt": "Which instrument, usually with four strings, plays the low notes in a rock or pop band?",
+    "choices": ["Bass guitar", "Ukulele", "Mandolin", "Banjo"],
+    "explanation": "The bass guitar plays the low notes that hold a band's rhythm and harmony together."
+  },
+  {
+    "id": "music-066",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "easy",
+    "prompt": "Which Irish boy band sang 'Flying Without Wings' and 'My Love'?",
+    "choices": ["Westlife", "Boyzone", "Backstreet Boys", "*NSYNC"],
+    "explanation": "Westlife, from Ireland, released 'Flying Without Wings' in 1999 and 'My Love' in 2000."
+  },
+  {
+    "id": "music-067",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "easy",
+    "prompt": "Which British singer released the albums '21' and '25'?",
+    "choices": ["Adele", "Amy Winehouse", "Duffy", "Leona Lewis"],
+    "explanation": "Adele's albums are '19', '21', '25' and '30'."
+  },
+  {
+    "id": "music-068",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "easy",
+    "prompt": "Which singer had hits with 'Umbrella' and 'Diamonds'?",
+    "choices": ["Rihanna", "Beyoncé", "Ciara", "Nicki Minaj"],
+    "explanation": "Rihanna released 'Umbrella' in 2007 and 'Diamonds' in 2012."
+  },
+  {
+    "id": "music-069",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "easy",
+    "prompt": "Which British girl group sang 'Wannabe' and '2 Become 1' in the 1990s?",
+    "choices": ["Spice Girls", "Sugababes", "All Saints", "Little Mix"],
+    "explanation": "The Spice Girls released 'Wannabe' and '2 Become 1' in 1996."
+  },
+  {
+    "id": "music-070",
+    "category": "music",
+    "topic": "R&B",
+    "difficulty": "easy",
+    "prompt": "Which singer released the 2008 hit 'Single Ladies (Put a Ring on It)'?",
+    "choices": ["Beyoncé", "Rihanna", "Alicia Keys", "Kelly Rowland"],
+    "explanation": "'Single Ladies (Put a Ring on It)' was released by Beyoncé in 2008."
+  },
+  {
+    "id": "music-071",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "easy",
+    "prompt": "Harry Styles first became famous as a member of which boy band?",
+    "choices": ["One Direction", "Westlife", "Backstreet Boys", "The Wanted"],
+    "explanation": "Harry Styles was one of the five original members of One Direction, formed on 'The X Factor' in 2010."
+  },
+  {
+    "id": "music-072",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "easy",
+    "prompt": "Which singer released the albums '1989' and 'Folklore'?",
+    "choices": ["Taylor Swift", "Katy Perry", "Lady Gaga", "Ariana Grande"],
+    "explanation": "Taylor Swift released '1989' in 2014 and 'Folklore' in 2020."
+  },
+  {
+    "id": "music-073",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "easy",
+    "prompt": "Which Swedish group sang 'Dancing Queen' and 'Mamma Mia'?",
+    "choices": ["ABBA", "Boney M.", "Bee Gees", "Roxette"],
+    "explanation": "ABBA, from Sweden, recorded both 'Dancing Queen' and 'Mamma Mia' in the 1970s."
+  },
+  {
+    "id": "music-074",
+    "category": "music",
+    "topic": "Rock",
+    "difficulty": "easy",
+    "prompt": "Mick Jagger found fame as the lead singer of which band?",
+    "choices": ["The Rolling Stones", "The Who", "The Kinks", "The Beatles"],
+    "explanation": "Mick Jagger was a founding member and the lead singer of the Rolling Stones, formed in London in 1962."
+  },
+  {
+    "id": "music-075",
+    "category": "music",
+    "topic": "Hip hop",
+    "difficulty": "easy",
+    "prompt": "Which rapper's real name is Marshall Mathers?",
+    "choices": ["Eminem", "Jay-Z", "Snoop Dogg", "50 Cent"],
+    "explanation": "Eminem was born Marshall Bruce Mathers III in Missouri in 1972."
+  },
+  {
+    "id": "music-076",
+    "category": "music",
+    "topic": "Hip hop",
+    "difficulty": "easy",
+    "prompt": "Which rapper had the 2003 hit 'In da Club'?",
+    "choices": ["50 Cent", "Eminem", "Nelly", "Ludacris"],
+    "explanation": "'In da Club' was the lead single from 50 Cent's 2003 album 'Get Rich or Die Tryin''."
+  },
+  {
+    "id": "music-077",
+    "category": "music",
+    "topic": "Hip hop",
+    "difficulty": "easy",
+    "prompt": "Which Canadian rapper released the 2015 song 'Hotline Bling'?",
+    "choices": ["Drake", "The Weeknd", "Justin Bieber", "Shawn Mendes"],
+    "explanation": "'Hotline Bling' was released by the Toronto rapper Drake in 2015."
+  },
+  {
+    "id": "music-078",
+    "category": "music",
+    "topic": "Hip hop",
+    "difficulty": "easy",
+    "prompt": "In hip hop, what is the person who plays, mixes and scratches records on turntables called?",
+    "choices": ["DJ", "MC", "B-boy", "Hype man"],
+    "explanation": "The DJ, or disc jockey, works the turntables while the MC raps."
+  },
+  {
+    "id": "music-079",
+    "category": "music",
+    "topic": "Soul",
+    "difficulty": "easy",
+    "prompt": "Which blind singer recorded 'I Just Called to Say I Love You'?",
+    "choices": ["Stevie Wonder", "Ray Charles", "Lionel Richie", "Marvin Gaye"],
+    "explanation": "Stevie Wonder, blind since infancy, released 'I Just Called to Say I Love You' in 1984."
+  },
+  {
+    "id": "music-080",
+    "category": "music",
+    "topic": "Soul",
+    "difficulty": "easy",
+    "prompt": "Which singer was known as the 'Godfather of Soul'?",
+    "choices": ["James Brown", "Otis Redding", "Ray Charles", "Sam Cooke"],
+    "explanation": "James Brown was nicknamed the Godfather of Soul for his hugely influential singing and shows."
+  },
+  {
+    "id": "music-081",
+    "category": "music",
+    "topic": "Jazz",
+    "difficulty": "easy",
+    "prompt": "Louis Armstrong was most famous for playing which instrument?",
+    "choices": ["Trumpet", "Saxophone", "Clarinet", "Trombone"],
+    "explanation": "Louis Armstrong was a trumpet player as well as a much-loved singer."
+  },
+  {
+    "id": "music-082",
+    "category": "music",
+    "topic": "Genres",
+    "difficulty": "easy",
+    "prompt": "Which music genre, born in the US, is famous for improvisation and swing?",
+    "choices": ["Jazz", "Country", "Punk", "Techno"],
+    "explanation": "Jazz grew up in the US in the early 1900s and is built on improvisation and swing rhythm."
+  },
+  {
+    "id": "music-083",
+    "category": "music",
+    "topic": "Genres",
+    "difficulty": "easy",
+    "prompt": "Which style of music, known for fiddles and twangy guitars, is most linked with Nashville?",
+    "choices": ["Country", "Jazz", "Hip hop", "Reggae"],
+    "explanation": "Nashville, Tennessee, nicknamed Music City, is the centre of the country music industry."
+  },
+  {
+    "id": "music-084",
+    "category": "music",
+    "topic": "Genres",
+    "difficulty": "easy",
+    "prompt": "Samba music and dance are most closely linked with which country?",
+    "choices": ["Brazil", "Argentina", "Cuba", "Mexico"],
+    "explanation": "Samba comes from Brazil and is the heartbeat of the Rio de Janeiro carnival."
+  },
+  {
+    "id": "music-085",
+    "category": "music",
+    "topic": "Reggae",
+    "difficulty": "easy",
+    "prompt": "Which Jamaican-born singer had the 2000 hit 'It Wasn't Me'?",
+    "choices": ["Shaggy", "Sean Paul", "Shabba Ranks", "Beenie Man"],
+    "explanation": "'It Wasn't Me' by Shaggy, featuring Rikrok, was released in 2000."
+  },
+  {
+    "id": "music-086",
+    "category": "music",
+    "topic": "Classical",
+    "difficulty": "easy",
+    "prompt": "What is a large piece for orchestra, usually in four movements, like Beethoven's Fifth, called?",
+    "choices": ["Symphony", "Sonata", "Anthem", "Opera"],
+    "explanation": "A symphony is an extended work for orchestra, usually in four movements."
+  },
+  {
+    "id": "music-087",
+    "category": "music",
+    "topic": "Opera",
+    "difficulty": "easy",
+    "prompt": "What is a stage drama in which the story is sung, with an orchestra playing, called?",
+    "choices": ["Opera", "Ballet", "Symphony", "Concerto"],
+    "explanation": "In an opera the story is told through singing, accompanied by an orchestra."
+  },
+  {
+    "id": "music-088",
+    "category": "music",
+    "topic": "Music terms",
+    "difficulty": "easy",
+    "prompt": "What is a group of singers who perform together, as in a church, called?",
+    "choices": ["Choir", "Orchestra", "Brass band", "String section"],
+    "explanation": "A choir is a group of singers; an orchestra and a band are groups of instrumentalists."
+  },
+  {
+    "id": "music-089",
+    "category": "music",
+    "topic": "Music terms",
+    "difficulty": "easy",
+    "prompt": "What is the name for the words of a song?",
+    "choices": ["Lyrics", "Melody", "Harmony", "Rhythm"],
+    "explanation": "The lyrics are the words of a song; the melody is the tune they are sung to."
+  },
+  {
+    "id": "music-090",
+    "category": "music",
+    "topic": "Music terms",
+    "difficulty": "easy",
+    "prompt": "What is the repeated part of a pop song that usually comes after each verse called?",
+    "choices": ["Chorus", "Bridge", "Intro", "Outro"],
+    "explanation": "The chorus, or refrain, is repeated after each verse and is usually the catchiest part of a song."
+  },
+  {
+    "id": "music-091",
+    "category": "music",
+    "topic": "Music terms",
+    "difficulty": "easy",
+    "prompt": "What is a gentle song sung to help a baby fall asleep called?",
+    "choices": ["Lullaby", "Anthem", "Hymn", "March"],
+    "explanation": "A lullaby is a soothing song sung to send a child to sleep."
+  },
+  {
+    "id": "music-092",
+    "category": "music",
+    "topic": "Music theory",
+    "difficulty": "easy",
+    "prompt": "In the sol-fa scale, which syllable comes right after 'do'?",
+    "choices": ["Re", "Mi", "Fa", "Ti"],
+    "explanation": "The sol-fa scale runs do, re, mi, fa, so, la, ti, do."
+  },
+  {
+    "id": "music-093",
+    "category": "music",
+    "topic": "Afrobeat",
+    "difficulty": "easy",
+    "prompt": "In which city did Fela Kuti run his famous club, the Afrika Shrine?",
+    "choices": ["Lagos", "Ibadan", "Abeokuta", "Accra"],
+    "explanation": "Fela's Afrika Shrine was in Lagos, where he played long all-night shows."
+  },
+  {
+    "id": "music-094",
+    "category": "music",
+    "topic": "Afrobeat",
+    "difficulty": "easy",
+    "prompt": "Femi Kuti and Seun Kuti are sons of which musician?",
+    "choices": ["Fela Kuti", "King Sunny Adé", "Tony Allen", "Ebenezer Obey"],
+    "explanation": "Femi and Seun Kuti are sons of Afrobeat pioneer Fela Kuti and have carried on his music."
+  },
+  {
+    "id": "music-095",
+    "category": "music",
+    "topic": "Afrobeats",
+    "difficulty": "easy",
+    "prompt": "Which Nigerian singer released the 2017 hit 'Fall'?",
+    "choices": ["Davido", "Wizkid", "Mr Eazi", "Kizz Daniel"],
+    "explanation": "'Fall' is a 2017 single by the Nigerian singer Davido."
+  },
+  {
+    "id": "music-096",
+    "category": "music",
+    "topic": "Nigerian pop",
+    "difficulty": "easy",
+    "prompt": "Which Nigerian twin-brother duo recorded 'Personally' and 'Beautiful Onyinye'?",
+    "choices": ["P-Square", "Bracket", "Styl-Plus", "Plantashun Boiz"],
+    "explanation": "P-Square is made up of the twin brothers Peter and Paul Okoye."
+  },
+  {
+    "id": "music-097",
+    "category": "music",
+    "topic": "Nigerian pop",
+    "difficulty": "easy",
+    "prompt": "Which Nigerian singer had a hit with 'Johnny', a song about a cheating lover?",
+    "choices": ["Yemi Alade", "Tiwa Savage", "Seyi Shay", "Simi"],
+    "explanation": "Yemi Alade's hit 'Johnny' is about an unfaithful boyfriend named Johnny."
+  },
+  {
+    "id": "music-098",
+    "category": "music",
+    "topic": "Nigerian hip hop",
+    "difficulty": "easy",
+    "prompt": "Which Nigerian rapper, nicknamed 'Baddo', founded the record label YBNL?",
+    "choices": ["Olamide", "Phyno", "Reminisce", "Zlatan"],
+    "explanation": "Olamide, known as Baddo, set up his record label YBNL in 2012."
+  },
+  {
+    "id": "music-099",
+    "category": "music",
+    "topic": "Hip hop",
+    "difficulty": "easy",
+    "prompt": "In hip hop, what does the term 'MC' originally stand for?",
+    "choices": ["Master of ceremonies", "Music composer", "Mix creator", "Main chorus"],
+    "explanation": "MC comes from master of ceremonies, the host who hyped the crowd and later became the rapper."
+  },
+  {
+    "id": "music-100",
+    "category": "music",
+    "topic": "Music terms",
+    "difficulty": "easy",
+    "prompt": "What is the official patriotic song of a country, sung at state events and sports matches, called?",
+    "choices": ["National anthem", "Lullaby", "Ballad", "Carol"],
+    "explanation": "A national anthem is a country's official patriotic song, played at state occasions and before international matches."
+  },
+  {
+    "id": "music-101",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "medium",
+    "prompt": "Which of these woodwind instruments has the lowest range?",
+    "choices": ["Bassoon", "Oboe", "Clarinet", "Flute"],
+    "explanation": "The bassoon is the bass voice of the woodwind section, far lower than the oboe, clarinet and flute."
+  },
+  {
+    "id": "music-102",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "medium",
+    "prompt": "The saxophone was invented in the 1840s by an instrument maker from which country?",
+    "choices": ["Belgium", "France", "Germany", "Italy"],
+    "explanation": "The saxophone was invented by Adolphe Sax, a Belgian instrument maker who worked in Paris."
+  },
+  {
+    "id": "music-103",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "medium",
+    "prompt": "Which Caribbean percussion instrument is made from a metal oil drum?",
+    "choices": ["Steelpan", "Marimba", "Bongo", "Conga"],
+    "explanation": "The steelpan was developed in Trinidad and Tobago and is made from a metal oil drum."
+  },
+  {
+    "id": "music-104",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "medium",
+    "prompt": "Rihanna comes from which Caribbean island country?",
+    "choices": ["Barbados", "Jamaica", "Trinidad and Tobago", "The Bahamas"],
+    "explanation": "Rihanna was born and grew up in Barbados."
+  },
+  {
+    "id": "music-105",
+    "category": "music",
+    "topic": "Disco",
+    "difficulty": "medium",
+    "prompt": "Which disco group had hits with 'Rivers of Babylon' and 'Rasputin'?",
+    "choices": ["Boney M.", "ABBA", "Bee Gees", "Village People"],
+    "explanation": "Boney M. released 'Rivers of Babylon' and 'Rasputin' in 1978."
+  },
+  {
+    "id": "music-106",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "medium",
+    "prompt": "Sting was the lead singer and bass player of which band?",
+    "choices": ["The Police", "Duran Duran", "Genesis", "Dire Straits"],
+    "explanation": "Sting sang and played bass in the Police, known for 'Every Breath You Take'."
+  },
+  {
+    "id": "music-107",
+    "category": "music",
+    "topic": "Rock",
+    "difficulty": "medium",
+    "prompt": "Which rock guitarist, famous for 'Purple Haze', played his guitar left-handed?",
+    "choices": ["Jimi Hendrix", "Eric Clapton", "Jimmy Page", "Carlos Santana"],
+    "explanation": "Jimi Hendrix played a right-handed guitar flipped over and restrung for his left hand."
+  },
+  {
+    "id": "music-108",
+    "category": "music",
+    "topic": "Rock",
+    "difficulty": "medium",
+    "prompt": "Which band released the 1973 album 'The Dark Side of the Moon'?",
+    "choices": ["Pink Floyd", "Led Zeppelin", "The Who", "Genesis"],
+    "explanation": "Pink Floyd released 'The Dark Side of the Moon' in 1973."
+  },
+  {
+    "id": "music-109",
+    "category": "music",
+    "topic": "Rock",
+    "difficulty": "medium",
+    "prompt": "Which band recorded 'Stairway to Heaven'?",
+    "choices": ["Led Zeppelin", "Deep Purple", "Black Sabbath", "Pink Floyd"],
+    "explanation": "'Stairway to Heaven' appeared on Led Zeppelin's untitled fourth album in 1971."
+  },
+  {
+    "id": "music-110",
+    "category": "music",
+    "topic": "Hip hop",
+    "difficulty": "medium",
+    "prompt": "Which rapper's real name is Shawn Carter?",
+    "choices": ["Jay-Z", "Nas", "Kanye West", "Diddy"],
+    "explanation": "Jay-Z was born Shawn Corey Carter in Brooklyn, New York, in 1969."
+  },
+  {
+    "id": "music-111",
+    "category": "music",
+    "topic": "Hip hop",
+    "difficulty": "medium",
+    "prompt": "Which rapper, shot dead in 1996, recorded 'California Love' with Dr. Dre?",
+    "choices": ["Tupac Shakur", "The Notorious B.I.G.", "Eazy-E", "Big Pun"],
+    "explanation": "Tupac Shakur released 'California Love' with Dr. Dre in 1995 and was killed in Las Vegas in 1996."
+  },
+  {
+    "id": "music-112",
+    "category": "music",
+    "topic": "Jazz",
+    "difficulty": "medium",
+    "prompt": "Which jazz singer was nicknamed 'Lady Day'?",
+    "choices": ["Billie Holiday", "Ella Fitzgerald", "Sarah Vaughan", "Nina Simone"],
+    "explanation": "Billie Holiday was given the nickname Lady Day by her friend, the saxophonist Lester Young."
+  },
+  {
+    "id": "music-113",
+    "category": "music",
+    "topic": "Jazz",
+    "difficulty": "medium",
+    "prompt": "Which trumpeter released the 1959 jazz album 'Kind of Blue'?",
+    "choices": ["Miles Davis", "Dizzy Gillespie", "Chet Baker", "Louis Armstrong"],
+    "explanation": "'Kind of Blue' was recorded by Miles Davis and his sextet in 1959."
+  },
+  {
+    "id": "music-114",
+    "category": "music",
+    "topic": "Blues",
+    "difficulty": "medium",
+    "prompt": "Which blues guitarist named his guitars 'Lucille'?",
+    "choices": ["B.B. King", "Muddy Waters", "John Lee Hooker", "Buddy Guy"],
+    "explanation": "B.B. King gave the name Lucille to the guitars he played."
+  },
+  {
+    "id": "music-115",
+    "category": "music",
+    "topic": "Reggae",
+    "difficulty": "medium",
+    "prompt": "What was the name of Bob Marley's band?",
+    "choices": ["The Wailers", "The Maytals", "The Skatalites", "Black Uhuru"],
+    "explanation": "Bob Marley formed the Wailers in Kingston with Peter Tosh and Bunny Wailer."
+  },
+  {
+    "id": "music-116",
+    "category": "music",
+    "topic": "Reggae",
+    "difficulty": "medium",
+    "prompt": "Bob Marley's music was closely linked with which religious movement?",
+    "choices": ["Rastafari", "Sufism", "Quakerism", "Hare Krishna"],
+    "explanation": "Bob Marley was a devoted Rastafarian, and the faith runs through many of his songs."
+  },
+  {
+    "id": "music-117",
+    "category": "music",
+    "topic": "Reggae",
+    "difficulty": "medium",
+    "prompt": "Which Jamaican style of the early 1960s led into rocksteady and then reggae?",
+    "choices": ["Ska", "Dancehall", "Dub", "Calypso"],
+    "explanation": "Ska came first in the early 1960s, slowed into rocksteady, and then gave way to reggae."
+  },
+  {
+    "id": "music-118",
+    "category": "music",
+    "topic": "Soul",
+    "difficulty": "medium",
+    "prompt": "Which singer released the 1971 album 'What's Going On'?",
+    "choices": ["Marvin Gaye", "Otis Redding", "Al Green", "Bill Withers"],
+    "explanation": "Marvin Gaye's 'What's Going On' was released by Motown in 1971."
+  },
+  {
+    "id": "music-119",
+    "category": "music",
+    "topic": "Soul",
+    "difficulty": "medium",
+    "prompt": "Motown Records was founded in which US city?",
+    "choices": ["Detroit", "Chicago", "Memphis", "Philadelphia"],
+    "explanation": "Motown takes its name from 'Motor Town', a nickname for Detroit, where it was founded in 1959."
+  },
+  {
+    "id": "music-120",
+    "category": "music",
+    "topic": "Classical",
+    "difficulty": "medium",
+    "prompt": "Who composed the ballet 'The Nutcracker'?",
+    "choices": [
+      "Pyotr Ilyich Tchaikovsky",
+      "Sergei Prokofiev",
+      "Igor Stravinsky",
+      "Nikolai Rimsky-Korsakov"
+    ],
+    "explanation": "Tchaikovsky's 'The Nutcracker' was first performed in St Petersburg in 1892."
+  },
+  {
+    "id": "music-121",
+    "category": "music",
+    "topic": "Classical",
+    "difficulty": "medium",
+    "prompt": "Which composer wrote 'Messiah', the oratorio that includes the 'Hallelujah' chorus?",
+    "choices": [
+      "George Frideric Handel",
+      "Johann Sebastian Bach",
+      "Joseph Haydn",
+      "Felix Mendelssohn"
+    ],
+    "explanation": "Handel composed 'Messiah' in 1741, and it was first performed in Dublin in 1742."
+  },
+  {
+    "id": "music-122",
+    "category": "music",
+    "topic": "Opera",
+    "difficulty": "medium",
+    "prompt": "Luciano Pavarotti was a famous opera singer with which voice type?",
+    "choices": ["Tenor", "Baritone", "Bass", "Countertenor"],
+    "explanation": "Pavarotti was an Italian tenor and one of the 'Three Tenors'."
+  },
+  {
+    "id": "music-123",
+    "category": "music",
+    "topic": "Opera",
+    "difficulty": "medium",
+    "prompt": "Which Italian composer wrote the operas 'La traviata' and 'Aida'?",
+    "choices": ["Giuseppe Verdi", "Giacomo Puccini", "Gioachino Rossini", "Gaetano Donizetti"],
+    "explanation": "Verdi wrote 'La traviata' in 1853 and 'Aida' in 1871."
+  },
+  {
+    "id": "music-124",
+    "category": "music",
+    "topic": "Opera",
+    "difficulty": "medium",
+    "prompt": "In an opera, what is an expressive song for a single voice called?",
+    "choices": ["Aria", "Libretto", "Overture", "Chorus"],
+    "explanation": "An aria is a solo song in an opera; the overture is played by the orchestra alone."
+  },
+  {
+    "id": "music-125",
+    "category": "music",
+    "topic": "Music terms",
+    "difficulty": "medium",
+    "prompt": "What does 'a cappella' mean in singing?",
+    "choices": [
+      "Without instruments",
+      "With a full orchestra",
+      "In a very high voice",
+      "Very slowly"
+    ],
+    "explanation": "A cappella singing uses only voices, with no instrumental backing."
+  },
+  {
+    "id": "music-126",
+    "category": "music",
+    "topic": "Music terms",
+    "difficulty": "medium",
+    "prompt": "What does 'crescendo' tell a musician to do?",
+    "choices": [
+      "Get gradually louder",
+      "Get gradually slower",
+      "Get suddenly quiet",
+      "Get gradually faster"
+    ],
+    "explanation": "A crescendo is a gradual increase in loudness; its opposite is a diminuendo."
+  },
+  {
+    "id": "music-127",
+    "category": "music",
+    "topic": "Music theory",
+    "difficulty": "medium",
+    "prompt": "How many crotchets (quarter notes) last as long as one semibreve (whole note)?",
+    "choices": ["Four", "Two", "Eight", "Three"],
+    "explanation": "A semibreve lasts four beats in 4/4 time, the same as four crotchets."
+  },
+  {
+    "id": "music-128",
+    "category": "music",
+    "topic": "Music theory",
+    "difficulty": "medium",
+    "prompt": "What is a chord made of three notes, such as C, E and G, called?",
+    "choices": ["Triad", "Octave", "Interval", "Scale"],
+    "explanation": "A triad is a three-note chord built from a root, a third and a fifth."
+  },
+  {
+    "id": "music-129",
+    "category": "music",
+    "topic": "Genres",
+    "difficulty": "medium",
+    "prompt": "Calypso music comes from which Caribbean country?",
+    "choices": ["Trinidad and Tobago", "Jamaica", "Cuba", "Barbados"],
+    "explanation": "Calypso grew up in Trinidad and Tobago and is closely tied to its carnival."
+  },
+  {
+    "id": "music-130",
+    "category": "music",
+    "topic": "Musicals",
+    "difficulty": "medium",
+    "prompt": "Which composer wrote the music for 'The Phantom of the Opera' and 'Cats'?",
+    "choices": ["Andrew Lloyd Webber", "Stephen Sondheim", "Tim Rice", "Cole Porter"],
+    "explanation": "Andrew Lloyd Webber composed 'Cats' in 1981 and 'The Phantom of the Opera' in 1986."
+  },
+  {
+    "id": "music-131",
+    "category": "music",
+    "topic": "Country",
+    "difficulty": "medium",
+    "prompt": "Which country singer wrote and recorded 'Jolene'?",
+    "choices": ["Dolly Parton", "Loretta Lynn", "Tammy Wynette", "Patsy Cline"],
+    "explanation": "Dolly Parton wrote 'Jolene' and released it in 1973."
+  },
+  {
+    "id": "music-132",
+    "category": "music",
+    "topic": "Country",
+    "difficulty": "medium",
+    "prompt": "Which singer had a 1978 country hit with 'The Gambler'?",
+    "choices": ["Kenny Rogers", "Jim Reeves", "Don Williams", "John Denver"],
+    "explanation": "'The Gambler', written by Don Schlitz, was a 1978 hit for Kenny Rogers."
+  },
+  {
+    "id": "music-133",
+    "category": "music",
+    "topic": "Afrobeat",
+    "difficulty": "medium",
+    "prompt": "Which Fela Kuti song mocked Nigerian soldiers for blindly obeying orders?",
+    "choices": ["Zombie", "Water No Get Enemy", "Lady", "Shakara"],
+    "explanation": "Fela's 'Zombie' compared soldiers to mindless zombies, which angered the military government."
+  },
+  {
+    "id": "music-134",
+    "category": "music",
+    "topic": "Afrobeats",
+    "difficulty": "medium",
+    "prompt": "What is Burna Boy's real name?",
+    "choices": ["Damini Ogulu", "David Adeleke", "Ayodeji Balogun", "Divine Ikubor"],
+    "explanation": "Burna Boy was born Damini Ebunoluwa Ogulu; the others are Davido, Wizkid and Rema."
+  },
+  {
+    "id": "music-135",
+    "category": "music",
+    "topic": "Afrobeats",
+    "difficulty": "medium",
+    "prompt": "Which Nigerian singer broke through with the 2019 song 'Dumebi'?",
+    "choices": ["Rema", "Fireboy DML", "Omah Lay", "Joeboy"],
+    "explanation": "Rema's 'Dumebi' came out in 2019 and made him a star."
+  },
+  {
+    "id": "music-136",
+    "category": "music",
+    "topic": "Afrobeats",
+    "difficulty": "medium",
+    "prompt": "Which Nigerian singer released the 2013 debut album 'Once Upon a Time'?",
+    "choices": ["Tiwa Savage", "Yemi Alade", "Seyi Shay", "Waje"],
+    "explanation": "Tiwa Savage's first album, 'Once Upon a Time', was released in 2013."
+  },
+  {
+    "id": "music-137",
+    "category": "music",
+    "topic": "Nigerian pop",
+    "difficulty": "medium",
+    "prompt": "Which two musicians founded the Nigerian record label Mo' Hits Records in 2004?",
+    "choices": [
+      "Don Jazzy and D'banj",
+      "Peter and Paul Okoye",
+      "Olamide and Phyno",
+      "Wizkid and Banky W"
+    ],
+    "explanation": "Producer Don Jazzy and singer D'banj started Mo' Hits Records in 2004."
+  },
+  {
+    "id": "music-138",
+    "category": "music",
+    "topic": "Nigerian pop",
+    "difficulty": "medium",
+    "prompt": "Before going solo, 2Face Idibia was a member of which group?",
+    "choices": ["Plantashun Boiz", "Styl-Plus", "The Remedies", "Trybesmen"],
+    "explanation": "2Face sang in the Plantashun Boiz with Blackface and Faze before launching his solo career."
+  },
+  {
+    "id": "music-139",
+    "category": "music",
+    "topic": "Nigerian hip hop",
+    "difficulty": "medium",
+    "prompt": "Which rapper, known for rapping in Igbo, recorded 'Fada Fada' with Olamide?",
+    "choices": ["Phyno", "Ice Prince", "Vector", "Reminisce"],
+    "explanation": "Phyno raps mostly in Igbo, and 'Fada Fada' features Olamide."
+  },
+  {
+    "id": "music-140",
+    "category": "music",
+    "topic": "Juju",
+    "difficulty": "medium",
+    "prompt": "Chief Commander Ebenezer Obey is best known for which style of music?",
+    "choices": ["Juju", "Fuji", "Apala", "Highlife"],
+    "explanation": "Ebenezer Obey is one of the great stars of juju, the Yoruba guitar-and-drum music."
+  },
+  {
+    "id": "music-141",
+    "category": "music",
+    "topic": "Orchestra",
+    "difficulty": "hard",
+    "prompt": "Which instrument traditionally plays the 'A' that an orchestra tunes to?",
+    "choices": ["Oboe", "Violin", "Flute", "Clarinet"],
+    "explanation": "The oboe's clear, steady tone makes it the instrument that sounds the tuning A for the orchestra."
+  },
+  {
+    "id": "music-142",
+    "category": "music",
+    "topic": "Classical",
+    "difficulty": "hard",
+    "prompt": "Which composer wrote the 'Brandenburg Concertos'?",
+    "choices": [
+      "Johann Sebastian Bach",
+      "George Frideric Handel",
+      "Antonio Vivaldi",
+      "Georg Philipp Telemann"
+    ],
+    "explanation": "Bach presented the six 'Brandenburg Concertos' to the Margrave of Brandenburg in 1721."
+  },
+  {
+    "id": "music-143",
+    "category": "music",
+    "topic": "African music",
+    "difficulty": "hard",
+    "prompt": "Soukous dance music is most closely linked with which country?",
+    "choices": ["DR Congo", "Ghana", "Senegal", "Mali"],
+    "explanation": "Soukous grew out of Congolese rumba in the Democratic Republic of the Congo."
+  },
+  {
+    "id": "music-144",
+    "category": "music",
+    "topic": "African instruments",
+    "difficulty": "hard",
+    "prompt": "What kind of instrument is the West African balafon?",
+    "choices": ["A wooden xylophone", "A thumb piano", "A harp-lute", "A goblet drum"],
+    "explanation": "The balafon has wooden bars, often with gourds hung underneath to make the sound richer."
+  },
+  {
+    "id": "music-145",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "hard",
+    "prompt": "Which instrument is played without being touched, by moving the hands near two antennas?",
+    "choices": ["Theremin", "Ondes Martenot", "Mellotron", "Hammond organ"],
+    "explanation": "The theremin, invented by Leon Theremin around 1920, senses the player's hands to set pitch and volume."
+  },
+  {
+    "id": "music-146",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "hard",
+    "prompt": "The oboe, bassoon and cor anglais all make their sound using what?",
+    "choices": [
+      "A double reed",
+      "A single reed",
+      "A cup-shaped mouthpiece",
+      "An edge the player blows across"
+    ],
+    "explanation": "All three are double-reed instruments; the clarinet and saxophone use a single reed."
+  },
+  {
+    "id": "music-147",
+    "category": "music",
+    "topic": "Instruments",
+    "difficulty": "hard",
+    "prompt": "Which keyboard instrument makes its sound by plucking the strings rather than striking them?",
+    "choices": ["Harpsichord", "Piano", "Clavichord", "Celesta"],
+    "explanation": "A harpsichord's keys lift jacks that pluck the strings with small plectra, once made of quill."
+  },
+  {
+    "id": "music-148",
+    "category": "music",
+    "topic": "Music theory",
+    "difficulty": "hard",
+    "prompt": "Which clef, centred on middle C, is mainly used by the viola?",
+    "choices": ["Alto clef", "Treble clef", "Bass clef", "Tenor clef"],
+    "explanation": "Viola music is written mostly in the alto clef, a C clef whose middle line is middle C."
+  },
+  {
+    "id": "music-149",
+    "category": "music",
+    "topic": "Music theory",
+    "difficulty": "hard",
+    "prompt": "What is the interval from C up to the G above it called?",
+    "choices": ["A perfect fifth", "A perfect fourth", "A major third", "A major sixth"],
+    "explanation": "C to G spans five letter names (C, D, E, F, G), making a perfect fifth."
+  },
+  {
+    "id": "music-150",
+    "category": "music",
+    "topic": "Music terms",
+    "difficulty": "hard",
+    "prompt": "What does 'da capo' (D.C.) tell a musician to do?",
+    "choices": [
+      "Go back to the beginning",
+      "Skip to the end",
+      "Repeat the last bar",
+      "Play more quietly"
+    ],
+    "explanation": "Da capo is Italian for 'from the head', meaning go back and play from the start."
+  },
+  {
+    "id": "music-151",
+    "category": "music",
+    "topic": "Opera",
+    "difficulty": "hard",
+    "prompt": "What is the written text of an opera called?",
+    "choices": ["Libretto", "Score", "Aria", "Overture"],
+    "explanation": "The libretto, Italian for 'little book', contains the words that are sung in an opera."
+  },
+  {
+    "id": "music-152",
+    "category": "music",
+    "topic": "Opera",
+    "difficulty": "hard",
+    "prompt": "Which composer wrote the opera 'Madama Butterfly'?",
+    "choices": ["Giacomo Puccini", "Giuseppe Verdi", "Gioachino Rossini", "Vincenzo Bellini"],
+    "explanation": "Puccini's 'Madama Butterfly' was first performed at La Scala in Milan in 1904."
+  },
+  {
+    "id": "music-153",
+    "category": "music",
+    "topic": "Opera",
+    "difficulty": "hard",
+    "prompt": "Which composer wrote the four-opera cycle 'The Ring of the Nibelung'?",
+    "choices": [
+      "Richard Wagner",
+      "Richard Strauss",
+      "Carl Maria von Weber",
+      "Engelbert Humperdinck"
+    ],
+    "explanation": "Wagner's 'Ring' cycle of four operas was first staged in full at Bayreuth in 1876."
+  },
+  {
+    "id": "music-154",
+    "category": "music",
+    "topic": "Opera",
+    "difficulty": "hard",
+    "prompt": "Georges Bizet's opera 'Carmen' is set mainly in which Spanish city?",
+    "choices": ["Seville", "Madrid", "Barcelona", "Granada"],
+    "explanation": "'Carmen' opens in Seville, where Carmen works in a cigarette factory."
+  },
+  {
+    "id": "music-155",
+    "category": "music",
+    "topic": "Classical",
+    "difficulty": "hard",
+    "prompt": "Which composer wrote 'Boléro', first performed in 1928?",
+    "choices": ["Maurice Ravel", "Claude Debussy", "Erik Satie", "Georges Bizet"],
+    "explanation": "Ravel wrote 'Boléro' as a ballet score for the dancer Ida Rubinstein in 1928."
+  },
+  {
+    "id": "music-156",
+    "category": "music",
+    "topic": "Classical",
+    "difficulty": "hard",
+    "prompt": "Which composer wrote the orchestral suite 'The Planets'?",
+    "choices": ["Gustav Holst", "Edward Elgar", "Ralph Vaughan Williams", "Benjamin Britten"],
+    "explanation": "The English composer Gustav Holst wrote 'The Planets' during the First World War."
+  },
+  {
+    "id": "music-157",
+    "category": "music",
+    "topic": "Classical",
+    "difficulty": "hard",
+    "prompt": "Who composed 'In the Hall of the Mountain King'?",
+    "choices": ["Edvard Grieg", "Jean Sibelius", "Carl Nielsen", "Antonín Dvořák"],
+    "explanation": "Grieg wrote 'In the Hall of the Mountain King' as music for Ibsen's play 'Peer Gynt'."
+  },
+  {
+    "id": "music-158",
+    "category": "music",
+    "topic": "Musicals",
+    "difficulty": "hard",
+    "prompt": "Who wrote the music for the 1957 musical 'West Side Story'?",
+    "choices": ["Leonard Bernstein", "Richard Rodgers", "George Gershwin", "Cole Porter"],
+    "explanation": "Leonard Bernstein wrote the music for 'West Side Story', with lyrics by Stephen Sondheim."
+  },
+  {
+    "id": "music-159",
+    "category": "music",
+    "topic": "Jazz",
+    "difficulty": "hard",
+    "prompt": "Which jazz singer was known as the 'First Lady of Song'?",
+    "choices": ["Ella Fitzgerald", "Sarah Vaughan", "Billie Holiday", "Dinah Washington"],
+    "explanation": "Ella Fitzgerald was called the First Lady of Song for her pure tone and famous scat singing."
+  },
+  {
+    "id": "music-160",
+    "category": "music",
+    "topic": "Jazz",
+    "difficulty": "hard",
+    "prompt": "Which jazz saxophonist was nicknamed 'Bird'?",
+    "choices": ["Charlie Parker", "John Coltrane", "Sonny Rollins", "Lester Young"],
+    "explanation": "Charlie 'Bird' Parker was one of the founders of bebop in the 1940s."
+  },
+  {
+    "id": "music-161",
+    "category": "music",
+    "topic": "Jazz",
+    "difficulty": "hard",
+    "prompt": "Which fast, complex jazz style was developed in the 1940s by Charlie Parker and Dizzy Gillespie?",
+    "choices": ["Bebop", "Swing", "Ragtime", "Dixieland"],
+    "explanation": "Bebop replaced danceable swing with fast tempos, complex harmony and virtuoso solos."
+  },
+  {
+    "id": "music-162",
+    "category": "music",
+    "topic": "Jazz",
+    "difficulty": "hard",
+    "prompt": "Which composer wrote the ragtime piano piece 'The Entertainer'?",
+    "choices": ["Scott Joplin", "Jelly Roll Morton", "Eubie Blake", "James P. Johnson"],
+    "explanation": "Scott Joplin, the 'King of Ragtime', published 'The Entertainer' in 1902."
+  },
+  {
+    "id": "music-163",
+    "category": "music",
+    "topic": "Rock",
+    "difficulty": "hard",
+    "prompt": "Who was the original lead singer of Black Sabbath?",
+    "choices": ["Ozzy Osbourne", "Ronnie James Dio", "Ian Gillan", "Robert Plant"],
+    "explanation": "Ozzy Osbourne sang with Black Sabbath from 1968; Dio and Gillan joined later."
+  },
+  {
+    "id": "music-164",
+    "category": "music",
+    "topic": "Rock",
+    "difficulty": "hard",
+    "prompt": "The 1969 Woodstock festival was held on a farm in which US state?",
+    "choices": ["New York", "New Jersey", "Pennsylvania", "Vermont"],
+    "explanation": "Woodstock took place on Max Yasgur's dairy farm near Bethel, New York, in August 1969."
+  },
+  {
+    "id": "music-165",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "hard",
+    "prompt": "What was Elton John's name at birth?",
+    "choices": ["Reginald Dwight", "Gordon Sumner", "David Jones", "Farrokh Bulsara"],
+    "explanation": "Elton John was born Reginald Dwight; the others are the birth names of Sting, David Bowie and Freddie Mercury."
+  },
+  {
+    "id": "music-166",
+    "category": "music",
+    "topic": "Pop",
+    "difficulty": "hard",
+    "prompt": "Queen singer Freddie Mercury was born on which island?",
+    "choices": ["Zanzibar", "Madagascar", "Mauritius", "Sri Lanka"],
+    "explanation": "Freddie Mercury was born Farrokh Bulsara in Stone Town, Zanzibar, in 1946."
+  },
+  {
+    "id": "music-167",
+    "category": "music",
+    "topic": "Hip hop",
+    "difficulty": "hard",
+    "prompt": "Which group released the 1986 album 'Raising Hell', featuring 'Walk This Way'?",
+    "choices": ["Run-DMC", "Public Enemy", "Beastie Boys", "N.W.A"],
+    "explanation": "Run-DMC's 'Raising Hell' included their version of 'Walk This Way' with Aerosmith."
+  },
+  {
+    "id": "music-168",
+    "category": "music",
+    "topic": "Hip hop",
+    "difficulty": "hard",
+    "prompt": "Which DJ played the 1973 back-to-school party at 1520 Sedgwick Avenue in the Bronx?",
+    "choices": ["DJ Kool Herc", "Grandmaster Flash", "Afrika Bambaataa", "Kurtis Blow"],
+    "explanation": "DJ Kool Herc's August 1973 party at 1520 Sedgwick Avenue is often called the birth of hip hop."
+  },
+  {
+    "id": "music-169",
+    "category": "music",
+    "topic": "Reggae",
+    "difficulty": "hard",
+    "prompt": "Which Jamaican singer recorded 'Many Rivers to Cross' and starred in 'The Harder They Come'?",
+    "choices": ["Jimmy Cliff", "Peter Tosh", "Toots Hibbert", "Dennis Brown"],
+    "explanation": "Jimmy Cliff starred in the 1972 film 'The Harder They Come' and sang 'Many Rivers to Cross' on its soundtrack."
+  },
+  {
+    "id": "music-170",
+    "category": "music",
+    "topic": "Reggae",
+    "difficulty": "hard",
+    "prompt": "Which founding member of the Wailers released the 1977 album 'Equal Rights'?",
+    "choices": ["Peter Tosh", "Bunny Wailer", "Junior Braithwaite", "Beverley Kelso"],
+    "explanation": "Peter Tosh released 'Equal Rights' in 1977, after leaving the Wailers to go solo."
+  },
+  {
+    "id": "music-171",
+    "category": "music",
+    "topic": "Soul",
+    "difficulty": "hard",
+    "prompt": "Which singer recorded '(Sittin' On) The Dock of the Bay' days before his death in 1967?",
+    "choices": ["Otis Redding", "Sam Cooke", "Wilson Pickett", "Marvin Gaye"],
+    "explanation": "Otis Redding recorded the song shortly before he died in a plane crash in December 1967."
+  },
+  {
+    "id": "music-172",
+    "category": "music",
+    "topic": "Soul",
+    "difficulty": "hard",
+    "prompt": "Who founded Motown Records?",
+    "choices": ["Berry Gordy", "Smokey Robinson", "Quincy Jones", "Ahmet Ertegun"],
+    "explanation": "Berry Gordy founded Motown in 1959 with a loan from his family."
+  },
+  {
+    "id": "music-173",
+    "category": "music",
+    "topic": "Rock and roll",
+    "difficulty": "hard",
+    "prompt": "Buddy Holly died in a 1959 plane crash along with Ritchie Valens and which singer?",
+    "choices": ["The Big Bopper", "Eddie Cochran", "Gene Vincent", "Bobby Darin"],
+    "explanation": "Buddy Holly, Ritchie Valens and J.P. 'The Big Bopper' Richardson died in Iowa on 3 February 1959."
+  },
+  {
+    "id": "music-174",
+    "category": "music",
+    "topic": "Gospel",
+    "difficulty": "hard",
+    "prompt": "Which group turned the hymn 'Oh Happy Day' into a gospel hit in 1969?",
+    "choices": [
+      "The Edwin Hawkins Singers",
+      "The Staple Singers",
+      "The Clark Sisters",
+      "The Mighty Clouds of Joy"
+    ],
+    "explanation": "The Edwin Hawkins Singers' arrangement of 'Oh Happy Day' became a worldwide hit in 1969."
+  },
+  {
+    "id": "music-175",
+    "category": "music",
+    "topic": "Afrobeat",
+    "difficulty": "hard",
+    "prompt": "Fela Kuti studied music at which London college?",
+    "choices": [
+      "Trinity College of Music",
+      "Royal Academy of Music",
+      "Royal College of Music",
+      "Guildhall School of Music"
+    ],
+    "explanation": "Fela went to London in 1958 and studied at Trinity College of Music."
+  },
+  {
+    "id": "music-176",
+    "category": "music",
+    "topic": "Afrobeat",
+    "difficulty": "hard",
+    "prompt": "What was the name of the political party Fela Kuti formed in 1979?",
+    "choices": [
+      "Movement of the People",
+      "Unity Party of Nigeria",
+      "People's Redemption Party",
+      "Action Group"
+    ],
+    "explanation": "Fela founded the Movement of the People (MOP) in 1979 and hoped to run for president."
+  },
+  {
+    "id": "music-177",
+    "category": "music",
+    "topic": "Afrobeat",
+    "difficulty": "hard",
+    "prompt": "Which band did Fela Kuti lead after Africa 70, until his death in 1997?",
+    "choices": ["Egypt 80", "Nigeria 70", "Koola Lobitos", "Positive Force"],
+    "explanation": "Egypt 80 followed Africa 70 as Fela's band and played with him until his death in 1997."
+  },
+  {
+    "id": "music-178",
+    "category": "music",
+    "topic": "Afrobeats",
+    "difficulty": "hard",
+    "prompt": "Which Nigerian singer released the 2011 debut album 'Superstar'?",
+    "choices": ["Wizkid", "Davido", "Ice Prince", "Banky W"],
+    "explanation": "'Superstar', with songs like 'Holla at Your Boy', was Wizkid's first album, released in 2011."
+  },
+  {
+    "id": "music-179",
+    "category": "music",
+    "topic": "Nigerian hip hop",
+    "difficulty": "hard",
+    "prompt": "Which Nigerian rapper released the 2008 debut album 'Talk About It'?",
+    "choices": ["M.I Abaga", "Ice Prince", "Olamide", "Modenine"],
+    "explanation": "M.I Abaga released his debut album, 'Talk About It', in 2008."
+  },
+  {
+    "id": "music-180",
+    "category": "music",
+    "topic": "Highlife",
+    "difficulty": "hard",
+    "prompt": "Which Benin City musician recorded the highlife hit 'Joromi'?",
+    "choices": ["Victor Uwaifo", "Oliver De Coque", "Rex Lawson", "Celestine Ukwu"],
+    "explanation": "Sir Victor Uwaifo's 'Joromi', based on a Benin legend, was a huge hit in the 1960s."
   }
 ]

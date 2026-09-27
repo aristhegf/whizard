@@ -543,5 +543,1125 @@
     "prompt": "Real Madrid won the first European Cup final in 1956 against which club?",
     "choices": ["Stade de Reims", "AC Milan", "Benfica", "Fiorentina"],
     "explanation": "Real Madrid beat Reims 4–3 in the final in Paris."
+  },
+  {
+    "id": "football-061",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "easy",
+    "prompt": "Which country won the 2010 World Cup in South Africa?",
+    "choices": ["Spain", "Netherlands", "Germany", "Italy"],
+    "explanation": "Spain beat the Netherlands 1–0 after extra time to win their first World Cup."
+  },
+  {
+    "id": "football-062",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "easy",
+    "prompt": "Which country hosted the 2022 World Cup?",
+    "choices": ["Qatar", "Saudi Arabia", "United Arab Emirates", "Bahrain"],
+    "explanation": "Qatar hosted the 2022 World Cup, the first held in the Middle East."
+  },
+  {
+    "id": "football-063",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "easy",
+    "prompt": "How often is the men's FIFA World Cup normally held?",
+    "choices": ["Every four years", "Every two years", "Every three years", "Every five years"],
+    "explanation": "The World Cup has been held every four years since 1930, apart from gaps during the Second World War."
+  },
+  {
+    "id": "football-064",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "easy",
+    "prompt": "Which country hosted the 2006 World Cup?",
+    "choices": ["Germany", "France", "Italy", "Spain"],
+    "explanation": "Germany hosted in 2006, and the final was played in Berlin's Olympic Stadium."
+  },
+  {
+    "id": "football-065",
+    "category": "football",
+    "topic": "Referees",
+    "difficulty": "easy",
+    "prompt": "What colour card does a referee show to caution, or book, a player?",
+    "choices": ["Yellow", "Red", "Blue", "Green"],
+    "explanation": "A yellow card is a caution, a formal warning to the player that is recorded by the referee."
+  },
+  {
+    "id": "football-066",
+    "category": "football",
+    "topic": "Referees",
+    "difficulty": "easy",
+    "prompt": "What happens to a player who is shown a second yellow card in the same match?",
+    "choices": [
+      "They are sent off",
+      "They must be substituted",
+      "They get a final warning",
+      "They miss the next half"
+    ],
+    "explanation": "Two yellow cards in one match add up to a red card, and the player must leave the field."
+  },
+  {
+    "id": "football-067",
+    "category": "football",
+    "topic": "Referees",
+    "difficulty": "easy",
+    "prompt": "What does an assistant referee raise to signal offside?",
+    "choices": ["A flag", "A yellow card", "A whistle", "An electronic board"],
+    "explanation": "Assistant referees on the touchlines raise their flag to signal offside and other decisions."
+  },
+  {
+    "id": "football-068",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "easy",
+    "prompt": "Which restart is given if a defender last touches the ball before it goes out over their own goal line?",
+    "choices": ["Corner kick", "Goal kick", "Throw-in", "Drop ball"],
+    "explanation": "If the defending side last touched the ball over its own goal line without a goal, the attackers take a corner."
+  },
+  {
+    "id": "football-069",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "easy",
+    "prompt": "If a knockout match is still level after extra time, how is it usually decided?",
+    "choices": ["Penalty shoot-out", "Coin toss", "A replay", "Golden goal"],
+    "explanation": "Drawn knockout matches are normally settled by a penalty shoot-out after extra time."
+  },
+  {
+    "id": "football-070",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "easy",
+    "prompt": "Outfield players may not deliberately touch the ball with which part of the body?",
+    "choices": ["Hands and arms", "Head", "Chest", "Thighs"],
+    "explanation": "Deliberate handball is an offence for outfield players; heading and chesting the ball are allowed."
+  },
+  {
+    "id": "football-071",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "easy",
+    "prompt": "In most league competitions, how many points does a team get for a win?",
+    "choices": ["3", "2", "1", "4"],
+    "explanation": "Most leagues award three points for a win and one for a draw."
+  },
+  {
+    "id": "football-072",
+    "category": "football",
+    "topic": "Pitch",
+    "difficulty": "easy",
+    "prompt": "From where on the pitch is a kick-off taken?",
+    "choices": [
+      "The centre mark",
+      "The penalty mark",
+      "The corner arc",
+      "The edge of the penalty area"
+    ],
+    "explanation": "Each half starts, and play restarts after a goal, with a kick-off from the centre mark."
+  },
+  {
+    "id": "football-073",
+    "category": "football",
+    "topic": "Terms",
+    "difficulty": "easy",
+    "prompt": "What is it called when a player accidentally puts the ball into their own team's net?",
+    "choices": ["Own goal", "Golden goal", "Away goal", "Field goal"],
+    "explanation": "A goal a player puts into their own net counts for the other team and is called an own goal."
+  },
+  {
+    "id": "football-074",
+    "category": "football",
+    "topic": "Terms",
+    "difficulty": "easy",
+    "prompt": "When a goalkeeper or team 'keeps a clean sheet', what have they done?",
+    "choices": [
+      "Not conceded a goal",
+      "Received no yellow cards",
+      "Won every game",
+      "Scored in both halves"
+    ],
+    "explanation": "A clean sheet means a team finished the match without conceding a goal."
+  },
+  {
+    "id": "football-075",
+    "category": "football",
+    "topic": "Terms",
+    "difficulty": "easy",
+    "prompt": "What name is given to a match between two local rival clubs?",
+    "choices": ["Derby", "Friendly", "Testimonial", "Play-off"],
+    "explanation": "A derby is a match between local rivals, such as clubs from the same city."
+  },
+  {
+    "id": "football-076",
+    "category": "football",
+    "topic": "Positions",
+    "difficulty": "easy",
+    "prompt": "Which player's main job is to score goals?",
+    "choices": ["Striker", "Full-back", "Centre-back", "Defensive midfielder"],
+    "explanation": "The striker, or centre-forward, plays furthest forward and is there mainly to score."
+  },
+  {
+    "id": "football-077",
+    "category": "football",
+    "topic": "Terms",
+    "difficulty": "easy",
+    "prompt": "If a shot 'hits the woodwork', what has the ball struck?",
+    "choices": ["The post or crossbar", "The corner flag", "The advertising boards", "The referee"],
+    "explanation": "'The woodwork' means the goalposts and crossbar, which were once made of wood."
+  },
+  {
+    "id": "football-078",
+    "category": "football",
+    "topic": "Positions",
+    "difficulty": "easy",
+    "prompt": "The number 1 shirt is traditionally worn by which player?",
+    "choices": ["Goalkeeper", "Left-back", "Centre-forward", "Right winger"],
+    "explanation": "Teams traditionally give the number 1 shirt to their first-choice goalkeeper."
+  },
+  {
+    "id": "football-079",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "easy",
+    "prompt": "Diego Maradona played international football for which country?",
+    "choices": ["Argentina", "Uruguay", "Brazil", "Italy"],
+    "explanation": "Maradona captained Argentina and led them to the 1986 World Cup title."
+  },
+  {
+    "id": "football-080",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "easy",
+    "prompt": "Zinedine Zidane played international football for which country?",
+    "choices": ["France", "Belgium", "Italy", "Spain"],
+    "explanation": "Zidane, born in Marseille, won both the World Cup and the European Championship with France."
+  },
+  {
+    "id": "football-081",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "easy",
+    "prompt": "Didier Drogba is a football legend from which country?",
+    "choices": ["Ivory Coast", "Ghana", "Cameroon", "Togo"],
+    "explanation": "Drogba captained Ivory Coast, the Elephants, and helped them reach their first World Cup in 2006."
+  },
+  {
+    "id": "football-082",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "easy",
+    "prompt": "Samuel Eto'o played international football for which country?",
+    "choices": ["Cameroon", "Nigeria", "Gabon", "Senegal"],
+    "explanation": "Eto'o won the Africa Cup of Nations twice with Cameroon's Indomitable Lions."
+  },
+  {
+    "id": "football-083",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "easy",
+    "prompt": "Sadio Mané has played international football for which country?",
+    "choices": ["Senegal", "Mali", "Guinea", "Gambia"],
+    "explanation": "Mané scored the winning kick in the 2022 AFCON final shoot-out for Senegal against Egypt."
+  },
+  {
+    "id": "football-084",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "easy",
+    "prompt": "Robert Lewandowski has played international football for which country?",
+    "choices": ["Poland", "Czech Republic", "Ukraine", "Germany"],
+    "explanation": "Lewandowski was born in Warsaw and has been Poland's star striker for many years."
+  },
+  {
+    "id": "football-085",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "easy",
+    "prompt": "The Camp Nou is the home stadium of which club?",
+    "choices": ["Barcelona", "Real Madrid", "Atlético Madrid", "Valencia"],
+    "explanation": "The Camp Nou, opened in 1957, is Barcelona's home ground in the city's Les Corts district."
+  },
+  {
+    "id": "football-086",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "easy",
+    "prompt": "Anfield is the home stadium of which club?",
+    "choices": ["Liverpool", "Aston Villa", "Manchester City", "Leeds United"],
+    "explanation": "Liverpool have played at Anfield since the club was founded in 1892."
+  },
+  {
+    "id": "football-087",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "easy",
+    "prompt": "Which English club is nicknamed the 'Red Devils'?",
+    "choices": ["Manchester United", "Liverpool", "Arsenal", "Nottingham Forest"],
+    "explanation": "Manchester United's nickname is the Red Devils, and the club crest shows a devil."
+  },
+  {
+    "id": "football-088",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "easy",
+    "prompt": "Which English club is nicknamed 'the Gunners'?",
+    "choices": ["Arsenal", "Chelsea", "Tottenham Hotspur", "West Ham United"],
+    "explanation": "Arsenal were founded by workers at the Royal Arsenal in Woolwich, hence the cannon and the name."
+  },
+  {
+    "id": "football-089",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "easy",
+    "prompt": "Which London club was founded in 1905 to play at Stamford Bridge?",
+    "choices": ["Chelsea", "Fulham", "Arsenal", "Tottenham Hotspur"],
+    "explanation": "Chelsea were founded in 1905 to play at Stamford Bridge, which had been offered to Fulham first."
+  },
+  {
+    "id": "football-090",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "easy",
+    "prompt": "Manchester United play which club in the Manchester derby?",
+    "choices": ["Manchester City", "Liverpool", "Leeds United", "Everton"],
+    "explanation": "The Manchester derby is between the city's two big clubs, United and City."
+  },
+  {
+    "id": "football-091",
+    "category": "football",
+    "topic": "Stadiums",
+    "difficulty": "easy",
+    "prompt": "Wembley Stadium is in which city?",
+    "choices": ["London", "Manchester", "Birmingham", "Liverpool"],
+    "explanation": "Wembley, England's national stadium, is in north-west London."
+  },
+  {
+    "id": "football-092",
+    "category": "football",
+    "topic": "National teams",
+    "difficulty": "easy",
+    "prompt": "Which country's men's national team is nicknamed the 'Three Lions'?",
+    "choices": ["England", "Wales", "Scotland", "Belgium"],
+    "explanation": "England's badge shows three lions, which gave the team its nickname."
+  },
+  {
+    "id": "football-093",
+    "category": "football",
+    "topic": "National teams",
+    "difficulty": "easy",
+    "prompt": "Which country's national team is nicknamed the 'Black Stars'?",
+    "choices": ["Ghana", "Cameroon", "Senegal", "Ivory Coast"],
+    "explanation": "Ghana's national team are the Black Stars, after the black star at the centre of the Ghanaian flag."
+  },
+  {
+    "id": "football-094",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "easy",
+    "prompt": "What is the main colour of the Super Eagles' traditional home kit?",
+    "choices": ["Green", "Red", "Blue", "Yellow"],
+    "explanation": "Nigeria traditionally play in green, taken from the green and white of the national flag."
+  },
+  {
+    "id": "football-095",
+    "category": "football",
+    "topic": "Women's football",
+    "difficulty": "easy",
+    "prompt": "The 2023 Women's World Cup was co-hosted by Australia and which country?",
+    "choices": ["New Zealand", "Japan", "Fiji", "Papua New Guinea"],
+    "explanation": "Australia and New Zealand shared the 2023 Women's World Cup, the first with 32 teams."
+  },
+  {
+    "id": "football-096",
+    "category": "football",
+    "topic": "Women's football",
+    "difficulty": "easy",
+    "prompt": "England's women's national football team is known by which nickname?",
+    "choices": ["Lionesses", "Red Roses", "Matildas", "Swifts"],
+    "explanation": "England's women are the Lionesses; the Matildas are Australia and the Red Roses are England's women's rugby team."
+  },
+  {
+    "id": "football-097",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "easy",
+    "prompt": "What is the name of the top yearly competition for Europe's best club sides?",
+    "choices": [
+      "UEFA Champions League",
+      "UEFA Europa League",
+      "UEFA Nations League",
+      "FIFA Club World Cup"
+    ],
+    "explanation": "The Champions League, known as the European Cup until 1992, is Europe's top club competition."
+  },
+  {
+    "id": "football-098",
+    "category": "football",
+    "topic": "AFCON",
+    "difficulty": "easy",
+    "prompt": "What does AFCON stand for?",
+    "choices": [
+      "Africa Cup of Nations",
+      "African Football Conference",
+      "African Federation of Nations",
+      "Africa Continental Cup"
+    ],
+    "explanation": "AFCON is the Africa Cup of Nations, the continent's championship for national teams, first played in 1957."
+  },
+  {
+    "id": "football-099",
+    "category": "football",
+    "topic": "Copa América",
+    "difficulty": "easy",
+    "prompt": "The Copa América is mainly contested by national teams from which continent?",
+    "choices": ["South America", "North America", "Central America", "Europe"],
+    "explanation": "The Copa América is South America's championship, first held in 1916."
+  },
+  {
+    "id": "football-100",
+    "category": "football",
+    "topic": "Awards",
+    "difficulty": "easy",
+    "prompt": "What is the Ballon d'Or awarded for?",
+    "choices": [
+      "Best player of the year",
+      "Top scorer in Europe",
+      "Best goalkeeper",
+      "Best young player"
+    ],
+    "explanation": "The Ballon d'Or, French for 'Golden Ball', has been given to the year's best player since 1956."
+  },
+  {
+    "id": "football-101",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "medium",
+    "prompt": "Which country won the 1998 World Cup on home soil?",
+    "choices": ["France", "Brazil", "Italy", "Netherlands"],
+    "explanation": "Zinedine Zidane scored twice as hosts France beat Brazil 3–0 in the final at the Stade de France."
+  },
+  {
+    "id": "football-102",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "medium",
+    "prompt": "Which country won the 2002 World Cup, beating Germany in the final?",
+    "choices": ["Brazil", "Argentina", "Turkey", "South Korea"],
+    "explanation": "Ronaldo scored both goals as Brazil beat Germany 2–0 in Yokohama."
+  },
+  {
+    "id": "football-103",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "medium",
+    "prompt": "At the 2010 World Cup, Luis Suárez's goal-line handball stopped a late winner for which African team?",
+    "choices": ["Ghana", "Nigeria", "Cameroon", "Ivory Coast"],
+    "explanation": "Suárez was sent off, Asamoah Gyan missed the penalty, and Uruguay beat Ghana in the shoot-out."
+  },
+  {
+    "id": "football-104",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "medium",
+    "prompt": "In 2022, which country became the first from Africa to reach a World Cup semi-final?",
+    "choices": ["Morocco", "Senegal", "Cameroon", "Ghana"],
+    "explanation": "Morocco beat Spain and Portugal on the way to the semi-finals in Qatar, where they lost to France."
+  },
+  {
+    "id": "football-105",
+    "category": "football",
+    "topic": "Euros",
+    "difficulty": "medium",
+    "prompt": "Which country won Euro 2016, beating hosts France in the final?",
+    "choices": ["Portugal", "Germany", "Wales", "Italy"],
+    "explanation": "Éder's extra-time goal gave Portugal a 1–0 win at the Stade de France, their first major trophy."
+  },
+  {
+    "id": "football-106",
+    "category": "football",
+    "topic": "Euros",
+    "difficulty": "medium",
+    "prompt": "Which country were the surprise winners of Euro 2004, held in Portugal?",
+    "choices": ["Greece", "Czech Republic", "Netherlands", "Denmark"],
+    "explanation": "Greece beat hosts Portugal 1–0 in the final in Lisbon with a header by Angelos Charisteas."
+  },
+  {
+    "id": "football-107",
+    "category": "football",
+    "topic": "Euros",
+    "difficulty": "medium",
+    "prompt": "Which country won back-to-back European Championships in 2008 and 2012?",
+    "choices": ["Spain", "Germany", "Italy", "Netherlands"],
+    "explanation": "Spain beat Germany 1–0 in the 2008 final and Italy 4–0 in the 2012 final."
+  },
+  {
+    "id": "football-108",
+    "category": "football",
+    "topic": "Copa América",
+    "difficulty": "medium",
+    "prompt": "Which country won the 2021 Copa América, beating Brazil in the final at the Maracanã?",
+    "choices": ["Argentina", "Uruguay", "Colombia", "Chile"],
+    "explanation": "Ángel Di María scored the only goal, giving Lionel Messi his first major title with Argentina."
+  },
+  {
+    "id": "football-109",
+    "category": "football",
+    "topic": "Governing bodies",
+    "difficulty": "medium",
+    "prompt": "Which confederation organises the Copa América?",
+    "choices": ["CONMEBOL", "CONCACAF", "UEFA", "CAF"],
+    "explanation": "CONMEBOL is the South American football confederation, founded in 1916."
+  },
+  {
+    "id": "football-110",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "medium",
+    "prompt": "Which club won the first five European Cups, from 1956 to 1960?",
+    "choices": ["Real Madrid", "AC Milan", "Benfica", "Barcelona"],
+    "explanation": "Led by Alfredo Di Stéfano, Real Madrid won the first five European Cups in a row."
+  },
+  {
+    "id": "football-111",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "medium",
+    "prompt": "Barcelona beat which club in both the 2009 and 2011 Champions League finals?",
+    "choices": ["Manchester United", "Chelsea", "Arsenal", "Bayern Munich"],
+    "explanation": "Barcelona beat Manchester United 2–0 in Rome in 2009 and 3–1 at Wembley in 2011."
+  },
+  {
+    "id": "football-112",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "medium",
+    "prompt": "In 2012, Chelsea won their first Champions League on penalties against which club, in its home stadium?",
+    "choices": ["Bayern Munich", "Barcelona", "Real Madrid", "Borussia Dortmund"],
+    "explanation": "Chelsea drew 1–1 with Bayern Munich in Munich, then won the shoot-out."
+  },
+  {
+    "id": "football-113",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "medium",
+    "prompt": "Which club did José Mourinho lead to the 2004 Champions League title?",
+    "choices": ["Porto", "Monaco", "Chelsea", "Benfica"],
+    "explanation": "Porto beat Monaco 3–0 in the 2004 final in Gelsenkirchen."
+  },
+  {
+    "id": "football-114",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "medium",
+    "prompt": "Liverpool beat which English club in the 2019 Champions League final?",
+    "choices": ["Tottenham Hotspur", "Chelsea", "Arsenal", "Manchester City"],
+    "explanation": "Liverpool beat Tottenham Hotspur 2–0 in the final in Madrid."
+  },
+  {
+    "id": "football-115",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "medium",
+    "prompt": "Celtic and Rangers, rivals in the 'Old Firm' derby, are from which city?",
+    "choices": ["Glasgow", "Edinburgh", "Aberdeen", "Dundee"],
+    "explanation": "Celtic and Rangers are both Glasgow clubs, and their meetings are known as the Old Firm derby."
+  },
+  {
+    "id": "football-116",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "medium",
+    "prompt": "Which German club is famous for the 'Yellow Wall', a huge standing terrace of fans?",
+    "choices": ["Borussia Dortmund", "Schalke 04", "Bayer Leverkusen", "Hamburg"],
+    "explanation": "The Yellow Wall is the giant south stand at Borussia Dortmund's home ground."
+  },
+  {
+    "id": "football-117",
+    "category": "football",
+    "topic": "Clubs",
+    "difficulty": "medium",
+    "prompt": "La Bombonera is the famous home stadium of which Argentine club?",
+    "choices": ["Boca Juniors", "River Plate", "Independiente", "Racing Club"],
+    "explanation": "Boca Juniors play at La Bombonera, 'the chocolate box', in the La Boca area of Buenos Aires."
+  },
+  {
+    "id": "football-118",
+    "category": "football",
+    "topic": "African clubs",
+    "difficulty": "medium",
+    "prompt": "Al Ahly and Zamalek contest a famous derby in which city?",
+    "choices": ["Cairo", "Alexandria", "Tunis", "Casablanca"],
+    "explanation": "Al Ahly and Zamalek are Egypt's two giant clubs, and their match is known as the Cairo derby."
+  },
+  {
+    "id": "football-119",
+    "category": "football",
+    "topic": "Stadiums",
+    "difficulty": "medium",
+    "prompt": "In which South African city was the 2010 World Cup final played?",
+    "choices": ["Johannesburg", "Cape Town", "Durban", "Pretoria"],
+    "explanation": "The 2010 final was played at Soccer City in Johannesburg."
+  },
+  {
+    "id": "football-120",
+    "category": "football",
+    "topic": "National teams",
+    "difficulty": "medium",
+    "prompt": "Which country's national team is nicknamed 'the Pharaohs'?",
+    "choices": ["Egypt", "Morocco", "Tunisia", "Sudan"],
+    "explanation": "Egypt's national team are known as the Pharaohs, after the rulers of ancient Egypt."
+  },
+  {
+    "id": "football-121",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "medium",
+    "prompt": "Eusébio, nicknamed 'the Black Panther', played international football for which country?",
+    "choices": ["Portugal", "Brazil", "Spain", "Angola"],
+    "explanation": "Born in Mozambique, Eusébio starred for Portugal and was top scorer at the 1966 World Cup."
+  },
+  {
+    "id": "football-122",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "medium",
+    "prompt": "Franz Beckenbauer, nicknamed 'Der Kaiser', played international football for which country?",
+    "choices": ["West Germany", "Austria", "Netherlands", "Switzerland"],
+    "explanation": "Beckenbauer won the World Cup with West Germany as captain in 1974 and as coach in 1990."
+  },
+  {
+    "id": "football-123",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "medium",
+    "prompt": "Abedi Pelé, one of Africa's greatest players, represented which country?",
+    "choices": ["Ghana", "Nigeria", "Togo", "Ivory Coast"],
+    "explanation": "Abedi Pelé was a star playmaker for Ghana's Black Stars in the 1980s and 1990s."
+  },
+  {
+    "id": "football-124",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "medium",
+    "prompt": "Luka Modrić captained which country to the 2018 World Cup final?",
+    "choices": ["Croatia", "Serbia", "Slovenia", "Bosnia and Herzegovina"],
+    "explanation": "Modrić led Croatia to the 2018 final and won the Golden Ball as the tournament's best player."
+  },
+  {
+    "id": "football-125",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "medium",
+    "prompt": "Which Brazilian striker was nicknamed 'O Fenômeno' (The Phenomenon)?",
+    "choices": ["Ronaldo Nazário", "Romário", "Rivaldo", "Ronaldinho"],
+    "explanation": "Ronaldo Nazário, 'O Fenômeno', was the top scorer as Brazil won the 2002 World Cup."
+  },
+  {
+    "id": "football-126",
+    "category": "football",
+    "topic": "Legends",
+    "difficulty": "medium",
+    "prompt": "Ferenc Puskás, after whom FIFA's goal of the year award is named, starred for which country in the 1950s?",
+    "choices": ["Hungary", "Austria", "Czechoslovakia", "Poland"],
+    "explanation": "Puskás captained Hungary's great 'Mighty Magyars' team of the early 1950s."
+  },
+  {
+    "id": "football-127",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "What is the nickname of Nigeria's under-20 men's national team?",
+    "choices": ["Flying Eagles", "Golden Eaglets", "Super Eagles", "Dream Team"],
+    "explanation": "Nigeria's under-20 side are the Flying Eagles, between the Golden Eaglets (U-17) and the Super Eagles."
+  },
+  {
+    "id": "football-128",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "medium",
+    "prompt": "Nwankwo Kanu was in the squad of which club's unbeaten 2003–04 Premier League title side?",
+    "choices": ["Arsenal", "Chelsea", "Manchester United", "Liverpool"],
+    "explanation": "Kanu played for Arsenal from 1999 to 2004, including the 'Invincibles' season."
+  },
+  {
+    "id": "football-129",
+    "category": "football",
+    "topic": "AFCON",
+    "difficulty": "medium",
+    "prompt": "Nigeria won the 2013 Africa Cup of Nations final against which country?",
+    "choices": ["Burkina Faso", "Mali", "Ghana", "Ivory Coast"],
+    "explanation": "Sunday Mba scored the only goal as Nigeria beat Burkina Faso 1–0 in Johannesburg."
+  },
+  {
+    "id": "football-130",
+    "category": "football",
+    "topic": "AFCON",
+    "difficulty": "medium",
+    "prompt": "Which country won the 2019 Africa Cup of Nations in Egypt?",
+    "choices": ["Algeria", "Senegal", "Nigeria", "Tunisia"],
+    "explanation": "Algeria beat Senegal 1–0 in the final in Cairo."
+  },
+  {
+    "id": "football-131",
+    "category": "football",
+    "topic": "AFCON",
+    "difficulty": "medium",
+    "prompt": "Which country won its first Africa Cup of Nations at the 2021 tournament, played in early 2022?",
+    "choices": ["Senegal", "Egypt", "Cameroon", "Morocco"],
+    "explanation": "Senegal beat Egypt on penalties in the final in Cameroon to win their first AFCON."
+  },
+  {
+    "id": "football-132",
+    "category": "football",
+    "topic": "Olympics",
+    "difficulty": "medium",
+    "prompt": "Which country won the men's football gold medal at the 2000 Sydney Olympics?",
+    "choices": ["Cameroon", "Spain", "Nigeria", "Chile"],
+    "explanation": "Cameroon beat Spain on penalties after a 2–2 draw, making it two African golds in a row."
+  },
+  {
+    "id": "football-133",
+    "category": "football",
+    "topic": "Olympics",
+    "difficulty": "medium",
+    "prompt": "Nigeria won silver in men's football at Beijing 2008 after losing the final to which country?",
+    "choices": ["Argentina", "Brazil", "Cameroon", "Belgium"],
+    "explanation": "Ángel Di María scored the only goal as Argentina beat Nigeria 1–0 in the final."
+  },
+  {
+    "id": "football-134",
+    "category": "football",
+    "topic": "Women's football",
+    "difficulty": "medium",
+    "prompt": "Which country won the 2023 Women's World Cup?",
+    "choices": ["Spain", "England", "Sweden", "Australia"],
+    "explanation": "Olga Carmona scored the only goal as Spain beat England 1–0 in the final in Sydney."
+  },
+  {
+    "id": "football-135",
+    "category": "football",
+    "topic": "Women's football",
+    "difficulty": "medium",
+    "prompt": "Which country won the 2019 Women's World Cup in France?",
+    "choices": ["United States", "Netherlands", "Sweden", "England"],
+    "explanation": "The USA beat the Netherlands 2–0 in the final in Lyon."
+  },
+  {
+    "id": "football-136",
+    "category": "football",
+    "topic": "Women's football",
+    "difficulty": "medium",
+    "prompt": "Marta, one of the greatest players in the women's game, has played for which country?",
+    "choices": ["Brazil", "Argentina", "Portugal", "Colombia"],
+    "explanation": "Marta has been a star for Brazil since the early 2000s and has scored at several Women's World Cups."
+  },
+  {
+    "id": "football-137",
+    "category": "football",
+    "topic": "Women's football",
+    "difficulty": "medium",
+    "prompt": "Which country won Women's Euro 2022, beating Germany in the final at Wembley?",
+    "choices": ["England", "Netherlands", "Spain", "France"],
+    "explanation": "England beat Germany 2–1 after extra time to win their first major women's title."
+  },
+  {
+    "id": "football-138",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "medium",
+    "prompt": "When extra time is played, how long does it last in total?",
+    "choices": ["30 minutes", "20 minutes", "15 minutes", "45 minutes"],
+    "explanation": "Extra time is two periods of 15 minutes each, 30 minutes in all."
+  },
+  {
+    "id": "football-139",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "medium",
+    "prompt": "For a goal to count, how much of the ball must cross the goal line?",
+    "choices": [
+      "The whole ball",
+      "Half of the ball",
+      "Any part of the ball",
+      "Three-quarters of the ball"
+    ],
+    "explanation": "A goal is scored only when the whole ball has crossed the goal line between the posts and under the bar."
+  },
+  {
+    "id": "football-140",
+    "category": "football",
+    "topic": "Referees",
+    "difficulty": "medium",
+    "prompt": "When a referee lets play go on after a foul because stopping it would hurt the fouled team, what is it called?",
+    "choices": ["Playing advantage", "Fair play", "Drop ball", "Stoppage time"],
+    "explanation": "The advantage rule lets the referee keep play going when the team fouled would benefit."
+  },
+  {
+    "id": "football-141",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "hard",
+    "prompt": "Which country was the first to host the men's World Cup twice?",
+    "choices": ["Mexico", "Italy", "France", "Brazil"],
+    "explanation": "Mexico hosted in 1970 and 1986; Italy's second tournament came later, in 1990."
+  },
+  {
+    "id": "football-142",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "hard",
+    "prompt": "Which country was the first from Africa to play at a World Cup, in 1934?",
+    "choices": ["Egypt", "Morocco", "Tunisia", "Zaire"],
+    "explanation": "Egypt played at the 1934 World Cup in Italy, losing 4–2 to Hungary."
+  },
+  {
+    "id": "football-143",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "hard",
+    "prompt": "In the 1954 final, the 'Miracle of Bern', West Germany beat which favourites?",
+    "choices": ["Hungary", "Austria", "Uruguay", "Brazil"],
+    "explanation": "West Germany came from 2–0 down to beat Hungary 3–2 in Bern, Switzerland."
+  },
+  {
+    "id": "football-144",
+    "category": "football",
+    "topic": "World Cup",
+    "difficulty": "hard",
+    "prompt": "Cameroon beat the reigning champions in the opening match of the 1990 World Cup. Who were they?",
+    "choices": ["Argentina", "Italy", "Brazil", "West Germany"],
+    "explanation": "François Omam-Biyik's header gave Cameroon a 1–0 win over holders Argentina in Milan."
+  },
+  {
+    "id": "football-145",
+    "category": "football",
+    "topic": "Euros",
+    "difficulty": "hard",
+    "prompt": "Antonín Panenka's famous chipped penalty won Euro 1976 for which country?",
+    "choices": ["Czechoslovakia", "Yugoslavia", "Hungary", "Poland"],
+    "explanation": "Panenka's chip won the shoot-out against West Germany, and the style of penalty now carries his name."
+  },
+  {
+    "id": "football-146",
+    "category": "football",
+    "topic": "Euros",
+    "difficulty": "hard",
+    "prompt": "Who scored the golden goal that won Euro 2000 for France against Italy?",
+    "choices": ["David Trezeguet", "Thierry Henry", "Sylvain Wiltord", "Zinedine Zidane"],
+    "explanation": "Wiltord equalised late in normal time, then Trezeguet's golden goal won it 2–1 in Rotterdam."
+  },
+  {
+    "id": "football-147",
+    "category": "football",
+    "topic": "Euros",
+    "difficulty": "hard",
+    "prompt": "Which country won the first European Championship, in 1960?",
+    "choices": ["Soviet Union", "Yugoslavia", "Spain", "Czechoslovakia"],
+    "explanation": "The Soviet Union beat Yugoslavia 2–1 after extra time in the final in Paris."
+  },
+  {
+    "id": "football-148",
+    "category": "football",
+    "topic": "Euros",
+    "difficulty": "hard",
+    "prompt": "Oliver Bierhoff's golden goal won the Euro 96 final for Germany against which team?",
+    "choices": ["Czech Republic", "England", "France", "Italy"],
+    "explanation": "Bierhoff scored twice, including the golden goal, as Germany beat the Czech Republic 2–1 at Wembley."
+  },
+  {
+    "id": "football-149",
+    "category": "football",
+    "topic": "Copa América",
+    "difficulty": "hard",
+    "prompt": "Which country won the Copa América in both 2015 and 2016?",
+    "choices": ["Chile", "Argentina", "Uruguay", "Colombia"],
+    "explanation": "Chile beat Argentina on penalties in both finals, in Santiago in 2015 and in New Jersey in 2016."
+  },
+  {
+    "id": "football-150",
+    "category": "football",
+    "topic": "Copa América",
+    "difficulty": "hard",
+    "prompt": "Which country won the 2001 Copa América on home soil?",
+    "choices": ["Colombia", "Peru", "Venezuela", "Ecuador"],
+    "explanation": "Colombia beat Mexico 1–0 in the final in Bogotá to win their first Copa América."
+  },
+  {
+    "id": "football-151",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "hard",
+    "prompt": "Which club won three European Cups in a row, from 1971 to 1973?",
+    "choices": ["Ajax", "Feyenoord", "Bayern Munich", "Inter Milan"],
+    "explanation": "Johan Cruyff's Ajax won the European Cup in 1971, 1972 and 1973."
+  },
+  {
+    "id": "football-152",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "hard",
+    "prompt": "Which club won the European Cup in both 1961 and 1962?",
+    "choices": ["Benfica", "Real Madrid", "Inter Milan", "AC Milan"],
+    "explanation": "Benfica beat Barcelona in 1961 and Real Madrid in 1962, with Eusébio scoring twice in the second final."
+  },
+  {
+    "id": "football-153",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "hard",
+    "prompt": "Which club from Eastern Europe won the European Cup in 1986?",
+    "choices": ["Steaua Bucharest", "Dinamo Bucharest", "Red Star Belgrade", "Dynamo Kyiv"],
+    "explanation": "Steaua Bucharest beat Barcelona on penalties in Seville after a 0–0 draw."
+  },
+  {
+    "id": "football-154",
+    "category": "football",
+    "topic": "Champions League",
+    "difficulty": "hard",
+    "prompt": "Which English club won the European Cup in both 1979 and 1980?",
+    "choices": ["Nottingham Forest", "Aston Villa", "Liverpool", "Leeds United"],
+    "explanation": "Brian Clough's Nottingham Forest beat Malmö in 1979 and Hamburg in 1980."
+  },
+  {
+    "id": "football-155",
+    "category": "football",
+    "topic": "African clubs",
+    "difficulty": "hard",
+    "prompt": "In 2010, which club became the first from Africa to reach the FIFA Club World Cup final?",
+    "choices": ["TP Mazembe", "Al Ahly", "Espérance de Tunis", "Enyimba"],
+    "explanation": "TP Mazembe of DR Congo beat Internacional in the semi-final before losing the final to Inter Milan."
+  },
+  {
+    "id": "football-156",
+    "category": "football",
+    "topic": "Positions",
+    "difficulty": "hard",
+    "prompt": "Which defensive role, also called the libero, did Franz Beckenbauer make famous?",
+    "choices": ["Sweeper", "Wing-back", "Target man", "Box-to-box midfielder"],
+    "explanation": "Beckenbauer played as a sweeper, or libero, behind the defence and often stepped forward with the ball."
+  },
+  {
+    "id": "football-157",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "hard",
+    "prompt": "If an indirect free kick goes straight into the opponents' goal without touching anyone, what is given?",
+    "choices": ["A goal kick", "A goal", "A corner kick", "The kick is retaken"],
+    "explanation": "A goal cannot be scored directly from an indirect free kick, so the defending team restarts with a goal kick."
+  },
+  {
+    "id": "football-158",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "hard",
+    "prompt": "An attacker exactly level with the second-last defender when the ball is played is judged to be what?",
+    "choices": ["Onside", "Offside", "Offside if ahead of the ball", "At the referee's discretion"],
+    "explanation": "A player is offside only if nearer the goal line than the second-last opponent, so level is onside."
+  },
+  {
+    "id": "football-159",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "hard",
+    "prompt": "What is the minimum number of players a team must have on the pitch for a match to continue?",
+    "choices": ["7", "8", "9", "6"],
+    "explanation": "Under the Laws of the Game, a match cannot start or continue if either team has fewer than seven players."
+  },
+  {
+    "id": "football-160",
+    "category": "football",
+    "topic": "Rules",
+    "difficulty": "hard",
+    "prompt": "What is given if a goalkeeper, in their own area, handles a ball deliberately kicked to them by a teammate?",
+    "choices": ["Indirect free kick", "Penalty kick", "Direct free kick", "Corner kick"],
+    "explanation": "Under the back-pass rule, handling a deliberate kick from a teammate gives the opponents an indirect free kick."
+  },
+  {
+    "id": "football-161",
+    "category": "football",
+    "topic": "Referees",
+    "difficulty": "hard",
+    "prompt": "Yellow and red cards were first used at which World Cup?",
+    "choices": ["1970", "1962", "1978", "1986"],
+    "explanation": "English referee Ken Aston came up with the cards, and they were first used at the 1970 World Cup in Mexico."
+  },
+  {
+    "id": "football-162",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "Who scored for Nigeria in their 2–1 extra-time loss to Italy at the 1994 World Cup?",
+    "choices": ["Emmanuel Amunike", "Daniel Amokachi", "Rashidi Yekini", "Finidi George"],
+    "explanation": "Amunike put Nigeria ahead, but Roberto Baggio scored late and again in extra time for Italy."
+  },
+  {
+    "id": "football-163",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "Nigeria's Golden Eaglets won the 2013 U-17 World Cup in which host country?",
+    "choices": ["United Arab Emirates", "Mexico", "Chile", "South Korea"],
+    "explanation": "Nigeria beat Mexico 3–0 in the 2013 final in Abu Dhabi."
+  },
+  {
+    "id": "football-164",
+    "category": "football",
+    "topic": "Nigeria",
+    "difficulty": "hard",
+    "prompt": "Which Nigerian striker won the Golden Boot as the Golden Eaglets won the 2015 U-17 World Cup?",
+    "choices": ["Victor Osimhen", "Kelechi Iheanacho", "Samuel Chukwueze", "Taiwo Awoniyi"],
+    "explanation": "Osimhen scored 10 goals in Chile as Nigeria beat Mali 2–0 in the final."
+  },
+  {
+    "id": "football-165",
+    "category": "football",
+    "topic": "NPFL",
+    "difficulty": "hard",
+    "prompt": "In which year did Enyimba first win the CAF Champions League?",
+    "choices": ["2003", "1999", "2001", "2007"],
+    "explanation": "Enyimba became the first Nigerian club to win the CAF Champions League in 2003, and won it again in 2004."
+  },
+  {
+    "id": "football-166",
+    "category": "football",
+    "topic": "AFCON",
+    "difficulty": "hard",
+    "prompt": "Zambia won the 2012 Africa Cup of Nations final on penalties against which country?",
+    "choices": ["Ivory Coast", "Ghana", "Mali", "Senegal"],
+    "explanation": "Zambia beat Ivory Coast 8–7 on penalties after a 0–0 draw in Libreville, Gabon."
+  },
+  {
+    "id": "football-167",
+    "category": "football",
+    "topic": "AFCON",
+    "difficulty": "hard",
+    "prompt": "Which country won three Africa Cup of Nations titles in a row, in 2006, 2008 and 2010?",
+    "choices": ["Egypt", "Cameroon", "Ghana", "Ivory Coast"],
+    "explanation": "Egypt won at home in 2006, in Ghana in 2008 and in Angola in 2010."
+  },
+  {
+    "id": "football-168",
+    "category": "football",
+    "topic": "AFCON",
+    "difficulty": "hard",
+    "prompt": "The 2000 Africa Cup of Nations was co-hosted by Nigeria and which country?",
+    "choices": ["Ghana", "Cameroon", "Benin", "Senegal"],
+    "explanation": "Nigeria and Ghana shared the 2000 tournament, the first AFCON with two hosts."
+  },
+  {
+    "id": "football-169",
+    "category": "football",
+    "topic": "AFCON",
+    "difficulty": "hard",
+    "prompt": "Which country beat Nigeria on penalties in the 2000 AFCON final in Lagos?",
+    "choices": ["Cameroon", "Ghana", "Senegal", "South Africa"],
+    "explanation": "Cameroon drew 2–2 with Nigeria in Lagos and won the shoot-out."
+  },
+  {
+    "id": "football-170",
+    "category": "football",
+    "topic": "Women's football",
+    "difficulty": "hard",
+    "prompt": "In which year did Nigeria's Super Falcons first reach a Women's World Cup quarter-final?",
+    "choices": ["1999", "1991", "2003", "2019"],
+    "explanation": "At the 1999 finals in the USA, Nigeria reached the quarter-finals and lost 4–3 to Brazil on a golden goal."
+  },
+  {
+    "id": "football-171",
+    "category": "football",
+    "topic": "Women's football",
+    "difficulty": "hard",
+    "prompt": "Which country hosted the first FIFA Women's World Cup, in 1991?",
+    "choices": ["China", "United States", "Sweden", "Norway"],
+    "explanation": "China hosted the first Women's World Cup in 1991, and the USA won it."
+  },
+  {
+    "id": "football-172",
+    "category": "football",
+    "topic": "Women's football",
+    "difficulty": "hard",
+    "prompt": "Which country won the 1995 Women's World Cup in Sweden?",
+    "choices": ["Norway", "Germany", "Sweden", "China"],
+    "explanation": "Norway beat Germany 2–0 in the final to become world champions for the first time."
+  },
+  {
+    "id": "football-173",
+    "category": "football",
+    "topic": "Women's football",
+    "difficulty": "hard",
+    "prompt": "Which country won the 2011 Women's World Cup, beating the USA on penalties?",
+    "choices": ["Japan", "Germany", "Sweden", "Brazil"],
+    "explanation": "Japan came from behind twice to draw 2–2 with the USA in Frankfurt, then won the shoot-out."
+  },
+  {
+    "id": "football-174",
+    "category": "football",
+    "topic": "Olympics",
+    "difficulty": "hard",
+    "prompt": "At which Olympics did Nigeria win bronze in men's football?",
+    "choices": ["Rio 2016", "London 2012", "Beijing 2008", "Sydney 2000"],
+    "explanation": "Nigeria beat Honduras 3–2 in the bronze medal match at Rio 2016."
+  },
+  {
+    "id": "football-175",
+    "category": "football",
+    "topic": "Olympics",
+    "difficulty": "hard",
+    "prompt": "Which country won men's football gold at London 2012, beating Brazil in the final?",
+    "choices": ["Mexico", "Japan", "South Korea", "Spain"],
+    "explanation": "Oribe Peralta scored twice as Mexico beat Brazil 2–1 at Wembley."
+  },
+  {
+    "id": "football-176",
+    "category": "football",
+    "topic": "Olympics",
+    "difficulty": "hard",
+    "prompt": "Which country won the first women's Olympic football tournament, at Atlanta 1996?",
+    "choices": ["United States", "China", "Norway", "Germany"],
+    "explanation": "The USA beat China 2–1 in the final in Athens, Georgia."
+  },
+  {
+    "id": "football-177",
+    "category": "football",
+    "topic": "Olympics",
+    "difficulty": "hard",
+    "prompt": "Which country won the women's football gold medal at the Tokyo 2020 Olympics?",
+    "choices": ["Canada", "Sweden", "United States", "Brazil"],
+    "explanation": "Canada beat Sweden on penalties in the final, played in Japan in 2021."
+  },
+  {
+    "id": "football-178",
+    "category": "football",
+    "topic": "Awards",
+    "difficulty": "hard",
+    "prompt": "What was the original World Cup trophy, used until 1970, called?",
+    "choices": [
+      "Jules Rimet Trophy",
+      "Henri Delaunay Trophy",
+      "Pierre de Coubertin Trophy",
+      "Stanley Rous Trophy"
+    ],
+    "explanation": "Brazil kept the Jules Rimet Trophy after winning it for a third time in 1970."
+  },
+  {
+    "id": "football-179",
+    "category": "football",
+    "topic": "Awards",
+    "difficulty": "hard",
+    "prompt": "Which Portuguese player won the Ballon d'Or in 2000?",
+    "choices": ["Luís Figo", "Rui Costa", "Deco", "Nuno Gomes"],
+    "explanation": "Luís Figo won the 2000 Ballon d'Or, the year he moved from Barcelona to Real Madrid."
+  },
+  {
+    "id": "football-180",
+    "category": "football",
+    "topic": "Awards",
+    "difficulty": "hard",
+    "prompt": "Who won the first Ballon d'Or, in 1956?",
+    "choices": ["Stanley Matthews", "Alfredo Di Stéfano", "Raymond Kopa", "Ferenc Puskás"],
+    "explanation": "England winger Stanley Matthews won the first Ballon d'Or at the age of 41."
   }
 ]

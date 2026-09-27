@@ -28,7 +28,7 @@ Quiz questions live in `packages/content/src/questions/`, one JSON file per cate
 - **Certain, not likely.** Only add a question if the answer is definitely right. If in doubt, write a different one.
 - **Exactly one right answer.** The three wrong choices are plausible, of the same type as the answer (all people, all places, all years) and clearly wrong on reflection. No "all of the above" and no joke answers.
 - **No giveaways.** The answer must not appear in the prompt.
-- **No repeats.** Don't ask a fact that's already in the file, even in different words.
+- **No repeats.** Don't ask a fact that's already in the file, even in different words, or one another category asks. Each fact belongs to one category.
 - **Built to last.** Avoid anything that goes out of date or is disputed. The notes for each category say what that means there.
 - **Spread out.** Cover many topics in the category, not the same famous facts again.
 
@@ -52,5 +52,5 @@ Quiz questions live in `packages/content/src/questions/`, one JSON file per cate
 
 1. **Write** the new questions at the end of the category's file, following the rules above.
 2. **Fact-check independently.** Someone who didn't write the batch reviews every question as a skeptic: is the answer definitely right, is any wrong choice also defensible, is the wording ambiguous, could it go stale, is the level right? They fix or replace anything that fails. The first 600 questions changed 28 times at this step, so it's worth it.
-3. **Test** with `pnpm test`. The suite rejects bad shapes, repeated choices, giveaways, near-duplicates and missing Bible references, and makes sure every level of every category still has at least 20 questions.
+3. **Test** with `pnpm test`. The suite rejects bad shapes, repeated choices, giveaways, near-duplicates and missing Bible references, repeats of a fact another category asks, and makes sure every level of every category still has at least 60 questions.
 4. **Ship** through a normal commit. The deploy runs only when every check passes.

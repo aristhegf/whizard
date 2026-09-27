@@ -179,7 +179,6 @@
     "choices": ["Charles Darwin", "Gregor Mendel", "Louis Pasteur", "Carl Linnaeus"],
     "explanation": "Charles Darwin published On the Origin of Species in 1859, setting out evolution by natural selection."
   },
-
   {
     "id": "science-021",
     "category": "science",
@@ -365,7 +364,6 @@
     "choices": ["Distance", "Time", "Speed", "Brightness"],
     "explanation": "A light-year is the distance light travels in one year, about 9.46 trillion kilometers."
   },
-
   {
     "id": "science-041",
     "category": "science",
@@ -550,5 +548,1110 @@
     "prompt": "Who coined the word cell after seeing tiny compartments in cork?",
     "choices": ["Robert Hooke", "Antonie van Leeuwenhoek", "Robert Brown", "Matthias Schleiden"],
     "explanation": "Robert Hooke described cork cells in his 1665 book Micrographia, naming them after small rooms."
+  },
+  {
+    "id": "science-061",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "easy",
+    "prompt": "Which planet is famous for its wide, bright rings of ice and rock?",
+    "choices": ["Saturn", "Jupiter", "Mars", "Venus"],
+    "explanation": "Saturn's broad rings are made of countless pieces of ice and rock and can be seen with a small telescope."
+  },
+  {
+    "id": "science-062",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "easy",
+    "prompt": "What is the name of the galaxy that contains our solar system?",
+    "choices": ["The Milky Way", "Andromeda", "The Whirlpool Galaxy", "The Sombrero Galaxy"],
+    "explanation": "Our Sun is one of billions of stars in the Milky Way, a spiral galaxy."
+  },
+  {
+    "id": "science-063",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "easy",
+    "prompt": "Which icy object grows a glowing tail as it travels close to the Sun?",
+    "choices": ["A comet", "An asteroid", "A meteorite", "A moon"],
+    "explanation": "As a comet nears the Sun, some of its ice turns to gas and dust, forming a glowing tail that points away from the Sun."
+  },
+  {
+    "id": "science-064",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "easy",
+    "prompt": "What do we call the curved path a planet follows around the Sun?",
+    "choices": ["An orbit", "An axis", "An eclipse", "A phase"],
+    "explanation": "A planet's orbit is its path around the Sun, held in place by the Sun's gravity."
+  },
+  {
+    "id": "science-065",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "easy",
+    "prompt": "What is it called when the Moon passes between the Sun and Earth and blocks the Sun's light?",
+    "choices": ["A solar eclipse", "A lunar eclipse", "A full moon", "A meteor shower"],
+    "explanation": "In a solar eclipse the Moon's shadow falls on Earth; in a lunar eclipse Earth's shadow falls on the Moon."
+  },
+  {
+    "id": "science-066",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "easy",
+    "prompt": "Which organs take in oxygen when you breathe in?",
+    "choices": ["The lungs", "The kidneys", "The liver", "The stomach"],
+    "explanation": "The lungs pass oxygen from the air you breathe into the blood and remove carbon dioxide."
+  },
+  {
+    "id": "science-067",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "easy",
+    "prompt": "What is the coloured ring around the pupil of the eye called?",
+    "choices": ["The iris", "The retina", "The cornea", "The lens"],
+    "explanation": "The iris is the coloured part of the eye, and its muscles change the size of the pupil."
+  },
+  {
+    "id": "science-068",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "easy",
+    "prompt": "What is the hard, white outer layer of a tooth called?",
+    "choices": ["Enamel", "Dentine", "Pulp", "Plaque"],
+    "explanation": "Enamel covers the crown of each tooth and is the hardest substance in the human body."
+  },
+  {
+    "id": "science-069",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "easy",
+    "prompt": "Which organs filter the blood and make urine?",
+    "choices": ["The kidneys", "The lungs", "The liver", "The bladder"],
+    "explanation": "The kidneys filter waste and extra water from the blood, which then leaves the body as urine."
+  },
+  {
+    "id": "science-070",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "easy",
+    "prompt": "Which organ churns swallowed food with acid before it moves on to the intestines?",
+    "choices": ["The stomach", "The liver", "The pancreas", "The bladder"],
+    "explanation": "The muscular stomach mixes food with acid and enzymes before passing it to the small intestine."
+  },
+  {
+    "id": "science-071",
+    "category": "science",
+    "topic": "Blood",
+    "difficulty": "easy",
+    "prompt": "Which blood cells help the body fight germs and infection?",
+    "choices": ["White blood cells", "Red blood cells", "Platelets", "Nerve cells"],
+    "explanation": "White blood cells are part of the immune system and attack germs that get into the body."
+  },
+  {
+    "id": "science-072",
+    "category": "science",
+    "topic": "Blood",
+    "difficulty": "easy",
+    "prompt": "Which blood vessels carry blood back towards the heart?",
+    "choices": ["Veins", "Arteries", "Capillaries", "Arterioles"],
+    "explanation": "Veins carry blood back to the heart, while arteries carry it away from the heart."
+  },
+  {
+    "id": "science-073",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "easy",
+    "prompt": "Which of these metals is a liquid at room temperature and was once widely used in thermometers?",
+    "choices": ["Mercury", "Lead", "Tin", "Silver"],
+    "explanation": "Mercury stays liquid at room temperature, which made it useful in old thermometers."
+  },
+  {
+    "id": "science-074",
+    "category": "science",
+    "topic": "Magnetism",
+    "difficulty": "easy",
+    "prompt": "What are the two ends of a bar magnet called?",
+    "choices": ["Poles", "Terminals", "Nodes", "Electrodes"],
+    "explanation": "Every magnet has a north pole and a south pole, where its pull is strongest."
+  },
+  {
+    "id": "science-075",
+    "category": "science",
+    "topic": "Magnetism",
+    "difficulty": "easy",
+    "prompt": "Which of these metals is strongly attracted to a magnet?",
+    "choices": ["Iron", "Copper", "Aluminium", "Gold"],
+    "explanation": "Iron is magnetic, while copper, aluminium and gold are not pulled noticeably by an ordinary magnet."
+  },
+  {
+    "id": "science-076",
+    "category": "science",
+    "topic": "Electricity",
+    "difficulty": "easy",
+    "prompt": "Which of these is a good conductor of electricity?",
+    "choices": ["Copper", "Rubber", "Glass", "Wood"],
+    "explanation": "Copper lets electric current flow easily, which is why it is used in most electrical wires."
+  },
+  {
+    "id": "science-077",
+    "category": "science",
+    "topic": "Physics",
+    "difficulty": "easy",
+    "prompt": "Which simple machine is a rigid bar that turns on a fixed point?",
+    "choices": ["A lever", "A pulley", "A wedge", "A screw"],
+    "explanation": "A lever turns on a fixed point called a fulcrum, as in a seesaw or a crowbar."
+  },
+  {
+    "id": "science-078",
+    "category": "science",
+    "topic": "Physics",
+    "difficulty": "easy",
+    "prompt": "Which force slows down an object sliding across a rough surface?",
+    "choices": ["Friction", "Magnetism", "Buoyancy", "Tension"],
+    "explanation": "Friction acts between surfaces that rub together and works against their motion."
+  },
+  {
+    "id": "science-079",
+    "category": "science",
+    "topic": "Energy",
+    "difficulty": "easy",
+    "prompt": "Which of these is a renewable source of energy?",
+    "choices": ["Solar power", "Coal", "Natural gas", "Crude oil"],
+    "explanation": "Sunlight keeps arriving every day, while coal, gas and oil are fossil fuels that take millions of years to form."
+  },
+  {
+    "id": "science-080",
+    "category": "science",
+    "topic": "Light and sound",
+    "difficulty": "easy",
+    "prompt": "In a storm, why do we see lightning before we hear its thunder?",
+    "choices": [
+      "Light travels faster than sound",
+      "Thunder is made a little later",
+      "Sound bends around the clouds",
+      "Clouds block the sound at first"
+    ],
+    "explanation": "Light arrives almost instantly, while sound covers only about a kilometre every three seconds."
+  },
+  {
+    "id": "science-081",
+    "category": "science",
+    "topic": "Light and sound",
+    "difficulty": "easy",
+    "prompt": "What do we call a sound that bounces off a surface and is heard again?",
+    "choices": ["An echo", "A tone", "A pitch", "A frequency"],
+    "explanation": "An echo is a reflected sound, heard a moment after the original, such as a shout in a large hall or valley."
+  },
+  {
+    "id": "science-082",
+    "category": "science",
+    "topic": "Light and sound",
+    "difficulty": "easy",
+    "prompt": "Which invisible rays from the Sun cause sunburn?",
+    "choices": ["Ultraviolet rays", "Infrared rays", "X-rays", "Radio waves"],
+    "explanation": "Ultraviolet rays damage skin cells, which is why sunscreen is made to block them."
+  },
+  {
+    "id": "science-083",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "easy",
+    "prompt": "What do we call a sudden shaking of the ground caused by rocks moving underground?",
+    "choices": ["An earthquake", "A tsunami", "A landslide", "An avalanche"],
+    "explanation": "Earthquakes happen when rocks along a fault suddenly slip, sending shaking waves through the ground."
+  },
+  {
+    "id": "science-084",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "easy",
+    "prompt": "What are the preserved remains or traces of ancient living things in rock called?",
+    "choices": ["Fossils", "Minerals", "Crystals", "Sediments"],
+    "explanation": "Fossils, such as bones, shells and footprints preserved in rock, show what lived long ago."
+  },
+  {
+    "id": "science-085",
+    "category": "science",
+    "topic": "Weather",
+    "difficulty": "easy",
+    "prompt": "What are the tiny water drops that form on grass on a cool, clear morning called?",
+    "choices": ["Dew", "Frost", "Drizzle", "Mist"],
+    "explanation": "Dew forms when water vapour in the air condenses on surfaces that have cooled overnight."
+  },
+  {
+    "id": "science-086",
+    "category": "science",
+    "topic": "Weather",
+    "difficulty": "easy",
+    "prompt": "In the water cycle, what is the name for water falling from clouds as rain, snow or hail?",
+    "choices": ["Precipitation", "Evaporation", "Condensation", "Transpiration"],
+    "explanation": "Precipitation is any water that falls from clouds to the ground, whether as rain, snow, sleet or hail."
+  },
+  {
+    "id": "science-087",
+    "category": "science",
+    "topic": "States of matter",
+    "difficulty": "easy",
+    "prompt": "What is it called when water vapour cools and turns into liquid droplets?",
+    "choices": ["Condensation", "Evaporation", "Melting", "Sublimation"],
+    "explanation": "Condensation is a gas turning into a liquid, as when droplets form on a cold glass."
+  },
+  {
+    "id": "science-088",
+    "category": "science",
+    "topic": "Plants",
+    "difficulty": "easy",
+    "prompt": "What is the process by which green plants make food using sunlight?",
+    "choices": ["Photosynthesis", "Respiration", "Digestion", "Pollination"],
+    "explanation": "In photosynthesis, plants use light energy to turn water and carbon dioxide into sugar, releasing oxygen."
+  },
+  {
+    "id": "science-089",
+    "category": "science",
+    "topic": "Plants",
+    "difficulty": "easy",
+    "prompt": "Which powdery substance do bees carry from flower to flower, helping plants make seeds?",
+    "choices": ["Pollen", "Nectar", "Sap", "Resin"],
+    "explanation": "Pollen carried between flowers pollinates them, so they can be fertilised and produce seeds."
+  },
+  {
+    "id": "science-090",
+    "category": "science",
+    "topic": "Plants",
+    "difficulty": "easy",
+    "prompt": "Which part of a plant makes most of its food?",
+    "choices": ["The leaves", "The roots", "The flowers", "The seeds"],
+    "explanation": "Leaves are packed with chlorophyll and are where most photosynthesis takes place."
+  },
+  {
+    "id": "science-091",
+    "category": "science",
+    "topic": "Ecology",
+    "difficulty": "easy",
+    "prompt": "What do we call the natural home or surroundings where an animal or plant lives?",
+    "choices": ["Its habitat", "Its colony", "Its climate", "Its territory"],
+    "explanation": "A habitat is the place that gives a living thing the food, water and shelter it needs."
+  },
+  {
+    "id": "science-092",
+    "category": "science",
+    "topic": "Ecology",
+    "difficulty": "easy",
+    "prompt": "What word describes a species that has died out completely, with none left alive?",
+    "choices": ["Extinct", "Endangered", "Dormant", "Invasive"],
+    "explanation": "An extinct species has no living members left anywhere, like the dodo."
+  },
+  {
+    "id": "science-093",
+    "category": "science",
+    "topic": "Ecology",
+    "difficulty": "easy",
+    "prompt": "What do we call a series like grass, then a goat that eats it, then a lion that eats the goat?",
+    "choices": ["A food chain", "A life cycle", "A water cycle", "A family tree"],
+    "explanation": "A food chain shows how energy passes from one living thing to another as each is eaten by the next."
+  },
+  {
+    "id": "science-094",
+    "category": "science",
+    "topic": "Animals and biology",
+    "difficulty": "easy",
+    "prompt": "What do we call animals that have a backbone?",
+    "choices": ["Vertebrates", "Invertebrates", "Arthropods", "Molluscs"],
+    "explanation": "Vertebrates, such as fish, birds and mammals, have a backbone made of small bones called vertebrae."
+  },
+  {
+    "id": "science-181",
+    "category": "science",
+    "topic": "Nutrition",
+    "difficulty": "easy",
+    "prompt": "Which nutrient does the body mainly use to build and repair muscles?",
+    "choices": ["Protein", "Carbohydrate", "Fat", "Fibre"],
+    "explanation": "Proteins, found in foods like beans, eggs, fish and meat, supply the building blocks for muscle."
+  },
+  {
+    "id": "science-096",
+    "category": "science",
+    "topic": "Microbiology",
+    "difficulty": "easy",
+    "prompt": "Which tiny fungus do bakers use to make bread dough rise?",
+    "choices": ["Yeast", "Mushroom", "Lichen", "Truffle"],
+    "explanation": "Yeast feeds on sugar in the dough and gives off carbon dioxide gas, which makes the bread rise."
+  },
+  {
+    "id": "science-182",
+    "category": "science",
+    "topic": "Units",
+    "difficulty": "easy",
+    "prompt": "How many centimetres are there in one metre?",
+    "choices": ["100", "10", "1,000", "12"],
+    "explanation": "Centi means one hundredth, so a metre is made up of 100 centimetres."
+  },
+  {
+    "id": "science-098",
+    "category": "science",
+    "topic": "Medicine",
+    "difficulty": "easy",
+    "prompt": "Which instrument does a doctor use to listen to your heartbeat?",
+    "choices": ["A stethoscope", "An otoscope", "A thermometer", "A syringe"],
+    "explanation": "A stethoscope carries the sounds of the heart and lungs to the doctor's ears."
+  },
+  {
+    "id": "science-099",
+    "category": "science",
+    "topic": "Medicine",
+    "difficulty": "easy",
+    "prompt": "Which type of medicine is used to treat infections caused by bacteria?",
+    "choices": ["Antibiotics", "Antihistamines", "Antacids", "Anaesthetics"],
+    "explanation": "Antibiotics kill bacteria or stop them multiplying, but they do not work against viruses."
+  },
+  {
+    "id": "science-100",
+    "category": "science",
+    "topic": "Nutrition",
+    "difficulty": "easy",
+    "prompt": "Which vitamin does your skin make when it is exposed to sunlight?",
+    "choices": ["Vitamin D", "Vitamin C", "Vitamin A", "Vitamin K"],
+    "explanation": "Sunlight on the skin lets the body make vitamin D, which helps build strong bones."
+  },
+  {
+    "id": "science-101",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "medium",
+    "prompt": "Which noble gas glows red-orange in classic advertising signs?",
+    "choices": ["Neon", "Argon", "Xenon", "Krypton"],
+    "explanation": "Neon gives off a bright red-orange glow when electricity passes through it, which gave neon signs their name."
+  },
+  {
+    "id": "science-102",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "medium",
+    "prompt": "Rust forms when iron reacts with water and which gas?",
+    "choices": ["Oxygen", "Nitrogen", "Hydrogen", "Helium"],
+    "explanation": "Rust is iron oxide, formed when iron is exposed to both oxygen and water."
+  },
+  {
+    "id": "science-103",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "medium",
+    "prompt": "Diamond and graphite are both made of which element?",
+    "choices": ["Carbon", "Silicon", "Sulfur", "Boron"],
+    "explanation": "Diamond and graphite are both pure carbon; only the way their atoms are arranged differs."
+  },
+  {
+    "id": "science-104",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "medium",
+    "prompt": "What do we call a substance that speeds up a chemical reaction without being used up?",
+    "choices": ["A catalyst", "A reactant", "A solvent", "An inhibitor"],
+    "explanation": "A catalyst lowers the energy a reaction needs and is left unchanged at the end."
+  },
+  {
+    "id": "science-105",
+    "category": "science",
+    "topic": "Acids and bases",
+    "difficulty": "medium",
+    "prompt": "A solution with a pH of 2 is best described as what?",
+    "choices": ["Strongly acidic", "Strongly alkaline", "Neutral", "Weakly alkaline"],
+    "explanation": "On the pH scale, values well below 7 are strongly acidic, 7 is neutral and values above 7 are alkaline."
+  },
+  {
+    "id": "science-106",
+    "category": "science",
+    "topic": "Acids and bases",
+    "difficulty": "medium",
+    "prompt": "Which acid does the human stomach produce to help digest food?",
+    "choices": ["Hydrochloric acid", "Sulfuric acid", "Citric acid", "Nitric acid"],
+    "explanation": "The stomach lining releases hydrochloric acid, which helps break down food and kill germs."
+  },
+  {
+    "id": "science-107",
+    "category": "science",
+    "topic": "States of matter",
+    "difficulty": "medium",
+    "prompt": "What is it called when a solid turns straight into a gas without melting first?",
+    "choices": ["Sublimation", "Condensation", "Evaporation", "Deposition"],
+    "explanation": "In sublimation a solid becomes a gas directly, as dry ice does at room temperature."
+  },
+  {
+    "id": "science-108",
+    "category": "science",
+    "topic": "Atoms",
+    "difficulty": "medium",
+    "prompt": "What are atoms of the same element with different numbers of neutrons called?",
+    "choices": ["Isotopes", "Ions", "Isomers", "Allotropes"],
+    "explanation": "Isotopes have the same number of protons but different numbers of neutrons, like carbon-12 and carbon-14."
+  },
+  {
+    "id": "science-109",
+    "category": "science",
+    "topic": "Units",
+    "difficulty": "medium",
+    "prompt": "What is the SI unit of force?",
+    "choices": ["Newton", "Joule", "Pascal", "Watt"],
+    "explanation": "Force is measured in newtons, named after Isaac Newton."
+  },
+  {
+    "id": "science-110",
+    "category": "science",
+    "topic": "Units",
+    "difficulty": "medium",
+    "prompt": "The joule is the SI unit of what?",
+    "choices": ["Energy", "Power", "Pressure", "Force"],
+    "explanation": "The joule measures energy and work, and is named after the English physicist James Prescott Joule."
+  },
+  {
+    "id": "science-111",
+    "category": "science",
+    "topic": "Light and sound",
+    "difficulty": "medium",
+    "prompt": "What is the bending of light as it passes from air into water called?",
+    "choices": ["Refraction", "Reflection", "Diffraction", "Absorption"],
+    "explanation": "Light changes speed as it enters water, so it bends; this is why a straw in a glass looks broken."
+  },
+  {
+    "id": "science-112",
+    "category": "science",
+    "topic": "Light and sound",
+    "difficulty": "medium",
+    "prompt": "Sound cannot travel through which of these?",
+    "choices": ["A vacuum", "Water", "Steel", "Air"],
+    "explanation": "Sound needs particles to vibrate, so it cannot cross a vacuum such as outer space."
+  },
+  {
+    "id": "science-113",
+    "category": "science",
+    "topic": "Light and sound",
+    "difficulty": "medium",
+    "prompt": "What do we call sound that is too high-pitched for humans to hear?",
+    "choices": ["Ultrasound", "Infrasound", "Ultraviolet", "Microwaves"],
+    "explanation": "Ultrasound is above the range of human hearing and is used in medical scans of unborn babies."
+  },
+  {
+    "id": "science-114",
+    "category": "science",
+    "topic": "Scientists",
+    "difficulty": "medium",
+    "prompt": "Which chemist published a periodic table in 1869, leaving gaps for elements not yet found?",
+    "choices": ["Dmitri Mendeleev", "John Dalton", "Antoine Lavoisier", "Niels Bohr"],
+    "explanation": "Mendeleev's table left gaps and predicted elements such as gallium and germanium before they were discovered."
+  },
+  {
+    "id": "science-115",
+    "category": "science",
+    "topic": "Scientists",
+    "difficulty": "medium",
+    "prompt": "Whose book of 1543 placed the Sun, not Earth, at the centre of the planets' orbits?",
+    "choices": ["Nicolaus Copernicus", "Galileo Galilei", "Johannes Kepler", "Ptolemy"],
+    "explanation": "Copernicus's book On the Revolutions of the Heavenly Spheres set out a Sun-centred model of the solar system."
+  },
+  {
+    "id": "science-116",
+    "category": "science",
+    "topic": "Electricity",
+    "difficulty": "medium",
+    "prompt": "In what form is energy stored inside a battery?",
+    "choices": ["Chemical energy", "Nuclear energy", "Kinetic energy", "Sound energy"],
+    "explanation": "A battery stores chemical energy and turns it into electrical energy when connected in a circuit."
+  },
+  {
+    "id": "science-117",
+    "category": "science",
+    "topic": "Electricity",
+    "difficulty": "medium",
+    "prompt": "What does a fuse do when too much current flows in a circuit?",
+    "choices": [
+      "It melts and breaks the circuit",
+      "It stores the extra charge",
+      "It raises the voltage",
+      "It turns AC into DC"
+    ],
+    "explanation": "A fuse contains a thin wire that melts if the current gets too high, cutting off the power."
+  },
+  {
+    "id": "science-118",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "medium",
+    "prompt": "Which of these planets is farthest from the Sun?",
+    "choices": ["Neptune", "Uranus", "Saturn", "Jupiter"],
+    "explanation": "Neptune is the eighth and outermost planet; Pluto is now classed as a dwarf planet."
+  },
+  {
+    "id": "science-119",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "medium",
+    "prompt": "Between which two planets does the main asteroid belt lie?",
+    "choices": ["Mars and Jupiter", "Earth and Mars", "Jupiter and Saturn", "Venus and Earth"],
+    "explanation": "The main asteroid belt is a ring of rocky bodies orbiting the Sun between Mars and Jupiter."
+  },
+  {
+    "id": "science-120",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "medium",
+    "prompt": "What name is given to the huge explosion of a massive star at the end of its life?",
+    "choices": ["A supernova", "A nebula", "A pulsar", "A quasar"],
+    "explanation": "When a massive star runs out of fuel its core collapses, and it blows apart in a supernova."
+  },
+  {
+    "id": "science-121",
+    "category": "science",
+    "topic": "Space exploration",
+    "difficulty": "medium",
+    "prompt": "Which space telescope was launched in 1990 and later repaired and upgraded by visiting astronauts?",
+    "choices": ["Hubble", "James Webb", "Kepler", "Spitzer"],
+    "explanation": "The Hubble Space Telescope went up in 1990, and astronauts on the Space Shuttle visited it five times to fix and upgrade it."
+  },
+  {
+    "id": "science-122",
+    "category": "science",
+    "topic": "Discoveries",
+    "difficulty": "medium",
+    "prompt": "Which element did Marie and Pierre Curie discover and name after Marie's homeland?",
+    "choices": ["Polonium", "Radium", "Plutonium", "Francium"],
+    "explanation": "The Curies named polonium in 1898 after Poland, where Marie was born."
+  },
+  {
+    "id": "science-123",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "medium",
+    "prompt": "Which supercontinent joined almost all of Earth's land about 250 million years ago?",
+    "choices": ["Pangaea", "Gondwana", "Laurasia", "Rodinia"],
+    "explanation": "Pangaea later broke apart into Laurasia and Gondwana, which split further into today's continents."
+  },
+  {
+    "id": "science-124",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "medium",
+    "prompt": "What is the point on the surface directly above where an earthquake starts called?",
+    "choices": ["The epicentre", "The hypocentre", "The fault line", "The aftershock"],
+    "explanation": "An earthquake starts underground at the hypocentre, and the point on the surface right above it is the epicentre."
+  },
+  {
+    "id": "science-125",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "medium",
+    "prompt": "In which layer of the atmosphere is the ozone layer found?",
+    "choices": ["The stratosphere", "The troposphere", "The mesosphere", "The thermosphere"],
+    "explanation": "The ozone layer lies in the stratosphere, above the troposphere where our weather happens."
+  },
+  {
+    "id": "science-126",
+    "category": "science",
+    "topic": "Rocks",
+    "difficulty": "medium",
+    "prompt": "What type of rock is marble?",
+    "choices": ["Metamorphic", "Igneous", "Sedimentary", "Volcanic"],
+    "explanation": "Marble forms when limestone is changed by great heat and pressure, making it a metamorphic rock."
+  },
+  {
+    "id": "science-127",
+    "category": "science",
+    "topic": "Weather",
+    "difficulty": "medium",
+    "prompt": "Which instrument measures air pressure?",
+    "choices": ["A barometer", "A thermometer", "An anemometer", "A hygrometer"],
+    "explanation": "A barometer measures air pressure, and falling pressure often warns of stormy weather."
+  },
+  {
+    "id": "science-128",
+    "category": "science",
+    "topic": "Weather",
+    "difficulty": "medium",
+    "prompt": "What are hurricane-type storms called when they form over the north-western Pacific Ocean?",
+    "choices": ["Typhoons", "Tornadoes", "Monsoons", "Blizzards"],
+    "explanation": "Hurricanes and typhoons are the same kind of tropical cyclone; the name depends on the ocean where they form."
+  },
+  {
+    "id": "science-129",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "medium",
+    "prompt": "How many chambers does the human heart have?",
+    "choices": ["Four", "Two", "Three", "Six"],
+    "explanation": "The heart has two upper chambers called atria and two lower chambers called ventricles."
+  },
+  {
+    "id": "science-130",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "medium",
+    "prompt": "Which pigment mainly gives human skin and hair their colour?",
+    "choices": ["Melanin", "Keratin", "Collagen", "Bilirubin"],
+    "explanation": "Melanin is made by cells in the skin; more melanin gives darker skin and hair."
+  },
+  {
+    "id": "science-131",
+    "category": "science",
+    "topic": "Blood",
+    "difficulty": "medium",
+    "prompt": "Which part of the blood helps a cut stop bleeding by forming a clot?",
+    "choices": ["Platelets", "Red blood cells", "White blood cells", "Antibodies"],
+    "explanation": "Platelets are tiny cell fragments that clump together at a wound to help form a clot."
+  },
+  {
+    "id": "science-132",
+    "category": "science",
+    "topic": "Blood",
+    "difficulty": "medium",
+    "prompt": "Which protein in red blood cells carries oxygen?",
+    "choices": ["Haemoglobin", "Keratin", "Insulin", "Collagen"],
+    "explanation": "Haemoglobin contains iron, which binds oxygen in the lungs and releases it around the body."
+  },
+  {
+    "id": "science-133",
+    "category": "science",
+    "topic": "Cells",
+    "difficulty": "medium",
+    "prompt": "Which structure do plant cells have but animal cells lack?",
+    "choices": ["A cell wall", "A nucleus", "A cell membrane", "Mitochondria"],
+    "explanation": "Plant cells have a stiff cell wall made of cellulose outside the membrane; animal cells do not."
+  },
+  {
+    "id": "science-134",
+    "category": "science",
+    "topic": "Cells",
+    "difficulty": "medium",
+    "prompt": "What is the movement of water through a membrane from a weaker to a stronger solution called?",
+    "choices": ["Osmosis", "Filtration", "Respiration", "Evaporation"],
+    "explanation": "In osmosis, water moves through a partly permeable membrane towards the more concentrated solution."
+  },
+  {
+    "id": "science-135",
+    "category": "science",
+    "topic": "Genetics",
+    "difficulty": "medium",
+    "prompt": "What was the name of the sheep cloned in 1996, the first mammal cloned from an adult cell?",
+    "choices": ["Dolly", "Molly", "Polly", "Daisy"],
+    "explanation": "Dolly the sheep was born in Scotland in 1996, cloned from a cell taken from an adult sheep."
+  },
+  {
+    "id": "science-136",
+    "category": "science",
+    "topic": "Plants",
+    "difficulty": "medium",
+    "prompt": "What is the loss of water vapour from a plant's leaves called?",
+    "choices": ["Transpiration", "Respiration", "Germination", "Condensation"],
+    "explanation": "Transpiration is the evaporation of water from leaves, which pulls more water up from the roots."
+  },
+  {
+    "id": "science-137",
+    "category": "science",
+    "topic": "Plants",
+    "difficulty": "medium",
+    "prompt": "What are the tiny pores on a leaf that let gases in and out called?",
+    "choices": ["Stomata", "Chloroplasts", "Root hairs", "Petioles"],
+    "explanation": "Stomata open and close to let carbon dioxide in and oxygen and water vapour out."
+  },
+  {
+    "id": "science-138",
+    "category": "science",
+    "topic": "Medicine",
+    "difficulty": "medium",
+    "prompt": "In 1796, which English doctor used cowpox to protect a boy against smallpox?",
+    "choices": ["Edward Jenner", "Louis Pasteur", "Joseph Lister", "Robert Koch"],
+    "explanation": "Edward Jenner's cowpox work led to the smallpox vaccine; the word vaccine comes from vacca, Latin for cow."
+  },
+  {
+    "id": "science-139",
+    "category": "science",
+    "topic": "Medicine",
+    "difficulty": "medium",
+    "prompt": "The process of gently heating milk to kill harmful germs is named after which scientist?",
+    "choices": ["Louis Pasteur", "Robert Koch", "Joseph Lister", "Edward Jenner"],
+    "explanation": "Pasteurisation is named after Louis Pasteur, who showed that gentle heating kills the microbes that spoil drinks."
+  },
+  {
+    "id": "science-140",
+    "category": "science",
+    "topic": "Nutrition",
+    "difficulty": "medium",
+    "prompt": "Which disease is caused by a long-term lack of vitamin C?",
+    "choices": ["Scurvy", "Rickets", "Beriberi", "Pellagra"],
+    "explanation": "Scurvy causes bleeding gums and weakness, and was common among sailors until citrus fruit was added to their diet."
+  },
+  {
+    "id": "science-141",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "hard",
+    "prompt": "Which element has the chemical symbol Sb?",
+    "choices": ["Antimony", "Tin", "Strontium", "Selenium"],
+    "explanation": "The symbol Sb comes from stibium, the Latin name for antimony."
+  },
+  {
+    "id": "science-142",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "hard",
+    "prompt": "Which element's name comes from the Greek word for pale green?",
+    "choices": ["Chlorine", "Chromium", "Iodine", "Bromine"],
+    "explanation": "Chlorine is a yellow-green gas, and its name comes from the Greek word chloros, meaning pale green."
+  },
+  {
+    "id": "science-143",
+    "category": "science",
+    "topic": "Chemistry",
+    "difficulty": "hard",
+    "prompt": "Which is the least dense of all metals?",
+    "choices": ["Lithium", "Sodium", "Magnesium", "Aluminium"],
+    "explanation": "Lithium is only about half as dense as water, making it the lightest of all metals."
+  },
+  {
+    "id": "science-144",
+    "category": "science",
+    "topic": "Scientists",
+    "difficulty": "hard",
+    "prompt": "Which French chemist gave oxygen and hydrogen their names?",
+    "choices": ["Antoine Lavoisier", "Joseph Priestley", "Henry Cavendish", "Robert Boyle"],
+    "explanation": "Antoine Lavoisier named both oxygen and hydrogen in the late 1700s and is often called the father of modern chemistry."
+  },
+  {
+    "id": "science-145",
+    "category": "science",
+    "topic": "Scientists",
+    "difficulty": "hard",
+    "prompt": "Which physicist is known for the uncertainty principle?",
+    "choices": ["Werner Heisenberg", "Erwin Schrödinger", "Max Planck", "Paul Dirac"],
+    "explanation": "Heisenberg's principle says a particle's exact position and momentum cannot both be known at the same time."
+  },
+  {
+    "id": "science-146",
+    "category": "science",
+    "topic": "Units",
+    "difficulty": "hard",
+    "prompt": "What is the SI unit of electric charge?",
+    "choices": ["Coulomb", "Farad", "Henry", "Weber"],
+    "explanation": "Charge is measured in coulombs, named after the French physicist Charles-Augustin de Coulomb."
+  },
+  {
+    "id": "science-147",
+    "category": "science",
+    "topic": "States of matter",
+    "difficulty": "hard",
+    "prompt": "What name is given to the temperature and pressure at which a substance can exist as solid, liquid and gas together?",
+    "choices": ["The triple point", "The critical point", "The boiling point", "The dew point"],
+    "explanation": "At its triple point a substance can be solid, liquid and gas at once; for water this is just above 0 °C at very low pressure."
+  },
+  {
+    "id": "science-148",
+    "category": "science",
+    "topic": "Units",
+    "difficulty": "hard",
+    "prompt": "The candela is the SI unit of what?",
+    "choices": ["Luminous intensity", "Sound level", "Radioactivity", "Magnetic force"],
+    "explanation": "The candela measures how bright a light source is in a given direction; its name comes from the Latin for candle."
+  },
+  {
+    "id": "science-149",
+    "category": "science",
+    "topic": "Units",
+    "difficulty": "hard",
+    "prompt": "At what temperature do the Celsius and Fahrenheit scales show the same number?",
+    "choices": ["−40", "0", "32", "−273"],
+    "explanation": "Minus 40 degrees Celsius is exactly minus 40 degrees Fahrenheit, the only point where the two scales meet."
+  },
+  {
+    "id": "science-150",
+    "category": "science",
+    "topic": "Discoveries",
+    "difficulty": "hard",
+    "prompt": "Who discovered the neutron in 1932?",
+    "choices": ["James Chadwick", "Ernest Rutherford", "Enrico Fermi", "Niels Bohr"],
+    "explanation": "James Chadwick found the neutron in 1932 and won the Nobel Prize in Physics for it in 1935."
+  },
+  {
+    "id": "science-151",
+    "category": "science",
+    "topic": "Discoveries",
+    "difficulty": "hard",
+    "prompt": "Which German physicist discovered X-rays in 1895?",
+    "choices": ["Wilhelm Röntgen", "Max Planck", "Heinrich Hertz", "Albert Einstein"],
+    "explanation": "Röntgen discovered X-rays in 1895 and won the first Nobel Prize in Physics in 1901."
+  },
+  {
+    "id": "science-152",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "hard",
+    "prompt": "What is the largest moon of Saturn?",
+    "choices": ["Titan", "Enceladus", "Mimas", "Rhea"],
+    "explanation": "Titan is Saturn's largest moon and has a thick atmosphere made mostly of nitrogen."
+  },
+  {
+    "id": "science-153",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "hard",
+    "prompt": "Which planet spins the fastest, giving it the shortest day?",
+    "choices": ["Jupiter", "Saturn", "Mercury", "Earth"],
+    "explanation": "Jupiter turns once in just under 10 hours, the shortest day of any planet."
+  },
+  {
+    "id": "science-154",
+    "category": "science",
+    "topic": "Space",
+    "difficulty": "hard",
+    "prompt": "After its red giant stage, what is our Sun expected to become?",
+    "choices": ["A white dwarf", "A neutron star", "A black hole", "A blue giant"],
+    "explanation": "The Sun is not massive enough to explode, so it will shed its outer layers and leave a small, hot white dwarf."
+  },
+  {
+    "id": "science-155",
+    "category": "science",
+    "topic": "Space exploration",
+    "difficulty": "hard",
+    "prompt": "Which spacecraft became the first to reach interstellar space, in 2012?",
+    "choices": ["Voyager 1", "Voyager 2", "Pioneer 10", "New Horizons"],
+    "explanation": "Voyager 1, launched in 1977, crossed the edge of the Sun's bubble of solar wind in 2012; Voyager 2 followed in 2018."
+  },
+  {
+    "id": "science-156",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "hard",
+    "prompt": "What is the rigid outer layer of Earth, broken into tectonic plates, called?",
+    "choices": ["The lithosphere", "The asthenosphere", "The hydrosphere", "The mesosphere"],
+    "explanation": "The lithosphere is the crust plus the top of the mantle, and it is split into plates that slide over the softer asthenosphere."
+  },
+  {
+    "id": "science-157",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "hard",
+    "prompt": "Earth's inner core is made mostly of iron and which other metal?",
+    "choices": ["Nickel", "Copper", "Lead", "Aluminium"],
+    "explanation": "The inner core is a solid ball of mainly iron and nickel at the centre of the Earth."
+  },
+  {
+    "id": "science-158",
+    "category": "science",
+    "topic": "Rocks",
+    "difficulty": "hard",
+    "prompt": "Obsidian is a natural glass formed from what?",
+    "choices": [
+      "Lava that cooled very quickly",
+      "Sand melted by lightning",
+      "Fossilised tree resin",
+      "Compressed volcanic ash"
+    ],
+    "explanation": "Obsidian forms when lava cools so fast that crystals have no time to grow, leaving a glassy rock."
+  },
+  {
+    "id": "science-159",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "hard",
+    "prompt": "What is the smallest bone in the human body?",
+    "choices": ["Stapes", "Incus", "Malleus", "Hyoid"],
+    "explanation": "The stapes, or stirrup, is a tiny bone in the middle ear that passes sound vibrations to the inner ear."
+  },
+  {
+    "id": "science-160",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "hard",
+    "prompt": "Which part of the brain mainly controls balance and coordination?",
+    "choices": ["The cerebellum", "The cerebrum", "The medulla oblongata", "The hypothalamus"],
+    "explanation": "The cerebellum, at the back of the brain, coordinates movement and helps keep us balanced."
+  },
+  {
+    "id": "science-161",
+    "category": "science",
+    "topic": "Human body",
+    "difficulty": "hard",
+    "prompt": "Which gland at the base of the brain is often called the master gland?",
+    "choices": [
+      "The pituitary gland",
+      "The thyroid gland",
+      "The adrenal gland",
+      "The pineal gland"
+    ],
+    "explanation": "The pituitary gland releases hormones that control many other glands in the body."
+  },
+  {
+    "id": "science-162",
+    "category": "science",
+    "topic": "Genetics",
+    "difficulty": "hard",
+    "prompt": "In RNA, which base takes the place of thymine?",
+    "choices": ["Uracil", "Cytosine", "Guanine", "Adenine"],
+    "explanation": "RNA uses uracil instead of thymine, so in RNA adenine pairs with uracil."
+  },
+  {
+    "id": "science-163",
+    "category": "science",
+    "topic": "Genetics",
+    "difficulty": "hard",
+    "prompt": "What are different versions of the same gene called?",
+    "choices": ["Alleles", "Codons", "Genomes", "Chromatids"],
+    "explanation": "Alleles are alternative forms of a gene, such as those that give different blood groups."
+  },
+  {
+    "id": "science-164",
+    "category": "science",
+    "topic": "Genetics",
+    "difficulty": "hard",
+    "prompt": "How many DNA bases make up one codon?",
+    "choices": ["Three", "Two", "Four", "Six"],
+    "explanation": "A codon is a set of three bases that codes for one amino acid or a stop signal."
+  },
+  {
+    "id": "science-165",
+    "category": "science",
+    "topic": "Cells",
+    "difficulty": "hard",
+    "prompt": "Which organelles contain enzymes that break down waste and worn-out parts of a cell?",
+    "choices": ["Lysosomes", "Ribosomes", "Golgi bodies", "Centrioles"],
+    "explanation": "Lysosomes are small sacs of digestive enzymes that act as the cell's recycling system."
+  },
+  {
+    "id": "science-166",
+    "category": "science",
+    "topic": "Cells",
+    "difficulty": "hard",
+    "prompt": "Which type of cell division produces sex cells such as sperm and eggs?",
+    "choices": ["Meiosis", "Mitosis", "Binary fission", "Budding"],
+    "explanation": "Meiosis halves the number of chromosomes, so human sex cells carry 23 instead of 46."
+  },
+  {
+    "id": "science-167",
+    "category": "science",
+    "topic": "Plants",
+    "difficulty": "hard",
+    "prompt": "Which part of a flower develops into the fruit?",
+    "choices": ["The ovary", "The anther", "The stigma", "The sepal"],
+    "explanation": "After fertilisation, the ovary swells into the fruit and the ovules inside become seeds."
+  },
+  {
+    "id": "science-168",
+    "category": "science",
+    "topic": "Plants",
+    "difficulty": "hard",
+    "prompt": "Which plant hormone triggers fruits such as bananas to ripen?",
+    "choices": ["Ethylene", "Auxin", "Gibberellin", "Cytokinin"],
+    "explanation": "Ethylene is a gas given off by ripening fruit, which is why one ripe banana can speed up others nearby."
+  },
+  {
+    "id": "science-169",
+    "category": "science",
+    "topic": "Ecology",
+    "difficulty": "hard",
+    "prompt": "What is a close relationship between two species in which both of them benefit called?",
+    "choices": ["Mutualism", "Parasitism", "Commensalism", "Predation"],
+    "explanation": "In mutualism both partners gain, as when bees feed on nectar while pollinating flowers."
+  },
+  {
+    "id": "science-170",
+    "category": "science",
+    "topic": "Ecology",
+    "difficulty": "hard",
+    "prompt": "Which process by soil bacteria returns nitrogen gas to the air?",
+    "choices": ["Denitrification", "Nitrogen fixation", "Nitrification", "Ammonification"],
+    "explanation": "Denitrifying bacteria turn nitrates in the soil back into nitrogen gas, completing the nitrogen cycle."
+  },
+  {
+    "id": "science-171",
+    "category": "science",
+    "topic": "Medicine",
+    "difficulty": "hard",
+    "prompt": "Which surgeon pioneered antiseptic surgery using carbolic acid in the 1860s?",
+    "choices": ["Joseph Lister", "Ignaz Semmelweis", "Edward Jenner", "Robert Koch"],
+    "explanation": "Joseph Lister cleaned wounds and instruments with carbolic acid, sharply cutting deaths from infection after surgery."
+  },
+  {
+    "id": "science-172",
+    "category": "science",
+    "topic": "Medicine",
+    "difficulty": "hard",
+    "prompt": "Which scientist identified the bacterium that causes tuberculosis in 1882?",
+    "choices": ["Robert Koch", "Louis Pasteur", "Paul Ehrlich", "Alexander Fleming"],
+    "explanation": "The German doctor Robert Koch announced the tuberculosis bacterium in 1882 and later won a Nobel Prize for the work."
+  },
+  {
+    "id": "science-173",
+    "category": "science",
+    "topic": "Medicine",
+    "difficulty": "hard",
+    "prompt": "Which tiny parasite, carried by mosquitoes, causes malaria?",
+    "choices": ["Plasmodium", "Trypanosoma", "Giardia", "Leishmania"],
+    "explanation": "Malaria is caused by Plasmodium parasites, which infect the liver and red blood cells."
+  },
+  {
+    "id": "science-174",
+    "category": "science",
+    "topic": "Light and sound",
+    "difficulty": "hard",
+    "prompt": "Roughly how fast does sound travel through air at room temperature?",
+    "choices": ["About 340 m/s", "About 34 m/s", "About 3,400 m/s", "About 34,000 m/s"],
+    "explanation": "Sound travels at about 343 metres per second in air at 20 °C, much slower than light."
+  },
+  {
+    "id": "science-175",
+    "category": "science",
+    "topic": "Light and sound",
+    "difficulty": "hard",
+    "prompt": "Which type of electromagnetic radiation has the shortest wavelength?",
+    "choices": ["Gamma rays", "X-rays", "Ultraviolet", "Microwaves"],
+    "explanation": "Gamma rays have the shortest wavelength and the highest energy in the electromagnetic spectrum."
+  },
+  {
+    "id": "science-176",
+    "category": "science",
+    "topic": "Electricity",
+    "difficulty": "hard",
+    "prompt": "Which law says the current through a conductor is proportional to the voltage across it?",
+    "choices": ["Ohm's law", "Coulomb's law", "Faraday's law", "Hooke's law"],
+    "explanation": "Ohm's law links voltage, current and resistance: voltage equals current times resistance."
+  },
+  {
+    "id": "science-177",
+    "category": "science",
+    "topic": "Physics",
+    "difficulty": "hard",
+    "prompt": "What name is given to the inward force that keeps an object moving in a circle?",
+    "choices": ["Centripetal force", "Centrifugal force", "Inertia", "Torque"],
+    "explanation": "Centripetal force always points towards the centre of the circle, such as the pull of a string on a whirled stone."
+  },
+  {
+    "id": "science-178",
+    "category": "science",
+    "topic": "Evolution",
+    "difficulty": "hard",
+    "prompt": "Which naturalist came up with the idea of natural selection independently of Charles Darwin?",
+    "choices": [
+      "Alfred Russel Wallace",
+      "Jean-Baptiste Lamarck",
+      "Thomas Henry Huxley",
+      "Joseph Hooker"
+    ],
+    "explanation": "Wallace reached the same idea while working in South-East Asia, and his and Darwin's papers were presented together in 1858."
+  },
+  {
+    "id": "science-179",
+    "category": "science",
+    "topic": "Microbiology",
+    "difficulty": "hard",
+    "prompt": "What are viruses that infect bacteria called?",
+    "choices": ["Bacteriophages", "Prions", "Plasmids", "Retroviruses"],
+    "explanation": "Bacteriophages, or phages, inject their genes into bacteria and use them to make new viruses."
+  },
+  {
+    "id": "science-180",
+    "category": "science",
+    "topic": "Earth science",
+    "difficulty": "hard",
+    "prompt": "What name is given to the deepest part of the Mariana Trench?",
+    "choices": ["Challenger Deep", "Sirena Deep", "Horizon Deep", "Milwaukee Deep"],
+    "explanation": "The Challenger Deep, nearly 11 kilometres down, is the deepest point in Earth's oceans."
   }
 ]

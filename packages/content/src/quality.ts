@@ -41,6 +41,22 @@ export function isDuplicate(a: StoredQuestion, b: StoredQuestion): boolean {
   );
 }
 
+/**
+ * Across categories the bar is lower: two questions with the same answer and prompts at least
+ * half alike ask the same fact ("Who wrote 'Things Fall Apart'?" in both General knowledge and
+ * Nigerian culture), and a player who plays both would get it twice.
+ */
+export const CROSS_CATEGORY_SIMILARITY = 0.5;
+
+export function repeatsAcrossCategories(a: StoredQuestion, b: StoredQuestion): boolean {
+  if (a.category === b.category) return false;
+  if (normalize(a.prompt) === normalize(b.prompt)) return true;
+  return (
+    normalize(a.choices[0]!) === normalize(b.choices[0]!) &&
+    similarity(a.prompt, b.prompt) >= CROSS_CATEGORY_SIMILARITY
+  );
+}
+
 export function findDuplicate(
   question: StoredQuestion,
   existing: readonly StoredQuestion[],

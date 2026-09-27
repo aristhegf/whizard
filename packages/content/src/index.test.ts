@@ -4,14 +4,19 @@ import {
   QUESTIONS,
   QUESTION_FILES,
   drawQuestions,
+  type DrawOptions,
   findQuestion,
   questionCounts,
   questionVersion,
 } from "./index";
-import { isDuplicate, problemsWith } from "./quality";
+import { isDuplicate, normalize, problemsWith, repeatsAcrossCategories } from "./quality";
+import type { StoredQuestion } from "./schema";
 
-/** Enough for the longest game (20 questions) at every level. */
-const MIN_PER_LEVEL = 20;
+/**
+ * Three of the longest games (20 questions) at every level, so players who come back don't see
+ * repeats straight away.
+ */
+const MIN_PER_LEVEL = 60;
 
 describe("question bank", () => {
   it("has a file for every category, holding only that category", () => {
@@ -45,7 +50,26 @@ describe("question bank", () => {
     expect(duplicates).toEqual([]);
   });
 
-  it("has enough questions for a full game at every level of every category", () => {
+  it("doesn't ask the same thing in two categories", () => {
+    // Only questions with the same answer or the same prompt can repeat, so compare within those.
+    const groups = new Map<string, StoredQuestion[]>();
+    for (const q of QUESTIONS) {
+      for (const key of [`a:${normalize(q.choices[0]!)}`, `p:${normalize(q.prompt)}`]) {
+        groups.set(key, [...(groups.get(key) ?? []), q]);
+      }
+    }
+    const repeats = new Set<string>();
+    for (const group of groups.values()) {
+      group.forEach((a, i) => {
+        for (const b of group.slice(i + 1)) {
+          if (repeatsAcrossCategories(a, b)) repeats.add(`${a.id} ~ ${b.id}`);
+        }
+      });
+    }
+    expect([...repeats]).toEqual([]);
+  });
+
+  it("has enough questions at every level of every category", () => {
     const counts = questionCounts();
     for (const { id } of QUIZ_CATEGORIES) {
       for (const level of QUIZ_DIFFICULTIES) {
@@ -75,16 +99,21 @@ describe("drawQuestions", () => {
 });
 
 describe("avoiding repeats", () => {
-  const pool = QUESTIONS.filter((q) => q.category === "geography" && q.difficulty === "easy");
-  const ids = (qs: { id: string }[]) => qs.map((q) => q.id);
+  // A fixed pool of 20, so the tests don't depend on how big the bank grows.
+  const pool = QUESTIONS.filter((q) => q.category === "geography" && q.difficulty === "easy").slice(
+    0,
+    20,
+  );
+  const draw = (count: number, seed: number, options: DrawOptions = {}) =>
+    drawQuestions("geography", "easy", count, seed, options, pool).map((q) => q.id);
 
   it("doesn't repeat a room's questions until the pool runs out", () => {
-    const first = ids(drawQuestions("geography", "easy", 10, 1));
-    const second = ids(drawQuestions("geography", "easy", 10, 2, { recent: first }));
+    const first = draw(10, 1);
+    const second = draw(10, 2, { recent: first });
     expect(second.filter((id) => first.includes(id))).toEqual([]);
 
-    // The pool has 20, so a third game has to reuse some: the oldest ones first.
-    const third = ids(drawQuestions("geography", "easy", 15, 3, { recent: [...second, ...first] }));
+    // All 20 are used, so a third game has to reuse some: the oldest ones first.
+    const third = draw(15, 3, { recent: [...second, ...first] });
     expect(third.filter((id) => second.includes(id))).toHaveLength(5);
     expect(first.every((id) => third.includes(id))).toBe(true);
   });
@@ -93,7 +122,7 @@ describe("avoiding repeats", () => {
     const seen = new Map(
       pool.map((q, i) => [q.id, { players: i < 10 ? 2 : 1, lastSeenAt: i }] as const),
     );
-    const drawn = ids(drawQuestions("geography", "easy", 12, 4, { seen }));
+    const drawn = draw(12, 4, { seen });
     const once = pool.slice(10).map((q) => q.id);
     expect(once.every((id) => drawn.includes(id))).toBe(true);
     // The two seen by both players are the two seen longest ago.
@@ -104,7 +133,7 @@ describe("avoiding repeats", () => {
 
   it("leaves out retired questions", () => {
     const retired = new Set(pool.slice(0, 5).map((q) => q.id));
-    const drawn = ids(drawQuestions("geography", "easy", 20, 5, { retired }));
+    const drawn = draw(20, 5, { retired });
     expect(drawn).toHaveLength(15);
     expect(drawn.some((id) => retired.has(id))).toBe(false);
   });

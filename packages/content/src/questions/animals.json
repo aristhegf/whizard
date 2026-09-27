@@ -179,7 +179,6 @@
     "choices": ["African elephant", "White rhinoceros", "Hippopotamus", "Giraffe"],
     "explanation": "The African bush elephant is the heaviest land animal, with large males weighing several tonnes."
   },
-
   {
     "id": "animals-021",
     "category": "animals",
@@ -360,7 +359,6 @@
     "choices": ["Madagascar", "Borneo", "Sri Lanka", "New Guinea"],
     "explanation": "Lemurs evolved on Madagascar, off the coast of south-east Africa, and almost all lemur species live nowhere else."
   },
-
   {
     "id": "animals-041",
     "category": "animals",
@@ -560,5 +558,1145 @@
     "prompt": "Each autumn, monarch butterflies from eastern North America fly to forests in which country?",
     "choices": ["Mexico", "Brazil", "Cuba", "Colombia"],
     "explanation": "Eastern monarchs migrate thousands of kilometres to spend the winter in the mountain forests of central Mexico."
+  },
+  {
+    "id": "animals-061",
+    "category": "animals",
+    "topic": "Animal young",
+    "difficulty": "easy",
+    "prompt": "What is a baby dog called?",
+    "choices": ["A puppy", "A kitten", "A cub", "A foal"],
+    "explanation": "A young dog is called a puppy, or pup for short."
+  },
+  {
+    "id": "animals-062",
+    "category": "animals",
+    "topic": "Animal young",
+    "difficulty": "easy",
+    "prompt": "What is a young horse called?",
+    "choices": ["A foal", "A calf", "A lamb", "A kid"],
+    "explanation": "A young horse of either sex is called a foal."
+  },
+  {
+    "id": "animals-063",
+    "category": "animals",
+    "topic": "Animal young",
+    "difficulty": "easy",
+    "prompt": "What is a baby sheep called?",
+    "choices": ["A lamb", "A kid", "A calf", "A piglet"],
+    "explanation": "A young sheep is called a lamb."
+  },
+  {
+    "id": "animals-064",
+    "category": "animals",
+    "topic": "Animal young",
+    "difficulty": "easy",
+    "prompt": "What is a baby goat called?",
+    "choices": ["A kid", "A lamb", "A foal", "A cub"],
+    "explanation": "Young goats are called kids."
+  },
+  {
+    "id": "animals-065",
+    "category": "animals",
+    "topic": "Animal groups",
+    "difficulty": "easy",
+    "prompt": "What is a group of wolves called?",
+    "choices": ["A pack", "A pride", "A flock", "A school"],
+    "explanation": "Wolves live and hunt together in family groups called packs."
+  },
+  {
+    "id": "animals-066",
+    "category": "animals",
+    "topic": "Animal groups",
+    "difficulty": "easy",
+    "prompt": "What do we call the group of babies a mother dog gives birth to at one time?",
+    "choices": ["A litter", "A clutch", "A flock", "A herd"],
+    "explanation": "All the puppies born to one mother at the same time make up a litter."
+  },
+  {
+    "id": "animals-067",
+    "category": "animals",
+    "topic": "Animal names",
+    "difficulty": "easy",
+    "prompt": "What is an adult male chicken called?",
+    "choices": ["A rooster", "A hen", "A drake", "A gander"],
+    "explanation": "The male chicken is a rooster, famous for crowing in the morning, while the female is a hen."
+  },
+  {
+    "id": "animals-068",
+    "category": "animals",
+    "topic": "Animal names",
+    "difficulty": "easy",
+    "prompt": "What is an adult female sheep called?",
+    "choices": ["A ewe", "A ram", "A sow", "A mare"],
+    "explanation": "A female sheep is a ewe and a male sheep is a ram."
+  },
+  {
+    "id": "animals-069",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "easy",
+    "prompt": "Which bird is famous for copying human speech?",
+    "choices": ["Parrot", "Eagle", "Ostrich", "Pelican"],
+    "explanation": "Many parrots can copy human words and other sounds they hear."
+  },
+  {
+    "id": "animals-070",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "easy",
+    "prompt": "Which male bird spreads a huge fan of colourful feathers covered in eye-like spots?",
+    "choices": ["Peacock", "Flamingo", "Parrot", "Pelican"],
+    "explanation": "The peacock raises and shakes his long, eye-spotted feathers to impress females."
+  },
+  {
+    "id": "animals-071",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "easy",
+    "prompt": "Which pink wading bird often rests standing on one leg?",
+    "choices": ["Flamingo", "Pelican", "Stork", "Heron"],
+    "explanation": "Flamingos are pink wading birds well known for standing on one leg."
+  },
+  {
+    "id": "animals-072",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "easy",
+    "prompt": "Which bird drums on tree trunks with its beak to dig out insects?",
+    "choices": ["Woodpecker", "Kingfisher", "Parrot", "Swallow"],
+    "explanation": "Woodpeckers hammer holes in wood with their strong beaks to find insects and make nests."
+  },
+  {
+    "id": "animals-073",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "easy",
+    "prompt": "Which tiny bird can hover in one place and even fly backwards?",
+    "choices": ["Hummingbird", "Sparrow", "Swallow", "Pigeon"],
+    "explanation": "Hummingbirds beat their wings so fast that they can hover and fly backwards."
+  },
+  {
+    "id": "animals-074",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "easy",
+    "prompt": "Which animal uses its long trunk to drink water and pick up food?",
+    "choices": ["Elephant", "Rhinoceros", "Hippopotamus", "Giraffe"],
+    "explanation": "An elephant's trunk is its nose and upper lip joined, and it works like a hand."
+  },
+  {
+    "id": "animals-075",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "easy",
+    "prompt": "Zebras belong to the same family as which animal?",
+    "choices": ["The horse", "The cow", "The antelope", "The deer"],
+    "explanation": "Zebras, horses and donkeys are all members of the horse family."
+  },
+  {
+    "id": "animals-076",
+    "category": "animals",
+    "topic": "Animal behaviour",
+    "difficulty": "easy",
+    "prompt": "What is the long, deep sleep some animals go into through the winter called?",
+    "choices": ["Hibernation", "Migration", "Metamorphosis", "Camouflage"],
+    "explanation": "Hibernating animals slow their bodies right down to survive the cold months without food."
+  },
+  {
+    "id": "animals-077",
+    "category": "animals",
+    "topic": "Animal behaviour",
+    "difficulty": "easy",
+    "prompt": "What is it called when birds fly long distances each year to find warmer weather or food?",
+    "choices": ["Migration", "Hibernation", "Nesting", "Moulting"],
+    "explanation": "Migration is a regular seasonal journey, such as swallows flying from Europe to Africa."
+  },
+  {
+    "id": "animals-078",
+    "category": "animals",
+    "topic": "Animal behaviour",
+    "difficulty": "easy",
+    "prompt": "Which animal is famous for building dams across streams with sticks and mud?",
+    "choices": ["Beaver", "Otter", "Squirrel", "Rabbit"],
+    "explanation": "Beavers cut down trees with their teeth and build dams to make ponds."
+  },
+  {
+    "id": "animals-079",
+    "category": "animals",
+    "topic": "Animal behaviour",
+    "difficulty": "easy",
+    "prompt": "Which small spiny mammal rolls into a ball to protect itself?",
+    "choices": ["Hedgehog", "Mole", "Shrew", "Rat"],
+    "explanation": "A frightened hedgehog curls up so that only its sharp spines face outwards."
+  },
+  {
+    "id": "animals-080",
+    "category": "animals",
+    "topic": "Animal behaviour",
+    "difficulty": "easy",
+    "prompt": "A predator grabs a lizard by its tail. What can many lizards do to escape?",
+    "choices": [
+      "Drop the tail and grow a new one",
+      "Sting it with the tail tip",
+      "Spray a cloud of ink",
+      "Give it an electric shock"
+    ],
+    "explanation": "Many lizards can break off their tail to escape, and a new one slowly grows back."
+  },
+  {
+    "id": "animals-081",
+    "category": "animals",
+    "topic": "Animal behaviour",
+    "difficulty": "easy",
+    "prompt": "Dogs sweat very little. How do they mainly cool themselves down?",
+    "choices": ["By panting", "By rolling in mud", "By flapping their ears", "By shedding fur"],
+    "explanation": "Panting lets water evaporate from a dog's tongue and mouth, which cools it down."
+  },
+  {
+    "id": "animals-082",
+    "category": "animals",
+    "topic": "Diets",
+    "difficulty": "easy",
+    "prompt": "What do we call an animal that eats both plants and meat?",
+    "choices": ["An omnivore", "A herbivore", "A carnivore", "An insectivore"],
+    "explanation": "Omnivores such as pigs, bears and humans eat both plants and animals."
+  },
+  {
+    "id": "animals-083",
+    "category": "animals",
+    "topic": "Diets",
+    "difficulty": "easy",
+    "prompt": "What do most caterpillars mainly eat?",
+    "choices": ["Leaves", "Nectar", "Other insects", "Seeds"],
+    "explanation": "Caterpillars spend most of their time munching the leaves of plants."
+  },
+  {
+    "id": "animals-084",
+    "category": "animals",
+    "topic": "Diets",
+    "difficulty": "easy",
+    "prompt": "What sweet liquid do most adult butterflies drink from flowers?",
+    "choices": ["Nectar", "Honey", "Sap", "Milk"],
+    "explanation": "Butterflies sip nectar from flowers through a long, tube-like mouthpart."
+  },
+  {
+    "id": "animals-085",
+    "category": "animals",
+    "topic": "Diets",
+    "difficulty": "easy",
+    "prompt": "What do giraffes mainly eat?",
+    "choices": ["Leaves from trees", "Grass", "Insects", "Roots"],
+    "explanation": "Giraffes use their height and long tongues to eat leaves from tall trees such as acacias."
+  },
+  {
+    "id": "animals-086",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "easy",
+    "prompt": "Which insect makes its own light and flashes it at night?",
+    "choices": ["Firefly", "Moth", "Cricket", "Dragonfly"],
+    "explanation": "Fireflies are beetles that make light in their bodies to attract mates."
+  },
+  {
+    "id": "animals-087",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "easy",
+    "prompt": "Which insect spreads malaria to people?",
+    "choices": ["Mosquito", "Housefly", "Cockroach", "Tsetse fly"],
+    "explanation": "Malaria parasites are passed to people through the bites of Anopheles mosquitoes."
+  },
+  {
+    "id": "animals-088",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "easy",
+    "prompt": "Which insects build tall mounds of earth in the African savanna?",
+    "choices": ["Termites", "Bees", "Wasps", "Locusts"],
+    "explanation": "Termite colonies build huge mounds from soil, saliva and dung."
+  },
+  {
+    "id": "animals-089",
+    "category": "animals",
+    "topic": "Spiders",
+    "difficulty": "easy",
+    "prompt": "How many legs does a spider have?",
+    "choices": ["Eight", "Six", "Ten", "Twelve"],
+    "explanation": "Spiders have eight legs, which is one way to tell them apart from six-legged insects."
+  },
+  {
+    "id": "animals-090",
+    "category": "animals",
+    "topic": "Reptiles",
+    "difficulty": "easy",
+    "prompt": "Which reptile carries a hard, domed shell on its back and walks slowly on land?",
+    "choices": ["Tortoise", "Crocodile", "Lizard", "Snake"],
+    "explanation": "A tortoise's shell is part of its skeleton, and it can pull its head and legs inside."
+  },
+  {
+    "id": "animals-091",
+    "category": "animals",
+    "topic": "Reptiles",
+    "difficulty": "easy",
+    "prompt": "How does a python kill its prey?",
+    "choices": ["By squeezing it", "With a venomous bite", "By spitting venom", "By drowning it"],
+    "explanation": "Pythons have no venom; they wrap their bodies around prey and squeeze it."
+  },
+  {
+    "id": "animals-092",
+    "category": "animals",
+    "topic": "Amphibians",
+    "difficulty": "easy",
+    "prompt": "Which of these animals is an amphibian?",
+    "choices": ["Frog", "Lizard", "Snake", "Tortoise"],
+    "explanation": "Frogs are amphibians: they usually start life in water and later live on land as well."
+  },
+  {
+    "id": "animals-093",
+    "category": "animals",
+    "topic": "Fish",
+    "difficulty": "easy",
+    "prompt": "What do fish use to breathe underwater?",
+    "choices": ["Gills", "Lungs", "Fins", "Scales"],
+    "explanation": "Gills take oxygen from the water as it flows over them."
+  },
+  {
+    "id": "animals-094",
+    "category": "animals",
+    "topic": "Fish",
+    "difficulty": "easy",
+    "prompt": "Which fish with razor-sharp teeth lives in South American rivers such as the Amazon?",
+    "choices": ["Piranha", "Barracuda", "Swordfish", "Tilapia"],
+    "explanation": "Piranhas are freshwater fish of South America known for their sharp, interlocking teeth."
+  },
+  {
+    "id": "animals-095",
+    "category": "animals",
+    "topic": "Fish",
+    "difficulty": "easy",
+    "prompt": "Which fish can blow itself up like a ball when it is in danger?",
+    "choices": ["Pufferfish", "Swordfish", "Catfish", "Stingray"],
+    "explanation": "A pufferfish swallows water to swell up, making it too big and awkward to eat."
+  },
+  {
+    "id": "animals-096",
+    "category": "animals",
+    "topic": "Fish",
+    "difficulty": "easy",
+    "prompt": "Which fish is named for the whisker-like feelers around its mouth?",
+    "choices": ["Catfish", "Tilapia", "Mackerel", "Sardine"],
+    "explanation": "Catfish have barbels that look like a cat's whiskers and help them find food."
+  },
+  {
+    "id": "animals-097",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "easy",
+    "prompt": "How many arms do most starfish have?",
+    "choices": ["Five", "Four", "Six", "Eight"],
+    "explanation": "Most starfish have five arms, though a few kinds have many more."
+  },
+  {
+    "id": "animals-098",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "easy",
+    "prompt": "Which sea animal has a hard shell, two big claws and often walks sideways?",
+    "choices": ["Crab", "Lobster", "Shrimp", "Starfish"],
+    "explanation": "Crabs usually walk sideways because of the way their legs bend."
+  },
+  {
+    "id": "animals-099",
+    "category": "animals",
+    "topic": "Habitats",
+    "difficulty": "easy",
+    "prompt": "On which continent do kangaroos live in the wild?",
+    "choices": ["Australia", "Africa", "South America", "Asia"],
+    "explanation": "Kangaroos are found naturally only in Australia and nearby New Guinea."
+  },
+  {
+    "id": "animals-100",
+    "category": "animals",
+    "topic": "Habitats",
+    "difficulty": "easy",
+    "prompt": "In which country do giant pandas live in the wild?",
+    "choices": ["China", "India", "Japan", "Thailand"],
+    "explanation": "Wild giant pandas live only in the mountain forests of central China."
+  },
+  {
+    "id": "animals-101",
+    "category": "animals",
+    "topic": "Animal behaviour",
+    "difficulty": "medium",
+    "prompt": "Many bats find food in the dark by making sounds and listening to the echoes. What is this called?",
+    "choices": ["Echolocation", "Hibernation", "Photosynthesis", "Migration"],
+    "explanation": "Echolocation lets bats judge where objects are by the echoes of their calls."
+  },
+  {
+    "id": "animals-102",
+    "category": "animals",
+    "topic": "Diets",
+    "difficulty": "medium",
+    "prompt": "What is the food that cows bring back up from their stomach to chew again called?",
+    "choices": ["Cud", "Bile", "Silage", "Pellet"],
+    "explanation": "Cows chew the cud to break down tough grass before it is digested further."
+  },
+  {
+    "id": "animals-103",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "medium",
+    "prompt": "The orca, or killer whale, is actually the largest kind of which animal?",
+    "choices": ["Dolphin", "Shark", "Seal", "Baleen whale"],
+    "explanation": "Despite its name, the orca is the biggest kind of dolphin."
+  },
+  {
+    "id": "animals-104",
+    "category": "animals",
+    "topic": "Habitats",
+    "difficulty": "medium",
+    "prompt": "What is the name for the home a beaver builds from sticks and mud?",
+    "choices": ["A lodge", "A sett", "A drey", "An eyrie"],
+    "explanation": "Beavers live in lodges, domed homes of sticks and mud with underwater entrances."
+  },
+  {
+    "id": "animals-105",
+    "category": "animals",
+    "topic": "Body features",
+    "difficulty": "medium",
+    "prompt": "An elephant's tusks are actually extra-long versions of what?",
+    "choices": ["Teeth", "Horns", "Claws", "Nose bones"],
+    "explanation": "Elephant tusks are huge incisor teeth that keep growing throughout life."
+  },
+  {
+    "id": "animals-106",
+    "category": "animals",
+    "topic": "Body features",
+    "difficulty": "medium",
+    "prompt": "What does a camel store in its hump?",
+    "choices": ["Fat", "Water", "Milk", "Blood"],
+    "explanation": "A camel's hump holds fat that it can use for energy when food is short."
+  },
+  {
+    "id": "animals-107",
+    "category": "animals",
+    "topic": "Body features",
+    "difficulty": "medium",
+    "prompt": "What gives flamingos their pink colour?",
+    "choices": [
+      "Colours in the food they eat",
+      "The sunlight they stand in",
+      "Blood showing through the skin",
+      "The mud they wade through"
+    ],
+    "explanation": "Flamingos get their pink colour from pigments in the algae and shrimp they eat."
+  },
+  {
+    "id": "animals-108",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "medium",
+    "prompt": "What is the smallest bird in the world?",
+    "choices": ["Bee hummingbird", "Goldcrest", "Wren", "Sunbird"],
+    "explanation": "The bee hummingbird of Cuba is the world's smallest bird, only about the size of a large bee."
+  },
+  {
+    "id": "animals-109",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "medium",
+    "prompt": "What is the largest living lizard?",
+    "choices": ["Komodo dragon", "Green iguana", "Nile monitor", "Gila monster"],
+    "explanation": "The Komodo dragon is the biggest lizard alive today."
+  },
+  {
+    "id": "animals-110",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "medium",
+    "prompt": "Which is the heaviest snake in the world?",
+    "choices": ["Green anaconda", "Reticulated python", "King cobra", "Black mamba"],
+    "explanation": "The green anaconda of South America is the heaviest snake in the world."
+  },
+  {
+    "id": "animals-111",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "medium",
+    "prompt": "What is the largest living reptile?",
+    "choices": ["Saltwater crocodile", "Nile crocodile", "Komodo dragon", "Green anaconda"],
+    "explanation": "The saltwater crocodile is the biggest reptile alive today."
+  },
+  {
+    "id": "animals-112",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "medium",
+    "prompt": "What is the largest species of deer?",
+    "choices": ["Moose", "Red deer", "Reindeer", "White-tailed deer"],
+    "explanation": "The moose is the biggest member of the deer family."
+  },
+  {
+    "id": "animals-113",
+    "category": "animals",
+    "topic": "Animal groups",
+    "difficulty": "medium",
+    "prompt": "What is a group of geese on the ground called?",
+    "choices": ["A gaggle", "A parliament", "A pride", "A colony"],
+    "explanation": "Geese on the ground or water are a gaggle; in flight they are called a skein."
+  },
+  {
+    "id": "animals-114",
+    "category": "animals",
+    "topic": "Animal groups",
+    "difficulty": "medium",
+    "prompt": "What is the word for a set of eggs laid by a bird at one time?",
+    "choices": ["A clutch", "A litter", "A flock", "A herd"],
+    "explanation": "A clutch is the group of eggs a bird lays and sits on in one nesting."
+  },
+  {
+    "id": "animals-115",
+    "category": "animals",
+    "topic": "Animal young",
+    "difficulty": "medium",
+    "prompt": "What is a baby deer called?",
+    "choices": ["A fawn", "A foal", "A cub", "A joey"],
+    "explanation": "A young deer, often with white spots on its coat, is called a fawn."
+  },
+  {
+    "id": "animals-116",
+    "category": "animals",
+    "topic": "Fish",
+    "difficulty": "medium",
+    "prompt": "Which fish is famous for swimming upstream to lay its eggs in the river where it hatched?",
+    "choices": ["Salmon", "Tuna", "Cod", "Mackerel"],
+    "explanation": "Salmon grow up at sea and then return up rivers to spawn where they were born."
+  },
+  {
+    "id": "animals-117",
+    "category": "animals",
+    "topic": "Fish",
+    "difficulty": "medium",
+    "prompt": "What is a shark's skeleton made of?",
+    "choices": ["Cartilage", "Bone", "Keratin", "Chitin"],
+    "explanation": "Sharks have skeletons of cartilage, the same bendy material as in a human nose and ears."
+  },
+  {
+    "id": "animals-118",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "medium",
+    "prompt": "Clownfish live safely among the stinging tentacles of which animals?",
+    "choices": ["Sea anemones", "Jellyfish", "Sea urchins", "Octopuses"],
+    "explanation": "A slimy coat protects clownfish from the stings of the sea anemones they live in."
+  },
+  {
+    "id": "animals-119",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "medium",
+    "prompt": "What tiny, shrimp-like animals are the main food of the blue whale?",
+    "choices": ["Krill", "Barnacles", "Sea lice", "Sand hoppers"],
+    "explanation": "Blue whales eat huge amounts of krill, which they filter from the water."
+  },
+  {
+    "id": "animals-120",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "medium",
+    "prompt": "Coral reefs are built by tiny animals called what?",
+    "choices": ["Polyps", "Krill", "Barnacles", "Water fleas"],
+    "explanation": "Coral polyps build hard skeletons of limestone that pile up over time into reefs."
+  },
+  {
+    "id": "animals-121",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "medium",
+    "prompt": "Which bird is famous for laying its eggs in the nests of other birds?",
+    "choices": ["Cuckoo", "Robin", "Woodpecker", "Kingfisher"],
+    "explanation": "The common cuckoo leaves its eggs for other birds to hatch and raise."
+  },
+  {
+    "id": "animals-122",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "medium",
+    "prompt": "Which African bird is famous for weaving hanging nests out of grass?",
+    "choices": ["Weaver bird", "Hornbill", "Kingfisher", "Hoopoe"],
+    "explanation": "Male weaver birds knot strips of grass and leaves into neat hanging nests."
+  },
+  {
+    "id": "animals-123",
+    "category": "animals",
+    "topic": "Body features",
+    "difficulty": "medium",
+    "prompt": "Which part of a bird's gut grinds up food, often with the help of swallowed grit?",
+    "choices": ["The gizzard", "The crop", "The syrinx", "The bill"],
+    "explanation": "The muscular gizzard grinds food, helped by small stones the bird swallows."
+  },
+  {
+    "id": "animals-124",
+    "category": "animals",
+    "topic": "Habitats",
+    "difficulty": "medium",
+    "prompt": "Almost all wild penguins live in which part of the world?",
+    "choices": ["The Southern Hemisphere", "The Northern Hemisphere", "The Arctic", "Central Asia"],
+    "explanation": "Penguins are found almost only south of the Equator, from Antarctica to Africa and South America."
+  },
+  {
+    "id": "animals-125",
+    "category": "animals",
+    "topic": "Reptiles",
+    "difficulty": "medium",
+    "prompt": "What does a snake mainly use its flicking tongue for?",
+    "choices": ["Smelling", "Hearing", "Cooling down", "Drinking"],
+    "explanation": "A snake's tongue picks up scent particles and carries them to a special organ in its mouth."
+  },
+  {
+    "id": "animals-126",
+    "category": "animals",
+    "topic": "Reptiles",
+    "difficulty": "medium",
+    "prompt": "Which African snake can squirt venom into an attacker's eyes?",
+    "choices": ["Spitting cobra", "Puff adder", "Green mamba", "Rock python"],
+    "explanation": "Spitting cobras spray venom from their fangs towards the eyes of a threat."
+  },
+  {
+    "id": "animals-127",
+    "category": "animals",
+    "topic": "Amphibians",
+    "difficulty": "medium",
+    "prompt": "Besides their lungs, what can frogs also breathe through?",
+    "choices": ["Their skin", "Their eyes", "Their toes", "Their ears"],
+    "explanation": "Frogs take in oxygen through their thin, moist skin as well as their lungs."
+  },
+  {
+    "id": "animals-128",
+    "category": "animals",
+    "topic": "Amphibians",
+    "difficulty": "medium",
+    "prompt": "Which small, brightly coloured frogs of Central and South America have very poisonous skin?",
+    "choices": ["Poison dart frogs", "Bullfrogs", "Clawed frogs", "Glass frogs"],
+    "explanation": "Poison dart frogs' bright colours warn predators of the toxins in their skin."
+  },
+  {
+    "id": "animals-129",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "medium",
+    "prompt": "Which mosquitoes bite people to drink their blood?",
+    "choices": [
+      "Only the females",
+      "Only the males",
+      "Both males and females",
+      "Only the young larvae"
+    ],
+    "explanation": "Only female mosquitoes drink blood, which they need to make eggs; males feed on plant juices."
+  },
+  {
+    "id": "animals-130",
+    "category": "animals",
+    "topic": "Body features",
+    "difficulty": "medium",
+    "prompt": "An insect's body has three main parts: the head, the thorax and what?",
+    "choices": ["The abdomen", "The pelvis", "The tail", "The shell"],
+    "explanation": "Every adult insect has a head, a thorax where the legs attach, and an abdomen."
+  },
+  {
+    "id": "animals-131",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "medium",
+    "prompt": "Which disease is spread by the African tsetse fly?",
+    "choices": ["Sleeping sickness", "Malaria", "Yellow fever", "Cholera"],
+    "explanation": "Tsetse flies carry the parasites that cause sleeping sickness in people and animals."
+  },
+  {
+    "id": "animals-132",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "medium",
+    "prompt": "What is a male honeybee called?",
+    "choices": ["A drone", "A worker", "A soldier", "A queen"],
+    "explanation": "Drones are male bees whose main job is to mate with a queen."
+  },
+  {
+    "id": "animals-133",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "medium",
+    "prompt": "A locust is a type of which insect?",
+    "choices": ["Grasshopper", "Beetle", "Cicada", "Fly"],
+    "explanation": "Locusts are grasshoppers that can change behaviour and gather in huge swarms."
+  },
+  {
+    "id": "animals-134",
+    "category": "animals",
+    "topic": "Spiders",
+    "difficulty": "medium",
+    "prompt": "Spiders, scorpions and ticks all belong to which group of animals?",
+    "choices": ["Arachnids", "Insects", "Crustaceans", "Myriapods"],
+    "explanation": "Spiders, scorpions, ticks and mites are arachnids, which as adults have eight legs and no antennae."
+  },
+  {
+    "id": "animals-135",
+    "category": "animals",
+    "topic": "Spiders",
+    "difficulty": "medium",
+    "prompt": "What do spiders use their spinnerets for?",
+    "choices": ["Making silk", "Injecting venom", "Breathing", "Smelling"],
+    "explanation": "Spinnerets at the end of a spider's abdomen spin out the silk for webs and egg sacs."
+  },
+  {
+    "id": "animals-136",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "medium",
+    "prompt": "How many bones are in a giraffe's neck?",
+    "choices": ["Seven", "Twelve", "Twenty", "Thirty"],
+    "explanation": "A giraffe has seven neck bones, the same number as a human, but each one is very long."
+  },
+  {
+    "id": "animals-137",
+    "category": "animals",
+    "topic": "Classification",
+    "difficulty": "medium",
+    "prompt": "The Tasmanian devil is what kind of mammal?",
+    "choices": ["A marsupial", "A rodent", "A primate", "A monotreme"],
+    "explanation": "Tasmanian devils are marsupials, and the mother carries her tiny young in a pouch."
+  },
+  {
+    "id": "animals-138",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "medium",
+    "prompt": "What is the young of a male donkey and a female horse called?",
+    "choices": ["A mule", "A hinny", "A pony", "A zebroid"],
+    "explanation": "A mule has a donkey father and a horse mother; the reverse cross is a hinny."
+  },
+  {
+    "id": "animals-139",
+    "category": "animals",
+    "topic": "Animal names",
+    "difficulty": "medium",
+    "prompt": "What is a male duck called?",
+    "choices": ["A drake", "A gander", "A cob", "A cockerel"],
+    "explanation": "Male ducks are drakes, while male geese are ganders and male swans are cobs."
+  },
+  {
+    "id": "animals-140",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "medium",
+    "prompt": "Which African big cat often drags its kill up into a tree to keep it away from lions and hyenas?",
+    "choices": ["Leopard", "Cheetah", "Lion", "Serval"],
+    "explanation": "Leopards are strong climbers and store their prey in trees, out of reach of scavengers."
+  },
+  {
+    "id": "animals-141",
+    "category": "animals",
+    "topic": "Habitats",
+    "difficulty": "hard",
+    "prompt": "What is a squirrel's nest called?",
+    "choices": ["A drey", "A sett", "A holt", "A form"],
+    "explanation": "Squirrels build nests of twigs and leaves called dreys high in trees."
+  },
+  {
+    "id": "animals-142",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "hard",
+    "prompt": "What is the largest frog in the world?",
+    "choices": ["Goliath frog", "African bullfrog", "American bullfrog", "Cane toad"],
+    "explanation": "The Goliath frog of Cameroon and Equatorial Guinea is the world's biggest frog."
+  },
+  {
+    "id": "animals-143",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "hard",
+    "prompt": "What is the longest snake in the world?",
+    "choices": ["Reticulated python", "Green anaconda", "King cobra", "African rock python"],
+    "explanation": "The reticulated python of Southeast Asia is the longest snake in the world."
+  },
+  {
+    "id": "animals-144",
+    "category": "animals",
+    "topic": "Record-holders",
+    "difficulty": "hard",
+    "prompt": "Which animal has the largest brain of any living animal?",
+    "choices": ["Sperm whale", "Blue whale", "African elephant", "Orca"],
+    "explanation": "The sperm whale's brain is the biggest of any animal, bigger even than the blue whale's."
+  },
+  {
+    "id": "animals-145",
+    "category": "animals",
+    "topic": "Animal groups",
+    "difficulty": "hard",
+    "prompt": "A group of male cheetahs, often brothers, that live and hunt together is called what?",
+    "choices": ["A coalition", "A pride", "A clan", "A troop"],
+    "explanation": "Male cheetahs, often brothers, team up in coalitions that help them win and hold territories."
+  },
+  {
+    "id": "animals-146",
+    "category": "animals",
+    "topic": "Animal young",
+    "difficulty": "hard",
+    "prompt": "What is a baby pigeon called?",
+    "choices": ["A squab", "A cygnet", "A poult", "An eaglet"],
+    "explanation": "Young pigeons are called squabs."
+  },
+  {
+    "id": "animals-147",
+    "category": "animals",
+    "topic": "Animal young",
+    "difficulty": "hard",
+    "prompt": "What is a young eel called?",
+    "choices": ["An elver", "A smolt", "A spat", "A leveret"],
+    "explanation": "Young eels that swim up rivers from the sea are called elvers."
+  },
+  {
+    "id": "animals-148",
+    "category": "animals",
+    "topic": "Fish",
+    "difficulty": "hard",
+    "prompt": "Which African fish survives dry seasons by breathing air while sealed in a cocoon of mud?",
+    "choices": ["Lungfish", "Tilapia", "Nile perch", "Tigerfish"],
+    "explanation": "African lungfish can breathe air and wait in dried mud for months until the rains return."
+  },
+  {
+    "id": "animals-149",
+    "category": "animals",
+    "topic": "Fish",
+    "difficulty": "hard",
+    "prompt": "In a group of clownfish, what happens when the dominant female dies?",
+    "choices": [
+      "The largest male becomes female",
+      "The group breaks up",
+      "A female joins from outside",
+      "The young die"
+    ],
+    "explanation": "All clownfish start life male, and the biggest male changes sex to replace a lost female."
+  },
+  {
+    "id": "animals-150",
+    "category": "animals",
+    "topic": "Fish",
+    "difficulty": "hard",
+    "prompt": "How does the archerfish catch insects above the water?",
+    "choices": [
+      "It spits jets of water at them",
+      "It lures them with light",
+      "It uses a sticky tongue",
+      "It stuns them with electricity"
+    ],
+    "explanation": "Archerfish shoot jets of water from their mouths to knock insects off leaves."
+  },
+  {
+    "id": "animals-151",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "hard",
+    "prompt": "What colour is an octopus's blood?",
+    "choices": ["Blue", "Red", "Green", "Yellow"],
+    "explanation": "Octopus blood carries oxygen using a copper-based substance that makes it blue."
+  },
+  {
+    "id": "animals-152",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "hard",
+    "prompt": "Which of these is the manatee's closest living relative?",
+    "choices": ["Elephant", "Walrus", "Seal", "Hippopotamus"],
+    "explanation": "Manatees and dugongs share an ancestor with elephants, not with seals or walruses."
+  },
+  {
+    "id": "animals-153",
+    "category": "animals",
+    "topic": "Sea life",
+    "difficulty": "hard",
+    "prompt": "The long spiral tusk of the male narwhal is actually what?",
+    "choices": ["A tooth", "A horn", "A nose bone", "A fin spine"],
+    "explanation": "The narwhal's tusk is a very long tooth that grows through its upper lip."
+  },
+  {
+    "id": "animals-154",
+    "category": "animals",
+    "topic": "Classification",
+    "difficulty": "hard",
+    "prompt": "The sea cucumber is most closely related to which of these animals?",
+    "choices": ["Starfish", "Jellyfish", "Octopus", "Sea slug"],
+    "explanation": "Sea cucumbers, starfish and sea urchins all belong to the echinoderm group."
+  },
+  {
+    "id": "animals-155",
+    "category": "animals",
+    "topic": "Classification",
+    "difficulty": "hard",
+    "prompt": "Termites are most closely related to which insects?",
+    "choices": ["Cockroaches", "Ants", "Bees", "Beetles"],
+    "explanation": "Despite living like ants, termites are really a branch of the cockroach family tree."
+  },
+  {
+    "id": "animals-156",
+    "category": "animals",
+    "topic": "Classification",
+    "difficulty": "hard",
+    "prompt": "Rabbits and hares are not rodents. Which group of mammals do they belong to?",
+    "choices": ["Lagomorphs", "Marsupials", "Insectivores", "Ungulates"],
+    "explanation": "Rabbits, hares and pikas are lagomorphs, which have two pairs of upper front teeth."
+  },
+  {
+    "id": "animals-157",
+    "category": "animals",
+    "topic": "Classification",
+    "difficulty": "hard",
+    "prompt": "The horseshoe crab is more closely related to which animals than to true crabs?",
+    "choices": [
+      "Spiders and scorpions",
+      "Lobsters and shrimps",
+      "Starfish and urchins",
+      "Snails and clams"
+    ],
+    "explanation": "Horseshoe crabs belong to the same wider group as spiders and scorpions."
+  },
+  {
+    "id": "animals-158",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "hard",
+    "prompt": "The greater honeyguide of Africa is famous for leading which animals to bees' nests?",
+    "choices": ["Humans", "Elephants", "Baboons", "Lions"],
+    "explanation": "Honeyguides lead honey hunters to bees' nests and then eat the wax left behind."
+  },
+  {
+    "id": "animals-159",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "hard",
+    "prompt": "Many female hornbills seal themselves inside a tree hole to nest. How do they get food?",
+    "choices": [
+      "The male passes it through a slit",
+      "They eat stored seeds",
+      "They leave the nest at night",
+      "They eat insects in the tree"
+    ],
+    "explanation": "The male hornbill feeds the female and chicks through a narrow gap in the sealed nest wall."
+  },
+  {
+    "id": "animals-160",
+    "category": "animals",
+    "topic": "Birds",
+    "difficulty": "hard",
+    "prompt": "Which bird is known for throwing stones to crack open ostrich eggs?",
+    "choices": ["Egyptian vulture", "Secretary bird", "Marabou stork", "Ground hornbill"],
+    "explanation": "The Egyptian vulture picks up stones in its beak and throws them at ostrich eggs."
+  },
+  {
+    "id": "animals-161",
+    "category": "animals",
+    "topic": "Animal behaviour",
+    "difficulty": "hard",
+    "prompt": "How does a male bowerbird attract a mate?",
+    "choices": [
+      "By building and decorating a display",
+      "By singing the longest song",
+      "By growing a long tail",
+      "By bringing her a fish"
+    ],
+    "explanation": "Male bowerbirds build structures of twigs and decorate them with colourful objects."
+  },
+  {
+    "id": "animals-162",
+    "category": "animals",
+    "topic": "Animal behaviour",
+    "difficulty": "hard",
+    "prompt": "What is it called when an animal becomes inactive to survive a hot, dry season?",
+    "choices": ["Aestivation", "Hibernation", "Migration", "Moulting"],
+    "explanation": "Aestivation is like hibernation but happens in hot, dry weather instead of cold."
+  },
+  {
+    "id": "animals-163",
+    "category": "animals",
+    "topic": "Animal behaviour",
+    "difficulty": "hard",
+    "prompt": "How can elephants communicate with each other over long distances?",
+    "choices": [
+      "Rumbles too low for humans to hear",
+      "Flashing their ears in the sun",
+      "Stamping out drum beats",
+      "Trumpeting high whistles"
+    ],
+    "explanation": "Elephants make very low rumbles that travel far through the air and ground."
+  },
+  {
+    "id": "animals-164",
+    "category": "animals",
+    "topic": "Reptiles",
+    "difficulty": "hard",
+    "prompt": "In many turtles, what decides whether a hatchling is male or female?",
+    "choices": [
+      "The temperature of the nest",
+      "The size of the egg",
+      "The mother's diet",
+      "The number of eggs laid"
+    ],
+    "explanation": "In many turtles, warmer nests produce more females and cooler nests produce more males."
+  },
+  {
+    "id": "animals-165",
+    "category": "animals",
+    "topic": "Reptiles",
+    "difficulty": "hard",
+    "prompt": "The black mamba gets its name from the colour of which part of its body?",
+    "choices": ["The inside of its mouth", "Its scales", "Its tongue", "Its eyes"],
+    "explanation": "Black mambas are usually grey or brown; the name comes from the inky-black inside of the mouth."
+  },
+  {
+    "id": "animals-166",
+    "category": "animals",
+    "topic": "Reptiles",
+    "difficulty": "hard",
+    "prompt": "How can geckos climb up smooth glass?",
+    "choices": [
+      "Tiny hairs on their toes",
+      "Suction cups on their feet",
+      "Sticky glue from their skin",
+      "Tiny hooked claws"
+    ],
+    "explanation": "Millions of microscopic hairs on gecko toe pads cling to surfaces by weak attractive forces."
+  },
+  {
+    "id": "animals-167",
+    "category": "animals",
+    "topic": "Reptiles",
+    "difficulty": "hard",
+    "prompt": "The tuatara, a reptile that looks like a lizard but is not one, lives only in which country?",
+    "choices": ["New Zealand", "Australia", "Madagascar", "Indonesia"],
+    "explanation": "Tuataras are the last survivors of an ancient reptile group and live only in New Zealand."
+  },
+  {
+    "id": "animals-168",
+    "category": "animals",
+    "topic": "Amphibians",
+    "difficulty": "hard",
+    "prompt": "What are the legless, worm-like amphibians of the tropics called?",
+    "choices": ["Caecilians", "Newts", "Axolotls", "Mudpuppies"],
+    "explanation": "Caecilians are amphibians with no legs that mostly burrow in soil."
+  },
+  {
+    "id": "animals-169",
+    "category": "animals",
+    "topic": "Body features",
+    "difficulty": "hard",
+    "prompt": "What is the hard outer skeleton of an insect mainly made of?",
+    "choices": ["Chitin", "Keratin", "Cartilage", "Enamel"],
+    "explanation": "Insect exoskeletons are made mainly of chitin, a tough natural material."
+  },
+  {
+    "id": "animals-170",
+    "category": "animals",
+    "topic": "Insects",
+    "difficulty": "hard",
+    "prompt": "Some dung beetles steer their dung balls in a straight line at night using what?",
+    "choices": [
+      "The Milky Way",
+      "Scent trails",
+      "Sounds from other beetles",
+      "Heat from the ground"
+    ],
+    "explanation": "Scientists found that some dung beetles use the glow of the Milky Way to keep a straight path."
+  },
+  {
+    "id": "animals-171",
+    "category": "animals",
+    "topic": "Spiders",
+    "difficulty": "hard",
+    "prompt": "How many main body parts does a spider have?",
+    "choices": ["Two", "Three", "Four", "Five"],
+    "explanation": "A spider's body has two main parts: the cephalothorax and the abdomen."
+  },
+  {
+    "id": "animals-172",
+    "category": "animals",
+    "topic": "Spiders",
+    "difficulty": "hard",
+    "prompt": "The Goliath birdeater, the world's heaviest spider, is what kind of spider?",
+    "choices": ["A tarantula", "A wolf spider", "A huntsman spider", "A jumping spider"],
+    "explanation": "The Goliath birdeater is a huge South American tarantula."
+  },
+  {
+    "id": "animals-173",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "hard",
+    "prompt": "What is the only marsupial native to the United States and Canada?",
+    "choices": ["Virginia opossum", "Raccoon", "Skunk", "Armadillo"],
+    "explanation": "The Virginia opossum is the only pouched mammal native to North America north of Mexico."
+  },
+  {
+    "id": "animals-174",
+    "category": "animals",
+    "topic": "Mammals",
+    "difficulty": "hard",
+    "prompt": "Apart from the platypus, which other mammal lays eggs?",
+    "choices": ["Echidna", "Pangolin", "Armadillo", "Hedgehog"],
+    "explanation": "Echidnas and the platypus are monotremes, the only mammals that lay eggs."
+  },
+  {
+    "id": "animals-175",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "hard",
+    "prompt": "Which West African forest animal is the smallest antelope in the world?",
+    "choices": ["Royal antelope", "Dik-dik", "Klipspringer", "Duiker"],
+    "explanation": "The royal antelope of West African forests is only about 25 centimetres tall at the shoulder."
+  },
+  {
+    "id": "animals-176",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "hard",
+    "prompt": "Which great ape lives only south of the Congo River?",
+    "choices": ["Bonobo", "Chimpanzee", "Gorilla", "Orangutan"],
+    "explanation": "Bonobos live only in the forests of the Democratic Republic of the Congo, south of the Congo River."
+  },
+  {
+    "id": "animals-177",
+    "category": "animals",
+    "topic": "African wildlife",
+    "difficulty": "hard",
+    "prompt": "Which close relative of the mandrill lives wild in Nigeria's Cross River region?",
+    "choices": ["Drill", "Gelada", "Proboscis monkey", "Snub-nosed monkey"],
+    "explanation": "The drill lives only in forests of south-east Nigeria, western Cameroon and Bioko Island."
+  },
+  {
+    "id": "animals-178",
+    "category": "animals",
+    "topic": "Habitats",
+    "difficulty": "hard",
+    "prompt": "Which is the only bear that lives in South America?",
+    "choices": ["Spectacled bear", "Sun bear", "Sloth bear", "Black bear"],
+    "explanation": "The spectacled, or Andean, bear lives in the Andes mountains of South America."
+  },
+  {
+    "id": "animals-179",
+    "category": "animals",
+    "topic": "Habitats",
+    "difficulty": "hard",
+    "prompt": "The marine iguana, the only lizard that feeds in the sea, lives on which islands?",
+    "choices": ["Galapagos Islands", "Canary Islands", "Seychelles", "Hawaiian Islands"],
+    "explanation": "Marine iguanas live only on the Galapagos Islands, where they dive to eat seaweed."
+  },
+  {
+    "id": "animals-180",
+    "category": "animals",
+    "topic": "Diets",
+    "difficulty": "hard",
+    "prompt": "Unusually for a bird of prey, the palm-nut vulture mainly eats what?",
+    "choices": ["The fruit of oil palms", "Dead fish", "Bones", "Eggs"],
+    "explanation": "The palm-nut vulture of Africa feeds mostly on the fleshy fruit of the oil palm."
   }
 ]

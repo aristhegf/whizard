@@ -81,15 +81,6 @@
     "explanation": "Mattel introduced Barbie in 1959."
   },
   {
-    "id": "pop-culture-010",
-    "category": "pop-culture",
-    "topic": "Nollywood",
-    "difficulty": "easy",
-    "prompt": "'Nollywood' is the nickname for which country's film industry?",
-    "choices": ["Nigeria", "Ghana", "Kenya", "South Africa"],
-    "explanation": "Nollywood is the name for Nigeria's huge film industry."
-  },
-  {
     "id": "pop-culture-011",
     "category": "pop-culture",
     "topic": "TV",
@@ -135,15 +126,6 @@
     "explanation": "Mufasa is Simba's father; Scar is his jealous uncle."
   },
   {
-    "id": "pop-culture-016",
-    "category": "pop-culture",
-    "topic": "Movies",
-    "difficulty": "easy",
-    "prompt": "What is the name of the cowboy doll in Toy Story?",
-    "choices": ["Woody", "Buzz", "Rex", "Slinky"],
-    "explanation": "Sheriff Woody is Andy's favourite toy until Buzz Lightyear arrives."
-  },
-  {
     "id": "pop-culture-017",
     "category": "pop-culture",
     "topic": "Internet",
@@ -179,7 +161,6 @@
     "choices": ["A mouse", "A cat", "A dog", "A duck"],
     "explanation": "Tom is the cat who is forever chasing Jerry the mouse."
   },
-
   {
     "id": "pop-culture-021",
     "category": "pop-culture",
@@ -365,7 +346,6 @@
     "choices": ["Wizkid", "Davido", "Burna Boy", "Olamide"],
     "explanation": "Wizkid is known as Starboy and named his record label Starboy Entertainment."
   },
-
   {
     "id": "pop-culture-041",
     "category": "pop-culture",
@@ -498,15 +478,6 @@
     "explanation": "Larry Page and Sergey Brin called their Stanford search project BackRub in 1996."
   },
   {
-    "id": "pop-culture-055",
-    "category": "pop-culture",
-    "topic": "Nollywood",
-    "difficulty": "hard",
-    "prompt": "Which 1992 film is widely credited with launching Nigeria's home-video movie boom?",
-    "choices": ["Living in Bondage", "Osuofia in London", "The Wedding Party", "King of Boys"],
-    "explanation": "Kenneth Nnebue's Living in Bondage sold widely on VHS and kick-started Nollywood."
-  },
-  {
     "id": "pop-culture-056",
     "category": "pop-culture",
     "topic": "Nollywood",
@@ -550,5 +521,1127 @@
     "prompt": "Which US toy company launched Transformers in 1984?",
     "choices": ["Hasbro", "Mattel", "Kenner", "Tonka"],
     "explanation": "Hasbro rebranded robot toys from Japan's Takara as Transformers in 1984."
+  },
+  {
+    "id": "pop-culture-061",
+    "category": "pop-culture",
+    "topic": "Sitcoms",
+    "difficulty": "easy",
+    "prompt": "In Friends, which character is played by Jennifer Aniston?",
+    "choices": ["Rachel Green", "Monica Geller", "Phoebe Buffay", "Carol Willick"],
+    "explanation": "Jennifer Aniston played Rachel Green in all ten seasons of Friends."
+  },
+  {
+    "id": "pop-culture-062",
+    "category": "pop-culture",
+    "topic": "Sitcoms",
+    "difficulty": "easy",
+    "prompt": "Which actor played the bumbling title character in the TV comedy Mr. Bean?",
+    "choices": ["Rowan Atkinson", "John Cleese", "Hugh Laurie", "Ricky Gervais"],
+    "explanation": "Rowan Atkinson co-created and played Mr. Bean, a character who barely speaks."
+  },
+  {
+    "id": "pop-culture-063",
+    "category": "pop-culture",
+    "topic": "Sitcoms",
+    "difficulty": "easy",
+    "prompt": "What make of small car does Mr. Bean famously drive?",
+    "choices": ["A Mini", "A Volkswagen Beetle", "A Fiat 500", "A Renault 4"],
+    "explanation": "Mr. Bean drives a small British Mini, which he once steered from an armchair tied to its roof."
+  },
+  {
+    "id": "pop-culture-064",
+    "category": "pop-culture",
+    "topic": "TV",
+    "difficulty": "easy",
+    "prompt": "Who hosted a famous American daytime talk show under her own name from 1986 to 2011?",
+    "choices": ["Oprah Winfrey", "Ellen DeGeneres", "Tyra Banks", "Wendy Williams"],
+    "explanation": "The Oprah Winfrey Show ran nationally in the United States for 25 seasons, from 1986 to 2011."
+  },
+  {
+    "id": "pop-culture-065",
+    "category": "pop-culture",
+    "topic": "TV dramas",
+    "difficulty": "easy",
+    "prompt": "The 2021 hit series Squid Game comes from which country?",
+    "choices": ["South Korea", "Japan", "China", "Thailand"],
+    "explanation": "Squid Game is a South Korean drama written and directed by Hwang Dong-hyuk."
+  },
+  {
+    "id": "pop-culture-066",
+    "category": "pop-culture",
+    "topic": "Kids' TV",
+    "difficulty": "easy",
+    "prompt": "Which Sesame Street character lives in a trash can?",
+    "choices": ["Oscar the Grouch", "Big Bird", "Elmo", "Cookie Monster"],
+    "explanation": "Oscar the Grouch is the grumpy green Muppet who lives in a trash can on Sesame Street."
+  },
+  {
+    "id": "pop-culture-067",
+    "category": "pop-culture",
+    "topic": "Kids' TV",
+    "difficulty": "easy",
+    "prompt": "What is the name of the Muppets' famous green frog?",
+    "choices": ["Kermit", "Fozzie", "Gonzo", "Animal"],
+    "explanation": "Kermit the Frog, created by Jim Henson, is the leader of the Muppets."
+  },
+  {
+    "id": "pop-culture-068",
+    "category": "pop-culture",
+    "topic": "Kids' TV",
+    "difficulty": "easy",
+    "prompt": "In the cartoon Peppa Pig, what is the name of Peppa's little brother?",
+    "choices": ["George", "Richard", "Pedro", "Danny"],
+    "explanation": "George is Peppa's little brother, who loves his toy dinosaur."
+  },
+  {
+    "id": "pop-culture-069",
+    "category": "pop-culture",
+    "topic": "Kids' TV",
+    "difficulty": "easy",
+    "prompt": "In Dora the Explorer, what kind of animal is Dora's best friend Boots?",
+    "choices": ["A monkey", "A fox", "A bear", "A cow"],
+    "explanation": "Boots is a monkey who wears red boots; Swiper, who tries to steal things, is the fox."
+  },
+  {
+    "id": "pop-culture-070",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "easy",
+    "prompt": "In The Simpsons, what colour is the skin of most characters?",
+    "choices": ["Yellow", "Green", "Blue", "Orange"],
+    "explanation": "Most characters in The Simpsons are drawn with bright yellow skin."
+  },
+  {
+    "id": "pop-culture-071",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "easy",
+    "prompt": "Which Disney character is a duck who wears a blue sailor shirt and hat?",
+    "choices": ["Donald Duck", "Daffy Duck", "Scrooge McDuck", "Darkwing Duck"],
+    "explanation": "Donald Duck has worn his blue sailor shirt and cap since his first cartoon in 1934."
+  },
+  {
+    "id": "pop-culture-072",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "easy",
+    "prompt": "Which cartoon rabbit's famous catchphrase is 'Eh, what's up, Doc?'",
+    "choices": ["Bugs Bunny", "Roger Rabbit", "Peter Rabbit", "Br'er Rabbit"],
+    "explanation": "Bugs Bunny of Warner Bros.' Looney Tunes usually says the line while chewing a carrot."
+  },
+  {
+    "id": "pop-culture-073",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "easy",
+    "prompt": "In SpongeBob SquarePants, SpongeBob lives in a house shaped like which fruit?",
+    "choices": ["A pineapple", "A coconut", "A watermelon", "A mango"],
+    "explanation": "SpongeBob lives in a pineapple under the sea in the town of Bikini Bottom."
+  },
+  {
+    "id": "pop-culture-074",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "easy",
+    "prompt": "Which cartoon family lives in the Stone Age town of Bedrock?",
+    "choices": ["The Flintstones", "The Jetsons", "The Simpsons", "The Griffins"],
+    "explanation": "Fred and Wilma Flintstone live in Bedrock, a Stone Age town full of modern-style gadgets."
+  },
+  {
+    "id": "pop-culture-075",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "easy",
+    "prompt": "Which cartoon features the superpowered sisters Blossom, Bubbles and Buttercup?",
+    "choices": ["The Powerpuff Girls", "Totally Spies!", "Kim Possible", "Winx Club"],
+    "explanation": "Blossom, Bubbles and Buttercup are The Powerpuff Girls, who protect the city of Townsville."
+  },
+  {
+    "id": "pop-culture-076",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "easy",
+    "prompt": "Which superhero is often called the 'Man of Steel'?",
+    "choices": ["Superman", "Iron Man", "Batman", "Captain America"],
+    "explanation": "Superman has been nicknamed the Man of Steel since the early days of his comics."
+  },
+  {
+    "id": "pop-culture-077",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "easy",
+    "prompt": "What is Spider-Man's real name in the original comics?",
+    "choices": ["Peter Parker", "Bruce Banner", "Clark Kent", "Steve Rogers"],
+    "explanation": "In the original Marvel comics Spider-Man is Peter Parker, a teenager from New York."
+  },
+  {
+    "id": "pop-culture-078",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "easy",
+    "prompt": "Which Marvel superhero fights with a round shield that has a white star in the middle?",
+    "choices": ["Captain America", "Thor", "Iron Man", "Black Panther"],
+    "explanation": "Captain America, the super-soldier Steve Rogers, carries a red, white and blue shield with a star in the centre."
+  },
+  {
+    "id": "pop-culture-079",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "easy",
+    "prompt": "Which superhero is secretly the scientist Bruce Banner?",
+    "choices": ["The Hulk", "The Thing", "Iron Man", "Ant-Man"],
+    "explanation": "Bruce Banner turns into the Hulk, usually when he gets angry."
+  },
+  {
+    "id": "pop-culture-080",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "easy",
+    "prompt": "Which city does Batman protect?",
+    "choices": ["Gotham City", "Metropolis", "Star City", "Central City"],
+    "explanation": "Batman guards Gotham City; Metropolis is Superman's city."
+  },
+  {
+    "id": "pop-culture-081",
+    "category": "pop-culture",
+    "topic": "Comics",
+    "difficulty": "easy",
+    "prompt": "Which comic-book company publishes Batman, Superman and Wonder Woman?",
+    "choices": ["DC Comics", "Marvel Comics", "Image Comics", "Dark Horse Comics"],
+    "explanation": "Batman, Superman and Wonder Woman are all DC Comics characters."
+  },
+  {
+    "id": "pop-culture-082",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "easy",
+    "prompt": "Which company makes the Xbox consoles?",
+    "choices": ["Microsoft", "Sony", "Nintendo", "Sega"],
+    "explanation": "Microsoft launched the first Xbox in 2001."
+  },
+  {
+    "id": "pop-culture-083",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "easy",
+    "prompt": "In the arcade game Pac-Man, what chases Pac-Man around the maze?",
+    "choices": ["Ghosts", "Zombies", "Robots", "Bats"],
+    "explanation": "Pac-Man eats dots while four ghosts chase him around the maze."
+  },
+  {
+    "id": "pop-culture-084",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "easy",
+    "prompt": "In the mobile game Angry Birds, the birds are flung at which animals?",
+    "choices": ["Pigs", "Cats", "Frogs", "Rats"],
+    "explanation": "In Angry Birds, players catapult birds at green pigs who stole their eggs."
+  },
+  {
+    "id": "pop-culture-085",
+    "category": "pop-culture",
+    "topic": "Games",
+    "difficulty": "easy",
+    "prompt": "In which game do players take turns pulling wooden blocks from a tower without toppling it?",
+    "choices": ["Jenga", "Dominoes", "Mikado", "Kerplunk"],
+    "explanation": "In Jenga, players remove blocks from a stacked wooden tower until it falls."
+  },
+  {
+    "id": "pop-culture-086",
+    "category": "pop-culture",
+    "topic": "Games",
+    "difficulty": "easy",
+    "prompt": "In which board game do players buy streets, build houses and hotels, and try to stay out of jail?",
+    "choices": ["Monopoly", "Scrabble", "Cluedo", "Snakes and Ladders"],
+    "explanation": "Monopoly is the property-trading board game with houses, hotels and a Jail square."
+  },
+  {
+    "id": "pop-culture-087",
+    "category": "pop-culture",
+    "topic": "Games",
+    "difficulty": "easy",
+    "prompt": "In Ludo, what number must a player usually roll to move a piece out of its home base?",
+    "choices": ["Six", "One", "Four", "Five"],
+    "explanation": "In standard Ludo rules a player needs to roll a six to bring a piece into play."
+  },
+  {
+    "id": "pop-culture-088",
+    "category": "pop-culture",
+    "topic": "Games",
+    "difficulty": "easy",
+    "prompt": "In draughts (checkers), what does a piece become when it reaches the far side of the board?",
+    "choices": ["A king", "A queen", "A bishop", "A knight"],
+    "explanation": "A draughts piece that reaches the far row is crowned a king and can then move backwards."
+  },
+  {
+    "id": "pop-culture-089",
+    "category": "pop-culture",
+    "topic": "Brands",
+    "difficulty": "easy",
+    "prompt": "Which fast-food chain's logo is a pair of golden arches?",
+    "choices": ["McDonald's", "Burger King", "KFC", "Wendy's"],
+    "explanation": "McDonald's golden arches form the letter M."
+  },
+  {
+    "id": "pop-culture-090",
+    "category": "pop-culture",
+    "topic": "Brands",
+    "difficulty": "easy",
+    "prompt": "Which technology company's logo is a piece of fruit with a bite taken out of it?",
+    "choices": ["Apple", "Microsoft", "Samsung", "Dell"],
+    "explanation": "Apple's logo is an apple with a bite taken out of its right side."
+  },
+  {
+    "id": "pop-culture-091",
+    "category": "pop-culture",
+    "topic": "Brands",
+    "difficulty": "easy",
+    "prompt": "Which car maker's logo is a three-pointed star inside a circle?",
+    "choices": ["Mercedes-Benz", "BMW", "Audi", "Volkswagen"],
+    "explanation": "Mercedes-Benz uses a three-pointed star, said to stand for land, sea and air."
+  },
+  {
+    "id": "pop-culture-092",
+    "category": "pop-culture",
+    "topic": "Brands",
+    "difficulty": "easy",
+    "prompt": "Colonel Harland Sanders, whose face appears on its logo, founded which fast-food chain?",
+    "choices": ["KFC", "McDonald's", "Burger King", "Chicken Republic"],
+    "explanation": "Colonel Sanders founded Kentucky Fried Chicken, now known as KFC."
+  },
+  {
+    "id": "pop-culture-093",
+    "category": "pop-culture",
+    "topic": "Brands",
+    "difficulty": "easy",
+    "prompt": "Which Italian car maker's logo is a black prancing horse on a yellow shield?",
+    "choices": ["Ferrari", "Lamborghini", "Maserati", "Alfa Romeo"],
+    "explanation": "Ferrari's prancing horse sits on yellow, the colour of the city of Modena."
+  },
+  {
+    "id": "pop-culture-094",
+    "category": "pop-culture",
+    "topic": "Fashion",
+    "difficulty": "easy",
+    "prompt": "Which sportswear brand is known for a logo of three stripes?",
+    "choices": ["Adidas", "Puma", "Reebok", "Fila"],
+    "explanation": "Adidas has used three stripes on its clothes and shoes since the mid-20th century."
+  },
+  {
+    "id": "pop-culture-095",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "easy",
+    "prompt": "Which Looney Tunes cat is forever trying to catch the little yellow bird Tweety?",
+    "choices": ["Sylvester", "Tom", "Garfield", "Felix"],
+    "explanation": "Sylvester the cat keeps chasing Tweety in Looney Tunes cartoons but never manages to catch him."
+  },
+  {
+    "id": "pop-culture-096",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "easy",
+    "prompt": "Which member of the Scooby-Doo gang is Scooby's best friend and fellow snack lover?",
+    "choices": ["Shaggy", "Fred", "Velma", "Daphne"],
+    "explanation": "Shaggy and Scooby-Doo are best friends who are always hungry and always scared of monsters."
+  },
+  {
+    "id": "pop-culture-097",
+    "category": "pop-culture",
+    "topic": "Fashion",
+    "difficulty": "easy",
+    "prompt": "Classic blue jeans are made from which fabric?",
+    "choices": ["Denim", "Linen", "Velvet", "Satin"],
+    "explanation": "Jeans are made from denim, a sturdy woven cotton usually dyed blue with indigo."
+  },
+  {
+    "id": "pop-culture-098",
+    "category": "pop-culture",
+    "topic": "Social media",
+    "difficulty": "easy",
+    "prompt": "Which messaging app's logo is a white phone inside a green speech bubble?",
+    "choices": ["WhatsApp", "Telegram", "Signal", "Viber"],
+    "explanation": "WhatsApp's logo is a white phone handset inside a green speech bubble."
+  },
+  {
+    "id": "pop-culture-099",
+    "category": "pop-culture",
+    "topic": "Social media",
+    "difficulty": "easy",
+    "prompt": "Which video website's logo is a white play button on a red rectangle?",
+    "choices": ["YouTube", "Netflix", "Vimeo", "TikTok"],
+    "explanation": "YouTube's logo shows a white 'play' triangle on a red rounded rectangle."
+  },
+  {
+    "id": "pop-culture-100",
+    "category": "pop-culture",
+    "topic": "Social media",
+    "difficulty": "easy",
+    "prompt": "Facebook's parent company changed its name in 2021 to what?",
+    "choices": ["Meta", "Alphabet", "Oculus", "Horizon"],
+    "explanation": "In October 2021 Facebook, Inc. renamed itself Meta Platforms."
+  },
+  {
+    "id": "pop-culture-101",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "easy",
+    "prompt": "Which website, started in 2001, is a free online encyclopedia that anyone can edit?",
+    "choices": ["Wikipedia", "Britannica", "Encarta", "Quora"],
+    "explanation": "Wikipedia launched in January 2001 and is written and edited by volunteers."
+  },
+  {
+    "id": "pop-culture-102",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "easy",
+    "prompt": "On Big Brother Naija, what is the room where housemates talk privately to Big Brother called?",
+    "choices": ["The Diary Room", "The Whisper Room", "The Quiet Room", "The Truth Room"],
+    "explanation": "Housemates go to the Diary Room to speak privately with Big Brother."
+  },
+  {
+    "id": "pop-culture-103",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "medium",
+    "prompt": "Which football video game series was renamed EA Sports FC in 2023?",
+    "choices": ["FIFA", "Pro Evolution Soccer", "Football Manager", "Sensible Soccer"],
+    "explanation": "EA's FIFA games took the name EA Sports FC in 2023 after its licence deal with FIFA ended."
+  },
+  {
+    "id": "pop-culture-104",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "medium",
+    "prompt": "Which judge became famous for blunt put-downs on Pop Idol, American Idol and The X Factor?",
+    "choices": ["Simon Cowell", "Piers Morgan", "Randy Jackson", "Louis Walsh"],
+    "explanation": "Simon Cowell's harsh but honest comments made him famous as a talent-show judge."
+  },
+  {
+    "id": "pop-culture-105",
+    "category": "pop-culture",
+    "topic": "Sitcoms",
+    "difficulty": "medium",
+    "prompt": "In Friends, what is Joey Tribbiani's famous chat-up line?",
+    "choices": ["How you doin'?", "Hello, gorgeous", "Come here often?", "What's up, babe?"],
+    "explanation": "Joey uses his flirty line 'How you doin'?' throughout Friends."
+  },
+  {
+    "id": "pop-culture-106",
+    "category": "pop-culture",
+    "topic": "Sitcoms",
+    "difficulty": "medium",
+    "prompt": "In The Fresh Prince of Bel-Air, Will moves to Bel-Air from which city?",
+    "choices": ["Philadelphia", "Chicago", "Detroit", "Baltimore"],
+    "explanation": "The theme song tells how Will, 'West Philadelphia born and raised', was sent to live in Bel-Air."
+  },
+  {
+    "id": "pop-culture-107",
+    "category": "pop-culture",
+    "topic": "Sitcoms",
+    "difficulty": "medium",
+    "prompt": "The sitcom Everybody Hates Chris is based on the teenage years of which comedian?",
+    "choices": ["Chris Rock", "Chris Tucker", "Kevin Hart", "Eddie Murphy"],
+    "explanation": "Chris Rock co-created and narrates the show, which is based on his childhood in Brooklyn."
+  },
+  {
+    "id": "pop-culture-108",
+    "category": "pop-culture",
+    "topic": "Sitcoms",
+    "difficulty": "medium",
+    "prompt": "Which TV comedy is set at the Scranton branch of the paper company Dunder Mifflin?",
+    "choices": ["The Office", "Parks and Recreation", "Seinfeld", "Scrubs"],
+    "explanation": "The American version of The Office is set at Dunder Mifflin's Scranton branch."
+  },
+  {
+    "id": "pop-culture-109",
+    "category": "pop-culture",
+    "topic": "TV dramas",
+    "difficulty": "medium",
+    "prompt": "In Game of Thrones, what is the name of the continent where the Seven Kingdoms lie?",
+    "choices": ["Westeros", "Essos", "Sothoryos", "Valyria"],
+    "explanation": "The Seven Kingdoms are on Westeros; Essos is the continent across the Narrow Sea."
+  },
+  {
+    "id": "pop-culture-110",
+    "category": "pop-culture",
+    "topic": "TV dramas",
+    "difficulty": "medium",
+    "prompt": "What subject does Walter White teach at a high school in Breaking Bad?",
+    "choices": ["Chemistry", "Physics", "Biology", "Maths"],
+    "explanation": "Walter White is a high-school chemistry teacher who begins making drugs."
+  },
+  {
+    "id": "pop-culture-111",
+    "category": "pop-culture",
+    "topic": "TV dramas",
+    "difficulty": "medium",
+    "prompt": "In Money Heist, the robbers wear masks showing the face of which artist?",
+    "choices": ["Salvador Dalí", "Pablo Picasso", "Vincent van Gogh", "Frida Kahlo"],
+    "explanation": "The Money Heist gang wear red jumpsuits and masks of the Spanish painter Salvador Dalí."
+  },
+  {
+    "id": "pop-culture-112",
+    "category": "pop-culture",
+    "topic": "TV dramas",
+    "difficulty": "medium",
+    "prompt": "In Stranger Things, what is the name of the girl with psychic powers who escapes from a lab?",
+    "choices": ["Eleven", "Seven", "Twelve", "Nine"],
+    "explanation": "Eleven, named for the number tattooed on her wrist, escapes from Hawkins Lab."
+  },
+  {
+    "id": "pop-culture-113",
+    "category": "pop-culture",
+    "topic": "TV dramas",
+    "difficulty": "medium",
+    "prompt": "In Prison Break, what is the name of Michael Scofield's brother, whom he helps escape?",
+    "choices": ["Lincoln Burrows", "Fernando Sucre", "Theodore Bagwell", "Alexander Mahone"],
+    "explanation": "Michael gets himself sent to prison to break out his brother Lincoln Burrows."
+  },
+  {
+    "id": "pop-culture-114",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "medium",
+    "prompt": "Who created The Simpsons?",
+    "choices": ["Matt Groening", "Seth MacFarlane", "Mike Judge", "Trey Parker"],
+    "explanation": "Matt Groening created The Simpsons and named several characters after his own family."
+  },
+  {
+    "id": "pop-culture-115",
+    "category": "pop-culture",
+    "topic": "Comics",
+    "difficulty": "medium",
+    "prompt": "Snoopy the beagle comes from which comic strip?",
+    "choices": ["Peanuts", "Garfield", "Calvin and Hobbes", "Dennis the Menace"],
+    "explanation": "Snoopy is Charlie Brown's dog in Peanuts, the comic strip by Charles M. Schulz."
+  },
+  {
+    "id": "pop-culture-116",
+    "category": "pop-culture",
+    "topic": "Comics",
+    "difficulty": "medium",
+    "prompt": "In The Adventures of Tintin, what is the name of Tintin's white dog?",
+    "choices": ["Snowy", "Odie", "Pluto", "Toto"],
+    "explanation": "Tintin's white fox terrier is called Snowy in English."
+  },
+  {
+    "id": "pop-culture-117",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "medium",
+    "prompt": "Which Marvel team includes Cyclops, Storm and Jean Grey?",
+    "choices": ["The X-Men", "The Avengers", "The Fantastic Four", "The Defenders"],
+    "explanation": "Cyclops, Storm and Jean Grey are mutants and members of the X-Men."
+  },
+  {
+    "id": "pop-culture-118",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "medium",
+    "prompt": "Which near-unbreakable metal is bonded to Wolverine's skeleton?",
+    "choices": ["Adamantium", "Vibranium", "Titanium", "Uru"],
+    "explanation": "Wolverine's skeleton and claws are coated in the fictional metal adamantium."
+  },
+  {
+    "id": "pop-culture-119",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "medium",
+    "prompt": "What is the first name of Batman's loyal butler?",
+    "choices": ["Alfred", "Jarvis", "Albert", "Arthur"],
+    "explanation": "Alfred Pennyworth is the Wayne family butler who helps Batman."
+  },
+  {
+    "id": "pop-culture-120",
+    "category": "pop-culture",
+    "topic": "Anime",
+    "difficulty": "medium",
+    "prompt": "In Naruto, which ninja village is Naruto from?",
+    "choices": [
+      "The Hidden Leaf Village",
+      "The Hidden Sand Village",
+      "The Hidden Mist Village",
+      "The Hidden Cloud Village"
+    ],
+    "explanation": "Naruto Uzumaki grows up in Konoha, the Hidden Leaf Village."
+  },
+  {
+    "id": "pop-culture-121",
+    "category": "pop-culture",
+    "topic": "Anime",
+    "difficulty": "medium",
+    "prompt": "The name Pokémon is short for what?",
+    "choices": ["Pocket Monsters", "Power Monsters", "Portable Monsters", "Poker Monsters"],
+    "explanation": "Pokémon comes from the Japanese title Poketto Monsutā, meaning Pocket Monsters."
+  },
+  {
+    "id": "pop-culture-122",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "medium",
+    "prompt": "Who is the main character of Grand Theft Auto: San Andreas?",
+    "choices": ["Carl 'CJ' Johnson", "Tommy Vercetti", "Niko Bellic", "Franklin Clinton"],
+    "explanation": "In San Andreas you play Carl 'CJ' Johnson, who returns home to Los Santos."
+  },
+  {
+    "id": "pop-culture-123",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "medium",
+    "prompt": "What was the name of Nintendo's handheld console launched in 1989?",
+    "choices": ["Game Boy", "Game Gear", "Lynx", "Nintendo DS"],
+    "explanation": "Nintendo's Game Boy launched in 1989; the Game Gear and Lynx were rival machines."
+  },
+  {
+    "id": "pop-culture-124",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "medium",
+    "prompt": "In Mortal Kombat, what are the gruesome finishing moves called?",
+    "choices": ["Fatalities", "Knockouts", "Takedowns", "Finales"],
+    "explanation": "When the announcer says 'Finish him!', the winner can perform a Fatality."
+  },
+  {
+    "id": "pop-culture-125",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "medium",
+    "prompt": "Master Chief is the hero of which video game series?",
+    "choices": ["Halo", "Gears of War", "Call of Duty", "Destiny"],
+    "explanation": "Master Chief, a super-soldier in green armour, is the hero of Halo."
+  },
+  {
+    "id": "pop-culture-126",
+    "category": "pop-culture",
+    "topic": "Comics",
+    "difficulty": "medium",
+    "prompt": "In the comic strip Garfield, what is the name of Garfield's owner?",
+    "choices": ["Jon Arbuckle", "Charlie Brown", "Dennis Mitchell", "Calvin"],
+    "explanation": "Garfield, the lasagne-loving cat created by Jim Davis, lives with his owner Jon Arbuckle."
+  },
+  {
+    "id": "pop-culture-127",
+    "category": "pop-culture",
+    "topic": "Toys",
+    "difficulty": "medium",
+    "prompt": "The teddy bear was named after which US president?",
+    "choices": ["Theodore Roosevelt", "Abraham Lincoln", "George Washington", "Thomas Jefferson"],
+    "explanation": "Teddy bears are named after Theodore 'Teddy' Roosevelt, who refused to shoot a tied-up bear in 1902."
+  },
+  {
+    "id": "pop-culture-128",
+    "category": "pop-culture",
+    "topic": "Games",
+    "difficulty": "medium",
+    "prompt": "In the board game Cluedo, players try to solve what?",
+    "choices": ["A murder", "A bank robbery", "A kidnapping", "A jewel theft"],
+    "explanation": "Cluedo players work out who killed the victim, with which weapon and in which room."
+  },
+  {
+    "id": "pop-culture-129",
+    "category": "pop-culture",
+    "topic": "Brands",
+    "difficulty": "medium",
+    "prompt": "Which Italian car maker's logo shows a charging bull?",
+    "choices": ["Lamborghini", "Ferrari", "Maserati", "Fiat"],
+    "explanation": "Lamborghini's logo is a bull, chosen by founder Ferruccio Lamborghini."
+  },
+  {
+    "id": "pop-culture-130",
+    "category": "pop-culture",
+    "topic": "Brands",
+    "difficulty": "medium",
+    "prompt": "Indomie instant noodles, hugely popular in Nigeria, originally come from which country?",
+    "choices": ["Indonesia", "China", "Japan", "Malaysia"],
+    "explanation": "Indomie was launched in Indonesia in 1972; its name comes from 'Indonesian mie' (noodles)."
+  },
+  {
+    "id": "pop-culture-131",
+    "category": "pop-culture",
+    "topic": "Brands",
+    "difficulty": "medium",
+    "prompt": "The Starbucks logo shows which mythical figure?",
+    "choices": ["A two-tailed siren", "A winged dragon", "A unicorn", "A phoenix"],
+    "explanation": "The Starbucks logo is a green-and-white twin-tailed siren, a sea creature from myth."
+  },
+  {
+    "id": "pop-culture-132",
+    "category": "pop-culture",
+    "topic": "Gadgets",
+    "difficulty": "medium",
+    "prompt": "The phone maker Nokia comes from which country?",
+    "choices": ["Finland", "Sweden", "Norway", "Denmark"],
+    "explanation": "Nokia was founded in Finland in 1865 and is named after the town of Nokia."
+  },
+  {
+    "id": "pop-culture-133",
+    "category": "pop-culture",
+    "topic": "Fashion",
+    "difficulty": "medium",
+    "prompt": "Which French fashion brand's logo is a small green crocodile?",
+    "choices": ["Lacoste", "Hermès", "Dior", "Yves Saint Laurent"],
+    "explanation": "Lacoste's crocodile comes from the nickname of its founder, tennis star René Lacoste."
+  },
+  {
+    "id": "pop-culture-134",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "medium",
+    "prompt": "In the original Ben 10 cartoon, what watch-like device lets Ben turn into aliens?",
+    "choices": ["The Omnitrix", "The Tesseract", "The Infinity Gauntlet", "The Sonic Screwdriver"],
+    "explanation": "Ben Tennyson finds the Omnitrix, a watch-like alien device that lets him transform into different alien heroes."
+  },
+  {
+    "id": "pop-culture-135",
+    "category": "pop-culture",
+    "topic": "Fashion",
+    "difficulty": "medium",
+    "prompt": "Which luxury fashion house makes the famous Birkin handbag?",
+    "choices": ["Hermès", "Chanel", "Louis Vuitton", "Gucci"],
+    "explanation": "Hermès created the Birkin bag in 1984, naming it after the actress Jane Birkin."
+  },
+  {
+    "id": "pop-culture-136",
+    "category": "pop-culture",
+    "topic": "Pageants",
+    "difficulty": "medium",
+    "prompt": "Nigeria's Agbani Darego won the Miss World title in which year?",
+    "choices": ["2001", "1999", "2003", "2005"],
+    "explanation": "Agbani Darego became the first Black African woman to win Miss World, in 2001."
+  },
+  {
+    "id": "pop-culture-137",
+    "category": "pop-culture",
+    "topic": "Social media",
+    "difficulty": "medium",
+    "prompt": "Which company bought the photo app Instagram in 2012?",
+    "choices": ["Facebook", "Google", "Twitter", "Yahoo"],
+    "explanation": "Facebook bought Instagram in 2012, about 18 months after the app launched."
+  },
+  {
+    "id": "pop-culture-138",
+    "category": "pop-culture",
+    "topic": "Social media",
+    "difficulty": "medium",
+    "prompt": "Which short-video app, owned by Twitter, was famous for six-second looping clips?",
+    "choices": ["Vine", "Periscope", "Musical.ly", "Snapchat"],
+    "explanation": "Vine let users share six-second looping videos before Twitter shut the service down."
+  },
+  {
+    "id": "pop-culture-139",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "medium",
+    "prompt": "The word 'emoji' comes from which language?",
+    "choices": ["Japanese", "Chinese", "Korean", "English"],
+    "explanation": "Emoji is Japanese, from 'e' (picture) and 'moji' (character)."
+  },
+  {
+    "id": "pop-culture-140",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "medium",
+    "prompt": "What did Amazon sell when it first launched in the 1990s?",
+    "choices": ["Books", "Music CDs", "Clothes", "Electronics"],
+    "explanation": "Amazon began in 1995 as an online bookshop before selling almost everything."
+  },
+  {
+    "id": "pop-culture-141",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "medium",
+    "prompt": "The Ice Bucket Challenge of 2014 raised money for research into which disease?",
+    "choices": ["ALS (motor neurone disease)", "Malaria", "Breast cancer", "Diabetes"],
+    "explanation": "People poured icy water over their heads to raise money for ALS, also called motor neurone disease."
+  },
+  {
+    "id": "pop-culture-142",
+    "category": "pop-culture",
+    "topic": "Game shows",
+    "difficulty": "medium",
+    "prompt": "Who was the long-time host of Who Wants to Be a Millionaire? in Nigeria?",
+    "choices": ["Frank Edoho", "Ebuka Obi-Uchendu", "IK Osakioduwa", "Olisa Adibua"],
+    "explanation": "Frank Edoho hosted Who Wants to Be a Millionaire? Nigeria from its launch in 2004 for over a decade."
+  },
+  {
+    "id": "pop-culture-143",
+    "category": "pop-culture",
+    "topic": "TV dramas",
+    "difficulty": "hard",
+    "prompt": "In Game of Thrones, what is the name of Jon Snow's white direwolf?",
+    "choices": ["Ghost", "Summer", "Nymeria", "Grey Wind"],
+    "explanation": "Jon's albino direwolf is Ghost; Summer was Bran's, Nymeria Arya's and Grey Wind Robb's."
+  },
+  {
+    "id": "pop-culture-144",
+    "category": "pop-culture",
+    "topic": "TV dramas",
+    "difficulty": "hard",
+    "prompt": "In the TV series Lost, what was the number of the Oceanic flight that crashed on the island?",
+    "choices": ["815", "747", "101", "523"],
+    "explanation": "The survivors in Lost were passengers on Oceanic Flight 815 from Sydney to Los Angeles."
+  },
+  {
+    "id": "pop-culture-145",
+    "category": "pop-culture",
+    "topic": "Soaps",
+    "difficulty": "hard",
+    "prompt": "What is the name of the pub at the heart of the British soap EastEnders?",
+    "choices": ["The Queen Victoria", "The Rovers Return", "The Woolpack", "The Dog in the Pond"],
+    "explanation": "EastEnders' pub is the Queen Victoria, or 'the Vic'; the Rovers Return is in Coronation Street."
+  },
+  {
+    "id": "pop-culture-146",
+    "category": "pop-culture",
+    "topic": "Soaps",
+    "difficulty": "hard",
+    "prompt": "The American soap The Bold and the Beautiful centres on a family business in which industry?",
+    "choices": ["Fashion", "Oil", "Shipping", "Hotels"],
+    "explanation": "The soap follows the Forrester family and their fashion house, Forrester Creations."
+  },
+  {
+    "id": "pop-culture-147",
+    "category": "pop-culture",
+    "topic": "Soaps",
+    "difficulty": "hard",
+    "prompt": "In the soap Dallas, what is the surname of the oil family that includes J.R.?",
+    "choices": ["Ewing", "Carrington", "Forrester", "Colby"],
+    "explanation": "Dallas follows the Ewing family; the Carringtons and Colbys belong to Dynasty."
+  },
+  {
+    "id": "pop-culture-148",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "hard",
+    "prompt": "Tom and Jerry cartoons were first made in 1940 for which film studio?",
+    "choices": ["MGM", "Warner Bros.", "Disney", "Paramount"],
+    "explanation": "William Hanna and Joseph Barbera created Tom and Jerry at MGM's cartoon studio in 1940."
+  },
+  {
+    "id": "pop-culture-149",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "hard",
+    "prompt": "In SpongeBob SquarePants, which musical instrument does Squidward play?",
+    "choices": ["The clarinet", "The trumpet", "The saxophone", "The flute"],
+    "explanation": "Squidward proudly, and badly, plays the clarinet."
+  },
+  {
+    "id": "pop-culture-150",
+    "category": "pop-culture",
+    "topic": "Cartoons",
+    "difficulty": "hard",
+    "prompt": "In Avatar: The Last Airbender, what is the name of Aang's flying bison?",
+    "choices": ["Appa", "Momo", "Naga", "Druk"],
+    "explanation": "Appa is Aang's six-legged flying sky bison; Momo is his winged lemur."
+  },
+  {
+    "id": "pop-culture-151",
+    "category": "pop-culture",
+    "topic": "Comics",
+    "difficulty": "hard",
+    "prompt": "Batman first appeared in 1939 in issue #27 of which comic?",
+    "choices": ["Detective Comics", "Action Comics", "Amazing Fantasy", "All-Star Comics"],
+    "explanation": "Batman debuted in Detective Comics #27 in 1939; the title's initials gave DC Comics its name."
+  },
+  {
+    "id": "pop-culture-152",
+    "category": "pop-culture",
+    "topic": "Superheroes",
+    "difficulty": "hard",
+    "prompt": "On which hidden island of Amazons was Wonder Woman raised?",
+    "choices": ["Themyscira", "Atlantis", "Avalon", "Genosha"],
+    "explanation": "Diana grew up on Themyscira, also called Paradise Island, home of the Amazons."
+  },
+  {
+    "id": "pop-culture-153",
+    "category": "pop-culture",
+    "topic": "Anime",
+    "difficulty": "hard",
+    "prompt": "In Death Note, what is the name of the student who finds the deadly notebook?",
+    "choices": ["Light Yagami", "L Lawliet", "Ryuk", "Near"],
+    "explanation": "Light Yagami finds the Death Note dropped by the death god Ryuk."
+  },
+  {
+    "id": "pop-culture-154",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "hard",
+    "prompt": "Which studio made the first Call of Duty game, released in 2003?",
+    "choices": ["Infinity Ward", "Treyarch", "Bungie", "DICE"],
+    "explanation": "Infinity Ward developed the original Call of Duty, a Second World War shooter, in 2003."
+  },
+  {
+    "id": "pop-culture-155",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "hard",
+    "prompt": "What are the falling pieces in Tetris, each made of four squares, called?",
+    "choices": ["Tetrominoes", "Tetrahedra", "Quadrants", "Tessellations"],
+    "explanation": "Each Tetris piece is a tetromino, a shape made of four squares joined edge to edge."
+  },
+  {
+    "id": "pop-culture-156",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "hard",
+    "prompt": "In Pac-Man, the four ghosts are Blinky, Pinky, Inky and who?",
+    "choices": ["Clyde", "Dinky", "Stinky", "Winky"],
+    "explanation": "Clyde is the orange ghost, joining red Blinky, pink Pinky and cyan Inky."
+  },
+  {
+    "id": "pop-culture-157",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "hard",
+    "prompt": "In The Legend of Zelda series, what is the name of Princess Zelda's kingdom?",
+    "choices": ["Hyrule", "Tamriel", "Azeroth", "Mushroom Kingdom"],
+    "explanation": "Most Zelda games are set in the kingdom of Hyrule."
+  },
+  {
+    "id": "pop-culture-158",
+    "category": "pop-culture",
+    "topic": "Video games",
+    "difficulty": "hard",
+    "prompt": "Which game designer created The Sims?",
+    "choices": ["Will Wright", "Shigeru Miyamoto", "Hideo Kojima", "Sid Meier"],
+    "explanation": "Will Wright, who earlier made SimCity, designed The Sims, first released in 2000."
+  },
+  {
+    "id": "pop-culture-159",
+    "category": "pop-culture",
+    "topic": "Games",
+    "difficulty": "hard",
+    "prompt": "In the UK edition of Monopoly, which is the most expensive property?",
+    "choices": ["Mayfair", "Park Lane", "Bond Street", "Oxford Street"],
+    "explanation": "Mayfair, at £400, is the dearest property on the UK board; Park Lane is next at £350."
+  },
+  {
+    "id": "pop-culture-160",
+    "category": "pop-culture",
+    "topic": "Toys",
+    "difficulty": "hard",
+    "prompt": "What is Barbie's full name?",
+    "choices": [
+      "Barbara Millicent Roberts",
+      "Barbara Ann Roberts",
+      "Barbara Marie Carson",
+      "Barbara Louise Hart"
+    ],
+    "explanation": "Barbie's official full name is Barbara Millicent Roberts."
+  },
+  {
+    "id": "pop-culture-161",
+    "category": "pop-culture",
+    "topic": "Games",
+    "difficulty": "hard",
+    "prompt": "In the card game Whot!, what number is printed on the wild 'Whot' cards?",
+    "choices": ["20", "14", "1", "8"],
+    "explanation": "The Whot cards carry the number 20 and can stand for any shape."
+  },
+  {
+    "id": "pop-culture-162",
+    "category": "pop-culture",
+    "topic": "Brands",
+    "difficulty": "hard",
+    "prompt": "What is the name of the Michelin Man, the tyre company's mascot?",
+    "choices": ["Bibendum", "Bertrand", "Pneumo", "Gomino"],
+    "explanation": "The Michelin Man, a figure made of white tyres, is named Bibendum."
+  },
+  {
+    "id": "pop-culture-163",
+    "category": "pop-culture",
+    "topic": "Toys",
+    "difficulty": "hard",
+    "prompt": "Which Japanese company launched the Tamagotchi virtual pet in 1996?",
+    "choices": ["Bandai", "Nintendo", "Sega", "Konami"],
+    "explanation": "Bandai launched the egg-shaped Tamagotchi in Japan in 1996, and it soon became a craze around the world."
+  },
+  {
+    "id": "pop-culture-164",
+    "category": "pop-culture",
+    "topic": "Gadgets",
+    "difficulty": "hard",
+    "prompt": "Which Canadian company made BlackBerry phones?",
+    "choices": ["Research In Motion", "Nortel", "Palm", "HTC"],
+    "explanation": "Research In Motion, based in Waterloo, Canada, made BlackBerry and later renamed itself after it."
+  },
+  {
+    "id": "pop-culture-165",
+    "category": "pop-culture",
+    "topic": "Fashion",
+    "difficulty": "hard",
+    "prompt": "What is the bikini swimsuit, launched in 1946, named after?",
+    "choices": ["A Pacific atoll", "A French beach resort", "A Brazilian dance", "A Greek island"],
+    "explanation": "Louis Réard named the bikini after Bikini Atoll, where the US had just tested atomic bombs."
+  },
+  {
+    "id": "pop-culture-166",
+    "category": "pop-culture",
+    "topic": "Fashion",
+    "difficulty": "hard",
+    "prompt": "Which designer's 1947 collection became known as the 'New Look'?",
+    "choices": ["Christian Dior", "Coco Chanel", "Yves Saint Laurent", "Hubert de Givenchy"],
+    "explanation": "Christian Dior's first collection, with nipped waists and full skirts, was dubbed the New Look."
+  },
+  {
+    "id": "pop-culture-167",
+    "category": "pop-culture",
+    "topic": "Social media",
+    "difficulty": "hard",
+    "prompt": "What was the name of the blue bird in Twitter's logo?",
+    "choices": ["Larry", "Tweety", "Robin", "Jack"],
+    "explanation": "Twitter's bird was called Larry, after the basketball player Larry Bird."
+  },
+  {
+    "id": "pop-culture-168",
+    "category": "pop-culture",
+    "topic": "Social media",
+    "difficulty": "hard",
+    "prompt": "Jan Koum and Brian Acton founded which app in 2009?",
+    "choices": ["WhatsApp", "Telegram", "Instagram", "Viber"],
+    "explanation": "Jan Koum and Brian Acton, both former Yahoo engineers, founded WhatsApp in 2009."
+  },
+  {
+    "id": "pop-culture-169",
+    "category": "pop-culture",
+    "topic": "Social media",
+    "difficulty": "hard",
+    "prompt": "What is TikTok's sister app in China called?",
+    "choices": ["Douyin", "Weibo", "WeChat", "Kuaishou"],
+    "explanation": "Douyin, launched in 2016, is the Chinese version of TikTok and runs separately from it."
+  },
+  {
+    "id": "pop-culture-170",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "hard",
+    "prompt": "What was Amazon's original company name when Jeff Bezos set it up in 1994?",
+    "choices": ["Cadabra", "Bookmark", "Arcadia", "Riverbend"],
+    "explanation": "Bezos first registered the company as Cadabra, but changed it partly because it sounded like 'cadaver'."
+  },
+  {
+    "id": "pop-culture-171",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "hard",
+    "prompt": "Which free webmail service, launched in 1996, spelt its name with the capitals HTML?",
+    "choices": ["Hotmail", "Yahoo Mail", "Gmail", "AOL Mail"],
+    "explanation": "Hotmail was first styled HoTMaiL, a nod to HTML, the language of web pages."
+  },
+  {
+    "id": "pop-culture-172",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "hard",
+    "prompt": "Which emoji was named Oxford Dictionaries' Word of the Year for 2015?",
+    "choices": ["Face with Tears of Joy", "Red Heart", "Thumbs Up", "Smiling Face with Heart-Eyes"],
+    "explanation": "Oxford Dictionaries picked the crying-with-laughter emoji as its 2015 Word of the Year."
+  },
+  {
+    "id": "pop-culture-173",
+    "category": "pop-culture",
+    "topic": "Internet",
+    "difficulty": "hard",
+    "prompt": "The word 'meme' was coined by Richard Dawkins in which 1976 book?",
+    "choices": [
+      "The Selfish Gene",
+      "The Blind Watchmaker",
+      "The God Delusion",
+      "The Origin of Species"
+    ],
+    "explanation": "Dawkins introduced 'meme' in The Selfish Gene for an idea that spreads from person to person."
+  },
+  {
+    "id": "pop-culture-174",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "hard",
+    "prompt": "The singing contest The Voice began in 2010 in which country?",
+    "choices": ["The Netherlands", "Belgium", "Sweden", "United Kingdom"],
+    "explanation": "The format began as The Voice of Holland in 2010, created by John de Mol."
+  },
+  {
+    "id": "pop-culture-175",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "hard",
+    "prompt": "Who won the first series of the UK talent show Pop Idol in 2002?",
+    "choices": ["Will Young", "Gareth Gates", "Darius Danesh", "Michelle McManus"],
+    "explanation": "Will Young beat Gareth Gates in the 2002 final; Michelle McManus won the second series."
+  },
+  {
+    "id": "pop-culture-176",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "hard",
+    "prompt": "Who won the first Big Brother Africa, in 2003?",
+    "choices": ["Cherise Makubale", "Richard Bezuidenhout", "Karen Igho", "Mwisho Mwampamba"],
+    "explanation": "Cherise Makubale of Zambia won the first season of Big Brother Africa in 2003."
+  },
+  {
+    "id": "pop-culture-177",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "hard",
+    "prompt": "Which Nigerian won Big Brother Africa All Stars in 2010?",
+    "choices": ["Uti Nwachukwu", "Katung Aduwak", "Efe Ejeba", "Frank Edoho"],
+    "explanation": "Uti Nwachukwu won the All Stars season of Big Brother Africa in 2010."
+  },
+  {
+    "id": "pop-culture-178",
+    "category": "pop-culture",
+    "topic": "Reality TV",
+    "difficulty": "hard",
+    "prompt": "Who won the first season of MTN Project Fame West Africa, in 2008?",
+    "choices": ["Iyanya", "Chidinma", "Timi Dakolo", "Omawumi"],
+    "explanation": "Iyanya won the first Project Fame West Africa in 2008; Chidinma won a later season."
+  },
+  {
+    "id": "pop-culture-179",
+    "category": "pop-culture",
+    "topic": "BBNaija",
+    "difficulty": "hard",
+    "prompt": "Who won Big Brother Naija 'Double Wahala' in 2018?",
+    "choices": ["Miracle", "Cee-C", "Tobi", "Alex"],
+    "explanation": "Miracle Igbokwe won the 2018 Double Wahala season, with Cee-C as runner-up."
+  },
+  {
+    "id": "pop-culture-180",
+    "category": "pop-culture",
+    "topic": "BBNaija",
+    "difficulty": "hard",
+    "prompt": "Who won Big Brother Naija 'Level Up' in 2022?",
+    "choices": ["Phyna", "Bella", "Groovy", "Chichi"],
+    "explanation": "Phyna won the 2022 Level Up season, becoming the second woman to win the Nigerian show."
+  },
+  {
+    "id": "pop-culture-181",
+    "category": "pop-culture",
+    "topic": "Nigerian TV",
+    "difficulty": "hard",
+    "prompt": "In the classic sitcom The New Masquerade, Chief Zebrudaya was known by which nickname?",
+    "choices": ["4:30", "12:00", "6:15", "9:45"],
+    "explanation": "Chief Zebrudaya Okoroigwe Nwogbo was known as '4:30' in the popular NTA sitcom."
+  },
+  {
+    "id": "pop-culture-182",
+    "category": "pop-culture",
+    "topic": "Nigerian TV",
+    "difficulty": "hard",
+    "prompt": "Which film-maker created the hit 1990s Nigerian TV drama Checkmate?",
+    "choices": ["Amaka Igwe", "Wale Adenuga", "Zeb Ejiro", "Tunde Kelani"],
+    "explanation": "Amaka Igwe created Checkmate, an NTA drama about a wealthy family facing enemies inside and outside the home."
+  },
+  {
+    "id": "pop-culture-183",
+    "category": "pop-culture",
+    "topic": "Nigerian comedy",
+    "difficulty": "hard",
+    "prompt": "What is the real name of the Nigerian comedian known as Ali Baba?",
+    "choices": ["Atunyota Alleluya Akpobome", "Bright Okpocha", "Ayo Makun", "Julius Agwu"],
+    "explanation": "Ali Baba, born Atunyota Alleluya Akpobome, is one of the pioneers of stand-up comedy in Nigeria."
   }
 ]

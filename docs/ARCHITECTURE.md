@@ -237,7 +237,7 @@ A lint rule blocks the web app from importing `packages/content`, so answers can
 ### Drawing a question set
 
 - **Avoiding repeats.** Each room remembers the last 300 questions it used, and each player's questions from the last 60 days are kept in `seen_questions`, under their account or, for guests, the random guest ID their browser sends. When a game starts, the draw ranks the pool: questions the room hasn't used and no player has seen come first, then ones fewer of the players have seen, then the ones seen longest ago. Ties are broken by the game's seed, and the chosen set is shuffled. A guest's history moves to their account when they sign up.
-- **The pool sets the limit.** Most categories have 20 questions per level, so a 15-question game uses three-quarters of a pool and repeats return after a game or two. A bigger bank makes them rare.
+- **The pool sets the limit.** Every category has 60 questions per level, so three of the longest games fit before anything comes back, and the ranking then brings back the ones seen longest ago.
 - **Reporting.** Every question in the end-of-game review has a "Report this question" link with four reasons (wrong answer, unclear or a typo, out of date, offensive) and no free text, so there's nothing to moderate. Reports go to `question_reports`, one per person per question (by account, or the guest ID), tied to a fingerprint of the question's wording and answers. Once 3 people report the current wording, the question is left out of new games, with no redeploy. Editing a question changes its fingerprint, so a fixed question comes back with a clean slate; one that's fine as it is can be put back with the **Keep a reported question** workflow. Reported questions, their reasons and their status are listed at the end of the **Site stats** report. Reports are rate-limited to 20 a minute per address and deleted after a year.
 - **Stale facts:** time-sensitive questions are re-verified on a schedule, and retired if they no longer hold ("Who won the last World Cup?").
 
@@ -248,7 +248,8 @@ Every question in the bank must pass these checks, which run as tests on every p
 - **Shape:** four choices, length limits, a known category and level, and a verse reference for Bible questions.
 - **No giveaways:** all four choices are different, and the answer doesn't appear in the prompt.
 - **No duplicates:** within a category, no two questions share a prompt. Two questions with the same answer and prompts at least 70% similar (by character trigrams) also count as the same question. This keeps "Which river flows through Cairo?" and "…through Baghdad?" apart while catching rewordings.
-- **Enough to play:** at least 20 questions at every level of every category, so the longest game never runs short.
+- **No repeats across categories:** a fact belongs to one category. Across categories the bar is lower, the same answer and prompts at least 50% alike, because a player who plays both would get it twice.
+- **Enough to play:** at least 60 questions at every level of every category, three of the longest games' worth.
 
 ### Adding questions
 
@@ -256,7 +257,9 @@ New questions are written in batches and fact-checked independently before they 
 
 ### Starter set
 
-The launch bank has 740 questions: 140 Bible, and 60 (20 per level) in each of the other ten categories. Each set was written, then reviewed by a separate fact-checker that assumed nothing. That review changed 28 questions, mostly tightening explanations, removing a second defensible answer, or replacing questions that were too easy for their level.
+The launch bank had 740 questions: 140 Bible, and 60 (20 per level) in each of the other ten categories. Each set was written, then reviewed by a separate fact-checker that assumed nothing. That review changed 28 questions, mostly tightening explanations, removing a second defensible answer, or replacing questions that were too easy for their level.
+
+The bank then grew to 1,980: 180 in every category, 60 per level. The new questions went through the same two steps, with each category's writer and fact-checker working separately. The fact-checkers changed or replaced about a fifth of them: removing claims in explanations that couldn't be confirmed, swapping wrong choices that could also be defended, rewording anything that depended on the translation (Bible) or could go out of date, and cutting facts another category already asks. The same pass removed 22 older questions that repeated another category's, such as "What is the chemical symbol for gold?" in both Science and General knowledge.
 
 ## Accounts (optional)
 
