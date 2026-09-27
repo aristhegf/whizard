@@ -221,6 +221,7 @@ export async function signUpVerify(context: RequestContext): Promise<Response> {
     quiet_start: null,
     quiet_end: null,
     time_zone: null,
+    public_leaderboard: 0,
     created_at: now,
   };
   try {

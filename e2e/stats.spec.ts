@@ -21,21 +21,39 @@ test("the home page shows visitors so far and who's here now", async ({ browser 
     .toBeGreaterThanOrEqual(2);
 });
 
-test("the stats page shows rooms, games and visits", async ({ page }) => {
+test("the stats page shows what the community plays", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("link", { name: "Stats" }).filter({ visible: true }).first().click();
   await expect(page).toHaveURL(/\/stats$/);
-  await expect(page.getByRole("heading", { name: "Who’s been playing" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("The worldis playingWhizard");
 
-  for (const label of ["Visitors", "Visits", "Page views", "Rooms created", "Games played"]) {
-    await expect(page.locator(".stat-tile", { hasText: label }).locator("dd")).toHaveText(
-      /^[\d,]+$/,
-    );
+  for (const label of [
+    "Games played",
+    "Players joined",
+    "Game rooms created",
+    "Questions played",
+  ]) {
+    await expect(page.locator(".total", { hasText: label }).locator("dd")).toHaveText(/^[\d,]+$/);
   }
-  await expect(page.getByText(/Visitors per day · last 30 days/)).toBeVisible();
+  for (const heading of [
+    "Most Played Games",
+    "Most Popular Topics",
+    "Whizard Around the World",
+    "Currently Popular",
+    "Top Players",
+    "Ready to be part of the fun?",
+  ]) {
+    await expect(page.getByRole("heading", { name: heading })).toBeVisible();
+  }
 
-  await page.getByRole("button", { name: "7d" }).click();
-  await expect(page.getByRole("button", { name: "7d" })).toHaveAttribute("aria-pressed", "true");
-  await expect(page.getByText(/Visitors per day · last 7 days/)).toBeVisible();
-  await expect(page.locator(".day-chart").first().locator(".bar")).toHaveCount(7);
+  // Games that aren't out yet say so instead of showing a count.
+  const games = page.locator("section", {
+    has: page.getByRole("heading", { name: "Most Played Games" }),
+  });
+  await expect(games.getByText("Quiz", { exact: true })).toBeVisible();
+  await games.getByRole("button", { name: "View all" }).click();
+  await expect(games.getByRole("listitem")).toHaveCount(8);
+  await expect(games.getByRole("listitem").filter({ hasText: "Word Rush" })).toContainText(
+    "Coming soon",
+  );
 });

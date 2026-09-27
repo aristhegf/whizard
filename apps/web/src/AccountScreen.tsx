@@ -421,6 +421,31 @@ function Settings({ user }: { user: AccountUser }) {
             In games with friends. Solo games always explain each answer.
           </p>
         </div>
+        <div className="setting">
+          <span className="setting-name" id="leaderboard-label">
+            Public leaderboard
+          </span>
+          <div className="segmented" role="group" aria-labelledby="leaderboard-label">
+            {[false, true].map((value) => (
+              <button
+                key={String(value)}
+                type="button"
+                aria-pressed={user.publicLeaderboard === value}
+                disabled={saving.busy}
+                onClick={() => void saving.run(() => updateAccount({ publicLeaderboard: value }))}
+              >
+                {value ? "Show me" : "Hide me"}
+              </button>
+            ))}
+          </div>
+          <p className="setting-hint muted small">
+            Show your name, avatar and wins on the{" "}
+            <a className="btn-link" {...linkTo("/stats")}>
+              stats page
+            </a>
+            . Wins count in games with two or more players.
+          </p>
+        </div>
       </div>
       {saving.error && (
         <p className="error small" role="alert">

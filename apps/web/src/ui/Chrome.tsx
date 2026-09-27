@@ -6,7 +6,8 @@ import { Avatar } from "./Avatar";
 import { Icon, type IconName } from "./Icon";
 import { LogoMark } from "./Logo";
 
-export type Section = "home" | "games" | "topics" | "friends" | "profile" | "pricing" | null;
+export type Section =
+  "home" | "games" | "topics" | "friends" | "profile" | "pricing" | "stats" | null;
 
 export function Backdrop() {
   return <div className="backdrop" aria-hidden="true" />;
@@ -52,7 +53,7 @@ const SITE_LINKS: { label: string; href: string; section?: Section }[] = [
   { label: "How It Works", href: "/#how" },
   { label: "Pricing", href: "/pricing", section: "pricing" },
   { label: "About", href: "/#about" },
-  { label: "Stats", href: "/stats" },
+  { label: "Stats", href: "/stats", section: "stats" },
 ];
 
 const APP_LINKS: { label: string; href: string; section: Section }[] = [

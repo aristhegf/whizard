@@ -51,6 +51,7 @@ import { COUNTRY_HEADER, NETWORK_HEADER } from "./presence";
 import { ACCOUNT_HEADER } from "./room";
 import { reportQuestion } from "./reports";
 import { getSiteStats } from "./stats";
+import { getCommunityStats } from "./community";
 import { currentSession, hasSessionCookie } from "./sessions";
 
 export { Presence } from "./presence";
@@ -170,6 +171,7 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/rooms\/([^/]+)\/ws$/, roomSocket],
   ["GET", /^\/api\/presence$/, presenceSocket],
   ["GET", /^\/api\/stats$/, getSiteStats],
+  ["GET", /^\/api\/community$/, getCommunityStats],
   ["POST", /^\/api\/questions\/([^/]+)\/report$/, reportQuestion],
 
   ["POST", /^\/api\/auth\/signup\/options$/, signUpOptions],

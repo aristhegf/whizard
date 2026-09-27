@@ -68,6 +68,8 @@ export interface AccountUser {
   pings: boolean;
   /** No pings between these times, in minutes after midnight in `timeZone`. */
   quietHours: QuietHours | null;
+  /** Chose to be listed by name on the public leaderboard on the stats page. */
+  publicLeaderboard: boolean;
   createdAt: number;
 }
 
@@ -105,6 +107,7 @@ export const accountUpdateSchema = z
     quietHours: z.object({ start: minuteOfDay, end: minuteOfDay }).nullable(),
     /** IANA time zone for quiet hours, e.g. "Africa/Lagos". */
     timeZone: z.string().max(64),
+    publicLeaderboard: z.boolean(),
   })
   .partial();
 
