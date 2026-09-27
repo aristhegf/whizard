@@ -12,6 +12,9 @@ import { roomSocketUrl } from "./api";
 import { clearSession, loadSession, saveNickname, saveSession } from "./storage";
 
 const PING_INTERVAL_MS = 5000;
+/** Extra pings right after connecting, for a good clock estimate before the first question. */
+const STARTUP_PINGS_MS = [150, 400, 800];
+const CLOCK_SAMPLES = 8;
 const MAX_RECONNECT_DELAY_MS = 10_000;
 
 export type RoomSnapshot = Extract<ServerMessage, { type: "room" }>["room"];
@@ -23,6 +26,10 @@ export interface RoomClientState {
   room: RoomSnapshot | null;
   joining: boolean;
   joinError: string | null;
+  /** This player's view of the current game, straight from the server. */
+  game: unknown;
+  /** A problem with the last host action, e.g. not enough questions for the settings. */
+  notice: string | null;
   /** Set when the room can't be used any more; the UI shows it instead of the room. */
   fatal: string | null;
 }
@@ -33,6 +40,8 @@ const FINAL_CLOSE_MESSAGES: Record<number, string> = {
   [CloseCode.Replaced]: "You opened this room in another tab or device.",
   [CloseCode.RoomExpired]: "This room has closed because nobody was in it.",
 };
+
+const QUIET_ERRORS = new Set<string>([ErrorCode.BadAction, ErrorCode.BadMessage]);
 
 const JOIN_ERRORS = new Set<string>([
   ErrorCode.NicknameInvalid,
@@ -50,6 +59,8 @@ export class RoomClient {
   private attempts = 0;
   private stopped = true;
   private pendingNickname: string | null = null;
+  private clockSamples: { rtt: number; offset: number }[] = [];
+  private clockOffset = 0;
 
   constructor(private readonly code: string) {
     this.state = {
@@ -59,6 +70,8 @@ export class RoomClient {
       room: null,
       joining: loadSession(code) !== null,
       joinError: null,
+      game: null,
+      notice: null,
       fatal: null,
     };
   }
@@ -90,6 +103,27 @@ export class RoomClient {
     this.sendJoin();
   }
 
+  /** The server's clock, estimated from ping round trips. Game deadlines use server time. */
+  readonly serverNow = (): number => Date.now() + this.clockOffset;
+
+  configure(settings: unknown): void {
+    this.update({ notice: null });
+    this.send({ type: "configure", settings });
+  }
+
+  startGame(): void {
+    this.update({ notice: null });
+    this.send({ type: "start" });
+  }
+
+  act(action: unknown): void {
+    this.send({ type: "action", action });
+  }
+
+  backToLobby(): void {
+    this.send({ type: "backToLobby" });
+  }
+
   leave(): void {
     this.send({ type: "leave" });
     clearSession(this.code);
@@ -105,6 +139,7 @@ export class RoomClient {
       this.attempts = 0;
       this.update({ connection: "open" });
       this.ping();
+      for (const delay of STARTUP_PINGS_MS) setTimeout(() => this.ping(), delay);
       this.pingTimer = setInterval(() => this.ping(), PING_INTERVAL_MS);
       this.sendJoin();
     });
@@ -145,16 +180,27 @@ export class RoomClient {
           saveNickname(me.nickname);
         }
         this.pendingNickname = null;
+        if (this.clockSamples.length === 0) this.clockOffset = message.serverTime - Date.now();
         this.update({ playerId: message.playerId, room: message.room, joining: false });
         return;
       }
       case "room":
-        this.update({ room: message.room });
+        this.update({
+          room: message.room,
+          ...(message.room.phase === "lobby" ? { game: null } : {}),
+        });
         return;
-      case "pong":
-        this.update({ latencyMs: Math.round(performance.now() - message.t) });
+      case "game":
+        this.update({ game: message.view });
         return;
+      case "pong": {
+        const rtt = performance.now() - message.t;
+        this.recordClockSample(rtt, message.serverTime + rtt / 2 - Date.now());
+        this.update({ latencyMs: Math.round(rtt) });
+        return;
+      }
       case "error":
+        if (QUIET_ERRORS.has(message.code)) return;
         if (JOIN_ERRORS.has(message.code)) {
           this.update({ joining: false, joinError: message.message });
         } else if (
@@ -162,9 +208,18 @@ export class RoomClient {
           message.code === ErrorCode.OutdatedClient
         ) {
           this.update({ fatal: message.message });
+        } else {
+          this.update({ notice: message.message });
         }
         return;
     }
+  }
+
+  /** Keeps the offset from the fastest recent round trip, which has the least uncertainty. */
+  private recordClockSample(rtt: number, offset: number): void {
+    this.clockSamples = [...this.clockSamples, { rtt, offset }].slice(-CLOCK_SAMPLES);
+    const best = this.clockSamples.reduce((a, b) => (b.rtt < a.rtt ? b : a));
+    this.clockOffset = best.offset;
   }
 
   private sendJoin(): void {

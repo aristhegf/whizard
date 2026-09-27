@@ -30,16 +30,16 @@ function RoomRoute({ code }: { code: string }) {
 function HomeScreen() {
   const [joinInput, setJoinInput] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
+  const [creating, setCreating] = useState<"friends" | "solo" | null>(null);
 
-  const handleCreate = async () => {
-    setCreating(true);
+  const handleCreate = async (mode: "friends" | "solo") => {
+    setCreating(mode);
     setError(null);
     try {
       navigate(roomPath(await createRoom()));
     } catch {
       setError("Couldn't create a room. Check your connection and try again.");
-      setCreating(false);
+      setCreating(null);
     }
   };
 
@@ -52,8 +52,11 @@ function HomeScreen() {
 
   return (
     <section className="card">
-      <button className="primary" onClick={handleCreate} disabled={creating}>
-        {creating ? "Creating…" : "Create a room"}
+      <button className="primary" onClick={() => handleCreate("friends")} disabled={!!creating}>
+        {creating === "friends" ? "Creating…" : "Play with friends"}
+      </button>
+      <button onClick={() => handleCreate("solo")} disabled={!!creating}>
+        {creating === "solo" ? "Setting up…" : "Play solo"}
       </button>
       <div className="divider">or join one</div>
       <form className="inline-form" onSubmit={handleJoin}>

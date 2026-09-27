@@ -1,4 +1,5 @@
-import { generateRoomCode, normalizeRoomCode } from "@whizard/game-core";
+import { questionCounts } from "@whizard/content";
+import { QUIZ_CATEGORIES, generateRoomCode, normalizeRoomCode } from "@whizard/game-core";
 import { PROTOCOL_VERSION } from "@whizard/protocol";
 import type { Env } from "./env";
 
@@ -27,6 +28,15 @@ export default {
 
     if (url.pathname === "/api/health") {
       return Response.json({ ok: true, protocolVersion: PROTOCOL_VERSION });
+    }
+
+    if (url.pathname === "/api/quiz/categories") {
+      const counts = questionCounts();
+      const categories = QUIZ_CATEGORIES.map((c) => ({
+        ...c,
+        questions: counts[c.id] ?? { easy: 0, medium: 0, hard: 0 },
+      }));
+      return Response.json({ categories }, { headers: { "Cache-Control": "public, max-age=300" } });
     }
 
     if (url.pathname === "/api/rooms") {

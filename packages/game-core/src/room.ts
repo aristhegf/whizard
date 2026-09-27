@@ -1,4 +1,13 @@
 import { normalizeNickname, sameNickname } from "./nickname";
+import {
+  defaultGameConfig,
+  gamePlayerLeft,
+  gameWakeAt,
+  phaseOf,
+  type GameConfig,
+  type GameSession,
+  type RoomPhase,
+} from "./session";
 
 export const MAX_PLAYERS = 16;
 /** How long a disconnected host keeps the role, so a locked phone doesn't hand it over. */
@@ -22,6 +31,10 @@ export interface RoomState {
   /** In join order. */
   players: Player[];
   lastActivityAt: number;
+  /** The game picked in the lobby and its settings. */
+  game: GameConfig;
+  /** The game being played, or the one that just finished. */
+  session: GameSession | null;
 }
 
 export interface PlayerSnapshot {
@@ -34,6 +47,8 @@ export interface RoomSnapshot {
   code: string;
   hostId: string | null;
   players: PlayerSnapshot[];
+  phase: RoomPhase;
+  game: GameConfig;
 }
 
 /** IDs of players with an open connection right now. */
@@ -51,7 +66,15 @@ export type JoinResult =
   | { ok: false; error: JoinError };
 
 export function createRoomState(code: string, now: number): RoomState {
-  return { code, createdAt: now, hostId: null, players: [], lastActivityAt: now };
+  return {
+    code,
+    createdAt: now,
+    hostId: null,
+    players: [],
+    lastActivityAt: now,
+    game: defaultGameConfig(),
+    session: null,
+  };
 }
 
 export function joinRoom(
@@ -102,7 +125,8 @@ export function leaveRoom(
   now: number,
 ): RoomState {
   const players = state.players.filter((p) => p.id !== playerId);
-  return settle({ ...state, players, lastActivityAt: now }, without(connected, playerId), now);
+  const next = gamePlayerLeft({ ...state, players, lastActivityAt: now }, playerId, now);
+  return settle(next, without(connected, playerId), now);
 }
 
 export function markDisconnected(
@@ -135,9 +159,11 @@ function resolveHost(state: RoomState, connected: ConnectedIds, now: number): Ro
   return hostId === state.hostId ? state : { ...state, hostId };
 }
 
-/** When the room next needs to call `settle` or check expiry, or null if nothing is pending. */
+/** When the room next needs to tick the game, call `settle` or check expiry, or null. */
 export function nextDeadline(state: RoomState, connected: ConnectedIds): number | null {
   const deadlines: number[] = [];
+  const gameWake = gameWakeAt(state);
+  if (gameWake !== null) deadlines.push(gameWake);
   if (connected.size === 0) deadlines.push(state.lastActivityAt + ROOM_IDLE_TTL_MS);
   for (const player of state.players) {
     if (connected.has(player.id)) continue;
@@ -163,6 +189,8 @@ export function toSnapshot(state: RoomState, connected: ConnectedIds): RoomSnaps
       nickname: p.nickname,
       connected: connected.has(p.id),
     })),
+    phase: phaseOf(state),
+    game: state.game,
   };
 }
 

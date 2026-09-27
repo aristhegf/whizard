@@ -7,6 +7,7 @@
     "typecheck": "tsc -p ."
   },
   "dependencies": {
+    "@whizard/content": "workspace:*",
     "@whizard/game-core": "workspace:*",
     "@whizard/protocol": "workspace:*"
   },

@@ -1,3 +1,5 @@
+import type { QuizCategory, QuizDifficulty } from "@whizard/game-core";
+
 export async function createRoom(): Promise<string> {
   const response = await fetch("/api/rooms", { method: "POST" });
   if (!response.ok) throw new Error(`Could not create a room (${response.status})`);
@@ -8,4 +10,17 @@ export async function createRoom(): Promise<string> {
 export function roomSocketUrl(code: string): string {
   const protocol = location.protocol === "https:" ? "wss:" : "ws:";
   return `${protocol}//${location.host}/api/rooms/${encodeURIComponent(code)}/ws`;
+}
+
+export interface QuizCategoryInfo {
+  id: QuizCategory;
+  name: string;
+  questions: Record<QuizDifficulty, number>;
+}
+
+export async function fetchQuizCategories(): Promise<QuizCategoryInfo[]> {
+  const response = await fetch("/api/quiz/categories");
+  if (!response.ok) throw new Error(`Could not load categories (${response.status})`);
+  const body = (await response.json()) as { categories: QuizCategoryInfo[] };
+  return body.categories;
 }

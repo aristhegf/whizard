@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { DEFAULT_QUIZ_SETTINGS } from "./games/quiz/settings";
 import {
   DISCONNECTED_PLAYER_TTL_MS,
   HOST_GRACE_MS,
@@ -218,6 +219,8 @@ describe("toSnapshot", () => {
         { id: "p1", nickname: "Ada", connected: true },
         { id: "p2", nickname: "Tolu", connected: false },
       ],
+      phase: "lobby",
+      game: { id: "quiz", settings: DEFAULT_QUIZ_SETTINGS },
     });
     expect(JSON.stringify(snapshot)).not.toContain("token");
   });

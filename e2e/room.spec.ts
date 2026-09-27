@@ -7,7 +7,7 @@ async function newPlayer(browser: Browser): Promise<Page> {
 
 async function createRoom(page: Page, nickname: string): Promise<string> {
   await page.goto("/");
-  await page.getByRole("button", { name: "Create a room" }).click();
+  await page.getByRole("button", { name: "Play with friends" }).click();
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   await joinAs(page, nickname);
   return page.url();
@@ -27,7 +27,7 @@ test("two players meet in the lobby", async ({ browser }) => {
   const roomUrl = await createRoom(host, "Ada");
   await expect(playerRow(host, "Ada")).toContainText("Host");
   await expect(playerRow(host, "Ada")).toContainText("You");
-  await expect(host.getByText("You're the host.")).toBeVisible();
+  await expect(host.getByRole("button", { name: "Play solo" })).toBeVisible();
 
   const guest = await newPlayer(browser);
   await guest.goto(roomUrl);
@@ -40,6 +40,7 @@ test("two players meet in the lobby", async ({ browser }) => {
   await expect(playerRow(guest, "Tolu")).toContainText("You");
   await expect(playerRow(guest, "Tolu")).not.toContainText("Host");
   await expect(guest.getByText("Waiting for the host")).toBeVisible();
+  await expect(host.getByRole("button", { name: "Start game" })).toBeVisible();
 });
 
 test("joins by typing the room code", async ({ browser }) => {
@@ -107,14 +108,14 @@ test("the host role passes on when the host leaves", async ({ browser }) => {
 
   await expect(guest.getByRole("listitem")).toHaveCount(1);
   await expect(playerRow(guest, "Tolu")).toContainText("Host");
-  await expect(guest.getByText("You're the host.")).toBeVisible();
+  await expect(guest.getByRole("button", { name: "Play solo" })).toBeVisible();
 });
 
 test("explains when a room doesn't exist", async ({ page }) => {
   await page.goto("/r/ZZZZZZ");
   await expect(page.getByRole("alert")).toHaveText(/doesn't exist or has expired/);
   await page.getByRole("button", { name: "Back to home" }).click();
-  await expect(page.getByRole("button", { name: "Create a room" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Play with friends" })).toBeVisible();
 });
 
 test("explains when a room link is malformed", async ({ page }) => {

@@ -1,5 +1,7 @@
-import { MAX_PLAYERS, NICKNAME_MAX_LENGTH } from "@whizard/game-core";
+import { MAX_PLAYERS, NICKNAME_MAX_LENGTH, type QuizView } from "@whizard/game-core";
 import { useState, type FormEvent } from "react";
+import { QuizScreen } from "./games/quiz/QuizScreen";
+import { QuizSettingsPanel, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { Notice } from "./Notice";
 import type { RoomClient, RoomClientState, RoomSnapshot } from "./roomClient";
 import { navigate, roomPath } from "./router";
@@ -12,6 +14,18 @@ export function RoomScreen({ code }: { code: string }) {
   if (state.fatal) return <Notice message={state.fatal} />;
 
   if (state.playerId && state.room) {
+    const isHost = state.room.hostId === state.playerId;
+    if (state.room.phase !== "lobby" && state.game) {
+      return (
+        <>
+          <QuizScreen view={state.game as QuizView} client={client} isHost={isHost} />
+          <footer className="game-footer">
+            <ConnectionStatus state={state} />
+            <LeaveButton client={client} label="Leave game" />
+          </footer>
+        </>
+      );
+    }
     return <Lobby client={client} state={state} room={state.room} playerId={state.playerId} />;
   }
 
@@ -89,11 +103,9 @@ function Lobby({
   playerId: string;
 }) {
   const isHost = room.hostId === playerId;
-
-  const handleLeave = () => {
-    client.leave();
-    navigate("/");
-  };
+  const settings = parseQuizSettings(room.game.settings);
+  const connectedCount = room.players.filter((p) => p.connected).length;
+  const solo = connectedCount <= 1;
 
   return (
     <section className="card">
@@ -119,15 +131,46 @@ function Lobby({
         </ul>
       </div>
 
-      <p className="hint">
-        {isHost
-          ? "You're the host. Choosing a game arrives with the quiz."
-          : "Waiting for the host to start a game."}
-      </p>
+      {settings && (
+        <QuizSettingsPanel
+          settings={settings}
+          editable={isHost}
+          onChange={(next) => client.configure(next)}
+        />
+      )}
+
+      {isHost ? (
+        <div className="stack">
+          <button className="primary" onClick={() => client.startGame()}>
+            {solo ? "Play solo" : "Start game"}
+          </button>
+          {solo && <p className="hint">Start now on your own, or invite friends first.</p>}
+        </div>
+      ) : (
+        <p className="hint">Waiting for the host to start the game.</p>
+      )}
+      {state.notice && (
+        <p className="error" role="alert">
+          {state.notice}
+        </p>
+      )}
 
       <ConnectionStatus state={state} />
-      <button onClick={handleLeave}>Leave room</button>
+      <LeaveButton client={client} label="Leave room" />
     </section>
+  );
+}
+
+function LeaveButton({ client, label }: { client: RoomClient; label: string }) {
+  return (
+    <button
+      onClick={() => {
+        client.leave();
+        navigate("/");
+      }}
+    >
+      {label}
+    </button>
   );
 }
 

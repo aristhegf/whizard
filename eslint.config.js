@@ -11,6 +11,13 @@ export default tseslint.config(
     files: ["apps/web/**/*.{ts,tsx}"],
     extends: [reactHooks.configs.flat["recommended-latest"]],
     languageOptions: { globals: globals.browser },
+    rules: {
+      // The content package holds the answers; it must never be bundled into the browser.
+      "no-restricted-imports": [
+        "error",
+        { paths: [{ name: "@whizard/content", message: "Server-only: it contains the answers." }] },
+      ],
+    },
   },
   {
     files: ["*.{js,ts}", "apps/web/vite.config.ts"],

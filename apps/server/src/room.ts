@@ -1,16 +1,27 @@
 import { DurableObject } from "cloudflare:workers";
+import { drawContent } from "@whizard/content";
 import {
+  applyGameAction,
+  configureGame,
   createRoomState,
+  gameViewFor,
   isExpired,
   joinRoom,
   leaveRoom,
   markDisconnected,
   nextDeadline,
+  randomSeed,
   randomToken,
+  returnToLobby,
   settle,
+  startGame,
+  tickGame,
   toSnapshot,
   type ConnectedIds,
+  type GameError,
+  type GameResult,
   type JoinError,
+  type Player,
   type RoomState,
 } from "@whizard/game-core";
 import {
@@ -37,6 +48,16 @@ const JOIN_ERROR_MESSAGES: Record<JoinError, string> = {
   room_full: "This room is full.",
 };
 
+const GAME_ERROR_MESSAGES: Record<GameError, string> = {
+  not_host: "Only the host can do that.",
+  bad_settings: "Those settings aren't available.",
+  not_enough_players: "You need more players to start this game.",
+  game_in_progress: "A game is already running.",
+  no_game: "There's no game running.",
+  no_content: "There aren't any questions for those settings yet.",
+  bad_action: "That move isn't allowed right now.",
+};
+
 /**
  * One instance per room code, holding the authoritative room state. Uses the WebSocket
  * hibernation API so rooms aren't billed while they wait for messages.
@@ -54,25 +75,14 @@ export class Room extends DurableObject<Env> {
   override async fetch(): Promise<Response> {
     const { 0: client, 1: server } = new WebSocketPair();
     this.ctx.acceptWebSocket(server);
-    if (!(await this.load())) {
-      this.reject(
-        server,
-        ErrorCode.RoomNotFound,
-        "This room doesn't exist or has expired.",
-        CloseCode.RoomNotFound,
-      );
-    }
+    if (!(await this.load())) this.rejectMissingRoom(server);
     return new Response(null, { status: 101, webSocket: client });
   }
 
   override async webSocketMessage(ws: WebSocket, data: string | ArrayBuffer): Promise<void> {
     const message = parseClientMessage(data);
     if (!message) {
-      send(ws, {
-        type: "error",
-        code: ErrorCode.BadMessage,
-        message: "Message was not understood.",
-      });
+      sendError(ws, ErrorCode.BadMessage, "Message was not understood.");
       return;
     }
 
@@ -86,6 +96,24 @@ export class Room extends DurableObject<Env> {
       case "leave":
         await this.handleLeave(ws);
         return;
+      case "configure":
+        await this.handleGame(ws, (state, playerId) =>
+          configureGame(state, playerId, message.settings),
+        );
+        return;
+      case "start":
+        await this.handleGame(ws, (state, playerId, now) =>
+          startGame(state, playerId, this.connectedIds(), now, randomSeed(), drawContent),
+        );
+        return;
+      case "action":
+        await this.handleGame(ws, (state, playerId, now) =>
+          applyGameAction(state, playerId, message.action, now),
+        );
+        return;
+      case "backToLobby":
+        await this.handleGame(ws, (state, playerId) => returnToLobby(state, playerId));
+        return;
     }
   }
 
@@ -98,9 +126,9 @@ export class Room extends DurableObject<Env> {
   }
 
   override async alarm(): Promise<void> {
-    const state = await this.load();
-    if (!state) return;
     const now = Date.now();
+    const state = await this.current(now);
+    if (!state) return;
     const connected = this.connectedIds();
 
     if (isExpired(state, connected, now)) {
@@ -115,86 +143,110 @@ export class Room extends DurableObject<Env> {
 
   private async handleJoin(ws: WebSocket, message: Extract<ClientMessage, { type: "join" }>) {
     if (message.protocolVersion !== PROTOCOL_VERSION) {
-      this.reject(
+      sendError(
         ws,
         ErrorCode.OutdatedClient,
         "Whizard has been updated. Refresh the page to keep playing.",
-        CloseCode.OutdatedClient,
       );
+      ws.close(CloseCode.OutdatedClient, "Outdated client");
       return;
     }
-    const state = await this.load();
+    const now = Date.now();
+    const state = await this.current(now);
     if (!state) {
-      this.reject(
-        ws,
-        ErrorCode.RoomNotFound,
-        "This room doesn't exist or has expired.",
-        CloseCode.RoomNotFound,
-      );
+      this.rejectMissingRoom(ws);
       return;
     }
     if (attachmentOf(ws)) return;
 
-    const result = joinRoom(state, message, this.connectedIds(), Date.now(), () => ({
+    const result = joinRoom(state, message, this.connectedIds(), now, () => ({
       id: randomToken(9),
       sessionToken: randomToken(24),
     }));
     if (!result.ok) {
-      send(ws, { type: "error", code: result.error, message: JOIN_ERROR_MESSAGES[result.error] });
+      sendError(ws, result.error, JOIN_ERROR_MESSAGES[result.error]);
       return;
     }
 
-    const { player } = result;
-    for (const other of this.socketsFor(player.id)) {
+    for (const other of this.socketsFor(result.player.id)) {
       other.serializeAttachment(null);
       other.close(CloseCode.Replaced, "Opened somewhere else");
     }
-    ws.serializeAttachment({ playerId: player.id } satisfies SocketAttachment);
-
-    const snapshot = await this.commit(result.state);
-    send(ws, {
-      type: "welcome",
-      playerId: player.id,
-      sessionToken: player.sessionToken,
-      room: snapshot,
-    });
+    ws.serializeAttachment({ playerId: result.player.id } satisfies SocketAttachment);
+    await this.commit(result.state, { ws, player: result.player });
   }
 
   private async handleLeave(ws: WebSocket) {
     const attachment = attachmentOf(ws);
-    const state = await this.load();
+    const now = Date.now();
+    const state = await this.current(now);
     if (!attachment || !state) {
-      send(ws, {
-        type: "error",
-        code: ErrorCode.NotJoined,
-        message: "You haven't joined this room.",
-      });
+      sendError(ws, ErrorCode.NotJoined, "You haven't joined this room.");
       return;
     }
     ws.serializeAttachment(null);
-    await this.commit(leaveRoom(state, attachment.playerId, this.connectedIds(), Date.now()));
+    await this.commit(leaveRoom(state, attachment.playerId, this.connectedIds(), now));
     ws.close(1000, "Left the room");
   }
 
   private async handleDisconnect(ws: WebSocket) {
     const attachment = attachmentOf(ws);
-    const state = await this.load();
+    const now = Date.now();
+    const state = await this.current(now);
     if (!attachment || !state) return;
     ws.serializeAttachment(null);
-    await this.commit(
-      markDisconnected(state, attachment.playerId, this.connectedIds(), Date.now()),
-    );
+    await this.commit(markDisconnected(state, attachment.playerId, this.connectedIds(), now));
   }
 
-  /** Saves the state, reschedules the alarm and sends the new snapshot to everyone in the room. */
-  private async commit(state: RoomState) {
+  private async handleGame(
+    ws: WebSocket,
+    apply: (state: RoomState, playerId: string, now: number) => GameResult,
+  ) {
+    const attachment = attachmentOf(ws);
+    const now = Date.now();
+    const state = await this.current(now);
+    if (!attachment || !state) {
+      sendError(ws, ErrorCode.NotJoined, "You haven't joined this room.");
+      return;
+    }
+    const result = apply(state, attachment.playerId, now);
+    if (!result.ok) {
+      sendError(ws, result.error, result.message ?? GAME_ERROR_MESSAGES[result.error]);
+      return;
+    }
+    await this.commit(result.state);
+  }
+
+  /**
+   * Saves the state, reschedules the alarm, then sends everyone the room snapshot and their
+   * own view of the game. A newly joined player gets their welcome first.
+   */
+  private async commit(state: RoomState, joined?: { ws: WebSocket; player: Player }) {
     await this.save(state);
     const snapshot = toSnapshot(state, this.connectedIds());
-    const message = encode({ type: "room", room: snapshot });
-    for (const ws of this.ctx.getWebSockets()) {
-      if (attachmentOf(ws) && ws.readyState === OPEN) ws.send(message);
+    if (joined) {
+      send(joined.ws, {
+        type: "welcome",
+        playerId: joined.player.id,
+        sessionToken: joined.player.sessionToken,
+        room: snapshot,
+        serverTime: Date.now(),
+      });
     }
-    return snapshot;
+
+    const roomMessage = encode({ type: "room", room: snapshot });
+    for (const ws of this.ctx.getWebSockets()) {
+      const attachment = attachmentOf(ws);
+      if (!attachment || ws.readyState !== OPEN) continue;
+      if (ws !== joined?.ws) ws.send(roomMessage);
+      if (state.session) send(ws, { type: "game", view: gameViewFor(state, attachment.playerId) });
+    }
+  }
+
+  /** The room state with the game clock brought up to date. */
+  private async current(now: number): Promise<RoomState | null> {
+    const state = await this.load();
+    return state && tickGame(state, now);
   }
 
   private async load(): Promise<RoomState | null> {
@@ -225,9 +277,9 @@ export class Room extends DurableObject<Env> {
     return this.ctx.getWebSockets().filter((ws) => attachmentOf(ws)?.playerId === playerId);
   }
 
-  private reject(ws: WebSocket, code: ErrorCode, message: string, closeCode: number) {
-    send(ws, { type: "error", code, message });
-    ws.close(closeCode, message);
+  private rejectMissingRoom(ws: WebSocket) {
+    sendError(ws, ErrorCode.RoomNotFound, "This room doesn't exist or has expired.");
+    ws.close(CloseCode.RoomNotFound, "Room not found");
   }
 }
 
@@ -237,4 +289,8 @@ function attachmentOf(ws: WebSocket): SocketAttachment | null {
 
 function send(ws: WebSocket, message: ServerMessage): void {
   ws.send(encode(message));
+}
+
+function sendError(ws: WebSocket, code: ErrorCode, message: string): void {
+  send(ws, { type: "error", code, message });
 }

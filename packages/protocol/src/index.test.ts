@@ -66,7 +66,10 @@ describe("parseServerMessage", () => {
         code: "ABCDEF",
         hostId: "p1",
         players: [{ id: "p1", nickname: "Ada", connected: true }],
+        phase: "lobby",
+        game: { id: "quiz", settings: { count: 10 } },
       },
+      serverTime: 123,
     };
     expect(parseServerMessage(encode(welcome))).toEqual(welcome);
   });
