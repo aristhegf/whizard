@@ -48,8 +48,4 @@ To deploy by hand instead, run `pnpm deploy` after `wrangler login`.
 
 ## Adding questions
 
-Questions live in `packages/content/src/questions/`, one file per category, and every one is checked by the test suite. To add more, run the **Add questions** workflow from the Actions tab (it needs an `ANTHROPIC_API_KEY` secret) and review the pull request it opens. Or run it locally:
-
-```sh
-ANTHROPIC_API_KEY=… pnpm content:generate --category history --level medium --count 10
-```
+Questions live in `packages/content/src/questions/`, one file per category, and the test suite checks every one. See [docs/QUESTIONS.md](docs/QUESTIONS.md) for the format, the rules and how a batch gets fact-checked before it ships.

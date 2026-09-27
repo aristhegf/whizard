@@ -36,14 +36,14 @@ flowchart LR
         R2[("R2<br/>Images")]
     end
 
-    GEN["Content pipeline<br/>(offline script)"]
+    Q["Question files<br/>(reviewed in commits)"]
 
     UI -- "HTTPS: create room" --> W
     UI <-- "WebSocket" --> W
     W -- "route by room code" --> DO
     DO -- "draw content" --> D1
     CV -. "images" .-> R2
-    GEN -- "validated content" --> D1
+    Q -- "bundled at build" --> DO
 ```
 
 The web app and the Worker deploy together as a single Cloudflare Worker: the Worker handles `/api/*` and serves the built web app for everything else. Client and API share one origin, so there's no CORS setup.
@@ -70,8 +70,6 @@ whizard/
 │   ├── protocol/       Message types and runtime validation (zod), shared by client and server
 │   ├── game-core/      Pure game logic: room rules, game modules, scoring
 │   └── content/        Question bank (server-only: it holds the answers)
-├── tools/
-│   └── content-gen/    Offline tool that drafts, checks and adds new questions
 └── docs/
 ```
 
@@ -268,25 +266,9 @@ Every question in the bank must pass these checks, which run as tests on every p
 - **No duplicates:** within a category, no two questions share a prompt. Two questions with the same answer and prompts at least 70% similar (by character trigrams) also count as the same question. This keeps "Which river flows through Cairo?" and "…through Baghdad?" apart while catching rewordings.
 - **Enough to play:** at least 20 questions at every level of every category, so the longest game never runs short.
 
-### Generation pipeline (`tools/content-gen`)
+### Adding questions
 
-An offline tool that grows the bank. It never runs during a game.
-
-```sh
-ANTHROPIC_API_KEY=… pnpm content:generate --category football --level hard --count 10
-```
-
-For each category and level it:
-
-1. **Drafts** questions through an LLM API as structured JSON. The prompt includes the category's coverage and "avoid" guidance (for example, no current champions or records in Football), the level, and every existing prompt in that category so it steers away from repeats.
-2. **Validates** each draft against the schema and the quality checks above.
-3. **De-duplicates** against the bank and the rest of the batch.
-4. **Verifies** each survivor with a separate call that sees the choices shuffled, without the intended answer, and must answer it itself. A question is kept only if that answer matches, the checker is confident, and it flags no ambiguity, dispute or staleness.
-5. **Appends** the keepers with the next ids, formatted so the repo's checks pass. Rejections are printed with the reason.
-
-The **Add questions** workflow in GitHub Actions runs the same tool from the browser. Pick a category, level and count, and it opens a pull request with the new questions for a human to skim before merging. It needs an `ANTHROPIC_API_KEY` repository secret.
-
-Estimated cost is a few dollars per thousand questions, including the verification pass. The pipeline's logic is tested with a fake model, so the tests need no API key.
+New questions are written in batches and fact-checked independently before they ship: someone who didn't write a batch reviews every question as a skeptic and fixes or replaces anything doubtful. The tests above then gate the commit. The full standard, including the format, the rules and what to avoid in each category, is in [QUESTIONS.md](QUESTIONS.md).
 
 ### Starter set
 
@@ -390,7 +372,7 @@ Jigsaw, Spot It, Reaction and Draw & Guess use **Phaser**, loaded only when one 
 | **M0: Foundations**          | Monorepo, lint/format, CI, Worker + Room Durable Object, web app, room codes, WebSocket ping                                                                                        | Done   |
 | **M1: Rooms**                | Nicknames, live lobby, invite link, host and host handover, reconnection, room expiry, end-to-end tests                                                                             | Done   |
 | **M2: Quiz**                 | Game module runner, game settings in the lobby, solo play, synchronized start with own-pace play, points-only leaderboard, private review, 140 hand-checked Bible questions         | Done   |
-| **M3: Content**              | Question bank for all 11 categories (740 questions, independently fact-checked), quality checks in CI, question pipeline and "Add questions" workflow                               | Done   |
+| **M3: Content**              | Question bank for all 11 categories (740 questions, independently fact-checked), quality checks in CI, a written standard for adding questions                                      | Done   |
 | **M4: Accounts and friends** | Sign-in, quiz preferences (explanations during the quiz), profiles, friends, pings (web push), match history, head-to-head records, group leaderboards, account deletion and export |        |
 | **M5: Launch**               | Sounds, final polish, question bank in D1, report button, no repeated questions, rate limiting, privacy policy                                                                      |        |
 | **After launch**             | New games category by category, in the order in [GAMES.md](GAMES.md)                                                                                                                |        |
@@ -410,6 +392,5 @@ pnpm lint && pnpm typecheck
 ## Open items
 
 - **Deploys** run from CI on every green push to `main`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. `pnpm deploy` does the same by hand.
-- To grow the question bank, add an `ANTHROPIC_API_KEY` repository secret and run the **Add questions** workflow.
 - For accounts (M4): a **Google sign-in client** (free, from Google Cloud), an email sending service for sign-in links, and a **privacy policy and terms**.
 - **Domain name:** optional. The app can run on a free `*.workers.dev` address until there is one.
