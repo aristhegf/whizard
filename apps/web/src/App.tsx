@@ -1,16 +1,37 @@
 import { normalizeRoomCode, ROOM_CODE_LENGTH } from "@whizard/game-core";
 import { useState, type FormEvent } from "react";
+import { useAccount } from "./account";
+import { AccountScreen } from "./AccountScreen";
 import { createRoom } from "./api";
 import { Notice } from "./Notice";
+import { PrivacyScreen } from "./PrivacyScreen";
 import { RoomScreen } from "./RoomScreen";
-import { navigate, roomPath, useRoute } from "./router";
+import { linkTo, navigate, roomPath, useRoute } from "./router";
 
 export function App() {
   const route = useRoute();
   return (
     <main className="shell">
-      {route.name === "room" ? <RoomRoute code={route.code} /> : <HomeScreen />}
+      {route.name === "room" ? (
+        <RoomRoute code={route.code} />
+      ) : route.name === "account" ? (
+        <AccountScreen />
+      ) : route.name === "privacy" ? (
+        <PrivacyScreen />
+      ) : (
+        <HomeScreen />
+      )}
     </main>
+  );
+}
+
+function AccountLink() {
+  const account = useAccount();
+  if (account.status === "loading") return <span className="account-link" />;
+  return (
+    <a className="account-link" {...linkTo("/account")}>
+      {account.user ? account.user.displayName : "Sign in"}
+    </a>
   );
 }
 
@@ -45,6 +66,9 @@ function HomeScreen() {
 
   return (
     <div className="screen">
+      <nav className="home-top" aria-label="Account">
+        <AccountLink />
+      </nav>
       <header className="hero">
         <h1 className="wordmark" translate="no">
           Whizard<span className="spark">.</span>

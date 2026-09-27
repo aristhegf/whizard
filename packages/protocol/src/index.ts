@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const PROTOCOL_VERSION = 4;
+export const PROTOCOL_VERSION = 5;
 
 export const MAX_MESSAGE_BYTES = 4096;
 
@@ -37,6 +37,7 @@ const playerSnapshotSchema = z.object({
   id: z.string(),
   nickname: z.string(),
   connected: z.boolean(),
+  username: z.string().nullable(),
 });
 
 export const roomSnapshotSchema = z.object({
@@ -54,6 +55,7 @@ export const clientMessageSchema = z.discriminatedUnion("type", [
     protocolVersion: z.number().int(),
     nickname: z.string().max(100),
     sessionToken: z.string().max(100).optional(),
+    guestId: z.string().max(64).optional(),
   }),
   z.object({ type: z.literal("leave") }),
   z.object({ type: z.literal("ping"), t: z.number() }),
@@ -107,3 +109,5 @@ export function parseServerMessage(raw: unknown): ServerMessage | null {
 export function encode(message: ClientMessage | ServerMessage): string {
   return JSON.stringify(message);
 }
+
+export * from "./accounts";

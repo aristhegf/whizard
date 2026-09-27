@@ -14,9 +14,11 @@ import {
   applyGameAction,
   configureGame,
   gameViewFor,
+  markRecorded,
   returnToLobby,
   startGame,
   tickGame,
+  unrecordedResult,
   type ContentSource,
 } from "./session";
 
@@ -176,5 +178,57 @@ describe("playing", () => {
     expect(returnToLobby(started, "p2")).toEqual({ ok: false, error: "not_host" });
     const lobby = ok(returnToLobby(started, "p1"));
     expect(toSnapshot(lobby, connected).phase).toBe("lobby");
+  });
+});
+
+describe("match results", () => {
+  function runOut(state: RoomState, connected: Set<string>): RoomState {
+    let current = state;
+    for (let wake = nextDeadline(current, connected); wake !== null;) {
+      current = tickGame(current, wake);
+      wake =
+        toSnapshot(current, connected).phase === "playing"
+          ? nextDeadline(current, connected)
+          : null;
+    }
+    return current;
+  }
+
+  it("summarizes a finished game once, with who played", () => {
+    const { state, connected } = room("Ada", "Tolu");
+    const started = ok(startGame(state, "p1", connected, T0, 1, bank));
+    expect(unrecordedResult(started)).toBeNull();
+
+    const finished = runOut(started, connected);
+    const result = unrecordedResult(finished);
+    expect(result).toMatchObject({
+      gameId: "quiz",
+      startedAt: T0,
+      summary: {
+        category: DEFAULT_QUIZ_SETTINGS.category,
+        difficulty: DEFAULT_QUIZ_SETTINGS.difficulty,
+        mode: DEFAULT_QUIZ_SETTINGS.variant,
+        rounds: DEFAULT_QUIZ_SETTINGS.count,
+        players: [
+          { playerId: "p1", placing: 1, score: 0, correct: 0 },
+          { playerId: "p2", placing: 2, score: 0, correct: 0 },
+        ],
+      },
+      roster: [
+        { playerId: "p1", nickname: "Ada", account: null, guestId: null },
+        { playerId: "p2", nickname: "Tolu", account: null, guestId: null },
+      ],
+    });
+    expect(unrecordedResult(markRecorded(finished))).toBeNull();
+  });
+
+  it("leaves out players who quit before the end", () => {
+    const { state, connected } = room("Ada", "Tolu");
+    const started = ok(startGame(state, "p1", connected, T0, 1, bank));
+    const left = leaveRoom(started, "p2", connected, T0 + 10);
+    connected.delete("p2");
+    const result = unrecordedResult(runOut(left, connected));
+    expect(result?.summary.players.map((p) => p.playerId)).toEqual(["p1"]);
+    expect(result?.roster).toHaveLength(2);
   });
 });

@@ -1,7 +1,10 @@
+import { randomToken } from "@whizard/game-core";
+
 // localStorage can be unavailable (private browsing, blocked storage), so every access
 // is guarded and the app keeps working without it.
 
 const NICKNAME_KEY = "whizard:nickname";
+const GUEST_ID_KEY = "whizard:guest";
 const SESSIONS_KEY = "whizard:sessions";
 const SESSION_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
@@ -26,6 +29,18 @@ function write(key: string, value: unknown): void {
   } catch {
     // Storage full or blocked: the session just won't survive a reload.
   }
+}
+
+/**
+ * A random ID for this browser, sent when joining a room. If the player creates an account
+ * later, games played with it in the past week move to the account.
+ */
+export function guestId(): string {
+  const saved = read<string>(GUEST_ID_KEY);
+  if (saved) return saved;
+  const id = randomToken(18);
+  write(GUEST_ID_KEY, id);
+  return id;
 }
 
 export function loadNickname(): string {

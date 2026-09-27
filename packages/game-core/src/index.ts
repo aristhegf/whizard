@@ -14,6 +14,7 @@ export {
   nextDeadline,
   settle,
   toSnapshot,
+  type AccountIdentity,
   type ConnectedIds,
   type JoinError,
   type JoinRequest,
@@ -33,19 +34,23 @@ export {
   applyGameAction,
   configureGame,
   gameViewFor,
+  markRecorded,
   phaseOf,
   returnToLobby,
   startGame,
   tickGame,
+  unrecordedResult,
   type ContentSource,
+  type FinishedGame,
   type GameConfig,
   type GameError,
   type GameResult,
   type GameSession,
   type RoomPhase,
+  type RosterEntry,
 } from "./session";
 export { GAMES, GAME_IDS, gameModule, type GameId } from "./games/registry";
-export type { ContentRequest, GameModule, GamePlayer } from "./games/types";
+export type { ContentRequest, GameModule, GamePlayer, GameSummary } from "./games/types";
 export {
   AUTO_ADVANCE_MS,
   CLASSIC_IDLE_LIMIT_MS,

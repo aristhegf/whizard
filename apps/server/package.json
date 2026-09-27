@@ -7,9 +7,12 @@
     "typecheck": "tsc -p ."
   },
   "dependencies": {
+    "@pushforge/builder": "^2.0.5",
+    "@simplewebauthn/server": "^14.0.3",
     "@whizard/content": "workspace:*",
     "@whizard/game-core": "workspace:*",
-    "@whizard/protocol": "workspace:*"
+    "@whizard/protocol": "workspace:*",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260927.1",

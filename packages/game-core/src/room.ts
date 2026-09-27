@@ -16,12 +16,22 @@ export const DISCONNECTED_PLAYER_TTL_MS = 10 * 60_000;
 /** A room with nobody connected is deleted after this long. */
 export const ROOM_IDLE_TTL_MS = 30 * 60_000;
 
+/** A signed-in account, verified by the server before the player reaches the room. */
+export interface AccountIdentity {
+  userId: string;
+  username: string;
+}
+
 export interface Player {
   id: string;
   nickname: string;
   sessionToken: string;
   joinedAt: number;
   lastSeenAt: number;
+  /** Set when the player is signed in. */
+  account: AccountIdentity | null;
+  /** A random ID the browser keeps, so a guest's games can follow them into a new account. */
+  guestId: string | null;
 }
 
 export interface RoomState {
@@ -41,6 +51,8 @@ export interface PlayerSnapshot {
   id: string;
   nickname: string;
   connected: boolean;
+  /** Public account handle, so other players can add them as a friend. */
+  username: string | null;
 }
 
 export interface RoomSnapshot {
@@ -57,6 +69,8 @@ export type ConnectedIds = ReadonlySet<string>;
 export interface JoinRequest {
   nickname: string;
   sessionToken?: string | undefined;
+  guestId?: string | undefined;
+  account?: AccountIdentity | null | undefined;
 }
 
 export type JoinError = "nickname_invalid" | "nickname_taken" | "room_full";
@@ -90,7 +104,8 @@ export function joinRoom(
       : undefined;
 
   if (existing) {
-    const player = { ...existing, lastSeenAt: now };
+    // Signing in between visits upgrades the player; a signed-out reconnect keeps what they had.
+    const player = { ...existing, lastSeenAt: now, account: request.account ?? existing.account };
     const players = state.players.map((p) => (p.id === player.id ? player : p));
     const next = { ...state, players, lastActivityAt: now };
     return {
@@ -108,7 +123,14 @@ export function joinRoom(
     return { ok: false, error: "nickname_taken" };
   }
 
-  const player: Player = { ...newIds(), nickname, joinedAt: now, lastSeenAt: now };
+  const player: Player = {
+    ...newIds(),
+    nickname,
+    joinedAt: now,
+    lastSeenAt: now,
+    account: request.account ?? null,
+    guestId: request.guestId ?? null,
+  };
   const next = { ...state, players: [...state.players, player], lastActivityAt: now };
   return {
     ok: true,
@@ -188,6 +210,7 @@ export function toSnapshot(state: RoomState, connected: ConnectedIds): RoomSnaps
       id: p.id,
       nickname: p.nickname,
       connected: connected.has(p.id),
+      username: p.account?.username ?? null,
     })),
     phase: phaseOf(state),
     game: state.game,

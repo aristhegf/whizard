@@ -1,5 +1,6 @@
 import type { QuizReviewItem, QuizStage, QuizStanding, QuizView } from "@whizard/game-core";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
+import { useAccount } from "../../account";
 import type { RoomClient } from "../../roomClient";
 import { useServerNow } from "../../useServerNow";
 
@@ -9,7 +10,7 @@ type AnswerStage = Extract<QuizStage, { kind: "answer" }>;
 const LETTERS = ["A", "B", "C", "D"];
 /** Playing with friends: a glance at the right answer, then straight on. */
 const QUICK_RESULT_MS = 1000;
-/** Playing solo: time to read the explanation, with a Skip button. */
+/** Playing solo, or signed in and asked for them: time to read the explanation, with Skip. */
 const EXPLAINED_RESULT_MS = 3000;
 
 interface Props {
@@ -149,7 +150,9 @@ function Answer({
   stage: AnswerStage;
   client: RoomClient;
 }) {
-  const explained = view.playerCount === 1;
+  const account = useAccount();
+  const wantsExplanations = account.status === "ready" && !!account.user?.showExplanations;
+  const explained = view.playerCount === 1 || wantsExplanations;
   const sent = useRef(false);
   const next = () => {
     if (sent.current) return;

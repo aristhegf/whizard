@@ -23,7 +23,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `pnpm --filter @whizard/web exec vite --port ${PORT} --strictPort`,
+    command: `pnpm db:migrate && pnpm --filter @whizard/web exec vite --port ${PORT} --strictPort`,
     url: `http://localhost:${PORT}/api/health`,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,

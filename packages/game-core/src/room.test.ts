@@ -216,12 +216,58 @@ describe("toSnapshot", () => {
       code: "ABCDEF",
       hostId: "p1",
       players: [
-        { id: "p1", nickname: "Ada", connected: true },
-        { id: "p2", nickname: "Tolu", connected: false },
+        { id: "p1", nickname: "Ada", connected: true, username: null },
+        { id: "p2", nickname: "Tolu", connected: false, username: null },
       ],
       phase: "lobby",
       game: { id: "quiz", settings: DEFAULT_QUIZ_SETTINGS },
     });
     expect(JSON.stringify(snapshot)).not.toContain("token");
+  });
+});
+
+describe("accounts", () => {
+  const ada = { userId: "user-ada", username: "ada" };
+
+  it("records who is signed in and shows only their username", () => {
+    const state = createRoomState("ABCDEF", T0);
+    const result = joinRoom(
+      state,
+      { nickname: "Ada", account: ada, guestId: "guest-1" },
+      new Set(),
+      T0,
+      () => ({ id: "p1", sessionToken: "token1" }),
+    );
+    if (!result.ok) throw new Error(result.error);
+    expect(result.player.account).toEqual(ada);
+    expect(result.player.guestId).toBe("guest-1");
+
+    const snapshot = JSON.stringify(toSnapshot(result.state, new Set(["p1"])));
+    expect(snapshot).toContain('"username":"ada"');
+    expect(snapshot).not.toContain("user-ada");
+    expect(snapshot).not.toContain("guest-1");
+  });
+
+  it("keeps the account on a signed-out reconnect and adds one after signing in", () => {
+    const { state } = roomWith("Ada");
+    const signedIn = joinRoom(
+      state,
+      { nickname: "Ada", sessionToken: "token1", account: ada },
+      new Set(),
+      T0,
+      ids(),
+    );
+    if (!signedIn.ok) throw new Error(signedIn.error);
+    expect(signedIn.player.account).toEqual(ada);
+
+    const again = joinRoom(
+      signedIn.state,
+      { nickname: "Ada", sessionToken: "token1" },
+      new Set(),
+      T0,
+      ids(),
+    );
+    if (!again.ok) throw new Error(again.error);
+    expect(again.player.account).toEqual(ada);
   });
 });

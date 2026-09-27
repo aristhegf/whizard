@@ -11,5 +11,16 @@
     "bindings": [{ "name": "ROOMS", "class_name": "Room" }],
   },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Room"] }],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "whizard",
+      // The deploy job looks up the real ID (creating the database the first time) and fills it in.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations",
+    },
+  ],
+  // Daily tidy-up of expired sign-ins and old guest details.
+  "triggers": { "crons": ["17 3 * * *"] },
   "observability": { "enabled": true },
 }

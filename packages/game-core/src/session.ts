@@ -1,6 +1,6 @@
 import { gameModule, type GameId } from "./games/registry";
-import { isRejection, type ContentRequest } from "./games/types";
-import type { ConnectedIds, RoomState } from "./room";
+import { isRejection, type ContentRequest, type GameSummary } from "./games/types";
+import type { AccountIdentity, ConnectedIds, RoomState } from "./room";
 
 export type RoomPhase = "lobby" | "playing" | "finished";
 
@@ -9,10 +9,29 @@ export interface GameConfig {
   settings: unknown;
 }
 
+/** Who played, captured at the start so results can be saved even after someone leaves. */
+export interface RosterEntry {
+  playerId: string;
+  nickname: string;
+  account: AccountIdentity | null;
+  guestId: string | null;
+}
+
 export interface GameSession {
   gameId: GameId;
   state: unknown;
   finished: boolean;
+  startedAt: number;
+  roster: RosterEntry[];
+  /** Set once the result has been saved to match history. */
+  recorded: boolean;
+}
+
+export interface FinishedGame {
+  gameId: GameId;
+  startedAt: number;
+  summary: GameSummary;
+  roster: RosterEntry[];
 }
 
 export type GameError =
@@ -62,10 +81,8 @@ export function startGame(
   if (phaseOf(state) === "playing") return fail("game_in_progress");
 
   const module = gameModule(state.game.id);
-  const players = state.players
-    .filter((p) => connected.has(p.id))
-    .slice(0, module.maxPlayers)
-    .map((p) => ({ id: p.id, nickname: p.nickname }));
+  const playing = state.players.filter((p) => connected.has(p.id)).slice(0, module.maxPlayers);
+  const players = playing.map((p) => ({ id: p.id, nickname: p.nickname }));
   if (players.length < module.minPlayers) return fail("not_enough_players");
 
   const content = drawContent(module.contentNeeded(state.game.settings), seed);
@@ -77,7 +94,19 @@ export function startGame(
     state: {
       ...state,
       lastActivityAt: now,
-      session: { gameId: state.game.id, state: gameState, finished: module.isFinished(gameState) },
+      session: {
+        gameId: state.game.id,
+        state: gameState,
+        finished: module.isFinished(gameState),
+        startedAt: now,
+        roster: playing.map((p) => ({
+          playerId: p.id,
+          nickname: p.nickname,
+          account: p.account,
+          guestId: p.guestId,
+        })),
+        recorded: false,
+      },
     },
   };
 }
@@ -123,6 +152,24 @@ export function gamePlayerLeft(state: RoomState, playerId: string, now: number):
 export function gameWakeAt(state: RoomState): number | null {
   if (phaseOf(state) !== "playing") return null;
   return gameModule(state.session!.gameId).nextWakeAt(state.session!.state);
+}
+
+/** A finished game whose result hasn't been saved yet, or null. */
+export function unrecordedResult(state: RoomState): FinishedGame | null {
+  const session = state.session;
+  if (!session?.finished || session.recorded) return null;
+  return {
+    gameId: session.gameId,
+    startedAt: session.startedAt,
+    summary: gameModule(session.gameId).summarize(session.state),
+    // Rooms saved before results were recorded have no roster.
+    roster: session.roster ?? [],
+  };
+}
+
+export function markRecorded(state: RoomState): RoomState {
+  if (!state.session) return state;
+  return { ...state, session: { ...state.session, recorded: true } };
 }
 
 export function gameViewFor(state: RoomState, playerId: string): unknown {

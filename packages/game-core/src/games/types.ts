@@ -9,6 +9,24 @@ export interface GamePlayer {
 /** What a game needs from the content bank before it can start. */
 export type ContentRequest = QuizContentRequest;
 
+/** How a finished game went, for match history. The same shape for every game. */
+export interface GameSummary {
+  /** What stats are grouped by, e.g. the quiz category. */
+  category: string | null;
+  difficulty: string | null;
+  mode: string | null;
+  /** Questions or rounds played. */
+  rounds: number;
+  /** Players who stayed to the end, best first. */
+  players: {
+    playerId: string;
+    placing: number;
+    score: number;
+    /** Correct answers, for games that have them. */
+    correct: number | null;
+  }[];
+}
+
 export interface Rejection {
   rejected: string;
 }
@@ -42,6 +60,8 @@ export interface GameModule<Settings, Content, State, Action, View> {
   /** The next time `tick` has something to do, or null. */
   nextWakeAt(state: State): number | null;
   isFinished(state: State): boolean;
+  /** Only called once the game is finished. */
+  summarize(state: State): GameSummary;
   /** Everything this player may see. Must never include hidden information. */
   viewFor(state: State, playerId: string): View;
 }

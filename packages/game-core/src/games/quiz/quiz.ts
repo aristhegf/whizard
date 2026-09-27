@@ -403,5 +403,21 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
 
   isFinished: (state) => state.finishedAt !== null,
 
+  summarize(state) {
+    const stayed = standingsOf(state).filter((s) => !s.left);
+    return {
+      category: state.settings.category,
+      difficulty: state.settings.difficulty,
+      mode: state.settings.variant,
+      rounds: state.questions.length,
+      players: stayed.map((s, i) => ({
+        playerId: s.playerId,
+        placing: i + 1,
+        score: s.score,
+        correct: state.players.find((p) => p.id === s.playerId)?.correctCount ?? null,
+      })),
+    };
+  },
+
   viewFor,
 };

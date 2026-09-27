@@ -7,7 +7,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "pnpm --filter @whizard/web dev",
+    "dev": "pnpm db:migrate && pnpm --filter @whizard/web dev",
+    "db:migrate": "pnpm --filter @whizard/server exec wrangler d1 migrations apply DB --local --persist-to ../web/.wrangler/state",
     "build": "pnpm --filter @whizard/web build",
     "deploy": "pnpm --filter @whizard/web run deploy",
     "typecheck": "pnpm -r typecheck && tsc -p e2e",

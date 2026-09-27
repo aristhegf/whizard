@@ -65,7 +65,7 @@ describe("parseServerMessage", () => {
       room: {
         code: "ABCDEF",
         hostId: "p1",
-        players: [{ id: "p1", nickname: "Ada", connected: true }],
+        players: [{ id: "p1", nickname: "Ada", connected: true, username: null }],
         phase: "lobby",
         game: { id: "quiz", settings: { count: 10 } },
       },

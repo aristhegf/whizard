@@ -1,5 +1,6 @@
 import { NICKNAME_MAX_LENGTH, type QuizView } from "@whizard/game-core";
 import { useState, type FormEvent } from "react";
+import { useAccount } from "./account";
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsPanel, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { Notice } from "./Notice";
@@ -108,7 +109,9 @@ function NicknameForm({
   error: string | null;
   onSubmit: (nickname: string) => void;
 }) {
-  const [nickname, setNickname] = useState(loadNickname);
+  const account = useAccount();
+  const accountName = account.status === "ready" ? account.user?.displayName : undefined;
+  const [nickname, setNickname] = useState(() => loadNickname() || accountName || "");
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();

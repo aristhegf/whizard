@@ -65,7 +65,7 @@ A TypeScript monorepo using pnpm workspaces:
 whizard/
 ├── apps/
 │   ├── web/            React + Vite client (dev server runs the Worker too)
-│   └── server/         Cloudflare Worker, Room Durable Object, wrangler config
+│   └── server/         Cloudflare Worker, Room Durable Object, accounts API, D1 migrations
 ├── packages/
 │   ├── protocol/       Message types and runtime validation (zod), shared by client and server
 │   ├── game-core/      Pure game logic: room rules, game modules, scoring
@@ -287,27 +287,45 @@ Guests appear in results like everyone else, but nothing is saved for them.
 
 ### Identity
 
-- A **player** exists inside one room, as it does today. A **user** is an account. When a signed-in user joins a room, the Worker checks their session on the WebSocket upgrade and passes the user ID to the room, which records it on the player. Rooms and game modules don't need to know the difference.
-- Each browser also has a random **guest ID** in `localStorage`, which the room records for guest players when a game ends.
-- **Signing up after a game** attaches that browser's recent guest games to the new account, so the game that convinced someone to sign up still counts.
+- A **player** exists inside one room. A **user** is an account. When a signed-in player opens a room's WebSocket, the Worker checks their session cookie and passes their user ID and username to the room in a header it always rebuilds itself, so a client can't claim to be someone else. It only does this for connections from our own pages, because browsers send cookies with WebSocket upgrades from any site.
+- The room records the account on the player. Other players see only the username, never the user ID. Game modules don't know the difference between guests and accounts.
+- Each browser also keeps a random **guest ID**, sent when joining. **Signing up or signing in** moves games played with that guest ID in the past week onto the account, so the game that convinced someone to sign up still counts.
 
 ### Sign-in
 
-Google sign-in and email sign-in links, with no passwords to store or reset. It's built on an established auth library running in the Worker (Better Auth, with sessions in D1), not hand-written security code. Passkeys can come later.
+Sign-in is by **passkey** only: the phone or computer's screen lock (face, fingerprint or PIN) instead of a password. There's nothing to remember, nothing to reset, no email service or Google client to set up, and nothing phishable stored on the server.
+
+- The WebAuthn ceremony is verified with **SimpleWebAuthn**, a widely used library, rather than hand-written crypto. Challenges are stored for five minutes and deleted on first use.
+- Passkeys are discoverable, so signing in needs no username: the browser offers the accounts it has.
+- Passkeys sync across a person's devices (iCloud Keychain, Google Password Manager). For a device that doesn't sync, a signed-in user can add another passkey.
+- A session is a random 256-bit token in an `HttpOnly`, `Secure`, `SameSite=Lax` cookie. The database stores only its SHA-256 hash. Sessions last 60 days and are extended when used.
+- Requests that change anything must come with our own `Origin`, which blocks cross-site request forgery.
+
+Sign-in with Google can be added later as a second way in.
 
 ### Recording results
 
-When a game finishes, the room writes one match record to D1: the game, category and difficulty, and each player's placing and score, with their user ID or guest ID. Stats, head-to-head records and leaderboards are all queries over these records, so new stats can be added later without touching any game.
+When a game finishes, the room saves one match record to D1: the game, category, level and mode, and each player's placing, score and correct answers, with their user ID or guest ID. The room keeps a roster of who started, so a result is saved even if someone closes the tab before the end. Players who quit mid-game aren't included.
+
+Stats, head-to-head records and leaderboards are all queries over these records, so new stats can be added later without touching any game. History shows your own correct answers but only other players' placings and scores.
+
+A daily scheduled job deletes expired sessions and, after the week-long claim window, removes guest IDs. Games that no account holder played are deleted at that point.
 
 ```sql
-users                (id, username, display_name, created_at)
-friendships          (user_id, friend_id, status, created_at)   -- requested, accepted, blocked
+users           (id, username, display_name, show_explanations, created_at)
+passkeys        (id, user_id, public_key, counter, transports, name, created_at, last_used_at)
+sessions        (id /* token hash */, user_id, created_at, expires_at)
+auth_challenges (id, kind, challenge, data, expires_at)
+matches         (id, game, category, difficulty, mode, rounds, player_count, started_at, finished_at)
+match_players   (match_id, placing, user_id, guest_id, nickname, score, correct)
+-- still to come
+friendships          (user_id, friend_id, status, created_at)
 friend_groups        (id, owner_id, name)
 friend_group_members (group_id, user_id)
-matches              (id, game, category, difficulty, finished_at)
-match_players        (match_id, user_id, guest_id, nickname, placing, score)  -- one of user_id / guest_id
 push_subscriptions   (user_id, endpoint, keys, created_at)
 ```
+
+Schema changes are numbered SQL migrations in `apps/server/migrations/`. CI applies new ones before each deploy; `pnpm dev` and the browser tests apply them to the local database.
 
 ### Notifications
 
@@ -315,7 +333,7 @@ Pings use **Web Push**, which works in current browsers, including on iPhone onc
 
 ### Privacy
 
-Accounts mean storing personal data, so they launch with a privacy policy and terms, account deletion that removes personal data, a data export, and a minimum age of 13.
+Accounts mean storing personal data, so they launch with a plain-language privacy policy (`/privacy`), a minimum age of 13 confirmed at sign-up, a JSON download of everything stored, and account deletion. Deleting removes the account, passkeys, sessions and settings; the player's rows in other people's games become "Former player" with no link back.
 
 ## Canvas games (after launch)
 
@@ -352,18 +370,18 @@ Jigsaw, Spot It, Reaction and Draw & Guess use **Phaser**, loaded only when one 
 
 ## Key decisions
 
-| Decision          | Chosen                                                       | Alternatives considered                                           | Why                                                                                                                                    |
-| ----------------- | ------------------------------------------------------------ | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Real-time backend | Cloudflare Workers + Durable Objects                         | Node.js + `ws`/Socket.IO on a VM, with Redis for multiple servers | Rooms map directly to Durable Objects. No routing layer, no always-on server bill, handles spikes on its own                           |
-| Game rules        | Pure game modules behind one interface                       | Separate server code per game                                     | New games reuse rooms, reconnection and timing. Rules are testable and replayable without a network                                    |
-| Frontend          | React + Vite, TypeScript                                     | Next.js                                                           | The app is interactive and client-side. A single-page app is simpler and faster to load                                                |
-| Transport         | Raw WebSocket + zod-validated JSON                           | Socket.IO, Colyseus                                               | Small, explicit, typed protocol with no extra runtime dependency                                                                       |
-| Content           | Pre-built, verified content bank                             | Generating content live per game                                  | Instant starts, fixed cost, everything checked, easy to avoid repeats                                                                  |
-| 2D games          | Phaser (lazy-loaded)                                         | Plain canvas                                                      | Mature 2D engine, good fit for jigsaws, drawing and reaction games                                                                     |
-| 3D                | Not now                                                      | PlayCanvas                                                        | No 3D game is planned yet. Revisit if one is designed                                                                                  |
-| Accounts          | Optional: guests play, accounts add stats, friends and pings | Required sign-up; no accounts at all                              | Required sign-up loses people before their first game. With no accounts, there's no way to reach a friend or keep head-to-head records |
-| Sign-in           | Auth library in the Worker (Better Auth, D1)                 | Hosted provider (Clerk, Auth0); hand-written auth                 | Data stays in our database with no per-user fees, and no security-critical code written from scratch                                   |
-| Language          | TypeScript everywhere                                        | Java                                                              | One language across client, server and tools, with shared types. The Workers runtime runs JavaScript/TypeScript                        |
+| Decision          | Chosen                                                       | Alternatives considered                                            | Why                                                                                                                                    |
+| ----------------- | ------------------------------------------------------------ | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Real-time backend | Cloudflare Workers + Durable Objects                         | Node.js + `ws`/Socket.IO on a VM, with Redis for multiple servers  | Rooms map directly to Durable Objects. No routing layer, no always-on server bill, handles spikes on its own                           |
+| Game rules        | Pure game modules behind one interface                       | Separate server code per game                                      | New games reuse rooms, reconnection and timing. Rules are testable and replayable without a network                                    |
+| Frontend          | React + Vite, TypeScript                                     | Next.js                                                            | The app is interactive and client-side. A single-page app is simpler and faster to load                                                |
+| Transport         | Raw WebSocket + zod-validated JSON                           | Socket.IO, Colyseus                                                | Small, explicit, typed protocol with no extra runtime dependency                                                                       |
+| Content           | Pre-built, verified content bank                             | Generating content live per game                                   | Instant starts, fixed cost, everything checked, easy to avoid repeats                                                                  |
+| 2D games          | Phaser (lazy-loaded)                                         | Plain canvas                                                       | Mature 2D engine, good fit for jigsaws, drawing and reaction games                                                                     |
+| 3D                | Not now                                                      | PlayCanvas                                                         | No 3D game is planned yet. Revisit if one is designed                                                                                  |
+| Accounts          | Optional: guests play, accounts add stats, friends and pings | Required sign-up; no accounts at all                               | Required sign-up loses people before their first game. With no accounts, there's no way to reach a friend or keep head-to-head records |
+| Sign-in           | Passkeys, verified with SimpleWebAuthn, sessions in D1       | Passwords; email links; Google sign-in; hosted auth (Clerk, Auth0) | Nothing to remember or reset and nothing phishable stored. Needs no email service or third-party client, and costs nothing per user    |
+| Language          | TypeScript everywhere                                        | Java                                                               | One language across client, server and tools, with shared types. The Workers runtime runs JavaScript/TypeScript                        |
 
 ## Build plan
 
@@ -391,6 +409,6 @@ pnpm lint && pnpm typecheck
 
 ## Open items
 
-- **Deploys** run from CI on every green push to `main`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. `pnpm deploy` does the same by hand.
-- For accounts (M4): a **Google sign-in client** (free, from Google Cloud), an email sending service for sign-in links, and a **privacy policy and terms**.
+- **Deploys** run from CI on every green push to `main`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. The job creates the D1 database the first time and applies new migrations before deploying.
+- The Cloudflare API token needs **D1 → Edit** as well as the Workers permissions, so the deploy job can create the database and run migrations.
 - **Domain name:** optional. The app can run on a free `*.workers.dev` address until there is one.

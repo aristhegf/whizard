@@ -9,7 +9,7 @@ import {
   type ServerMessage,
 } from "@whizard/protocol";
 import { roomSocketUrl } from "./api";
-import { clearSession, loadSession, saveNickname, saveSession } from "./storage";
+import { clearSession, guestId, loadSession, saveNickname, saveSession } from "./storage";
 
 const PING_INTERVAL_MS = 5000;
 /** Extra pings right after connecting, for a good clock estimate before the first question. */
@@ -230,6 +230,7 @@ export class RoomClient {
       type: "join",
       protocolVersion: PROTOCOL_VERSION,
       nickname,
+      guestId: guestId(),
       ...(session ? { sessionToken: session.sessionToken } : {}),
     });
   }

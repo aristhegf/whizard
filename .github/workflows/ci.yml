@@ -77,10 +77,25 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
         if: steps.credentials.outputs.ready
+      - name: Prepare the database
+        if: steps.credentials.outputs.ready
+        working-directory: apps/server
+        run: |
+          find_id() { pnpm exec wrangler d1 list --json | jq -r '.[] | select(.name == "whizard") | .uuid'; }
+          id=$(find_id)
+          if [ -z "$id" ]; then
+            pnpm exec wrangler d1 create whizard --location weur --update-config=false
+            id=$(find_id)
+          fi
+          if [ -z "$id" ]; then echo "::error::Couldn't find or create the D1 database"; exit 1; fi
+          echo "D1 database: $id"
+          sed -i -E "s/\"database_id\": \"[^\"]*\"/\"database_id\": \"$id\"/" wrangler.jsonc
+          pnpm exec wrangler d1 migrations apply DB --remote
       - name: Deploy to Cloudflare
         id: deploy
         if: steps.credentials.outputs.ready
         run: |
+          set -o pipefail
           pnpm run deploy 2>&1 | tee deploy.log
           url=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' deploy.log | head -1)
           echo "url=$url" >> "$GITHUB_OUTPUT"
@@ -93,4 +108,5 @@ jobs:
           curl -fsS "$URL/api/health" | grep -q '"ok":true'
           curl -fsS "$URL/api/quiz/categories" | grep -q '"id":"bible"'
           curl -fsS -X POST "$URL/api/rooms" | grep -qE '"code":"[A-Z0-9]{6}"'
+          curl -fsS "$URL/api/me" | grep -q '"user":null'
           echo "Live at $URL"
