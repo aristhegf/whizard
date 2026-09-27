@@ -561,14 +561,9 @@
     scroll-snap-align: center;
   }
 
-  .plan-nav {
-    display: grid;
-    justify-items: center;
-    gap: 4px;
-  }
-
   .plan-dots {
     display: flex;
+    justify-content: center;
     gap: 4px;
   }
 
@@ -601,39 +596,13 @@
     width: 46px;
     border-radius: 999px;
   }
-
-  .swipe-hint {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--muted);
-  }
-
-  .swipe-hint svg {
-    color: #b9a9ff;
-    animation: swipe-nudge 1.6s ease-in-out infinite;
-  }
-
-  .swipe-hint svg:first-child {
-    --nudge: -4px;
-  }
-}
-
-@keyframes swipe-nudge {
-  50% {
-    translate: var(--nudge, 4px) 0;
-  }
 }
 
 @media (min-width: 1000px) {
-  .plan-nav {
+  .plan-dots {
     display: none;
   }
-}
 
-@media (min-width: 1000px) {
   .plans {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     max-width: none;

@@ -351,23 +351,16 @@ function PlanSlider({ names, children }: { names: string[]; children: ReactNode 
 
   return (
     <div className="plan-slider">
-      <div className="plan-nav">
-        <p className="swipe-hint" aria-hidden="true">
-          <Icon name="chevronLeft" size={16} stroke={2.6} />
-          Swipe to see all plans
-          <Icon name="chevronRight" size={16} stroke={2.6} />
-        </p>
-        <div className="plan-dots" role="group" aria-label="Plans">
-          {names.map((name, i) => (
-            <button
-              key={name}
-              className="plan-dot"
-              aria-label={`Show the ${name} plan`}
-              aria-current={i === active ? "true" : undefined}
-              onClick={() => show(i)}
-            />
-          ))}
-        </div>
+      <div className="plan-dots" role="group" aria-label="Plans">
+        {names.map((name, i) => (
+          <button
+            key={name}
+            className="plan-dot"
+            aria-label={`Show the ${name} plan`}
+            aria-current={i === active ? "true" : undefined}
+            onClick={() => show(i)}
+          />
+        ))}
       </div>
       <ul ref={list} className="plans" onScroll={onScroll}>
         {children}
