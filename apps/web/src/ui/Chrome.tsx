@@ -6,7 +6,7 @@ import { Avatar } from "./Avatar";
 import { Icon, type IconName } from "./Icon";
 import { LogoMark } from "./Logo";
 
-export type Section = "home" | "games" | "topics" | "friends" | "profile" | null;
+export type Section = "home" | "games" | "topics" | "friends" | "profile" | "pricing" | null;
 
 export function Backdrop() {
   return <div className="backdrop" aria-hidden="true" />;
@@ -47,9 +47,10 @@ function MeLink({ size = 44 }: { size?: number }) {
   );
 }
 
-const SITE_LINKS = [
+const SITE_LINKS: { label: string; href: string; section?: Section }[] = [
   { label: "Games", href: "/games" },
   { label: "How It Works", href: "/#how" },
+  { label: "Pricing", href: "/pricing", section: "pricing" },
   { label: "About", href: "/#about" },
   { label: "Stats", href: "/stats" },
 ];
@@ -89,7 +90,12 @@ export function TopNav({
       <nav className="nav-links" aria-label="Main">
         {variant === "site"
           ? SITE_LINKS.map((l) => (
-              <a key={l.label} className="nav-link" {...linkTo(l.href)}>
+              <a
+                key={l.label}
+                className="nav-link"
+                aria-current={l.section && active === l.section ? "page" : undefined}
+                {...linkTo(l.href)}
+              >
                 {l.label}
               </a>
             ))
@@ -132,6 +138,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
     { label: "Quiz topics", href: "/games/quiz", icon: "star" },
     { label: "Friends", href: "/friends", icon: "users" },
     { label: signedIn ? "My profile" : "Sign in", href: "/account", icon: "user" },
+    { label: "Pricing", href: "/pricing", icon: "crown" },
     { label: "Stats", href: "/stats", icon: "chart" },
     { label: "Privacy", href: "/privacy", icon: "settings" },
   ];

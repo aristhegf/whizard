@@ -5,6 +5,7 @@ import { AddFriendScreen, FriendsScreen, GroupScreen } from "./FriendsScreen";
 import { Notice } from "./Notice";
 import { GamesPage } from "./pages/GamesPage";
 import { HomePage } from "./pages/HomePage";
+import { PricingPage } from "./pages/PricingPage";
 import { StatsPage } from "./pages/StatsPage";
 import { TopicsPage } from "./pages/TopicsPage";
 import { pageOf, reportPage } from "./presence";
@@ -40,6 +41,8 @@ export function App() {
           <PrivacyScreen />
         ) : route.name === "stats" ? (
           <StatsPage />
+        ) : route.name === "pricing" ? (
+          <PricingPage />
         ) : (
           <HomePage />
         )}

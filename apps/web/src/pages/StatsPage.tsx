@@ -19,6 +19,7 @@ const PAGE_LABELS: Record<string, string> = {
   group: "Groups",
   privacy: "Privacy",
   stats: "Stats",
+  pricing: "Pricing",
   other: "Other",
 };
 
