@@ -1,0 +1,174 @@
+:root {
+  --bg: #f6f4ff;
+  --surface: #ffffff;
+  --text: #1c1733;
+  --muted: #6b6488;
+  --border: #e2ddf5;
+  --accent: #5b3fd9;
+  --accent-text: #ffffff;
+  --gold: #e0a800;
+  --ok: #1f9d55;
+  --warn: #c2410c;
+  --danger: #c0262d;
+
+  color-scheme: light dark;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  line-height: 1.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #110d22;
+    --surface: #1b1633;
+    --text: #f1eeff;
+    --muted: #a39cc4;
+    --border: #2f2852;
+    --accent: #8b73ff;
+    --accent-text: #110d22;
+    --gold: #ffd166;
+    --ok: #4ade80;
+    --warn: #fb923c;
+    --danger: #f87171;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.shell {
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+  display: grid;
+  gap: 2rem;
+}
+
+.brand {
+  text-align: center;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 2.75rem;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+
+.brand p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+button,
+input {
+  font: inherit;
+  min-height: 3rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  padding: 0 1rem;
+  background: var(--surface);
+  color: var(--text);
+}
+
+button {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.divider {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.join {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+}
+
+.join input {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  min-width: 0;
+}
+
+.join input::placeholder {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.error {
+  margin: 0;
+  color: var(--danger);
+}
+
+.label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.room-code {
+  margin: 0;
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  font-variant-numeric: tabular-nums;
+}
+
+.status {
+  margin: 0;
+  text-align: center;
+  font-weight: 600;
+}
+
+.status-connected {
+  color: var(--ok);
+}
+
+.status-connecting,
+.status-reconnecting {
+  color: var(--warn);
+}
