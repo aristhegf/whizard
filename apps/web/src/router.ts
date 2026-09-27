@@ -10,7 +10,8 @@ export type Route =
   | { name: "add"; username: string }
   | { name: "group"; id: string }
   | { name: "privacy" }
-  | { name: "stats" };
+  | { name: "stats" }
+  | { name: "pricing" };
 
 const ROOM_PATH = /^\/r\/([^/]+)\/?$/;
 
@@ -33,6 +34,7 @@ export function useRoute(): Route {
   if (group) return { name: "group", id: decodeURIComponent(group[1] ?? "") };
   if (/^\/privacy\/?$/.test(path)) return { name: "privacy" };
   if (/^\/stats\/?$/.test(path)) return { name: "stats" };
+  if (/^\/pricing\/?$/.test(path)) return { name: "pricing" };
   return { name: "home" };
 }
 

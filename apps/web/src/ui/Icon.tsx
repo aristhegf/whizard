@@ -14,6 +14,7 @@ const PATHS = {
   arrowLeft: "M19 12H5M11 18l-6-6 6-6",
   chevronRight: "M9 6l6 6-6 6",
   chevronLeft: "M15 6l-6 6 6 6",
+  chevronDown: "M6 9l6 6 6-6",
   share:
     "M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 22a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4",
   copy: "M9 9h11v11H9zM5 15H4V4h11v1",
