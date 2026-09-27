@@ -393,8 +393,35 @@
   margin-left: auto;
 }
 
+/* Segmented switches (range, sort, filter). The admin pages keep their own copy. */
+.admin-switch {
+  display: inline-flex;
+  flex: none;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
 .admin-switch button {
   min-width: 56px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.admin-switch button + button {
+  border-left: 1.5px solid var(--line-strong);
+}
+
+.admin-switch button[aria-pressed="true"] {
+  background: var(--purple);
+  color: #fff;
 }
 
 .admin-more {
@@ -883,6 +910,11 @@
   color: var(--muted);
 }
 
+.status-admin {
+  background: rgb(139 92 255 / 24%);
+  color: #cdb8ff;
+}
+
 .report-count {
   font-size: 0.85rem;
   color: var(--muted);
@@ -1027,5 +1059,283 @@
 
   .report-side {
     justify-items: start;
+  }
+}
+
+/* Users, rooms and analytics ---------------------------------------------------------------- */
+
+.span-12 {
+  grid-column: 1 / -1;
+}
+
+/* Four tiles share the width the same way five do. */
+.admin-kpis.four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.rank-list.no-art li {
+  grid-template-columns: 30px minmax(0, 1fr) minmax(0, 0.9fr) 52px;
+}
+
+.share-list.plain li {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) 48px;
+}
+
+.room-stats.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-panel > .share-list + .room-stats,
+.admin-panel > .room-stats + .share-list {
+  margin-top: 4px;
+}
+
+.admin-search input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 5%);
+  color: inherit;
+  font: inherit;
+}
+
+.admin-search input:focus-visible {
+  outline: 2px solid #8b5cff;
+  outline-offset: 2px;
+}
+
+.user-list,
+.room-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* One row per account: who, four facts, status, actions. Columns line up down the list. */
+.user-row,
+.room-row {
+  display: grid;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1.5px solid var(--line);
+}
+
+.user-row {
+  grid-template-columns: 44px minmax(0, 1.2fr) minmax(0, 2fr) 104px 196px;
+}
+
+.room-row {
+  grid-template-columns: 34px minmax(0, 1.2fr) 88px 72px minmax(0, 1.4fr) 120px 196px;
+}
+
+.user-row:last-child,
+.room-row:last-child {
+  border-bottom: none;
+}
+
+.user-row.suspended .user-name,
+.user-row.suspended .user-facts {
+  opacity: 0.6;
+}
+
+.user-name,
+.room-name,
+.room-players {
+  display: grid;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.user-name strong,
+.room-name strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-name span,
+.room-name span,
+.room-players span,
+.room-age {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.room-name code {
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+
+.room-players strong {
+  font-family: var(--display);
+}
+
+.user-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.user-facts dt {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.user-facts dd {
+  margin: 0;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.room-nicknames {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.room-nicknames .reason-chip {
+  background: rgb(127 176 255 / 14%);
+  color: #cfe0ff;
+}
+
+.room-nicknames .reason-chip.host {
+  background: rgb(255 196 61 / 18%);
+  color: #ffe3a3;
+}
+
+.user-row .status-pill,
+.room-row .status-pill {
+  justify-self: start;
+}
+
+.user-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.user-error {
+  grid-column: 1 / -1;
+  margin: 0;
+  text-align: right;
+}
+
+.admin-load-more {
+  justify-self: center;
+}
+
+@media (max-width: 1360px) {
+  .room-row {
+    grid-template-columns: 34px minmax(0, 1.2fr) 88px 72px minmax(0, 1.4fr) 180px;
+  }
+
+  .room-age {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .admin-kpis.four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-kpis.four .admin-kpi,
+  .admin-kpis.four .admin-kpi:nth-child(n + 4) {
+    grid-column: span 1;
+  }
+
+  /* Rows wrap to two lines: who and status on top, facts and actions below. */
+  .user-row {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+  }
+
+  .user-facts {
+    grid-column: 2 / -1;
+    grid-row: 2;
+  }
+
+  .user-row .user-actions {
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+  }
+
+  .room-row {
+    grid-template-columns: 34px minmax(0, 1fr) auto auto;
+  }
+
+  .room-nicknames {
+    grid-column: 2;
+  }
+
+  .room-row .user-actions {
+    grid-column: 3 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-kpis.four .admin-kpi:last-child {
+    grid-column: span 1;
+  }
+
+  .user-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .user-error {
+    text-align: left;
+  }
+
+  .room-nicknames,
+  .room-row .user-actions {
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+  }
+}
+
+/* Phones: the header row and panel titles wrap instead of pushing the page sideways. */
+@media (max-width: 700px) {
+  .admin-head-end {
+    gap: 12px;
+  }
+
+  .admin-range {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .admin-range select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .admin-me {
+    padding-left: 12px;
+  }
+
+  .admin-panel-head {
+    flex-wrap: wrap;
+  }
+
+  .admin-panel-head > div:not([role]) {
+    flex: 1 1 0;
+  }
+
+  .admin-panel-head .admin-switch {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .admin-switch button {
+    flex: 1;
+    min-width: 0;
+    padding: 0 8px;
   }
 }

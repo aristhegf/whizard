@@ -218,6 +218,7 @@ export async function signUpVerify(context: RequestContext): Promise<Response> {
     avatar: null,
     show_explanations: 0,
     is_admin: 0,
+    suspended_at: null,
     pings: 1,
     quiet_start: null,
     quiet_end: null,
@@ -320,6 +321,9 @@ export async function signInVerify(context: RequestContext): Promise<Response> {
   ]);
   const user = userResult?.results[0];
   if (!user) throw new HttpError(400, "passkey_unknown", "That account no longer exists.");
+  if (user.suspended_at !== null) {
+    throw new HttpError(403, "account_suspended", "This account has been suspended.");
+  }
 
   if (body.guestId) await claimGuestGames(context.env, body.guestId, user.id);
   return signedInResponse(user, await createSession(context.env, user.id, now));

@@ -1,13 +1,18 @@
 import type { QuizCategory, QuizDifficulty } from "@whizard/game-core";
 import type {
   ActivityItem,
+  AdminAnalytics,
   AdminOverview,
+  AdminRooms,
+  AdminUsers,
   CommunityStats,
   ReportAction,
   ReportedQuestion,
   ReportReason,
   SiteStats,
   StatsRange,
+  UserAction,
+  UserSort,
 } from "@whizard/protocol";
 import { guestId } from "./storage";
 
@@ -77,14 +82,34 @@ export const fetchAdminActivity = () =>
 export const fetchAdminReports = () =>
   adminGet<{ questions: ReportedQuestion[] }>("reports").then((r) => r.questions);
 
-export async function decideReport(questionId: string, action: ReportAction): Promise<void> {
-  const response = await fetch(`/api/admin/reports/${encodeURIComponent(questionId)}`, {
+export const fetchAdminUsers = (q: string, sort: UserSort, offset: number) =>
+  adminGet<AdminUsers>(
+    `users?${new URLSearchParams({ q, sort, offset: String(offset) }).toString()}`,
+  );
+export const fetchAdminRooms = () => adminGet<AdminRooms>("rooms");
+export const fetchAdminAnalytics = (range: StatsRange) =>
+  adminGet<AdminAnalytics>(`analytics?range=${range}`);
+
+/** An admin action; throws with the server's message when it's refused. */
+async function adminPost(path: string, body: unknown): Promise<void> {
+  const response = await fetch(`/api/admin/${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action }),
+    body: JSON.stringify(body),
   });
-  if (!response.ok) throw new Error(`Could not save that (${response.status})`);
+  if (!response.ok) {
+    const body = (await response.json().catch(() => null)) as {
+      error?: { message?: string };
+    } | null;
+    throw new Error(body?.error?.message ?? `Could not save that (${response.status})`);
+  }
 }
+
+export const decideReport = (questionId: string, action: ReportAction) =>
+  adminPost(`reports/${encodeURIComponent(questionId)}`, { action });
+export const manageUser = (userId: string, action: UserAction) =>
+  adminPost(`users/${encodeURIComponent(userId)}`, { action });
+export const closeRoom = (code: string) => adminPost(`rooms/${encodeURIComponent(code)}/close`, {});
 
 export interface QuizCategoryInfo {
   id: QuizCategory;

@@ -51,6 +51,9 @@ import { addSubscription, getPushKey, pingFriend, removeSubscription } from "./p
 import { COUNTRY_HEADER, NETWORK_HEADER } from "./presence";
 import { ACCOUNT_HEADER } from "./room";
 import { decideReport, getAdminActivity, getAdminOverview, getAdminReports } from "./admin";
+import { getAdminAnalytics } from "./adminAnalytics";
+import { closeRoom, getAdminRooms } from "./adminRooms";
+import { getAdminUsers, manageUser } from "./adminUsers";
 import { reportQuestion } from "./reports";
 import { getSiteStats } from "./stats";
 import { getCommunityStats } from "./community";
@@ -191,6 +194,11 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/admin\/activity$/, getAdminActivity],
   ["GET", /^\/api\/admin\/reports$/, getAdminReports],
   ["POST", /^\/api\/admin\/reports\/([^/]+)$/, decideReport],
+  ["GET", /^\/api\/admin\/users$/, getAdminUsers],
+  ["POST", /^\/api\/admin\/users\/([^/]+)$/, manageUser],
+  ["GET", /^\/api\/admin\/rooms$/, getAdminRooms],
+  ["POST", /^\/api\/admin\/rooms\/([^/]+)\/close$/, closeRoom],
+  ["GET", /^\/api\/admin\/analytics$/, getAdminAnalytics],
 
   ["POST", /^\/api\/auth\/signup\/options$/, signUpOptions],
   ["POST", /^\/api\/auth\/signup\/verify$/, signUpVerify],

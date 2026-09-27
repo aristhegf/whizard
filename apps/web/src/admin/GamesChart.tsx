@@ -1,5 +1,6 @@
-import { useState, type PointerEvent } from "react";
+import { useId, useState, type PointerEvent } from "react";
 import { formatNumber, shortDate } from "../format";
+import { useMediaQuery } from "../ui/common";
 
 /** A step that gives about four even gridlines, e.g. 0, 200, 400, 600, 800. */
 function niceMax(max: number): { top: number; step: number } {
@@ -11,11 +12,24 @@ function niceMax(max: number): { top: number; step: number } {
 }
 
 /**
- * Finished games per day as a line with a soft fill. The line is SVG stretched to the panel;
+ * A count per day as a line with a soft fill: finished games, or visitors. The line is SVG stretched to the panel;
  * the labels, dots and tooltip are HTML on top, so they stay crisp at any width.
  */
-export function GamesChart({ days }: { days: { day: string; count: number }[] }) {
+export function GamesChart({
+  days,
+  unit = ["game", "games"],
+  what = "games finished",
+}: {
+  days: { day: string; count: number }[];
+  /** The count's name, one and many. */
+  unit?: [string, string];
+  /** For screen readers, e.g. "games finished". */
+  what?: string;
+}) {
   const [hover, setHover] = useState<number | null>(null);
+  const narrow = useMediaQuery("(max-width: 700px)");
+  // useId has characters that "url(#...)" can't refer to.
+  const fillId = `fill-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const max = Math.max(0, ...days.map((d) => d.count));
   const { top, step } = niceMax(max);
   const n = days.length;
@@ -23,7 +37,8 @@ export function GamesChart({ days }: { days: { day: string; count: number }[] })
   const y = (v: number) => 100 - (v / top) * 100;
   const points = days.map((d, i) => `${x(i)},${y(d.count)}`).join(" ");
   const ticks = Array.from({ length: Math.round(top / step) + 1 }, (_, i) => i * step);
-  const labelEvery = Math.max(1, Math.ceil(n / 8));
+  // Fewer dates on a phone, so they don't run into each other.
+  const labelEvery = Math.max(1, Math.ceil(n / (narrow ? 4 : 8)));
   const dotEvery = n > 45 ? 3 : n > 14 ? 2 : 1;
   const total = days.reduce((sum, d) => sum + d.count, 0);
 
@@ -46,7 +61,7 @@ export function GamesChart({ days }: { days: { day: string; count: number }[] })
       <div
         className="chart-plot"
         role="img"
-        aria-label={`${formatNumber(total)} games finished, at most ${formatNumber(max)} in a day`}
+        aria-label={`${formatNumber(total)} ${what}, at most ${formatNumber(max)} in a day`}
         onPointerMove={onMove}
         onPointerLeave={() => setHover(null)}
       >
@@ -56,12 +71,12 @@ export function GamesChart({ days }: { days: { day: string; count: number }[] })
         {n > 0 && (
           <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             <defs>
-              <linearGradient id="games-fill" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#8b5cff" stopOpacity="0.55" />
                 <stop offset="100%" stopColor="#8b5cff" stopOpacity="0" />
               </linearGradient>
             </defs>
-            <polygon points={`0,100 ${points} 100,100`} fill="url(#games-fill)" />
+            <polygon points={`0,100 ${points} 100,100`} fill={`url(#${fillId})`} />
             <polyline
               points={points}
               fill="none"
@@ -91,7 +106,7 @@ export function GamesChart({ days }: { days: { day: string; count: number }[] })
             }}
           >
             <strong>
-              {formatNumber(shown.count)} {shown.count === 1 ? "game" : "games"}
+              {formatNumber(shown.count)} {shown.count === 1 ? unit[0] : unit[1]}
             </strong>
             <span>{shortDate(shown.day)}</span>
           </span>
@@ -100,7 +115,7 @@ export function GamesChart({ days }: { days: { day: string; count: number }[] })
       <div className="chart-x" aria-hidden="true">
         {days.map((d, i) =>
           // Every few days, and the last, but not one crowding the last.
-          (i % labelEvery === 0 && n - 1 - i >= labelEvery / 2) || i === n - 1 ? (
+          (i % labelEvery === 0 && n - 1 - i >= labelEvery * 0.75) || i === n - 1 ? (
             <span key={d.day} style={{ left: `${x(i)}%` }}>
               {shortDate(d.day)}
             </span>

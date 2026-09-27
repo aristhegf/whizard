@@ -33,7 +33,11 @@ export function groupBreakdown(rows: { metric: string; total: number }[]) {
   return { top, all: (prefix: string) => groups.get(prefix) ?? [] };
 }
 
-async function buildStats(db: D1Database, range: StatsRange, now: number): Promise<SiteStats> {
+export async function buildStats(
+  db: D1Database,
+  range: StatsRange,
+  now: number,
+): Promise<SiteStats> {
   const days = rangeDays(range, now);
   const since = days[0]!;
   const [visitors, daily, breakdown] = await db.batch<Record<string, unknown>>([

@@ -13,6 +13,8 @@ export const CloseCode = {
   RoomNotFound: 4404,
   Replaced: 4409,
   RoomExpired: 4410,
+  /** Closed by a Whizard admin. */
+  RoomClosed: 4403,
 } as const;
 
 export const FINAL_CLOSE_CODES: ReadonlySet<number> = new Set(Object.values(CloseCode));

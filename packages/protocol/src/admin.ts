@@ -1,4 +1,4 @@
-import type { StatsEntry, StatsRange } from "./stats";
+import type { SiteStats, StatsEntry, StatsRange } from "./stats";
 
 /** A number this period, and the same number over the period before, for the change arrow. */
 export interface Compared {
@@ -70,3 +70,78 @@ export interface ReportedQuestion {
 
 export const REPORT_ACTIONS = ["keep", "retire", "reopen"] as const;
 export type ReportAction = (typeof REPORT_ACTIONS)[number];
+
+// Users ---------------------------------------------------------------------------------------
+
+export interface AdminUser {
+  id: string;
+  username: string;
+  displayName: string;
+  avatar: string | null;
+  createdAt: number;
+  admin: boolean;
+  suspended: boolean;
+  /** Finished games saved to the account's history. */
+  games: number;
+  /** First place in games with two or more players. */
+  wins: number;
+  /** The last UTC day they started a game, `YYYY-MM-DD`, or null. */
+  lastPlayed: string | null;
+}
+
+export const USER_SORTS = ["newest", "games", "active"] as const;
+export type UserSort = (typeof USER_SORTS)[number];
+
+export interface AdminUsers {
+  totals: {
+    accounts: number;
+    newThisWeek: number;
+    /** Accounts that started a game in the last 7 days. */
+    activeThisWeek: number;
+    suspended: number;
+  };
+  users: AdminUser[];
+  /** Whether there are more users after these. */
+  more: boolean;
+}
+
+export const USER_ACTIONS = ["suspend", "unsuspend", "delete"] as const;
+export type UserAction = (typeof USER_ACTIONS)[number];
+
+// Rooms ---------------------------------------------------------------------------------------
+
+export interface LiveRoom {
+  code: string;
+  game: string;
+  topic: string | null;
+  difficulty: string | null;
+  questions: number | null;
+  phase: "lobby" | "playing" | "finished";
+  players: number;
+  online: number;
+  /** The host's nickname. */
+  host: string | null;
+  nicknames: string[];
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface AdminRooms {
+  totals: { open: number; waiting: number; playing: number; online: number };
+  rooms: LiveRoom[];
+}
+
+// Analytics -----------------------------------------------------------------------------------
+
+export interface AdminAnalytics {
+  stats: SiteStats;
+  newVisitors: Compared;
+  /** Visitors in the range who had first visited before it. */
+  returningVisitors: number;
+  visits: Compared;
+  pageViews: Compared;
+  accountsCreated: Compared;
+  averageVisitSeconds: { value: number | null; previous: number | null };
+  /** New visitors per UTC day, oldest first, every day of the range. */
+  newVisitorsPerDay: { day: string; count: number }[];
+}

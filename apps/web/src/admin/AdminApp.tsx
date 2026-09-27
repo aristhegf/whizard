@@ -8,8 +8,11 @@ import { Avatar } from "../ui/Avatar";
 import { Brand } from "../ui/Chrome";
 import { Icon, type IconName } from "../ui/Icon";
 import { LogoMark } from "../ui/Logo";
+import { Analytics } from "./Analytics";
 import { Dashboard } from "./Dashboard";
 import { Reports } from "./Reports";
+import { Rooms } from "./Rooms";
+import { Users } from "./Users";
 
 interface Section {
   id: string;
@@ -18,6 +21,14 @@ interface Section {
   /** What the section will hold, shown until it's built. */
   soon?: string;
 }
+
+const SUBTITLES: Record<string, string> = {
+  dashboard: "Overview of your platform’s activity, growth and performance.",
+  reports: "Questions players reported, and what’s been decided.",
+  rooms: "Rooms open right now and what they’re playing.",
+  users: "Accounts, sign-ups and removing abusive ones.",
+  analytics: "Who visits, where they come from and what they look at.",
+};
 
 const SECTIONS: Section[] = [
   { id: "dashboard", label: "Dashboard", icon: "chart" },
@@ -33,24 +44,9 @@ const SECTIONS: Section[] = [
     icon: "help",
     soon: "The question bank by topic and level, and the questions players get wrong most.",
   },
-  {
-    id: "rooms",
-    label: "Rooms",
-    icon: "door",
-    soon: "Rooms open right now and what they're playing.",
-  },
-  {
-    id: "users",
-    label: "Users",
-    icon: "users",
-    soon: "Accounts, sign-ups and removing abusive ones.",
-  },
-  {
-    id: "analytics",
-    label: "Analytics",
-    icon: "repeat",
-    soon: "Longer trends, pages and where visitors come from.",
-  },
+  { id: "rooms", label: "Rooms", icon: "door" },
+  { id: "users", label: "Users", icon: "users" },
+  { id: "analytics", label: "Analytics", icon: "repeat" },
   { id: "reports", label: "Reports", icon: "flag" },
   { id: "content", label: "Content", icon: "layers", soon: "Adding and editing questions." },
   {
@@ -116,16 +112,10 @@ function AdminShell({ section, user }: { section: string; user: AccountUser }) {
           <LogoMark className="admin-head-mark" />
           <div className="admin-head-text">
             <h1>{current.id === "dashboard" ? "Admin Dashboard" : current.label}</h1>
-            <p>
-              {current.id === "dashboard"
-                ? "Overview of your platform’s activity, growth and performance."
-                : current.id === "reports"
-                  ? "Questions players reported, and what’s been decided."
-                  : "Coming in a later update."}
-            </p>
+            <p>{SUBTITLES[current.id] ?? "Coming in a later update."}</p>
           </div>
           <div className="admin-head-end">
-            {current.id === "dashboard" && (
+            {(current.id === "dashboard" || current.id === "analytics") && (
               <label className="admin-range">
                 <Icon name="calendar" size={20} />
                 <span className="sr-only">Time range</span>
@@ -172,6 +162,12 @@ function AdminShell({ section, user }: { section: string; user: AccountUser }) {
           <Dashboard range={range} onRange={setRange} onOpenReports={setOpenReports} />
         ) : current.id === "reports" ? (
           <Reports onOpenReports={setOpenReports} />
+        ) : current.id === "analytics" ? (
+          <Analytics range={range} onRange={setRange} />
+        ) : current.id === "rooms" ? (
+          <Rooms />
+        ) : current.id === "users" ? (
+          <Users />
         ) : (
           <section className="panel admin-soon">
             <Icon name={current.icon} size={40} />

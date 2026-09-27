@@ -47,6 +47,7 @@ const FINAL_CLOSE_MESSAGES: Record<number, string> = {
   [CloseCode.RoomNotFound]: "This room doesn’t exist or has expired.",
   [CloseCode.Replaced]: "You opened this room in another tab or device.",
   [CloseCode.RoomExpired]: "This room has closed because nobody was in it.",
+  [CloseCode.RoomClosed]: "This room was closed by Whizard.",
 };
 
 const QUIET_ERRORS = new Set<string>([ErrorCode.BadAction, ErrorCode.BadMessage]);

@@ -10,9 +10,19 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { fetchAdminActivity, fetchAdminOverview } from "../api";
 import { CATALOG, TOPIC_STYLES } from "../catalog";
 import { countryFlag, countryName, formatNumber, formatPercent, timeAgo } from "../format";
-import { useLoaded } from "../ui/common";
 import { Icon, type IconName } from "../ui/Icon";
 import { GamesChart } from "./GamesChart";
+import {
+  amountChange,
+  countChange,
+  KpiTiles,
+  pointsChange,
+  RankPanel,
+  StatBox,
+  useRefreshing,
+  Bar,
+  type KpiTile,
+} from "./parts";
 
 const OVERVIEW_REFRESH_MS = 60_000;
 const ACTIVITY_REFRESH_MS = 15_000;
@@ -20,17 +30,6 @@ const ACTIVITY_REFRESH_MS = 15_000;
 const topicName = (id: string | null | undefined) =>
   QUIZ_CATEGORIES.find((c) => c.id === id)?.name ?? "Quiz";
 const gameName = (id: string) => CATALOG.find((g) => g.id === id)?.name ?? id;
-
-/** Refetches every `ms` while the page is open. */
-function useRefreshing<T>(load: () => Promise<T>, ms: number) {
-  const result = useLoaded(load);
-  const { reload } = result;
-  useEffect(() => {
-    const timer = setInterval(reload, ms);
-    return () => clearInterval(timer);
-  }, [reload, ms]);
-  return result;
-}
 
 export function Dashboard({
   range,
@@ -111,29 +110,9 @@ export function Dashboard({
 
 // KPIs ----------------------------------------------------------------------------------------
 
-type Change = { text: string; up: boolean | null };
-
-function countChange(value: number, previous: number): Change {
-  if (previous === 0) return value > 0 ? { text: "New", up: true } : { text: "–", up: null };
-  const pct = (value - previous) / previous;
-  return { text: formatPercent(Math.abs(pct)), up: pct >= 0 };
-}
-
-function pointsChange(value: number | null, previous: number | null): Change {
-  if (value === null || previous === null) return { text: "–", up: null };
-  const diff = (value - previous) * 100;
-  return { text: `${Math.abs(diff).toFixed(1)}%`, up: diff >= 0 };
-}
-
-function amountChange(value: number | null, previous: number | null): Change {
-  if (value === null || previous === null) return { text: "–", up: null };
-  const diff = value - previous;
-  return { text: Math.abs(diff).toFixed(1), up: diff >= 0 };
-}
-
 function Kpis({ data, range }: { data: AdminOverview | null; range: StatsRange }) {
   const k = data?.kpis;
-  const tiles: { tone: string; icon: IconName; label: string; value: string; change: Change }[] = [
+  const tiles: Omit<KpiTile, "note">[] = [
     {
       tone: "purple",
       icon: "games",
@@ -180,26 +159,7 @@ function Kpis({ data, range }: { data: AdminOverview | null; range: StatsRange }
         : { text: "–", up: null },
     },
   ];
-  return (
-    <dl className="admin-kpis">
-      {tiles.map((t) => (
-        <div key={t.label} className={`admin-kpi tone-${t.tone}`}>
-          <span className="admin-kpi-icon" aria-hidden="true">
-            <Icon name={t.icon} size={34} stroke={2.2} />
-          </span>
-          <div className="admin-kpi-text">
-            <dt>{t.label}</dt>
-            <dd>{t.value}</dd>
-            <p className={`admin-change${t.change.up === false ? " down" : ""}`}>
-              {t.change.up !== null && <span aria-hidden="true">{t.change.up ? "↑" : "↓"}</span>}{" "}
-              {t.change.text}
-            </p>
-            <p className="admin-vs">vs previous {range} days</p>
-          </div>
-        </div>
-      ))}
-    </dl>
-  );
+  return <KpiTiles tiles={tiles.map((t) => ({ ...t, note: `vs previous ${range} days` }))} />;
 }
 
 // Live activity -------------------------------------------------------------------------------
@@ -280,69 +240,6 @@ function LiveActivity() {
 }
 
 // Ranked lists --------------------------------------------------------------------------------
-
-function RankPanel({
-  title,
-  icon,
-  entries,
-  label,
-  art,
-  empty,
-  leaderTone,
-  tone,
-}: {
-  title: string;
-  icon: IconName;
-  entries: StatsEntry[] | undefined;
-  label: (id: string) => string;
-  art: (id: string) => string | undefined;
-  empty: string;
-  leaderTone?: string;
-  tone?: string;
-}) {
-  const top = entries?.[0]?.count ?? 0;
-  return (
-    <section className="panel admin-panel span-4" aria-label={title}>
-      <div className="admin-panel-head">
-        <span className="admin-panel-icon">
-          <Icon name={icon} size={26} />
-        </span>
-        <h2>{title}</h2>
-      </div>
-      {entries && entries.length === 0 ? (
-        <p className="admin-empty">{empty}</p>
-      ) : (
-        <ol className="rank-list">
-          {(entries ?? []).map((e, i) => (
-            <li key={e.name}>
-              <span className="rank">{i + 1}</span>
-              <span className="rank-art">
-                {art(e.name) && <img src={art(e.name)} alt="" loading="lazy" />}
-              </span>
-              <span className="rank-name">{label(e.name)}</span>
-              <Bar
-                share={top ? e.count / top : 0}
-                tone={i === 0 && leaderTone ? leaderTone : tone}
-              />
-              <span className="rank-count">{formatNumber(e.count)}</span>
-            </li>
-          ))}
-        </ol>
-      )}
-    </section>
-  );
-}
-
-function Bar({ share, tone }: { share: number; tone?: string | undefined }) {
-  return (
-    <span className="admin-bar" aria-hidden="true">
-      <span
-        className={tone ? `tone-${tone}` : undefined}
-        style={{ width: `${Math.max(share > 0 ? 3 : 0, share * 100)}%` }}
-      />
-    </span>
-  );
-}
 
 const SIZE_LABELS: Record<string, string> = {
   "2": "2 players",
@@ -426,21 +323,6 @@ function Retention({ data, range }: { data: AdminOverview | null; range: StatsRa
         </ul>
       </div>
     </section>
-  );
-}
-
-function StatBox({ label, value, change }: { label: string; value: string; change?: Change }) {
-  return (
-    <div className="stat-box">
-      <span className="stat-box-label">{label}</span>
-      <strong className="stat-box-value">{value}</strong>
-      {change && (
-        <span className={`admin-change${change.up === false ? " down" : ""}`}>
-          {change.up !== null && <span aria-hidden="true">{change.up ? "↑" : "↓"}</span>}{" "}
-          {change.text}
-        </span>
-      )}
-    </div>
   );
 }
 

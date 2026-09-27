@@ -101,24 +101,28 @@ export async function signOut(context: RequestContext): Promise<Response> {
 export async function deleteMe(context: RequestContext): Promise<Response> {
   requireSameOrigin(context);
   const { user } = await requireUser(context);
-  const db = context.env.DB;
+  await deleteAccount(context.env.DB, user.id);
+  return Response.json({ ok: true }, { headers: { "Set-Cookie": clearedSessionCookie } });
+}
+
+/** Deletes an account, for the player themselves or an admin removing an abusive one. */
+export async function deleteAccount(db: D1Database, userId: string): Promise<void> {
   await db.batch([
     db
       .prepare(
         "UPDATE match_players SET user_id = NULL, nickname = 'Former player' WHERE user_id = ?",
       )
-      .bind(user.id),
-    db.prepare("DELETE FROM seen_questions WHERE viewer = ?").bind(`u:${user.id}`),
-    db.prepare("DELETE FROM player_days WHERE viewer = ?").bind(`u:${user.id}`),
+      .bind(userId),
+    db.prepare("DELETE FROM seen_questions WHERE viewer = ?").bind(`u:${userId}`),
+    db.prepare("DELETE FROM player_days WHERE viewer = ?").bind(`u:${userId}`),
     // Their reports still count, but no longer point at them.
     db
       .prepare(
         "UPDATE question_reports SET reporter = 'x:' || lower(hex(randomblob(8))) WHERE reporter = ?",
       )
-      .bind(`u:${user.id}`),
-    db.prepare("DELETE FROM users WHERE id = ?").bind(user.id),
+      .bind(`u:${userId}`),
+    db.prepare("DELETE FROM users WHERE id = ?").bind(userId),
   ]);
-  return Response.json({ ok: true }, { headers: { "Set-Cookie": clearedSessionCookie } });
 }
 
 /** Everything stored about the signed-in user, as a JSON download. */
