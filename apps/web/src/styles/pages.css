@@ -101,9 +101,9 @@
 
 @media (min-width: 768px) {
   .btn-hero {
-    min-height: 74px;
-    padding: 0 44px;
-    font-size: 1.3rem;
+    min-height: 64px;
+    padding: 0 32px;
+    font-size: 1.2rem;
   }
 }
 
@@ -204,26 +204,35 @@
   }
 }
 
-@media (min-width: 1100px) {
+/* Side by side from tablets up: copy on the left edge of the column, mascot on the right edge. */
+@media (min-width: 900px) {
   .hero {
-    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
-    min-height: 660px;
-    padding: 72px 0 0 64px;
+    gap: 32px;
+    padding: 40px 0 0;
   }
 
   .hero-title {
-    font-size: clamp(4.5rem, 5.6vw, 6rem);
+    font-size: clamp(3.2rem, 5.6vw, 5.25rem);
   }
 
   .hero-art {
+    justify-self: end;
     width: 100%;
     max-width: 600px;
-    margin: 0 auto;
+    margin: 0;
   }
 
   .features {
-    margin: 36px 64px 0;
+    margin-top: 32px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .hero {
+    min-height: 600px;
+    padding-top: 56px;
   }
 }
 
@@ -234,7 +243,7 @@
 .how {
   display: grid;
   gap: 24px;
-  margin-top: 72px;
+  margin-top: var(--section-gap);
 }
 
 .steps {
@@ -273,19 +282,26 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 26px;
   }
-
-  .how,
-  .about {
-    margin-inline: 64px;
-  }
 }
 
 .about {
   display: grid;
   gap: 12px;
-  margin-top: 40px;
+  margin-top: var(--section-gap);
   padding: 28px;
-  max-width: 60rem;
+}
+
+.about > p {
+  max-width: 72ch;
+}
+
+.about .link-row {
+  justify-content: flex-start;
+  gap: 8px 24px;
+}
+
+.about .link-row .btn-link {
+  padding-inline: 0;
 }
 
 /* Choose a game ------------------------------------------------------------------------------ */
@@ -310,7 +326,6 @@
 
 @media (min-width: 1100px) {
   .browse {
-    padding: 0 40px;
     gap: 30px;
   }
 

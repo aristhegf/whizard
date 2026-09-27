@@ -3,8 +3,6 @@
 .pricing {
   display: grid;
   gap: 28px;
-  max-width: 1240px;
-  margin: 0 auto;
   padding: 8px 0 24px;
 }
 
@@ -65,7 +63,7 @@
 @media (min-width: 1000px) {
   .pricing {
     gap: 36px;
-    padding: 16px 32px 24px;
+    padding: 16px 0 24px;
   }
 
   .pricing-hero {
