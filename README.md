@@ -36,3 +36,12 @@ pnpm e2e          # browser tests
 pnpm lint
 pnpm typecheck
 ```
+
+## Deploying
+
+The app runs on Cloudflare Workers. Every push to `main` that passes CI is deployed automatically, once two repository secrets are set in **Settings → Secrets and variables → Actions**:
+
+- `CLOUDFLARE_API_TOKEN`: an API token created from the "Edit Cloudflare Workers" template
+- `CLOUDFLARE_ACCOUNT_ID`: the account ID shown in the Cloudflare dashboard
+
+To deploy by hand instead, run `pnpm deploy` after `wrangler login`.

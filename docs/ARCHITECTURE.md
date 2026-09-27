@@ -366,7 +366,7 @@ pnpm lint && pnpm typecheck
 
 ## Open items
 
-- A free **Cloudflare account** is needed before the first deploy. Then `pnpm deploy` publishes the whole app.
+- **Deploys** run from CI on every green push to `main`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. `pnpm deploy` does the same by hand.
 - An **LLM API key** is needed for the content pipeline (M3).
 - For accounts (M4): a **Google sign-in client** (free, from Google Cloud), an email sending service for sign-in links, and a **privacy policy and terms**.
 - **Domain name:** optional. The app can run on a free `*.workers.dev` address until there is one.
