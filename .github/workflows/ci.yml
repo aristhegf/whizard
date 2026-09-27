@@ -98,10 +98,14 @@ jobs:
         env:
           URL: ${{ steps.deploy.outputs.url }}
         run: |
+          set -x
           curl -fsS --retry 5 --retry-delay 3 --retry-all-errors "$URL/" | grep -q "<title>Whizard</title>"
           curl -fsS "$URL/api/health" | grep -q '"ok":true'
           curl -fsS "$URL/api/quiz/categories" | grep -q '"id":"bible"'
           curl -fsS -X POST -H "X-Whizard-Smoke-Test: 1" "$URL/api/rooms" | grep -qE '"code":"[A-Z0-9]{6}"'
-          test "$(curl -s -o /dev/null -w '%{http_code}' "$URL/api/presence")" = 426
+          presence=$(curl -s -o /dev/null -w '%{http_code}' "$URL/api/presence")
+          echo "Presence without an upgrade: $presence"
+          test "$presence" = 426
+          curl -fsS "$URL/api/stats?range=7" | grep -q '"range":7'
           curl -fsS "$URL/api/me" | grep -q '"user":null'
           echo "Live at $URL"
