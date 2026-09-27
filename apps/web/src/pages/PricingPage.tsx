@@ -1,5 +1,5 @@
 import { MAX_PLAYERS } from "@whizard/game-core";
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { linkTo } from "../router";
 import { TopLayout } from "../ui/Chrome";
 import { Icon, type IconName } from "../ui/Icon";
@@ -112,7 +112,7 @@ export function PricingPage() {
           <HeroArt />
         </section>
 
-        <ul className="plans">
+        <PlanSlider names={["Free", "Pro", "Organizations & Events"]}>
           <Plan
             id="free"
             icon="games"
@@ -166,7 +166,7 @@ export function PricingPage() {
             features={ORG_FEATURES}
             art={<OrgArt />}
           />
-        </ul>
+        </PlanSlider>
 
         <section className="compare panel" aria-labelledby="compare-title">
           <h2 id="compare-title" className="display compare-title">
@@ -315,6 +315,64 @@ function Plan({
         {art}
       </div>
     </li>
+  );
+}
+
+/**
+ * The plans. Side by side on wide screens; on phones they slide sideways, with dots above
+ * that show which plan you're on and jump to the others.
+ */
+function PlanSlider({ names, children }: { names: string[]; children: ReactNode }) {
+  const list = useRef<HTMLUListElement>(null);
+  const [active, setActive] = useState(0);
+
+  const cards = () => Array.from(list.current?.children ?? []) as HTMLElement[];
+
+  const onScroll = () => {
+    const el = list.current;
+    if (!el) return;
+    const middle = el.scrollLeft + el.clientWidth / 2;
+    const offsets = cards().map((card) =>
+      Math.abs(card.offsetLeft + card.offsetWidth / 2 - middle),
+    );
+    setActive(offsets.indexOf(Math.min(...offsets)));
+  };
+
+  const show = (index: number) => {
+    const el = list.current;
+    const card = cards()[index];
+    if (!el || !card) return;
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollTo({
+      left: card.offsetLeft + card.offsetWidth / 2 - el.clientWidth / 2,
+      behavior: still ? "auto" : "smooth",
+    });
+  };
+
+  return (
+    <div className="plan-slider">
+      <div className="plan-nav">
+        <p className="swipe-hint" aria-hidden="true">
+          <Icon name="chevronLeft" size={16} stroke={2.6} />
+          Swipe to see all plans
+          <Icon name="chevronRight" size={16} stroke={2.6} />
+        </p>
+        <div className="plan-dots" role="group" aria-label="Plans">
+          {names.map((name, i) => (
+            <button
+              key={name}
+              className="plan-dot"
+              aria-label={`Show the ${name} plan`}
+              aria-current={i === active ? "true" : undefined}
+              onClick={() => show(i)}
+            />
+          ))}
+        </div>
+      </div>
+      <ul ref={list} className="plans" onScroll={onScroll}>
+        {children}
+      </ul>
+    </div>
   );
 }
 

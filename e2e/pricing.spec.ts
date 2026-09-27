@@ -16,6 +16,14 @@ test("the pricing page shows the three plans and answers questions", async ({ pa
   await expect(page.getByText("₦5,000", { exact: true })).toBeVisible();
   await expect(page.getByText("Custom pricing", { exact: true })).toBeVisible();
 
+  // On phones the plans slide sideways, and the dots show and pick which one is in view.
+  const dot = (plan: string) => page.getByRole("button", { name: `Show the ${plan} plan` });
+  await expect(dot("Free")).toHaveAttribute("aria-current", "true");
+  await dot("Organizations & Events").click();
+  await expect(page.getByRole("heading", { name: "Organizations & Events" })).toBeInViewport();
+  await expect(dot("Organizations & Events")).toHaveAttribute("aria-current", "true");
+  await expect(dot("Free")).not.toHaveAttribute("aria-current");
+
   // Pro can't be bought yet, so the button says it's coming.
   await page.getByRole("button", { name: "Upgrade to Pro" }).click();
   await expect(page.getByRole("status")).toHaveText(/Pro is coming soon/);
