@@ -19,6 +19,16 @@ export type QuizCategory = (typeof QUIZ_CATEGORIES)[number]["id"];
 export const QUIZ_DIFFICULTIES = ["easy", "medium", "hard"] as const;
 export type QuizDifficulty = (typeof QUIZ_DIFFICULTIES)[number];
 
+export const QUIZ_VARIANTS = [
+  { id: "classic", name: "Classic", description: "No clock. Answer, then move on." },
+  {
+    id: "speed",
+    name: "Speed",
+    description: "A timer on every question. Faster answers score more.",
+  },
+] as const;
+export type QuizVariant = (typeof QUIZ_VARIANTS)[number]["id"];
+
 export const QUIZ_QUESTION_COUNTS = [5, 10, 15, 20] as const;
 export const QUIZ_TIME_LIMITS_SECONDS = [10, 20, 30] as const;
 
@@ -26,6 +36,8 @@ export const quizSettingsSchema = z.object({
   category: z.enum(QUIZ_CATEGORIES.map((c) => c.id) as [QuizCategory, ...QuizCategory[]]),
   difficulty: z.enum(QUIZ_DIFFICULTIES),
   count: z.literal(QUIZ_QUESTION_COUNTS),
+  variant: z.enum(QUIZ_VARIANTS.map((v) => v.id) as [QuizVariant, ...QuizVariant[]]),
+  /** Speed only. */
   timeLimitSeconds: z.literal(QUIZ_TIME_LIMITS_SECONDS),
 });
 
@@ -35,6 +47,7 @@ export const DEFAULT_QUIZ_SETTINGS: QuizSettings = {
   category: "bible",
   difficulty: "easy",
   count: 10,
+  variant: "classic",
   timeLimitSeconds: 20,
 };
 

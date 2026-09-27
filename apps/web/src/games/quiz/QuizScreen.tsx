@@ -110,16 +110,18 @@ function Question({
   return (
     <div className="screen">
       <Progress view={view} index={stage.index} />
-      <div
-        className={`timer${fraction < 0.25 ? " low" : ""}`}
-        role="progressbar"
-        aria-label="Time left"
-        aria-valuemin={0}
-        aria-valuemax={view.timeLimitMs}
-        aria-valuenow={remaining}
-      >
-        <div style={{ width: `${fraction * 100}%` }} />
-      </div>
+      {view.timed && (
+        <div
+          className={`timer${fraction < 0.25 ? " low" : ""}`}
+          role="progressbar"
+          aria-label="Time left"
+          aria-valuemin={0}
+          aria-valuemax={view.timeLimitMs}
+          aria-valuenow={remaining}
+        >
+          <div style={{ width: `${fraction * 100}%` }} />
+        </div>
+      )}
       <h2 className="prompt">{stage.prompt}</h2>
       <div className="choices">
         {stage.choices.map((text, i) => (

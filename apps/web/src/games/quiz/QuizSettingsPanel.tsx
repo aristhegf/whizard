@@ -3,6 +3,7 @@ import {
   QUIZ_DIFFICULTIES,
   QUIZ_QUESTION_COUNTS,
   QUIZ_TIME_LIMITS_SECONDS,
+  QUIZ_VARIANTS,
   quizSettingsSchema,
   type QuizSettings,
 } from "@whizard/game-core";
@@ -26,12 +27,15 @@ export function QuizSettingsPanel({
   onChange: (settings: QuizSettings) => void;
 }) {
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings.category)!;
+  const variant = QUIZ_VARIANTS.find((v) => v.id === settings.variant)!;
+  const speed = settings.variant === "speed";
 
   if (!editable) {
     return (
       <p className="summary">
-        Quiz · {category.name} · {DIFFICULTY_LABELS[settings.difficulty]} · {settings.count}{" "}
-        questions · {settings.timeLimitSeconds}s each
+        {variant.name} quiz · {category.name} · {DIFFICULTY_LABELS[settings.difficulty]} ·{" "}
+        {settings.count} questions
+        {speed && ` · ${settings.timeLimitSeconds}s each`}
       </p>
     );
   }
@@ -41,6 +45,14 @@ export function QuizSettingsPanel({
 
   return (
     <div className="settings">
+      <Setting label="Mode" hint={variant.description}>
+        <Segmented
+          label="Mode"
+          options={QUIZ_VARIANTS.map((v) => ({ value: v.id, label: v.name }))}
+          value={settings.variant}
+          onChange={(value) => set("variant", value)}
+        />
+      </Setting>
       <Setting label="Category" htmlFor="category">
         <CategorySelect value={settings.category} onChange={(value) => set("category", value)} />
       </Setting>
@@ -60,14 +72,16 @@ export function QuizSettingsPanel({
           onChange={(value) => set("count", value)}
         />
       </Setting>
-      <Setting label="Time">
-        <Segmented
-          label="Time per question"
-          options={QUIZ_TIME_LIMITS_SECONDS.map((s) => ({ value: s, label: `${s}s` }))}
-          value={settings.timeLimitSeconds}
-          onChange={(value) => set("timeLimitSeconds", value)}
-        />
-      </Setting>
+      {speed && (
+        <Setting label="Time">
+          <Segmented
+            label="Time per question"
+            options={QUIZ_TIME_LIMITS_SECONDS.map((s) => ({ value: s, label: `${s}s` }))}
+            value={settings.timeLimitSeconds}
+            onChange={(value) => set("timeLimitSeconds", value)}
+          />
+        </Setting>
+      )}
     </div>
   );
 }
@@ -116,10 +130,12 @@ function CategorySelect({
 function Setting({
   label,
   htmlFor,
+  hint,
   children,
 }: {
   label: string;
   htmlFor?: string;
+  hint?: string;
   children: ReactNode;
 }) {
   return (
@@ -134,6 +150,7 @@ function Setting({
         </span>
       )}
       {children}
+      {hint && <p className="setting-hint muted small">{hint}</p>}
     </div>
   );
 }

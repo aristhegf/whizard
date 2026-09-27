@@ -33,12 +33,16 @@ test("plays a solo quiz with explanations and a review", async ({ browser }) => 
   await page.getByRole("button", { name: "Play solo" }).click();
   await joinAs(page, "Ada");
 
+  await expect(option(page, "Mode", "Classic")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("group", { name: "Time per question" })).toHaveCount(0);
   await option(page, "Questions", "5").click();
   await expect(option(page, "Questions", "5")).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "Play solo" }).click();
   await expect(page.getByText("Get ready")).toBeVisible();
 
   for (let i = 1; i <= 5; i++) {
+    await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
+    await expect(page.getByRole("progressbar", { name: "Time left" })).toHaveCount(0);
     await answerFirstChoice(page, i, 5);
     await expect(page.locator(".explanation")).toBeVisible();
     await page.getByRole("button", { name: "Skip" }).click();
@@ -65,6 +69,22 @@ test("solo moves on by itself after the explanation", async ({ browser }) => {
   await expect(page.locator(".progress")).toContainText("2 / 10", { timeout: 6000 });
 });
 
+test("Speed mode puts a timer on every question", async ({ browser }) => {
+  const page = await newPlayer(browser);
+  await page.goto("/");
+  await page.getByRole("button", { name: "Play solo" }).click();
+  await joinAs(page, "Ada");
+
+  await option(page, "Mode", "Speed").click();
+  await expect(page.getByRole("group", { name: "Time per question" })).toBeVisible();
+  await option(page, "Time per question", "10s").click();
+  await expect(option(page, "Time per question", "10s")).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Play solo" }).click();
+
+  await expect(page.locator(".progress")).toContainText("1 / 10", { timeout: 10_000 });
+  await expect(page.getByRole("progressbar", { name: "Time left" })).toBeVisible();
+});
+
 test("friends play at their own pace and only see points", async ({ browser }) => {
   const host = await newPlayer(browser);
   await host.goto("/");
@@ -75,7 +95,7 @@ test("friends play at their own pace and only see points", async ({ browser }) =
   const guest = await newPlayer(browser);
   await guest.goto(host.url());
   await joinAs(guest, "Tolu");
-  await expect(guest.getByText(/5 questions/)).toBeVisible();
+  await expect(guest.getByText(/Classic quiz · Bible · Easy · 5 questions/)).toBeVisible();
   await expect(guest.getByRole("button", { name: "Start game" })).toHaveCount(0);
 
   await host.getByRole("button", { name: "Start game" }).click();

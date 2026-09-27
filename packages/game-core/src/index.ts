@@ -48,6 +48,7 @@ export { GAMES, GAME_IDS, gameModule, type GameId } from "./games/registry";
 export type { ContentRequest, GameModule, GamePlayer } from "./games/types";
 export {
   AUTO_ADVANCE_MS,
+  CLASSIC_IDLE_LIMIT_MS,
   COUNTDOWN_MS,
   quizGame,
   type QuizAction,
@@ -69,10 +70,12 @@ export {
   QUIZ_DIFFICULTIES,
   QUIZ_QUESTION_COUNTS,
   QUIZ_TIME_LIMITS_SECONDS,
+  QUIZ_VARIANTS,
   quizSettingsSchema,
   type QuizCategory,
   type QuizContentRequest,
   type QuizDifficulty,
   type QuizQuestion,
   type QuizSettings,
+  type QuizVariant,
 } from "./games/quiz/settings";

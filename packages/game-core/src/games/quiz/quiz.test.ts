@@ -2,13 +2,14 @@ import { describe, expect, it } from "vitest";
 import { isRejection } from "../types";
 import {
   AUTO_ADVANCE_MS,
+  CLASSIC_IDLE_LIMIT_MS,
   COUNTDOWN_MS,
   quizGame,
   type QuizAction,
   type QuizState,
   type QuizView,
 } from "./quiz";
-import { DEFAULT_QUIZ_SETTINGS, type QuizQuestion } from "./settings";
+import { DEFAULT_QUIZ_SETTINGS, type QuizQuestion, type QuizVariant } from "./settings";
 
 const T0 = 1_000_000;
 const LIMIT = 20_000;
@@ -22,9 +23,9 @@ const QUESTIONS: QuizQuestion[] = [1, 2, 3].map((n) => ({
   reference: `Book ${n}:1`,
 }));
 
-function setup(players = ["ada", "tolu"], seed = 42): QuizState {
+function setup(players = ["ada", "tolu"], seed = 42, variant: QuizVariant = "speed"): QuizState {
   return quizGame.setup({
-    settings: { ...DEFAULT_QUIZ_SETTINGS, timeLimitSeconds: 20 },
+    settings: { ...DEFAULT_QUIZ_SETTINGS, variant, timeLimitSeconds: 20 },
     players: players.map((id) => ({ id, nickname: id.toUpperCase() })),
     content: QUESTIONS,
     seed,
@@ -212,5 +213,44 @@ describe("results", () => {
   it("lets a spectator see the leaderboard but no answers", () => {
     const state = answer(setup(), "ada", 0, true, START + 500);
     expect(view(state, "stranger").stage).toEqual({ kind: "watching" });
+  });
+});
+
+describe("Classic", () => {
+  const classic = () => setup(["ada", "tolu"], 42, "classic");
+
+  it("has no clock on the questions", () => {
+    expect(view(classic(), "ada").timed).toBe(false);
+    expect(view(setup(), "ada").timed).toBe(true);
+    const later = quizGame.tick(classic(), START + 60_000);
+    expect(view(later, "ada").stage).toMatchObject({ kind: "question", index: 0 });
+  });
+
+  it("scores right answers the same however long they take", () => {
+    let state = answer(classic(), "ada", 0, true, START + 500);
+    state = act(state, "ada", { type: "next" }, START + 600);
+    state = answer(state, "ada", 1, true, START + 45_000);
+    expect(view(state, "ada").me?.score).toBe(2000);
+  });
+
+  it("still breaks ties by who answered faster", () => {
+    const first = playThrough(classic(), "ada", [true, true, true], START);
+    let state = first.state;
+    let now = first.now;
+    [true, true, true].forEach((c, i) => {
+      state = answer(state, "tolu", i, c, now + 9000);
+      state = act(state, "tolu", { type: "next" }, now + 9100);
+      now += 9100;
+    });
+    expect(view(state, "tolu").standings.map((s) => [s.nickname, s.score])).toEqual([
+      ["ADA", 3000],
+      ["TOLU", 3000],
+    ]);
+  });
+
+  it("closes a question if a player walks away, so results still arrive", () => {
+    const state = quizGame.tick(classic(), START + CLASSIC_IDLE_LIMIT_MS);
+    expect(view(state, "ada").stage).toMatchObject({ kind: "answer", myChoice: null });
+    expect(quizGame.nextWakeAt(classic())).toBe(START + CLASSIC_IDLE_LIMIT_MS);
   });
 });

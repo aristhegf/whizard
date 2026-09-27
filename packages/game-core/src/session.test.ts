@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { COUNTDOWN_MS, type QuizView } from "./games/quiz/quiz";
+import { CLASSIC_IDLE_LIMIT_MS, COUNTDOWN_MS, type QuizView } from "./games/quiz/quiz";
 import { DEFAULT_QUIZ_SETTINGS, type QuizQuestion } from "./games/quiz/settings";
 import type { ContentRequest } from "./games/types";
 import {
@@ -158,7 +158,7 @@ describe("playing", () => {
   it("schedules the room's alarm for the game's next deadline", () => {
     const { state, connected } = room("Ada");
     const started = ok(startGame(state, "p1", connected, T0, 1, bank));
-    expect(nextDeadline(started, connected)).toBe(T0 + COUNTDOWN_MS + 20_000);
+    expect(nextDeadline(started, connected)).toBe(T0 + COUNTDOWN_MS + CLASSIC_IDLE_LIMIT_MS);
   });
 
   it("stops waiting for players who leave mid-game", () => {

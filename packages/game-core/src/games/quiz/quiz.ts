@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { seededRng, shuffled } from "../../random";
 import type { GameModule, GamePlayer, Rejection } from "../types";
-import { creditedElapsed, pointsFor } from "./scoring";
+import { BASE_POINTS, creditedElapsed, pointsFor } from "./scoring";
 import {
   DEFAULT_QUIZ_SETTINGS,
   quizSettingsSchema,
@@ -16,6 +16,11 @@ export const COUNTDOWN_MS = 3000;
  * question. This is only the fallback for a player who has stopped responding.
  */
 export const AUTO_ADVANCE_MS = 8000;
+/**
+ * Classic has no clock, but a question still closes after this long so a player who walks away
+ * can't hold up everyone's final results.
+ */
+export const CLASSIC_IDLE_LIMIT_MS = 5 * 60_000;
 /** Answers this early are accepted, to allow for small clock differences. */
 const EARLY_TOLERANCE_MS = 1000;
 
@@ -110,6 +115,8 @@ export type QuizStage =
 
 export interface QuizView {
   game: "quiz";
+  /** Speed shows a countdown on every question; Classic has no clock. */
+  timed: boolean;
   total: number;
   timeLimitMs: number;
   playerCount: number;
@@ -120,7 +127,9 @@ export interface QuizView {
   final: boolean;
 }
 
-const limitMs = (state: QuizState) => state.settings.timeLimitSeconds * 1000;
+const timed = (state: QuizState) => state.settings.variant === "speed";
+const limitMs = (state: QuizState) =>
+  timed(state) ? state.settings.timeLimitSeconds * 1000 : CLASSIC_IDLE_LIMIT_MS;
 const active = (state: QuizState) => state.players.filter((p) => !p.left);
 const answerFor = (player: QuizPlayer, index: number) =>
   player.answers.find((a) => a.index === index);
@@ -215,7 +224,12 @@ function answer(
     choice: action.choice,
     correct,
     elapsedMs,
-    points: pointsFor(correct, elapsedMs, limitMs(state), state.settings.difficulty),
+    // Speed rewards fast answers; Classic only counts being right.
+    points: timed(state)
+      ? pointsFor(correct, elapsedMs, limitMs(state), state.settings.difficulty)
+      : correct
+        ? BASE_POINTS[state.settings.difficulty]
+        : 0,
   };
   const updated = {
     ...withAnswer(player, record),
@@ -292,6 +306,7 @@ function viewFor(state: QuizState, playerId: string): QuizView {
   const showStandings = stage.kind === "done" || stage.kind === "watching";
   return {
     game: "quiz",
+    timed: timed(state),
     total: state.questions.length,
     timeLimitMs: limitMs(state),
     playerCount: state.players.length,
