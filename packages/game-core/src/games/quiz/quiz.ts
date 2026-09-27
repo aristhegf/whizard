@@ -7,16 +7,14 @@ import {
   quizSettingsSchema,
   type QuizQuestion,
   type QuizSettings,
-  type QuizVariant,
 } from "./settings";
 
-/** "Get ready" time before the first question. */
+/** "Get ready" time before the first question, the same moment for everyone. */
 export const COUNTDOWN_MS = 3000;
-/** How long Classic shows the answer and standings between questions. */
-export const REVEAL_MS = 4000;
-/** Gap between a Classic reveal ending and the next question appearing, so it arrives in time. */
-export const ROUND_LEAD_MS = 600;
-/** Speed Quiz moves on by itself if a player doesn't tap "Next" in time. */
+/**
+ * After answering, the client decides how long to show the result before asking for the next
+ * question. This is only the fallback for a player who has stopped responding.
+ */
 export const AUTO_ADVANCE_MS = 8000;
 /** Answers this early are accepted, to allow for small clock differences. */
 const EARLY_TOLERANCE_MS = 1000;
@@ -51,6 +49,7 @@ interface AnswerRecord {
   elapsedMs: number;
 }
 
+/** Everyone starts together, then each player moves through the questions on their own clock. */
 interface QuizPlayer {
   id: string;
   nickname: string;
@@ -59,40 +58,40 @@ interface QuizPlayer {
   correctCount: number;
   totalTimeMs: number;
   answers: AnswerRecord[];
-  // Speed Quiz: each player moves through the questions on their own clock.
   current: number;
-  /** When the current question appears. null while the player is looking at feedback. */
+  /** When the current question appears. null while the player is looking at the result. */
   startsAt: number | null;
   advanceAt: number | null;
   finishedAt: number | null;
-}
-
-interface ClassicRound {
-  index: number;
-  startsAt: number;
-  endsAt: number;
-  /** Set once the round closes: the answer is shown until then. */
-  revealUntil: number | null;
 }
 
 export interface QuizState {
   settings: QuizSettings;
   questions: PreparedQuestion[];
   players: QuizPlayer[];
-  round: ClassicRound | null;
   finishedAt: number | null;
 }
 
+/** Leaderboard row. Deliberately only points: what others got right or wrong stays private. */
 export interface QuizStanding {
   playerId: string;
   nickname: string;
   rank: number;
   score: number;
-  correctCount: number;
-  answeredCount: number;
-  totalTimeMs: number;
   finished: boolean;
   left: boolean;
+}
+
+export interface QuizReviewItem {
+  index: number;
+  prompt: string;
+  choices: string[];
+  myChoice: number | null;
+  correctChoice: number;
+  correct: boolean;
+  points: number;
+  explanation: string | null;
+  reference: string | null;
 }
 
 export type QuizStage =
@@ -104,37 +103,19 @@ export type QuizStage =
       /** Server time the question appears. Before then, show a countdown. */
       startsAt: number;
       deadline: number;
-      /** Classic only: your answer while waiting for the others. */
-      myChoice: number | null;
-      answeredCount: number;
-      activeCount: number;
     }
-  | {
-      kind: "answer";
-      index: number;
-      prompt: string;
-      choices: string[];
-      myChoice: number | null;
-      correctChoice: number;
-      correct: boolean;
-      points: number;
-      explanation: string | null;
-      reference: string | null;
-      /** When the game moves on by itself. */
-      nextAt: number | null;
-      isLast: boolean;
-    }
-  | { kind: "done" }
+  | ({ kind: "answer"; isLast: boolean } & QuizReviewItem)
+  | { kind: "done"; review: QuizReviewItem[] }
   | { kind: "watching" };
 
 export interface QuizView {
   game: "quiz";
-  variant: QuizVariant;
   total: number;
   timeLimitMs: number;
+  playerCount: number;
   stage: QuizStage;
   me: { score: number; correctCount: number } | null;
-  /** Hidden (empty) while it would give answers away, e.g. during a Speed Quiz. */
+  /** Empty until you've finished, so nobody can read hints from others' scores. */
   standings: QuizStanding[];
   final: boolean;
 }
@@ -173,94 +154,6 @@ function replacePlayer(state: QuizState, player: QuizPlayer): QuizState {
   return { ...state, players: state.players.map((p) => (p.id === player.id ? player : p)) };
 }
 
-function grade(
-  state: QuizState,
-  index: number,
-  choice: number,
-  clientMs: number,
-  serverMs: number,
-): AnswerRecord {
-  const question = state.questions[index]!;
-  const elapsedMs = creditedElapsed(clientMs, serverMs, limitMs(state));
-  const correct = choice === question.correctChoice;
-  return {
-    index,
-    choice,
-    correct,
-    elapsedMs,
-    points: pointsFor(correct, elapsedMs, limitMs(state), state.settings.difficulty),
-  };
-}
-
-const timedOut = (state: QuizState, index: number): AnswerRecord => ({
-  index,
-  choice: null,
-  correct: false,
-  points: 0,
-  elapsedMs: limitMs(state),
-});
-
-// Classic ----------------------------------------------------------------------------------
-
-function closeRound(state: QuizState, at: number): QuizState {
-  const round = state.round!;
-  const players = state.players.map((p) =>
-    p.left || answerFor(p, round.index) ? p : withAnswer(p, timedOut(state, round.index)),
-  );
-  return { ...state, players, round: { ...round, revealUntil: at + REVEAL_MS } };
-}
-
-function closeRoundIfEveryoneAnswered(state: QuizState, now: number): QuizState {
-  const round = state.round;
-  if (!round || round.revealUntil !== null) return state;
-  const remaining = active(state);
-  if (remaining.length === 0) return { ...state, finishedAt: now };
-  return remaining.every((p) => answerFor(p, round.index)) ? closeRound(state, now) : state;
-}
-
-function tickClassic(state: QuizState, now: number): QuizState {
-  let s = state;
-  for (;;) {
-    const round = s.round;
-    if (!round || s.finishedAt !== null) return s;
-    if (round.revealUntil === null) {
-      if (now < round.endsAt) return s;
-      s = closeRound(s, round.endsAt);
-      continue;
-    }
-    if (now < round.revealUntil) return s;
-    const index = round.index + 1;
-    if (index >= s.questions.length) return { ...s, finishedAt: round.revealUntil };
-    const startsAt = Math.max(now, round.revealUntil) + ROUND_LEAD_MS;
-    s = { ...s, round: { index, startsAt, endsAt: startsAt + limitMs(s), revealUntil: null } };
-  }
-}
-
-function answerClassic(
-  state: QuizState,
-  player: QuizPlayer,
-  action: Extract<QuizAction, { type: "answer" }>,
-  now: number,
-): QuizState | Rejection {
-  const round = state.round;
-  if (!round || round.revealUntil !== null || action.index !== round.index) {
-    return { rejected: "That question has closed." };
-  }
-  if (now < round.startsAt - EARLY_TOLERANCE_MS)
-    return { rejected: "That question hasn't started." };
-  if (answerFor(player, round.index)) return { rejected: "You've already answered." };
-  const answer = grade(
-    state,
-    round.index,
-    action.choice,
-    action.clientElapsedMs,
-    now - round.startsAt,
-  );
-  return closeRoundIfEveryoneAnswered(replacePlayer(state, withAnswer(player, answer)), now);
-}
-
-// Speed ------------------------------------------------------------------------------------
-
 function advance(state: QuizState, player: QuizPlayer, at: number): QuizPlayer {
   const next = player.current + 1;
   if (next >= state.questions.length) {
@@ -277,15 +170,21 @@ function finishIfEveryoneDone(state: QuizState, now: number): QuizState {
   return { ...state, finishedAt: remaining.length > 0 ? last : now };
 }
 
-function tickSpeedPlayer(state: QuizState, player: QuizPlayer, now: number): QuizPlayer {
+function tickPlayer(state: QuizState, player: QuizPlayer, now: number): QuizPlayer {
   let p = player;
   for (;;) {
     if (p.left || p.finishedAt !== null) return p;
     if (p.startsAt !== null) {
       const deadline = p.startsAt + limitMs(state);
       if (now < deadline) return p;
-      p = { ...withAnswer(p, timedOut(state, p.current)), startsAt: null };
-      p = { ...p, advanceAt: deadline + AUTO_ADVANCE_MS };
+      const timedOut = {
+        index: p.current,
+        choice: null,
+        correct: false,
+        points: 0,
+        elapsedMs: limitMs(state),
+      };
+      p = { ...withAnswer(p, timedOut), startsAt: null, advanceAt: deadline + AUTO_ADVANCE_MS };
       continue;
     }
     if (p.advanceAt !== null && now >= p.advanceAt) {
@@ -296,37 +195,30 @@ function tickSpeedPlayer(state: QuizState, player: QuizPlayer, now: number): Qui
   }
 }
 
-function tickSpeed(state: QuizState, now: number): QuizState {
-  if (state.finishedAt !== null) return state;
-  const players = state.players.map((p) => tickSpeedPlayer(state, p, now));
-  return finishIfEveryoneDone({ ...state, players }, now);
-}
-
-function actSpeed(
+function answer(
   state: QuizState,
   player: QuizPlayer,
-  action: QuizAction,
+  action: Extract<QuizAction, { type: "answer" }>,
   now: number,
 ): QuizState | Rejection {
-  if (action.type === "next") {
-    if (player.advanceAt === null) return { rejected: "Answer the question first." };
-    return finishIfEveryoneDone(replacePlayer(state, advance(state, player, now)), now);
-  }
   if (player.startsAt === null || action.index !== player.current) {
     return { rejected: "That question has closed." };
   }
   if (now < player.startsAt - EARLY_TOLERANCE_MS) {
     return { rejected: "That question hasn't started." };
   }
-  const answer = grade(
-    state,
-    player.current,
-    action.choice,
-    action.clientElapsedMs,
-    now - player.startsAt,
-  );
+  const question = state.questions[player.current]!;
+  const elapsedMs = creditedElapsed(action.clientElapsedMs, now - player.startsAt, limitMs(state));
+  const correct = action.choice === question.correctChoice;
+  const record = {
+    index: player.current,
+    choice: action.choice,
+    correct,
+    elapsedMs,
+    points: pointsFor(correct, elapsedMs, limitMs(state), state.settings.difficulty),
+  };
   const updated = {
-    ...withAnswer(player, answer),
+    ...withAnswer(player, record),
     startsAt: null,
     advanceAt: now + AUTO_ADVANCE_MS,
   };
@@ -335,124 +227,77 @@ function actSpeed(
 
 // Views ------------------------------------------------------------------------------------
 
-export function standingsOf(state: QuizState, hideRound: number | null = null): QuizStanding[] {
-  const rows = state.players.map((p) => {
-    const counted = p.answers.filter((a) => a.index !== hideRound);
-    return {
-      playerId: p.id,
-      nickname: p.nickname,
-      score: counted.reduce((sum, a) => sum + a.points, 0),
-      correctCount: counted.filter((a) => a.correct).length,
-      answeredCount: counted.length,
-      totalTimeMs: counted.reduce((sum, a) => sum + a.elapsedMs, 0),
-      finished: state.finishedAt !== null || p.finishedAt !== null,
-      left: p.left,
-    };
-  });
-  rows.sort(
+export function standingsOf(state: QuizState): QuizStanding[] {
+  const rows = [...state.players].sort(
     (a, b) =>
       Number(a.left) - Number(b.left) ||
       b.score - a.score ||
       a.totalTimeMs - b.totalTimeMs ||
       a.nickname.localeCompare(b.nickname),
   );
-  return rows.map((row, i) => ({ ...row, rank: i + 1 }));
+  return rows.map((p, i) => ({
+    playerId: p.id,
+    nickname: p.nickname,
+    rank: i + 1,
+    score: p.score,
+    finished: state.finishedAt !== null || p.finishedAt !== null,
+    left: p.left,
+  }));
 }
 
-function answerStage(
-  state: QuizState,
-  player: QuizPlayer,
-  index: number,
-  nextAt: number | null,
-): QuizStage {
+function reviewItem(state: QuizState, player: QuizPlayer, index: number): QuizReviewItem {
   const question = state.questions[index]!;
-  const answer = answerFor(player, index);
+  const record = answerFor(player, index);
   return {
-    kind: "answer",
     index,
     prompt: question.prompt,
     choices: question.choices,
-    myChoice: answer?.choice ?? null,
+    myChoice: record?.choice ?? null,
     correctChoice: question.correctChoice,
-    correct: answer?.correct ?? false,
-    points: answer?.points ?? 0,
+    correct: record?.correct ?? false,
+    points: record?.points ?? 0,
     explanation: question.explanation,
     reference: question.reference,
-    nextAt,
-    isLast: index === state.questions.length - 1,
-  };
-}
-
-function questionStage(
-  state: QuizState,
-  index: number,
-  startsAt: number,
-  myChoice: number | null,
-  answeredCount: number,
-): QuizStage {
-  const question = state.questions[index]!;
-  return {
-    kind: "question",
-    index,
-    prompt: question.prompt,
-    choices: question.choices,
-    startsAt,
-    deadline: startsAt + limitMs(state),
-    myChoice,
-    answeredCount,
-    activeCount: active(state).length,
   };
 }
 
 function stageFor(state: QuizState, player: QuizPlayer | undefined): QuizStage {
-  if (state.finishedAt !== null) return { kind: "done" };
-  if (!player || player.left) return { kind: "watching" };
-
-  if (state.settings.variant === "classic") {
-    const round = state.round!;
-    if (round.revealUntil !== null) {
-      const isLast = round.index === state.questions.length - 1;
-      return answerStage(state, player, round.index, isLast ? null : round.revealUntil);
-    }
-    const answered = active(state).filter((p) => answerFor(p, round.index)).length;
-    return questionStage(
-      state,
-      round.index,
-      round.startsAt,
-      answerFor(player, round.index)?.choice ?? null,
-      answered,
-    );
+  if (!player || player.left) {
+    return state.finishedAt === null ? { kind: "watching" } : { kind: "done", review: [] };
   }
-
-  if (player.finishedAt !== null) return { kind: "done" };
-  if (player.startsAt !== null)
-    return questionStage(state, player.current, player.startsAt, null, 0);
-  return answerStage(state, player, player.current, player.advanceAt);
+  if (player.finishedAt !== null || state.finishedAt !== null) {
+    return { kind: "done", review: player.answers.map((a) => reviewItem(state, player, a.index)) };
+  }
+  if (player.startsAt !== null) {
+    const question = state.questions[player.current]!;
+    return {
+      kind: "question",
+      index: player.current,
+      prompt: question.prompt,
+      choices: question.choices,
+      startsAt: player.startsAt,
+      deadline: player.startsAt + limitMs(state),
+    };
+  }
+  return {
+    kind: "answer",
+    isLast: player.current === state.questions.length - 1,
+    ...reviewItem(state, player, player.current),
+  };
 }
 
 function viewFor(state: QuizState, playerId: string): QuizView {
   const player = state.players.find((p) => p.id === playerId);
   const stage = stageFor(state, player);
-  const classicRoundOpen =
-    state.settings.variant === "classic" && state.round?.revealUntil === null;
-
-  // Speed Quiz hides others' scores until you've finished, so they don't hint at answers.
-  const showStandings =
-    state.settings.variant === "classic" || stage.kind === "done" || stage.kind === "watching";
-
+  const showStandings = stage.kind === "done" || stage.kind === "watching";
   return {
     game: "quiz",
-    variant: state.settings.variant,
     total: state.questions.length,
     timeLimitMs: limitMs(state),
+    playerCount: state.players.length,
     stage,
     me: player ? { score: player.score, correctCount: player.correctCount } : null,
-    standings: showStandings
-      ? standingsOf(
-          state,
-          classicRoundOpen && state.finishedAt === null ? state.round!.index : null,
-        )
-      : [],
+    standings: showStandings ? standingsOf(state) : [],
     final: state.finishedAt !== null,
   };
 }
@@ -478,8 +323,7 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
   setup({ settings, players, content, seed, now }) {
     const rng = seededRng(seed);
     const questions = content.map((q) => prepare(q, rng));
-    const firstAt = now + COUNTDOWN_MS;
-    const speed = settings.variant === "speed";
+    const startsAt = now + COUNTDOWN_MS;
     return {
       settings,
       questions,
@@ -492,18 +336,10 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
         totalTimeMs: 0,
         answers: [],
         current: 0,
-        startsAt: speed ? firstAt : null,
+        startsAt,
         advanceAt: null,
         finishedAt: null,
       })),
-      round: speed
-        ? null
-        : {
-            index: 0,
-            startsAt: firstAt,
-            endsAt: firstAt + settings.timeLimitSeconds * 1000,
-            revealUntil: null,
-          },
       finishedAt: questions.length === 0 ? now : null,
     };
   },
@@ -512,32 +348,32 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
     if (state.finishedAt !== null) return { rejected: "The game is over." };
     const player = state.players.find((p) => p.id === playerId);
     if (!player || player.left) return { rejected: "You're watching this game." };
-    if (action.type === "answer") {
-      const question = state.questions[action.index];
-      if (!question || action.choice >= question.choices.length) {
-        return { rejected: "That isn't one of the choices." };
-      }
+    if (player.finishedAt !== null) return { rejected: "You've finished." };
+
+    if (action.type === "next") {
+      if (player.advanceAt === null) return { rejected: "Answer the question first." };
+      return finishIfEveryoneDone(replacePlayer(state, advance(state, player, now)), now);
     }
-    if (state.settings.variant === "speed") return actSpeed(state, player, action, now);
-    if (action.type === "next") return { rejected: "Classic moves on by itself." };
-    return answerClassic(state, player, action, now);
+    const question = state.questions[action.index];
+    if (!question || action.choice >= question.choices.length) {
+      return { rejected: "That isn't one of the choices." };
+    }
+    return answer(state, player, action, now);
   },
 
   onPlayerLeft(state, playerId, now) {
     const players = state.players.map((p) => (p.id === playerId ? { ...p, left: true } : p));
-    const next = { ...state, players };
-    if (next.finishedAt !== null) return next;
-    return state.settings.variant === "classic"
-      ? closeRoundIfEveryoneAnswered(next, now)
-      : finishIfEveryoneDone(next, now);
+    return finishIfEveryoneDone({ ...state, players }, now);
   },
 
-  tick: (state, now) =>
-    state.settings.variant === "classic" ? tickClassic(state, now) : tickSpeed(state, now),
+  tick(state, now) {
+    if (state.finishedAt !== null) return state;
+    const players = state.players.map((p) => tickPlayer(state, p, now));
+    return finishIfEveryoneDone({ ...state, players }, now);
+  },
 
   nextWakeAt(state) {
     if (state.finishedAt !== null) return null;
-    if (state.round) return state.round.revealUntil ?? state.round.endsAt;
     const times = active(state).flatMap((p) =>
       p.finishedAt !== null
         ? []

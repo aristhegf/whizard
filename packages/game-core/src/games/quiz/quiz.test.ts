@@ -3,16 +3,16 @@ import { isRejection } from "../types";
 import {
   AUTO_ADVANCE_MS,
   COUNTDOWN_MS,
-  REVEAL_MS,
   quizGame,
   type QuizAction,
   type QuizState,
   type QuizView,
 } from "./quiz";
-import { DEFAULT_QUIZ_SETTINGS, type QuizQuestion, type QuizSettings } from "./settings";
+import { DEFAULT_QUIZ_SETTINGS, type QuizQuestion } from "./settings";
 
 const T0 = 1_000_000;
 const LIMIT = 20_000;
+const START = T0 + COUNTDOWN_MS;
 
 const QUESTIONS: QuizQuestion[] = [1, 2, 3].map((n) => ({
   id: `q${n}`,
@@ -22,9 +22,9 @@ const QUESTIONS: QuizQuestion[] = [1, 2, 3].map((n) => ({
   reference: `Book ${n}:1`,
 }));
 
-function setup(variant: QuizSettings["variant"], players = ["ada", "tolu"], seed = 42): QuizState {
+function setup(players = ["ada", "tolu"], seed = 42): QuizState {
   return quizGame.setup({
-    settings: { ...DEFAULT_QUIZ_SETTINGS, variant, timeLimitSeconds: 20 },
+    settings: { ...DEFAULT_QUIZ_SETTINGS, timeLimitSeconds: 20 },
     players: players.map((id) => ({ id, nickname: id.toUpperCase() })),
     content: QUESTIONS,
     seed,
@@ -52,56 +52,60 @@ function answer(state: QuizState, player: string, index: number, correct: boolea
   return act(state, player, { type: "answer", index, choice, clientElapsedMs: 0 }, at);
 }
 
+/** Answers every question, moving on right after each answer. */
+function playThrough(state: QuizState, player: string, correct: boolean[], from: number) {
+  let s = state;
+  let now = from;
+  correct.forEach((c, i) => {
+    s = answer(s, player, i, c, now + 400);
+    s = act(s, player, { type: "next" }, now + 500);
+    now += 500;
+  });
+  return { state: s, now };
+}
+
 const view = (state: QuizState, player: string): QuizView => quizGame.viewFor(state, player);
 
-describe("quiz setup", () => {
+describe("setup", () => {
   it("shuffles choices but keeps every option", () => {
-    const state = setup("classic");
+    const state = setup();
     state.questions.forEach((q, i) => {
       expect([...q.choices].sort()).toEqual([...QUESTIONS[i]!.choices].sort());
       expect(q.choices[q.correctChoice]).toBe(`Right ${i + 1}`);
     });
   });
 
-  it("gives every player the same order for the same seed", () => {
-    expect(setup("classic", ["a"], 7).questions).toEqual(setup("classic", ["b"], 7).questions);
+  it("gives everyone the same order for the same seed", () => {
+    expect(setup(["a"], 7).questions).toEqual(setup(["b"], 7).questions);
   });
 
-  it("works for a single player", () => {
-    const state = setup("classic", ["solo"]);
-    const solo = answer(state, "solo", 0, true, T0 + COUNTDOWN_MS + 1000);
-    expect(view(solo, "solo").stage.kind).toBe("answer");
-  });
-});
-
-describe("Classic", () => {
-  it("shows everyone the same question after a countdown, without the answer", () => {
-    const state = setup("classic");
+  it("starts everyone on the same question at the same moment, without the answer", () => {
+    const state = setup();
     for (const player of ["ada", "tolu"]) {
       const stage = view(state, player).stage;
-      expect(stage).toMatchObject({ kind: "question", index: 0, startsAt: T0 + COUNTDOWN_MS });
+      expect(stage).toMatchObject({ kind: "question", index: 0, startsAt: START });
       expect(JSON.stringify(stage)).not.toContain("correct");
     }
   });
 
-  it("scores a fast correct answer and waits for the others", () => {
-    const state = answer(setup("classic"), "ada", 0, true, T0 + COUNTDOWN_MS + 2000);
-    const stage = view(state, "ada").stage;
-    expect(stage).toMatchObject({ kind: "question", answeredCount: 1, activeCount: 2 });
-    // Claimed 0 ms, server saw 2000 ms: credited 500 ms after the network allowance.
-    expect(view(state, "ada").me?.score).toBe(988);
+  it("works for a single player", () => {
+    const state = setup(["solo"]);
+    expect(view(state, "solo").playerCount).toBe(1);
+    const { state: done } = playThrough(state, "solo", [true, true, false], START);
+    expect(quizGame.isFinished(done)).toBe(true);
+  });
+});
+
+describe("playing at your own pace", () => {
+  it("never waits for other players", () => {
+    let state = answer(setup(), "ada", 0, true, START + 1000);
+    state = act(state, "ada", { type: "next" }, START + 1500);
+    expect(view(state, "ada").stage).toMatchObject({ kind: "question", index: 1 });
+    expect(view(state, "tolu").stage).toMatchObject({ kind: "question", index: 0 });
   });
 
-  it("hides scores from the open round so nobody learns the answer early", () => {
-    const state = answer(setup("classic"), "ada", 0, true, T0 + COUNTDOWN_MS + 2000);
-    expect(view(state, "tolu").standings.every((s) => s.score === 0)).toBe(true);
-  });
-
-  it("reveals the answer once everyone has answered", () => {
-    let state = setup("classic");
-    const at = T0 + COUNTDOWN_MS + 2000;
-    state = answer(state, "ada", 0, true, at);
-    state = answer(state, "tolu", 0, false, at + 1000);
+  it("shows the right answer and explanation after answering", () => {
+    const state = answer(setup(), "tolu", 0, false, START + 1000);
     expect(view(state, "tolu").stage).toMatchObject({
       kind: "answer",
       correct: false,
@@ -109,146 +113,104 @@ describe("Classic", () => {
       correctChoice: right(state, 0),
       explanation: "Because 1.",
       reference: "Book 1:1",
-      nextAt: at + 1000 + REVEAL_MS,
-    });
-    expect(view(state, "tolu").standings[0]).toMatchObject({ nickname: "ADA", score: 988 });
-  });
-
-  it("times out players who don't answer", () => {
-    let state = answer(setup("classic"), "ada", 0, true, T0 + COUNTDOWN_MS + 1000);
-    state = quizGame.tick(state, T0 + COUNTDOWN_MS + LIMIT);
-    expect(view(state, "tolu").stage).toMatchObject({
-      kind: "answer",
-      myChoice: null,
-      correct: false,
+      isLast: false,
     });
   });
 
-  it("moves to the next question after the reveal, then finishes", () => {
-    let state = setup("classic");
-    let now = T0 + COUNTDOWN_MS;
-    for (let i = 0; i < 3; i++) {
-      state = answer(state, "ada", i, true, now + 1000);
-      state = answer(state, "tolu", i, i === 0, now + 2000);
-      now = now + 2000 + REVEAL_MS;
-      state = quizGame.tick(state, now);
-      now =
-        quizGame.viewFor(state, "ada").stage.kind === "question"
-          ? (view(state, "ada").stage as { startsAt: number }).startsAt
-          : now;
-    }
-    expect(quizGame.isFinished(state)).toBe(true);
-    const final = view(state, "tolu");
-    expect(final.final).toBe(true);
-    expect(final.stage.kind).toBe("done");
-    expect(final.standings.map((s) => [s.nickname, s.rank, s.correctCount])).toEqual([
-      ["ADA", 1, 3],
-      ["TOLU", 2, 1],
-    ]);
-  });
-
-  it("rejects early, repeated and out-of-turn answers", () => {
-    const state = setup("classic");
-    const early = { type: "answer", index: 0, choice: 0, clientElapsedMs: 0 } as const;
-    expect(reject(state, "ada", early, T0)).toMatch(/hasn't started/);
-
-    const answered = answer(state, "ada", 0, true, T0 + COUNTDOWN_MS + 100);
-    expect(reject(answered, "ada", early, T0 + COUNTDOWN_MS + 200)).toMatch(/already answered/);
-    const future = { type: "answer", index: 1, choice: 0, clientElapsedMs: 0 } as const;
-    expect(reject(state, "ada", future, T0 + COUNTDOWN_MS + 100)).toMatch(/closed/);
-    expect(reject(state, "ada", { type: "next" }, T0 + COUNTDOWN_MS)).toMatch(/by itself/);
-    expect(reject(state, "stranger", early, T0 + COUNTDOWN_MS)).toMatch(/watching/);
-  });
-
-  it("stops waiting for a player who leaves", () => {
-    let state = answer(setup("classic"), "ada", 0, true, T0 + COUNTDOWN_MS + 1000);
-    state = quizGame.onPlayerLeft(state, "tolu", T0 + COUNTDOWN_MS + 1500);
-    expect(view(state, "ada").stage.kind).toBe("answer");
-  });
-
-  it("wakes at the deadline, then at the end of the reveal", () => {
-    let state = setup("classic");
-    expect(quizGame.nextWakeAt(state)).toBe(T0 + COUNTDOWN_MS + LIMIT);
-    state = quizGame.tick(state, T0 + COUNTDOWN_MS + LIMIT);
-    expect(quizGame.nextWakeAt(state)).toBe(T0 + COUNTDOWN_MS + LIMIT + REVEAL_MS);
-  });
-});
-
-describe("Speed Quiz", () => {
-  const start = T0 + COUNTDOWN_MS;
-
-  it("lets each player move at their own pace", () => {
-    let state = answer(setup("speed"), "ada", 0, true, start + 1000);
-    expect(view(state, "ada").stage).toMatchObject({ kind: "answer", correct: true });
-    expect(view(state, "tolu").stage).toMatchObject({ kind: "question", index: 0 });
-
-    state = act(state, "ada", { type: "next" }, start + 2000);
-    expect(view(state, "ada").stage).toMatchObject({
-      kind: "question",
-      index: 1,
-      startsAt: start + 2000,
-    });
-  });
-
-  it("measures each question from when it appeared", () => {
-    let state = answer(setup("speed"), "ada", 0, true, start + 1000);
-    state = act(state, "ada", { type: "next" }, start + 5000);
-    state = answer(state, "ada", 1, true, start + 5000);
+  it("times each question from when it appeared", () => {
+    let state = answer(setup(), "ada", 0, true, START + 1000);
+    state = act(state, "ada", { type: "next" }, START + 5000);
+    state = answer(state, "ada", 1, true, START + 5000);
+    // First: claimed 0 ms, server saw 1000 ms, allowance keeps it at 0. Second: instant.
     expect(view(state, "ada").me?.score).toBe(1000 + 1000);
   });
 
-  it("keeps other players' scores hidden until you finish", () => {
-    const state = answer(setup("speed"), "ada", 0, true, start + 1000);
-    expect(view(state, "tolu").standings).toEqual([]);
-    expect(view(state, "ada").standings).toEqual([]);
-  });
-
-  it("shows live results to whoever finishes first, and final results at the end", () => {
-    let state = setup("speed");
-    let now = start;
-    for (let i = 0; i < 3; i++) {
-      state = answer(state, "ada", i, true, now + 500);
-      state = act(state, "ada", { type: "next" }, now + 1000);
-      now += 1000;
-    }
-    const early = view(state, "ada");
-    expect(early.stage.kind).toBe("done");
-    expect(early.final).toBe(false);
-    expect(early.standings.find((s) => s.nickname === "TOLU")).toMatchObject({
-      finished: false,
-      answeredCount: 0,
-    });
-
-    for (let i = 0; i < 3; i++) {
-      state = answer(state, "tolu", i, false, now + 500);
-      state = act(state, "tolu", { type: "next" }, now + 1000);
-      now += 1000;
-    }
-    expect(view(state, "tolu").final).toBe(true);
-  });
-
   it("times out a question and moves on by itself", () => {
-    let state = quizGame.tick(setup("speed"), start + LIMIT);
+    let state = quizGame.tick(setup(), START + LIMIT);
     expect(view(state, "ada").stage).toMatchObject({ kind: "answer", myChoice: null });
-    state = quizGame.tick(state, start + LIMIT + AUTO_ADVANCE_MS);
+    state = quizGame.tick(state, START + LIMIT + AUTO_ADVANCE_MS);
     expect(view(state, "ada").stage).toMatchObject({ kind: "question", index: 1 });
   });
 
   it("finishes even if a player stops responding", () => {
-    const state = quizGame.tick(setup("speed"), start + 10 * 60_000);
+    const state = quizGame.tick(setup(), START + 10 * 60_000);
     expect(quizGame.isFinished(state)).toBe(true);
     expect(quizGame.nextWakeAt(state)).toBeNull();
   });
 
-  it("finishes when the only other player leaves", () => {
-    let state = setup("speed");
-    let now = start;
-    for (let i = 0; i < 3; i++) {
-      state = answer(state, "ada", i, true, now + 500);
-      state = act(state, "ada", { type: "next" }, now + 1000);
-      now += 1000;
+  it("rejects early, repeated and invalid moves", () => {
+    const state = setup();
+    const move = { type: "answer", index: 0, choice: 0, clientElapsedMs: 0 } as const;
+    expect(reject(state, "ada", move, T0)).toMatch(/hasn't started/);
+    expect(reject(state, "ada", { type: "next" }, START)).toMatch(/Answer the question first/);
+    expect(reject(state, "ada", { ...move, choice: 9 }, START)).toMatch(/isn't one of the choices/);
+    expect(reject(state, "stranger", move, START)).toMatch(/watching/);
+
+    const answered = answer(state, "ada", 0, true, START + 100);
+    expect(reject(answered, "ada", move, START + 200)).toMatch(/closed/);
+  });
+});
+
+describe("results", () => {
+  it("keeps everyone's scores hidden while you're still playing", () => {
+    const state = answer(setup(), "ada", 0, true, START + 1000);
+    expect(view(state, "ada").standings).toEqual([]);
+    expect(view(state, "tolu").standings).toEqual([]);
+  });
+
+  it("shows a points-only leaderboard to whoever finishes first", () => {
+    const { state } = playThrough(setup(), "ada", [true, true, true], START);
+    const results = view(state, "ada");
+    expect(results.stage.kind).toBe("done");
+    expect(results.final).toBe(false);
+    for (const row of results.standings) {
+      expect(Object.keys(row).sort()).toEqual(
+        ["finished", "left", "nickname", "playerId", "rank", "score"].sort(),
+      );
     }
-    state = quizGame.onPlayerLeft(state, "tolu", now);
-    expect(quizGame.isFinished(state)).toBe(true);
+    expect(results.standings.map((s) => [s.nickname, s.finished])).toEqual([
+      ["ADA", true],
+      ["TOLU", false],
+    ]);
+  });
+
+  it("gives each player a private review of their own answers", () => {
+    const first = playThrough(setup(), "ada", [true, false, true], START);
+    const { state } = playThrough(first.state, "tolu", [false, false, false], first.now);
+
+    const ada = view(state, "ada");
+    expect(ada.final).toBe(true);
+    if (ada.stage.kind !== "done") throw new Error("expected done");
+    expect(ada.stage.review.map((r) => r.correct)).toEqual([true, false, true]);
+    expect(ada.stage.review[1]).toMatchObject({
+      prompt: "Question 2?",
+      myChoice: wrong(state, 1),
+      correctChoice: right(state, 1),
+      explanation: "Because 2.",
+    });
+
+    const tolu = view(state, "tolu");
+    if (tolu.stage.kind !== "done") throw new Error("expected done");
+    expect(tolu.stage.review.map((r) => r.correct)).toEqual([false, false, false]);
+    expect(JSON.stringify(tolu)).not.toContain('"correct":true');
+  });
+
+  it("ranks by points", () => {
+    const first = playThrough(setup(), "ada", [false, false, true], START);
+    const { state } = playThrough(first.state, "tolu", [true, true, false], first.now);
+    expect(view(state, "ada").standings.map((s) => [s.nickname, s.rank])).toEqual([
+      ["TOLU", 1],
+      ["ADA", 2],
+    ]);
+  });
+
+  it("finishes when the only other player leaves", () => {
+    const { state, now } = playThrough(setup(), "ada", [true, true, true], START);
+    expect(quizGame.isFinished(quizGame.onPlayerLeft(state, "tolu", now))).toBe(true);
+  });
+
+  it("lets a spectator see the leaderboard but no answers", () => {
+    const state = answer(setup(), "ada", 0, true, START + 500);
+    expect(view(state, "stranger").stage).toEqual({ kind: "watching" });
   });
 });

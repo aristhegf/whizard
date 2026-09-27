@@ -49,9 +49,9 @@ export type { ContentRequest, GameModule, GamePlayer } from "./games/types";
 export {
   AUTO_ADVANCE_MS,
   COUNTDOWN_MS,
-  REVEAL_MS,
   quizGame,
   type QuizAction,
+  type QuizReviewItem,
   type QuizStage,
   type QuizStanding,
   type QuizState,
@@ -69,12 +69,10 @@ export {
   QUIZ_DIFFICULTIES,
   QUIZ_QUESTION_COUNTS,
   QUIZ_TIME_LIMITS_SECONDS,
-  QUIZ_VARIANTS,
   quizSettingsSchema,
   type QuizCategory,
   type QuizContentRequest,
   type QuizDifficulty,
   type QuizQuestion,
   type QuizSettings,
-  type QuizVariant,
 } from "./games/quiz/settings";

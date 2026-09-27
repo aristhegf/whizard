@@ -35,7 +35,7 @@ test("two players meet in the lobby", async ({ browser }) => {
 
   for (const page of [host, guest]) {
     await expect(page.getByRole("listitem")).toHaveCount(2);
-    await expect(page.getByText(/Connected · \d+ ms/)).toBeVisible();
+    await expect(page.getByText(/^\d+\sms$/)).toBeVisible();
   }
   await expect(playerRow(guest, "Tolu")).toContainText("You");
   await expect(playerRow(guest, "Tolu")).not.toContainText("Host");
@@ -55,7 +55,7 @@ test("joins by typing the room code", async ({ browser }) => {
   await expect(guest.getByRole("listitem")).toHaveCount(2);
 });
 
-test("rejects a nickname that's already taken", async ({ browser }) => {
+test("rejects a nickname that’s already taken", async ({ browser }) => {
   const host = await newPlayer(browser);
   const roomUrl = await createRoom(host, "Ada");
 
@@ -103,7 +103,7 @@ test("the host role passes on when the host leaves", async ({ browser }) => {
   await joinAs(guest, "Tolu");
   await expect(guest.getByRole("listitem")).toHaveCount(2);
 
-  await host.getByRole("button", { name: "Leave room" }).click();
+  await host.getByRole("button", { name: "Leave" }).click();
   await expect(host).toHaveURL(/\/$/);
 
   await expect(guest.getByRole("listitem")).toHaveCount(1);
@@ -111,14 +111,14 @@ test("the host role passes on when the host leaves", async ({ browser }) => {
   await expect(guest.getByRole("button", { name: "Play solo" })).toBeVisible();
 });
 
-test("explains when a room doesn't exist", async ({ page }) => {
+test("explains when a room doesn’t exist", async ({ page }) => {
   await page.goto("/r/ZZZZZZ");
-  await expect(page.getByRole("alert")).toHaveText(/doesn't exist or has expired/);
+  await expect(page.getByRole("alert")).toHaveText(/doesn’t exist or has expired/);
   await page.getByRole("button", { name: "Back to home" }).click();
   await expect(page.getByRole("button", { name: "Play with friends" })).toBeVisible();
 });
 
 test("explains when a room link is malformed", async ({ page }) => {
   await page.goto("/r/abc");
-  await expect(page.getByRole("alert")).toHaveText("That isn't a valid room link.");
+  await expect(page.getByRole("alert")).toHaveText("That isn’t a valid room link.");
 });

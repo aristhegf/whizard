@@ -52,7 +52,7 @@ function ok(result: ReturnType<typeof startGame>): RoomState {
 describe("configureGame", () => {
   it("lets the host change settings in the lobby", () => {
     const { state } = room("Ada", "Tolu");
-    const settings = { ...DEFAULT_QUIZ_SETTINGS, count: 5, variant: "speed" };
+    const settings = { ...DEFAULT_QUIZ_SETTINGS, count: 5, timeLimitSeconds: 10 };
     const next = ok(configureGame(state, "p1", settings));
     expect(toSnapshot(next, new Set()).game.settings).toEqual(settings);
   });

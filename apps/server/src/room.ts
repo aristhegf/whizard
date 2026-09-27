@@ -50,17 +50,17 @@ const JOIN_ERROR_MESSAGES: Record<JoinError, string> = {
 
 const GAME_ERROR_MESSAGES: Record<GameError, string> = {
   not_host: "Only the host can do that.",
-  bad_settings: "Those settings aren't available.",
+  bad_settings: "Those settings aren’t available.",
   not_enough_players: "You need more players to start this game.",
   game_in_progress: "A game is already running.",
-  no_game: "There's no game running.",
-  no_content: "There aren't any questions for those settings yet.",
-  bad_action: "That move isn't allowed right now.",
+  no_game: "There’s no game running.",
+  no_content: "There aren’t any questions for those settings yet.",
+  bad_action: "That move isn’t allowed right now.",
 };
 
 /**
  * One instance per room code, holding the authoritative room state. Uses the WebSocket
- * hibernation API so rooms aren't billed while they wait for messages.
+ * hibernation API so rooms aren’t billed while they wait for messages.
  */
 export class Room extends DurableObject<Env> {
   private cached: RoomState | null | undefined;
@@ -181,7 +181,7 @@ export class Room extends DurableObject<Env> {
     const now = Date.now();
     const state = await this.current(now);
     if (!attachment || !state) {
-      sendError(ws, ErrorCode.NotJoined, "You haven't joined this room.");
+      sendError(ws, ErrorCode.NotJoined, "You haven’t joined this room.");
       return;
     }
     ws.serializeAttachment(null);
@@ -206,7 +206,7 @@ export class Room extends DurableObject<Env> {
     const now = Date.now();
     const state = await this.current(now);
     if (!attachment || !state) {
-      sendError(ws, ErrorCode.NotJoined, "You haven't joined this room.");
+      sendError(ws, ErrorCode.NotJoined, "You haven’t joined this room.");
       return;
     }
     const result = apply(state, attachment.playerId, now);
@@ -278,7 +278,7 @@ export class Room extends DurableObject<Env> {
   }
 
   private rejectMissingRoom(ws: WebSocket) {
-    sendError(ws, ErrorCode.RoomNotFound, "This room doesn't exist or has expired.");
+    sendError(ws, ErrorCode.RoomNotFound, "This room doesn’t exist or has expired.");
     ws.close(CloseCode.RoomNotFound, "Room not found");
   }
 }
