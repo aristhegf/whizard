@@ -13,8 +13,10 @@ async function joinAs(page: Page, nickname: string) {
   await expect(page.getByRole("listitem").filter({ hasText: nickname })).toBeVisible();
 }
 
-function option(page: Page, group: string, name: string) {
-  return page.getByRole("group", { name: group }).getByRole("button", { name, exact: true });
+async function openRoom(page: Page, nickname = "Ada") {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Create a Room" }).click();
+  await joinAs(page, nickname);
 }
 
 async function answerFirstChoice(page: Page, question: number, total: number) {
@@ -29,14 +31,12 @@ async function answerFirstChoice(page: Page, question: number, total: number) {
 
 test("plays a solo quiz with explanations and a review", async ({ browser }) => {
   const page = await newPlayer(browser);
-  await page.goto("/");
-  await page.getByRole("button", { name: "Play solo" }).click();
-  await joinAs(page, "Ada");
+  await openRoom(page);
 
-  await expect(option(page, "Mode", "Classic")).toHaveAttribute("aria-pressed", "true");
-  await expect(page.getByRole("group", { name: "Time per question" })).toHaveCount(0);
-  await option(page, "Questions", "5").click();
-  await expect(option(page, "Questions", "5")).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByLabel("Game Mode")).toHaveValue("classic");
+  await expect(page.getByLabel("Time per question")).toHaveCount(0);
+  await page.getByLabel("Questions").selectOption("5");
+  await expect(page.getByLabel("Questions")).toHaveValue("5");
   await page.getByRole("button", { name: "Play solo" }).click();
   await expect(page.getByText("Get ready")).toBeVisible();
 
@@ -54,15 +54,13 @@ test("plays a solo quiz with explanations and a review", async ({ browser }) => 
   await expect(page.locator(".review li")).toHaveCount(5);
   await expect(page.locator(".review .explanation")).toHaveCount(5);
 
-  await page.getByRole("button", { name: "Change settings" }).click();
-  await expect(option(page, "Questions", "5")).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Change Game" }).click();
+  await expect(page.getByLabel("Questions")).toHaveValue("5");
 });
 
 test("solo moves on by itself after the explanation", async ({ browser }) => {
   const page = await newPlayer(browser);
-  await page.goto("/");
-  await page.getByRole("button", { name: "Play solo" }).click();
-  await joinAs(page, "Ada");
+  await openRoom(page);
   await page.getByRole("button", { name: "Play solo" }).click();
 
   await answerFirstChoice(page, 1, 10);
@@ -71,9 +69,7 @@ test("solo moves on by itself after the explanation", async ({ browser }) => {
 
 test("every category can be picked and played", async ({ browser }) => {
   const page = await newPlayer(browser);
-  await page.goto("/");
-  await page.getByRole("button", { name: "Play solo" }).click();
-  await joinAs(page, "Ada");
+  await openRoom(page);
 
   const category = page.getByLabel("Category");
   await expect(category.locator("option:disabled")).toHaveCount(0);
@@ -85,14 +81,12 @@ test("every category can be picked and played", async ({ browser }) => {
 
 test("Speed mode puts a timer on every question", async ({ browser }) => {
   const page = await newPlayer(browser);
-  await page.goto("/");
-  await page.getByRole("button", { name: "Play solo" }).click();
-  await joinAs(page, "Ada");
+  await openRoom(page);
 
-  await option(page, "Mode", "Speed").click();
-  await expect(page.getByRole("group", { name: "Time per question" })).toBeVisible();
-  await option(page, "Time per question", "10s").click();
-  await expect(option(page, "Time per question", "10s")).toHaveAttribute("aria-pressed", "true");
+  await page.getByLabel("Game Mode").selectOption("speed");
+  await expect(page.getByLabel("Time per question")).toBeVisible();
+  await page.getByLabel("Time per question").selectOption("10");
+  await expect(page.getByLabel("Time per question")).toHaveValue("10");
   await page.getByRole("button", { name: "Play solo" }).click();
 
   await expect(page.locator(".progress")).toContainText("1 / 10", { timeout: 10_000 });
@@ -101,10 +95,8 @@ test("Speed mode puts a timer on every question", async ({ browser }) => {
 
 test("friends play at their own pace and only see points", async ({ browser }) => {
   const host = await newPlayer(browser);
-  await host.goto("/");
-  await host.getByRole("button", { name: "Play with friends" }).click();
-  await joinAs(host, "Ada");
-  await option(host, "Questions", "5").click();
+  await openRoom(host);
+  await host.getByLabel("Questions").selectOption("5");
 
   const guest = await newPlayer(browser);
   await guest.goto(host.url());
@@ -130,7 +122,7 @@ test("friends play at their own pace and only see points", async ({ browser }) =
   for (let i = 1; i <= 5; i++) await answerFirstChoice(guest, i, 5);
 
   for (const page of [host, guest]) {
-    await expect(page.getByRole("heading", { name: "Final results" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Final Rankings" })).toBeVisible();
     const board = page.locator(".board li");
     await expect(board).toHaveCount(2);
     await expect(board.first()).toHaveText(/^1(Ada|Tolu)[\d,]+$/);
@@ -143,9 +135,7 @@ test("friends play at their own pace and only see points", async ({ browser }) =
 
 test("a player who arrives mid-game watches until the next one", async ({ browser }) => {
   const host = await newPlayer(browser);
-  await host.goto("/");
-  await host.getByRole("button", { name: "Play with friends" }).click();
-  await joinAs(host, "Ada");
+  await openRoom(host);
   await host.getByRole("button", { name: "Play solo" }).click();
   await expect(host.getByText("Get ready")).toBeVisible();
 
@@ -154,4 +144,49 @@ test("a player who arrives mid-game watches until the next one", async ({ browse
   await late.getByLabel("Choose a nickname").fill("Tolu");
   await late.getByRole("button", { name: "Join", exact: true }).click();
   await expect(late.getByText("A game is in progress.")).toBeVisible();
+});
+
+test("shows live scores on tablets and computers, but not on phones", async ({ browser }) => {
+  const desktop = await (
+    await browser.newContext({ viewport: { width: 1280, height: 800 } })
+  ).newPage();
+  await openRoom(desktop);
+  await desktop.getByLabel("Questions").selectOption("5");
+  const phone = await newPlayer(browser);
+  await phone.goto(desktop.url());
+  await joinAs(phone, "Tolu");
+  await desktop.getByRole("button", { name: "Start game" }).click();
+
+  await expect(desktop.locator(".progress")).toContainText("1 / 5", { timeout: 10_000 });
+  await expect(phone.locator(".progress")).toContainText("1 / 5", { timeout: 10_000 });
+  const live = desktop.getByRole("complementary", { name: "Live scores" });
+  await expect(live).toBeVisible();
+  await expect(live.getByRole("listitem")).toHaveCount(2);
+  await expect(phone.getByRole("complementary", { name: "Live scores" })).toBeHidden();
+});
+
+test("a late joiner plays the running game when the host allows it", async ({ browser }) => {
+  const host = await newPlayer(browser);
+  await openRoom(host);
+  await host.getByRole("switch", { name: "Allow Late Join" }).click();
+  await expect(host.getByRole("switch", { name: "Allow Late Join" })).toHaveAttribute(
+    "aria-checked",
+    "true",
+  );
+  await host.getByRole("button", { name: "Play solo" }).click();
+  await answerFirstChoice(host, 1, 10);
+
+  const late = await newPlayer(browser);
+  await late.goto(host.url());
+  await late.getByLabel("Choose a nickname").fill("Tolu");
+  await late.getByRole("button", { name: "Join", exact: true }).click();
+  await answerFirstChoice(late, 1, 10);
+});
+
+test("the lobby has a QR code and room limits", async ({ browser }) => {
+  const host = await newPlayer(browser);
+  await openRoom(host);
+  await expect(host.getByRole("img", { name: "QR code that opens this room" })).toBeVisible();
+  await host.getByLabel("Max Players").selectOption("2");
+  await expect(host.getByText("1/2 players")).toBeVisible();
 });

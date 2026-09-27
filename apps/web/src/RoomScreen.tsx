@@ -1,13 +1,23 @@
-import { NICKNAME_MAX_LENGTH, type QuizView } from "@whizard/game-core";
+import {
+  MAX_PLAYERS,
+  NICKNAME_MAX_LENGTH,
+  QUIZ_CATEGORIES,
+  type QuizView,
+} from "@whizard/game-core";
+import { AVATAR_IDS } from "@whizard/protocol";
 import { useState, type FormEvent } from "react";
 import { useAccount } from "./account";
 import { PingFriends } from "./FriendsScreen";
 import { QuizScreen } from "./games/quiz/QuizScreen";
-import { QuizSettingsPanel, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
+import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { Notice } from "./Notice";
 import type { RoomClient, RoomClientState, RoomSnapshot } from "./roomClient";
 import { navigate, roomPath } from "./router";
-import { loadNickname } from "./storage";
+import { loadAvatar, loadNickname } from "./storage";
+import { Avatar, avatarUrl } from "./ui/Avatar";
+import { Brand } from "./ui/Chrome";
+import { Icon } from "./ui/Icon";
+import { QrCode } from "./ui/QrCode";
 import { useRoom } from "./useRoom";
 
 export function RoomScreen({ code }: { code: string }) {
@@ -15,226 +25,372 @@ export function RoomScreen({ code }: { code: string }) {
 
   if (state.fatal) return <Notice message={state.fatal} />;
 
-  const joined = state.playerId && state.room;
-  const inGame = joined && state.room!.phase !== "lobby" && state.game;
+  const room = state.room;
+  const joined = !!(state.playerId && room);
+  const inGame = joined && room!.phase !== "lobby" && !!state.game;
+
+  const stage = inGame ? (state.game as QuizView).stage.kind : null;
+  const midGame = room?.phase === "playing" && (stage === "question" || stage === "answer");
+
+  const leave = (to: string) => {
+    if (midGame && !window.confirm("Leave this game? You can’t rejoin it.")) return;
+    client.leave();
+    navigate(to);
+  };
 
   return (
-    <>
+    <div className="page room-page">
       <h1 className="sr-only">Whizard room {code}</h1>
-      <TopBar state={state} client={client} canLeave={!!joined} inGame={!!inGame} />
       {inGame ? (
         <QuizScreen
           view={state.game as QuizView}
           client={client}
+          room={room!}
           playerId={state.playerId!}
-          isHost={state.room!.hostId === state.playerId}
-          usernames={state.room!.players.flatMap((p) => (p.username ? [p.username] : []))}
+          isHost={room!.hostId === state.playerId}
+          latency={<Latency state={state} />}
+          onQuit={() => leave("/")}
         />
       ) : joined ? (
-        <Lobby client={client} state={state} room={state.room!} playerId={state.playerId!} />
+        <Lobby
+          client={client}
+          state={state}
+          room={room!}
+          playerId={state.playerId!}
+          onLeave={leave}
+        />
       ) : (
-        <div className="screen">
-          <RoomCode code={code} />
-          {state.joining && !state.joinError ? (
-            <p className="muted" aria-live="polite">
-              Joining…
-            </p>
-          ) : (
-            <NicknameForm
-              disabled={state.connection !== "open"}
-              error={state.joinError}
-              onSubmit={(nickname) => client.join(nickname)}
-            />
-          )}
-        </div>
+        <JoinScreen code={code} state={state} client={client} />
       )}
-    </>
+    </div>
   );
 }
 
-function TopBar({
-  state,
-  client,
-  canLeave,
-  inGame,
-}: {
-  state: RoomClientState;
-  client: RoomClient;
-  canLeave: boolean;
-  inGame: boolean;
-}) {
+export function Latency({ state }: { state: RoomClientState }) {
   const connected = state.connection === "open";
   return (
-    <header className="topbar">
-      <a
-        className="brand"
-        translate="no"
-        href="/"
-        onClick={(event) => {
-          event.preventDefault();
-          navigate("/");
-        }}
-      >
-        Whizard
-      </a>
-      <span className={`net${connected ? "" : " warn"}`} aria-live="polite">
-        {connected
-          ? state.latencyMs === null
-            ? "Connected"
-            : `${state.latencyMs}\u00a0ms`
-          : state.connection === "connecting"
-            ? "Connecting…"
-            : "Reconnecting…"}
-      </span>
-      {canLeave && (
-        <button
-          className="btn-link"
-          onClick={() => {
-            if (inGame && !window.confirm("Leave this game? You can’t rejoin it.")) return;
-            client.leave();
-            navigate("/");
-          }}
-        >
-          Leave
-        </button>
-      )}
-    </header>
+    <span className={`net${connected ? "" : " warn"}`} aria-live="polite">
+      {connected
+        ? state.latencyMs === null
+          ? "Connected"
+          : `${state.latencyMs}\u00a0ms`
+        : state.connection === "connecting"
+          ? "Connecting…"
+          : "Reconnecting…"}
+    </span>
   );
 }
 
-function NicknameForm({
-  disabled,
-  error,
-  onSubmit,
+// Joining --------------------------------------------------------------------------------------
+
+function JoinScreen({
+  code,
+  state,
+  client,
 }: {
-  disabled: boolean;
-  error: string | null;
-  onSubmit: (nickname: string) => void;
+  code: string;
+  state: RoomClientState;
+  client: RoomClient;
 }) {
   const account = useAccount();
-  const accountName = account.status === "ready" ? account.user?.displayName : undefined;
+  const user = account.status === "ready" ? account.user : null;
   // null until they type, so the account name can fill in once it has loaded.
   const [typed, setTyped] = useState<string | null>(null);
-  const nickname = typed ?? (loadNickname() || accountName || "");
+  const nickname = typed ?? (loadNickname() || user?.displayName || "");
+  const [picked, setPicked] = useState<string | null>(null);
+  const avatar = picked ?? user?.avatar ?? loadAvatar() ?? AVATAR_IDS[0];
+  const disabled = state.connection !== "open";
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if (nickname.trim()) onSubmit(nickname);
+    if (nickname.trim()) client.join(nickname, avatar);
   };
 
   return (
-    <form className="stack" onSubmit={handleSubmit}>
-      <label className="label" htmlFor="nickname">
-        Choose a nickname
-      </label>
-      <div className="inline-form">
-        <input
-          id="nickname"
-          name="nickname"
-          value={nickname}
-          maxLength={NICKNAME_MAX_LENGTH}
-          autoComplete="nickname"
-          autoFocus
-          onChange={(event) => setTyped(event.target.value)}
-        />
-        <button className="btn btn-primary" type="submit" disabled={disabled || !nickname.trim()}>
-          Join
-        </button>
-      </div>
-      {error && (
-        <p className="error" role="alert">
-          {error}
-        </p>
-      )}
-    </form>
+    <div className="join-screen">
+      <header className="topnav">
+        <Brand />
+      </header>
+      <form className="panel join-card" onSubmit={handleSubmit}>
+        <div className="code-box small-code">
+          <span className="code-label">Room Code</span>
+          <strong translate="no">{code}</strong>
+        </div>
+        {state.joining && !state.joinError ? (
+          <p className="muted center" aria-live="polite">
+            Joining…
+          </p>
+        ) : (
+          <>
+            <label className="label" htmlFor="nickname">
+              Choose a nickname
+            </label>
+            <input
+              id="nickname"
+              name="nickname"
+              value={nickname}
+              maxLength={NICKNAME_MAX_LENGTH}
+              autoComplete="nickname"
+              autoFocus
+              onChange={(event) => setTyped(event.target.value)}
+            />
+            <span className="label" id="avatar-label">
+              Pick your avatar
+            </span>
+            <div className="avatar-picker" role="radiogroup" aria-labelledby="avatar-label">
+              {AVATAR_IDS.map((id, i) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="radio"
+                  aria-checked={avatar === id}
+                  aria-label={`Avatar ${i + 1}`}
+                  onClick={() => setPicked(id)}
+                >
+                  <img src={avatarUrl(id)} alt="" width={56} height={56} />
+                </button>
+              ))}
+            </div>
+            <button
+              className="btn btn-primary btn-block"
+              type="submit"
+              disabled={disabled || !nickname.trim()}
+            >
+              Join
+            </button>
+            {state.joinError && (
+              <p className="error" role="alert">
+                {state.joinError}
+              </p>
+            )}
+          </>
+        )}
+      </form>
+    </div>
   );
 }
+
+// Lobby ----------------------------------------------------------------------------------------
+
+const CAPACITY_OPTIONS = [2, 4, 6, 8, 10, 12, 16, 20].filter((n) => n <= MAX_PLAYERS);
 
 function Lobby({
   client,
   state,
   room,
   playerId,
+  onLeave,
 }: {
   client: RoomClient;
   state: RoomClientState;
   room: RoomSnapshot;
   playerId: string;
+  onLeave: (to: string) => void;
 }) {
   const isHost = room.hostId === playerId;
   const settings = parseQuizSettings(room.game.settings);
-  const alone = room.players.filter((p) => p.connected).length <= 1;
+  const connected = room.players.filter((p) => p.connected);
+  const alone = connected.length <= 1;
+  const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
+  const url = `${location.origin}${roomPath(room.code)}`;
 
   return (
-    <div className="screen">
-      <div className="code-row">
-        <RoomCode code={room.code} />
-        <InviteButton code={room.code} />
-      </div>
-
-      <ul className="chips" aria-label="Players">
-        {room.players.map((player) => (
-          <li
-            key={player.id}
-            className={`chip${player.id === playerId ? " me" : ""}${player.connected ? "" : " offline"}`}
-          >
-            {player.id === room.hostId && (
-              <span className="crown" aria-hidden="true">
-                ★
-              </span>
-            )}
-            {player.nickname}
-            {player.id === room.hostId && <span className="sr-only">Host</span>}
-            {player.id === playerId && <span className="muted small">You</span>}
-            {!player.connected && <span className="muted small">Offline</span>}
-          </li>
-        ))}
-      </ul>
-
-      <PingFriends code={room.code} />
-
-      {settings && (
-        <QuizSettingsPanel
-          settings={settings}
-          editable={isHost}
-          onChange={(next) => client.configure(next)}
-        />
-      )}
-
-      <div className="dock">
-        {state.notice && (
-          <p className="error small" role="alert">
-            {state.notice}
-          </p>
-        )}
-        {isHost ? (
-          <button className="btn btn-primary" onClick={() => client.startGame()}>
-            {alone ? "Play solo" : "Start game"}
+    <>
+      <header className="room-bar">
+        <button className="btn-link back-link" onClick={() => onLeave("/games")}>
+          <Icon name="chevronLeft" size={20} />
+          Back to Games
+        </button>
+        <Latency state={state} />
+        <div className="room-actions">
+          <InviteButton url={url} />
+          {isHost && (
+            <button
+              className="bar-btn"
+              onClick={() =>
+                document.getElementById("room-settings")?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
+              <Icon name="settings" size={20} />
+              <span>Settings</span>
+            </button>
+          )}
+          <button className="bar-btn leave" onClick={() => onLeave("/")}>
+            <Icon name="logout" size={20} />
+            <span>Leave</span>
           </button>
-        ) : (
-          <p className="muted center">Waiting for the host to start the game.</p>
-        )}
+        </div>
+      </header>
+
+      <div className="lobby">
+        <section className="lobby-main">
+          <div className="panel game-summary">
+            <span className="summary-art">
+              <img src="/art/games/quiz.webp" alt="" />
+            </span>
+            <div className="summary-text">
+              <h2 className="summary-title">Quiz</h2>
+              <span className="pill">{category?.name ?? "Quiz"}</span>
+              {!isHost && settings && (
+                <p className="summary muted small">
+                  {settings.variant === "speed" ? "Speed" : "Classic"} quiz · {category?.name} ·{" "}
+                  {settings.difficulty[0]!.toUpperCase() + settings.difficulty.slice(1)} ·{" "}
+                  {settings.count} questions
+                  {settings.variant === "speed" && ` · ${settings.timeLimitSeconds}s each`}
+                </p>
+              )}
+            </div>
+            {isHost && (
+              <button
+                className="icon-btn edit-btn"
+                aria-label="Change topic"
+                onClick={() => document.getElementById("category")?.focus()}
+              >
+                <Icon name="pencil" size={20} />
+              </button>
+            )}
+          </div>
+
+          <div className="panel settings-panel" id="room-settings">
+            <h2 className="section-title">Room Settings</h2>
+            <div className="settings-list">
+              <div className="setting-row">
+                <Icon name="users" size={20} />
+                <label htmlFor="max-players">Max Players</label>
+                <select
+                  id="max-players"
+                  value={room.settings.maxPlayers}
+                  disabled={!isHost}
+                  onChange={(event) =>
+                    client.configureRoom({ maxPlayers: Number(event.target.value) })
+                  }
+                >
+                  {CAPACITY_OPTIONS.map((n) => (
+                    <option key={n} value={n} disabled={n < room.players.length}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {settings && (
+                <QuizSettingsRows
+                  settings={settings}
+                  editable={isHost}
+                  onChange={(next) => client.configure(next)}
+                />
+              )}
+              <div className="setting-row toggle-row">
+                <Icon name="clock" size={20} />
+                <span className="toggle-text">
+                  <span id="late-join-label">Allow Late Join</span>
+                  <span className="dim small">Players can join after the game starts</span>
+                </span>
+                <button
+                  className="switch"
+                  role="switch"
+                  aria-checked={room.settings.lateJoin}
+                  aria-labelledby="late-join-label"
+                  disabled={!isHost}
+                  onClick={() => client.configureRoom({ lateJoin: !room.settings.lateJoin })}
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="panel room-card" aria-label="Room">
+          <div className="code-box">
+            <span className="code-label">Room Code</span>
+            <strong className="room-code" translate="no">
+              {room.code}
+            </strong>
+            <CopyButton text={room.code} />
+          </div>
+          <p className="dim small center">Share this code with your friends</p>
+          <QrCode value={url} label="QR code that opens this room" />
+
+          <div className="lobby-count">
+            <span className="avatar-stack" aria-hidden="true">
+              {connected.slice(0, 5).map((p) => (
+                <Avatar key={p.id} id={p.avatar} name={p.nickname} size={40} />
+              ))}
+            </span>
+            <span className="muted">
+              {connected.length}/{room.settings.maxPlayers} players
+            </span>
+          </div>
+
+          <ul className="player-list" aria-label="Players">
+            {room.players.map((player) => (
+              <li
+                key={player.id}
+                className={`${player.id === playerId ? "me" : ""}${player.connected ? "" : " offline"}`}
+              >
+                <Avatar id={player.avatar} name={player.nickname} size={36} />
+                <span className="player-name">{player.nickname}</span>
+                {player.id === room.hostId && (
+                  <span className="host-badge">
+                    <Icon name="crown" size={16} />
+                    <span className="sr-only">Host</span>
+                  </span>
+                )}
+                {player.id === playerId && <span className="dim small">You</span>}
+                {!player.connected && <span className="dim small">Offline</span>}
+              </li>
+            ))}
+          </ul>
+
+          <PingFriends code={room.code} />
+
+          <div className="lobby-dock">
+            {state.notice && (
+              <p className="error small" role="alert">
+                {state.notice}
+              </p>
+            )}
+            {isHost ? (
+              <button
+                className="btn btn-primary btn-block btn-start"
+                onClick={() => client.startGame()}
+              >
+                <Icon name="play" size={20} fill />
+                {alone ? "Play solo" : "Start game"}
+              </button>
+            ) : (
+              <p className="muted center">Waiting for the host to start the game.</p>
+            )}
+          </div>
+        </section>
       </div>
-    </div>
+    </>
   );
 }
 
-function RoomCode({ code }: { code: string }) {
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
   return (
-    <div>
-      <p className="label">Room code</p>
-      <p className="room-code" translate="no">
-        {code}
-      </p>
-    </div>
+    <button
+      className="icon-btn copy-btn"
+      aria-label={copied ? "Copied" : "Copy room code"}
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(text);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+        } catch {
+          // Clipboard blocked; the code is on screen.
+        }
+      }}
+    >
+      <Icon name={copied ? "check" : "copy"} size={26} />
+    </button>
   );
 }
 
-function InviteButton({ code }: { code: string }) {
+function InviteButton({ url }: { url: string }) {
   const [copied, setCopied] = useState(false);
 
   const handleInvite = async () => {
-    const url = `${location.origin}${roomPath(code)}`;
     try {
       if (navigator.share) {
         await navigator.share({ title: "Join my Whizard room", url });
@@ -249,8 +405,9 @@ function InviteButton({ code }: { code: string }) {
   };
 
   return (
-    <button className="btn" onClick={handleInvite} aria-live="polite">
-      {copied ? "Link copied" : "Invite"}
+    <button className="bar-btn invite" onClick={handleInvite} aria-live="polite">
+      <Icon name="invite" size={20} />
+      <span>{copied ? "Link copied" : "Invite"}</span>
     </button>
   );
 }

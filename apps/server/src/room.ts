@@ -3,7 +3,9 @@ import { drawContent } from "@whizard/content";
 import {
   applyGameAction,
   configureGame,
+  configureRoom,
   createRoomState,
+  gameModule,
   gameViewFor,
   isExpired,
   joinRoom,
@@ -28,6 +30,7 @@ import {
   type RoomState,
 } from "@whizard/game-core";
 import {
+  AVATAR_IDS,
   CloseCode,
   ErrorCode,
   PROTOCOL_VERSION,
@@ -74,10 +77,20 @@ const GAME_ERROR_MESSAGES: Record<GameError, string> = {
 export class Room extends DurableObject<Env> {
   private cached: RoomState | null | undefined;
 
-  /** Claims this room for a newly generated code. Returns false if the code is already in use. */
-  async create(code: string): Promise<boolean> {
+  /**
+   * Claims this room for a newly generated code, optionally with game settings picked before
+   * the room existed (such as a topic). Returns false if the code is already in use.
+   */
+  async create(code: string, gameSettings?: unknown): Promise<boolean> {
     if (await this.load()) return false;
-    await this.save(createRoomState(code, Date.now()));
+    const state = createRoomState(code, Date.now());
+    const game = gameModule(state.game.id).settingsSchema.safeParse({
+      ...(state.game.settings as object),
+      ...(typeof gameSettings === "object" ? gameSettings : {}),
+    });
+    await this.save(
+      game.success ? { ...state, game: { ...state.game, settings: game.data } } : state,
+    );
     return true;
   }
 
@@ -108,6 +121,12 @@ export class Room extends DurableObject<Env> {
         return;
       case "leave":
         await this.handleLeave(ws);
+        return;
+      case "roomSettings":
+        await this.handleGame(ws, (state, playerId) => {
+          const result = configureRoom(state, playerId, withoutUndefined(message.settings));
+          return result.ok ? result : { ok: false, error: result.error };
+        });
         return;
       case "configure":
         await this.handleGame(ws, (state, playerId) =>
@@ -174,10 +193,19 @@ export class Room extends DurableObject<Env> {
     if (attachment?.playerId) return;
     const account = attachment?.account ?? null;
 
-    const result = joinRoom(state, { ...message, account }, this.connectedIds(), now, () => ({
-      id: randomToken(9),
-      sessionToken: randomToken(24),
-    }));
+    const avatar = (AVATAR_IDS as readonly string[]).includes(message.avatar ?? "")
+      ? message.avatar
+      : undefined;
+    const result = joinRoom(
+      state,
+      { ...message, avatar, account },
+      this.connectedIds(),
+      now,
+      () => ({
+        id: randomToken(9),
+        sessionToken: randomToken(24),
+      }),
+    );
     if (!result.ok) {
       sendError(ws, result.error, JOIN_ERROR_MESSAGES[result.error]);
       return;
@@ -308,6 +336,14 @@ export class Room extends DurableObject<Env> {
     sendError(ws, ErrorCode.RoomNotFound, "This room doesn’t exist or has expired.");
     ws.close(CloseCode.RoomNotFound, "Room not found");
   }
+}
+
+function withoutUndefined<T extends object>(
+  value: T,
+): { [K in keyof T]?: Exclude<T[K], undefined> } {
+  return Object.fromEntries(Object.entries(value).filter(([, v]) => v !== undefined)) as {
+    [K in keyof T]?: Exclude<T[K], undefined>;
+  };
 }
 
 function parseAccount(header: string | null): AccountIdentity | null {

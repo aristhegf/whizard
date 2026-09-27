@@ -9,7 +9,15 @@ import {
   type ServerMessage,
 } from "@whizard/protocol";
 import { roomSocketUrl } from "./api";
-import { clearSession, guestId, loadSession, saveNickname, saveSession } from "./storage";
+import {
+  clearSession,
+  guestId,
+  loadAvatar,
+  loadSession,
+  saveAvatar,
+  saveNickname,
+  saveSession,
+} from "./storage";
 
 const PING_INTERVAL_MS = 5000;
 /** Extra pings right after connecting, for a good clock estimate before the first question. */
@@ -97,14 +105,21 @@ export class RoomClient {
     this.socket = null;
   }
 
-  join(nickname: string): void {
+  join(nickname: string, avatar?: string): void {
     this.pendingNickname = nickname;
+    if (avatar) saveAvatar(avatar);
     this.update({ joining: true, joinError: null });
     this.sendJoin();
   }
 
   /** The server’s clock, estimated from ping round trips. Game deadlines use server time. */
   readonly serverNow = (): number => Date.now() + this.clockOffset;
+
+  /** Host only: who can join, and whether they can join a game that's already running. */
+  configureRoom(settings: { maxPlayers?: number; lateJoin?: boolean }): void {
+    this.update({ notice: null });
+    this.send({ type: "roomSettings", settings });
+  }
 
   configure(settings: unknown): void {
     this.update({ notice: null });
@@ -231,6 +246,7 @@ export class RoomClient {
       protocolVersion: PROTOCOL_VERSION,
       nickname,
       guestId: guestId(),
+      ...(loadAvatar() ? { avatar: loadAvatar()! } : {}),
       ...(session ? { sessionToken: session.sessionToken } : {}),
     });
   }

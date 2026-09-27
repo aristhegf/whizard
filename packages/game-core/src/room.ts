@@ -1,6 +1,7 @@
 import { normalizeNickname, sameNickname } from "./nickname";
 import {
   defaultGameConfig,
+  gamePlayerJoined,
   gamePlayerLeft,
   gameWakeAt,
   phaseOf,
@@ -9,7 +10,8 @@ import {
   type RoomPhase,
 } from "./session";
 
-export const MAX_PLAYERS = 16;
+export const MAX_PLAYERS = 20;
+export const MIN_ROOM_CAPACITY = 2;
 /** How long a disconnected host keeps the role, so a locked phone doesn't hand it over. */
 export const HOST_GRACE_MS = 30_000;
 export const DISCONNECTED_PLAYER_TTL_MS = 10 * 60_000;
@@ -32,7 +34,19 @@ export interface Player {
   account: AccountIdentity | null;
   /** A random ID the browser keeps, so a guest's games can follow them into a new account. */
   guestId: string | null;
+  /** One of the avatar pictures, or null for the default. */
+  avatar: string | null;
 }
+
+/** Chosen by the host in the lobby. */
+export interface RoomSettings {
+  /** How many people can be in the room. */
+  maxPlayers: number;
+  /** Whether someone arriving mid-game joins it, or waits for the next one. */
+  lateJoin: boolean;
+}
+
+export const DEFAULT_ROOM_SETTINGS: RoomSettings = { maxPlayers: MAX_PLAYERS, lateJoin: false };
 
 export interface RoomState {
   code: string;
@@ -45,6 +59,8 @@ export interface RoomState {
   game: GameConfig;
   /** The game being played, or the one that just finished. */
   session: GameSession | null;
+  /** Missing from rooms saved before room settings existed. */
+  settings?: RoomSettings;
 }
 
 export interface PlayerSnapshot {
@@ -53,6 +69,7 @@ export interface PlayerSnapshot {
   connected: boolean;
   /** Public account handle, so other players can add them as a friend. */
   username: string | null;
+  avatar: string | null;
 }
 
 export interface RoomSnapshot {
@@ -61,6 +78,7 @@ export interface RoomSnapshot {
   players: PlayerSnapshot[];
   phase: RoomPhase;
   game: GameConfig;
+  settings: RoomSettings;
 }
 
 /** IDs of players with an open connection right now. */
@@ -71,6 +89,7 @@ export interface JoinRequest {
   sessionToken?: string | undefined;
   guestId?: string | undefined;
   account?: AccountIdentity | null | undefined;
+  avatar?: string | null | undefined;
 }
 
 export type JoinError = "nickname_invalid" | "nickname_taken" | "room_full";
@@ -79,16 +98,45 @@ export type JoinResult =
   | { ok: true; state: RoomState; player: Player; rejoined: boolean }
   | { ok: false; error: JoinError };
 
-export function createRoomState(code: string, now: number): RoomState {
+export function createRoomState(
+  code: string,
+  now: number,
+  game: GameConfig = defaultGameConfig(),
+): RoomState {
   return {
     code,
     createdAt: now,
     hostId: null,
     players: [],
     lastActivityAt: now,
-    game: defaultGameConfig(),
+    game,
     session: null,
+    settings: DEFAULT_ROOM_SETTINGS,
   };
+}
+
+export function roomSettings(state: RoomState): RoomSettings {
+  return state.settings ?? DEFAULT_ROOM_SETTINGS;
+}
+
+export type RoomSettingsError = "not_host" | "bad_settings";
+
+/** The host changes who can join. Doesn't remove anyone already in the room. */
+export function configureRoom(
+  state: RoomState,
+  playerId: string,
+  patch: Partial<RoomSettings>,
+): { ok: true; state: RoomState } | { ok: false; error: RoomSettingsError } {
+  if (state.hostId !== playerId) return { ok: false, error: "not_host" };
+  const next = { ...roomSettings(state), ...patch };
+  if (
+    !Number.isInteger(next.maxPlayers) ||
+    next.maxPlayers < MIN_ROOM_CAPACITY ||
+    next.maxPlayers > MAX_PLAYERS
+  ) {
+    return { ok: false, error: "bad_settings" };
+  }
+  return { ok: true, state: { ...state, settings: next } };
 }
 
 export function joinRoom(
@@ -105,7 +153,12 @@ export function joinRoom(
 
   if (existing) {
     // Signing in between visits upgrades the player; a signed-out reconnect keeps what they had.
-    const player = { ...existing, lastSeenAt: now, account: request.account ?? existing.account };
+    const player = {
+      ...existing,
+      lastSeenAt: now,
+      account: request.account ?? existing.account,
+      avatar: request.avatar ?? existing.avatar ?? null,
+    };
     const players = state.players.map((p) => (p.id === player.id ? player : p));
     const next = { ...state, players, lastActivityAt: now };
     return {
@@ -118,7 +171,9 @@ export function joinRoom(
 
   const nickname = normalizeNickname(request.nickname);
   if (!nickname) return { ok: false, error: "nickname_invalid" };
-  if (state.players.length >= MAX_PLAYERS) return { ok: false, error: "room_full" };
+  if (state.players.length >= Math.min(roomSettings(state).maxPlayers, MAX_PLAYERS)) {
+    return { ok: false, error: "room_full" };
+  }
   if (state.players.some((p) => sameNickname(p.nickname, nickname))) {
     return { ok: false, error: "nickname_taken" };
   }
@@ -130,8 +185,10 @@ export function joinRoom(
     lastSeenAt: now,
     account: request.account ?? null,
     guestId: request.guestId ?? null,
+    avatar: request.avatar ?? null,
   };
-  const next = { ...state, players: [...state.players, player], lastActivityAt: now };
+  let next: RoomState = { ...state, players: [...state.players, player], lastActivityAt: now };
+  if (roomSettings(state).lateJoin) next = gamePlayerJoined(next, player, now);
   return {
     ok: true,
     rejoined: false,
@@ -211,9 +268,11 @@ export function toSnapshot(state: RoomState, connected: ConnectedIds): RoomSnaps
       nickname: p.nickname,
       connected: connected.has(p.id),
       username: p.account?.username ?? null,
+      avatar: p.avatar ?? null,
     })),
     phase: phaseOf(state),
     game: state.game,
+    settings: roomSettings(state),
   };
 }
 

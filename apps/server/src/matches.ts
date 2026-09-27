@@ -3,6 +3,7 @@ import type { CategoryStat, MatchPlayer, MatchRecord, PlayerStats } from "@whiza
 import { requireUser } from "./account";
 import type { Env } from "./env";
 import type { RequestContext } from "./http";
+import { asAvatar } from "./sessions";
 
 /** How long a guest's games can still be claimed by an account they create. */
 export const GUEST_CLAIM_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
@@ -25,6 +26,7 @@ interface MatchPlayerRow {
   placing: number;
   user_id: string | null;
   username: string | null;
+  avatar: string | null;
   nickname: string;
   score: number;
   correct: number | null;
@@ -102,7 +104,7 @@ async function matchesFor(
 
   const ids = matches.map((m) => m.id);
   const { results: players } = await env.DB.prepare(
-    `SELECT mp.match_id, mp.placing, mp.user_id, u.username, mp.nickname, mp.score
+    `SELECT mp.match_id, mp.placing, mp.user_id, u.username, u.avatar, mp.nickname, mp.score
        FROM match_players mp LEFT JOIN users u ON u.id = mp.user_id
       WHERE mp.match_id IN (${ids.map(() => "?").join(", ")})
       ORDER BY mp.placing`,
@@ -123,6 +125,7 @@ async function matchesFor(
       .filter((p) => p.match_id === m.id)
       .map((p): MatchPlayer => ({
         nickname: p.nickname,
+        avatar: asAvatar(p.avatar),
         username: p.username,
         placing: p.placing,
         score: p.score,

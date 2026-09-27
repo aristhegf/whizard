@@ -3,6 +3,7 @@ import { CLASSIC_IDLE_LIMIT_MS, COUNTDOWN_MS, type QuizView } from "./games/quiz
 import { DEFAULT_QUIZ_SETTINGS, type QuizQuestion } from "./games/quiz/settings";
 import type { ContentRequest } from "./games/types";
 import {
+  configureRoom,
   createRoomState,
   joinRoom,
   leaveRoom,
@@ -230,5 +231,36 @@ describe("match results", () => {
     const result = unrecordedResult(runOut(left, connected));
     expect(result?.summary.players.map((p) => p.playerId)).toEqual(["p1"]);
     expect(result?.roster).toHaveLength(2);
+  });
+});
+
+describe("late joiners", () => {
+  function started(lateJoin: boolean) {
+    const { state, connected } = room("Ada");
+    const withSettings = configureRoom(state, "p1", { lateJoin });
+    if (!withSettings.ok) throw new Error(withSettings.error);
+    return { state: ok(startGame(withSettings.state, "p1", connected, T0, 1, bank)), connected };
+  }
+
+  it("join the running game when the host allows it", () => {
+    const { state, connected } = started(true);
+    const result = joinRoom(state, { nickname: "Tolu" }, connected, T0 + 10_000, () => ({
+      id: "p2",
+      sessionToken: "t2",
+    }));
+    if (!result.ok) throw new Error(result.error);
+    const view = gameViewFor(result.state, "p2") as QuizView;
+    expect(view.stage).toMatchObject({ kind: "question", index: 0 });
+    expect(unrecordedResult(result.state)).toBeNull();
+  });
+
+  it("watch until the next game otherwise", () => {
+    const { state, connected } = started(false);
+    const result = joinRoom(state, { nickname: "Tolu" }, connected, T0 + 10_000, () => ({
+      id: "p2",
+      sessionToken: "t2",
+    }));
+    if (!result.ok) throw new Error(result.error);
+    expect((gameViewFor(result.state, "p2") as QuizView).stage.kind).toBe("watching");
   });
 });

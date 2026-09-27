@@ -1,0 +1,328 @@
+/* Account, friends, groups and privacy pages ------------------------------------------------ */
+
+.account-page .side-main > .screen,
+.account-page .side-main > .panel {
+  width: 100%;
+  max-width: 900px;
+}
+
+.account-page .screen {
+  gap: 20px;
+  padding-top: 0;
+}
+
+/* Each section of these pages sits on its own panel. */
+.account-page .screen > section.stack,
+.account-page .screen > form.stack,
+.account-page .screen > .stack:not(header) {
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  border: 1.5px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.account-page .screen > header {
+  display: grid;
+  gap: 6px;
+}
+
+.profile-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.profile-head .btn {
+  flex: none;
+}
+
+.profile-id {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+
+/* Settings rows inside account panels. */
+.settings {
+  display: grid;
+}
+
+.setting {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 8px 14px;
+  padding: 12px 0;
+  border-bottom: 1.5px solid var(--line);
+}
+
+.setting:last-child {
+  border-bottom: none;
+}
+
+.setting-name {
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.setting .setting-hint {
+  grid-column: 2;
+  margin: 0;
+}
+
+.setting .inline-form input,
+.setting select {
+  min-height: 44px;
+}
+
+@media (max-width: 520px) {
+  .setting {
+    grid-template-columns: 1fr;
+  }
+
+  .setting .setting-hint {
+    grid-column: 1;
+  }
+}
+
+.device-row,
+.quiet-range {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quiet-range select {
+  flex: 1;
+  min-height: 44px;
+  padding: 0 34px 0 12px;
+}
+
+/* Stats tiles. */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  min-height: 96px;
+}
+
+.tiles > div {
+  padding: 16px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgb(92 50 230 / 45%), rgb(20 18 70 / 85%));
+  border: 1.5px solid var(--line-strong);
+  min-width: 0;
+}
+
+.tiles dt {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.tiles dd {
+  margin: 6px 0 0;
+  font-family: var(--display);
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.tiles dd.best {
+  font-size: 1.1rem;
+}
+
+.tiles .of {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* Lists: games played, passkeys, people. */
+.matches,
+.passkeys,
+.people {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.matches li,
+.passkeys li,
+.people li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 10px 0;
+  border-bottom: 1.5px solid var(--line);
+}
+
+.matches li:last-child,
+.passkeys li:last-child,
+.people li:last-child {
+  border-bottom: none;
+}
+
+.people.compact li {
+  min-height: 50px;
+  padding: 4px 0;
+}
+
+.match-main,
+.person {
+  display: grid;
+  min-width: 0;
+}
+
+.person-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.match-title,
+.person-name {
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.match-result {
+  display: grid;
+  justify-items: end;
+  flex: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.placing {
+  font-family: var(--display);
+  font-weight: 800;
+}
+
+.placing.first {
+  color: var(--gold);
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.group-link {
+  flex: 1;
+  text-decoration: none;
+}
+
+.group-form {
+  padding: 18px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--line-strong);
+  background: rgb(22 21 64 / 70%);
+}
+
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.back {
+  justify-self: start;
+  padding-left: 0;
+  text-decoration: none;
+}
+
+/* The ⋯ menu on a friend. */
+.more {
+  position: relative;
+}
+
+.more summary {
+  list-style: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.more summary::-webkit-details-marker {
+  display: none;
+}
+
+.more[open] summary {
+  background: rgb(255 255 255 / 8%);
+  color: #fff;
+}
+
+.more .menu {
+  position: absolute;
+  right: 0;
+  top: 44px;
+  z-index: 5;
+  display: grid;
+  justify-items: start;
+  min-width: 11rem;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  background: var(--panel-strong);
+  border: 1.5px solid var(--line-strong);
+  box-shadow: var(--shadow);
+}
+
+.ping-toggle {
+  align-self: flex-start;
+  padding-left: 0;
+}
+
+/* Privacy text. */
+.prose {
+  display: grid;
+  gap: 14px;
+  padding: 28px;
+  line-height: 1.6;
+}
+
+.prose h2 {
+  margin-top: 10px;
+  font-family: var(--display);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.prose ul {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 8px;
+}
+
+.prose p,
+.prose li {
+  color: #dcd8f5;
+}
+
+.account-page .screen > header.profile-head {
+  display: flex;
+}
+
+.setting .avatar-picker {
+  grid-template-columns: repeat(auto-fill, minmax(44px, 52px));
+  gap: 8px;
+}

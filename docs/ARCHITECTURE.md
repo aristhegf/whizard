@@ -133,9 +133,13 @@ Categories at launch: Bible, Geography, History, Science, Animals, Football, Mov
 
 This pacing is decided entirely on the player's own screen: the server only needs to hear "next". That's what makes the account setting simple: a signed-in player can choose to see explanations after each answer in group games too, without changing the game rules.
 
-**Results.** Whoever finishes first sees the leaderboard straight away. It fills in as the others finish, and players still going show as "Playing…". The leaderboard shows **rank, name and points only**. What anyone else got right or wrong stays private.
+**Live scores.** On tablets and computers, a panel beside the question shows everyone's points as they play. Phones leave it out to keep the question and answers large. Either way it shows **rank, name and points only**: what anyone else got right or wrong stays private.
+
+**Results.** Whoever finishes first sees the rankings straight away. They fill in as the others finish, and players still going show as "Playing…". Once everyone is done, the top three go on a podium.
 
 **Review.** Every player gets a private review of their own game at the end: each question, their answer, the correct answer and the explanation where the category has one.
+
+**Late joiners.** By default, someone who arrives mid-game watches until the next one. If the host turns on **Allow late join**, they join the running game instead, starting from the first question with their own countdown. It works because every player already moves at their own pace.
 
 Streak and Elimination variants can be added later on top of this.
 
@@ -158,21 +162,24 @@ stateDiagram-v2
 - **Players who drop** stay in the room, shown as offline, for 10 minutes so they can come back.
 - **Host handover:** if the host leaves, the longest-connected player becomes host right away. If the host only loses connection, they keep the role for 30 seconds first, so a locked phone doesn't hand it over.
 - **Cleanup** runs from a Durable Object alarm. A room is deleted 30 minutes after the last player disconnects.
-- **Limits:** up to 16 players per room, nicknames up to 20 characters (emoji welcome), unique within the room.
+- **Room settings** belong to the host: the most players the room takes (2 to 20) and whether late joiners can enter a running game.
+- **Limits:** up to 20 players per room, nicknames up to 20 characters (emoji welcome), unique within the room. Each player picks an avatar from a built-in set.
+- **Rooms can be opened with a game already set up**, such as a topic picked on the Quiz Topics page.
 
 ## Real-time protocol
 
 JSON messages over one WebSocket per player. Every message has a `type` and is validated with zod on both ends. Messages that fail validation are dropped.
 
-| Client → Server                                     | Purpose                                                             |
-| --------------------------------------------------- | ------------------------------------------------------------------- |
-| `join { protocolVersion, nickname, sessionToken? }` | Join, or rejoin with the token from an earlier `welcome`            |
-| `leave {}`                                          | Leave the room for good                                             |
-| `ping { t }`                                        | Measure round-trip time and clock offset                            |
-| `configure { settings }`                            | Host changes the game settings in the lobby                         |
-| `start {}`                                          | Host starts a game, or plays again from the results                 |
-| `action { action }`                                 | A game move (an answer, "next"), validated by the game's own schema |
-| `backToLobby {}`                                    | Host returns everyone to the lobby to change settings               |
+| Client → Server                                                        | Purpose                                                             |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `join { protocolVersion, nickname, avatar?, guestId?, sessionToken? }` | Join, or rejoin with the token from an earlier `welcome`            |
+| `leave {}`                                                             | Leave the room for good                                             |
+| `ping { t }`                                                           | Measure round-trip time and clock offset                            |
+| `configure { settings }`                                               | Host changes the game settings in the lobby                         |
+| `roomSettings { maxPlayers?, lateJoin? }`                              | Host changes who can join                                           |
+| `start {}`                                                             | Host starts a game, or plays again from the results                 |
+| `action { action }`                                                    | A game move (an answer, "next"), validated by the game's own schema |
+| `backToLobby {}`                                                       | Host returns everyone to the lobby to change settings               |
 
 | Server → Client                                        | Purpose                                                                 |
 | ------------------------------------------------------ | ----------------------------------------------------------------------- |
@@ -352,6 +359,15 @@ A native app later registers with the same system, so pings work the same way th
 ### Privacy
 
 Accounts mean storing personal data, so they launch with a plain-language privacy policy (`/privacy`), a minimum age of 13 confirmed at sign-up, a JSON download of everything stored, and account deletion. Deleting removes the account, passkeys, sessions and settings; the player's rows in other people's games become "Former player" with no link back.
+
+## Visual design
+
+A dark, cozy game-night look: deep navy and purple with warm lamp glows behind every screen, glassy panels, and bright cards for each game and topic.
+
+- **Type:** Poppins for headings, Nunito for everything else, both bundled with the app.
+- **Colour:** purple for primary actions, gold for the big "Create a Room" call to action and for scores, green and red for right and wrong answers. Tokens live at the top of `apps/web/src/styles/base.css`.
+- **Layouts:** a top bar on the landing and games pages, a sidebar for app pages on wide screens, and a bottom tab bar (Home, Games, Create, Profile) on phones. Game screens drop the navigation to give the question room.
+- **Artwork** is plain image files in `apps/web/public/art/`: `mascot/`, `games/` (one per game), `topics/` (one per quiz category), `avatars/` (`a01` to `a10`) and the logo. To update a picture, replace the file with one of the same name; transparent WebP works best. The app icons in `apps/web/public/` are made from the logo.
 
 ## Canvas games (after launch)
 

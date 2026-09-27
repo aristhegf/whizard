@@ -1,7 +1,12 @@
 import type { QuizCategory, QuizDifficulty } from "@whizard/game-core";
 
-export async function createRoom(): Promise<string> {
-  const response = await fetch("/api/rooms", { method: "POST" });
+/** Makes a room, optionally with game settings already chosen (such as a topic). */
+export async function createRoom(settings?: Record<string, unknown>): Promise<string> {
+  const response = await fetch("/api/rooms", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(settings ? { settings } : {}),
+  });
   if (!response.ok) throw new Error(`Could not create a room (${response.status})`);
   const body = (await response.json()) as { code: string };
   return body.code;

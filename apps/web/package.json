@@ -11,10 +11,12 @@
     "typecheck": "tsc -p ."
   },
   "dependencies": {
-    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/nunito": "^5.3.0",
+    "@fontsource/poppins": "^5.3.0",
     "@simplewebauthn/browser": "^14.0.0",
     "@whizard/game-core": "workspace:*",
     "@whizard/protocol": "workspace:*",
+    "qrcode-generator": "^2.0.4",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },

@@ -7,7 +7,7 @@ async function newPlayer(browser: Browser): Promise<Page> {
 
 async function createRoom(page: Page, nickname: string): Promise<string> {
   await page.goto("/");
-  await page.getByRole("button", { name: "Play with friends" }).click();
+  await page.getByRole("button", { name: "Create a Room" }).click();
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   await joinAs(page, nickname);
   return page.url();
@@ -115,7 +115,7 @@ test("explains when a room doesn’t exist", async ({ page }) => {
   await page.goto("/r/ZZZZZZ");
   await expect(page.getByRole("alert")).toHaveText(/doesn’t exist or has expired/);
   await page.getByRole("button", { name: "Back to home" }).click();
-  await expect(page.getByRole("button", { name: "Play with friends" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Create a Room" })).toBeVisible();
 });
 
 test("explains when a room link is malformed", async ({ page }) => {

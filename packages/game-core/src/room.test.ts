@@ -5,6 +5,7 @@ import {
   HOST_GRACE_MS,
   MAX_PLAYERS,
   ROOM_IDLE_TTL_MS,
+  configureRoom,
   createRoomState,
   isExpired,
   joinRoom,
@@ -216,11 +217,12 @@ describe("toSnapshot", () => {
       code: "ABCDEF",
       hostId: "p1",
       players: [
-        { id: "p1", nickname: "Ada", connected: true, username: null },
-        { id: "p2", nickname: "Tolu", connected: false, username: null },
+        { id: "p1", nickname: "Ada", connected: true, username: null, avatar: null },
+        { id: "p2", nickname: "Tolu", connected: false, username: null, avatar: null },
       ],
       phase: "lobby",
       game: { id: "quiz", settings: DEFAULT_QUIZ_SETTINGS },
+      settings: { maxPlayers: MAX_PLAYERS, lateJoin: false },
     });
     expect(JSON.stringify(snapshot)).not.toContain("token");
   });
@@ -269,5 +271,36 @@ describe("accounts", () => {
     );
     if (!again.ok) throw new Error(again.error);
     expect(again.player.account).toEqual(ada);
+  });
+});
+
+describe("room settings", () => {
+  it("lets only the host change them, within limits", () => {
+    const { state } = roomWith("Ada", "Tolu");
+    expect(configureRoom(state, "p2", { maxPlayers: 4 })).toEqual({ ok: false, error: "not_host" });
+    expect(configureRoom(state, "p1", { maxPlayers: 1 })).toEqual({
+      ok: false,
+      error: "bad_settings",
+    });
+    expect(configureRoom(state, "p1", { maxPlayers: MAX_PLAYERS + 1 })).toMatchObject({
+      ok: false,
+    });
+    const result = configureRoom(state, "p1", { maxPlayers: 2, lateJoin: true });
+    if (!result.ok) throw new Error(result.error);
+    expect(toSnapshot(result.state, new Set()).settings).toEqual({ maxPlayers: 2, lateJoin: true });
+  });
+
+  it("stops new players at the room's capacity", () => {
+    const { state } = roomWith("Ada", "Tolu");
+    const result = configureRoom(state, "p1", { maxPlayers: 2 });
+    if (!result.ok) throw new Error(result.error);
+    expect(join(result.state, "Kemi")).toEqual({ ok: false, error: "room_full" });
+  });
+
+  it("keeps the avatar a player picked", () => {
+    const state = createRoomState("ABCDEF", T0);
+    const result = joinRoom(state, { nickname: "Ada", avatar: "a03" }, new Set(), T0, ids());
+    if (!result.ok) throw new Error(result.error);
+    expect(toSnapshot(result.state, new Set()).players[0]?.avatar).toBe("a03");
   });
 });

@@ -42,6 +42,7 @@ export async function updateMe(context: RequestContext): Promise<Response> {
   const next: UserRow = {
     ...user,
     display_name: displayName,
+    avatar: update.avatar === undefined ? user.avatar : update.avatar,
     show_explanations:
       update.showExplanations === undefined
         ? user.show_explanations
@@ -54,12 +55,13 @@ export async function updateMe(context: RequestContext): Promise<Response> {
   };
 
   await context.env.DB.prepare(
-    `UPDATE users SET display_name = ?, show_explanations = ?, pings = ?,
+    `UPDATE users SET display_name = ?, avatar = ?, show_explanations = ?, pings = ?,
                       quiet_start = ?, quiet_end = ?, time_zone = ?
       WHERE id = ?`,
   )
     .bind(
       next.display_name,
+      next.avatar,
       next.show_explanations,
       next.pings,
       next.quiet_start,

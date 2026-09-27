@@ -5,6 +5,7 @@ import { randomToken } from "@whizard/game-core";
 
 const NICKNAME_KEY = "whizard:nickname";
 const GUEST_ID_KEY = "whizard:guest";
+const AVATAR_KEY = "whizard:avatar";
 const SESSIONS_KEY = "whizard:sessions";
 const SESSION_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
@@ -41,6 +42,15 @@ export function guestId(): string {
   const id = randomToken(18);
   write(GUEST_ID_KEY, id);
   return id;
+}
+
+/** The avatar picked when joining a room, reused next time. */
+export function loadAvatar(): string | null {
+  return read<string>(AVATAR_KEY);
+}
+
+export function saveAvatar(avatar: string): void {
+  write(AVATAR_KEY, avatar);
 }
 
 export function loadNickname(): string {

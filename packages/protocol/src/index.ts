@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const PROTOCOL_VERSION = 5;
+export const PROTOCOL_VERSION = 6;
 
 export const MAX_MESSAGE_BYTES = 4096;
 
@@ -38,6 +38,7 @@ const playerSnapshotSchema = z.object({
   nickname: z.string(),
   connected: z.boolean(),
   username: z.string().nullable(),
+  avatar: z.string().nullable(),
 });
 
 export const roomSnapshotSchema = z.object({
@@ -47,6 +48,7 @@ export const roomSnapshotSchema = z.object({
   phase: z.enum(["lobby", "playing", "finished"]),
   // Game settings and views are validated by each game's own schema in game-core.
   game: z.object({ id: z.string(), settings: z.unknown() }),
+  settings: z.object({ maxPlayers: z.number().int(), lateJoin: z.boolean() }),
 });
 
 export const clientMessageSchema = z.discriminatedUnion("type", [
@@ -56,10 +58,17 @@ export const clientMessageSchema = z.discriminatedUnion("type", [
     nickname: z.string().max(100),
     sessionToken: z.string().max(100).optional(),
     guestId: z.string().max(64).optional(),
+    avatar: z.string().max(16).optional(),
   }),
   z.object({ type: z.literal("leave") }),
   z.object({ type: z.literal("ping"), t: z.number() }),
   z.object({ type: z.literal("configure"), settings: z.unknown() }),
+  z.object({
+    type: z.literal("roomSettings"),
+    settings: z
+      .object({ maxPlayers: z.number().int().min(2).max(20), lateJoin: z.boolean() })
+      .partial(),
+  }),
   z.object({ type: z.literal("start") }),
   z.object({ type: z.literal("action"), action: z.unknown() }),
   z.object({ type: z.literal("backToLobby") }),

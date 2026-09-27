@@ -24,7 +24,9 @@ import {
   removeFriend,
   updateGroup,
 } from "./social";
-import { PageBar, useAction, useLoaded } from "./ui";
+import { Avatar } from "./ui/Avatar";
+import { SideLayout } from "./ui/Chrome";
+import { useAction, useLoaded } from "./ui/common";
 
 /** Wraps a screen that needs an account, offering sign-in first. */
 function SignedInOnly({
@@ -38,14 +40,7 @@ function SignedInOnly({
 }) {
   const account = useAccount();
   return (
-    <>
-      <PageBar>
-        {account.status === "ready" && account.user && (
-          <a className="account-link" {...linkTo("/account")}>
-            {account.user.displayName}
-          </a>
-        )}
-      </PageBar>
+    <SideLayout active="friends" className="account-page">
       {account.status === "loading" ? (
         <p className="muted">Loading…</p>
       ) : account.user ? (
@@ -61,7 +56,7 @@ function SignedInOnly({
           </a>
         </div>
       )}
-    </>
+    </SideLayout>
   );
 }
 
@@ -299,12 +294,15 @@ function Friends({ username }: { username: string }) {
 
 function Person({ user, detail }: { user: PublicUser; detail?: string }) {
   return (
-    <div className="person">
-      <span className="person-name">{user.displayName}</span>
-      <span className="muted small">
-        @{user.username}
-        {detail && ` · ${detail}`}
-      </span>
+    <div className="person-row">
+      <Avatar id={user.avatar} name={user.username} size={44} />
+      <div className="person">
+        <span className="person-name">{user.displayName}</span>
+        <span className="muted small">
+          @{user.username}
+          {detail && ` · ${detail}`}
+        </span>
+      </div>
     </div>
   );
 }
@@ -581,8 +579,7 @@ export function AddFriendScreen({ username }: { username: string }) {
   const signedIn = account.status === "ready" && !!account.user;
 
   return (
-    <>
-      <PageBar />
+    <SideLayout active="friends" className="account-page">
       <div className="screen">
         <ErrorLine error={profile.error} />
         {profile.data && (
@@ -640,7 +637,7 @@ export function AddFriendScreen({ username }: { username: string }) {
           </>
         )}
       </div>
-    </>
+    </SideLayout>
   );
 }
 

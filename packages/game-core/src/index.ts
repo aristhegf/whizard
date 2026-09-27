@@ -2,16 +2,20 @@ export { randomToken, type RandomBytes } from "./ids";
 export { randomSeed, seededRng, shuffled, type Rng } from "./random";
 export { NICKNAME_MAX_LENGTH, normalizeNickname, sameNickname } from "./nickname";
 export {
+  DEFAULT_ROOM_SETTINGS,
   DISCONNECTED_PLAYER_TTL_MS,
   HOST_GRACE_MS,
   MAX_PLAYERS,
+  MIN_ROOM_CAPACITY,
   ROOM_IDLE_TTL_MS,
+  configureRoom,
   createRoomState,
   isExpired,
   joinRoom,
   leaveRoom,
   markDisconnected,
   nextDeadline,
+  roomSettings,
   settle,
   toSnapshot,
   type AccountIdentity,
@@ -21,6 +25,8 @@ export {
   type JoinResult,
   type Player,
   type PlayerSnapshot,
+  type RoomSettings,
+  type RoomSettingsError,
   type RoomSnapshot,
   type RoomState,
 } from "./room";
@@ -33,6 +39,7 @@ export {
 export {
   applyGameAction,
   configureGame,
+  defaultGameConfig,
   gameViewFor,
   markRecorded,
   phaseOf,

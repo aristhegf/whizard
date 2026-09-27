@@ -122,7 +122,7 @@ export interface QuizView {
   playerCount: number;
   stage: QuizStage;
   me: { score: number; correctCount: number } | null;
-  /** Empty until you've finished, so nobody can read hints from others' scores. */
+  /** Everyone's points so far. Phones leave this out while you play; bigger screens show it. */
   standings: QuizStanding[];
   final: boolean;
 }
@@ -146,6 +146,22 @@ function prepare(question: QuizQuestion, rng: () => number): PreparedQuestion {
     correctChoice: order.indexOf(0),
     explanation: question.explanation ?? null,
     reference: question.reference ?? null,
+  };
+}
+
+function newPlayer(player: GamePlayer, startsAt: number): QuizPlayer {
+  return {
+    id: player.id,
+    nickname: player.nickname,
+    left: false,
+    score: 0,
+    correctCount: 0,
+    totalTimeMs: 0,
+    answers: [],
+    current: 0,
+    startsAt,
+    advanceAt: null,
+    finishedAt: null,
   };
 }
 
@@ -303,7 +319,6 @@ function stageFor(state: QuizState, player: QuizPlayer | undefined): QuizStage {
 function viewFor(state: QuizState, playerId: string): QuizView {
   const player = state.players.find((p) => p.id === playerId);
   const stage = stageFor(state, player);
-  const showStandings = stage.kind === "done" || stage.kind === "watching";
   return {
     game: "quiz",
     timed: timed(state),
@@ -312,7 +327,7 @@ function viewFor(state: QuizState, playerId: string): QuizView {
     playerCount: state.players.length,
     stage,
     me: player ? { score: player.score, correctCount: player.correctCount } : null,
-    standings: showStandings ? standingsOf(state) : [],
+    standings: standingsOf(state),
     final: state.finishedAt !== null,
   };
 }
@@ -323,7 +338,7 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
   id: "quiz",
   name: "Quiz",
   minPlayers: 1,
-  maxPlayers: 16,
+  maxPlayers: 20,
   settingsSchema: quizSettingsSchema,
   defaultSettings: DEFAULT_QUIZ_SETTINGS,
   actionSchema: quizActionSchema,
@@ -342,19 +357,7 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
     return {
       settings,
       questions,
-      players: players.map((p: GamePlayer) => ({
-        id: p.id,
-        nickname: p.nickname,
-        left: false,
-        score: 0,
-        correctCount: 0,
-        totalTimeMs: 0,
-        answers: [],
-        current: 0,
-        startsAt,
-        advanceAt: null,
-        finishedAt: null,
-      })),
+      players: players.map((p: GamePlayer) => newPlayer(p, startsAt)),
       finishedAt: questions.length === 0 ? now : null,
     };
   },
@@ -374,6 +377,12 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
       return { rejected: "That isn't one of the choices." };
     }
     return answer(state, player, action, now);
+  },
+
+  onPlayerJoined(state, player, now) {
+    if (state.finishedAt !== null || state.players.some((p) => p.id === player.id)) return state;
+    // A late joiner starts from question one with their own countdown, like everyone did.
+    return { ...state, players: [...state.players, newPlayer(player, now + COUNTDOWN_MS)] };
   },
 
   onPlayerLeft(state, playerId, now) {

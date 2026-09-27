@@ -56,6 +56,8 @@ export interface GameModule<Settings, Content, State, Action, View> {
   }): State;
   onAction(state: State, playerId: string, action: Action, now: number): State | Rejection;
   onPlayerLeft(state: State, playerId: string, now: number): State;
+  /** Someone joining a game that has already started, when the room allows it. */
+  onPlayerJoined(state: State, player: GamePlayer, now: number): State;
   tick(state: State, now: number): State;
   /** The next time `tick` has something to do, or null. */
   nextWakeAt(state: State): number | null;

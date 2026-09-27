@@ -59,10 +59,20 @@ async function quizCategories(): Promise<Response> {
   return Response.json({ categories }, { headers: { "Cache-Control": "public, max-age=300" } });
 }
 
-async function createRoom({ env }: RequestContext): Promise<Response> {
+/** Creates a room. The body can preset the game's settings, e.g. `{"settings":{"category":"music"}}`. */
+async function createRoom({ env, request }: RequestContext): Promise<Response> {
+  const text = await request.text();
+  let settings: unknown;
+  if (text.length > 0 && text.length < 2048) {
+    try {
+      settings = (JSON.parse(text) as { settings?: unknown }).settings;
+    } catch {
+      return jsonError(400, "bad_request", "Request body must be JSON.");
+    }
+  }
   for (let attempt = 0; attempt < CREATE_ATTEMPTS; attempt++) {
     const code = generateRoomCode();
-    if (await env.ROOMS.getByName(code).create(code)) {
+    if (await env.ROOMS.getByName(code).create(code, settings)) {
       return Response.json({ code }, { status: 201 });
     }
   }

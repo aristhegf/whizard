@@ -1,16 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { linkTo } from "./router";
-
-export function PageBar({ children }: { children?: ReactNode }) {
-  return (
-    <header className="topbar">
-      <a className="brand" translate="no" {...linkTo("/")}>
-        Whizard
-      </a>
-      {children}
-    </header>
-  );
-}
+import { useEffect, useState } from "react";
 
 export function errorText(error: unknown): string {
   return error instanceof Error ? error.message : "Something went wrong. Please try again.";

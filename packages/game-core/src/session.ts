@@ -1,6 +1,6 @@
 import { gameModule, type GameId } from "./games/registry";
 import { isRejection, type ContentRequest, type GameSummary } from "./games/types";
-import type { AccountIdentity, ConnectedIds, RoomState } from "./room";
+import type { AccountIdentity, ConnectedIds, Player, RoomState } from "./room";
 
 export type RoomPhase = "lobby" | "playing" | "finished";
 
@@ -99,12 +99,7 @@ export function startGame(
         state: gameState,
         finished: module.isFinished(gameState),
         startedAt: now,
-        roster: playing.map((p) => ({
-          playerId: p.id,
-          nickname: p.nickname,
-          account: p.account,
-          guestId: p.guestId,
-        })),
+        roster: playing.map(rosterEntry),
         recorded: false,
       },
     },
@@ -139,6 +134,31 @@ export function tickGame(state: RoomState, now: number): RoomState {
   return withGameState(
     state,
     gameModule(state.session!.gameId).tick(state.session!.state, now),
+    now,
+  );
+}
+
+function rosterEntry(p: Player): RosterEntry {
+  return { playerId: p.id, nickname: p.nickname, account: p.account, guestId: p.guestId };
+}
+
+/** Brings a player who arrived mid-game into it. Only called when the room allows late joins. */
+export function gamePlayerJoined(state: RoomState, player: Player, now: number): RoomState {
+  if (phaseOf(state) !== "playing") return state;
+  const session = state.session!;
+  const module = gameModule(session.gameId);
+  const roster = session.roster ?? [];
+  if (roster.length >= module.maxPlayers || roster.some((r) => r.playerId === player.id)) {
+    return state;
+  }
+  const gameState = module.onPlayerJoined(
+    session.state,
+    { id: player.id, nickname: player.nickname },
+    now,
+  );
+  return withGameState(
+    { ...state, session: { ...session, roster: [...roster, rosterEntry(player)] } },
+    gameState,
     now,
   );
 }

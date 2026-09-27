@@ -1,5 +1,5 @@
 import { randomToken } from "@whizard/game-core";
-import type { AccountUser } from "@whizard/protocol";
+import { AVATAR_IDS, type AccountUser, type AvatarId } from "@whizard/protocol";
 import type { Env } from "./env";
 
 const COOKIE_NAME = "__Host-whizard_session";
@@ -12,6 +12,7 @@ export interface UserRow {
   id: string;
   username: string;
   display_name: string;
+  avatar: string | null;
   show_explanations: number;
   pings: number;
   quiet_start: number | null;
@@ -26,11 +27,16 @@ export interface SignedIn {
   expiresAt: number;
 }
 
+export function asAvatar(value: string | null | undefined): AvatarId | null {
+  return (AVATAR_IDS as readonly string[]).includes(value ?? "") ? (value as AvatarId) : null;
+}
+
 export function toAccountUser(row: UserRow): AccountUser {
   return {
     id: row.id,
     username: row.username,
     displayName: row.display_name,
+    avatar: asAvatar(row.avatar),
     showExplanations: row.show_explanations === 1,
     pings: row.pings === 1,
     quietHours:

@@ -1,10 +1,9 @@
-import { PageBar } from "./ui";
+import { SideLayout } from "./ui/Chrome";
 
 export function PrivacyScreen() {
   return (
-    <>
-      <PageBar />
-      <article className="screen prose">
+    <SideLayout active={null} className="account-page">
+      <article className="panel prose">
         <h1 className="page-title">Privacy</h1>
         <p className="muted">Last updated 27 September 2026</p>
 
@@ -78,6 +77,6 @@ export function PrivacyScreen() {
           .
         </p>
       </article>
-    </>
+    </SideLayout>
   );
 }

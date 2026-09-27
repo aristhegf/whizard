@@ -214,6 +214,7 @@ export async function signUpVerify(context: RequestContext): Promise<Response> {
     id: data.userId,
     username: data.username,
     display_name: data.displayName,
+    avatar: null,
     show_explanations: 0,
     pings: 1,
     quiet_start: null,

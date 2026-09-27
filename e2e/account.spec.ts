@@ -30,17 +30,24 @@ async function signUp(page: Page, username: string, name = "Ada") {
   await expect(page.getByText(`@${username}`)).toBeVisible();
 }
 
+async function openRoom(page: Page) {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Create a Room" }).click();
+  await page.getByRole("button", { name: "Join", exact: true }).click();
+  await page.getByLabel("Questions").selectOption("5");
+}
+
 async function playSoloGame(page: Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: "Play solo" }).click();
+  await page.getByRole("button", { name: "Create a Room" }).click();
   const nickname = page.getByLabel("Choose a nickname");
-  const questions = page.getByRole("group", { name: "Questions" });
+  const questions = page.getByLabel("Questions");
   await expect(nickname.or(questions)).toBeVisible();
   if (await nickname.isVisible()) {
     await nickname.fill("Ada");
     await page.getByRole("button", { name: "Join", exact: true }).click();
   }
-  await questions.getByRole("button", { name: "5", exact: true }).click();
+  await questions.selectOption("5");
   await page.getByRole("button", { name: "Play solo" }).click();
   for (let i = 1; i <= 5; i++) {
     await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
@@ -149,7 +156,7 @@ test("friends add each other, play together and see their record", async ({ brow
   await signUp(tolu, toluName, "Tolu");
 
   // Ada sends a request by username; Tolu accepts it from the invite link.
-  await ada.getByRole("link", { name: "Friends" }).click();
+  await ada.goto("/friends");
   await ada.getByLabel("Friend’s username").fill(toluName);
   await ada.getByRole("button", { name: "Add", exact: true }).click();
   await expect(ada.getByRole("status")).toContainText("Request sent");
@@ -163,13 +170,7 @@ test("friends add each other, play together and see their record", async ({ brow
   await expect(friendRow).toContainText("No games together yet");
 
   // One game together.
-  await ada.goto("/");
-  await ada.getByRole("button", { name: "Play with friends" }).click();
-  await ada.getByRole("button", { name: "Join", exact: true }).click();
-  await ada
-    .getByRole("group", { name: "Questions" })
-    .getByRole("button", { name: "5", exact: true })
-    .click();
+  await openRoom(ada);
   await tolu.goto(ada.url());
   await tolu.getByRole("button", { name: "Join", exact: true }).click();
   await expect(ada.getByRole("listitem").filter({ hasText: "Tolu" })).toBeVisible();
@@ -180,7 +181,7 @@ test("friends add each other, play together and see their record", async ({ brow
       await page.locator("button.choice").first().click();
     }
   }
-  await expect(ada.getByRole("heading", { name: "Final results" })).toBeVisible();
+  await expect(ada.getByRole("heading", { name: "Final Rankings" })).toBeVisible();
 
   await ada.goto("/friends");
   await expect(friendRow).toContainText("1 game");
@@ -208,13 +209,7 @@ test("offers to add signed-in players after a game", async ({ browser }) => {
   const toluName = uniqueUsername();
   await signUp(tolu, toluName, "Tolu");
 
-  await ada.goto("/");
-  await ada.getByRole("button", { name: "Play with friends" }).click();
-  await ada.getByRole("button", { name: "Join", exact: true }).click();
-  await ada
-    .getByRole("group", { name: "Questions" })
-    .getByRole("button", { name: "5", exact: true })
-    .click();
+  await openRoom(ada);
   await tolu.goto(ada.url());
   await tolu.getByRole("button", { name: "Join", exact: true }).click();
   await ada.getByRole("button", { name: "Start game" }).click();

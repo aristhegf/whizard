@@ -16,22 +16,24 @@ import {
 import { requireUser } from "./account";
 import type { Env } from "./env";
 import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./http";
-import { currentSession } from "./sessions";
+import { asAvatar, currentSession } from "./sessions";
 
 interface PublicRow {
   id: string;
   username: string;
   display_name: string;
+  avatar: string | null;
 }
 
-const toPublic = (row: PublicRow): PublicUser => ({
+const toPublic = (row: Omit<PublicRow, "id">): PublicUser => ({
   username: row.username,
   displayName: row.display_name,
+  avatar: asAvatar(row.avatar),
 });
 
 async function findUser(env: Env, username: string): Promise<PublicRow> {
   const row = await env.DB.prepare(
-    "SELECT id, username, display_name FROM users WHERE username = ?",
+    "SELECT id, username, display_name, avatar FROM users WHERE username = ?",
   )
     .bind(normalizeUsername(username))
     .first<PublicRow>();
@@ -73,7 +75,7 @@ export async function getFriends(context: RequestContext): Promise<Response> {
   const [friends, incoming, outgoing] = await db.batch<Record<string, string | number>>([
     db
       .prepare(
-        `SELECT u.username, u.display_name, f.created_at, f.muted,
+        `SELECT u.username, u.display_name, u.avatar, f.created_at, f.muted,
                 COUNT(them.match_id) AS games,
                 COALESCE(SUM(me.placing < them.placing), 0) AS wins,
                 COALESCE(SUM(me.placing > them.placing), 0) AS losses
@@ -88,13 +90,13 @@ export async function getFriends(context: RequestContext): Promise<Response> {
       .bind(user.id),
     db
       .prepare(
-        `SELECT u.username, u.display_name FROM friend_requests r
+        `SELECT u.username, u.display_name, u.avatar FROM friend_requests r
            JOIN users u ON u.id = r.from_id WHERE r.to_id = ? ORDER BY r.created_at DESC`,
       )
       .bind(user.id),
     db
       .prepare(
-        `SELECT u.username, u.display_name FROM friend_requests r
+        `SELECT u.username, u.display_name, u.avatar FROM friend_requests r
            JOIN users u ON u.id = r.to_id WHERE r.from_id = ? ORDER BY r.created_at DESC`,
       )
       .bind(user.id),
@@ -103,6 +105,7 @@ export async function getFriends(context: RequestContext): Promise<Response> {
   const publicRow = (r: Record<string, string | number>): PublicUser => ({
     username: String(r["username"]),
     displayName: String(r["display_name"]),
+    avatar: asAvatar(r["avatar"] as string | null),
   });
   const list: FriendsList = {
     friends: (friends?.results ?? []).map((r): Friend => ({
@@ -242,7 +245,7 @@ async function groupFor(env: Env, groupId: string, userId: string): Promise<Grou
 export async function getGroups(context: RequestContext): Promise<Response> {
   const { user } = await requireUser(context);
   const { results } = await context.env.DB.prepare(
-    `SELECT g.id, g.name, owner.username AS owner, u.username, u.display_name
+    `SELECT g.id, g.name, owner.username AS owner, u.username, u.display_name, u.avatar
        FROM friend_group_members mine
        JOIN friend_groups g ON g.id = mine.group_id
        JOIN users owner ON owner.id = g.owner_id
@@ -252,7 +255,14 @@ export async function getGroups(context: RequestContext): Promise<Response> {
       ORDER BY g.created_at, u.display_name COLLATE NOCASE`,
   )
     .bind(user.id)
-    .all<{ id: string; name: string; owner: string; username: string; display_name: string }>();
+    .all<{
+      id: string;
+      name: string;
+      owner: string;
+      username: string;
+      display_name: string;
+      avatar: string | null;
+    }>();
 
   const groups = new Map<string, FriendGroup>();
   for (const row of results) {
@@ -262,7 +272,7 @@ export async function getGroups(context: RequestContext): Promise<Response> {
       owner: row.owner,
       members: [],
     };
-    group.members.push({ username: row.username, displayName: row.display_name });
+    group.members.push(toPublic(row));
     groups.set(row.id, group);
   }
   return Response.json(
@@ -350,7 +360,7 @@ export async function getGroupLeaderboard(context: RequestContext): Promise<Resp
             SELECT match_id, MIN(placing) AS best FROM played
              GROUP BY match_id HAVING COUNT(*) >= 2
           )
-     SELECT u.username, u.display_name,
+     SELECT u.username, u.display_name, u.avatar,
             COUNT(s.match_id) AS games,
             COALESCE(SUM(p.placing = s.best), 0) AS wins
        FROM members
@@ -361,11 +371,16 @@ export async function getGroupLeaderboard(context: RequestContext): Promise<Resp
       ORDER BY wins DESC, games DESC, u.display_name COLLATE NOCASE`,
   )
     .bind(group.id, category)
-    .all<{ username: string; display_name: string; games: number; wins: number }>();
+    .all<{
+      username: string;
+      display_name: string;
+      avatar: string | null;
+      games: number;
+      wins: number;
+    }>();
 
   const standings: GroupStanding[] = results.map((r) => ({
-    username: r.username,
-    displayName: r.display_name,
+    ...toPublic(r),
     games: r.games,
     wins: r.wins,
   }));

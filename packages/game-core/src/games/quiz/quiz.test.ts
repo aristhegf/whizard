@@ -153,10 +153,30 @@ describe("playing at your own pace", () => {
 });
 
 describe("results", () => {
-  it("keeps everyone's scores hidden while you're still playing", () => {
+  it("shares live points, but never who answered what", () => {
     const state = answer(setup(), "ada", 0, true, START + 1000);
-    expect(view(state, "ada").standings).toEqual([]);
-    expect(view(state, "tolu").standings).toEqual([]);
+    const live = view(state, "tolu").standings;
+    expect(live.map((s) => [s.nickname, s.finished])).toEqual([
+      ["ADA", false],
+      ["TOLU", false],
+    ]);
+    expect(live[0]!.score).toBeGreaterThan(0);
+    expect(JSON.stringify(view(state, "tolu"))).not.toContain("myChoice");
+  });
+
+  it("lets a late joiner start from the first question", () => {
+    const state = answer(setup(), "ada", 0, true, START + 1000);
+    const joined = quizGame.onPlayerJoined(state, { id: "kemi", nickname: "KEMI" }, START + 5000);
+    const kemi = view(joined, "kemi");
+    expect(kemi.stage).toMatchObject({
+      kind: "question",
+      index: 0,
+      startsAt: START + 5000 + COUNTDOWN_MS,
+    });
+    expect(kemi.playerCount).toBe(3);
+    expect(quizGame.onPlayerJoined(joined, { id: "kemi", nickname: "KEMI" }, START + 6000)).toBe(
+      joined,
+    );
   });
 
   it("shows a points-only leaderboard to whoever finishes first", () => {

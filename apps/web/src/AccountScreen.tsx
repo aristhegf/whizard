@@ -1,5 +1,6 @@
 import { NICKNAME_MAX_LENGTH, QUIZ_CATEGORIES, normalizeNickname } from "@whizard/game-core";
 import {
+  AVATAR_IDS,
   USERNAME_MAX_LENGTH,
   normalizeUsername,
   usernameProblem,
@@ -24,15 +25,16 @@ import {
   useAccount,
 } from "./account";
 import { linkTo, navigate } from "./router";
-import { PageBar, useAction, useLoaded } from "./ui";
+import { Avatar, avatarUrl } from "./ui/Avatar";
+import { SideLayout } from "./ui/Chrome";
+import { useAction, useLoaded } from "./ui/common";
 import { disablePings, enablePings, localTimeZone, pingSupport, pingsOnThisDevice } from "./pings";
 import { loadNickname } from "./storage";
 
 export function AccountScreen() {
   const account = useAccount();
   return (
-    <>
-      <PageBar />
+    <SideLayout active="profile" className="account-page">
       {account.status === "loading" ? (
         <p className="muted">Loading…</p>
       ) : account.user ? (
@@ -40,7 +42,7 @@ export function AccountScreen() {
       ) : (
         <SignedOut />
       )}
-    </>
+    </SideLayout>
   );
 }
 
@@ -196,9 +198,12 @@ function Profile({ user }: { user: AccountUser }) {
   return (
     <div className="screen">
       <header className="profile-head">
-        <div>
-          <h1 className="page-title">{user.displayName}</h1>
-          <p className="muted">@{user.username}</p>
+        <div className="profile-id">
+          <Avatar id={user.avatar} name={user.username} size={84} />
+          <div>
+            <h1 className="page-title">{user.displayName}</h1>
+            <p className="muted">@{user.username}</p>
+          </div>
         </div>
         <a className="btn" {...linkTo("/friends")}>
           Friends
@@ -352,7 +357,7 @@ function Settings({ user }: { user: AccountUser }) {
   };
 
   return (
-    <section className="stack" aria-labelledby="settings-title">
+    <section className="stack" id="settings" aria-labelledby="settings-title">
       <h2 id="settings-title" className="section-title">
         Settings
       </h2>
@@ -375,6 +380,26 @@ function Settings({ user }: { user: AccountUser }) {
             </button>
           </div>
         </form>
+        <div className="setting">
+          <span className="setting-name" id="avatar-setting">
+            Avatar
+          </span>
+          <div className="avatar-picker" role="radiogroup" aria-labelledby="avatar-setting">
+            {AVATAR_IDS.map((id, i) => (
+              <button
+                key={id}
+                type="button"
+                role="radio"
+                aria-checked={(user.avatar ?? null) === id}
+                aria-label={`Avatar ${i + 1}`}
+                disabled={saving.busy}
+                onClick={() => void saving.run(() => updateAccount({ avatar: id }))}
+              >
+                <img src={avatarUrl(id)} alt="" width={48} height={48} />
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="setting">
           <span className="setting-name" id="explain-label">
             Explanations

@@ -23,6 +23,22 @@ const RESERVED_USERNAMES: ReadonlySet<string> = new Set([
   "whizard",
 ]);
 
+/** The avatar pictures players can choose from. */
+export const AVATAR_IDS = [
+  "a01",
+  "a02",
+  "a03",
+  "a04",
+  "a05",
+  "a06",
+  "a07",
+  "a08",
+  "a09",
+  "a10",
+] as const;
+export type AvatarId = (typeof AVATAR_IDS)[number];
+export const avatarSchema = z.enum(AVATAR_IDS);
+
 export type UsernameProblem = "length" | "characters" | "reserved";
 
 /** Usernames are lowercase handles: a letter, then letters, digits or underscores. */
@@ -43,6 +59,7 @@ export interface AccountUser {
   id: string;
   username: string;
   displayName: string;
+  avatar: AvatarId | null;
   /** Show the answer's explanation during group games too, not only when playing solo. */
   showExplanations: boolean;
   /** Whether friends can ping this account at all. */
@@ -80,6 +97,7 @@ const minuteOfDay = z
 export const accountUpdateSchema = z
   .object({
     displayName: z.string().max(100),
+    avatar: avatarSchema,
     showExplanations: z.boolean(),
     pings: z.boolean(),
     quietHours: z.object({ start: minuteOfDay, end: minuteOfDay }).nullable(),
@@ -99,6 +117,7 @@ export type AccountUpdate = z.infer<typeof accountUpdateSchema>;
 
 export interface MatchPlayer {
   nickname: string;
+  avatar: AvatarId | null;
   /** Set for players with an account. */
   username: string | null;
   placing: number;
@@ -137,6 +156,7 @@ export interface PlayerStats {
 export interface PublicUser {
   username: string;
   displayName: string;
+  avatar: AvatarId | null;
 }
 
 export type Relation = "self" | "friend" | "incoming" | "outgoing" | "none";

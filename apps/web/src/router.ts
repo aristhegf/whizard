@@ -2,6 +2,8 @@ import { useSyncExternalStore } from "react";
 
 export type Route =
   | { name: "home" }
+  | { name: "games" }
+  | { name: "topics" }
   | { name: "room"; code: string }
   | { name: "account" }
   | { name: "friends" }
@@ -20,6 +22,8 @@ export function useRoute(): Route {
   const path = useSyncExternalStore(subscribe, () => location.pathname);
   const match = ROOM_PATH.exec(path);
   if (match) return { name: "room", code: decodeURIComponent(match[1] ?? "") };
+  if (/^\/games\/?$/.test(path)) return { name: "games" };
+  if (/^\/games\/quiz\/?$/.test(path)) return { name: "topics" };
   if (/^\/account\/?$/.test(path)) return { name: "account" };
   if (/^\/friends\/?$/.test(path)) return { name: "friends" };
   const add = /^\/add\/([^/]+)\/?$/.exec(path);
@@ -35,10 +39,19 @@ export function roomPath(code: string): string {
 }
 
 export function navigate(path: string): void {
-  if (path === location.pathname + location.search) return;
-  history.pushState(null, "", path);
-  window.dispatchEvent(new PopStateEvent("popstate"));
-  window.scrollTo(0, 0);
+  const [target, hash] = path.split("#");
+  if (path !== location.pathname + location.search + location.hash) {
+    history.pushState(null, "", path);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  }
+  if (hash) {
+    // Wait a frame so the page for the new path has rendered.
+    requestAnimationFrame(() =>
+      document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" }),
+    );
+  } else if (target !== undefined) {
+    window.scrollTo(0, 0);
+  }
 }
 
 /** Props for an in-app link: a real href, handled without a page load. */
