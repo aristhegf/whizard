@@ -11,7 +11,8 @@ export type Route =
   | { name: "group"; id: string }
   | { name: "privacy" }
   | { name: "stats" }
-  | { name: "pricing" };
+  | { name: "pricing" }
+  | { name: "admin"; section: string };
 
 const ROOM_PATH = /^\/r\/([^/]+)\/?$/;
 
@@ -35,6 +36,8 @@ export function useRoute(): Route {
   if (/^\/privacy\/?$/.test(path)) return { name: "privacy" };
   if (/^\/stats\/?$/.test(path)) return { name: "stats" };
   if (/^\/pricing\/?$/.test(path)) return { name: "pricing" };
+  const admin = /^\/admin(?:\/([a-z-]+))?\/?$/.exec(path);
+  if (admin) return { name: "admin", section: admin[1] ?? "dashboard" };
   return { name: "home" };
 }
 

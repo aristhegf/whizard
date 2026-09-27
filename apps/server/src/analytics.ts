@@ -1,4 +1,4 @@
-import type { DeviceType, PageName } from "@whizard/protocol";
+import type { ActivityKind, DeviceType, PageName } from "@whizard/protocol";
 import type { Env } from "./env";
 
 /** The UTC day, as the `daily_counts` table stores it. */
@@ -225,4 +225,50 @@ export async function networkKey(secret: string, prefix: string, userAgent: stri
     new TextEncoder().encode(`${prefix}\n${userAgent.slice(0, 512)}`),
   );
   return [...new Uint8Array(mac).slice(0, 16)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+// Activity ------------------------------------------------------------------------------------
+
+/** Adds a line to the admin dashboard's live activity. Never breaks what it records. */
+export async function logActivity(
+  env: Env,
+  kind: ActivityKind,
+  detail: Record<string, string | number | null>,
+  now = Date.now(),
+) {
+  try {
+    await env.DB.prepare("INSERT INTO activity (at, kind, detail) VALUES (?, ?, ?)")
+      .bind(now, kind, JSON.stringify(detail))
+      .run();
+  } catch (error) {
+    console.error("Couldn’t log activity", error);
+  }
+}
+
+/** Remembers that these players played today, for unique players and retention. */
+export async function recordPlayerDays(env: Env, viewers: string[], now = Date.now()) {
+  if (viewers.length === 0) return;
+  const day = dayOf(now);
+  try {
+    await env.DB.prepare(
+      `INSERT OR IGNORE INTO player_days (viewer, day) VALUES ${viewers.map(() => "(?, ?)").join(", ")}`,
+    )
+      .bind(...viewers.flatMap((viewer) => [viewer, day]))
+      .run();
+  } catch (error) {
+    console.error("Couldn’t record players", error);
+  }
+}
+
+/** Groups a game's player count the way the dashboard shows it. */
+export function sizeBucket(players: number): string {
+  return players <= 1
+    ? "1"
+    : players === 2
+      ? "2"
+      : players <= 5
+        ? "3-5"
+        : players <= 10
+          ? "6-10"
+          : "11+";
 }

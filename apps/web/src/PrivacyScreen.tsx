@@ -86,6 +86,12 @@ export function PrivacyScreen() {
           </a>
           . None of it is linked to your nickname, games or account.
         </p>
+        <p>
+          To count unique and returning players, the server notes each day you start a game, stored
+          against your account or your browser’s guest ID and kept for 400 days. Whizard’s admins
+          also see a short feed of recent events, like “a room was created” or “a game finished”,
+          with no names in it; each entry is deleted after 7 days.
+        </p>
 
         <h2>Your choices</h2>
         <p>

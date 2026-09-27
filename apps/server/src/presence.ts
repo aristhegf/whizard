@@ -85,6 +85,10 @@ export class Presence extends DurableObject<Env> {
       if (attachment.person) await count(this.env, { [`page:${message.page}`]: 1 });
       return;
     }
+    if (message.type === "invite") {
+      if (attachment.person) await count(this.env, { invites: 1 });
+      return;
+    }
 
     // One hello per socket, so a socket can't count itself as many visitors.
     if (attachment.visitor) return;

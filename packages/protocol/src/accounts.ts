@@ -71,6 +71,8 @@ export interface AccountUser {
   /** Chose to be listed by name on the public leaderboard on the stats page. */
   publicLeaderboard: boolean;
   createdAt: number;
+  /** Can open the admin dashboard. */
+  admin: boolean;
 }
 
 export interface QuietHours {

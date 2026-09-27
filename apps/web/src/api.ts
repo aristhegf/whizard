@@ -1,5 +1,14 @@
 import type { QuizCategory, QuizDifficulty } from "@whizard/game-core";
-import type { CommunityStats, ReportReason, SiteStats, StatsRange } from "@whizard/protocol";
+import type {
+  ActivityItem,
+  AdminOverview,
+  CommunityStats,
+  ReportAction,
+  ReportedQuestion,
+  ReportReason,
+  SiteStats,
+  StatsRange,
+} from "@whizard/protocol";
 import { guestId } from "./storage";
 
 /** Makes a room, optionally with game settings already chosen (such as a topic). */
@@ -53,6 +62,28 @@ export async function reportQuestion(questionId: string, reason: ReportReason): 
     body: JSON.stringify({ reason, guestId: guestId() }),
   });
   if (!response.ok) throw new Error(`Could not send the report (${response.status})`);
+}
+
+async function adminGet<T>(path: string): Promise<T> {
+  const response = await fetch(`/api/admin/${path}`);
+  if (!response.ok) throw new Error(`Could not load (${response.status})`);
+  return (await response.json()) as T;
+}
+
+export const fetchAdminOverview = (range: StatsRange) =>
+  adminGet<AdminOverview>(`overview?range=${range}`);
+export const fetchAdminActivity = () =>
+  adminGet<{ items: ActivityItem[] }>("activity").then((r) => r.items);
+export const fetchAdminReports = () =>
+  adminGet<{ questions: ReportedQuestion[] }>("reports").then((r) => r.questions);
+
+export async function decideReport(questionId: string, action: ReportAction): Promise<void> {
+  const response = await fetch(`/api/admin/reports/${encodeURIComponent(questionId)}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action }),
+  });
+  if (!response.ok) throw new Error(`Could not save that (${response.status})`);
 }
 
 export interface QuizCategoryInfo {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isBot, networkKey, networkPrefix } from "./analytics";
+import { isBot, networkKey, networkPrefix, sizeBucket } from "./analytics";
 
 describe("visitor networks", () => {
   it("keeps a whole IPv4 address and the first half of an IPv6 one", () => {
@@ -54,5 +54,20 @@ describe("visitor networks", () => {
         "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148",
       ),
     ).toBe(false);
+  });
+});
+
+describe("game sizes", () => {
+  it("groups finished games by how many played", () => {
+    expect([1, 2, 3, 5, 6, 10, 11, 40].map(sizeBucket)).toEqual([
+      "1",
+      "2",
+      "3-5",
+      "3-5",
+      "6-10",
+      "6-10",
+      "11+",
+      "11+",
+    ]);
   });
 });

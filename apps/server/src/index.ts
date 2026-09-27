@@ -1,5 +1,6 @@
 import { questionCounts } from "@whizard/content";
 import {
+  DEFAULT_QUIZ_SETTINGS,
   QUIZ_CATEGORIES,
   generateRoomCode,
   normalizeRoomCode,
@@ -15,7 +16,7 @@ import {
   signOut,
   updateMe,
 } from "./account";
-import { count, countryCode, networkPrefix } from "./analytics";
+import { count, countryCode, logActivity, networkPrefix } from "./analytics";
 import type { Env } from "./env";
 import {
   addFriend,
@@ -49,6 +50,7 @@ import {
 import { addSubscription, getPushKey, pingFriend, removeSubscription } from "./push";
 import { COUNTRY_HEADER, NETWORK_HEADER } from "./presence";
 import { ACCOUNT_HEADER } from "./room";
+import { decideReport, getAdminActivity, getAdminOverview, getAdminReports } from "./admin";
 import { reportQuestion } from "./reports";
 import { getSiteStats } from "./stats";
 import { getCommunityStats } from "./community";
@@ -95,7 +97,18 @@ async function createRoom({ env, request, ctx }: RequestContext): Promise<Respon
     if (await env.ROOMS.getByName(code).create(code, settings)) {
       // The deploy's smoke test makes a room each time; it isn't a real one.
       if (!request.headers.has("X-Whizard-Smoke-Test")) {
-        ctx.waitUntil(count(env, { rooms_created: 1 }));
+        const topic = (settings as { category?: unknown } | undefined)?.category;
+        ctx.waitUntil(
+          Promise.all([
+            count(env, { rooms_created: 1 }),
+            logActivity(env, "room_created", {
+              game: "quiz",
+              topic: QUIZ_CATEGORIES.some((c) => c.id === topic)
+                ? (topic as string)
+                : DEFAULT_QUIZ_SETTINGS.category,
+            }),
+          ]),
+        );
       }
       return Response.json({ code }, { status: 201 });
     }
@@ -173,6 +186,11 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/stats$/, getSiteStats],
   ["GET", /^\/api\/community$/, getCommunityStats],
   ["POST", /^\/api\/questions\/([^/]+)\/report$/, reportQuestion],
+
+  ["GET", /^\/api\/admin\/overview$/, getAdminOverview],
+  ["GET", /^\/api\/admin\/activity$/, getAdminActivity],
+  ["GET", /^\/api\/admin\/reports$/, getAdminReports],
+  ["POST", /^\/api\/admin\/reports\/([^/]+)$/, decideReport],
 
   ["POST", /^\/api\/auth\/signup\/options$/, signUpOptions],
   ["POST", /^\/api\/auth\/signup\/verify$/, signUpVerify],

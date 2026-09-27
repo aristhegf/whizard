@@ -73,6 +73,16 @@ export async function retiredQuestions(env: Env, category: string): Promise<Set<
       const question = findQuestion(row.question_id);
       if (question && questionVersion(question) === row.version) retired.add(row.question_id);
     }
+    // Questions an admin retired, whatever their reports.
+    const { results: byAdmin } = await env.DB.prepare(
+      "SELECT question_id, version FROM question_retired",
+    ).all<{ question_id: string; version: string }>();
+    for (const row of byAdmin) {
+      const question = findQuestion(row.question_id);
+      if (question?.category === category && questionVersion(question) === row.version) {
+        retired.add(row.question_id);
+      }
+    }
   } catch (error) {
     console.error("Couldn’t load reported questions", error);
   }
