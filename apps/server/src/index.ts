@@ -112,6 +112,9 @@ async function roomSocket({ request, env, url, params }: RequestContext): Promis
   if (request.headers.get("Upgrade") !== "websocket") {
     return jsonError(426, "upgrade_required", "Expected a WebSocket upgrade");
   }
+  if (!(await withinLimit(env.JOIN_LIMIT, request))) {
+    return jsonError(429, "too_many_connections", "Too many connections. Try again in a minute.");
+  }
 
   const headers = new Headers(request.headers);
   headers.delete(ACCOUNT_HEADER);

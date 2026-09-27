@@ -33,6 +33,8 @@ async function signUp(page: Page, username: string, name = "Ada") {
 async function openRoom(page: Page) {
   await page.goto("/");
   await page.getByRole("button", { name: "Create a Room" }).click();
+  // The home page has a Join button too (for codes), so wait until the room is open.
+  await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   await page.getByRole("button", { name: "Join", exact: true }).click();
   await page.getByLabel("Questions").selectOption("5");
 }

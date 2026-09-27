@@ -15,7 +15,7 @@ The full list is in [docs/GAMES.md](docs/GAMES.md).
 
 ## Status
 
-Early development. The quiz is playable in all 11 categories: pick a topic, then play solo or invite friends with a link, code or QR code. Choose Classic or Speed, a level and the number of questions. Everyone starts together and plays at their own pace; on tablets and computers a live scoreboard shows everyone's points. At the end there's a podium, the final rankings and a private review of your own answers.
+Launched. The quiz is playable in all 11 categories: pick a topic, then play solo or invite friends with a link, code or QR code. Choose Classic or Speed, a level and the number of questions. Everyone starts together and plays at their own pace; on tablets and computers a live scoreboard shows everyone's points. At the end there's a podium, the final rankings and a private review of your own answers, where any question can be reported. Games avoid questions you or your friends have already had, and there are sounds, with a mute button.
 
 Optional accounts sign in with a passkey (no passwords) and keep your game history and stats, including games you played as a guest just before signing up. Add friends by username, invite link or straight from a game's results to see your record against each of them, and save groups with their own leaderboards. Ping a friend and they get a notification that opens your room, with mute and quiet hours on their side. The home page shows how many people have visited and how many are here now, and `/stats` has the numbers behind them: visits, rooms created, games played, where visitors came from and more. See the [architecture and build plan](docs/ARCHITECTURE.md).
 

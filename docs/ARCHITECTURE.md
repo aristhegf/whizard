@@ -380,7 +380,7 @@ Jigsaw, Spot It, Reaction and Draw & Guess use **Phaser**, loaded only when one 
 
 ## Security and abuse
 
-- **Rate limiting** per address with the Workers rate-limiting binding: 30 new rooms and 100 presence connections a minute. The limits are generous because mobile networks put many people behind one address.
+- **Rate limiting** per address with the Workers rate-limiting binding, each minute: 30 new rooms, 120 room connections (joins and reconnects), 100 presence connections and 20 question reports. The limits are generous because mobile networks put many people behind one address.
 - **Validation** of every incoming message with a size cap. Unknown or malformed messages are dropped.
 - **Nickname and text filtering** for length, characters and a basic profanity list. This matters more once social games let players type answers.
 - **Guests leave nothing behind.** Nicknames, typed answers and uploaded images live only as long as the room. Account data is covered in [Privacy](#privacy).
@@ -412,15 +412,15 @@ Jigsaw, Spot It, Reaction and Draw & Guess use **Phaser**, loaded only when one 
 
 ## Build plan
 
-| Milestone                    | Scope                                                                                                                                                                               | Status |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| **M0: Foundations**          | Monorepo, lint/format, CI, Worker + Room Durable Object, web app, room codes, WebSocket ping                                                                                        | Done   |
-| **M1: Rooms**                | Nicknames, live lobby, invite link, host and host handover, reconnection, room expiry, end-to-end tests                                                                             | Done   |
-| **M2: Quiz**                 | Game module runner, game settings in the lobby, solo play, synchronized start with own-pace play, points-only leaderboard, private review, 140 hand-checked Bible questions         | Done   |
-| **M3: Content**              | Question bank for all 11 categories (740 questions, independently fact-checked), quality checks in CI, a written standard for adding questions                                      | Done   |
-| **M4: Accounts and friends** | Sign-in, quiz preferences (explanations during the quiz), profiles, friends, pings (web push), match history, head-to-head records, group leaderboards, account deletion and export | Done   |
-| **M5: Launch**               | Sounds, final polish, question bank in D1, report button, no repeated questions, rate limiting, privacy policy                                                                      |        |
-| **After launch**             | New games category by category, in the order in [GAMES.md](GAMES.md)                                                                                                                |        |
+| Milestone                    | Scope                                                                                                                                                                                                 | Status |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| **M0: Foundations**          | Monorepo, lint/format, CI, Worker + Room Durable Object, web app, room codes, WebSocket ping                                                                                                          | Done   |
+| **M1: Rooms**                | Nicknames, live lobby, invite link, host and host handover, reconnection, room expiry, end-to-end tests                                                                                               | Done   |
+| **M2: Quiz**                 | Game module runner, game settings in the lobby, solo play, synchronized start with own-pace play, points-only leaderboard, private review, 140 hand-checked Bible questions                           | Done   |
+| **M3: Content**              | Question bank for all 11 categories (740 questions, independently fact-checked), quality checks in CI, a written standard for adding questions                                                        | Done   |
+| **M4: Accounts and friends** | Sign-in, quiz preferences (explanations during the quiz), profiles, friends, pings (web push), match history, head-to-head records, group leaderboards, account deletion and export                   | Done   |
+| **M5: Launch**               | Sounds with a mute button, no repeated questions (per room and per player), reporting questions with automatic retirement, rate limiting, live visitor counts and a public stats page, privacy policy | Done   |
+| **After launch**             | New games category by category, in the order in [GAMES.md](GAMES.md)                                                                                                                                  |        |
 
 The first playable version is **M0 to M2**: you and a friend can play a Bible quiz together.
 

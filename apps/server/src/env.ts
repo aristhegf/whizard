@@ -9,4 +9,6 @@ export interface Env {
   PRESENCE_LIMIT: RateLimit;
   ROOM_LIMIT: RateLimit;
   REPORT_LIMIT: RateLimit;
+  /** Room connections (joins and reconnects). */
+  JOIN_LIMIT: RateLimit;
 }
