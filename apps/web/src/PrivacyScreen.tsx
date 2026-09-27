@@ -55,6 +55,14 @@ export function PrivacyScreen() {
             Your friends, friend requests and groups. Friends and fellow group members can see your
             record against them and your place on group leaderboards.
           </li>
+          <li>
+            If you turn on the public leaderboard in your settings: your name, avatar and number of
+            wins are shown to everyone on the{" "}
+            <a className="btn-link" {...linkTo("/stats")}>
+              stats page
+            </a>
+            . It’s off unless you turn it on, and turning it off takes you off within a few minutes.
+          </li>
         </ul>
         <p>
           Your username is public to people you play with, so they can find you. Accounts are for
@@ -70,8 +78,9 @@ export function PrivacyScreen() {
           your IP address itself is never stored. These, with the first and last day you visited,
           tell a return visit from a new visitor. Everything else is a daily total: pages viewed,
           rooms made, games played, and, for new visitors only, the site you came from, your country
-          (worked out by Cloudflare) and whether you’re on a phone, tablet or computer. These totals
-          are shown on the public{" "}
+          (worked out by Cloudflare) and whether you’re on a phone, tablet or computer. Some of
+          these totals, such as games played and the share of visitors from each country, are shown
+          on the public{" "}
           <a className="btn-link" {...linkTo("/stats")}>
             stats page
           </a>

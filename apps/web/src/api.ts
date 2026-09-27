@@ -1,5 +1,5 @@
 import type { QuizCategory, QuizDifficulty } from "@whizard/game-core";
-import type { ReportReason, SiteStats, StatsRange } from "@whizard/protocol";
+import type { CommunityStats, ReportReason, SiteStats, StatsRange } from "@whizard/protocol";
 import { guestId } from "./storage";
 
 /** Makes a room, optionally with game settings already chosen (such as a topic). */
@@ -37,6 +37,12 @@ export async function fetchSiteStats(range: StatsRange): Promise<SiteStats> {
   const response = await fetch(`/api/stats?range=${range}`);
   if (!response.ok) throw new Error(`Could not load stats (${response.status})`);
   return (await response.json()) as SiteStats;
+}
+
+export async function fetchCommunityStats(): Promise<CommunityStats> {
+  const response = await fetch("/api/community");
+  if (!response.ok) throw new Error(`Could not load stats (${response.status})`);
+  return (await response.json()) as CommunityStats;
 }
 
 /** Reports a question. Signed-in players are known by their account; guests by their browser ID. */

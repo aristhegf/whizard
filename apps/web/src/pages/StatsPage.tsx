@@ -1,33 +1,28 @@
-import { QUIZ_CATEGORIES, QUIZ_VARIANTS } from "@whizard/game-core";
-import { STATS_RANGES, type StatsDay, type StatsEntry, type StatsRange } from "@whizard/protocol";
-import { useCallback, useState, type CSSProperties } from "react";
-import { fetchSiteStats } from "../api";
-import { usePresence } from "../presence";
-import { TopLayout } from "../ui/Chrome";
+import { QUIZ_CATEGORIES, type QuizCategory } from "@whizard/game-core";
+import type {
+  CommunityStats,
+  LeaderboardEntry,
+  StatsEntry,
+  TrendingEntry,
+} from "@whizard/protocol";
+import { useState, type CSSProperties, type ReactNode } from "react";
+import { fetchCommunityStats } from "../api";
+import { CATALOG, TOPIC_STYLES } from "../catalog";
+import { linkTo } from "../router";
+import { Avatar } from "../ui/Avatar";
+import { startRoom, TopLayout } from "../ui/Chrome";
 import { useLoaded } from "../ui/common";
+import { Icon, type IconName } from "../ui/Icon";
+import { countryShares } from "./communityStats";
+import { WORLD_PINS } from "./worldPins";
 
 const n = (value: number) => value.toLocaleString("en-US");
 
-const PAGE_LABELS: Record<string, string> = {
-  home: "Home",
-  games: "Games",
-  topics: "Quiz topics",
-  room: "Game rooms",
-  account: "Profile",
-  friends: "Friends",
-  add: "Add a friend",
-  group: "Groups",
-  privacy: "Privacy",
-  stats: "Stats",
-  pricing: "Pricing",
-  other: "Other",
-};
-
-const DEVICE_LABELS: Record<string, string> = {
-  phone: "Phones",
-  tablet: "Tablets",
-  desktop: "Computers",
-};
+/** How many rows a list shows before "View all". */
+const SHORT_LIST = 5;
+/** Top Players: the podium, then this many more beside it before "View full leaderboard". */
+const PODIUM = 3;
+const LEADERBOARD_SHORT = 8;
 
 const regionNames = (() => {
   try {
@@ -37,73 +32,72 @@ const regionNames = (() => {
   }
 })();
 
-function countryLabel(code: string): string {
-  if (!/^[A-Z]{2}$/.test(code)) return "Unknown";
-  const flag = String.fromCodePoint(...[...code].map((c) => 0x1f1a5 + c.charCodeAt(0)));
-  return `${flag} ${regionNames?.of(code) ?? code}`;
+function flag(code: string): string {
+  return String.fromCodePoint(...[...code].map((c) => 0x1f1a5 + c.charCodeAt(0)));
 }
 
-function sourceLabel(source: string): string {
-  return source === "direct" ? "Direct or unknown" : source;
-}
-
-function topicLabel(id: string): string {
+function topicName(id: string): string {
   return QUIZ_CATEGORIES.find((c) => c.id === id)?.name ?? id;
 }
 
-function modeLabel(id: string): string {
-  return QUIZ_VARIANTS.find((v) => v.id === id)?.name ?? id;
+function topicArt(id: string): string | undefined {
+  return TOPIC_STYLES[id as QuizCategory]?.art;
 }
 
-function duration(seconds: number | null): string {
-  if (seconds === null) return "–";
-  if (seconds < 60) return `${seconds}s`;
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ${seconds % 60}s`;
-  return `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
+function gameName(id: string): string {
+  return CATALOG.find((g) => g.id === id)?.name ?? id;
 }
 
-function shortDate(day: string): string {
-  return new Date(`${day}T00:00:00Z`).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
+function trendingName(entry: TrendingEntry): string {
+  if (entry.game === "quiz" && entry.topic) return `${topicName(entry.topic)} Quiz`;
+  return gameName(entry.game);
 }
 
-/** Public, site-wide numbers: who's been by, and what they played. */
+function trendingArt(entry: TrendingEntry): string | undefined {
+  if (entry.game === "quiz" && entry.topic) return topicArt(entry.topic);
+  return CATALOG.find((g) => g.id === entry.game)?.art;
+}
+
+const loadStats = () => fetchCommunityStats();
+
+/** The public stats page: what the Whizard community plays, and who wins. */
 export function StatsPage() {
-  const [range, setRange] = useState<StatsRange>(30);
-  const load = useCallback(() => fetchSiteStats(range), [range]);
-  const { data: stats, error, reload } = useLoaded(load);
-  const presence = usePresence();
+  const { data: stats, error, reload } = useLoaded(loadStats);
 
   return (
-    <TopLayout variant="site" active={null}>
-      <section className="stats" aria-labelledby="stats-title">
-        <header className="stats-head">
-          <div>
-            <p className="eyebrow">Stats</p>
-            <h1 id="stats-title" className="page-title">
-              Who’s been <span className="gradient-text">playing</span>
+    <TopLayout variant="site" active="stats">
+      <div className="community">
+        <section className="community-hero" aria-labelledby="stats-title">
+          <div className="community-hero-copy">
+            <p className="pill community-pill">
+              <Icon name="chart" size={18} />
+              Community stats
+            </p>
+            <h1 id="stats-title" className="display community-title">
+              The world
+              <br />
+              is playing
+              <br />
+              <span className="purple-text">Whizard</span>
             </h1>
+            <p className="community-tagline">
+              Real people. <span className="purple-text">Real games. Real fun.</span>
+            </p>
+            <p className="community-lead">
+              From friends and families to classrooms and couples, Whizard brings people together
+              through games.
+            </p>
           </div>
-          <div className="stats-controls">
-            {presence && (
-              <span className="here-now">
-                <span className="live-dot" aria-hidden="true" />
-                {n(presence.online)} here now
-              </span>
-            )}
-            <div className="range-switch" role="group" aria-label="Time range">
-              {STATS_RANGES.map((r) => (
-                <button key={r} aria-pressed={range === r} onClick={() => setRange(r)}>
-                  {r}d
-                </button>
-              ))}
-            </div>
-          </div>
-        </header>
+          <img
+            className="community-hero-art"
+            src="/art/stats/hero.webp"
+            alt=""
+            aria-hidden="true"
+            width={1200}
+            height={772}
+            fetchPriority="high"
+          />
+        </section>
 
         {error && !stats && (
           <p className="error" role="alert">
@@ -114,135 +108,436 @@ export function StatsPage() {
           </p>
         )}
 
-        <dl className={stats ? "stat-tiles" : "stat-tiles loading"}>
-          <Tile label="Visitors" value={stats && n(stats.totals.visitors)} />
-          <Tile label="Visits" value={stats && n(stats.totals.visits)} />
-          <Tile label="Page views" value={stats && n(stats.totals.pageViews)} />
-          <Tile label="Rooms created" value={stats && n(stats.totals.roomsCreated)} />
-          <Tile label="Games played" value={stats && n(stats.totals.gamesPlayed)} />
-          <Tile label="Avg. visit" value={stats && duration(stats.totals.averageVisitSeconds)} />
+        <dl className="totals">
+          <Total
+            icon="games"
+            tone="purple"
+            label="Games played"
+            value={stats?.totals.gamesPlayed}
+          />
+          <Total
+            icon="users"
+            tone="blue"
+            label="Players joined"
+            value={stats?.totals.playersJoined}
+          />
+          <Total
+            icon="door"
+            tone="orange"
+            label="Game rooms created"
+            value={stats?.totals.roomsCreated}
+          />
+          <Total
+            icon="bolt"
+            tone="pink"
+            label="Questions played"
+            value={stats?.totals.questionsPlayed}
+          />
         </dl>
 
-        <DayChart
-          title={`Visitors per day · last ${range} days`}
-          unit="visitors"
-          days={stats?.days ?? null}
-          value={(d) => d.visitors}
-        />
-        <DayChart
-          title={`Games played per day · last ${range} days`}
-          unit="games"
-          days={stats?.days ?? null}
-          value={(d) => d.games}
-        />
-
-        <div className="stat-panels">
-          <Breakdown title="Top pages" entries={stats?.pages} label={(p) => PAGE_LABELS[p] ?? p} />
-          <Breakdown
-            title="Where visitors came from"
-            entries={stats?.sources}
-            label={sourceLabel}
-          />
-          <Breakdown title="Countries" entries={stats?.countries} label={countryLabel} />
-          <Breakdown title="Quiz topics played" entries={stats?.topics} label={topicLabel} />
-          <Breakdown
-            title="Devices"
-            entries={stats?.devices}
-            label={(d) => DEVICE_LABELS[d] ?? d}
-          />
-          <Breakdown title="Game modes" entries={stats?.modes} label={modeLabel} />
+        <div className="community-panels">
+          <MostPlayedGames entries={stats?.games} />
+          <PopularTopics entries={stats?.topics} />
+          <AroundTheWorld stats={stats} />
         </div>
 
-        <p className="muted stats-note">
-          Days are in UTC. Visitors are counted once however often they come back. Where people came
-          from, their country and their device are counted on their first visit. Nothing here
-          identifies anyone.
-        </p>
-      </section>
+        <CurrentlyPopular entries={stats?.trending} />
+        <TopPlayers leaders={stats?.leaderboard} />
+
+        <section className="community-cta panel" aria-labelledby="community-cta-title">
+          <div className="community-cta-copy">
+            <div className="community-cta-head">
+              <span className="community-cta-icon" aria-hidden="true">
+                <Icon name="games" size={30} />
+              </span>
+              <div>
+                <h2 id="community-cta-title" className="community-cta-title">
+                  Ready to be part of the fun?
+                </h2>
+                <p className="muted">Create a room, invite your friends, and start playing!</p>
+              </div>
+            </div>
+            <div className="community-cta-actions">
+              <CreateRoomButton />
+              <a className="btn community-btn" {...linkTo("/games")}>
+                Explore Games
+              </a>
+            </div>
+          </div>
+          <img
+            className="community-cta-art"
+            src="/art/stats/cta.webp"
+            alt=""
+            aria-hidden="true"
+            width={900}
+            height={481}
+            loading="lazy"
+          />
+        </section>
+      </div>
     </TopLayout>
   );
 }
 
-function Tile({ label, value }: { label: string; value: string | null }) {
+function Total({
+  icon,
+  tone,
+  label,
+  value,
+}: {
+  icon: IconName;
+  tone: string;
+  label: string;
+  value: number | undefined;
+}) {
   return (
-    <div className="stat-tile">
-      <dt>{label}</dt>
-      <dd>{value ?? "–"}</dd>
+    <div className={`total panel tone-${tone}`}>
+      <span className="total-icon" aria-hidden="true">
+        <Icon name={icon} size={30} />
+      </span>
+      <div className="total-text">
+        <dd>{value === undefined ? "–" : n(value)}</dd>
+        <dt>{label}</dt>
+      </div>
     </div>
   );
 }
 
-function DayChart({
+/** A panel with a title, an optional "View all" button and a body. */
+function Panel({
+  id,
+  icon,
   title,
-  unit,
-  days,
-  value,
+  canExpand,
+  expanded,
+  onToggle,
+  children,
+  className,
 }: {
+  id: string;
+  icon: IconName;
   title: string;
-  unit: string;
-  days: StatsDay[] | null;
-  value: (day: StatsDay) => number;
+  canExpand?: boolean;
+  expanded?: boolean;
+  onToggle?: () => void;
+  children: ReactNode;
+  className?: string;
 }) {
-  const values = days?.map(value) ?? [];
-  const peak = Math.max(0, ...values);
-  const total = values.reduce((a, b) => a + b, 0);
-  const first = days?.[0];
-  const last = days?.[days.length - 1];
-
   return (
-    <figure className="panel day-chart">
-      <figcaption className="chart-title">{title}</figcaption>
-      <div
-        className="bars"
-        role="img"
-        aria-label={days ? `${n(total)} ${unit} in total, at most ${n(peak)} in a day` : "Loading"}
-      >
-        {days?.map((day, i) => {
-          const v = values[i] ?? 0;
-          return (
-            <span
-              key={day.day}
-              className={v > 0 ? "bar" : "bar empty"}
-              style={{ height: peak > 0 && v > 0 ? `max(3px, ${(v / peak) * 100}%)` : undefined }}
-              title={`${shortDate(day.day)}: ${n(v)} ${unit}`}
-            />
-          );
-        })}
-      </div>
-      <div className="chart-axis" aria-hidden="true">
-        <span>{first ? shortDate(first.day) : ""}</span>
-        <span>peak {n(peak)} / day</span>
-        <span>{last ? shortDate(last.day) : ""}</span>
-      </div>
-    </figure>
+    <section className={`community-panel panel ${className ?? ""}`} aria-labelledby={id}>
+      <header className="community-panel-head">
+        <h2 id={id} className="community-panel-title">
+          <Icon name={icon} size={24} />
+          {title}
+        </h2>
+        {canExpand && (
+          <button className="view-all" aria-expanded={expanded} onClick={onToggle}>
+            {expanded ? "Show less" : "View all"}
+          </button>
+        )}
+      </header>
+      {children}
+    </section>
   );
 }
 
-function Breakdown({
-  title,
-  entries,
-  label,
-}: {
-  title: string;
-  entries: StatsEntry[] | undefined;
-  label: (name: string) => string;
-}) {
-  const top = entries?.[0]?.count ?? 0;
+interface BarRow {
+  key: string;
+  name: string;
+  art?: string;
+  count: number | null;
+}
+
+/** Ranked rows with a bar each. A null count is a game that's still being made. */
+function BarList({ rows, rank, tone }: { rows: BarRow[]; rank?: boolean; tone: string }) {
+  const top = Math.max(1, ...rows.map((r) => r.count ?? 0));
   return (
-    <section className="panel breakdown">
-      <h2 className="chart-title">{title}</h2>
-      {entries === undefined ? null : entries.length === 0 ? (
-        <p className="muted">Nothing yet.</p>
+    <ol className={`bar-list tone-${tone}`}>
+      {rows.map((row, i) => (
+        <li key={row.key}>
+          {rank && <span className="bar-rank">{i + 1}</span>}
+          <span className="bar-art" aria-hidden="true">
+            {row.art && <img src={row.art} alt="" loading="lazy" />}
+          </span>
+          <span className="bar-name">{row.name}</span>
+          {row.count === null ? (
+            <span className="bar-soon">Coming soon</span>
+          ) : (
+            <>
+              <span className="bar-track" aria-hidden="true">
+                <span
+                  className="bar-fill"
+                  style={{ "--share": `${(row.count / top) * 100}%` } as CSSProperties}
+                />
+              </span>
+              <span className="bar-count">{n(row.count)}</span>
+            </>
+          )}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function MostPlayedGames({ entries }: { entries: StatsEntry[] | undefined }) {
+  const [expanded, setExpanded] = useState(false);
+  // Every game in the catalog: played ones by how often, then the ones still being made.
+  const rows: BarRow[] = CATALOG.map((game) => ({
+    key: game.id,
+    name: game.name,
+    art: game.art,
+    count: entries?.find((e) => e.name === game.id)?.count ?? (game.href ? 0 : null),
+  })).sort((a, b) => (b.count ?? -1) - (a.count ?? -1));
+  return (
+    <Panel
+      id="games-title"
+      icon="games"
+      title="Most Played Games"
+      canExpand={rows.length > SHORT_LIST}
+      expanded={expanded}
+      onToggle={() => setExpanded(!expanded)}
+    >
+      {entries === undefined ? (
+        <PanelLoading />
       ) : (
-        <ol>
-          {entries.map((e) => (
-            <li key={e.name} style={{ "--share": `${(e.count / top) * 100}%` } as CSSProperties}>
-              <span className="breakdown-name">{label(e.name)}</span>
-              <span className="breakdown-count">{n(e.count)}</span>
+        <BarList rows={expanded ? rows : rows.slice(0, SHORT_LIST)} rank tone="purple" />
+      )}
+    </Panel>
+  );
+}
+
+function PopularTopics({ entries }: { entries: StatsEntry[] | undefined }) {
+  const [expanded, setExpanded] = useState(false);
+  const rows: BarRow[] = (entries ?? []).map((e) => ({
+    key: e.name,
+    name: topicName(e.name),
+    art: topicArt(e.name),
+    count: e.count,
+  }));
+  return (
+    <Panel
+      id="topics-title"
+      icon="layers"
+      title="Most Popular Topics"
+      canExpand={rows.length > SHORT_LIST}
+      expanded={expanded}
+      onToggle={() => setExpanded(!expanded)}
+    >
+      {entries === undefined ? (
+        <PanelLoading />
+      ) : rows.length === 0 ? (
+        <p className="muted panel-empty">No quiz games yet. Be the first!</p>
+      ) : (
+        <BarList rows={expanded ? rows : rows.slice(0, SHORT_LIST)} tone="gold" />
+      )}
+    </Panel>
+  );
+}
+
+function AroundTheWorld({ stats }: { stats: CommunityStats | undefined | null }) {
+  const shares = stats ? countryShares(stats.countries, stats.countriesTotal) : [];
+  const pins = (stats?.countries ?? [])
+    .filter((c) => WORLD_PINS[c.name])
+    .map((c) => ({
+      code: c.name,
+      at: WORLD_PINS[c.name]!,
+      share: c.count / stats!.countriesTotal,
+    }));
+  return (
+    <Panel id="world-title" icon="globe" title="Whizard Around the World" className="world-panel">
+      <div className="world-map" aria-hidden="true">
+        <img src="/art/stats/world.svg" alt="" width={103} height={53} loading="lazy" />
+        {pins.map((pin) => (
+          <span
+            key={pin.code}
+            className="world-pin"
+            style={
+              {
+                left: `${(pin.at[0] / 103) * 100}%`,
+                top: `${((pin.at[1] + 1) / 53) * 100}%`,
+                "--size": `${8 + Math.round(Math.sqrt(pin.share) * 14)}px`,
+              } as CSSProperties
+            }
+          />
+        ))}
+      </div>
+      {!stats ? (
+        <PanelLoading />
+      ) : shares.length === 0 ? (
+        <p className="muted panel-empty">No visitors counted yet.</p>
+      ) : (
+        <ul className="country-list">
+          {shares.map((s) => (
+            <li key={s.code}>
+              <span className="country-flag" aria-hidden="true">
+                {s.code === "other" ? <Icon name="globe" size={18} /> : flag(s.code)}
+              </span>
+              <span className="country-name">
+                {s.code === "other" ? "Other" : (regionNames?.of(s.code) ?? s.code)}
+              </span>
+              <span className="country-share">{s.percent}%</span>
             </li>
           ))}
-        </ol>
+        </ul>
+      )}
+    </Panel>
+  );
+}
+
+function CurrentlyPopular({ entries }: { entries: TrendingEntry[] | undefined }) {
+  return (
+    <section className="trending panel" aria-labelledby="trending-title">
+      <header className="trending-head">
+        <h2 id="trending-title" className="community-panel-title trending-title">
+          <Icon name="flame" size={26} fill />
+          Currently Popular
+        </h2>
+        <p className="trending-live">
+          <span className="live-dot" aria-hidden="true" />
+          Live from the Whizard community · last 24 hours
+        </p>
+      </header>
+      {entries === undefined ? (
+        <PanelLoading />
+      ) : entries.length === 0 ? (
+        <p className="muted panel-empty">
+          Nothing played in the last 24 hours yet.{" "}
+          <a className="btn-link" {...linkTo("/games")}>
+            Start the first game
+          </a>
+        </p>
+      ) : (
+        <ul className="trending-list">
+          {entries.map((entry) => {
+            const art = trendingArt(entry);
+            return (
+              <li key={`${entry.game}:${entry.topic ?? ""}`}>
+                <a
+                  className="trending-card"
+                  {...linkTo(entry.game === "quiz" ? "/games/quiz" : "/games")}
+                >
+                  <span className="trending-art" aria-hidden="true">
+                    {art && <img src={art} alt="" loading="lazy" />}
+                  </span>
+                  <span className="trending-text">
+                    <strong>{trendingName(entry)}</strong>
+                    <span className="muted small">
+                      {n(entry.games)} {entry.games === 1 ? "game" : "games"}
+                    </span>
+                  </span>
+                  <Icon name="chevronRight" size={20} className="trending-chevron" />
+                </a>
+              </li>
+            );
+          })}
+        </ul>
       )}
     </section>
+  );
+}
+
+function TopPlayers({ leaders }: { leaders: LeaderboardEntry[] | undefined }) {
+  const [full, setFull] = useState(false);
+  const podium = leaders?.slice(0, PODIUM) ?? [];
+  const rest = leaders?.slice(PODIUM, full ? undefined : LEADERBOARD_SHORT) ?? [];
+  // The podium reads 2, 1, 3 from left to right.
+  const podiumOrder = [podium[1], podium[0], podium[2]]
+    .map((leader, i) => leader && { leader, place: [2, 1, 3][i]! })
+    .filter((p) => p !== undefined);
+
+  return (
+    <section className="top-players panel" aria-labelledby="top-players-title">
+      <header className="community-panel-head">
+        <div className="top-players-heading">
+          <h2 id="top-players-title" className="community-panel-title top-players-title">
+            <Icon name="crown" size={28} fill />
+            Top Players
+          </h2>
+          <p className="muted small">Most wins in games with friends</p>
+        </div>
+        {leaders && leaders.length > LEADERBOARD_SHORT && (
+          <button className="view-all" aria-expanded={full} onClick={() => setFull(!full)}>
+            {full ? "Show less" : "View full leaderboard"}
+          </button>
+        )}
+      </header>
+
+      {leaders === undefined ? (
+        <PanelLoading />
+      ) : leaders.length === 0 ? (
+        <p className="muted panel-empty">
+          No one on the leaderboard yet. Signed-in players can choose to appear here from their{" "}
+          <a className="btn-link" {...linkTo("/account#settings")}>
+            settings
+          </a>
+          .
+        </p>
+      ) : (
+        <div className="top-players-body">
+          <ol className="podium">
+            {podiumOrder.map(({ leader, place }) => (
+              <li key={leader.username} className={`podium-step place-${place}`}>
+                <span className="podium-avatar">
+                  {place === 1 && <Icon name="crown" size={34} fill className="podium-crown" />}
+                  <Avatar id={leader.avatar} name={leader.username} size={place === 1 ? 76 : 64} />
+                  <span className="podium-place">{place}</span>
+                </span>
+                <strong className="podium-name">{leader.displayName}</strong>
+                <span className="podium-wins">{winsLabel(leader.wins)}</span>
+              </li>
+            ))}
+          </ol>
+          {rest.length > 0 && (
+            <ol className="leader-list" start={PODIUM + 1}>
+              {rest.map((leader, i) => (
+                <li key={leader.username}>
+                  <span className="leader-rank">{PODIUM + 1 + i}</span>
+                  <Avatar id={leader.avatar} name={leader.username} size={34} />
+                  <span className="leader-name">{leader.displayName}</span>
+                  <span className="leader-wins">{winsLabel(leader.wins)}</span>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function winsLabel(wins: number): string {
+  return `${n(wins)} ${wins === 1 ? "win" : "wins"}`;
+}
+
+function PanelLoading() {
+  return <p className="muted panel-empty">Loading…</p>;
+}
+
+function CreateRoomButton() {
+  const [creating, setCreating] = useState(false);
+  const [failed, setFailed] = useState(false);
+  return (
+    <>
+      <button
+        className="btn btn-gold community-btn"
+        disabled={creating}
+        onClick={() => {
+          setCreating(true);
+          setFailed(false);
+          startRoom().catch(() => {
+            setCreating(false);
+            setFailed(true);
+          });
+        }}
+      >
+        {creating ? "Creating…" : "Create a Room"}
+        <Icon name="arrowRight" size={22} stroke={2.4} />
+      </button>
+      {failed && (
+        <p className="error small" role="alert">
+          Couldn’t create a room. Check your connection and try again.
+        </p>
+      )}
+    </>
   );
 }

@@ -263,3 +263,26 @@ test("pings a friend from the friends page and the lobby", async ({ browser }) =
   await tolu.reload();
   await expect(quiet.getByRole("button", { name: "On" })).toHaveAttribute("aria-pressed", "true");
 });
+
+test("players choose whether they appear on the public leaderboard", async ({ page }) => {
+  await withPasskeys(page);
+  await signUp(page, uniqueUsername());
+
+  const setting = page.getByRole("group", { name: "Public leaderboard" });
+  await expect(setting.getByRole("button", { name: "Hide me" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await setting.getByRole("button", { name: "Show me" }).click();
+  await expect(setting.getByRole("button", { name: "Show me" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+
+  await page.reload();
+  await expect(
+    page
+      .getByRole("group", { name: "Public leaderboard" })
+      .getByRole("button", { name: "Show me" }),
+  ).toHaveAttribute("aria-pressed", "true");
+});

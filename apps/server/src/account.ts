@@ -52,11 +52,15 @@ export async function updateMe(context: RequestContext): Promise<Response> {
       update.quietHours === undefined ? user.quiet_start : (update.quietHours?.start ?? null),
     quiet_end: update.quietHours === undefined ? user.quiet_end : (update.quietHours?.end ?? null),
     time_zone: update.timeZone === undefined ? user.time_zone : validTimeZone(update.timeZone),
+    public_leaderboard:
+      update.publicLeaderboard === undefined
+        ? user.public_leaderboard
+        : Number(update.publicLeaderboard),
   };
 
   await context.env.DB.prepare(
     `UPDATE users SET display_name = ?, avatar = ?, show_explanations = ?, pings = ?,
-                      quiet_start = ?, quiet_end = ?, time_zone = ?
+                      quiet_start = ?, quiet_end = ?, time_zone = ?, public_leaderboard = ?
       WHERE id = ?`,
   )
     .bind(
@@ -67,6 +71,7 @@ export async function updateMe(context: RequestContext): Promise<Response> {
       next.quiet_start,
       next.quiet_end,
       next.time_zone,
+      next.public_leaderboard,
       user.id,
     )
     .run();
