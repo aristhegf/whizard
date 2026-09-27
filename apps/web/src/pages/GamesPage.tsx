@@ -30,7 +30,7 @@ export function GamesPage() {
   );
 
   return (
-    <TopLayout variant="app" active="games" navExtra={search}>
+    <TopLayout variant="app" active="games">
       <section className="browse">
         <header className="browse-head">
           <div>
@@ -51,17 +51,20 @@ export function GamesPage() {
           />
         </header>
 
-        <div className="chips" role="group" aria-label="Kinds of game">
-          {GAME_GROUPS.map((g) => (
-            <button
-              key={g.id}
-              className="chip"
-              aria-pressed={group === g.id}
-              onClick={() => setGroup(g.id)}
-            >
-              {g.name}
-            </button>
-          ))}
+        <div className="browse-tools">
+          {search}
+          <div className="chips" role="group" aria-label="Kinds of game">
+            {GAME_GROUPS.map((g) => (
+              <button
+                key={g.id}
+                className="chip"
+                aria-pressed={group === g.id}
+                onClick={() => setGroup(g.id)}
+              >
+                {g.name}
+              </button>
+            ))}
+          </div>
         </div>
 
         {games.length === 0 ? (
@@ -101,7 +104,7 @@ function GameCard({ game }: { game: CatalogGame }) {
           <span className="soon">Coming soon</span>
         )}
       </span>
-      <Icon name="chevronRight" className="row-chevron" size={20} />
+      {game.href && <Icon name="chevronRight" className="row-chevron" size={20} />}
     </>
   );
   const style = { "--wash": cardWash(game.colors) } as CSSProperties;

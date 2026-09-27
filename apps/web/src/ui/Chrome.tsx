@@ -324,23 +324,19 @@ export function SideLayout({
   );
 }
 
-/** Pages with the top bar: the landing page and the games list. */
+/** Pages with the top bar: home, games, pricing and stats. */
 export function TopLayout({
   variant,
   active,
-  navExtra,
   children,
 }: {
   variant: "site" | "app";
   active: Section;
-  navExtra?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <div className="page">
-      <TopNav variant={variant} active={active}>
-        {navExtra}
-      </TopNav>
+      <TopNav variant={variant} active={active} />
       {children}
       <TabBar active={active} />
     </div>
