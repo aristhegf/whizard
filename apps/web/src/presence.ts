@@ -53,6 +53,11 @@ export function reportPage(next: PageName): void {
   if (changed && visited) send({ type: "view", page });
 }
 
+/** Counts a shared room code or link, for the stats. */
+export function reportInvite(): void {
+  if (visited) send({ type: "invite" });
+}
+
 export function usePresence(): PresenceCounts | null {
   return useSyncExternalStore(
     (listener) => {

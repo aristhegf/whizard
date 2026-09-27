@@ -1,5 +1,6 @@
 import { normalizeRoomCode } from "@whizard/game-core";
 import { useEffect } from "react";
+import { AdminApp } from "./admin/AdminApp";
 import { AccountScreen } from "./AccountScreen";
 import { AddFriendScreen, FriendsScreen, GroupScreen } from "./FriendsScreen";
 import { Notice } from "./Notice";
@@ -41,13 +42,15 @@ export function App() {
           <PrivacyScreen />
         ) : route.name === "stats" ? (
           <StatsPage />
+        ) : route.name === "admin" ? (
+          <AdminApp section={route.section} />
         ) : route.name === "pricing" ? (
           <PricingPage />
         ) : (
           <HomePage />
         )}
       </main>
-      {route.name !== "room" && <ReturnToRoom page={page} />}
+      {route.name !== "room" && route.name !== "admin" && <ReturnToRoom page={page} />}
     </>
   );
 }

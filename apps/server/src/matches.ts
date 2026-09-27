@@ -91,6 +91,11 @@ export async function claimGuestGames(env: Env, guestId: string, userId: string)
       `g:${guestId}`,
     ),
     env.DB.prepare("DELETE FROM seen_questions WHERE viewer = ?").bind(`g:${guestId}`),
+    env.DB.prepare("UPDATE OR IGNORE player_days SET viewer = ?1 WHERE viewer = ?2").bind(
+      `u:${userId}`,
+      `g:${guestId}`,
+    ),
+    env.DB.prepare("DELETE FROM player_days WHERE viewer = ?").bind(`g:${guestId}`),
   ]);
 }
 
@@ -206,6 +211,10 @@ export async function cleanUp(env: Env, now: number) {
     env.DB.prepare("DELETE FROM sessions WHERE expires_at < ?").bind(now),
     env.DB.prepare("DELETE FROM auth_challenges WHERE expires_at < ?").bind(now),
     env.DB.prepare("DELETE FROM seen_questions WHERE seen_at < ?").bind(now - SEEN_KEEP_MS),
+    env.DB.prepare("DELETE FROM activity WHERE at < ?").bind(now - 7 * 24 * 60 * 60 * 1000),
+    env.DB.prepare("DELETE FROM player_days WHERE day < ?").bind(
+      dayOf(now - 400 * 24 * 60 * 60 * 1000),
+    ),
     env.DB.prepare("DELETE FROM question_reports WHERE created_at < ?").bind(
       now - 365 * 24 * 60 * 60 * 1000,
     ),

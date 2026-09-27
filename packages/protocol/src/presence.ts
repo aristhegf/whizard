@@ -18,6 +18,7 @@ export const PAGE_NAMES = [
   "privacy",
   "stats",
   "pricing",
+  "admin",
   "other",
 ] as const;
 
@@ -46,6 +47,8 @@ export const presenceClientMessageSchema = z.discriminatedUnion("type", [
     newVisit: z.boolean(),
   }),
   z.object({ type: z.literal("view"), page: z.enum(PAGE_NAMES) }),
+  /** The player shared their room's code or link. */
+  z.object({ type: z.literal("invite") }),
 ]);
 
 export type PresenceClientMessage = z.infer<typeof presenceClientMessageSchema>;

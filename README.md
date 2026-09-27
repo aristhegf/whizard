@@ -50,7 +50,7 @@ The app runs on Cloudflare Workers. Every push to `main` that passes CI is deplo
 
 The deploy job creates the D1 database the first time and applies any new migrations from `apps/server/migrations/` before each deploy.
 
-To see the site's stats as tables, run the **Site stats** workflow from the Actions tab.
+To see the site's stats as tables, run the **Site stats** workflow from the Actions tab. To open the admin dashboard at `/admin`, run the **Admins** workflow with your username and **grant**.
 
 ## Adding questions
 

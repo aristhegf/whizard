@@ -24,6 +24,7 @@ import { Brand } from "./ui/Chrome";
 import { useMediaQuery } from "./ui/common";
 import { Icon } from "./ui/Icon";
 import { QrCode } from "./ui/QrCode";
+import { reportInvite } from "./presence";
 import { play } from "./sounds";
 import { MuteButton } from "./ui/MuteButton";
 import { useRoom } from "./useRoom";
@@ -425,6 +426,7 @@ function CopyButton({ text }: { text: string }) {
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(text);
+          reportInvite();
           setCopied(true);
           setTimeout(() => setCopied(false), 1500);
         } catch {
@@ -446,8 +448,10 @@ function InviteButton({ url }: { url: string }) {
     try {
       if (navigator.share) {
         await navigator.share({ title: "Join my Whizard room", url });
+        reportInvite();
       } else {
         await navigator.clipboard.writeText(url);
+        reportInvite();
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
       }

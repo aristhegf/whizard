@@ -109,6 +109,7 @@ export async function deleteMe(context: RequestContext): Promise<Response> {
       )
       .bind(user.id),
     db.prepare("DELETE FROM seen_questions WHERE viewer = ?").bind(`u:${user.id}`),
+    db.prepare("DELETE FROM player_days WHERE viewer = ?").bind(`u:${user.id}`),
     // Their reports still count, but no longer point at them.
     db
       .prepare(
@@ -137,6 +138,11 @@ export async function exportMe(context: RequestContext): Promise<Response> {
         .bind(`u:${user.id}`)
         .all<{ question_id: string; seen_at: number }>()
     ).results.map((r) => ({ question: r.question_id, seenAt: new Date(r.seen_at).toISOString() })),
+    daysPlayed: (
+      await context.env.DB.prepare("SELECT day FROM player_days WHERE viewer = ? ORDER BY day")
+        .bind(`u:${user.id}`)
+        .all<{ day: string }>()
+    ).results.map((r) => r.day),
   };
   return new Response(JSON.stringify(data, null, 2), {
     headers: {

@@ -41,7 +41,7 @@ import {
   type ServerMessage,
 } from "@whizard/protocol";
 import type { Env } from "./env";
-import { count } from "./analytics";
+import { count, logActivity, recordPlayerDays, sizeBucket } from "./analytics";
 import { recordMatch } from "./matches";
 import { retiredQuestions } from "./reports";
 import { loadSeen, recordSeen, viewerKey } from "./seen";
@@ -226,6 +226,12 @@ export class Room extends DurableObject<Env> {
     }
     ws.serializeAttachment({ playerId: result.player.id, account } satisfies SocketAttachment);
     await this.commit(result.state, { ws, player: result.player });
+    if (!result.rejoined) {
+      // The second person in is what makes it a shared room rather than a solo one.
+      const shared = result.state.players.length === 2;
+      await count(this.env, { room_joins: 1, ...(shared ? { rooms_shared: 1 } : {}) });
+      await logActivity(this.env, "player_joined", { room: result.state.code });
+    }
   }
 
   private async handleLeave(ws: WebSocket) {
@@ -277,8 +283,13 @@ export class Room extends DurableObject<Env> {
       }),
     );
     if (!started) return;
-    await count(this.env, { games_started: 1 });
+    // A game in a room that has already had one is a rematch.
+    await count(this.env, { games_started: 1, ...(before?.session ? { rematches: 1 } : {}) });
     const roster = (await this.load())?.session?.roster ?? [];
+    await recordPlayerDays(
+      this.env,
+      roster.flatMap((p) => viewerKey(p) ?? []),
+    );
     if (request) {
       await recordSeen(
         this.env,
@@ -344,9 +355,15 @@ export class Room extends DurableObject<Env> {
       await count(this.env, {
         games_finished: 1,
         game_players: summary.players.length,
+        [`game_size:${sizeBucket(summary.players.length)}`]: 1,
         [`game:${result.gameId}`]: 1,
         ...(summary.category ? { [`topic:${summary.category}`]: 1 } : {}),
         ...(summary.mode ? { [`mode:${summary.mode}`]: 1 } : {}),
+      });
+      await logActivity(this.env, "game_finished", {
+        game: result.gameId,
+        topic: summary.category,
+        players: summary.players.length,
       });
       try {
         await recordMatch(this.env, result, Date.now());

@@ -10,7 +10,7 @@ import { isoBase64URL } from "@simplewebauthn/server/helpers";
 import { normalizeNickname, randomToken } from "@whizard/game-core";
 import { normalizeUsername, signUpRequestSchema, usernameProblem } from "@whizard/protocol";
 import { z } from "zod";
-import { count } from "./analytics";
+import { count, countryCode, logActivity } from "./analytics";
 import { claimGuestGames } from "./matches";
 import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./http";
 import { requireUser } from "./account";
@@ -217,6 +217,7 @@ export async function signUpVerify(context: RequestContext): Promise<Response> {
     display_name: data.displayName,
     avatar: null,
     show_explanations: 0,
+    is_admin: 0,
     pings: 1,
     quiet_start: null,
     quiet_end: null,
@@ -235,7 +236,14 @@ export async function signUpVerify(context: RequestContext): Promise<Response> {
     // The username was free a moment ago; someone else just took it.
     throw new HttpError(409, "username_taken", "That username was just taken. Try another.");
   }
-  context.ctx.waitUntil(count(context.env, { accounts_created: 1 }, now));
+  context.ctx.waitUntil(
+    Promise.all([
+      count(context.env, { accounts_created: 1 }, now),
+      logActivity(context.env, "account_created", {
+        country: countryCode((context.request.cf as { country?: unknown } | undefined)?.country),
+      }),
+    ]),
+  );
 
   if (body.guestId) await claimGuestGames(context.env, body.guestId, user.id);
   return signedInResponse(user, await createSession(context.env, user.id, now));
