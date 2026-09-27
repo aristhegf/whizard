@@ -84,3 +84,13 @@ jobs:
           pnpm run deploy 2>&1 | tee deploy.log
           url=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' deploy.log | head -1)
           echo "url=$url" >> "$GITHUB_OUTPUT"
+      - name: Smoke test the live site
+        if: steps.credentials.outputs.ready
+        env:
+          URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          curl -fsS --retry 5 --retry-delay 3 --retry-all-errors "$URL/" | grep -q "<title>Whizard</title>"
+          curl -fsS "$URL/api/health" | grep -q '"ok":true'
+          curl -fsS "$URL/api/quiz/categories" | grep -q '"id":"bible"'
+          curl -fsS -X POST "$URL/api/rooms" | grep -qE '"code":"[A-Z0-9]{6}"'
+          echo "Live at $URL"
