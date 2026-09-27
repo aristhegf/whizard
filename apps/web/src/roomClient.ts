@@ -26,17 +26,17 @@ export interface RoomClientState {
   room: RoomSnapshot | null;
   joining: boolean;
   joinError: string | null;
-  /** This player's view of the current game, straight from the server. */
+  /** This player’s view of the current game, straight from the server. */
   game: unknown;
   /** A problem with the last host action, e.g. not enough questions for the settings. */
   notice: string | null;
-  /** Set when the room can't be used any more; the UI shows it instead of the room. */
+  /** Set when the room can’t be used any more; the UI shows it instead of the room. */
   fatal: string | null;
 }
 
 const FINAL_CLOSE_MESSAGES: Record<number, string> = {
   [CloseCode.OutdatedClient]: "Whizard has been updated. Refresh the page to keep playing.",
-  [CloseCode.RoomNotFound]: "This room doesn't exist or has expired.",
+  [CloseCode.RoomNotFound]: "This room doesn’t exist or has expired.",
   [CloseCode.Replaced]: "You opened this room in another tab or device.",
   [CloseCode.RoomExpired]: "This room has closed because nobody was in it.",
 };
@@ -49,7 +49,7 @@ const JOIN_ERRORS = new Set<string>([
   ErrorCode.RoomFull,
 ]);
 
-/** Owns one room's WebSocket: joins, rejoins after drops, and exposes state for React. */
+/** Owns one room’s WebSocket: joins, rejoins after drops, and exposes state for React. */
 export class RoomClient {
   private state: RoomClientState;
   private readonly listeners = new Set<() => void>();
@@ -103,7 +103,7 @@ export class RoomClient {
     this.sendJoin();
   }
 
-  /** The server's clock, estimated from ping round trips. Game deadlines use server time. */
+  /** The server’s clock, estimated from ping round trips. Game deadlines use server time. */
   readonly serverNow = (): number => Date.now() + this.clockOffset;
 
   configure(settings: unknown): void {

@@ -1,5 +1,5 @@
-import type { QuizStage, QuizStanding, QuizView } from "@whizard/game-core";
-import { useEffect, useRef, useState } from "react";
+import type { QuizReviewItem, QuizStage, QuizStanding, QuizView } from "@whizard/game-core";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import type { RoomClient } from "../../roomClient";
 import { useServerNow } from "../../useServerNow";
 
@@ -7,14 +7,19 @@ type QuestionStage = Extract<QuizStage, { kind: "question" }>;
 type AnswerStage = Extract<QuizStage, { kind: "answer" }>;
 
 const LETTERS = ["A", "B", "C", "D"];
+/** Playing with friends: a glance at the right answer, then straight on. */
+const QUICK_RESULT_MS = 1000;
+/** Playing solo: time to read the explanation, with a Skip button. */
+const EXPLAINED_RESULT_MS = 3000;
 
 interface Props {
   view: QuizView;
   client: RoomClient;
+  playerId: string;
   isHost: boolean;
 }
 
-export function QuizScreen({ view, client, isHost }: Props) {
+export function QuizScreen({ view, client, playerId, isHost }: Props) {
   const { stage } = view;
   switch (stage.kind) {
     case "question":
@@ -22,24 +27,32 @@ export function QuizScreen({ view, client, isHost }: Props) {
     case "answer":
       return <Answer key={`a${stage.index}`} view={view} stage={stage} client={client} />;
     case "done":
-      return <Results view={view} client={client} isHost={isHost} />;
+      return (
+        <Results
+          view={view}
+          review={stage.review}
+          client={client}
+          playerId={playerId}
+          isHost={isHost}
+        />
+      );
     case "watching":
       return (
-        <section className="card">
-          <p className="notice">A game is in progress. You'll be in the next one.</p>
-          {view.standings.length > 0 && <Standings standings={view.standings} total={view.total} />}
-        </section>
+        <div className="screen">
+          <p className="muted">A game is in progress. You’ll be in the next one.</p>
+          <Leaderboard standings={view.standings} />
+        </div>
       );
   }
 }
 
-function GameHeader({ view, index }: { view: QuizView; index: number }) {
+function Progress({ view, index }: { view: QuizView; index: number }) {
   return (
-    <div className="game-header">
+    <div className="progress">
       <span>
-        Question {index + 1} of {view.total}
+        {index + 1} <span className="of">/ {view.total}</span>
       </span>
-      {view.me && <span className="score">{view.me.score.toLocaleString()} pts</span>}
+      {view.me && <span>{view.me.score.toLocaleString()} pts</span>}
     </div>
   );
 }
@@ -56,9 +69,9 @@ function Question({
   const now = useServerNow(client.serverNow);
   const [visible, setVisible] = useState(() => client.serverNow() >= stage.startsAt);
   const shownAt = useRef<number | null>(null);
-  const [picked, setPicked] = useState<number | null>(stage.myChoice);
+  const [picked, setPicked] = useState<number | null>(null);
 
-  // Reveal exactly at the server's start time, and time the answer from that moment.
+  // Everyone’s first question appears at the same server moment; answers are timed from then.
   useEffect(() => {
     if (visible) {
       shownAt.current ??= performance.now();
@@ -72,51 +85,48 @@ function Question({
   }, [visible, stage.startsAt, client]);
 
   if (!visible) {
-    const seconds = Math.max(1, Math.ceil((stage.startsAt - now) / 1000));
     return (
-      <section className="card countdown" aria-live="polite">
-        <p className="label">
-          {stage.index === 0 ? "Get ready" : `Question ${stage.index + 1} of ${view.total}`}
-        </p>
-        <p className="countdown-number">{stage.index === 0 ? seconds : "…"}</p>
-      </section>
+      <div className="screen countdown" aria-live="polite">
+        <p className="label">Get ready</p>
+        <p className="countdown-number">{Math.max(1, Math.ceil((stage.startsAt - now) / 1000))}</p>
+      </div>
     );
   }
 
-  const choice = picked ?? stage.myChoice;
   const remaining = Math.max(0, stage.deadline - now);
+  const fraction = remaining / view.timeLimitMs;
 
-  const handlePick = (index: number) => {
-    if (choice !== null) return;
-    setPicked(index);
+  const handlePick = (choice: number) => {
+    if (picked !== null) return;
+    setPicked(choice);
     client.act({
       type: "answer",
       index: stage.index,
-      choice: index,
+      choice,
       clientElapsedMs: elapsedSince(shownAt.current),
     });
   };
 
   return (
-    <section className="card">
-      <GameHeader view={view} index={stage.index} />
+    <div className="screen">
+      <Progress view={view} index={stage.index} />
       <div
-        className="timer"
+        className={`timer${fraction < 0.25 ? " low" : ""}`}
         role="progressbar"
         aria-label="Time left"
         aria-valuemin={0}
         aria-valuemax={view.timeLimitMs}
         aria-valuenow={remaining}
       >
-        <div style={{ width: `${(remaining / view.timeLimitMs) * 100}%` }} />
+        <div style={{ width: `${fraction * 100}%` }} />
       </div>
       <h2 className="prompt">{stage.prompt}</h2>
       <div className="choices">
         {stage.choices.map((text, i) => (
           <button
             key={i}
-            className={`choice${choice === i ? " selected" : ""}`}
-            disabled={choice !== null}
+            className={`choice${picked === i ? " picked" : ""}`}
+            disabled={picked !== null}
             onClick={() => handlePick(i)}
           >
             <span className="letter">{LETTERS[i]}</span>
@@ -124,14 +134,7 @@ function Question({
           </button>
         ))}
       </div>
-      {choice !== null && view.variant === "classic" && (
-        <p className="hint" aria-live="polite">
-          {stage.activeCount > 1
-            ? `Waiting for the others · ${stage.answeredCount} of ${stage.activeCount} answered`
-            : "Locked in."}
-        </p>
-      )}
-    </section>
+    </div>
   );
 }
 
@@ -144,23 +147,27 @@ function Answer({
   stage: AnswerStage;
   client: RoomClient;
 }) {
-  const now = useServerNow(client.serverNow, stage.nextAt !== null);
-  const [advancing, setAdvancing] = useState(false);
-  const seconds =
-    stage.nextAt === null ? null : Math.max(0, Math.ceil((stage.nextAt - now) / 1000));
+  const explained = view.playerCount === 1;
+  const sent = useRef(false);
+  const next = () => {
+    if (sent.current) return;
+    sent.current = true;
+    client.act({ type: "next" });
+  };
+  const left = useCountdown(explained ? EXPLAINED_RESULT_MS : QUICK_RESULT_MS, next);
 
-  const verdict = stage.myChoice === null ? "Time's up" : stage.correct ? "Correct!" : "Not quite";
+  const verdict = stage.myChoice === null ? "Time’s up" : stage.correct ? "Correct" : "Wrong";
 
   return (
-    <section className="card">
-      <GameHeader view={view} index={stage.index} />
+    <div className="screen result">
+      <Progress view={view} index={stage.index} />
       <h2 className="prompt">{stage.prompt}</h2>
       <div className="choices">
         {stage.choices.map((text, i) => {
-          const state =
-            i === stage.correctChoice ? " correct" : i === stage.myChoice ? " wrong" : " dim";
+          const tone =
+            i === stage.correctChoice ? " correct" : i === stage.myChoice ? " wrong" : " faded";
           return (
-            <div key={i} className={`choice${state}`} aria-current={i === stage.myChoice}>
+            <div key={i} className={`choice${tone}`}>
               <span className="letter">{LETTERS[i]}</span>
               {text}
             </div>
@@ -169,122 +176,163 @@ function Answer({
       </div>
       <p className={`verdict ${stage.correct ? "good" : "bad"}`} role="status">
         {verdict}
-        {stage.points > 0 && <span className="points"> +{stage.points}</span>}
+        {stage.points > 0 && <span className="points">+{stage.points}</span>}
       </p>
-      {stage.explanation && (
-        <p className="explanation">
-          {stage.explanation}
-          {stage.reference && (
-            <>
-              {" "}
-              <span className="reference">({stage.reference})</span>
-            </>
-          )}
-        </p>
-      )}
-
-      {view.variant === "classic" ? (
+      {explained && (
         <>
-          {view.standings.length > 1 && (
-            <Standings standings={view.standings} total={view.total} compact />
-          )}
-          <p className="hint">
-            {stage.isLast ? "Final results coming up…" : `Next question in ${seconds ?? 0}…`}
-          </p>
+          {stage.explanation && <Explanation item={stage} />}
+          <div className="dock next-row">
+            <span className="muted">
+              {stage.isLast ? "Results" : "Next"} in {Math.ceil(left / 1000)}
+            </span>
+            <button className="btn" onClick={next}>
+              Skip
+            </button>
+          </div>
         </>
-      ) : (
-        <button
-          className="primary"
-          disabled={advancing}
-          onClick={() => {
-            setAdvancing(true);
-            client.act({ type: "next" });
-          }}
-        >
-          {stage.isLast ? "See results" : "Next question"}
-        </button>
       )}
-    </section>
+    </div>
   );
 }
 
 function Results({
   view,
+  review,
   client,
+  playerId,
   isHost,
 }: {
   view: QuizView;
+  review: QuizReviewItem[];
   client: RoomClient;
+  playerId: string;
   isHost: boolean;
 }) {
-  const solo = view.standings.length === 1;
-  const me = view.me;
+  const solo = view.playerCount === 1;
   return (
-    <section className="card">
-      <h2 className="section-title">{view.final ? "Final results" : "Results so far"}</h2>
-      {solo && me ? (
-        <div className="solo-result">
-          <p className="big-score">{me.score.toLocaleString()}</p>
-          <p className="hint">
-            {me.correctCount} of {view.total} correct
+    <div className="screen">
+      {solo && view.me ? (
+        <div className="stack">
+          <p className="label">Your score</p>
+          <p className="big-score">{view.me.score.toLocaleString()}</p>
+          <p className="muted">
+            {view.me.correctCount} of {view.total} correct
           </p>
         </div>
       ) : (
-        <Standings standings={view.standings} total={view.total} />
+        <div className="stack">
+          <h2 className="label">{view.final ? "Final results" : "Results so far"}</h2>
+          <Leaderboard standings={view.standings} me={playerId} />
+          {!view.final && <p className="muted small">Waiting for everyone to finish…</p>}
+        </div>
       )}
-      {!view.final && <p className="hint">Waiting for everyone to finish…</p>}
+
       {view.final &&
         (isHost ? (
           <div className="stack">
-            <button className="primary" onClick={() => client.startGame()}>
+            <button className="btn btn-primary" onClick={() => client.startGame()}>
               Play again
             </button>
-            <button onClick={() => client.backToLobby()}>Change settings</button>
+            <button className="btn" onClick={() => client.backToLobby()}>
+              Change settings
+            </button>
           </div>
         ) : (
-          <p className="hint">Waiting for the host to start the next game.</p>
+          <p className="muted">Waiting for the host to start the next game.</p>
         ))}
-    </section>
+
+      {review.length > 0 && (
+        <section className="stack" aria-labelledby="review-title">
+          <h2 className="label" id="review-title">
+            Your answers
+          </h2>
+          <ol className="review">
+            {review.map((item) => (
+              <li key={item.index}>
+                <p className="q">
+                  {item.index + 1}. {item.prompt}
+                </p>
+                {!item.correct && (
+                  <p className="line bad">
+                    ✗ {item.myChoice === null ? "No answer" : item.choices[item.myChoice]}
+                  </p>
+                )}
+                <p className="line good">✓ {item.choices[item.correctChoice]}</p>
+                {item.explanation && <Explanation item={item} />}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+    </div>
   );
 }
 
-function Standings({
-  standings,
-  total,
-  compact = false,
-}: {
-  standings: QuizStanding[];
-  total: number;
-  compact?: boolean;
-}) {
-  const rows = compact ? standings.slice(0, 5) : standings;
+function Leaderboard({ standings, me = null }: { standings: QuizStanding[]; me?: string | null }) {
   return (
-    <ol className={`standings${compact ? " compact" : ""}`}>
-      {rows.map((s) => (
-        <li key={s.playerId} className={s.left ? "offline" : ""}>
+    <ol className="board">
+      {standings.map((s) => (
+        <li
+          key={s.playerId}
+          className={[
+            s.rank === 1 && s.finished ? "first" : "",
+            s.playerId === me ? "me" : "",
+            s.left ? "gone" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        >
           <span className="rank">{s.rank}</span>
-          <span className="nickname">{s.nickname}</span>
-          <span className="detail">
-            {s.left
-              ? "Left"
-              : compact
-                ? `${s.correctCount} correct`
-                : s.finished
-                  ? `${s.correctCount}/${total} · ${formatSeconds(s.totalTimeMs)}`
-                  : `On question ${Math.min(s.answeredCount + 1, total)} of ${total}`}
-          </span>
-          <span className="score">{s.score.toLocaleString()}</span>
+          <span className="name">{s.nickname}</span>
+          {s.left ? (
+            <span className="playing">Left</span>
+          ) : s.finished ? (
+            <span className="pts">{s.score.toLocaleString()}</span>
+          ) : (
+            <span className="playing">Playing…</span>
+          )}
         </li>
       ))}
     </ol>
   );
 }
 
-/** Milliseconds since a `performance.now()` reading, or 0 if there isn't one yet. */
-function elapsedSince(start: number | null): number {
-  return start === null ? 0 : Math.round(performance.now() - start);
+function Explanation({ item }: { item: Pick<QuizReviewItem, "explanation" | "reference"> }) {
+  return (
+    <p className="explanation">
+      {item.explanation}
+      {item.reference && (
+        <>
+          {" "}
+          <span className="reference">({item.reference})</span>
+        </>
+      )}
+    </p>
+  );
 }
 
-function formatSeconds(ms: number): string {
-  return `${(ms / 1000).toFixed(1)}s`;
+/** Counts down from `ms`, calling `onDone` once at zero. Returns the milliseconds left. */
+function useCountdown(ms: number, onDone: () => void): number {
+  const [left, setLeft] = useState(ms);
+  const done = useEffectEvent(onDone);
+
+  useEffect(() => {
+    const start = performance.now();
+    const timer = setInterval(() => {
+      const remaining = Math.max(0, ms - (performance.now() - start));
+      setLeft(remaining);
+      if (remaining === 0) {
+        clearInterval(timer);
+        done();
+      }
+    }, 100);
+    return () => clearInterval(timer);
+  }, [ms]);
+
+  return left;
+}
+
+/** Milliseconds since a `performance.now()` reading, or 0 if there isn’t one yet. */
+function elapsedSince(start: number | null): number {
+  return start === null ? 0 : Math.round(performance.now() - start);
 }

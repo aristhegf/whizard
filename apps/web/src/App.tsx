@@ -2,20 +2,13 @@ import { normalizeRoomCode, ROOM_CODE_LENGTH } from "@whizard/game-core";
 import { useState, type FormEvent } from "react";
 import { createRoom } from "./api";
 import { Notice } from "./Notice";
-import { navigate, roomPath, useRoute } from "./router";
 import { RoomScreen } from "./RoomScreen";
+import { navigate, roomPath, useRoute } from "./router";
 
 export function App() {
   const route = useRoute();
-
   return (
     <main className="shell">
-      <header className="brand">
-        <a href="/" onClick={(event) => (event.preventDefault(), navigate("/"))}>
-          <h1>Whizard</h1>
-        </a>
-        <p>Play quiz games with friends, wherever they are.</p>
-      </header>
       {route.name === "room" ? <RoomRoute code={route.code} /> : <HomeScreen />}
     </main>
   );
@@ -23,7 +16,7 @@ export function App() {
 
 function RoomRoute({ code }: { code: string }) {
   const normalized = normalizeRoomCode(code);
-  if (!normalized) return <Notice message="That isn't a valid room link." />;
+  if (!normalized) return <Notice message="That isn’t a valid room link." />;
   return <RoomScreen key={normalized} code={normalized} />;
 }
 
@@ -38,7 +31,7 @@ function HomeScreen() {
     try {
       navigate(roomPath(await createRoom()));
     } catch {
-      setError("Couldn't create a room. Check your connection and try again.");
+      setError("Couldn’t create a room. Check your connection and try again.");
       setCreating(null);
     }
   };
@@ -51,19 +44,35 @@ function HomeScreen() {
   };
 
   return (
-    <section className="card">
-      <button className="primary" onClick={() => handleCreate("friends")} disabled={!!creating}>
-        {creating === "friends" ? "Creating…" : "Play with friends"}
-      </button>
-      <button onClick={() => handleCreate("solo")} disabled={!!creating}>
-        {creating === "solo" ? "Setting up…" : "Play solo"}
-      </button>
-      <div className="divider">or join one</div>
+    <div className="screen">
+      <header className="hero">
+        <h1 className="wordmark" translate="no">
+          Whizard<span className="spark">.</span>
+        </h1>
+        <p>Quick quiz games with friends, wherever they are.</p>
+      </header>
+
+      <div className="stack">
+        <button
+          className="btn btn-primary"
+          onClick={() => handleCreate("friends")}
+          disabled={!!creating}
+        >
+          {creating === "friends" ? "Creating…" : "Play with friends"}
+        </button>
+        <button className="btn" onClick={() => handleCreate("solo")} disabled={!!creating}>
+          {creating === "solo" ? "Setting up…" : "Play solo"}
+        </button>
+      </div>
+
+      <div className="or">or join a room</div>
+
       <form className="inline-form" onSubmit={handleJoin}>
         <input
           className="code-input"
+          name="code"
           aria-label="Room code"
-          placeholder="Room code"
+          placeholder="Room code, e.g. K7QX2M"
           value={joinInput}
           maxLength={ROOM_CODE_LENGTH + 4}
           autoCapitalize="characters"
@@ -71,13 +80,16 @@ function HomeScreen() {
           spellCheck={false}
           onChange={(event) => setJoinInput(event.target.value)}
         />
-        <button type="submit">Join</button>
+        <button className="btn" type="submit">
+          Join
+        </button>
       </form>
+
       {error && (
         <p className="error" role="alert">
           {error}
         </p>
       )}
-    </section>
+    </div>
   );
 }
