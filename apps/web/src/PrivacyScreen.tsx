@@ -1,3 +1,4 @@
+import { linkTo } from "./router";
 import { SideLayout } from "./ui/Chrome";
 
 export function PrivacyScreen() {
@@ -52,6 +53,20 @@ export function PrivacyScreen() {
         <p>
           Your username is public to people you play with, so they can find you. Accounts are for
           people aged 13 and over.
+        </p>
+
+        <h2>Visitor stats</h2>
+        <p>
+          To count visitors, your browser keeps another random ID, used for nothing else. The server
+          stores it with the first and last day you visited, so a return visit isn’t counted as a
+          new visitor. Everything else is a daily total: pages viewed, rooms made, games played,
+          and, for new visitors only, the site you came from, your country (worked out by
+          Cloudflare; your IP address isn’t stored) and whether you’re on a phone, tablet or
+          computer. These totals are shown on the public{" "}
+          <a className="btn-link" {...linkTo("/stats")}>
+            stats page
+          </a>
+          . None of it is linked to your nickname, games or account.
         </p>
 
         <h2>Your choices</h2>

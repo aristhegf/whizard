@@ -34,6 +34,7 @@ const PATHS = {
   check: "M5 12.5l4.5 4.5L19 7.5",
   pencil: "M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4",
   bolt: "M13 2 4 14h7l-1 8 9-12h-7z",
+  chart: "M4 20h16M7 16v-5M12 16V6M17 16v-8",
   star: "M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z",
 } as const;
 

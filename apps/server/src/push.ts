@@ -2,6 +2,7 @@ import { buildPushHTTPRequest } from "@pushforge/builder";
 import { normalizeRoomCode } from "@whizard/game-core";
 import { pingRequestSchema, pushSubscriptionSchema, normalizeUsername } from "@whizard/protocol";
 import { requireUser } from "./account";
+import { count } from "./analytics";
 import type { Env } from "./env";
 import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./http";
 import { inQuietHours } from "./quiet";
@@ -181,6 +182,7 @@ export async function pingFriend(context: RequestContext): Promise<Response> {
     url: `/r/${room}`,
     tag: `ping-${user.username}`,
   });
+  if (sent) context.ctx.waitUntil(count(context.env, { pings_sent: 1 }));
   return Response.json({ sent });
 }
 

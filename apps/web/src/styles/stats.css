@@ -1,0 +1,267 @@
+/* Public stats page ------------------------------------------------------------------------- */
+
+.stats {
+  display: grid;
+  gap: 20px;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 8px 0 32px;
+}
+
+.stats-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
+  padding: 12px 0 8px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.stats-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+
+.here-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.range-switch {
+  display: inline-flex;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.range-switch button {
+  min-width: 52px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.range-switch button + button {
+  border-left: 1.5px solid var(--line-strong);
+}
+
+.range-switch button[aria-pressed="true"] {
+  background: var(--purple);
+  color: #fff;
+}
+
+/* The totals: one strip of tiles, like a scoreboard. */
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.stat-tiles.loading {
+  opacity: 0.55;
+}
+
+.stat-tile {
+  display: grid;
+  gap: 8px;
+  padding: 18px 20px;
+  border-right: 1.5px solid var(--line);
+  border-bottom: 1.5px solid var(--line);
+  min-width: 0;
+}
+
+.stat-tile dt {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.stat-tile dd {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* Dividers go between tiles only, for 2, 3 or 6 to a row. */
+.stat-tile:nth-child(2n) {
+  border-right: none;
+}
+
+.stat-tile:nth-last-child(-n + 2) {
+  border-bottom: none;
+}
+
+@media (min-width: 640px) {
+  .stat-tiles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .stat-tile:nth-child(2n) {
+    border-right: 1.5px solid var(--line);
+  }
+
+  .stat-tile:nth-child(3n) {
+    border-right: none;
+  }
+
+  .stat-tile:nth-last-child(-n + 3) {
+    border-bottom: none;
+  }
+}
+
+@media (min-width: 1000px) {
+  .stat-tiles {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .stat-tile:nth-child(3n) {
+    border-right: 1.5px solid var(--line);
+  }
+
+  .stat-tile:last-child {
+    border-right: none;
+  }
+}
+
+/* Per-day bar charts. */
+.day-chart {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 20px;
+}
+
+.chart-title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 180px;
+  border-bottom: 1.5px solid var(--line);
+}
+
+.bar {
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, #b392ff, var(--purple));
+}
+
+.bar.empty {
+  height: 0;
+}
+
+.bar:hover {
+  background: var(--gold);
+}
+
+.chart-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* Top-N lists, each row shaded by its share of the leader. */
+.stat-panels {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .stat-panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1000px) {
+  .stat-panels {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.breakdown {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 20px;
+}
+
+.breakdown ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.breakdown li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    rgb(122 58 255 / 32%) var(--share),
+    rgb(255 255 255 / 3%) var(--share)
+  );
+}
+
+.breakdown-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.breakdown-count {
+  flex: none;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.stats-note {
+  margin: 0;
+  font-size: 0.9rem;
+}

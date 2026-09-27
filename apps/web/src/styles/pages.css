@@ -13,6 +13,53 @@
   align-content: center;
 }
 
+/* Live visitor count, in a quiet monospace box above the hero. */
+.live-count {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  background: rgb(10 9 36 / 55%);
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  transition: opacity 0.4s ease;
+}
+
+.live-count.loading {
+  opacity: 0;
+}
+
+.live-count > span {
+  padding: 7px 14px;
+}
+
+.live-count-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 1.5px solid var(--line);
+  color: var(--text);
+}
+
+.live-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 0 3px rgb(15 198 128 / 25%);
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  50% {
+    box-shadow: 0 0 0 6px rgb(15 198 128 / 0%);
+  }
+}
+
 .hero-pill {
   padding: 8px 20px;
   font-size: 0.95rem;

@@ -5,6 +5,7 @@ import { randomToken } from "@whizard/game-core";
 
 const NICKNAME_KEY = "whizard:nickname";
 const GUEST_ID_KEY = "whizard:guest";
+const VISITOR_ID_KEY = "whizard:visitor";
 const AVATAR_KEY = "whizard:avatar";
 const SESSIONS_KEY = "whizard:sessions";
 const SESSION_MAX_AGE_MS = 24 * 60 * 60 * 1000;
@@ -41,6 +42,18 @@ export function guestId(): string {
   if (saved) return saved;
   const id = randomToken(18);
   write(GUEST_ID_KEY, id);
+  return id;
+}
+
+/**
+ * A separate random ID for the site's visitor count. It's never sent with anything else, so
+ * the stats can't be tied to games or accounts.
+ */
+export function visitorId(): string {
+  const saved = read<string>(VISITOR_ID_KEY);
+  if (saved) return saved;
+  const id = randomToken(18);
+  write(VISITOR_ID_KEY, id);
   return id;
 }
 

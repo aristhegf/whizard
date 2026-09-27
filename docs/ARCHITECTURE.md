@@ -360,6 +360,16 @@ A native app later registers with the same system, so pings work the same way th
 
 Accounts mean storing personal data, so they launch with a plain-language privacy policy (`/privacy`), a minimum age of 13 confirmed at sign-up, a JSON download of everything stored, and account deletion. Deleting removes the account, passkeys, sessions and settings; the player's rows in other people's games become "Former player" with no link back.
 
+## Site stats
+
+The home page shows two live numbers, "visitors so far" and "here now", and `/stats` shows the fuller picture for the last 7, 30 or 90 days: visitors, visits, page views, rooms created, games played and average visit length, a chart of visitors and games per day, and top pages, sources, countries, topics, devices and game modes.
+
+- **Presence.** Every open tab keeps one small WebSocket to a single `Presence` Durable Object (`/api/presence`). "Here now" is the number of different visitors with a socket open, sent to everyone at most every 2 seconds when it changes. Tabs send `ping` every 30 seconds, which Cloudflare answers without waking the object; once a minute it closes sockets that have been quiet for 150 seconds, so phones that dropped off don't linger. A tab in the background disconnects after 2 minutes and reconnects when it's shown again.
+- **Visits.** A socket's first message (`hello`) carries a random visitor ID the browser keeps (separate from the guest ID used in games), the page, the device type from the screen width, and the source: `utm_source` if the link has one, else the referring site. The Worker adds the country from Cloudflare. No IP address or name is stored.
+- **Storage.** `visitors` has one row per browser with its first and last day, which tells new visitors from returning ones and gives exact unique counts for any range. Everything else is a daily total in `daily_counts` (`day`, `metric`, `count`); breakdowns use a prefix such as `page:games`, `topic:bible` or `source:whatsapp`. Rooms, games (started and finished, players, topic, mode), accounts and pings are counted where they happen. A failed stats write is logged and never breaks the thing being counted.
+- **Reading them.** `GET /api/stats?range=7|30|90` builds the page's numbers in three queries and caches them for two minutes. For the raw tables, run the **Site stats** workflow in GitHub Actions; it prints every total and breakdown to the run summary.
+- To share a link and see how it did, add a campaign tag, e.g. `?utm_source=whatsapp`.
+
 ## Visual design
 
 A dark, cozy game-night look: deep navy and purple with warm lamp glows behind every screen, glassy panels, and bright cards for each game and topic.
@@ -394,6 +404,7 @@ Jigsaw, Spot It, Reaction and Draw & Guess use **Phaser**, loaded only when one 
 - **Guests leave nothing behind.** Nicknames, typed answers and uploaded images live only as long as the room. Account data is covered in [Privacy](#privacy).
 - **Account sessions** are checked by the Worker. The room only ever receives a verified user ID, never a password or token it has to trust.
 - **Hidden information stays on the server** until a player is allowed to see it.
+- **Stats are best-effort.** Presence only accepts sockets from the site's own pages and one `hello` per socket, but a script could still make up visitor IDs. The counts are for a sense of scale, not billing.
 
 ## Testing and CI
 

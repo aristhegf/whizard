@@ -15,6 +15,7 @@ import {
   signOut,
   updateMe,
 } from "./account";
+import { count, countryCode } from "./analytics";
 import type { Env } from "./env";
 import {
   addFriend,
@@ -39,9 +40,12 @@ import {
   signUpVerify,
 } from "./passkeys";
 import { addSubscription, getPushKey, pingFriend, removeSubscription } from "./push";
+import { COUNTRY_HEADER } from "./presence";
 import { ACCOUNT_HEADER } from "./room";
+import { getSiteStats } from "./stats";
 import { currentSession, hasSessionCookie } from "./sessions";
 
+export { Presence } from "./presence";
 export { Room } from "./room";
 
 const CREATE_ATTEMPTS = 5;
@@ -60,7 +64,7 @@ async function quizCategories(): Promise<Response> {
 }
 
 /** Creates a room. The body can preset the game's settings, e.g. `{"settings":{"category":"music"}}`. */
-async function createRoom({ env, request }: RequestContext): Promise<Response> {
+async function createRoom({ env, request, ctx }: RequestContext): Promise<Response> {
   const text = await request.text();
   let settings: unknown;
   if (text.length > 0 && text.length < 2048) {
@@ -73,6 +77,10 @@ async function createRoom({ env, request }: RequestContext): Promise<Response> {
   for (let attempt = 0; attempt < CREATE_ATTEMPTS; attempt++) {
     const code = generateRoomCode();
     if (await env.ROOMS.getByName(code).create(code, settings)) {
+      // The deploy's smoke test makes a room each time; it isn't a real one.
+      if (!request.headers.has("X-Whizard-Smoke-Test")) {
+        ctx.waitUntil(count(env, { rooms_created: 1 }));
+      }
       return Response.json({ code }, { status: 201 });
     }
   }
@@ -106,6 +114,19 @@ async function roomSocket({ request, env, url, params }: RequestContext): Promis
   return env.ROOMS.getByName(code).fetch(new Request(request, { headers }));
 }
 
+/** The site-wide presence socket: the live "here now" count, and visit stats. */
+async function presenceSocket({ request, env, url }: RequestContext): Promise<Response> {
+  if (request.headers.get("Upgrade") !== "websocket") {
+    return jsonError(426, "upgrade_required", "Expected a WebSocket upgrade");
+  }
+  if (!isSameOrigin(request, url)) return jsonError(403, "forbidden", "Not allowed");
+  const headers = new Headers(request.headers);
+  headers.delete(COUNTRY_HEADER);
+  const country = countryCode((request.cf as { country?: unknown } | undefined)?.country);
+  if (country) headers.set(COUNTRY_HEADER, country);
+  return env.PRESENCE.getByName("site").fetch(new Request(request, { headers }));
+}
+
 type Method = "GET" | "POST" | "PATCH" | "DELETE";
 
 const ROUTES: [Method, RegExp, Handler][] = [
@@ -113,6 +134,8 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/quiz\/categories$/, quizCategories],
   ["POST", /^\/api\/rooms$/, createRoom],
   ["GET", /^\/api\/rooms\/([^/]+)\/ws$/, roomSocket],
+  ["GET", /^\/api\/presence$/, presenceSocket],
+  ["GET", /^\/api\/stats$/, getSiteStats],
 
   ["POST", /^\/api\/auth\/signup\/options$/, signUpOptions],
   ["POST", /^\/api\/auth\/signup\/verify$/, signUpVerify],

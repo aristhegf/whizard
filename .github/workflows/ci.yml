@@ -80,25 +80,10 @@ jobs:
       - name: Prepare the database
         if: steps.credentials.outputs.ready
         working-directory: apps/server
+        env:
+          CREATE_IF_MISSING: "1"
         run: |
-          find_id() {
-            local out
-            if ! out=$(pnpm exec wrangler d1 list --json 2>d1-list.err) || ! jq -e . >/dev/null 2>&1 <<<"$out"; then
-              echo "$out" >&2
-              cat d1-list.err >&2
-              echo "::error::Couldn't list D1 databases. The API token needs the Account > D1 > Edit permission." >&2
-              return 1
-            fi
-            jq -r '.[] | select(.name == "whizard") | .uuid' <<<"$out"
-          }
-          id=$(find_id)
-          if [ -z "$id" ]; then
-            pnpm exec wrangler d1 create whizard --location weur --update-config=false
-            id=$(find_id)
-          fi
-          if [ -z "$id" ]; then echo "::error::Couldn't find or create the D1 database"; exit 1; fi
-          echo "D1 database: $id"
-          sed -i -E "s/\"database_id\": \"[^\"]*\"/\"database_id\": \"$id\"/" wrangler.jsonc
+          ./scripts/use-remote-db.sh
           pnpm exec wrangler d1 migrations apply DB --remote
       - name: Deploy to Cloudflare
         id: deploy
@@ -116,6 +101,7 @@ jobs:
           curl -fsS --retry 5 --retry-delay 3 --retry-all-errors "$URL/" | grep -q "<title>Whizard</title>"
           curl -fsS "$URL/api/health" | grep -q '"ok":true'
           curl -fsS "$URL/api/quiz/categories" | grep -q '"id":"bible"'
-          curl -fsS -X POST "$URL/api/rooms" | grep -qE '"code":"[A-Z0-9]{6}"'
+          curl -fsS -X POST -H "X-Whizard-Smoke-Test: 1" "$URL/api/rooms" | grep -qE '"code":"[A-Z0-9]{6}"'
+          test "$(curl -s -o /dev/null -w '%{http_code}' "$URL/api/presence")" = 426
           curl -fsS "$URL/api/me" | grep -q '"user":null'
           echo "Live at $URL"

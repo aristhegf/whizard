@@ -1,10 +1,13 @@
 import { normalizeRoomCode } from "@whizard/game-core";
+import { useEffect } from "react";
 import { AccountScreen } from "./AccountScreen";
 import { AddFriendScreen, FriendsScreen, GroupScreen } from "./FriendsScreen";
 import { Notice } from "./Notice";
 import { GamesPage } from "./pages/GamesPage";
 import { HomePage } from "./pages/HomePage";
+import { StatsPage } from "./pages/StatsPage";
 import { TopicsPage } from "./pages/TopicsPage";
+import { pageOf, reportPage } from "./presence";
 import { PrivacyScreen } from "./PrivacyScreen";
 import { RoomScreen } from "./RoomScreen";
 import { useRoute } from "./router";
@@ -12,6 +15,8 @@ import { Backdrop } from "./ui/Chrome";
 
 export function App() {
   const route = useRoute();
+  const page = pageOf(route);
+  useEffect(() => reportPage(page), [page]);
   return (
     <>
       <Backdrop />
@@ -32,6 +37,8 @@ export function App() {
           <GroupScreen key={route.id} id={route.id} />
         ) : route.name === "privacy" ? (
           <PrivacyScreen />
+        ) : route.name === "stats" ? (
+          <StatsPage />
         ) : (
           <HomePage />
         )}

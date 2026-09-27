@@ -1,0 +1,35 @@
+name: Site stats
+
+# Run it from the Actions tab ("Site stats" → "Run workflow"). The tables appear on the run's
+# summary page.
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: How many days to show
+        default: "30"
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Report
+        working-directory: apps/server
+        env:
+          DAYS: ${{ inputs.days }}
+        run: |
+          ./scripts/use-remote-db.sh
+          node scripts/stats-report.mjs "$DAYS"

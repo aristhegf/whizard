@@ -40,6 +40,7 @@ import {
   type ServerMessage,
 } from "@whizard/protocol";
 import type { Env } from "./env";
+import { count } from "./analytics";
 import { recordMatch } from "./matches";
 
 const STATE_KEY = "room";
@@ -134,9 +135,13 @@ export class Room extends DurableObject<Env> {
         );
         return;
       case "start":
-        await this.handleGame(ws, (state, playerId, now) =>
-          startGame(state, playerId, this.connectedIds(), now, randomSeed(), drawContent),
-        );
+        if (
+          await this.handleGame(ws, (state, playerId, now) =>
+            startGame(state, playerId, this.connectedIds(), now, randomSeed(), drawContent),
+          )
+        ) {
+          await count(this.env, { games_started: 1 });
+        }
         return;
       case "action":
         await this.handleGame(ws, (state, playerId, now) =>
@@ -241,23 +246,25 @@ export class Room extends DurableObject<Env> {
     await this.commit(markDisconnected(state, playerId, this.connectedIds(), now));
   }
 
+  /** Applies a game change from a player. Returns whether it was accepted. */
   private async handleGame(
     ws: WebSocket,
     apply: (state: RoomState, playerId: string, now: number) => GameResult,
-  ) {
+  ): Promise<boolean> {
     const playerId = attachmentOf(ws)?.playerId;
     const now = Date.now();
     const state = await this.current(now);
     if (!playerId || !state) {
       sendError(ws, ErrorCode.NotJoined, "You haven’t joined this room.");
-      return;
+      return false;
     }
     const result = apply(state, playerId, now);
     if (!result.ok) {
       sendError(ws, result.error, result.message ?? GAME_ERROR_MESSAGES[result.error]);
-      return;
+      return false;
     }
     await this.commit(result.state);
+    return true;
   }
 
   /**
@@ -289,6 +296,14 @@ export class Room extends DurableObject<Env> {
     }
 
     if (result) {
+      const { summary } = result;
+      await count(this.env, {
+        games_finished: 1,
+        game_players: summary.players.length,
+        [`game:${result.gameId}`]: 1,
+        ...(summary.category ? { [`topic:${summary.category}`]: 1 } : {}),
+        ...(summary.mode ? { [`mode:${summary.mode}`]: 1 } : {}),
+      });
       try {
         await recordMatch(this.env, result, Date.now());
       } catch (error) {

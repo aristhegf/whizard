@@ -24,7 +24,7 @@ export default tseslint.config(
     languageOptions: { globals: globals.serviceworker },
   },
   {
-    files: ["*.{js,ts}", "apps/web/vite.config.ts"],
+    files: ["*.{js,ts}", "apps/web/vite.config.ts", "apps/server/scripts/**/*.mjs"],
     languageOptions: { globals: globals.node },
   },
 );

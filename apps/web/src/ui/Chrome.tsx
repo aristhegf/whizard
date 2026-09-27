@@ -51,6 +51,7 @@ const SITE_LINKS = [
   { label: "Games", href: "/games" },
   { label: "How It Works", href: "/#how" },
   { label: "About", href: "/#about" },
+  { label: "Stats", href: "/stats" },
 ];
 
 const APP_LINKS: { label: string; href: string; section: Section }[] = [
@@ -131,6 +132,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
     { label: "Quiz topics", href: "/games/quiz", icon: "star" },
     { label: "Friends", href: "/friends", icon: "users" },
     { label: signedIn ? "My profile" : "Sign in", href: "/account", icon: "user" },
+    { label: "Stats", href: "/stats", icon: "chart" },
     { label: "Privacy", href: "/privacy", icon: "settings" },
   ];
   return (

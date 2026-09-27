@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import { linkTo, navigate, roomPath } from "../router";
 import { startRoom, TopLayout } from "../ui/Chrome";
 import { Icon, type IconName } from "../ui/Icon";
+import { LiveCount } from "../ui/LiveCount";
 
 const FEATURES: { icon: IconName; title: string; text: string }[] = [
   { icon: "device", title: "Play on any device", text: "Phones, tablets, or desktop" },
@@ -43,6 +44,7 @@ export function HomePage() {
     <TopLayout variant="site" active="home">
       <section className="hero">
         <div className="hero-copy">
+          <LiveCount />
           <p className="pill hero-pill">
             <Icon name="users" size={20} />
             Play Together, Anywhere
@@ -139,6 +141,9 @@ export function HomePage() {
           ping friends when you’re free.
         </p>
         <div className="link-row">
+          <a className="btn-link" {...linkTo("/stats")}>
+            Stats
+          </a>
           <a className="btn-link" {...linkTo("/privacy")}>
             Privacy
           </a>
