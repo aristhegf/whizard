@@ -27,7 +27,7 @@ test("two players meet in the lobby", async ({ browser }) => {
   const roomUrl = await createRoom(host, "Ada");
   await expect(playerRow(host, "Ada")).toContainText("Host");
   await expect(playerRow(host, "Ada")).toContainText("You");
-  await expect(host.getByRole("button", { name: "Play solo" })).toBeVisible();
+  await expect(host.getByRole("button", { name: /play solo/i })).toBeVisible();
 
   const guest = await newPlayer(browser);
   await guest.goto(roomUrl);
@@ -40,7 +40,7 @@ test("two players meet in the lobby", async ({ browser }) => {
   await expect(playerRow(guest, "Tolu")).toContainText("You");
   await expect(playerRow(guest, "Tolu")).not.toContainText("Host");
   await expect(guest.getByText("Waiting for the host")).toBeVisible();
-  await expect(host.getByRole("button", { name: "Start game" })).toBeVisible();
+  await expect(host.getByRole("button", { name: /start game/i })).toBeVisible();
 });
 
 test("joins by typing the room code", async ({ browser }) => {
@@ -108,7 +108,7 @@ test("the host role passes on when the host leaves", async ({ browser }) => {
 
   await expect(guest.getByRole("listitem")).toHaveCount(1);
   await expect(playerRow(guest, "Tolu")).toContainText("Host");
-  await expect(guest.getByRole("button", { name: "Play solo" })).toBeVisible();
+  await expect(guest.getByRole("button", { name: /play solo/i })).toBeVisible();
 });
 
 test("explains when a room doesn’t exist", async ({ page }) => {
@@ -140,7 +140,7 @@ test("a host who goes back can return to the same room", async ({ browser }) => 
   await expect(playerRow(host, "Ada")).toContainText("Host");
   await expect(playerRow(host, "Tolu")).toBeVisible();
   await expect(playerRow(guest, "Ada")).not.toContainText("Offline");
-  await expect(host.getByRole("button", { name: "Start game" })).toBeVisible();
+  await expect(host.getByRole("button", { name: /start game/i })).toBeVisible();
 });
 
 test("the sound setting is remembered", async ({ browser }) => {
@@ -155,4 +155,27 @@ test("the sound setting is remembered", async ({ browser }) => {
     "aria-pressed",
     "false",
   );
+});
+
+test("on a phone the host slides to start, and a tap alone doesn't start the game", async ({
+  browser,
+}) => {
+  const host = await newPlayer(browser);
+  await createRoom(host, "Ada");
+  const thumb = host.getByRole("button", { name: "Slide to play solo" });
+  await expect(thumb).toBeVisible();
+
+  // A tap on the handle does nothing.
+  await thumb.click();
+  await expect(host.locator(".progress")).toHaveCount(0);
+
+  // Dragging it to the end starts the game.
+  const track = host.locator(".slide-start");
+  const handle = (await thumb.boundingBox())!;
+  const end = (await track.boundingBox())!;
+  await host.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
+  await host.mouse.down();
+  await host.mouse.move(end.x + end.width - 10, handle.y + handle.height / 2, { steps: 12 });
+  await host.mouse.up();
+  await expect(host.locator(".progress")).toBeVisible();
 });

@@ -50,7 +50,7 @@ async function playSoloGame(page: Page) {
     await page.getByRole("button", { name: "Join", exact: true }).click();
   }
   await questions.selectOption("5");
-  await page.getByRole("button", { name: "Play solo" }).click();
+  await page.getByRole("button", { name: /play solo/i }).press("Enter");
   for (let i = 1; i <= 5; i++) {
     await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
     await page.locator("button.choice").first().click();
@@ -176,7 +176,7 @@ test("friends add each other, play together and see their record", async ({ brow
   await tolu.goto(ada.url());
   await tolu.getByRole("button", { name: "Join", exact: true }).click();
   await expect(ada.getByRole("listitem").filter({ hasText: "Tolu" })).toBeVisible();
-  await ada.getByRole("button", { name: "Start game" }).click();
+  await ada.getByRole("button", { name: /start game/i }).press("Enter");
   for (const page of [ada, tolu]) {
     for (let i = 1; i <= 5; i++) {
       await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
@@ -214,7 +214,7 @@ test("offers to add signed-in players after a game", async ({ browser }) => {
   await openRoom(ada);
   await tolu.goto(ada.url());
   await tolu.getByRole("button", { name: "Join", exact: true }).click();
-  await ada.getByRole("button", { name: "Start game" }).click();
+  await ada.getByRole("button", { name: /start game/i }).press("Enter");
   for (const page of [ada, tolu]) {
     for (let i = 1; i <= 5; i++) {
       await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });

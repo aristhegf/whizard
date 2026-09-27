@@ -6,6 +6,11 @@ import {
 } from "@whizard/game-core";
 import { AVATAR_IDS } from "@whizard/protocol";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import {
+  ActionSwapCascadeIcon,
+  ActionSwapCascadeText,
+} from "@/components/motion/action-swap-cascade";
+import { SlideActionButton } from "@/components/motion/slide-action-button";
 import { useAccount } from "./account";
 import { PingFriends } from "./FriendsScreen";
 import { QuizScreen } from "./games/quiz/QuizScreen";
@@ -16,6 +21,7 @@ import { navigate, roomPath } from "./router";
 import { loadAvatar, loadNickname } from "./storage";
 import { Avatar, avatarUrl } from "./ui/Avatar";
 import { Brand } from "./ui/Chrome";
+import { useMediaQuery } from "./ui/common";
 import { Icon } from "./ui/Icon";
 import { QrCode } from "./ui/QrCode";
 import { play } from "./sounds";
@@ -360,13 +366,7 @@ function Lobby({
               </p>
             )}
             {isHost ? (
-              <button
-                className="btn btn-primary btn-block btn-start"
-                onClick={() => client.startGame()}
-              >
-                <Icon name="play" size={20} fill />
-                {alone ? "Play solo" : "Start game"}
-              </button>
+              <StartButton alone={alone} onStart={() => client.startGame()} />
             ) : (
               <p className="muted center">Waiting for the host to start the game.</p>
             )}
@@ -374,6 +374,45 @@ function Lobby({
         </section>
       </div>
     </>
+  );
+}
+
+/** Phones with touch get "slide to start", so a stray tap can't start the game. */
+const SLIDE_QUERY = "(max-width: 767px) and (pointer: coarse)";
+
+function StartButton({ alone, onStart }: { alone: boolean; onStart: () => void }) {
+  const slide = useMediaQuery(SLIDE_QUERY);
+  const started = useRef(false);
+  const start = () => {
+    if (started.current) return;
+    started.current = true;
+    onStart();
+    // If the server says no (say, a player left), the host can try again.
+    setTimeout(() => (started.current = false), 1500);
+  };
+
+  if (!slide) {
+    return (
+      <button className="btn btn-primary btn-block btn-start" onClick={start}>
+        <Icon name="play" size={20} fill />
+        {alone ? "Play solo" : "Start game"}
+      </button>
+    );
+  }
+  return (
+    <SlideActionButton
+      className="slide-start"
+      thumbClassName="slide-start-thumb"
+      fillClassName="slide-start-fill"
+      completeLabel="Starting…"
+      onComplete={start}
+      // A screen reader's double-tap arrives as a click with no pointer behind it.
+      onClick={(event) => {
+        if (event.detail === 0) start();
+      }}
+    >
+      {alone ? "Slide to play solo" : "Slide to start game"}
+    </SlideActionButton>
   );
 }
 
@@ -393,7 +432,9 @@ function CopyButton({ text }: { text: string }) {
         }
       }}
     >
-      <Icon name={copied ? "check" : "copy"} size={26} />
+      <ActionSwapCascadeIcon value={copied ? "copied" : "copy"}>
+        <Icon name={copied ? "check" : "copy"} size={26} />
+      </ActionSwapCascadeIcon>
     </button>
   );
 }
@@ -418,7 +459,9 @@ function InviteButton({ url }: { url: string }) {
   return (
     <button className="bar-btn invite" onClick={handleInvite} aria-live="polite">
       <Icon name="invite" size={20} />
-      <span>{copied ? "Link copied" : "Invite"}</span>
+      <ActionSwapCascadeText value={copied ? "copied" : "invite"}>
+        {copied ? "Link copied" : "Invite"}
+      </ActionSwapCascadeText>
     </button>
   );
 }

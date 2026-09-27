@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { loadAccount } from "./account";
 import { App } from "./App";
 import "./styles.css";
+import "./styles/tailwind.css";
 
 void loadAccount();
 

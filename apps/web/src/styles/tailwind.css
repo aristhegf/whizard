@@ -1,0 +1,32 @@
+/*
+ * Tailwind, only for the BeUI components in src/components (added with `npx shadcn add @beui/…`).
+ * There's no preflight, so the rest of the site keeps its own styles, and classes are only
+ * generated from src/components.
+ *
+ * Priority, lowest first: the site's bare-element resets (layer base, in base.css), then these
+ * utilities, then the site's own classes (not in any layer). So a BeUI button can be given
+ * Whizard's look with `className="btn btn-gold"`, and its internals still beat the resets.
+ */
+@layer base, theme, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+@source "../components";
+
+/* shadcn's colour names, pointed at Whizard's palette. */
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-card: var(--panel-strong);
+  --color-card-foreground: var(--text);
+  --color-primary: var(--purple);
+  --color-primary-foreground: #fff;
+  --color-secondary: var(--panel-raised);
+  --color-secondary-foreground: var(--text);
+  --color-muted: var(--panel-raised);
+  --color-muted-foreground: var(--muted);
+  --color-accent: var(--gold);
+  --color-accent-foreground: #221400;
+  --color-border: var(--line-strong);
+  --color-ring: var(--focus);
+  --font-sans: var(--body);
+}

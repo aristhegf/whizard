@@ -390,6 +390,45 @@
   font-size: 1.2rem;
 }
 
+/* Slide to start, on phones (a BeUI slide-action button in Whizard's colours). */
+.slide-start {
+  width: 100%;
+  height: 64px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgb(18 17 56 / 85%);
+  box-shadow:
+    inset 0 0 0 1.5px var(--line-strong),
+    var(--glow-purple);
+}
+
+.slide-start > span {
+  font-family: var(--body);
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.slide-start-fill {
+  border-radius: inherit;
+  background: linear-gradient(90deg, #6630f5, #9a4dff);
+}
+
+.slide-start-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  color: #221400;
+  background: linear-gradient(180deg, #ffe14a 0%, #ffb52c 100%);
+  box-shadow:
+    0 6px 18px rgb(255 180 40 / 40%),
+    inset 0 1px 0 rgb(255 255 255 / 50%);
+}
+
+.slide-start-thumb svg {
+  width: 24px;
+  height: 24px;
+}
+
 @media (min-width: 900px) {
   .lobby {
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
