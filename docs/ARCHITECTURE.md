@@ -160,7 +160,7 @@ stateDiagram-v2
 - **Room codes** are 6 characters from an alphabet with no look-alike characters (no `0/O`, `1/I/L`). That gives about 890 million combinations. Creating a room claims the code in its Durable Object. If the code is already in use, the server tries another.
 - **Room state** lives in Durable Object storage, so it survives hibernation and restarts. The rules for joining, leaving, host handover and expiry are pure functions in `game-core`, and the Durable Object applies them.
 - **Players who drop** stay in the room, shown as offline, for 10 minutes so they can come back.
-- **Host handover:** if the host leaves, the longest-connected player becomes host right away. If the host only loses connection, they keep the role for 30 seconds first, so a locked phone doesn't hand it over.
+- **Host handover:** if the host leaves, the longest-connected player becomes host right away. If the host only loses connection or taps back by mistake, they keep the role for 2 minutes first, so a locked phone doesn't hand it over. Every other page shows a "Return to your room" bar while the room is still open, so a host who went back can walk straight back in, with everyone still there.
 - **Cleanup** runs from a Durable Object alarm. A room is deleted 30 minutes after the last player disconnects.
 - **Room settings** belong to the host: the most players the room takes (2 to 20) and whether late joiners can enter a running game.
 - **Limits:** up to 20 players per room, nicknames up to 20 characters (emoji welcome), unique within the room. Each player picks an avatar from a built-in set.
@@ -365,8 +365,9 @@ Accounts mean storing personal data, so they launch with a plain-language privac
 The home page shows two live numbers, "visitors so far" and "here now", and `/stats` shows the fuller picture for the last 7, 30 or 90 days: visitors, visits, page views, rooms created, games played and average visit length, a chart of visitors and games per day, and top pages, sources, countries, topics, devices and game modes.
 
 - **Presence.** Every open tab keeps one small WebSocket to a single `Presence` Durable Object (`/api/presence`). "Here now" is the number of different visitors with a socket open, sent to everyone at most every 2 seconds when it changes. Tabs send `ping` every 30 seconds, which Cloudflare answers without waking the object; once a minute it closes sockets that have been quiet for 150 seconds, so phones that dropped off don't linger. A tab in the background disconnects after 2 minutes and reconnects when it's shown again.
-- **Visits.** A socket's first message (`hello`) carries a random visitor ID the browser keeps (separate from the guest ID used in games), the page, the device type from the screen width, and the source: `utm_source` if the link has one, else the referring site. The Worker adds the country from Cloudflare. No IP address or name is stored.
-- **Storage.** `visitors` has one row per browser with its first and last day, which tells new visitors from returning ones and gives exact unique counts for any range. Everything else is a daily total in `daily_counts` (`day`, `metric`, `count`); breakdowns use a prefix such as `page:games`, `topic:bible` or `source:whatsapp`. Rooms, games (started and finished, players, topic, mode), accounts and pings are counted where they happen. A failed stats write is logged and never breaks the thing being counted.
+- **Visits.** A socket's first message (`hello`) carries a random visitor ID the browser keeps (separate from the guest ID used in games), the page, the device type from the screen width, and the source: `utm_source` if the link has one, else the referring site. The Worker adds the country from Cloudflare and the visitor's network: the whole IPv4 address, or the first half of an IPv6 one.
+- **Recognising people.** The presence object turns the network and the browser's user agent into a one-way code, an HMAC with a secret kept in `server_keys`, so the address is never stored and the code can't be reversed. A visit is from a known person if either the browser ID or the network code has been seen; only when neither has is it a new visitor. So a private window, cleared storage or a script making up IDs from one connection counts once, and "here now" counts people, not IDs. Network codes match for 30 days after they were last seen (addresses get reassigned) and are then deleted. Mobile networks put many phones behind one address, so two people on the same network with the same phone and browser can be counted as one: the numbers lean low rather than high. Crawlers and headless browsers are never counted.
+- **Storage.** `visitor_people` has one row per person with their first and last day, which gives unique counts for any range; `visitor_browsers` and `visitor_networks` map browser IDs and network codes to people. Everything else is a daily total in `daily_counts` (`day`, `metric`, `count`); breakdowns use a prefix such as `page:games`, `topic:bible` or `source:whatsapp`. Rooms, games (started and finished, players, topic, mode), accounts and pings are counted where they happen. A failed stats write is logged and never breaks the thing being counted.
 - **Reading them.** `GET /api/stats?range=7|30|90` builds the page's numbers in three queries and caches them for two minutes. For the raw tables, run the **Site stats** workflow in GitHub Actions; it prints every total and breakdown to the run summary.
 - To share a link and see how it did, add a campaign tag, e.g. `?utm_source=whatsapp`.
 
@@ -398,13 +399,13 @@ Jigsaw, Spot It, Reaction and Draw & Guess use **Phaser**, loaded only when one 
 
 ## Security and abuse
 
-- **Rate limiting** room creation and joins per IP, using the Workers rate-limiting binding.
+- **Rate limiting** per address with the Workers rate-limiting binding: 30 new rooms and 100 presence connections a minute. The limits are generous because mobile networks put many people behind one address.
 - **Validation** of every incoming message with a size cap. Unknown or malformed messages are dropped.
 - **Nickname and text filtering** for length, characters and a basic profanity list. This matters more once social games let players type answers.
 - **Guests leave nothing behind.** Nicknames, typed answers and uploaded images live only as long as the room. Account data is covered in [Privacy](#privacy).
 - **Account sessions** are checked by the Worker. The room only ever receives a verified user ID, never a password or token it has to trust.
 - **Hidden information stays on the server** until a player is allowed to see it.
-- **Stats are best-effort.** Presence only accepts sockets from the site's own pages and one `hello` per socket, but a script could still make up visitor IDs. The counts are for a sense of scale, not billing.
+- **Stats resist faking.** Presence only accepts sockets from the site's own pages, one `hello` per socket, and at most 100 connections a minute from one address. Made-up visitor IDs from one connection are matched by network code, so only someone rotating through many addresses could inflate the counts.
 
 ## Testing and CI
 

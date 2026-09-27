@@ -80,6 +80,15 @@ function loadSessions(): Record<string, RoomSession> {
   return Object.fromEntries(Object.entries(sessions).filter(([, s]) => s.savedAt > cutoff));
 }
 
+/** The room this browser was in most recently, if its session is still fresh. */
+export function latestSession(): (RoomSession & { code: string }) | null {
+  let latest: (RoomSession & { code: string }) | null = null;
+  for (const [code, session] of Object.entries(loadSessions())) {
+    if (!latest || session.savedAt > latest.savedAt) latest = { ...session, code };
+  }
+  return latest;
+}
+
 export function loadSession(code: string): RoomSession | null {
   return loadSessions()[code] ?? null;
 }

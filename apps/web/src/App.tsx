@@ -12,6 +12,7 @@ import { PrivacyScreen } from "./PrivacyScreen";
 import { RoomScreen } from "./RoomScreen";
 import { useRoute } from "./router";
 import { Backdrop } from "./ui/Chrome";
+import { ReturnToRoom } from "./ui/ReturnToRoom";
 
 export function App() {
   const route = useRoute();
@@ -43,6 +44,7 @@ export function App() {
           <HomePage />
         )}
       </main>
+      {route.name !== "room" && <ReturnToRoom page={page} />}
     </>
   );
 }

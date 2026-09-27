@@ -2,7 +2,10 @@ import { z } from "zod";
 
 export const PROTOCOL_VERSION = 6;
 
+/** The most a player may send in one message. Server messages can be far bigger: a finished
+ * game's review or a full lobby easily passes this, so they have their own, looser cap. */
 export const MAX_MESSAGE_BYTES = 4096;
+export const MAX_SERVER_MESSAGE_BYTES = 1024 * 1024;
 
 /** WebSocket close codes the client treats as final: it shows a message instead of reconnecting. */
 export const CloseCode = {
@@ -95,8 +98,8 @@ export const serverMessageSchema = z.discriminatedUnion("type", [
 export type ClientMessage = z.infer<typeof clientMessageSchema>;
 export type ServerMessage = z.infer<typeof serverMessageSchema>;
 
-function parse<T>(schema: z.ZodType<T>, raw: unknown): T | null {
-  if (typeof raw !== "string" || raw.length > MAX_MESSAGE_BYTES) return null;
+function parse<T>(schema: z.ZodType<T>, raw: unknown, maxBytes: number): T | null {
+  if (typeof raw !== "string" || raw.length > maxBytes) return null;
   let json: unknown;
   try {
     json = JSON.parse(raw);
@@ -108,11 +111,11 @@ function parse<T>(schema: z.ZodType<T>, raw: unknown): T | null {
 }
 
 export function parseClientMessage(raw: unknown): ClientMessage | null {
-  return parse(clientMessageSchema, raw);
+  return parse(clientMessageSchema, raw, MAX_MESSAGE_BYTES);
 }
 
 export function parseServerMessage(raw: unknown): ServerMessage | null {
-  return parse(serverMessageSchema, raw);
+  return parse(serverMessageSchema, raw, MAX_SERVER_MESSAGE_BYTES);
 }
 
 export function encode(message: ClientMessage | ServerMessage): string {

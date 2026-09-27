@@ -37,7 +37,7 @@ async function buildStats(db: D1Database, range: StatsRange, now: number): Promi
   const days = rangeDays(range, now);
   const since = days[0]!;
   const [visitors, daily, breakdown] = await db.batch<Record<string, unknown>>([
-    db.prepare("SELECT COUNT(*) AS n FROM visitors WHERE last_day >= ?").bind(since),
+    db.prepare("SELECT COUNT(*) AS n FROM visitor_people WHERE last_day >= ?").bind(since),
     db
       .prepare(
         `SELECT day, metric, count FROM daily_counts

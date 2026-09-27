@@ -4,6 +4,7 @@ import { requireUser } from "./account";
 import type { Env } from "./env";
 import type { RequestContext } from "./http";
 import { asAvatar } from "./sessions";
+import { dayOf, NETWORK_MATCH_DAYS } from "./analytics";
 
 /** How long a guest's games can still be claimed by an account they create. */
 export const GUEST_CLAIM_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
@@ -197,6 +198,10 @@ export async function cleanUp(env: Env, now: number) {
   await env.DB.batch([
     env.DB.prepare("DELETE FROM sessions WHERE expires_at < ?").bind(now),
     env.DB.prepare("DELETE FROM auth_challenges WHERE expires_at < ?").bind(now),
+    // Network codes stop matching after a while (addresses get reused), so drop them then.
+    env.DB.prepare("DELETE FROM visitor_networks WHERE last_day < ?").bind(
+      dayOf(now - NETWORK_MATCH_DAYS * 24 * 60 * 60 * 1000),
+    ),
     // Games nobody with an account played aren't anyone's history.
     env.DB.prepare(
       `DELETE FROM matches WHERE finished_at < ?

@@ -15,7 +15,7 @@ import {
   signOut,
   updateMe,
 } from "./account";
-import { count, countryCode } from "./analytics";
+import { count, countryCode, networkPrefix } from "./analytics";
 import type { Env } from "./env";
 import {
   addFriend,
@@ -40,7 +40,7 @@ import {
   signUpVerify,
 } from "./passkeys";
 import { addSubscription, getPushKey, pingFriend, removeSubscription } from "./push";
-import { COUNTRY_HEADER } from "./presence";
+import { COUNTRY_HEADER, NETWORK_HEADER } from "./presence";
 import { ACCOUNT_HEADER } from "./room";
 import { getSiteStats } from "./stats";
 import { currentSession, hasSessionCookie } from "./sessions";
@@ -49,6 +49,17 @@ export { Presence } from "./presence";
 export { Room } from "./room";
 
 const CREATE_ATTEMPTS = 5;
+
+/**
+ * Checks a per-address rate limit. Local development and tests share one private address, so
+ * only public addresses are limited.
+ */
+async function withinLimit(limiter: RateLimit, request: Request): Promise<boolean> {
+  const network = networkPrefix(request.headers.get("CF-Connecting-IP"));
+  if (!network) return true;
+  const { success } = await limiter.limit({ key: network });
+  return success;
+}
 
 async function health(): Promise<Response> {
   return Response.json({ ok: true, protocolVersion: PROTOCOL_VERSION });
@@ -65,6 +76,13 @@ async function quizCategories(): Promise<Response> {
 
 /** Creates a room. The body can preset the game's settings, e.g. `{"settings":{"category":"music"}}`. */
 async function createRoom({ env, request, ctx }: RequestContext): Promise<Response> {
+  if (!(await withinLimit(env.ROOM_LIMIT, request))) {
+    return jsonError(
+      429,
+      "too_many_rooms",
+      "That’s a lot of rooms at once. Try again in a minute.",
+    );
+  }
   const text = await request.text();
   let settings: unknown;
   if (text.length > 0 && text.length < 2048) {
@@ -120,11 +138,26 @@ async function presenceSocket({ request, env, url }: RequestContext): Promise<Re
     return jsonError(426, "upgrade_required", "Expected a WebSocket upgrade");
   }
   if (!isSameOrigin(request, url)) return jsonError(403, "forbidden", "Not allowed");
+  if (!(await withinLimit(env.PRESENCE_LIMIT, request))) {
+    return jsonError(429, "too_many_connections", "Too many connections. Try again in a minute.");
+  }
   const headers = new Headers(request.headers);
   headers.delete(COUNTRY_HEADER);
+  headers.delete(NETWORK_HEADER);
+  const network = networkPrefix(request.headers.get("CF-Connecting-IP"));
+  if (network) headers.set(NETWORK_HEADER, network);
   const country = countryCode((request.cf as { country?: unknown } | undefined)?.country);
   if (country) headers.set(COUNTRY_HEADER, country);
   return env.PRESENCE.getByName("site").fetch(new Request(request, { headers }));
+}
+
+/** Whether a room is still open. Used to offer a way back to it from other pages. */
+async function roomStatus({ env, params }: RequestContext): Promise<Response> {
+  const code = normalizeRoomCode(decodeURIComponent(params[0] ?? ""));
+  if (!code) return jsonError(400, "invalid_room_code", "That isn't a valid room code");
+  const status = await env.ROOMS.getByName(code).status();
+  if (!status) return jsonError(404, "room_not_found", "This room doesn’t exist or has expired.");
+  return Response.json({ code, ...status }, { headers: { "Cache-Control": "no-store" } });
 }
 
 type Method = "GET" | "POST" | "PATCH" | "DELETE";
@@ -133,6 +166,7 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/health$/, health],
   ["GET", /^\/api\/quiz\/categories$/, quizCategories],
   ["POST", /^\/api\/rooms$/, createRoom],
+  ["GET", /^\/api\/rooms\/([^/]+)$/, roomStatus],
   ["GET", /^\/api\/rooms\/([^/]+)\/ws$/, roomSocket],
   ["GET", /^\/api\/presence$/, presenceSocket],
   ["GET", /^\/api\/stats$/, getSiteStats],

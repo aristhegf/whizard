@@ -163,6 +163,7 @@ export class RoomClient {
       if (this.socket !== socket) return;
       const message = parseServerMessage(event.data);
       if (message) this.handle(message);
+      else console.warn("Ignored a message from the server that couldn’t be read");
     });
 
     socket.addEventListener("close", (event) => {

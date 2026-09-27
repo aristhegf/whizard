@@ -12,6 +12,7 @@ import {
   leaveRoom,
   markDisconnected,
   markRecorded,
+  phaseOf,
   nextDeadline,
   randomSeed,
   randomToken,
@@ -93,6 +94,13 @@ export class Room extends DurableObject<Env> {
       game.success ? { ...state, game: { ...state.game, settings: game.data } } : state,
     );
     return true;
+  }
+
+  /** Whether the room still exists, for the "return to your room" bar. */
+  async status(): Promise<{ phase: "lobby" | "playing" | "finished"; online: number } | null> {
+    const state = await this.current(Date.now());
+    if (!state) return null;
+    return { phase: phaseOf(state), online: this.connectedIds().size };
   }
 
   override async fetch(request: Request): Promise<Response> {

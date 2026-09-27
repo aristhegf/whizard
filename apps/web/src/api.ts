@@ -13,6 +13,20 @@ export async function createRoom(settings?: Record<string, unknown>): Promise<st
   return body.code;
 }
 
+export interface RoomStatus {
+  code: string;
+  phase: "lobby" | "playing" | "finished";
+  online: number;
+}
+
+/** A room's status, or null if it no longer exists. */
+export async function fetchRoomStatus(code: string): Promise<RoomStatus | null> {
+  const response = await fetch(`/api/rooms/${encodeURIComponent(code)}`);
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error(`Could not check the room (${response.status})`);
+  return (await response.json()) as RoomStatus;
+}
+
 export function roomSocketUrl(code: string): string {
   const protocol = location.protocol === "https:" ? "wss:" : "ws:";
   return `${protocol}//${location.host}/api/rooms/${encodeURIComponent(code)}/ws`;

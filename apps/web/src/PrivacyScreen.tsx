@@ -57,12 +57,15 @@ export function PrivacyScreen() {
 
         <h2>Visitor stats</h2>
         <p>
-          To count visitors, your browser keeps another random ID, used for nothing else. The server
-          stores it with the first and last day you visited, so a return visit isn’t counted as a
-          new visitor. Everything else is a daily total: pages viewed, rooms made, games played,
-          and, for new visitors only, the site you came from, your country (worked out by
-          Cloudflare; your IP address isn’t stored) and whether you’re on a phone, tablet or
-          computer. These totals are shown on the public{" "}
+          To count visitors, your browser keeps another random ID, used for nothing else. So that a
+          private window or cleared storage doesn’t count you twice, the server also makes a one-way
+          code from your network address and browser type. It’s scrambled with a secret key so it
+          can’t be turned back into your address, and it’s deleted 30 days after your last visit;
+          your IP address itself is never stored. These, with the first and last day you visited,
+          tell a return visit from a new visitor. Everything else is a daily total: pages viewed,
+          rooms made, games played, and, for new visitors only, the site you came from, your country
+          (worked out by Cloudflare) and whether you’re on a phone, tablet or computer. These totals
+          are shown on the public{" "}
           <a className="btn-link" {...linkTo("/stats")}>
             stats page
           </a>

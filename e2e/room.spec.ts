@@ -122,3 +122,23 @@ test("explains when a room link is malformed", async ({ page }) => {
   await page.goto("/r/abc");
   await expect(page.getByRole("alert")).toHaveText("That isn’t a valid room link.");
 });
+
+test("a host who goes back can return to the same room", async ({ browser }) => {
+  const host = await newPlayer(browser);
+  const roomUrl = await createRoom(host, "Ada");
+  const guest = await newPlayer(browser);
+  await guest.goto(roomUrl);
+  await joinAs(guest, "Tolu");
+  await expect(playerRow(host, "Tolu")).toBeVisible();
+
+  await host.goBack();
+  const bar = host.getByRole("region", { name: "Your room" });
+  await expect(bar).toContainText("is still open");
+  await bar.getByRole("link", { name: "Return" }).click();
+
+  await expect(host).toHaveURL(roomUrl);
+  await expect(playerRow(host, "Ada")).toContainText("Host");
+  await expect(playerRow(host, "Tolu")).toBeVisible();
+  await expect(playerRow(guest, "Ada")).not.toContainText("Offline");
+  await expect(host.getByRole("button", { name: "Start game" })).toBeVisible();
+});

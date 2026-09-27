@@ -190,3 +190,28 @@ test("the lobby has a QR code and room limits", async ({ browser }) => {
   await host.getByLabel("Max Players").selectOption("2");
   await expect(host.getByText("1/2 players")).toBeVisible();
 });
+
+test("a long game with friends ends on the final rankings", async ({ browser }) => {
+  // A finished 15-question game's review is much bigger than anything a player sends; it once
+  // got dropped by the size check meant for players, leaving everyone stuck on the last answer.
+  const host = await newPlayer(browser);
+  await openRoom(host);
+  await host.getByLabel("Questions").selectOption("15");
+  const guest = await newPlayer(browser);
+  await guest.goto(host.url());
+  await joinAs(guest, "Tolu");
+  await host.getByRole("button", { name: "Start game" }).click();
+
+  const play = async (page: Page) => {
+    for (let i = 1; i <= 15; i++) await answerFirstChoice(page, i, 15);
+  };
+  await Promise.all([play(host), play(guest)]);
+
+  for (const page of [host, guest]) {
+    await expect(page.getByRole("heading", { name: "Final Rankings" })).toBeVisible();
+    await expect(page.locator(".review li")).toHaveCount(15);
+  }
+  // Reloading keeps the results.
+  await guest.reload();
+  await expect(guest.getByRole("heading", { name: "Final Rankings" })).toBeVisible();
+});

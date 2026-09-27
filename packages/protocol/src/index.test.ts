@@ -36,6 +36,14 @@ describe("parseClientMessage", () => {
     const padded = JSON.stringify({ type: "ping", t: 1, pad: "x".repeat(MAX_MESSAGE_BYTES) });
     expect(parseClientMessage(padded)).toBeNull();
   });
+
+  it("accepts server messages far bigger than a player may send", () => {
+    // A finished 20-question game's review is well over the player limit.
+    const view = { review: Array.from({ length: 20 }, () => "x".repeat(600)) };
+    const message = encode({ type: "game", view });
+    expect(message.length).toBeGreaterThan(MAX_MESSAGE_BYTES);
+    expect(parseServerMessage(message)).toEqual({ type: "game", view });
+  });
 });
 
 describe("join messages", () => {

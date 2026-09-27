@@ -26,8 +26,8 @@ const sum = (metric) =>
   `(SELECT COALESCE(SUM(count), 0) FROM daily_counts WHERE metric = '${metric}')`;
 
 const [totals] = query(`SELECT
-  (SELECT COUNT(*) FROM visitors) AS visitors,
-  (SELECT COUNT(*) FROM visitors WHERE last_day > first_day) AS returning_visitors,
+  (SELECT COUNT(*) FROM visitor_people) AS visitors,
+  (SELECT COUNT(*) FROM visitor_people WHERE last_day > first_day) AS returning_visitors,
   ${sum("visits")} AS visits,
   (SELECT COALESCE(MAX(count), 0) FROM daily_counts WHERE metric = 'online_peak') AS peak,
   ${sum("rooms_created")} AS rooms,

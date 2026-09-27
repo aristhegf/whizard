@@ -7,11 +7,16 @@ import {
   count,
   visitorTotal,
   dayOf,
+  isBot,
+  networkKey,
+  networkSecret,
 } from "./analytics";
 import type { Env } from "./env";
 
 /** The Worker sets this from Cloudflare's own lookup; anything a client sends is dropped. */
 export const COUNTRY_HEADER = "X-Whizard-Country";
+/** Likewise: the visitor's network (see `networkPrefix`), when they have a public address. */
+export const NETWORK_HEADER = "X-Whizard-Network";
 
 /** How long to gather joins and leaves before telling everyone the new count. */
 const BROADCAST_DELAY_MS = 2_000;
@@ -29,7 +34,11 @@ const PEAK_KEY = "peak";
 
 interface SocketAttachment {
   visitor: string | null;
+  /** Who the visitor turned out to be. Null until they've said hello, and for bots. */
+  person?: string | null;
   country: string | null;
+  network?: string | null;
+  agent?: string | null;
   connectedAt: number;
   /** The socket a page load opened first, as opposed to a reconnect. */
   firstSocket?: boolean;
@@ -45,6 +54,9 @@ interface SocketAttachment {
 export class Presence extends DurableObject<Env> {
   private visitorCount: number | undefined;
   private lastSent = "";
+  private secret: Promise<string> | undefined;
+  /** Visits are recorded one at a time, so two tabs opening together can't both be "new". */
+  private visits: Promise<unknown> = Promise.resolve();
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
@@ -57,6 +69,8 @@ export class Presence extends DurableObject<Env> {
     server.serializeAttachment({
       visitor: null,
       country: countryCode(request.headers.get(COUNTRY_HEADER)),
+      network: request.headers.get(NETWORK_HEADER),
+      agent: request.headers.get("User-Agent")?.slice(0, 400) ?? null,
       connectedAt: Date.now(),
     } satisfies SocketAttachment);
     return new Response(null, { status: 101, webSocket: client });
@@ -68,31 +82,53 @@ export class Presence extends DurableObject<Env> {
     if (!message || !attachment) return;
 
     if (message.type === "view") {
-      if (attachment.visitor) await count(this.env, { [`page:${message.page}`]: 1 });
+      if (attachment.person) await count(this.env, { [`page:${message.page}`]: 1 });
       return;
     }
 
     // One hello per socket, so a socket can't count itself as many visitors.
     if (attachment.visitor) return;
-    ws.serializeAttachment({
+    const hello: SocketAttachment = {
       ...attachment,
       visitor: message.visitor,
+      person: null,
       firstSocket: message.newVisit,
-    } satisfies SocketAttachment);
+    };
+    ws.serializeAttachment(hello);
     await this.total();
-    const isNew = await recordVisit(this.env, {
-      visitor: message.visitor,
-      page: message.page,
-      device: message.device,
-      source: message.source,
-      country: attachment.country,
-      newVisit: message.newVisit,
-    });
-    if (isNew) {
-      this.visitorCount = (this.visitorCount ?? 0) + 1;
-      await this.ctx.storage.put(VISITORS_KEY, this.visitorCount);
+
+    // Crawlers see the counts but never count themselves.
+    if (!isBot(attachment.agent ?? null)) {
+      const result = await this.recordInTurn(async () => {
+        const network =
+          attachment.network && attachment.agent
+            ? await this.networkSecret()
+                .then((secret) => networkKey(secret, attachment.network!, attachment.agent!))
+                .catch(() => null)
+            : null;
+        return recordVisit(this.env, {
+          visitor: message.visitor,
+          network,
+          page: message.page,
+          device: message.device,
+          source: message.source,
+          country: attachment.country,
+          newVisit: message.newVisit,
+        });
+      });
+      if (result?.isNew) {
+        this.visitorCount = (this.visitorCount ?? 0) + 1;
+        await this.ctx.storage.put(VISITORS_KEY, this.visitorCount);
+      }
+      // If the database was out of reach, the browser ID stands in for the person.
+      const person = result?.person ?? message.visitor;
+      try {
+        ws.serializeAttachment({ ...hello, person } satisfies SocketAttachment);
+      } catch {
+        // The tab closed while the visit was being recorded.
+      }
     }
-    send(ws, this.counts());
+    if (ws.readyState === OPEN) send(ws, this.counts());
     await this.scheduleBroadcast();
   }
 
@@ -135,7 +171,7 @@ export class Presence extends DurableObject<Env> {
   /** Adds how long a socket was open to the visit-length stats, once per socket. */
   private async endVisit(ws: WebSocket, endedAt: number) {
     const attachment = attachmentOf(ws);
-    if (!attachment?.visitor || attachment.ended) return;
+    if (!attachment?.person || attachment.ended) return;
     try {
       ws.serializeAttachment({ ...attachment, ended: true } satisfies SocketAttachment);
     } catch {
@@ -146,6 +182,20 @@ export class Presence extends DurableObject<Env> {
       visit_seconds: Math.round(ms / 1000),
       ...(attachment.firstSocket ? { visits_ended: 1 } : {}),
     });
+  }
+
+  private recordInTurn<T>(task: () => Promise<T>): Promise<T> {
+    const run = this.visits.then(task, task);
+    this.visits = run.catch(() => undefined);
+    return run;
+  }
+
+  private networkSecret(): Promise<string> {
+    this.secret ??= networkSecret(this.env).catch((error: unknown) => {
+      this.secret = undefined;
+      throw error;
+    });
+    return this.secret;
   }
 
   private async scheduleBroadcast() {
@@ -166,12 +216,13 @@ export class Presence extends DurableObject<Env> {
   }
 
   private counts(): PresenceServerMessage {
-    const visitors = new Set<string>();
+    // Each person once, however many tabs, browsers or made-up IDs they have open.
+    const people = new Set<string>();
     for (const ws of this.openSockets()) {
-      const visitor = attachmentOf(ws)?.visitor;
-      if (visitor) visitors.add(visitor);
+      const person = attachmentOf(ws)?.person;
+      if (person) people.add(person);
     }
-    return { type: "presence", online: visitors.size, visitors: this.visitorCount ?? 0 };
+    return { type: "presence", online: people.size, visitors: this.visitorCount ?? 0 };
   }
 
   private openSockets(): WebSocket[] {

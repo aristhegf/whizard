@@ -5,4 +5,7 @@ export interface Env {
   ROOMS: DurableObjectNamespace<Room>;
   PRESENCE: DurableObjectNamespace<Presence>;
   DB: D1Database;
+  /** Per address: presence connections, and rooms created. */
+  PRESENCE_LIMIT: RateLimit;
+  ROOM_LIMIT: RateLimit;
 }

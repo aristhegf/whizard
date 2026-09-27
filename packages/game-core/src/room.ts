@@ -13,7 +13,7 @@ import {
 export const MAX_PLAYERS = 20;
 export const MIN_ROOM_CAPACITY = 2;
 /** How long a disconnected host keeps the role, so a locked phone doesn't hand it over. */
-export const HOST_GRACE_MS = 30_000;
+export const HOST_GRACE_MS = 120_000;
 export const DISCONNECTED_PLAYER_TTL_MS = 10 * 60_000;
 /** A room with nobody connected is deleted after this long. */
 export const ROOM_IDLE_TTL_MS = 30 * 60_000;
