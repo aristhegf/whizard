@@ -15,7 +15,7 @@ The full list is in [docs/GAMES.md](docs/GAMES.md).
 
 ## Status
 
-Early development. Rooms work: create one, invite friends with a link or code, and see who's in the lobby live. The quiz is next. See the [architecture and build plan](docs/ARCHITECTURE.md).
+Early development. The Bible quiz is playable: play solo or invite friends with a link or code, pick Classic or Speed Quiz, a difficulty, the number of questions and time per question, and see live results. More categories are next. See the [architecture and build plan](docs/ARCHITECTURE.md).
 
 ## Tech stack
 

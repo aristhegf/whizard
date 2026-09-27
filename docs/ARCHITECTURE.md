@@ -68,7 +68,8 @@ whizard/
 │   └── server/         Cloudflare Worker, Room Durable Object, wrangler config
 ├── packages/
 │   ├── protocol/       Message types and runtime validation (zod), shared by client and server
-│   └── game-core/      Pure game logic: room codes, game modules, scoring
+│   ├── game-core/      Pure game logic: room rules, game modules, scoring
+│   └── content/        Question bank (server-only: it holds the answers)
 ├── tools/
 │   └── content-gen/    Offline pipeline that generates, checks and imports content (M3)
 └── docs/
@@ -81,25 +82,30 @@ whizard/
 The room and the games are separate. The **room** handles everything every game needs: connections, nicknames, the host, the lobby, reconnection, timers, saving state and sending updates. A **game module** holds only the rules of one game, as pure functions:
 
 ```ts
-interface GameModule<Settings, State, Action, View> {
+interface GameModule<Settings, Content, State, Action, View> {
   id: string; // "quiz", "word-rush", "impostor", ...
-  settings: ZodType<Settings>; // what the host can choose in the lobby
-  actions: ZodType<Action>; // what a player can send during the game
+  minPlayers: number; // 1 means it can be played solo
+  maxPlayers: number;
+  settingsSchema: ZodType<Settings>; // what the host can choose in the lobby
+  actionSchema: ZodType<Action>; // what a player can send during the game
   contentNeeded(settings: Settings): ContentRequest; // e.g. 20 easy Bible questions
-  setup(settings: Settings, players: PlayerId[], content: Content, seed: number): Transition<State>;
-  onAction(state: State, player: PlayerId, action: Action, now: number): Transition<State>;
-  onTimer(state: State, timerId: string, now: number): Transition<State>;
-  viewFor(state: State, player: PlayerId): View; // what this player may see
-  results(state: State): Standings | null; // null while the game is running
+  setup(args: { settings; players; content: Content; seed: number; now: number }): State;
+  onAction(state: State, playerId: string, action: Action, now: number): State | Rejection;
+  onPlayerLeft(state: State, playerId: string, now: number): State;
+  tick(state: State, now: number): State; // apply whatever is due: timeouts, reveals, next rounds
+  nextWakeAt(state: State): number | null; // when tick next has something to do
+  isFinished(state: State): boolean;
+  viewFor(state: State, playerId: string): View; // what this player may see
 }
-
-type Transition<S> = { state: S; timers?: { id: string; at: number }[] };
 ```
+
+Time is just another input. The room calls `tick` when `nextWakeAt` is reached, using its Durable Object alarm, and before every action. So a module never manages timers, and a test can jump straight to any moment by passing a time.
 
 This shape covers every game on the list:
 
 - **Hidden information** goes through `viewFor`. A quiz player never receives the answer before answering. In Impostor, only the impostor's view says "you are the impostor".
-- **Timed games** (Classic quiz rounds, Reaction, Draw & Guess) ask the room for timers. The room runs them on one Durable Object alarm and calls `onTimer`.
+- **Timed games** (Classic quiz rounds, Reaction, Draw & Guess) report their next deadline through `nextWakeAt`, and the room wakes them with `tick`.
+- **Solo play** needs nothing special: a game with `minPlayers: 1` can start with just the host in the room. The home screen has a "Play solo" button that creates a room and goes straight to the game settings.
 - **Social and party games** use the same actions: votes, typed answers and drawing strokes are all player actions.
 - **Randomness** comes only from the `seed`, so a game can be replayed exactly from its seed and action log. That makes bugs reproducible and tests deterministic.
 
@@ -107,7 +113,7 @@ Each game's screens live in the web app under `src/games/<id>/`. Canvas-heavy ga
 
 ## Quiz (launch game)
 
-The host picks a **category**, a **difficulty**, the **number of questions** and a **variant**. The room draws one question set, and every player gets the same questions in the same order.
+The host picks a **category**, a **difficulty**, the **number of questions** (5, 10, 15 or 20), the **time per question** (10, 20 or 30 seconds) and a **variant**. The room draws one question set, and every player gets the same questions in the same order. Quiz can be played solo.
 
 Categories at launch: Bible, Geography, History, Science, Animals, Football, Movies, Music, Nigerian culture, General knowledge, Pop culture.
 
@@ -126,7 +132,8 @@ stateDiagram-v2
     Lobby --> Lobby: players join / leave, host picks game and settings
     Lobby --> Playing: host starts
     Playing --> Finished: game module reports results
-    Finished --> Lobby: rematch
+    Finished --> Playing: play again
+    Finished --> Lobby: change settings
     Finished --> [*]: idle timeout
     Lobby --> [*]: idle timeout
 ```
@@ -142,24 +149,23 @@ stateDiagram-v2
 
 JSON messages over one WebSocket per player. Every message has a `type` and is validated with zod on both ends. Messages that fail validation are dropped.
 
-| Client → Server                                     | Purpose                                                                        |
-| --------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `join { protocolVersion, nickname, sessionToken? }` | Join, or rejoin with the token from an earlier `welcome`                       |
-| `leave {}`                                          | Leave the room for good                                                        |
-| `ping { t }`                                        | Measure round-trip time and clock offset                                       |
-| `configure { game, settings }`                      | Host picks the game and its settings in the lobby (M2)                         |
-| `start {}`                                          | Host starts the game (M2)                                                      |
-| `action { payload }`                                | A game move (an answer, a vote, a stroke), validated by the game's schema (M2) |
-| `rematch {}`                                        | Host returns everyone to the lobby (M2)                                        |
+| Client → Server                                     | Purpose                                                             |
+| --------------------------------------------------- | ------------------------------------------------------------------- |
+| `join { protocolVersion, nickname, sessionToken? }` | Join, or rejoin with the token from an earlier `welcome`            |
+| `leave {}`                                          | Leave the room for good                                             |
+| `ping { t }`                                        | Measure round-trip time and clock offset                            |
+| `configure { settings }`                            | Host changes the game settings in the lobby                         |
+| `start {}`                                          | Host starts a game, or plays again from the results                 |
+| `action { action }`                                 | A game move (an answer, "next"), validated by the game's own schema |
+| `backToLobby {}`                                    | Host returns everyone to the lobby to change settings               |
 
-| Server → Client                            | Purpose                                             |
-| ------------------------------------------ | --------------------------------------------------- |
-| `welcome { playerId, sessionToken, room }` | Joined. Includes the full room snapshot             |
-| `room { room }`                            | Players, host or who's online changed               |
-| `pong { t, serverTime }`                   | Reply to `ping`                                     |
-| `error { code, message }`                  | Something was rejected, with a message for the user |
-| `view { view }`                            | This player's view of the game, from `viewFor` (M2) |
-| `results { standings, final }`             | Live or final results (M2)                          |
+| Server → Client                                        | Purpose                                                                 |
+| ------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `welcome { playerId, sessionToken, room, serverTime }` | Joined. Includes the full room snapshot                                 |
+| `room { room }`                                        | Players, host, who's online, phase or settings changed                  |
+| `pong { t, serverTime }`                               | Reply to `ping`                                                         |
+| `error { code, message }`                              | Something was rejected, with a message for the user                     |
+| `game { view }`                                        | This player's view of the game from `viewFor`, including live standings |
 
 The protocol has a version number, so an old client gets a clear "please refresh" message instead of breaking. When a room can't be used (it doesn't exist or has expired, the client is out of date, or the player opened it somewhere else), the server closes the connection with a specific close code and the client shows a message instead of reconnecting.
 
@@ -177,9 +183,11 @@ On first join the server issues a random `sessionToken`, which the browser keeps
 
 1. The client measures how long the question was on screen before the tap (`clientElapsedMs`, using `performance.now()`).
 2. The server measures the time between sending the question and receiving the answer.
-3. The server accepts the client's time only if it fits inside that window, allowing for the player's measured round-trip time. Anything outside it is replaced with the server's own measurement.
+3. The server accepts the client's time if it's at most 1.5 seconds faster than its own measurement, which covers network delay on a slow connection. A faster claim is raised to that limit, and a slower one is capped at the server's time.
 
-**Simultaneous starts.** For games where everyone must see something at the same moment (Classic rounds, Reaction), the server sends the content slightly ahead with a start time in server time. Each client works out its clock offset from `ping`/`pong` and reveals the content at that moment. A player on a slow connection sees the question at the same instant as everyone else instead of a few hundred milliseconds late.
+**Simultaneous starts.** For games where everyone must see something at the same moment (Classic rounds, Reaction), the server sends the content slightly ahead with a start time in server time. Each client works out its clock offset from `ping`/`pong`, keeping the estimate from the fastest recent round trip, and reveals the content at that moment. A player on a slow connection sees the question at the same instant as everyone else instead of a few hundred milliseconds late.
+
+**No early hints.** In Classic, scores from the question that's still open are left out of the standings, so a jump in someone's score can't give the answer away. In Speed Quiz, other players' scores stay hidden until you finish.
 
 **Quiz scoring** (in `game-core`, easy to tune):
 
@@ -239,7 +247,7 @@ An offline script that fills and grows the bank. It never runs during a game.
 
 Estimated cost is a few dollars per 10,000 questions. The same pipeline, with a different schema and checks, produces content for the other games.
 
-To unblock the first playable version, we seed it with a small hand-checked Bible set (100–200 questions) before the pipeline is built.
+The first playable version ships with a hand-checked set of 140 Bible questions in `packages/content`, bundled with the Worker. Tests check every question's shape: four distinct choices, no repeated prompts, the answer not given away in the prompt. When the pipeline arrives (M3), the questions move into D1 behind the same `drawContent` function, so the room doesn't change. A lint rule blocks the web app from importing `packages/content`, so answers can never end up in the browser.
 
 ## Accounts (optional)
 
@@ -334,15 +342,15 @@ Jigsaw, Spot It, Reaction and Draw & Guess use **Phaser**, loaded only when one 
 
 ## Build plan
 
-| Milestone                    | Scope                                                                                                                              | Status |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| **M0: Foundations**          | Monorepo, lint/format, CI, Worker + Room Durable Object, web app, room codes, WebSocket ping                                       | Done   |
-| **M1: Rooms**                | Nicknames, live lobby, invite link, host and host handover, reconnection, room expiry, end-to-end tests                            | Done   |
-| **M2: Quiz**                 | Game module runner, game settings in the lobby, Classic and Speed Quiz, seeded Bible set, scoring, live results, rematch           |        |
-| **M3: Content pipeline**     | Generate, validate, de-duplicate, verify, import. Fill all 11 quiz categories                                                      |        |
-| **M4: Accounts and friends** | Sign-in, profiles, friends, pings (web push), match history, head-to-head records, group leaderboards, account deletion and export |        |
-| **M5: Launch**               | Streak and Elimination, visual design, sounds, report button, no repeated questions, rate limiting, privacy policy                 |        |
-| **After launch**             | New games category by category, in the order in [GAMES.md](GAMES.md)                                                               |        |
+| Milestone                    | Scope                                                                                                                                                  | Status |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
+| **M0: Foundations**          | Monorepo, lint/format, CI, Worker + Room Durable Object, web app, room codes, WebSocket ping                                                           | Done   |
+| **M1: Rooms**                | Nicknames, live lobby, invite link, host and host handover, reconnection, room expiry, end-to-end tests                                                | Done   |
+| **M2: Quiz**                 | Game module runner, game settings in the lobby, solo play, Classic and Speed Quiz, 140 hand-checked Bible questions, scoring, live results, play again | Done   |
+| **M3: Content pipeline**     | Generate, validate, de-duplicate, verify, import. Fill all 11 quiz categories                                                                          |        |
+| **M4: Accounts and friends** | Sign-in, profiles, friends, pings (web push), match history, head-to-head records, group leaderboards, account deletion and export                     |        |
+| **M5: Launch**               | Streak and Elimination, visual design, sounds, report button, no repeated questions, rate limiting, privacy policy                                     |        |
+| **After launch**             | New games category by category, in the order in [GAMES.md](GAMES.md)                                                                                   |        |
 
 The first playable version is **M0 to M2**: you and a friend can play a Bible quiz together.
 
