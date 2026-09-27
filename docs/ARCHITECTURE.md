@@ -92,7 +92,7 @@ interface GameModule<Settings, Content, State, Action, View> {
   setup(args: { settings; players; content: Content; seed: number; now: number }): State;
   onAction(state: State, playerId: string, action: Action, now: number): State | Rejection;
   onPlayerLeft(state: State, playerId: string, now: number): State;
-  tick(state: State, now: number): State; // apply whatever is due: timeouts, reveals, next rounds
+  tick(state: State, now: number): State; // apply whatever is due: timeouts, next rounds
   nextWakeAt(state: State): number | null; // when tick next has something to do
   isFinished(state: State): boolean;
   viewFor(state: State, playerId: string): View; // what this player may see
@@ -104,7 +104,7 @@ Time is just another input. The room calls `tick` when `nextWakeAt` is reached, 
 This shape covers every game on the list:
 
 - **Hidden information** goes through `viewFor`. A quiz player never receives the answer before answering. In Impostor, only the impostor's view says "you are the impostor".
-- **Timed games** (Classic quiz rounds, Reaction, Draw & Guess) report their next deadline through `nextWakeAt`, and the room wakes them with `tick`.
+- **Timed games** (quiz questions, Reaction, Draw & Guess) report their next deadline through `nextWakeAt`, and the room wakes them with `tick`.
 - **Solo play** needs nothing special: a game with `minPlayers: 1` can start with just the host in the room. The home screen has a "Play solo" button that creates a room and goes straight to the game settings.
 - **Social and party games** use the same actions: votes, typed answers and drawing strokes are all player actions.
 - **Randomness** comes only from the `seed`, so a game can be replayed exactly from its seed and action log. That makes bugs reproducible and tests deterministic.
@@ -113,16 +113,26 @@ Each game's screens live in the web app under `src/games/<id>/`. Canvas-heavy ga
 
 ## Quiz (launch game)
 
-The host picks a **category**, a **difficulty**, the **number of questions** (5, 10, 15 or 20), the **time per question** (10, 20 or 30 seconds) and a **variant**. The room draws one question set, and every player gets the same questions in the same order. Quiz can be played solo.
+The host picks a **category**, a **level** (easy, medium or hard), the **number of questions** (5, 10, 15 or 20) and the **time per question** (10, 20 or 30 seconds). The room draws one question set. Quiz can be played solo.
 
 Categories at launch: Bible, Geography, History, Science, Animals, Football, Movies, Music, Nigerian culture, General knowledge, Pop culture.
 
-| Variant         | How it plays                                                                                                                                                                   | Winner                           |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------- |
-| **Classic**     | Everyone sees each question at the same moment, with a timer. The round ends when everyone has answered or time runs out, then the answer and standings are shown.             | Most points                      |
-| **Speed Quiz**  | Everyone works through the same set at their own pace. A player who finishes goes straight to the results, which update live as others finish ("Tolu is on question 7 of 20"). | Most points, then fastest finish |
-| **Streak**      | Same questions, own pace, but the first wrong answer ends your run.                                                                                                            | Longest streak, then fastest     |
-| **Elimination** | Classic rounds, but a wrong answer or no answer knocks you out. If everyone left gets it wrong, nobody is knocked out. Players who are out keep watching.                      | Last player standing             |
+**Everyone starts together, then plays at their own pace.** The first question appears for every player at the same moment, and every player gets the same questions in the same order. After that nobody waits for anybody: answering takes you straight on to your next question.
+
+**Between questions:**
+
+| Playing          | After each answer                                                                                   |
+| ---------------- | --------------------------------------------------------------------------------------------------- |
+| **With friends** | The correct answer flashes for about a second, with no explanation, then the next question appears. |
+| **Solo**         | The correct answer and its explanation show for 3 seconds, with a Skip button.                      |
+
+This pacing is decided entirely on the player's own screen: the server only needs to hear "next". That's what makes the planned account preference simple: a signed-in player will be able to choose explanations during the quiz, or none, without changing the game rules (M4).
+
+**Results.** Whoever finishes first sees the leaderboard straight away. It fills in as the others finish, and players still going show as "Playing…". The leaderboard shows **rank, name and points only**. What anyone else got right or wrong stays private.
+
+**Review.** Every player gets a private review of their own game at the end: each question, their answer, the correct answer and the explanation where the category has one.
+
+Streak and Elimination variants can be added later on top of this.
 
 ## Room lifecycle
 
@@ -185,9 +195,9 @@ On first join the server issues a random `sessionToken`, which the browser keeps
 2. The server measures the time between sending the question and receiving the answer.
 3. The server accepts the client's time if it's at most 1.5 seconds faster than its own measurement, which covers network delay on a slow connection. A faster claim is raised to that limit, and a slower one is capped at the server's time.
 
-**Simultaneous starts.** For games where everyone must see something at the same moment (Classic rounds, Reaction), the server sends the content slightly ahead with a start time in server time. Each client works out its clock offset from `ping`/`pong`, keeping the estimate from the fastest recent round trip, and reveals the content at that moment. A player on a slow connection sees the question at the same instant as everyone else instead of a few hundred milliseconds late.
+**Simultaneous starts.** For games where everyone must see something at the same moment (the quiz's first question, Reaction), the server sends the content slightly ahead with a start time in server time. Each client works out its clock offset from `ping`/`pong`, keeping the estimate from the fastest recent round trip, and reveals the content at that moment. A player on a slow connection sees the question at the same instant as everyone else instead of a few hundred milliseconds late.
 
-**No early hints.** In Classic, scores from the question that's still open are left out of the standings, so a jump in someone's score can't give the answer away. In Speed Quiz, other players' scores stay hidden until you finish.
+**No early hints.** Nobody sees anyone else's score until they've finished their own game, so a jump in someone's score can't give an answer away.
 
 **Quiz scoring** (in `game-core`, easy to tune):
 
@@ -272,14 +282,14 @@ Google sign-in and email sign-in links, with no passwords to store or reset. It'
 
 ### Recording results
 
-When a game finishes, the room writes one match record to D1: the game, variant, category and difficulty, and each player's placing and score, with their user ID or guest ID. Stats, head-to-head records and leaderboards are all queries over these records, so new stats can be added later without touching any game.
+When a game finishes, the room writes one match record to D1: the game, category and difficulty, and each player's placing and score, with their user ID or guest ID. Stats, head-to-head records and leaderboards are all queries over these records, so new stats can be added later without touching any game.
 
 ```sql
 users                (id, username, display_name, created_at)
 friendships          (user_id, friend_id, status, created_at)   -- requested, accepted, blocked
 friend_groups        (id, owner_id, name)
 friend_group_members (group_id, user_id)
-matches              (id, game, variant, category, difficulty, finished_at)
+matches              (id, game, category, difficulty, finished_at)
 match_players        (match_id, user_id, guest_id, nickname, placing, score)  -- one of user_id / guest_id
 push_subscriptions   (user_id, endpoint, keys, created_at)
 ```
@@ -342,15 +352,15 @@ Jigsaw, Spot It, Reaction and Draw & Guess use **Phaser**, loaded only when one 
 
 ## Build plan
 
-| Milestone                    | Scope                                                                                                                                                  | Status |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ |
-| **M0: Foundations**          | Monorepo, lint/format, CI, Worker + Room Durable Object, web app, room codes, WebSocket ping                                                           | Done   |
-| **M1: Rooms**                | Nicknames, live lobby, invite link, host and host handover, reconnection, room expiry, end-to-end tests                                                | Done   |
-| **M2: Quiz**                 | Game module runner, game settings in the lobby, solo play, Classic and Speed Quiz, 140 hand-checked Bible questions, scoring, live results, play again | Done   |
-| **M3: Content pipeline**     | Generate, validate, de-duplicate, verify, import. Fill all 11 quiz categories                                                                          |        |
-| **M4: Accounts and friends** | Sign-in, profiles, friends, pings (web push), match history, head-to-head records, group leaderboards, account deletion and export                     |        |
-| **M5: Launch**               | Streak and Elimination, visual design, sounds, report button, no repeated questions, rate limiting, privacy policy                                     |        |
-| **After launch**             | New games category by category, in the order in [GAMES.md](GAMES.md)                                                                                   |        |
+| Milestone                    | Scope                                                                                                                                                                               | Status |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| **M0: Foundations**          | Monorepo, lint/format, CI, Worker + Room Durable Object, web app, room codes, WebSocket ping                                                                                        | Done   |
+| **M1: Rooms**                | Nicknames, live lobby, invite link, host and host handover, reconnection, room expiry, end-to-end tests                                                                             | Done   |
+| **M2: Quiz**                 | Game module runner, game settings in the lobby, solo play, synchronized start with own-pace play, points-only leaderboard, private review, 140 hand-checked Bible questions         | Done   |
+| **M3: Content pipeline**     | Generate, validate, de-duplicate, verify, import. Fill all 11 quiz categories                                                                                                       |        |
+| **M4: Accounts and friends** | Sign-in, quiz preferences (explanations during the quiz), profiles, friends, pings (web push), match history, head-to-head records, group leaderboards, account deletion and export |        |
+| **M5: Launch**               | Sounds, final polish, report button, no repeated questions, rate limiting, privacy policy                                                                                           |        |
+| **After launch**             | New games category by category, in the order in [GAMES.md](GAMES.md)                                                                                                                |        |
 
 The first playable version is **M0 to M2**: you and a friend can play a Bible quiz together.
 
