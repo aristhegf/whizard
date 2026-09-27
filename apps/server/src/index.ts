@@ -16,6 +16,18 @@ import {
   updateMe,
 } from "./account";
 import type { Env } from "./env";
+import {
+  addFriend,
+  createGroup,
+  deleteGroup,
+  getFriends,
+  getGroupLeaderboard,
+  getGroups,
+  getUser,
+  removeFriend,
+  updateFriend,
+  updateGroup,
+} from "./friends";
 import { HttpError, isSameOrigin, jsonError, type Handler, type RequestContext } from "./http";
 import { cleanUp, getMatches, getStats } from "./matches";
 import {
@@ -107,6 +119,17 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["POST", /^\/api\/me\/passkeys\/options$/, addPasskeyOptions],
   ["POST", /^\/api\/me\/passkeys\/verify$/, addPasskeyVerify],
   ["DELETE", /^\/api\/me\/passkeys\/([^/]+)$/, deletePasskey],
+
+  ["GET", /^\/api\/users\/([^/]+)$/, getUser],
+  ["GET", /^\/api\/friends$/, getFriends],
+  ["POST", /^\/api\/friends$/, addFriend],
+  ["PATCH", /^\/api\/friends\/([^/]+)$/, updateFriend],
+  ["DELETE", /^\/api\/friends\/([^/]+)$/, removeFriend],
+  ["GET", /^\/api\/groups$/, getGroups],
+  ["POST", /^\/api\/groups$/, createGroup],
+  ["PATCH", /^\/api\/groups\/([^/]+)$/, updateGroup],
+  ["DELETE", /^\/api\/groups\/([^/]+)$/, deleteGroup],
+  ["GET", /^\/api\/groups\/([^/]+)\/leaderboard$/, getGroupLeaderboard],
 ];
 
 async function route(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {

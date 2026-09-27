@@ -1,7 +1,13 @@
 import { useSyncExternalStore } from "react";
 
 export type Route =
-  { name: "home" } | { name: "room"; code: string } | { name: "account" } | { name: "privacy" };
+  | { name: "home" }
+  | { name: "room"; code: string }
+  | { name: "account" }
+  | { name: "friends" }
+  | { name: "add"; username: string }
+  | { name: "group"; id: string }
+  | { name: "privacy" };
 
 const ROOM_PATH = /^\/r\/([^/]+)\/?$/;
 
@@ -15,6 +21,11 @@ export function useRoute(): Route {
   const match = ROOM_PATH.exec(path);
   if (match) return { name: "room", code: decodeURIComponent(match[1] ?? "") };
   if (/^\/account\/?$/.test(path)) return { name: "account" };
+  if (/^\/friends\/?$/.test(path)) return { name: "friends" };
+  const add = /^\/add\/([^/]+)\/?$/.exec(path);
+  if (add) return { name: "add", username: decodeURIComponent(add[1] ?? "") };
+  const group = /^\/groups\/([^/]+)\/?$/.exec(path);
+  if (group) return { name: "group", id: decodeURIComponent(group[1] ?? "") };
   if (/^\/privacy\/?$/.test(path)) return { name: "privacy" };
   return { name: "home" };
 }

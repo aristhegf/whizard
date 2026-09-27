@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import { useAccount } from "./account";
 import { AccountScreen } from "./AccountScreen";
 import { createRoom } from "./api";
+import { AddFriendScreen, FriendsScreen, GroupScreen } from "./FriendsScreen";
 import { Notice } from "./Notice";
 import { PrivacyScreen } from "./PrivacyScreen";
 import { RoomScreen } from "./RoomScreen";
@@ -16,6 +17,12 @@ export function App() {
         <RoomRoute code={route.code} />
       ) : route.name === "account" ? (
         <AccountScreen />
+      ) : route.name === "friends" ? (
+        <FriendsScreen />
+      ) : route.name === "add" ? (
+        <AddFriendScreen key={route.username} username={route.username} />
+      ) : route.name === "group" ? (
+        <GroupScreen key={route.id} id={route.id} />
       ) : route.name === "privacy" ? (
         <PrivacyScreen />
       ) : (
@@ -29,9 +36,16 @@ function AccountLink() {
   const account = useAccount();
   if (account.status === "loading") return <span className="account-link" />;
   return (
-    <a className="account-link" {...linkTo("/account")}>
-      {account.user ? account.user.displayName : "Sign in"}
-    </a>
+    <>
+      {account.user && (
+        <a className="account-link plain" {...linkTo("/friends")}>
+          Friends
+        </a>
+      )}
+      <a className="account-link" {...linkTo("/account")}>
+        {account.user ? account.user.displayName : "Sign in"}
+      </a>
+    </>
   );
 }
 

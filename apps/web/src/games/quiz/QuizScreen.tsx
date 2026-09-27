@@ -1,6 +1,7 @@
 import type { QuizReviewItem, QuizStage, QuizStanding, QuizView } from "@whizard/game-core";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useAccount } from "../../account";
+import { AddFromGame } from "../../FriendsScreen";
 import type { RoomClient } from "../../roomClient";
 import { useServerNow } from "../../useServerNow";
 
@@ -18,9 +19,11 @@ interface Props {
   client: RoomClient;
   playerId: string;
   isHost: boolean;
+  /** Signed-in players in the room, so you can add them as friends after a game. */
+  usernames: string[];
 }
 
-export function QuizScreen({ view, client, playerId, isHost }: Props) {
+export function QuizScreen({ view, client, playerId, isHost, usernames }: Props) {
   const { stage } = view;
   switch (stage.kind) {
     case "question":
@@ -35,6 +38,7 @@ export function QuizScreen({ view, client, playerId, isHost }: Props) {
           client={client}
           playerId={playerId}
           isHost={isHost}
+          usernames={usernames}
         />
       );
     case "watching":
@@ -206,12 +210,14 @@ function Results({
   client,
   playerId,
   isHost,
+  usernames,
 }: {
   view: QuizView;
   review: QuizReviewItem[];
   client: RoomClient;
   playerId: string;
   isHost: boolean;
+  usernames: string[];
 }) {
   const solo = view.playerCount === 1;
   return (
@@ -245,6 +251,8 @@ function Results({
         ) : (
           <p className="muted">Waiting for the host to start the next game.</p>
         ))}
+
+      {view.final && !solo && <AddFromGame usernames={usernames} />}
 
       {review.length > 0 && (
         <section className="stack" aria-labelledby="review-title">

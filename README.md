@@ -17,7 +17,7 @@ The full list is in [docs/GAMES.md](docs/GAMES.md).
 
 Early development. The quiz is playable in all 11 categories: play solo or invite friends with a link or code, pick Classic or Speed, a level and the number of questions. Everyone starts together and plays at their own pace, then sees a points leaderboard and a private review of their own answers.
 
-Optional accounts sign in with a passkey (no passwords) and keep your game history and stats, including games you played as a guest just before signing up. Friends and pings are next. See the [architecture and build plan](docs/ARCHITECTURE.md).
+Optional accounts sign in with a passkey (no passwords) and keep your game history and stats, including games you played as a guest just before signing up. Add friends by username, invite link or straight from a game's results to see your record against each of them, and save groups with their own leaderboards. Pings are next. See the [architecture and build plan](docs/ARCHITECTURE.md).
 
 ## Tech stack
 

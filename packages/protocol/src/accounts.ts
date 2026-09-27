@@ -108,6 +108,55 @@ export interface PlayerStats {
   categories: CategoryStat[];
 }
 
+export interface PublicUser {
+  username: string;
+  displayName: string;
+}
+
+export type Relation = "self" | "friend" | "incoming" | "outgoing" | "none";
+
+export interface Friend extends PublicUser {
+  since: number;
+  /** Games you both finished, and how often each of you placed higher. */
+  record: { games: number; wins: number; losses: number };
+  muted: boolean;
+}
+
+export interface FriendsList {
+  friends: Friend[];
+  /** People asking to be your friend. */
+  incoming: PublicUser[];
+  /** Requests you've sent that are still waiting. */
+  outgoing: PublicUser[];
+}
+
+export const GROUP_NAME_MAX_LENGTH = 30;
+export const GROUP_MAX_MEMBERS = 16;
+
+export interface FriendGroup {
+  id: string;
+  name: string;
+  owner: string;
+  members: PublicUser[];
+}
+
+export interface GroupStanding extends PublicUser {
+  /** Games at least two members finished together. */
+  games: number;
+  /** How many of those this member placed highest in. */
+  wins: number;
+}
+
+export const groupRequestSchema = z.object({
+  name: z.string().max(100),
+  /** Usernames, not counting the owner. They must all be the owner's friends. */
+  members: z.array(z.string().max(40)).max(GROUP_MAX_MEMBERS),
+});
+
+export const friendRequestSchema = z.object({ username: z.string().max(40) });
+
+export const friendUpdateSchema = z.object({ muted: z.boolean() });
+
 export interface ApiErrorBody {
   error: { code: string; message: string };
 }

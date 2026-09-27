@@ -902,3 +902,92 @@ a {
 .settings.wide .setting {
   grid-template-columns: 7.25rem 1fr;
 }
+
+.account-link.plain::after {
+  content: none;
+}
+
+.home-top {
+  gap: 16px;
+}
+
+.btn-block {
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+}
+
+a.btn {
+  display: inline-grid;
+  place-items: center;
+  text-decoration: none;
+}
+
+.profile-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.profile-head .btn {
+  min-height: 44px;
+  flex: none;
+}
+
+.people {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.people li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 0;
+  border-bottom: 1.5px solid var(--line);
+}
+
+.person {
+  display: grid;
+  min-width: 0;
+}
+
+.person-name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.group-link {
+  flex: 1;
+  text-decoration: none;
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.back {
+  justify-self: start;
+  padding-left: 0;
+}
+
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.group-form {
+  padding: 14px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+}

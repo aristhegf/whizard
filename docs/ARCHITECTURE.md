@@ -318,14 +318,22 @@ sessions        (id /* token hash */, user_id, created_at, expires_at)
 auth_challenges (id, kind, challenge, data, expires_at)
 matches         (id, game, category, difficulty, mode, rounds, player_count, started_at, finished_at)
 match_players   (match_id, placing, user_id, guest_id, nickname, score, correct)
--- still to come
-friendships          (user_id, friend_id, status, created_at)
-friend_groups        (id, owner_id, name)
+friend_requests      (from_id, to_id, created_at)
+friends              (user_id, friend_id, muted, created_at)   -- one row each way
+friend_groups        (id, owner_id, name, created_at)
 friend_group_members (group_id, user_id)
+-- still to come
 push_subscriptions   (user_id, endpoint, keys, created_at)
 ```
 
 Schema changes are numbered SQL migrations in `apps/server/migrations/`. CI applies new ones before each deploy; `pnpm dev` and the browser tests apply them to the local database.
+
+### Friends and groups
+
+- **Adding a friend** sends a request by username, from an invite link (`/add/username`), or from the results screen after playing with someone signed in. Asking someone who already asked you makes you friends straight away. Removing works from either side and also clears any pending request.
+- A friendship is stored as two rows, one each way, so each person keeps their own settings for the other, such as muting their pings.
+- **Head-to-head records** come from games you both finished: whoever placed higher won that game.
+- **Groups** are saved sets of friends, like "Game night crew". Every member sees the group; only the person who made it can rename it or change who's in it, and only their friends can be added. The **group leaderboard** counts games where at least two members finished together, overall or for one category, and the member who placed highest among them wins that game.
 
 ### Notifications
 

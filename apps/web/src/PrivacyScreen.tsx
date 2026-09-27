@@ -1,4 +1,4 @@
-import { PageBar } from "./AccountScreen";
+import { PageBar } from "./ui";
 
 export function PrivacyScreen() {
   return (
@@ -39,6 +39,10 @@ export function PrivacyScreen() {
           <li>
             Results of the games you finish: the category, level, placing, score and how many you
             got right. Other players see your placing and score, never which answers you got right.
+          </li>
+          <li>
+            Your friends, friend requests and groups. Friends and fellow group members can see your
+            record against them and your place on group leaderboards.
           </li>
         </ul>
         <p>

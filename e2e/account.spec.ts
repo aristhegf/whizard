@@ -136,3 +136,96 @@ test("shows the privacy policy", async ({ page }) => {
   await page.goto("/privacy");
   await expect(page.getByRole("heading", { name: "Privacy", level: 1 })).toBeVisible();
 });
+
+test("friends add each other, play together and see their record", async ({ browser }) => {
+  const ada = await browser.newPage();
+  await withPasskeys(ada);
+  const adaName = uniqueUsername();
+  await signUp(ada, adaName, "Ada");
+
+  const tolu = await browser.newPage();
+  await withPasskeys(tolu);
+  const toluName = uniqueUsername();
+  await signUp(tolu, toluName, "Tolu");
+
+  // Ada sends a request by username; Tolu accepts it from the invite link.
+  await ada.getByRole("link", { name: "Friends" }).click();
+  await ada.getByLabel("Friend’s username").fill(toluName);
+  await ada.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(ada.getByRole("status")).toContainText("Request sent");
+
+  await tolu.goto(`/add/${adaName}`);
+  await tolu.getByRole("button", { name: "Accept friend request" }).click();
+  await expect(tolu.getByText("You’re friends.")).toBeVisible();
+
+  await ada.reload();
+  const friendRow = ada.locator(".people li").filter({ hasText: `@${toluName}` });
+  await expect(friendRow).toContainText("No games together yet");
+
+  // One game together.
+  await ada.goto("/");
+  await ada.getByRole("button", { name: "Play with friends" }).click();
+  await ada.getByRole("button", { name: "Join", exact: true }).click();
+  await ada
+    .getByRole("group", { name: "Questions" })
+    .getByRole("button", { name: "5", exact: true })
+    .click();
+  await tolu.goto(ada.url());
+  await tolu.getByRole("button", { name: "Join", exact: true }).click();
+  await expect(ada.getByRole("listitem").filter({ hasText: "Tolu" })).toBeVisible();
+  await ada.getByRole("button", { name: "Start game" }).click();
+  for (const page of [ada, tolu]) {
+    for (let i = 1; i <= 5; i++) {
+      await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
+      await page.locator("button.choice").first().click();
+    }
+  }
+  await expect(ada.getByRole("heading", { name: "Final results" })).toBeVisible();
+
+  await ada.goto("/friends");
+  await expect(friendRow).toContainText("1 game");
+
+  // A group shows who tops it.
+  await ada.getByRole("button", { name: "New group" }).click();
+  await ada.getByLabel("Group name").fill("Game night");
+  await ada.getByRole("checkbox", { name: /Tolu/ }).check();
+  await ada.getByRole("button", { name: "Create group" }).click();
+  await expect(ada.getByRole("heading", { name: "Game night", level: 1 })).toBeVisible();
+  const board = ada.getByRole("list", { name: "Leaderboard" }).locator("li");
+  await expect(board).toHaveCount(2);
+  await expect(board.first()).toContainText("1 / 1");
+
+  await tolu.goto("/friends");
+  await expect(tolu.getByRole("link", { name: /Game night/ })).toBeVisible();
+});
+
+test("offers to add signed-in players after a game", async ({ browser }) => {
+  const ada = await browser.newPage();
+  await withPasskeys(ada);
+  await signUp(ada, uniqueUsername(), "Ada");
+  const tolu = await browser.newPage();
+  await withPasskeys(tolu);
+  const toluName = uniqueUsername();
+  await signUp(tolu, toluName, "Tolu");
+
+  await ada.goto("/");
+  await ada.getByRole("button", { name: "Play with friends" }).click();
+  await ada.getByRole("button", { name: "Join", exact: true }).click();
+  await ada
+    .getByRole("group", { name: "Questions" })
+    .getByRole("button", { name: "5", exact: true })
+    .click();
+  await tolu.goto(ada.url());
+  await tolu.getByRole("button", { name: "Join", exact: true }).click();
+  await ada.getByRole("button", { name: "Start game" }).click();
+  for (const page of [ada, tolu]) {
+    for (let i = 1; i <= 5; i++) {
+      await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
+      await page.locator("button.choice").first().click();
+    }
+  }
+  const offer = ada.getByRole("region", { name: "Add as a friend" });
+  await expect(offer).toContainText(`@${toluName}`);
+  await offer.getByRole("button", { name: "Add" }).click();
+  await expect(offer).toContainText("Request sent");
+});

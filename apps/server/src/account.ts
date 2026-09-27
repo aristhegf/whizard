@@ -1,6 +1,7 @@
 import { normalizeNickname } from "@whizard/game-core";
 import { accountUpdateSchema, type AccountPasskey } from "@whizard/protocol";
 import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./http";
+import { exportSocial } from "./friends";
 import { exportMatches } from "./matches";
 import {
   clearedSessionCookie,
@@ -91,6 +92,7 @@ export async function exportMe(context: RequestContext): Promise<Response> {
     account: toAccountUser(user),
     passkeys,
     matches: await exportMatches(context.env, user.id),
+    ...(await exportSocial(context.env, user.id)),
   };
   return new Response(JSON.stringify(data, null, 2), {
     headers: {

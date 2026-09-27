@@ -8,7 +8,7 @@ import {
   type MatchRecord,
   type PlayerStats,
 } from "@whizard/protocol";
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import {
   addPasskey,
   deleteAccount,
@@ -24,6 +24,7 @@ import {
   useAccount,
 } from "./account";
 import { linkTo, navigate } from "./router";
+import { PageBar, useAction, useLoaded } from "./ui";
 import { loadNickname } from "./storage";
 
 export function AccountScreen() {
@@ -42,39 +43,6 @@ export function AccountScreen() {
   );
 }
 
-export function PageBar({ children }: { children?: ReactNode }) {
-  return (
-    <header className="topbar">
-      <a className="brand" translate="no" {...linkTo("/")}>
-        Whizard
-      </a>
-      {children}
-    </header>
-  );
-}
-
-function errorText(error: unknown): string {
-  return error instanceof Error ? error.message : "Something went wrong. Please try again.";
-}
-
-/** Runs an async action, tracking whether it's busy and what went wrong. */
-function useAction() {
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const run = async (action: () => Promise<unknown>) => {
-    setBusy(true);
-    setError(null);
-    try {
-      await action();
-    } catch (e) {
-      setError(errorText(e));
-    } finally {
-      setBusy(false);
-    }
-  };
-  return { busy, error, run };
-}
-
 // Signed out ------------------------------------------------------------------------------------
 
 const USERNAME_HINTS = {
@@ -82,6 +50,13 @@ const USERNAME_HINTS = {
   characters: "Lowercase letters, numbers and _ only, starting with a letter.",
   reserved: "That username isn’t available.",
 } as const;
+
+/** Where to go after signing in, from `?next=`. Only paths on this site. */
+function afterSignIn() {
+  const next = new URLSearchParams(location.search).get("next");
+  if (next && next.startsWith("/") && !next.startsWith("//")) navigate(next);
+  else history.replaceState(null, "", "/account");
+}
 
 function SignedOut() {
   const signingIn = useAction();
@@ -108,7 +83,12 @@ function SignedOut() {
 
   const handleCreate = (event: FormEvent) => {
     event.preventDefault();
-    if (canCreate) void creating.run(() => signUp(normalized, name));
+    if (canCreate) {
+      void creating.run(async () => {
+        await signUp(normalized, name);
+        afterSignIn();
+      });
+    }
   };
 
   return (
@@ -125,7 +105,12 @@ function SignedOut() {
         <button
           className="btn btn-primary"
           disabled={signingIn.busy}
-          onClick={() => void signingIn.run(signIn)}
+          onClick={() =>
+            void signingIn.run(async () => {
+              await signIn();
+              afterSignIn();
+            })
+          }
         >
           {signingIn.busy ? "Waiting for your passkey…" : "Sign in with a passkey"}
         </button>
@@ -209,9 +194,14 @@ function SignedOut() {
 function Profile({ user }: { user: AccountUser }) {
   return (
     <div className="screen">
-      <header>
-        <h1 className="page-title">{user.displayName}</h1>
-        <p className="muted">@{user.username}</p>
+      <header className="profile-head">
+        <div>
+          <h1 className="page-title">{user.displayName}</h1>
+          <p className="muted">@{user.username}</p>
+        </div>
+        <a className="btn" {...linkTo("/friends")}>
+          Friends
+        </a>
       </header>
       <Stats />
       <History />
@@ -220,25 +210,6 @@ function Profile({ user }: { user: AccountUser }) {
       <Data />
     </div>
   );
-}
-
-/** Loads data once on mount. */
-function useLoaded<T>(load: () => Promise<T>): { data: T | null; error: string | null } {
-  const [result, setResult] = useState<{ data: T | null; error: string | null }>({
-    data: null,
-    error: null,
-  });
-  useEffect(() => {
-    let live = true;
-    load().then(
-      (data) => live && setResult({ data, error: null }),
-      (error: unknown) => live && setResult({ data: null, error: errorText(error) }),
-    );
-    return () => {
-      live = false;
-    };
-  }, [load]);
-  return result;
 }
 
 const categoryName = (id: string | null) =>

@@ -27,6 +27,7 @@ export function RoomScreen({ code }: { code: string }) {
           client={client}
           playerId={state.playerId!}
           isHost={state.room!.hostId === state.playerId}
+          usernames={state.room!.players.flatMap((p) => (p.username ? [p.username] : []))}
         />
       ) : joined ? (
         <Lobby client={client} state={state} room={state.room!} playerId={state.playerId!} />
@@ -111,7 +112,9 @@ function NicknameForm({
 }) {
   const account = useAccount();
   const accountName = account.status === "ready" ? account.user?.displayName : undefined;
-  const [nickname, setNickname] = useState(() => loadNickname() || accountName || "");
+  // null until they type, so the account name can fill in once it has loaded.
+  const [typed, setTyped] = useState<string | null>(null);
+  const nickname = typed ?? (loadNickname() || accountName || "");
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -131,7 +134,7 @@ function NicknameForm({
           maxLength={NICKNAME_MAX_LENGTH}
           autoComplete="nickname"
           autoFocus
-          onChange={(event) => setNickname(event.target.value)}
+          onChange={(event) => setTyped(event.target.value)}
         />
         <button className="btn btn-primary" type="submit" disabled={disabled || !nickname.trim()}>
           Join
