@@ -71,7 +71,7 @@ whizard/
 │   ├── game-core/      Pure game logic: room rules, game modules, scoring
 │   └── content/        Question bank (server-only: it holds the answers)
 ├── tools/
-│   └── content-gen/    Offline pipeline that generates, checks and imports content (M3)
+│   └── content-gen/    Offline tool that drafts, checks and adds new questions
 └── docs/
 ```
 
@@ -219,9 +219,17 @@ A correct answer earns between 50% and 100% of the base points, depending on spe
 
 Game content is prepared ahead of time and stored, not written while players wait. That keeps games starting instantly, keeps the cost fixed however many people play, and means everything has been checked before anyone sees it.
 
-Each game that needs content gets its own table: quiz questions first, later word lists (Word Rush), group sets (Connections), and prompts for the social games (Most Likely To, Would You Rather, Predict Me).
+Each game that needs content gets its own set: quiz questions first, later word lists (Word Rush), group sets (Connections), and prompts for the social games (Most Likely To, Would You Rather, Predict Me).
 
-### Quiz questions (D1 / SQLite)
+### Where questions live
+
+Today the questions are JSON files in `packages/content/src/questions/`, one per category, bundled with the Worker. At a few thousand questions that is small, fast and needs no database. Every change goes through a pull request, so each new question gets reviewed and tested before it ships.
+
+They move into D1 in M5, when the "report this question" button and "don't repeat questions I've seen" need somewhere to write. The room already draws questions through a single `drawContent` function, so it won't change.
+
+A lint rule blocks the web app from importing `packages/content`, so answers can never end up in the browser.
+
+### Quiz questions in D1 (M5)
 
 ```sql
 CREATE TABLE questions (
@@ -251,20 +259,38 @@ CREATE INDEX idx_draw ON questions (category, difficulty, status, rand_key);
 - A **"report this question"** button increments `reports`. Questions with too many reports are flagged and hidden until reviewed.
 - **Stale facts:** time-sensitive questions are re-verified on a schedule, and retired if they no longer hold ("Who won the last World Cup?").
 
+### Quality checks
+
+Every question in the bank must pass these checks, which run as tests on every push:
+
+- **Shape:** four choices, length limits, a known category and level, and a verse reference for Bible questions.
+- **No giveaways:** all four choices are different, and the answer doesn't appear in the prompt.
+- **No duplicates:** within a category, no two questions share a prompt. Two questions with the same answer and prompts at least 70% similar (by character trigrams) also count as the same question. This keeps "Which river flows through Cairo?" and "…through Baghdad?" apart while catching rewordings.
+- **Enough to play:** at least 20 questions at every level of every category, so the longest game never runs short.
+
 ### Generation pipeline (`tools/content-gen`)
 
-An offline script that fills and grows the bank. It never runs during a game.
+An offline tool that grows the bank. It never runs during a game.
 
-1. **Plan coverage.** Each category has a topic list (Bible: books, people, events; Geography: continents, capitals, rivers; ...). Requests are spread across topics and difficulties so the bank doesn't cluster around the same famous facts.
-2. **Generate** candidate questions in batches through an LLM API, as structured JSON.
-3. **Validate** each candidate against the schema: exactly one correct answer, distinct choices, length limits.
-4. **De-duplicate** with a normalised content hash, plus a similarity check against existing questions on the same topic.
-5. **Verify** with a separate pass that answers each question independently. If it disagrees with the stated answer, or finds the question ambiguous, the question is flagged for manual review instead of being imported. Bible questions must include a verse reference.
-6. **Import** approved questions into D1.
+```sh
+ANTHROPIC_API_KEY=… pnpm content:generate --category football --level hard --count 10
+```
 
-Estimated cost is a few dollars per 10,000 questions. The same pipeline, with a different schema and checks, produces content for the other games.
+For each category and level it:
 
-The first playable version ships with a hand-checked set of 140 Bible questions in `packages/content`, bundled with the Worker. Tests check every question's shape: four distinct choices, no repeated prompts, the answer not given away in the prompt. When the pipeline arrives (M3), the questions move into D1 behind the same `drawContent` function, so the room doesn't change. A lint rule blocks the web app from importing `packages/content`, so answers can never end up in the browser.
+1. **Drafts** questions through an LLM API as structured JSON. The prompt includes the category's coverage and "avoid" guidance (for example, no current champions or records in Football), the level, and every existing prompt in that category so it steers away from repeats.
+2. **Validates** each draft against the schema and the quality checks above.
+3. **De-duplicates** against the bank and the rest of the batch.
+4. **Verifies** each survivor with a separate call that sees the choices shuffled, without the intended answer, and must answer it itself. A question is kept only if that answer matches, the checker is confident, and it flags no ambiguity, dispute or staleness.
+5. **Appends** the keepers with the next ids, formatted so the repo's checks pass. Rejections are printed with the reason.
+
+The **Add questions** workflow in GitHub Actions runs the same tool from the browser. Pick a category, level and count, and it opens a pull request with the new questions for a human to skim before merging. It needs an `ANTHROPIC_API_KEY` repository secret.
+
+Estimated cost is a few dollars per thousand questions, including the verification pass. The pipeline's logic is tested with a fake model, so the tests need no API key.
+
+### Starter set
+
+The launch bank has 740 questions: 140 Bible, and 60 (20 per level) in each of the other ten categories. Each set was written, then reviewed by a separate fact-checker that assumed nothing. That review changed 28 questions, mostly tightening explanations, removing a second defensible answer, or replacing questions that were too easy for their level.
 
 ## Accounts (optional)
 
@@ -364,9 +390,9 @@ Jigsaw, Spot It, Reaction and Draw & Guess use **Phaser**, loaded only when one 
 | **M0: Foundations**          | Monorepo, lint/format, CI, Worker + Room Durable Object, web app, room codes, WebSocket ping                                                                                        | Done   |
 | **M1: Rooms**                | Nicknames, live lobby, invite link, host and host handover, reconnection, room expiry, end-to-end tests                                                                             | Done   |
 | **M2: Quiz**                 | Game module runner, game settings in the lobby, solo play, synchronized start with own-pace play, points-only leaderboard, private review, 140 hand-checked Bible questions         | Done   |
-| **M3: Content pipeline**     | Generate, validate, de-duplicate, verify, import. Fill all 11 quiz categories                                                                                                       |        |
+| **M3: Content**              | Question bank for all 11 categories (740 questions, independently fact-checked), quality checks in CI, question pipeline and "Add questions" workflow                               | Done   |
 | **M4: Accounts and friends** | Sign-in, quiz preferences (explanations during the quiz), profiles, friends, pings (web push), match history, head-to-head records, group leaderboards, account deletion and export |        |
-| **M5: Launch**               | Sounds, final polish, report button, no repeated questions, rate limiting, privacy policy                                                                                           |        |
+| **M5: Launch**               | Sounds, final polish, question bank in D1, report button, no repeated questions, rate limiting, privacy policy                                                                      |        |
 | **After launch**             | New games category by category, in the order in [GAMES.md](GAMES.md)                                                                                                                |        |
 
 The first playable version is **M0 to M2**: you and a friend can play a Bible quiz together.
@@ -384,6 +410,6 @@ pnpm lint && pnpm typecheck
 ## Open items
 
 - **Deploys** run from CI on every green push to `main`, using the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repository secrets. `pnpm deploy` does the same by hand.
-- An **LLM API key** is needed for the content pipeline (M3).
+- To grow the question bank, add an `ANTHROPIC_API_KEY` repository secret and run the **Add questions** workflow.
 - For accounts (M4): a **Google sign-in client** (free, from Google Cloud), an email sending service for sign-in links, and a **privacy policy and terms**.
 - **Domain name:** optional. The app can run on a free `*.workers.dev` address until there is one.

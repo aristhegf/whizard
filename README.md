@@ -15,7 +15,7 @@ The full list is in [docs/GAMES.md](docs/GAMES.md).
 
 ## Status
 
-Early development. The Bible quiz is playable: play solo or invite friends with a link or code, pick Classic (no clock) or Speed (a timer on every question), a level and the number of questions. Everyone starts together and plays at their own pace, then sees a points leaderboard and a private review of their own answers. More categories are next. See the [architecture and build plan](docs/ARCHITECTURE.md).
+Early development. The quiz is playable in all 11 categories: play solo or invite friends with a link or code, pick Classic (no clock) or Speed (a timer on every question), a level and the number of questions. Everyone starts together and plays at their own pace, then sees a points leaderboard and a private review of their own answers. See the [architecture and build plan](docs/ARCHITECTURE.md).
 
 ## Tech stack
 
@@ -45,3 +45,11 @@ The app runs on Cloudflare Workers. Every push to `main` that passes CI is deplo
 - `CLOUDFLARE_ACCOUNT_ID`: the account ID shown in the Cloudflare dashboard
 
 To deploy by hand instead, run `pnpm deploy` after `wrangler login`.
+
+## Adding questions
+
+Questions live in `packages/content/src/questions/`, one file per category, and every one is checked by the test suite. To add more, run the **Add questions** workflow from the Actions tab (it needs an `ANTHROPIC_API_KEY` secret) and review the pull request it opens. Or run it locally:
+
+```sh
+ANTHROPIC_API_KEY=… pnpm content:generate --category history --level medium --count 10
+```

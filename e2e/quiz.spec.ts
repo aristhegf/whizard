@@ -69,6 +69,20 @@ test("solo moves on by itself after the explanation", async ({ browser }) => {
   await expect(page.locator(".progress")).toContainText("2 / 10", { timeout: 6000 });
 });
 
+test("every category can be picked and played", async ({ browser }) => {
+  const page = await newPlayer(browser);
+  await page.goto("/");
+  await page.getByRole("button", { name: "Play solo" }).click();
+  await joinAs(page, "Ada");
+
+  const category = page.getByLabel("Category");
+  await expect(category.locator("option:disabled")).toHaveCount(0);
+  await category.selectOption({ label: "Nigerian culture" });
+  await expect(page.getByLabel("Category")).toHaveValue("nigerian-culture");
+  await page.getByRole("button", { name: "Play solo" }).click();
+  await answerFirstChoice(page, 1, 10);
+});
+
 test("Speed mode puts a timer on every question", async ({ browser }) => {
   const page = await newPlayer(browser);
   await page.goto("/");
