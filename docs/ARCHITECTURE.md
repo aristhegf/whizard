@@ -367,7 +367,7 @@ A dark, cozy game-night look: deep navy and purple with warm lamp glows behind e
 - **Type:** Poppins for headings, Nunito for everything else, both bundled with the app.
 - **Colour:** purple for primary actions, gold for the big "Create a Room" call to action and for scores, green and red for right and wrong answers. Tokens live at the top of `apps/web/src/styles/base.css`.
 - **Layouts:** a top bar on the landing and games pages, a sidebar for app pages on wide screens, and a bottom tab bar (Home, Games, Create, Profile) on phones. Game screens drop the navigation to give the question room.
-- **Artwork** is plain image files in `apps/web/public/art/`: `mascot/`, `games/` (one per game), `topics/` (one per quiz category), `avatars/` (`a01` to `a10`) and the logo. To update a picture, replace the file with one of the same name; transparent WebP works best. The app icons in `apps/web/public/` are made from the logo.
+- **Artwork** is plain image files in `apps/web/public/art/`: `mascot/`, `games/` (one per game), `topics/` (one per quiz category), `avatars/` (`a01` to `a12`), and the logo (`logo-mark.webp` for the crown W, `logo-lockup.webp` for the full logo). To update a picture, replace the file with one of the same name; transparent WebP works best. The favicon and app icons in `apps/web/public/` are made from the crown W.
 
 ## Canvas games (after launch)
 

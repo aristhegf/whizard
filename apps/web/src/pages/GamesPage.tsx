@@ -46,8 +46,8 @@ export function GamesPage() {
             className="head-mascot"
             src="/art/mascot/wave.webp"
             alt=""
-            width={360}
-            height={416}
+            width={451}
+            height={520}
           />
         </header>
 

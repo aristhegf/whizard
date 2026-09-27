@@ -111,6 +111,7 @@ function JoinScreen({
       <header className="topnav">
         <Brand />
       </header>
+      <img className="join-logo" src="/art/logo-lockup.webp" alt="" width={760} height={660} />
       <form className="panel join-card" onSubmit={handleSubmit}>
         <div className="code-box small-code">
           <span className="code-label">Room Code</span>

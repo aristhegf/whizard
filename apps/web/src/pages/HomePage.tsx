@@ -95,7 +95,7 @@ export function HomePage() {
         </div>
         <div className="hero-art" aria-hidden="true">
           <div className="stage-glow" />
-          <img src="/art/mascot/hero.webp" alt="" width={1100} height={787} fetchPriority="high" />
+          <img src="/art/mascot/hero.webp" alt="" width={866} height={857} fetchPriority="high" />
         </div>
       </section>
 

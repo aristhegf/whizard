@@ -607,9 +607,11 @@ select option {
   letter-spacing: -0.02em;
 }
 
-.brand svg {
-  width: 36px;
-  height: 36px;
+.brand .logo-mark {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgb(140 70 255 / 45%));
 }
 
 @media (min-width: 1100px) {
@@ -617,9 +619,9 @@ select option {
     font-size: 1.8rem;
   }
 
-  .brand svg {
-    width: 50px;
-    height: 50px;
+  .brand .logo-mark {
+    width: 56px;
+    height: 56px;
   }
 }
 

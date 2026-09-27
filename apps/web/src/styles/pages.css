@@ -87,7 +87,7 @@
 
 .hero-art {
   position: relative;
-  width: min(100%, 560px);
+  width: min(100%, 460px);
   justify-self: center;
   margin-top: 8px;
 }
@@ -99,8 +99,9 @@
   filter: drop-shadow(0 20px 40px rgb(120 40 255 / 35%));
 }
 
-/* The glowing stage under the characters. */
+/* A soft glow behind the mascot; the art brings its own stage. */
 .stage-glow {
+  display: none;
   position: absolute;
   left: 2%;
   right: 2%;
@@ -170,8 +171,8 @@
 
   .hero-art {
     width: 100%;
-    max-width: 780px;
-    margin: 0 -40px 0 0;
+    max-width: 600px;
+    margin: 0 auto;
   }
 
   .features {

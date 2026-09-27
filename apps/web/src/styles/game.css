@@ -50,7 +50,7 @@
 
 .avatar-picker {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 10px;
 }
 
@@ -1255,4 +1255,36 @@ button.choice:disabled {
 
 .review .line.bad {
   color: #ff7b8c;
+}
+
+.join-logo {
+  width: min(62vw, 260px);
+  height: auto;
+  margin: 4px 0 -8px;
+  filter: drop-shadow(0 12px 30px rgb(130 60 255 / 45%));
+}
+
+.notice img {
+  width: 160px;
+  height: auto;
+}
+
+.results-main {
+  position: relative;
+}
+
+.results-mascot {
+  display: none;
+}
+
+@media (min-width: 1400px) {
+  .results-mascot {
+    display: block;
+    position: absolute;
+    left: -30px;
+    top: 10px;
+    width: 150px;
+    height: auto;
+    filter: drop-shadow(0 16px 30px rgb(120 40 255 / 45%));
+  }
 }

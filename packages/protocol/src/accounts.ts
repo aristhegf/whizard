@@ -35,6 +35,8 @@ export const AVATAR_IDS = [
   "a08",
   "a09",
   "a10",
+  "a11",
+  "a12",
 ] as const;
 export type AvatarId = (typeof AVATAR_IDS)[number];
 export const avatarSchema = z.enum(AVATAR_IDS);

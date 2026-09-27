@@ -141,7 +141,7 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
       <div className="game">
         <GameBar context={context} index={null} />
         <div className="countdown" aria-live="polite">
-          <img src="/art/mascot/wave.webp" alt="" width={180} height={208} />
+          <img src="/art/mascot/run.webp" alt="" width={441} height={480} />
           <p className="countdown-label">Get ready</p>
           <p className="countdown-number">
             {Math.max(1, Math.ceil((stage.startsAt - now) / 1000))}
@@ -325,6 +325,13 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
 
       <div className="results-layout">
         <section className="results-main">
+          <img
+            className="results-mascot"
+            src="/art/mascot/podium.webp"
+            alt=""
+            width={590}
+            height={620}
+          />
           <div className="results-head">
             <h2 className="display results-title">
               Game <span className="gradient-text">Results</span>

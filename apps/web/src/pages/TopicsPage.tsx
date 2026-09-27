@@ -142,13 +142,7 @@ export function TopicsPage() {
             );
           })}
         </ul>
-        <img
-          className="topics-mascot"
-          src="/art/mascot/wave.webp"
-          alt=""
-          width={360}
-          height={416}
-        />
+        <img className="topics-mascot" src="/art/mascot/fly.webp" alt="" width={477} height={520} />
       </div>
     </SideLayout>
   );

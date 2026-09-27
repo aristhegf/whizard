@@ -8,7 +8,7 @@ export function Notice({ message }: { message: string }) {
         <Brand />
       </header>
       <div className="notice">
-        <img src="/art/mascot/wave.webp" alt="" width={180} height={208} />
+        <img src="/art/mascot/podium.webp" alt="" width={590} height={620} />
         <p role="alert">{message}</p>
         <button className="btn btn-primary" onClick={() => navigate("/")}>
           Back to home
