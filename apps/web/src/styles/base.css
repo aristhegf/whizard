@@ -32,6 +32,10 @@
   --display: "Poppins", system-ui, sans-serif;
   --body: "Nunito Variable", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
   --gutter: 16px;
+  /* Every top-bar page lines up to one column this wide, logo to sign-in button. */
+  --content: 1280px;
+  /* Space between the big sections of a page. */
+  --section-gap: 56px;
 
   color-scheme: dark;
   font-family: var(--body);
@@ -44,6 +48,12 @@
 @media (min-width: 768px) {
   :root {
     --gutter: 32px;
+  }
+}
+
+@media (min-width: 1100px) {
+  :root {
+    --section-gap: 88px;
   }
 }
 
@@ -97,40 +107,44 @@ body {
   filter: blur(1px);
 }
 
-h1,
-h2,
-h3,
-p {
-  margin: 0;
-}
+/* Resets for bare elements. They sit in the lowest layer so that any class wins over them,
+   including the Tailwind classes inside BeUI components (see tailwind.css). */
+@layer base {
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
 
-a {
-  color: inherit;
-}
+  a {
+    color: inherit;
+  }
 
-img {
-  display: block;
-  max-width: 100%;
-}
+  img {
+    display: block;
+    max-width: 100%;
+  }
 
-button,
-input,
-select {
-  font: inherit;
-  color: inherit;
-}
+  button,
+  input,
+  select {
+    font: inherit;
+    color: inherit;
+  }
 
-button {
-  cursor: pointer;
-  border: none;
-  background: none;
-  padding: 0;
-  touch-action: manipulation;
-}
+  button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+    touch-action: manipulation;
+  }
 
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
+  button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
 }
 
 :focus-visible {
@@ -569,7 +583,7 @@ select option {
 
 .page {
   width: 100%;
-  max-width: 1560px;
+  max-width: calc(var(--content) + 2 * var(--gutter));
   margin: 0 auto;
   padding: 0 var(--gutter) calc(100px + env(safe-area-inset-bottom));
 }
@@ -634,7 +648,17 @@ select option {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-left: clamp(40px, 11vw, 200px);
+  }
+
+  /* Logo on the left, links in the exact middle, sign-in on the right. The side columns only
+     grow past an equal share when their content needs it. */
+  .page > .topnav {
+    display: grid;
+    grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr);
+  }
+
+  .page > .topnav .nav-end {
+    justify-self: end;
   }
 }
 

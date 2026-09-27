@@ -1,4 +1,5 @@
 import { MAX_PLAYERS } from "@whizard/game-core";
+import { ActionSwapCascadeText } from "@/components/motion/action-swap-cascade";
 import { useRef, useState, type ReactNode } from "react";
 import { linkTo } from "../router";
 import { TopLayout } from "../ui/Chrome";
@@ -395,10 +396,20 @@ function PlanSlider({ names, children }: { names: string[]; children: ReactNode 
 /** Pro can't be bought yet, so the button says so instead. */
 function ProButton() {
   const [asked, setAsked] = useState(false);
+  const [flash, setFlash] = useState(false);
   return (
     <div className="pro-action">
-      <button className="btn btn-gold btn-block plan-btn" onClick={() => setAsked(true)}>
-        Upgrade to Pro
+      <button
+        className="btn btn-gold btn-block plan-btn"
+        onClick={() => {
+          setAsked(true);
+          setFlash(true);
+          setTimeout(() => setFlash(false), 2500);
+        }}
+      >
+        <ActionSwapCascadeText value={flash ? "soon" : "upgrade"}>
+          {flash ? "Coming soon" : "Upgrade to Pro"}
+        </ActionSwapCascadeText>
         <Icon name="arrowRight" size={20} stroke={2.4} />
       </button>
       <p className="pro-soon" role="status">

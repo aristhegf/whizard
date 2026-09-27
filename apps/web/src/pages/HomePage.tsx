@@ -1,7 +1,7 @@
 import { normalizeRoomCode, ROOM_CODE_LENGTH } from "@whizard/game-core";
 import { useState, type FormEvent } from "react";
 import { linkTo, navigate, roomPath } from "../router";
-import { startRoom, TopLayout } from "../ui/Chrome";
+import { CreateRoomButton, TopLayout } from "../ui/Chrome";
 import { Icon, type IconName } from "../ui/Icon";
 import { LiveCount } from "../ui/LiveCount";
 
@@ -18,20 +18,8 @@ const STEPS = [
 ];
 
 export function HomePage() {
-  const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [code, setCode] = useState("");
-
-  const create = async () => {
-    setCreating(true);
-    setError(null);
-    try {
-      await startRoom();
-    } catch {
-      setError("Couldn’t create a room. Check your connection and try again.");
-      setCreating(false);
-    }
-  };
 
   const join = (event: FormEvent) => {
     event.preventDefault();
@@ -60,14 +48,7 @@ export function HomePage() {
             Fun multiplayer games for friends, families, couples and teams. No downloads. Just play.
           </p>
           <div className="hero-actions">
-            <button
-              className="btn btn-gold btn-hero"
-              onClick={() => void create()}
-              disabled={creating}
-            >
-              {creating ? "Creating…" : "Create a Room"}
-              <Icon name="arrowRight" size={24} stroke={2.4} />
-            </button>
+            <CreateRoomButton className="btn btn-gold btn-hero" onError={setError} />
             <a className="btn btn-hero" {...linkTo("/games")}>
               Explore Games
             </a>

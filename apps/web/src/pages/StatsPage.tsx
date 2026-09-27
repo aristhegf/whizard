@@ -1,3 +1,4 @@
+import { ActionSwapCascadeText } from "@/components/motion/action-swap-cascade";
 import { QUIZ_CATEGORIES, type QuizCategory } from "@whizard/game-core";
 import type {
   CommunityStats,
@@ -10,7 +11,7 @@ import { fetchCommunityStats } from "../api";
 import { CATALOG, TOPIC_STYLES } from "../catalog";
 import { linkTo } from "../router";
 import { Avatar } from "../ui/Avatar";
-import { startRoom, TopLayout } from "../ui/Chrome";
+import { CreateRoomButton, TopLayout } from "../ui/Chrome";
 import { useLoaded } from "../ui/common";
 import { Icon, type IconName } from "../ui/Icon";
 import { countryShares } from "./communityStats";
@@ -63,6 +64,7 @@ const loadStats = () => fetchCommunityStats();
 /** The public stats page: what the Whizard community plays, and who wins. */
 export function StatsPage() {
   const { data: stats, error, reload } = useLoaded(loadStats);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   return (
     <TopLayout variant="site" active="stats">
@@ -158,11 +160,16 @@ export function StatsPage() {
               </div>
             </div>
             <div className="community-cta-actions">
-              <CreateRoomButton />
+              <CreateRoomButton className="btn btn-gold community-btn" onError={setCreateError} />
               <a className="btn community-btn" {...linkTo("/games")}>
                 Explore Games
               </a>
             </div>
+            {createError && (
+              <p className="error small" role="alert">
+                {createError}
+              </p>
+            )}
           </div>
           <img
             className="community-cta-art"
@@ -232,7 +239,9 @@ function Panel({
         </h2>
         {canExpand && (
           <button className="view-all" aria-expanded={expanded} onClick={onToggle}>
-            {expanded ? "Show less" : "View all"}
+            <ActionSwapCascadeText value={expanded ? "less" : "all"}>
+              {expanded ? "Show less" : "View all"}
+            </ActionSwapCascadeText>
           </button>
         )}
       </header>
@@ -457,7 +466,9 @@ function TopPlayers({ leaders }: { leaders: LeaderboardEntry[] | undefined }) {
         </div>
         {leaders && leaders.length > LEADERBOARD_SHORT && (
           <button className="view-all" aria-expanded={full} onClick={() => setFull(!full)}>
-            {full ? "Show less" : "View full leaderboard"}
+            <ActionSwapCascadeText value={full ? "less" : "all"}>
+              {full ? "Show less" : "View full leaderboard"}
+            </ActionSwapCascadeText>
           </button>
         )}
       </header>
@@ -511,33 +522,4 @@ function winsLabel(wins: number): string {
 
 function PanelLoading() {
   return <p className="muted panel-empty">Loading…</p>;
-}
-
-function CreateRoomButton() {
-  const [creating, setCreating] = useState(false);
-  const [failed, setFailed] = useState(false);
-  return (
-    <>
-      <button
-        className="btn btn-gold community-btn"
-        disabled={creating}
-        onClick={() => {
-          setCreating(true);
-          setFailed(false);
-          startRoom().catch(() => {
-            setCreating(false);
-            setFailed(true);
-          });
-        }}
-      >
-        {creating ? "Creating…" : "Create a Room"}
-        <Icon name="arrowRight" size={22} stroke={2.4} />
-      </button>
-      {failed && (
-        <p className="error small" role="alert">
-          Couldn’t create a room. Check your connection and try again.
-        </p>
-      )}
-    </>
-  );
 }

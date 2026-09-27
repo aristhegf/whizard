@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 export function errorText(error: unknown): string {
   return error instanceof Error ? error.message : "Something went wrong. Please try again.";
@@ -44,4 +44,17 @@ export function useLoaded<T>(load: () => Promise<T>): {
     };
   }, [load, version]);
   return { ...result, reload: () => setVersion((v) => v + 1) };
+}
+
+/** Whether a media query matches, kept up to date as the window changes. */
+export function useMediaQuery(query: string): boolean {
+  return useSyncExternalStore(
+    (onChange) => {
+      const list = matchMedia(query);
+      list.addEventListener("change", onChange);
+      return () => list.removeEventListener("change", onChange);
+    },
+    () => matchMedia(query).matches,
+    () => false,
+  );
 }

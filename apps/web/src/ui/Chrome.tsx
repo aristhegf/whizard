@@ -1,3 +1,4 @@
+import { StatefulButton, type ButtonState } from "@/components/motion/button/stateful";
 import { useState, type ReactNode } from "react";
 import { useAccount } from "../account";
 import { createRoom } from "../api";
@@ -25,6 +26,39 @@ export function Brand() {
 /** Opens a new room and goes to its lobby. */
 export async function startRoom(settings?: Record<string, unknown>) {
   navigate(roomPath(await createRoom(settings)));
+}
+
+const CREATE_FAILED = "Couldn’t create a room. Check your connection and try again.";
+
+/** "Create a Room": says it's working, and offers to try again if the room couldn't be made. */
+export function CreateRoomButton({
+  className,
+  onError,
+}: {
+  className: string;
+  /** Told the error message, or null when trying again. */
+  onError?: (message: string | null) => void;
+}) {
+  const [state, setState] = useState<ButtonState>("idle");
+  return (
+    <StatefulButton
+      className={className}
+      state={state}
+      loadingText="Creating…"
+      errorText="Try again"
+      icon={<Icon name="arrowRight" size={24} stroke={2.4} />}
+      onClick={() => {
+        setState("loading");
+        onError?.(null);
+        startRoom().catch(() => {
+          setState("error");
+          onError?.(CREATE_FAILED);
+        });
+      }}
+    >
+      Create a Room
+    </StatefulButton>
+  );
 }
 
 function MeLink({ size = 44 }: { size?: number }) {

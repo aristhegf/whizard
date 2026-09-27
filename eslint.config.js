@@ -20,6 +20,11 @@ export default tseslint.config(
     },
   },
   {
+    // BeUI components, added with `npx shadcn add @beui/…` and kept as published.
+    files: ["apps/web/src/components/motion/**", "apps/web/src/lib/**"],
+    rules: { "react-hooks/exhaustive-deps": "off" },
+  },
+  {
     files: ["apps/web/public/sw.js"],
     languageOptions: { globals: globals.serviceworker },
   },
