@@ -3,12 +3,25 @@ import { useRef, useState, type ReactNode } from "react";
 import { linkTo } from "../router";
 import { TopLayout } from "../ui/Chrome";
 import { Icon, type IconName } from "../ui/Icon";
-import { Sparkle, Tile } from "../ui/Tile";
 
 const WHATSAPP_NUMBER = "2349161294881";
 const WHATSAPP_MESSAGE =
   "Hi Whizard! I'd like to use Whizard for my organization or event. Can we talk about a plan?";
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+
+interface Art {
+  src: string;
+  width: number;
+  height: number;
+}
+
+const ART = {
+  hero: { src: "/art/pricing/hero.webp", width: 1200, height: 802 },
+  free: { src: "/art/pricing/free.webp", width: 900, height: 355 },
+  pro: { src: "/art/pricing/pro.webp", width: 900, height: 447 },
+  org: { src: "/art/pricing/org.webp", width: 900, height: 413 },
+  cta: { src: "/art/pricing/cta.webp", width: 800, height: 550 },
+} satisfies Record<string, Art>;
 
 interface Feature {
   text: string;
@@ -109,7 +122,13 @@ export function PricingPage() {
               Upgrade when you want to bring your own questions and build your own games.
             </p>
           </div>
-          <HeroArt />
+          <img
+            className="pricing-hero-art"
+            {...ART.hero}
+            alt=""
+            aria-hidden="true"
+            fetchPriority="high"
+          />
         </section>
 
         <PlanSlider names={["Free", "Pro", "Organizations & Events"]}>
@@ -128,7 +147,7 @@ export function PricingPage() {
               </a>
             }
             features={FREE_FEATURES}
-            art={<FreeArt />}
+            art={ART.free}
           />
           <Plan
             id="pro"
@@ -141,7 +160,7 @@ export function PricingPage() {
             action={<ProButton />}
             listTitle="Everything in Free, plus:"
             features={PRO_FEATURES}
-            art={<ProArt />}
+            art={ART.pro}
             badge="Most Popular"
           />
           <Plan
@@ -164,7 +183,7 @@ export function PricingPage() {
             }
             listTitle="Everything in Pro, plus:"
             features={ORG_FEATURES}
-            art={<OrgArt />}
+            art={ART.org}
           />
         </PlanSlider>
 
@@ -239,7 +258,13 @@ export function PricingPage() {
                 </a>
               </div>
             </div>
-            <CtaArt />
+            <img
+              className="pricing-cta-art"
+              {...ART.cta}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+            />
           </section>
         </div>
       </div>
@@ -271,7 +296,7 @@ function Plan({
   action: ReactNode;
   listTitle?: string;
   features: Feature[];
-  art: ReactNode;
+  art: Art;
   badge?: string;
 }) {
   return (
@@ -311,9 +336,7 @@ function Plan({
           ))}
         </ul>
       </div>
-      <div className="plan-art" aria-hidden="true">
-        {art}
-      </div>
+      <img className="plan-art" {...art} alt="" aria-hidden="true" loading="lazy" />
     </li>
   );
 }
@@ -405,73 +428,4 @@ function Cell({ value }: { value: boolean | string }) {
     );
   }
   return <>{value}</>;
-}
-
-/* Art. These are stand-ins drawn from the art we already have. */
-
-function HeroArt() {
-  return (
-    <div className="pricing-hero-art" aria-hidden="true">
-      <div className="hero-art-glow" />
-      <img src="/art/mascot/hero.webp" alt="" width={866} height={857} fetchPriority="high" />
-      <Tile kind="question" color="orange" className="float t-question" />
-      <Tile kind="image" color="purple" className="float t-image" />
-      <Tile kind="question" color="orange" className="float t-small" />
-      <Tile kind="image" color="blue" className="float t-blue" />
-      <Tile kind="image" color="pink" className="float t-pink" />
-      <Tile kind="list" color="orange" className="float t-list" />
-      <Sparkle className="sparkle s1" />
-      <Sparkle className="sparkle s2" />
-      <Sparkle className="sparkle s3" />
-    </div>
-  );
-}
-
-function FreeArt() {
-  return (
-    <>
-      <img src="/art/mascot/run.webp" alt="" width={477} height={480} loading="lazy" />
-      <Sparkle className="sparkle s1" />
-      <Sparkle className="sparkle s2" />
-    </>
-  );
-}
-
-function ProArt() {
-  return (
-    <>
-      <div className="plan-art-glow" />
-      <Tile kind="csv" color="green" className="pro-tile p1" />
-      <Tile kind="image" color="purple" className="pro-tile p2" />
-      <Tile kind="list" color="orange" className="pro-tile p3" />
-      <Sparkle className="sparkle s1" />
-      <Sparkle className="sparkle s2" />
-    </>
-  );
-}
-
-function OrgArt() {
-  return (
-    <div className="game-night">
-      <Icon name="crown" size={26} fill />
-      <strong>
-        Whizard
-        <br />
-        Game Night
-      </strong>
-      <Sparkle className="sparkle s1" />
-    </div>
-  );
-}
-
-function CtaArt() {
-  return (
-    <div className="pricing-cta-art" aria-hidden="true">
-      <img src="/art/mascot/fly.webp" alt="" width={477} height={520} loading="lazy" />
-      <Tile kind="image" color="purple" className="float c1" />
-      <Tile kind="list" color="orange" className="float c2" />
-      <Sparkle className="sparkle s1" />
-      <Sparkle className="sparkle s2" />
-    </div>
-  );
 }

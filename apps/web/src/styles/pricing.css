@@ -56,117 +56,10 @@
 }
 
 .pricing-hero-art {
-  position: relative;
   width: min(100%, 560px);
-  aspect-ratio: 16 / 10;
-  justify-self: center;
-}
-
-.pricing-hero-art img {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  width: 52%;
   height: auto;
-  transform: translateX(-50%);
-  filter: drop-shadow(0 18px 36px rgb(120 40 255 / 40%));
-}
-
-.hero-art-glow,
-.plan-art-glow {
-  position: absolute;
-  left: 15%;
-  right: 15%;
-  bottom: 0;
-  height: 40%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(160 80 255 / 55%), transparent);
-  filter: blur(8px);
-}
-
-.float {
-  position: absolute;
-  filter: drop-shadow(0 10px 18px rgb(0 0 0 / 40%));
-  animation: tile-float 5s ease-in-out infinite;
-}
-
-@keyframes tile-float {
-  50% {
-    translate: 0 -6px;
-  }
-}
-
-.t-question {
-  left: 22%;
-  top: 0;
-  width: 21%;
-  rotate: -9deg;
-}
-
-.t-image {
-  left: 2%;
-  top: 24%;
-  width: 15%;
-  rotate: -10deg;
-  animation-delay: -1s;
-}
-
-.t-small {
-  left: 12%;
-  top: 66%;
-  width: 10%;
-  rotate: 10deg;
-  animation-delay: -2.5s;
-}
-
-.t-blue {
-  right: 9%;
-  top: 14%;
-  width: 14%;
-  rotate: 10deg;
-  animation-delay: -1.8s;
-}
-
-.t-pink {
-  right: 21%;
-  top: 46%;
-  width: 11%;
-  rotate: -8deg;
-  animation-delay: -3s;
-}
-
-.t-list {
-  right: 0;
-  top: 34%;
-  width: 13%;
-  rotate: 12deg;
-  animation-delay: -0.6s;
-}
-
-.sparkle {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  filter: drop-shadow(0 0 6px rgb(255 200 60 / 70%));
-}
-
-.pricing-hero-art .s1 {
-  left: 48%;
-  top: 4%;
-}
-
-.pricing-hero-art .s2 {
-  right: 30%;
-  top: 8%;
-  width: 14px;
-  height: 14px;
-}
-
-.pricing-hero-art .s3 {
-  left: 8%;
-  top: 8%;
-  width: 14px;
-  height: 14px;
+  justify-self: center;
+  filter: drop-shadow(0 18px 40px rgb(120 40 255 / 35%));
 }
 
 @media (min-width: 1000px) {
@@ -188,7 +81,7 @@
   }
 
   .pricing-hero-art {
-    width: 100%;
+    width: min(100%, 600px);
   }
 }
 
@@ -397,139 +290,18 @@
   vertical-align: 1px;
 }
 
+/* Each card's picture sits on its bottom edge. */
 .plan-art {
-  position: relative;
+  width: calc(100% + 48px);
+  max-width: none;
+  height: auto;
   margin: auto -24px 0;
-  height: 190px;
-  pointer-events: none;
 }
 
-.plan-free .plan-art img {
-  position: absolute;
-  left: 50%;
-  bottom: -12px;
-  height: 200px;
-  width: auto;
-  transform: translateX(-50%);
-  filter: drop-shadow(0 12px 28px rgb(120 40 255 / 45%));
-}
-
-.plan-free .plan-art .s1 {
-  left: 18%;
-  top: 30%;
-}
-
-.plan-free .plan-art .s2 {
-  right: 16%;
-  top: 18%;
-  width: 16px;
-  height: 16px;
-}
-
-.pro-tile {
-  position: absolute;
-  width: 30%;
-  max-width: 110px;
-  filter: drop-shadow(0 10px 18px rgb(0 0 0 / 45%));
-}
-
-.p1 {
-  left: 16%;
-  bottom: 12%;
-  rotate: -12deg;
-}
-
-.p2 {
-  left: 38%;
-  bottom: 34%;
-  rotate: 6deg;
-}
-
-.p3 {
-  right: 14%;
-  bottom: 8%;
-  rotate: 14deg;
-}
-
-.plan-pro .plan-art .s1 {
-  left: 10%;
-  top: 22%;
-}
-
-.plan-pro .plan-art .s2 {
-  right: 12%;
-  top: 14%;
-  width: 16px;
-  height: 16px;
-}
-
-.plan-pro .plan-art-glow {
-  left: 10%;
-  right: 10%;
-  height: 60%;
-  background: radial-gradient(closest-side, rgb(200 90 255 / 60%), transparent);
-}
-
-/* The Organizations art: a big screen at a game night, with the crowd in front. */
-.plan-org .plan-art {
-  display: grid;
-  place-items: center;
-  background:
-    radial-gradient(60% 50% at 50% 40%, rgb(130 70 255 / 35%), transparent),
-    radial-gradient(30% 40% at 6% 45%, rgb(255 150 60 / 30%), transparent),
-    radial-gradient(30% 40% at 94% 45%, rgb(255 150 60 / 30%), transparent);
-}
-
-.plan-org .plan-art::after {
-  /* Heads and shoulders in silhouette. */
-  content: "";
-  position: absolute;
-  inset: auto 0 0;
-  height: 70px;
-  background:
-    radial-gradient(22px 24px at 8% 34%, #0b0921 98%, transparent),
-    radial-gradient(22px 24px at 24% 26%, #0d0b26 98%, transparent),
-    radial-gradient(22px 24px at 41% 36%, #0b0921 98%, transparent),
-    radial-gradient(22px 24px at 58% 28%, #0d0b26 98%, transparent),
-    radial-gradient(22px 24px at 75% 34%, #0b0921 98%, transparent),
-    radial-gradient(22px 24px at 92% 26%, #0d0b26 98%, transparent),
-    radial-gradient(60% 55% at 50% 110%, #0b0921 98%, transparent),
-    linear-gradient(transparent 60%, #0b0921 60%);
-}
-
-.game-night {
-  position: relative;
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-  padding: 16px 28px 26px;
-  margin-bottom: 40px;
-  border-radius: 10px;
-  rotate: -3deg;
-  text-align: center;
-  background: linear-gradient(160deg, #5a2fe8, #2c1a9e);
-  border: 3px solid rgb(190 160 255 / 80%);
-  box-shadow:
-    0 0 30px rgb(130 80 255 / 60%),
-    inset 0 0 24px rgb(0 0 0 / 30%);
-}
-
-.game-night svg {
-  color: var(--gold);
-}
-
-.game-night strong {
-  font-family: var(--display);
-  font-weight: 800;
-  font-size: 1.2rem;
-  line-height: 1.1;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.game-night .s1 {
-  right: -8px;
-  bottom: -8px;
+.plan-pro .plan-art {
+  width: 100%;
+  margin: auto 0 14px;
+  filter: drop-shadow(0 10px 24px rgb(160 70 255 / 35%));
 }
 
 .plan-slider {
@@ -807,47 +579,10 @@
 }
 
 .pricing-cta-art {
-  position: relative;
-  height: 200px;
+  width: min(100%, 340px);
+  height: auto;
   justify-self: center;
-  aspect-ratio: 1;
-}
-
-.pricing-cta-art img {
-  position: absolute;
-  left: 50%;
-  bottom: -14px;
-  height: 100%;
-  width: auto;
-  transform: translateX(-50%);
-  filter: drop-shadow(0 14px 28px rgb(120 40 255 / 45%));
-}
-
-.pricing-cta-art .c1 {
-  right: -6%;
-  top: 6%;
-  width: 26%;
-  rotate: 10deg;
-}
-
-.pricing-cta-art .c2 {
-  right: -2%;
-  bottom: 12%;
-  width: 18%;
-  rotate: -12deg;
-  animation-delay: -2s;
-}
-
-.pricing-cta-art .s1 {
-  left: 4%;
-  top: 30%;
-}
-
-.pricing-cta-art .s2 {
-  right: 28%;
-  top: 2%;
-  width: 14px;
-  height: 14px;
+  margin-bottom: 10px;
 }
 
 @media (min-width: 1000px) {
@@ -856,13 +591,41 @@
     align-items: stretch;
   }
 
+  /* The headline runs across the panel; the buttons and the mascot share the space below. */
   .pricing-cta {
     grid-template-columns: minmax(0, 1fr) auto;
-    padding: 30px 20px 0 34px;
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      "title title"
+      "text art"
+      "actions art";
+    column-gap: 12px;
+    row-gap: 10px;
+    padding: 36px 20px 0 34px;
+  }
+
+  .pricing-cta-copy {
+    display: contents;
+  }
+
+  .pricing-cta-title {
+    grid-area: title;
+  }
+
+  .pricing-cta-copy > p {
+    grid-area: text;
+  }
+
+  .pricing-cta-actions {
+    grid-area: actions;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: start;
   }
 
   .pricing-cta-art {
+    grid-area: art;
     align-self: end;
-    height: 190px;
+    width: 290px;
   }
 }
