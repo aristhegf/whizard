@@ -8,7 +8,7 @@ This document covers the system design, the key decisions behind it, and the ord
 
 ## Goals
 
-- **Instant to play.** No accounts. Open the link, pick a nickname, enter a code, play.
+- **Instant to play.** No sign-up needed. Open the link, pick a nickname, play. Accounts are optional and add stats, friends and pings.
 - **Fair.** Everyone gets the same content in the same order. The server owns rules, scoring and timing, so a slow connection doesn't cost points and nobody can cheat from the browser.
 - **Fast.** Moving between questions should feel instant. The first page load should be quick on a phone over 4G.
 - **Cheap to run with unpredictable traffic.** Usage will come in bursts (evenings, weekends, game nights). Idle time should cost close to nothing, and a sudden spike shouldn't need manual scaling.
@@ -16,8 +16,7 @@ This document covers the system design, the key decisions behind it, and the ord
 
 ## Non-goals (for now)
 
-- User accounts, profiles, friends lists
-- Global leaderboards
+- Global leaderboards (leaderboards are per friend group)
 - Native mobile apps (the web app should work well on phones)
 - 3D games
 
@@ -33,7 +32,7 @@ flowchart LR
     subgraph Edge["Cloudflare"]
         W["Worker<br/>HTTP API + WebSocket routing"]
         DO["Room<br/>(one Durable Object per room)"]
-        D1[("D1<br/>Content bank")]
+        D1[("D1<br/>Content, accounts,<br/>match history")]
         R2[("R2<br/>Images")]
     end
 
@@ -132,39 +131,41 @@ stateDiagram-v2
     Lobby --> [*]: idle timeout
 ```
 
-- **Room codes** are 6 characters from an alphabet with no look-alike characters (no `0/O`, `1/I/L`). That gives about 890 million combinations. On creation the server checks the code is free and retries if it isn't.
-- **Room state** lives in Durable Object storage, so it survives hibernation and restarts.
-- **Cleanup** runs from a Durable Object alarm. A room is deleted after 30 minutes with no activity.
-- **Limits:** up to 16 players per room, nicknames up to 20 characters.
-- **Host handover:** if the host leaves, the longest-connected player becomes host.
+- **Room codes** are 6 characters from an alphabet with no look-alike characters (no `0/O`, `1/I/L`). That gives about 890 million combinations. Creating a room claims the code in its Durable Object. If the code is already in use, the server tries another.
+- **Room state** lives in Durable Object storage, so it survives hibernation and restarts. The rules for joining, leaving, host handover and expiry are pure functions in `game-core`, and the Durable Object applies them.
+- **Players who drop** stay in the room, shown as offline, for 10 minutes so they can come back.
+- **Host handover:** if the host leaves, the longest-connected player becomes host right away. If the host only loses connection, they keep the role for 30 seconds first, so a locked phone doesn't hand it over.
+- **Cleanup** runs from a Durable Object alarm. A room is deleted 30 minutes after the last player disconnects.
+- **Limits:** up to 16 players per room, nicknames up to 20 characters (emoji welcome), unique within the room.
 
 ## Real-time protocol
 
 JSON messages over one WebSocket per player. Every message has a `type` and is validated with zod on both ends. Messages that fail validation are dropped.
 
-| Client → Server                    | Purpose                                                                   |
-| ---------------------------------- | ------------------------------------------------------------------------- |
-| `join { nickname, sessionToken? }` | Join or rejoin a room                                                     |
-| `configure { game, settings }`     | Host picks the game and its settings in the lobby                         |
-| `start {}`                         | Host starts the game                                                      |
-| `action { payload }`               | A game move (an answer, a vote, a stroke). Validated by the game's schema |
-| `ping { t }`                       | Measure round-trip time and clock offset                                  |
-| `rematch {}`                       | Host returns everyone to the lobby                                        |
+| Client → Server                                     | Purpose                                                                        |
+| --------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `join { protocolVersion, nickname, sessionToken? }` | Join, or rejoin with the token from an earlier `welcome`                       |
+| `leave {}`                                          | Leave the room for good                                                        |
+| `ping { t }`                                        | Measure round-trip time and clock offset                                       |
+| `configure { game, settings }`                      | Host picks the game and its settings in the lobby (M2)                         |
+| `start {}`                                          | Host starts the game (M2)                                                      |
+| `action { payload }`                                | A game move (an answer, a vote, a stroke), validated by the game's schema (M2) |
+| `rematch {}`                                        | Host returns everyone to the lobby (M2)                                        |
 
-| Server → Client                             | Purpose                                        |
-| ------------------------------------------- | ---------------------------------------------- |
-| `welcome { playerId, sessionToken, room }`  | Full snapshot on join or rejoin                |
-| `lobby { players, game, settings, hostId }` | Lobby changed                                  |
-| `view { view }`                             | This player's view of the game, from `viewFor` |
-| `results { standings, final }`              | Live or final results                          |
-| `pong { t, serverTime }`                    | Reply to `ping`                                |
-| `error { code, message }`                   | Something was rejected                         |
+| Server → Client                            | Purpose                                             |
+| ------------------------------------------ | --------------------------------------------------- |
+| `welcome { playerId, sessionToken, room }` | Joined. Includes the full room snapshot             |
+| `room { room }`                            | Players, host or who's online changed               |
+| `pong { t, serverTime }`                   | Reply to `ping`                                     |
+| `error { code, message }`                  | Something was rejected, with a message for the user |
+| `view { view }`                            | This player's view of the game, from `viewFor` (M2) |
+| `results { standings, final }`             | Live or final results (M2)                          |
 
-The protocol has a version number, so an old client gets a clear "please refresh" message instead of breaking.
+The protocol has a version number, so an old client gets a clear "please refresh" message instead of breaking. When a room can't be used (it doesn't exist or has expired, the client is out of date, or the player opened it somewhere else), the server closes the connection with a specific close code and the client shows a message instead of reconnecting.
 
 ### Reconnection
 
-On first join the server issues a random `sessionToken`, which the browser keeps in `sessionStorage`. If a phone locks or the network drops, the client reconnects with backoff and sends the token. The room restores that player's place: same player, same score, same question.
+On first join the server issues a random `sessionToken`, which the browser keeps in `localStorage` for a day. If a phone locks, the network drops or the tab is closed and reopened, the client reconnects with backoff and sends the token. The room restores that player's place: same player, same score, same question. Opening the same room in a second tab moves the player there, and the first tab says so.
 
 ## Fair timing and scoring
 
@@ -221,7 +222,7 @@ CREATE INDEX idx_draw ON questions (category, difficulty, status, rand_key);
 ### Drawing a question set
 
 - The room picks a random point and walks the `idx_draw` index from there. That's fast at any size, unlike `ORDER BY RANDOM()`.
-- **Avoiding repeats:** without accounts, each browser keeps a list of recently seen question IDs. The host's list is sent when the game starts and those questions are skipped where possible.
+- **Avoiding repeats:** each browser keeps a list of recently seen question IDs, and signed-in players' match history is used too. Those questions are skipped where possible.
 - A **"report this question"** button increments `reports`. Questions with too many reports are flagged and hidden until reviewed.
 - **Stale facts:** time-sensitive questions are re-verified on a schedule, and retired if they no longer hold ("Who won the last World Cup?").
 
@@ -239,6 +240,49 @@ An offline script that fills and grows the bank. It never runs during a game.
 Estimated cost is a few dollars per 10,000 questions. The same pipeline, with a different schema and checks, produces content for the other games.
 
 To unblock the first playable version, we seed it with a small hand-checked Bible set (100–200 questions) before the pipeline is built.
+
+## Accounts (optional)
+
+Anyone can play as a guest with just a nickname. An account is optional and adds the features that need a lasting identity:
+
+- **Friends:** add friends by username or with an invite link.
+- **Pings:** tell a friend you're free to play. They get a notification with a link to your room ("Tolu wants to play. Join K7QX2M").
+- **History and stats:** every game you've played, your wins and losses against each friend, and your best categories.
+- **Group leaderboards:** save a friend group ("Game night crew") and see who tops each category across the games you've played together.
+
+Guests appear in results like everyone else, but nothing is saved for them.
+
+### Identity
+
+- A **player** exists inside one room, as it does today. A **user** is an account. When a signed-in user joins a room, the Worker checks their session on the WebSocket upgrade and passes the user ID to the room, which records it on the player. Rooms and game modules don't need to know the difference.
+- Each browser also has a random **guest ID** in `localStorage`, which the room records for guest players when a game ends.
+- **Signing up after a game** attaches that browser's recent guest games to the new account, so the game that convinced someone to sign up still counts.
+
+### Sign-in
+
+Google sign-in and email sign-in links, with no passwords to store or reset. It's built on an established auth library running in the Worker (Better Auth, with sessions in D1), not hand-written security code. Passkeys can come later.
+
+### Recording results
+
+When a game finishes, the room writes one match record to D1: the game, variant, category and difficulty, and each player's placing and score, with their user ID or guest ID. Stats, head-to-head records and leaderboards are all queries over these records, so new stats can be added later without touching any game.
+
+```sql
+users                (id, username, display_name, created_at)
+friendships          (user_id, friend_id, status, created_at)   -- requested, accepted, blocked
+friend_groups        (id, owner_id, name)
+friend_group_members (group_id, user_id)
+matches              (id, game, variant, category, difficulty, finished_at)
+match_players        (match_id, user_id, guest_id, nickname, placing, score)  -- one of user_id / guest_id
+push_subscriptions   (user_id, endpoint, keys, created_at)
+```
+
+### Notifications
+
+Pings use **Web Push**, which works in current browsers, including on iPhone once the site is added to the home screen. A native app later registers with the same system, so pings work the same way. Players can turn pings off, mute a friend and set quiet hours.
+
+### Privacy
+
+Accounts mean storing personal data, so they launch with a privacy policy and terms, account deletion that removes personal data, a data export, and a minimum age of 13.
 
 ## Canvas games (after launch)
 
@@ -262,39 +306,43 @@ Jigsaw, Spot It, Reaction and Draw & Guess use **Phaser**, loaded only when one 
 - **Rate limiting** room creation and joins per IP, using the Workers rate-limiting binding.
 - **Validation** of every incoming message with a size cap. Unknown or malformed messages are dropped.
 - **Nickname and text filtering** for length, characters and a basic profanity list. This matters more once social games let players type answers.
-- **No personal data stored.** Nicknames, typed answers and uploaded images live only as long as the room.
+- **Guests leave nothing behind.** Nicknames, typed answers and uploaded images live only as long as the room. Account data is covered in [Privacy](#privacy).
+- **Account sessions** are checked by the Worker. The room only ever receives a verified user ID, never a password or token it has to trust.
 - **Hidden information stays on the server** until a player is allowed to see it.
 
 ## Testing and CI
 
 - **Unit tests** (Vitest) for `game-core`: every game module, scoring, timing clamps, content drawing. Game modules are pure, so tests replay a seed and a list of actions and check the result.
 - **Integration tests** for the Room Durable Object, using Cloudflare's Vitest pool to run it in the real Workers runtime.
-- **End-to-end tests** (Playwright): several browsers join the same room and play a full game.
+- **End-to-end tests** (Playwright, phone-sized screens): several browsers join the same room, reload, drop off and hand over the host role. Full games are added with each game.
 - **GitHub Actions** on every push and pull request: format, lint, typecheck, tests and a production build.
 
 ## Key decisions
 
-| Decision          | Chosen                                 | Alternatives considered                                           | Why                                                                                                             |
-| ----------------- | -------------------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| Real-time backend | Cloudflare Workers + Durable Objects   | Node.js + `ws`/Socket.IO on a VM, with Redis for multiple servers | Rooms map directly to Durable Objects. No routing layer, no always-on server bill, handles spikes on its own    |
-| Game rules        | Pure game modules behind one interface | Separate server code per game                                     | New games reuse rooms, reconnection and timing. Rules are testable and replayable without a network             |
-| Frontend          | React + Vite, TypeScript               | Next.js                                                           | The app is interactive and client-side. A single-page app is simpler and faster to load                         |
-| Transport         | Raw WebSocket + zod-validated JSON     | Socket.IO, Colyseus                                               | Small, explicit, typed protocol with no extra runtime dependency                                                |
-| Content           | Pre-built, verified content bank       | Generating content live per game                                  | Instant starts, fixed cost, everything checked, easy to avoid repeats                                           |
-| 2D games          | Phaser (lazy-loaded)                   | Plain canvas                                                      | Mature 2D engine, good fit for jigsaws, drawing and reaction games                                              |
-| 3D                | Not now                                | PlayCanvas                                                        | No 3D game is planned yet. Revisit if one is designed                                                           |
-| Language          | TypeScript everywhere                  | Java                                                              | One language across client, server and tools, with shared types. The Workers runtime runs JavaScript/TypeScript |
+| Decision          | Chosen                                                       | Alternatives considered                                           | Why                                                                                                                                    |
+| ----------------- | ------------------------------------------------------------ | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Real-time backend | Cloudflare Workers + Durable Objects                         | Node.js + `ws`/Socket.IO on a VM, with Redis for multiple servers | Rooms map directly to Durable Objects. No routing layer, no always-on server bill, handles spikes on its own                           |
+| Game rules        | Pure game modules behind one interface                       | Separate server code per game                                     | New games reuse rooms, reconnection and timing. Rules are testable and replayable without a network                                    |
+| Frontend          | React + Vite, TypeScript                                     | Next.js                                                           | The app is interactive and client-side. A single-page app is simpler and faster to load                                                |
+| Transport         | Raw WebSocket + zod-validated JSON                           | Socket.IO, Colyseus                                               | Small, explicit, typed protocol with no extra runtime dependency                                                                       |
+| Content           | Pre-built, verified content bank                             | Generating content live per game                                  | Instant starts, fixed cost, everything checked, easy to avoid repeats                                                                  |
+| 2D games          | Phaser (lazy-loaded)                                         | Plain canvas                                                      | Mature 2D engine, good fit for jigsaws, drawing and reaction games                                                                     |
+| 3D                | Not now                                                      | PlayCanvas                                                        | No 3D game is planned yet. Revisit if one is designed                                                                                  |
+| Accounts          | Optional: guests play, accounts add stats, friends and pings | Required sign-up; no accounts at all                              | Required sign-up loses people before their first game. With no accounts, there's no way to reach a friend or keep head-to-head records |
+| Sign-in           | Auth library in the Worker (Better Auth, D1)                 | Hosted provider (Clerk, Auth0); hand-written auth                 | Data stays in our database with no per-user fees, and no security-critical code written from scratch                                   |
+| Language          | TypeScript everywhere                                        | Java                                                              | One language across client, server and tools, with shared types. The Workers runtime runs JavaScript/TypeScript                        |
 
 ## Build plan
 
-| Milestone                | Scope                                                                                          | Status |
-| ------------------------ | ---------------------------------------------------------------------------------------------- | ------ |
-| **M0: Foundations**      | Monorepo, lint/format, CI, Worker + Room Durable Object, web app, room codes, WebSocket ping   | Done   |
-| **M1: Rooms**            | Nicknames, live lobby, host and host handover, game settings, reconnection, game module runner |        |
-| **M2: Quiz**             | Classic and Speed Quiz variants, seeded Bible set, scoring, live results, rematch              |        |
-| **M3: Content pipeline** | Generate, validate, de-duplicate, verify, import. Fill all 11 quiz categories                  |        |
-| **M4: Launch**           | Streak and Elimination variants, visual design, sounds, share link, report button, no repeats  |        |
-| **After launch**         | New games category by category, in the order in [GAMES.md](GAMES.md)                           |        |
+| Milestone                    | Scope                                                                                                                              | Status |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| **M0: Foundations**          | Monorepo, lint/format, CI, Worker + Room Durable Object, web app, room codes, WebSocket ping                                       | Done   |
+| **M1: Rooms**                | Nicknames, live lobby, invite link, host and host handover, reconnection, room expiry, end-to-end tests                            | Done   |
+| **M2: Quiz**                 | Game module runner, game settings in the lobby, Classic and Speed Quiz, seeded Bible set, scoring, live results, rematch           |        |
+| **M3: Content pipeline**     | Generate, validate, de-duplicate, verify, import. Fill all 11 quiz categories                                                      |        |
+| **M4: Accounts and friends** | Sign-in, profiles, friends, pings (web push), match history, head-to-head records, group leaderboards, account deletion and export |        |
+| **M5: Launch**               | Streak and Elimination, visual design, sounds, report button, no repeated questions, rate limiting, privacy policy                 |        |
+| **After launch**             | New games category by category, in the order in [GAMES.md](GAMES.md)                                                               |        |
 
 The first playable version is **M0 to M2**: you and a friend can play a Bible quiz together.
 
@@ -304,6 +352,7 @@ The first playable version is **M0 to M2**: you and a friend can play a Bible qu
 pnpm install
 pnpm dev          # web app and Worker together on http://localhost:5173
 pnpm test         # unit tests
+pnpm e2e          # browser tests (starts its own server)
 pnpm lint && pnpm typecheck
 ```
 
@@ -311,4 +360,5 @@ pnpm lint && pnpm typecheck
 
 - A free **Cloudflare account** is needed before the first deploy. Then `pnpm deploy` publishes the whole app.
 - An **LLM API key** is needed for the content pipeline (M3).
+- For accounts (M4): a **Google sign-in client** (free, from Google Cloud), an email sending service for sign-in links, and a **privacy policy and terms**.
 - **Domain name:** optional. The app can run on a free `*.workers.dev` address until there is one.

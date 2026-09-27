@@ -4,7 +4,7 @@ Real-time games to play with friends, whether you're in the same room or on oppo
 
 Pick a nickname, share a room code, and everyone gets the same challenge at the same time. Results update live as each player finishes.
 
-Free to play. No sign-up.
+Free to play, with no sign-up needed. An optional account keeps your stats and lets you ping friends when you're free to play.
 
 ## Games
 
@@ -15,13 +15,13 @@ The full list is in [docs/GAMES.md](docs/GAMES.md).
 
 ## Status
 
-Early development. The project foundations are in place, and rooms and the quiz are next. See the [architecture and build plan](docs/ARCHITECTURE.md).
+Early development. Rooms work: create one, invite friends with a link or code, and see who's in the lobby live. The quiz is next. See the [architecture and build plan](docs/ARCHITECTURE.md).
 
 ## Tech stack
 
 - **Client:** React, Vite, TypeScript, Phaser (canvas games)
 - **Server:** Cloudflare Workers and Durable Objects (one per game room), WebSockets
-- **Data:** Cloudflare D1 (content bank), R2 (images)
+- **Data:** Cloudflare D1 (content bank, accounts, match history), R2 (images)
 - **Testing:** Vitest, Playwright
 
 ## Running locally
@@ -32,6 +32,7 @@ Requires Node.js 22 and pnpm.
 pnpm install
 pnpm dev          # web app and server together on http://localhost:5173
 pnpm test         # unit tests
+pnpm e2e          # browser tests
 pnpm lint
 pnpm typecheck
 ```
