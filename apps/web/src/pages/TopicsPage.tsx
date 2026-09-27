@@ -135,8 +135,10 @@ export function TopicsPage() {
                   <span className="topic-art">
                     <img src={style.art} alt="" loading="lazy" />
                   </span>
-                  <span className="topic-name">{starting === c.id ? "Starting…" : c.name}</span>
-                  <span className="topic-count">{questionTotal(c)} questions</span>
+                  <span className="topic-foot">
+                    <span className="topic-name">{starting === c.id ? "Starting…" : c.name}</span>
+                    <span className="topic-count">{questionTotal(c)} questions</span>
+                  </span>
                 </button>
               </li>
             );

@@ -516,11 +516,9 @@ button.topic-tile {
 
 .topic-tile {
   position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-end;
-  align-items: center;
-  gap: 6px 10px;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 6px;
   width: 100%;
   aspect-ratio: 1.08;
   padding: 12px;
@@ -544,20 +542,28 @@ button.topic-tile {
     linear-gradient(180deg, transparent 50%, rgb(10 6 30 / 35%) 100%);
 }
 
+/* The art fills whatever the name row leaves, so a two-line name never sits under it. */
 .topic-art {
-  position: absolute;
-  inset: 8% 8% 34%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  margin: 2% 4% 0;
   pointer-events: none;
 }
 
 .topic-art img {
-  max-height: 100%;
-  max-width: 100%;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 10px 14px rgb(0 0 0 / 38%));
+}
+
+/* The count moves under the name when both don't fit on one line. */
+.topic-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
 }
 
 .topic-name {
