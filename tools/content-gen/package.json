@@ -1,0 +1,21 @@
+{
+  "name": "@whizard/content-gen",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "tsx src/cli.ts",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "@whizard/content": "workspace:*",
+    "@whizard/game-core": "workspace:*",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.0",
+    "prettier": "^3.9.9",
+    "tsx": "^4.23.15"
+  }
+}

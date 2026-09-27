@@ -16,7 +16,8 @@
     "e2e": "playwright test",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "content:generate": "pnpm --filter @whizard/content-gen generate"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
