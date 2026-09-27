@@ -113,7 +113,14 @@ Each game's screens live in the web app under `src/games/<id>/`. Canvas-heavy ga
 
 ## Quiz (launch game)
 
-The host picks a **category**, a **level** (easy, medium or hard), the **number of questions** (5, 10, 15 or 20) and the **time per question** (10, 20 or 30 seconds). The room draws one question set. Quiz can be played solo.
+The host picks a **mode**, a **category**, a **level** (easy, medium or hard) and the **number of questions** (5, 10, 15 or 20). The room draws one question set. Quiz can be played solo.
+
+| Mode        | Questions                                                          | Points                                                            |
+| ----------- | ------------------------------------------------------------------ | ----------------------------------------------------------------- |
+| **Classic** | No clock. Answer, then move on.                                    | The full points for the level for each right answer               |
+| **Speed**   | A countdown on every question: 10, 20 or 30 seconds, host's choice | 50% to 100% of the points for a right answer, the faster the more |
+
+In both modes, ties are broken by who answered faster overall. A Classic question still closes after 5 minutes without an answer, so a player who walks away can't hold up everyone's final results.
 
 Categories at launch: Bible, Geography, History, Science, Animals, Football, Movies, Music, Nigerian culture, General knowledge, Pop culture.
 
@@ -199,7 +206,7 @@ On first join the server issues a random `sessionToken`, which the browser keeps
 
 **No early hints.** Nobody sees anyone else's score until they've finished their own game, so a jump in someone's score can't give an answer away.
 
-**Quiz scoring** (in `game-core`, easy to tune):
+**Speed scoring** (in `game-core`, easy to tune). Classic gives the full base points for every right answer:
 
 ```
 points = correct ? round(base × (0.5 + 0.5 × (1 − elapsed / timeLimit))) : 0

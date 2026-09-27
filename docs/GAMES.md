@@ -11,7 +11,8 @@ Everyone answers the same questions. This is the foundation game and has the big
 - **Categories:** Bible, Geography, History, Science, Animals, Football, Movies, Music, Nigerian culture, General knowledge, Pop culture
 - **How it plays:** everyone starts together on the same questions, then plays at their own pace. The leaderboard shows points only, and each player reviews their own answers at the end (details in [ARCHITECTURE.md](ARCHITECTURE.md#quiz-launch-game))
 - **Players:** 1 to 16. Play solo, or with friends
-- **Settings:** category, level (easy, medium, hard), number of questions, time per question
+- **Modes:** Classic (no clock, points for right answers) and Speed (a timer on every question, faster answers score more)
+- **Settings:** mode, category, level (easy, medium, hard), number of questions, and time per question for Speed
 
 ## After launch
 

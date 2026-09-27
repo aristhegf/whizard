@@ -15,7 +15,7 @@ The full list is in [docs/GAMES.md](docs/GAMES.md).
 
 ## Status
 
-Early development. The Bible quiz is playable: play solo or invite friends with a link or code, pick a level, number of questions and time per question. Everyone starts together and plays at their own pace, then sees a points leaderboard and a private review of their own answers. More categories are next. See the [architecture and build plan](docs/ARCHITECTURE.md).
+Early development. The Bible quiz is playable: play solo or invite friends with a link or code, pick Classic (no clock) or Speed (a timer on every question), a level and the number of questions. Everyone starts together and plays at their own pace, then sees a points leaderboard and a private review of their own answers. More categories are next. See the [architecture and build plan](docs/ARCHITECTURE.md).
 
 ## Tech stack
 
