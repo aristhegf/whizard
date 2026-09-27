@@ -81,7 +81,16 @@ jobs:
         if: steps.credentials.outputs.ready
         working-directory: apps/server
         run: |
-          find_id() { pnpm exec wrangler d1 list --json | jq -r '.[] | select(.name == "whizard") | .uuid'; }
+          find_id() {
+            local out
+            if ! out=$(pnpm exec wrangler d1 list --json 2>d1-list.err) || ! jq -e . >/dev/null 2>&1 <<<"$out"; then
+              echo "$out" >&2
+              cat d1-list.err >&2
+              echo "::error::Couldn't list D1 databases. The API token needs the Account > D1 > Edit permission." >&2
+              return 1
+            fi
+            jq -r '.[] | select(.name == "whizard") | .uuid' <<<"$out"
+          }
           id=$(find_id)
           if [ -z "$id" ]; then
             pnpm exec wrangler d1 create whizard --location weur --update-config=false
