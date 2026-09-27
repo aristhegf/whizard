@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type { Env } from "./env";
+import { networkPrefix } from "./analytics";
 
 export interface RequestContext {
   request: Request;
@@ -56,4 +57,15 @@ export function requireSameOrigin({ request, url }: RequestContext): void {
 
 export function isSameOrigin(request: Request, url: URL): boolean {
   return request.headers.get("Origin") === url.origin;
+}
+
+/**
+ * Checks a per-address rate limit. Local development and tests share one private address, so
+ * only public addresses are limited.
+ */
+export async function withinLimit(limiter: RateLimit, request: Request): Promise<boolean> {
+  const network = networkPrefix(request.headers.get("CF-Connecting-IP"));
+  if (!network) return true;
+  const { success } = await limiter.limit({ key: network });
+  return success;
 }

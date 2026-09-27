@@ -54,6 +54,25 @@ export function questionCounts(questions: readonly StoredQuestion[] = QUESTIONS)
 }
 
 /** Who in a game has seen a question before, from their history across rooms. */
+const BY_ID = new Map(QUESTIONS.map((q) => [q.id, q]));
+
+export function findQuestion(id: string): StoredQuestion | undefined {
+  return BY_ID.get(id);
+}
+
+/**
+ * A short fingerprint of a question's wording and answers. Reports are tied to it, so once a
+ * reported question is fixed, the old reports no longer count against it.
+ */
+export function questionVersion(q: Pick<StoredQuestion, "prompt" | "choices">): string {
+  let hash = 0x811c9dc5;
+  for (const char of JSON.stringify([q.prompt, q.choices])) {
+    hash ^= char.codePointAt(0)!;
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash.toString(16).padStart(8, "0");
+}
+
 export interface QuestionSeen {
   /** How many of the players have seen it. */
   players: number;

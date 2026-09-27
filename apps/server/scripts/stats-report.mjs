@@ -7,6 +7,7 @@
 
 import { execFileSync } from "node:child_process";
 import { appendFileSync } from "node:fs";
+import { questions, questionVersion } from "./questions.mjs";
 
 const days = Math.max(1, Math.min(365, Number(process.argv[2]) || 30));
 const local = process.env.STATS_LOCAL === "1";
@@ -124,6 +125,39 @@ for (const [prefix, title] of GROUPS) {
     table(
       ["", "Count"],
       rows.map((r) => [r.metric.slice(prefix.length + 1), n(r.total)]),
+    ),
+  );
+}
+
+// Reported questions, with the reasons. Three different people take a question out of play.
+const reported = query(`SELECT r.question_id, r.version, COUNT(*) AS reports,
+    group_concat(r.reason) AS reasons,
+    EXISTS (SELECT 1 FROM question_kept k WHERE k.question_id = r.question_id AND k.version = r.version) AS kept
+  FROM question_reports r GROUP BY r.question_id, r.version ORDER BY reports DESC LIMIT 40`);
+const current = reported.filter((r) => {
+  const q = questions.get(r.question_id);
+  return q && questionVersion(q) === r.version;
+});
+if (current.length > 0) {
+  const tally = (reasons) =>
+    Object.entries(reasons.split(",").reduce((all, r) => ({ ...all, [r]: (all[r] ?? 0) + 1 }), {}))
+      .map(([reason, count]) => `${reason} ×${count}`)
+      .join(", ");
+  lines.push(
+    "",
+    "## Reported questions",
+    "",
+    "Out of play after 3 reports. To keep one as it is, run the **Keep a reported question** workflow; to fix one, edit it and its old reports stop counting.",
+    "",
+    table(
+      ["Question", "", "Reports", "Why", "Status"],
+      current.map((r) => [
+        r.question_id,
+        questions.get(r.question_id).prompt.replace(/\|/g, "/"),
+        n(r.reports),
+        tally(r.reasons),
+        r.kept ? "Kept" : r.reports >= 3 ? "Out of play" : "In play",
+      ]),
     ),
   );
 }

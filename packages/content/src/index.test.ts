@@ -1,6 +1,13 @@
 import { QUIZ_CATEGORIES, QUIZ_DIFFICULTIES } from "@whizard/game-core";
 import { describe, expect, it } from "vitest";
-import { QUESTIONS, QUESTION_FILES, drawQuestions, questionCounts } from "./index";
+import {
+  QUESTIONS,
+  QUESTION_FILES,
+  drawQuestions,
+  findQuestion,
+  questionCounts,
+  questionVersion,
+} from "./index";
 import { isDuplicate, problemsWith } from "./quality";
 
 /** Enough for the longest game (20 questions) at every level. */
@@ -100,5 +107,17 @@ describe("avoiding repeats", () => {
     const drawn = ids(drawQuestions("geography", "easy", 20, 5, { retired }));
     expect(drawn).toHaveLength(15);
     expect(drawn.some((id) => retired.has(id))).toBe(false);
+  });
+});
+
+describe("question versions", () => {
+  it("changes when the wording or answers change, and only then", () => {
+    const q = findQuestion("bible-001")!;
+    expect(questionVersion(q)).toMatch(/^[0-9a-f]{8}$/);
+    expect(questionVersion({ ...q })).toBe(questionVersion(q));
+    expect(questionVersion({ ...q, prompt: q.prompt + "?" })).not.toBe(questionVersion(q));
+    expect(questionVersion({ ...q, choices: [...q.choices].reverse() })).not.toBe(
+      questionVersion(q),
+    );
   });
 });

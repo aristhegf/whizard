@@ -104,6 +104,12 @@ export async function deleteMe(context: RequestContext): Promise<Response> {
       )
       .bind(user.id),
     db.prepare("DELETE FROM seen_questions WHERE viewer = ?").bind(`u:${user.id}`),
+    // Their reports still count, but no longer point at them.
+    db
+      .prepare(
+        "UPDATE question_reports SET reporter = 'x:' || lower(hex(randomblob(8))) WHERE reporter = ?",
+      )
+      .bind(`u:${user.id}`),
     db.prepare("DELETE FROM users WHERE id = ?").bind(user.id),
   ]);
   return Response.json({ ok: true }, { headers: { "Set-Cookie": clearedSessionCookie } });

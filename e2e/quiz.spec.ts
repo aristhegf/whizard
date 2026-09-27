@@ -54,6 +54,14 @@ test("plays a solo quiz with explanations and a review", async ({ browser }) => 
   await expect(page.locator(".review li")).toHaveCount(5);
   await expect(page.locator(".review .explanation")).toHaveCount(5);
 
+  // Any question in the review can be reported.
+  const first = page.locator(".review li").first();
+  await first.getByRole("button", { name: "Report this question" }).click();
+  await expect(first.getByRole("button", { name: "Send report" })).toBeDisabled();
+  await first.getByLabel("It’s unclear or has a typo").check();
+  await first.getByRole("button", { name: "Send report" }).click();
+  await expect(first.getByRole("status")).toHaveText(/Thanks for the report/);
+
   await page.getByRole("button", { name: "Change Game" }).click();
   await expect(page.getByLabel("Questions")).toHaveValue("5");
 });

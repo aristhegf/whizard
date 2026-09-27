@@ -1288,3 +1288,51 @@ button.choice:disabled {
     filter: drop-shadow(0 16px 30px rgb(120 40 255 / 45%));
   }
 }
+
+/* Reporting a question from the review. */
+.report-link {
+  justify-self: start;
+  padding: 4px 0;
+  font-size: 0.85rem;
+  color: var(--dim);
+}
+
+.report-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 6px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line-strong);
+  background: rgb(10 9 36 / 60%);
+}
+
+.report-form legend {
+  margin-bottom: 6px;
+  font-weight: 800;
+}
+
+.report-reason {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+}
+
+.report-reason input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--purple);
+}
+
+.report-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.report-done {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: var(--ok);
+}

@@ -43,6 +43,7 @@ import {
 import type { Env } from "./env";
 import { count } from "./analytics";
 import { recordMatch } from "./matches";
+import { retiredQuestions } from "./reports";
 import { loadSeen, recordSeen, viewerKey } from "./seen";
 
 const STATE_KEY = "room";
@@ -260,12 +261,17 @@ export class Room extends DurableObject<Env> {
     const viewers = (before?.players ?? [])
       .filter((p) => connected.has(p.id))
       .flatMap((p) => viewerKey(p) ?? []);
-    const seen = request ? await loadSeen(this.env, viewers, request.category) : new Map();
+    const [seen, retired] = request
+      ? await Promise.all([
+          loadSeen(this.env, viewers, request.category),
+          retiredQuestions(this.env, request.category),
+        ])
+      : [new Map(), new Set<string>()];
 
     let drawn: string[] = [];
     const started = await this.handleGame(ws, (state, playerId, now) =>
       startGame(state, playerId, this.connectedIds(), now, randomSeed(), (req, seed, room) => {
-        const content = drawContent(req, seed, { recent: room.recent, seen });
+        const content = drawContent(req, seed, { recent: room.recent, seen, retired });
         drawn = content.map((q) => (q as { id: string }).id);
         return content;
       }),

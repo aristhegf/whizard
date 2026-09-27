@@ -206,6 +206,9 @@ export async function cleanUp(env: Env, now: number) {
     env.DB.prepare("DELETE FROM sessions WHERE expires_at < ?").bind(now),
     env.DB.prepare("DELETE FROM auth_challenges WHERE expires_at < ?").bind(now),
     env.DB.prepare("DELETE FROM seen_questions WHERE seen_at < ?").bind(now - SEEN_KEEP_MS),
+    env.DB.prepare("DELETE FROM question_reports WHERE created_at < ?").bind(
+      now - 365 * 24 * 60 * 60 * 1000,
+    ),
     // Network codes stop matching after a while (addresses get reused), so drop them then.
     env.DB.prepare("DELETE FROM visitor_networks WHERE last_day < ?").bind(
       dayOf(now - NETWORK_MATCH_DAYS * 24 * 60 * 60 * 1000),

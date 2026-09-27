@@ -14,6 +14,7 @@ import { Avatar } from "../../ui/Avatar";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { parseQuizSettings } from "./QuizSettingsPanel";
+import { ReportQuestion } from "./ReportQuestion";
 
 type QuestionStage = Extract<QuizStage, { kind: "question" }>;
 type AnswerStage = Extract<QuizStage, { kind: "answer" }>;
@@ -408,6 +409,7 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
                 )}
                 <p className="line good">✓ {item.choices[item.correctChoice]}</p>
                 {item.explanation && <Explanation item={item} />}
+                <ReportQuestion questionId={item.questionId} />
               </li>
             ))}
           </ol>
