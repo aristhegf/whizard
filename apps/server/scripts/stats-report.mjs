@@ -102,7 +102,7 @@ const lines = [
     ],
   ),
   "",
-  `All days are UTC. "Visitors" in the daily table counts each browser once a day; "Visits" counts page loads.`,
+  `All days are UTC. "Visitors" in the daily table counts each person once a day; "Visits" counts page loads.`,
   "",
   `## Last ${days} days`,
   "",
