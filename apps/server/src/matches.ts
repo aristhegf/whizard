@@ -5,6 +5,7 @@ import type { Env } from "./env";
 import type { RequestContext } from "./http";
 import { asAvatar } from "./sessions";
 import { dayOf, NETWORK_MATCH_DAYS } from "./analytics";
+import { SEEN_KEEP_MS } from "./seen";
 
 /** How long a guest's games can still be claimed by an account they create. */
 export const GUEST_CLAIM_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
@@ -78,13 +79,19 @@ export async function recordMatch(env: Env, result: FinishedGame, finishedAt: nu
 
 /** Moves recent games played as a guest in this browser onto the account. */
 export async function claimGuestGames(env: Env, guestId: string, userId: string) {
-  await env.DB.prepare(
-    `UPDATE match_players SET user_id = ?1, guest_id = NULL
-      WHERE guest_id = ?2 AND user_id IS NULL
-        AND match_id NOT IN (SELECT match_id FROM match_players WHERE user_id = ?1)`,
-  )
-    .bind(userId, guestId)
-    .run();
+  await env.DB.batch([
+    env.DB.prepare(
+      `UPDATE match_players SET user_id = ?1, guest_id = NULL
+        WHERE guest_id = ?2 AND user_id IS NULL
+          AND match_id NOT IN (SELECT match_id FROM match_players WHERE user_id = ?1)`,
+    ).bind(userId, guestId),
+    // The questions they were asked as a guest follow them too.
+    env.DB.prepare("UPDATE OR IGNORE seen_questions SET viewer = ?1 WHERE viewer = ?2").bind(
+      `u:${userId}`,
+      `g:${guestId}`,
+    ),
+    env.DB.prepare("DELETE FROM seen_questions WHERE viewer = ?").bind(`g:${guestId}`),
+  ]);
 }
 
 async function matchesFor(
@@ -198,6 +205,7 @@ export async function cleanUp(env: Env, now: number) {
   await env.DB.batch([
     env.DB.prepare("DELETE FROM sessions WHERE expires_at < ?").bind(now),
     env.DB.prepare("DELETE FROM auth_challenges WHERE expires_at < ?").bind(now),
+    env.DB.prepare("DELETE FROM seen_questions WHERE seen_at < ?").bind(now - SEEN_KEEP_MS),
     // Network codes stop matching after a while (addresses get reused), so drop them then.
     env.DB.prepare("DELETE FROM visitor_networks WHERE last_day < ?").bind(
       dayOf(now - NETWORK_MATCH_DAYS * 24 * 60 * 60 * 1000),

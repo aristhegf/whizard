@@ -43,6 +43,7 @@ import {
 import type { Env } from "./env";
 import { count } from "./analytics";
 import { recordMatch } from "./matches";
+import { loadSeen, recordSeen, viewerKey } from "./seen";
 
 const STATE_KEY = "room";
 const OPEN = 1;
@@ -143,13 +144,7 @@ export class Room extends DurableObject<Env> {
         );
         return;
       case "start":
-        if (
-          await this.handleGame(ws, (state, playerId, now) =>
-            startGame(state, playerId, this.connectedIds(), now, randomSeed(), drawContent),
-          )
-        ) {
-          await count(this.env, { games_started: 1 });
-        }
+        await this.handleStart(ws);
         return;
       case "action":
         await this.handleGame(ws, (state, playerId, now) =>
@@ -252,6 +247,41 @@ export class Room extends DurableObject<Env> {
     if (!playerId || !state) return;
     ws.serializeAttachment(null);
     await this.commit(markDisconnected(state, playerId, this.connectedIds(), now));
+  }
+
+  /**
+   * Starts a game with questions the players haven't seen, as far as the bank allows: the
+   * room's own history comes with its state, and each player's comes from the database.
+   */
+  private async handleStart(ws: WebSocket) {
+    const before = await this.current(Date.now());
+    const request = before && gameModule(before.game.id).contentNeeded(before.game.settings);
+    const connected = this.connectedIds();
+    const viewers = (before?.players ?? [])
+      .filter((p) => connected.has(p.id))
+      .flatMap((p) => viewerKey(p) ?? []);
+    const seen = request ? await loadSeen(this.env, viewers, request.category) : new Map();
+
+    let drawn: string[] = [];
+    const started = await this.handleGame(ws, (state, playerId, now) =>
+      startGame(state, playerId, this.connectedIds(), now, randomSeed(), (req, seed, room) => {
+        const content = drawContent(req, seed, { recent: room.recent, seen });
+        drawn = content.map((q) => (q as { id: string }).id);
+        return content;
+      }),
+    );
+    if (!started) return;
+    await count(this.env, { games_started: 1 });
+    const roster = (await this.load())?.session?.roster ?? [];
+    if (request) {
+      await recordSeen(
+        this.env,
+        roster.flatMap((p) => viewerKey(p) ?? []),
+        request.category,
+        drawn,
+        Date.now(),
+      );
+    }
   }
 
   /** Applies a game change from a player. Returns whether it was accepted. */

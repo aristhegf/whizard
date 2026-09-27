@@ -25,6 +25,10 @@ export function PrivacyScreen() {
           nobody had an account are then deleted; otherwise only your nickname stays, so the other
           players’ history still makes sense.
         </p>
+        <p>
+          So you don’t get the same questions again, the ID of each question you’re asked is kept
+          with that random ID (or your account, if you have one) for 60 days, then deleted.
+        </p>
 
         <h2>With an account</h2>
         <ul>

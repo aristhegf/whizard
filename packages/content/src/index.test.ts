@@ -63,6 +63,42 @@ describe("drawQuestions", () => {
   });
 
   it("returns what it has when a pool is short", () => {
-    expect(drawQuestions("bible", "easy", 10, 1, [])).toEqual([]);
+    expect(drawQuestions("bible", "easy", 10, 1, {}, [])).toEqual([]);
+  });
+});
+
+describe("avoiding repeats", () => {
+  const pool = QUESTIONS.filter((q) => q.category === "geography" && q.difficulty === "easy");
+  const ids = (qs: { id: string }[]) => qs.map((q) => q.id);
+
+  it("doesn't repeat a room's questions until the pool runs out", () => {
+    const first = ids(drawQuestions("geography", "easy", 10, 1));
+    const second = ids(drawQuestions("geography", "easy", 10, 2, { recent: first }));
+    expect(second.filter((id) => first.includes(id))).toEqual([]);
+
+    // The pool has 20, so a third game has to reuse some: the oldest ones first.
+    const third = ids(drawQuestions("geography", "easy", 15, 3, { recent: [...second, ...first] }));
+    expect(third.filter((id) => second.includes(id))).toHaveLength(5);
+    expect(first.every((id) => third.includes(id))).toBe(true);
+  });
+
+  it("prefers questions fewer players have seen, then the ones seen longest ago", () => {
+    const seen = new Map(
+      pool.map((q, i) => [q.id, { players: i < 10 ? 2 : 1, lastSeenAt: i }] as const),
+    );
+    const drawn = ids(drawQuestions("geography", "easy", 12, 4, { seen }));
+    const once = pool.slice(10).map((q) => q.id);
+    expect(once.every((id) => drawn.includes(id))).toBe(true);
+    // The two seen by both players are the two seen longest ago.
+    expect(drawn.filter((id) => !once.includes(id)).sort()).toEqual(
+      [pool[0]!.id, pool[1]!.id].sort(),
+    );
+  });
+
+  it("leaves out retired questions", () => {
+    const retired = new Set(pool.slice(0, 5).map((q) => q.id));
+    const drawn = ids(drawQuestions("geography", "easy", 20, 5, { retired }));
+    expect(drawn).toHaveLength(15);
+    expect(drawn.some((id) => retired.has(id))).toBe(false);
   });
 });

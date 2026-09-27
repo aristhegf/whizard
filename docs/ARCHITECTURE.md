@@ -228,39 +228,16 @@ Each game that needs content gets its own set: quiz questions first, later word 
 
 ### Where questions live
 
-Today the questions are JSON files in `packages/content/src/questions/`, one per category, bundled with the Worker. At a few thousand questions that is small, fast and needs no database. Every change goes through a pull request, so each new question gets reviewed and tested before it ships.
+The questions are JSON files in `packages/content/src/questions/`, one per category, bundled with the Worker. At a few thousand questions that is small, fast and needs no database. Every change goes through a pull request, so each new question gets reviewed and tested before it ships.
 
-They move into D1 in M5, when the "report this question" button and "don't repeat questions I've seen" need somewhere to write. The room already draws questions through a single `drawContent` function, so it won't change.
+What changes while the site runs lives in D1 instead: which questions each player has seen, and reports that take a question out of play. That gives the benefits the original plan wanted from moving the whole bank to D1 (no redeploy to retire a bad question, no repeats) without moving the questions themselves, which only pays off at many thousands. The room draws questions through a single `drawContent` function, so moving the bank later wouldn't change the rooms.
 
 A lint rule blocks the web app from importing `packages/content`, so answers can never end up in the browser.
 
-### Quiz questions in D1 (M5)
-
-```sql
-CREATE TABLE questions (
-  id              TEXT PRIMARY KEY,
-  category        TEXT NOT NULL,        -- bible, geography, football, nigerian-culture, ...
-  topic           TEXT,                 -- e.g. "Genesis", "Rivers", "Premier League"
-  difficulty      TEXT NOT NULL,        -- easy, medium, hard
-  prompt          TEXT NOT NULL,
-  choices         TEXT NOT NULL,        -- JSON array, correct answer first
-  explanation     TEXT,
-  reference       TEXT,                 -- e.g. "Genesis 6:14"
-  time_sensitive  INTEGER NOT NULL DEFAULT 0,  -- facts that can go stale (football, pop culture)
-  checked_at      INTEGER NOT NULL,     -- when the facts were last verified
-  content_hash    TEXT NOT NULL UNIQUE, -- normalised prompt + answer, for de-duplication
-  status          TEXT NOT NULL DEFAULT 'approved',  -- approved, flagged, retired
-  reports         INTEGER NOT NULL DEFAULT 0,
-  rand_key        REAL NOT NULL,        -- stored random value for fast random draws
-  created_at      INTEGER NOT NULL
-);
-CREATE INDEX idx_draw ON questions (category, difficulty, status, rand_key);
-```
-
 ### Drawing a question set
 
-- The room picks a random point and walks the `idx_draw` index from there. That's fast at any size, unlike `ORDER BY RANDOM()`.
-- **Avoiding repeats:** each browser keeps a list of recently seen question IDs, and signed-in players' match history is used too. Those questions are skipped where possible.
+- **Avoiding repeats.** Each room remembers the last 300 questions it used, and each player's questions from the last 60 days are kept in `seen_questions`, under their account or, for guests, the random guest ID their browser sends. When a game starts, the draw ranks the pool: questions the room hasn't used and no player has seen come first, then ones fewer of the players have seen, then the ones seen longest ago. Ties are broken by the game's seed, and the chosen set is shuffled. A guest's history moves to their account when they sign up.
+- **The pool sets the limit.** Most categories have 20 questions per level, so a 15-question game uses three-quarters of a pool and repeats return after a game or two. A bigger bank makes them rare.
 - A **"report this question"** button increments `reports`. Questions with too many reports are flagged and hidden until reviewed.
 - **Stale facts:** time-sensitive questions are re-verified on a schedule, and retired if they no longer hold ("Who won the last World Cup?").
 

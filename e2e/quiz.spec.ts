@@ -215,3 +215,27 @@ test("a long game with friends ends on the final rankings", async ({ browser }) 
   await guest.reload();
   await expect(guest.getByRole("heading", { name: "Final Rankings" })).toBeVisible();
 });
+
+test("playing again doesn't repeat questions", async ({ browser }) => {
+  const page = await newPlayer(browser);
+  await openRoom(page);
+  await page.getByLabel("Questions").selectOption("5");
+
+  const play = async () => {
+    const prompts: string[] = [];
+    for (let i = 1; i <= 5; i++) {
+      await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
+      prompts.push(await page.locator(".prompt").innerText());
+      await answerFirstChoice(page, i, 5);
+      await page.getByRole("button", { name: "Skip" }).click();
+    }
+    await expect(page.getByText("Your score")).toBeVisible();
+    return prompts;
+  };
+
+  await page.getByRole("button", { name: "Play solo" }).click();
+  const first = await play();
+  await page.getByRole("button", { name: "Play again" }).click();
+  const second = await play();
+  expect(second.filter((prompt) => first.includes(prompt))).toEqual([]);
+});

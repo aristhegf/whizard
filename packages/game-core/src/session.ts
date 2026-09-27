@@ -46,8 +46,28 @@ export type GameError =
 export type GameResult =
   { ok: true; state: RoomState } | { ok: false; error: GameError; message?: string };
 
+/** What a room has already used, so the next game can pick something else. */
+export interface ContentHistory {
+  /** Content IDs this room used, newest first. */
+  recent: readonly string[];
+}
+
 /** Draws content for a game, e.g. questions from the bank. Returns fewer items if it runs short. */
-export type ContentSource = (request: ContentRequest, seed: number) => unknown[];
+export type ContentSource = (
+  request: ContentRequest,
+  seed: number,
+  history: ContentHistory,
+) => unknown[];
+
+/** How many used items a room remembers: several long games' worth. */
+const RECENT_CONTENT_LIMIT = 300;
+
+function contentIds(content: unknown[]): string[] {
+  return content.flatMap((item) => {
+    const id = (item as { id?: unknown } | null)?.id;
+    return typeof id === "string" ? [id] : [];
+  });
+}
 
 export function defaultGameConfig(id: GameId = "quiz"): GameConfig {
   return { id, settings: gameModule(id).defaultSettings };
@@ -85,7 +105,8 @@ export function startGame(
   const players = playing.map((p) => ({ id: p.id, nickname: p.nickname }));
   if (players.length < module.minPlayers) return fail("not_enough_players");
 
-  const content = drawContent(module.contentNeeded(state.game.settings), seed);
+  const recent = state.recentContent ?? [];
+  const content = drawContent(module.contentNeeded(state.game.settings), seed, { recent });
   if (content.length === 0) return fail("no_content");
 
   const gameState = module.setup({ settings: state.game.settings, players, content, seed, now });
@@ -94,6 +115,7 @@ export function startGame(
     state: {
       ...state,
       lastActivityAt: now,
+      recentContent: [...contentIds(content), ...recent].slice(0, RECENT_CONTENT_LIMIT),
       session: {
         gameId: state.game.id,
         state: gameState,

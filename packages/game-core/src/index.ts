@@ -47,6 +47,7 @@ export {
   startGame,
   tickGame,
   unrecordedResult,
+  type ContentHistory,
   type ContentSource,
   type FinishedGame,
   type GameConfig,
