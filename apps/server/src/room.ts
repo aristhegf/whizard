@@ -17,6 +17,7 @@ import {
   randomSeed,
   randomToken,
   returnToLobby,
+  sameNickname,
   settle,
   startGame,
   tickGame,
@@ -45,6 +46,7 @@ import { count, logActivity, recordPlayerDays, sizeBucket } from "./analytics";
 import { loadBank, recordQuestionStats } from "./bank";
 import { liveRoomOf, removeLiveRoom, saveLiveRoom } from "./liveRooms";
 import { recordMatch } from "./matches";
+import { NAME_BLOCKED_MESSAGE, recordName, refusedName } from "./moderation";
 import { retiredQuestions } from "./reports";
 import { loadSeen, recordSeen, viewerKey } from "./seen";
 
@@ -205,6 +207,15 @@ export class Room extends DurableObject<Env> {
     if (attachment?.playerId) return;
     const account = attachment?.account ?? null;
 
+    // A new player's nickname is checked against the blocked words; a returning one keeps theirs.
+    const returning =
+      message.sessionToken !== undefined &&
+      state.players.some((p) => p.sessionToken === message.sessionToken);
+    if (!returning && (await refusedName(this.env, message.nickname))) {
+      sendError(ws, ErrorCode.NicknameInvalid, NAME_BLOCKED_MESSAGE);
+      return;
+    }
+
     const avatar = (AVATAR_IDS as readonly string[]).includes(message.avatar ?? "")
       ? message.avatar
       : undefined;
@@ -234,6 +245,12 @@ export class Room extends DurableObject<Env> {
       const shared = result.state.players.length === 2;
       await count(this.env, { room_joins: 1, ...(shared ? { rooms_shared: 1 } : {}) });
       await logActivity(this.env, "player_joined", { room: result.state.code });
+      await recordName(this.env, {
+        name: result.player.nickname,
+        kind: "nickname",
+        target: result.state.code,
+        detail: result.state.code,
+      });
     }
   }
 
@@ -394,6 +411,23 @@ export class Room extends DurableObject<Env> {
       ws.close(CloseCode.RoomClosed, "Room closed");
     }
     await this.remove(state);
+    return true;
+  }
+
+  /**
+   * `Remove` on the admin Moderation page: the player with this nickname is sent away and
+   * leaves the room. Returns whether they were in it.
+   */
+  async removeByAdmin(nickname: string): Promise<boolean> {
+    const now = Date.now();
+    const state = await this.current(now);
+    const player = state?.players.find((p) => sameNickname(p.nickname, nickname));
+    if (!state || !player) return false;
+    for (const ws of this.socketsFor(player.id)) {
+      ws.serializeAttachment(null);
+      ws.close(CloseCode.Removed, "Removed from the room");
+    }
+    await this.commit(leaveRoom(state, player.id, this.connectedIds(), now));
     return true;
   }
 

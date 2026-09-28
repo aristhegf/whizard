@@ -12,9 +12,11 @@ import { LogoMark } from "../ui/Logo";
 import { Analytics } from "./Analytics";
 import { Content } from "./Content";
 import { Dashboard } from "./Dashboard";
+import { Moderation } from "./Moderation";
 import { Questions } from "./Questions";
 import { Reports } from "./Reports";
 import { Rooms } from "./Rooms";
+import { Settings } from "./Settings";
 import { Users } from "./Users";
 
 interface Section {
@@ -33,6 +35,8 @@ const SUBTITLES: Record<string, string> = {
   analytics: "Who visits, where they come from and what they look at.",
   questions: "The bank by topic and level, and how each question plays.",
   content: "Browse, edit and add questions. Changes reach new games within a minute.",
+  moderation: "The names players choose, and the words they can’t use.",
+  settings: "Site switches, admins, and what admins have done.",
 };
 
 const SECTIONS: Section[] = [
@@ -49,19 +53,14 @@ const SECTIONS: Section[] = [
   { id: "analytics", label: "Analytics", icon: "repeat" },
   { id: "reports", label: "Reports", icon: "flag" },
   { id: "content", label: "Content", icon: "layers" },
-  {
-    id: "moderation",
-    label: "Moderation",
-    icon: "shield",
-    soon: "Nicknames and anything players type, once games let them.",
-  },
+  { id: "moderation", label: "Moderation", icon: "shield" },
   {
     id: "payments",
     label: "Payments",
     icon: "wallet",
     soon: "Pro subscriptions, once they exist.",
   },
-  { id: "settings", label: "Settings", icon: "settings", soon: "Admins and site settings." },
+  { id: "settings", label: "Settings", icon: "settings" },
 ];
 
 /** `/admin`: only accounts marked as admin get in; the server checks every request too. */
@@ -180,6 +179,10 @@ function AdminShell({
           <Questions />
         ) : current.id === "content" ? (
           <Content item={item} />
+        ) : current.id === "moderation" ? (
+          <Moderation />
+        ) : current.id === "settings" ? (
+          <Settings me={user.id} />
         ) : (
           <section className="panel admin-soon">
             <Icon name={current.icon} size={40} />

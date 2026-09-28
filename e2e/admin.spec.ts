@@ -144,3 +144,78 @@ test("an admin can edit a question, undo it, and add their own", async ({ browse
   await page.getByRole("button", { name: "Delete question" }).click();
   await expect(page).toHaveURL(/\/admin\/content$/);
 });
+
+test("blocked words keep names out, and a flagged player can be removed", async ({ browser }) => {
+  const admin = await signedUp(browser);
+  grantAdmin(admin.username);
+  const page = admin.page;
+  const tag = Math.random().toString(36).slice(2, 7);
+  const block = async (word: string) => {
+    await page.goto("/admin/moderation");
+    await page.getByLabel("Add a word").fill(word);
+    await page.getByRole("button", { name: "Block it" }).click();
+    await expect(page.locator(".word-list").getByText(word, { exact: true })).toBeVisible();
+  };
+
+  const host = await (await browser.newContext()).newPage();
+  await host.goto("/");
+  await host.getByRole("button", { name: "Create a Room" }).click();
+  await expect(host).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
+  await host.getByLabel("Choose a nickname").fill(`Ok${tag}`);
+  await host.getByRole("button", { name: "Join", exact: true }).click();
+  await expect(host.getByLabel("Questions")).toBeVisible();
+
+  // A new player can't use a blocked word, even written with look-alikes.
+  await block(`zq${tag}`);
+  const guest = await (await browser.newContext()).newPage();
+  await guest.goto(host.url());
+  await guest.getByLabel("Choose a nickname").fill(`Z Q ${tag}`);
+  await guest.getByRole("button", { name: "Join", exact: true }).click();
+  await expect(guest.getByText("That name isn’t allowed here. Try another.")).toBeVisible();
+
+  // Blocking a name already in use flags it, and the player can be sent away.
+  await block(`ok${tag}`);
+  await page.reload();
+  const row = page.locator(".name-row", { hasText: `Ok${tag}` });
+  await expect(row.getByText(`Matches “ok${tag}”`)).toBeVisible();
+  await row.getByRole("button", { name: "Remove from room" }).click();
+  await expect(host.getByText("You were removed from this room by Whizard.")).toBeVisible();
+
+  await page
+    .locator(".word-list li", { hasText: `ok${tag}` })
+    .getByRole("button")
+    .click();
+  await expect(page.locator(".word-list").getByText(`ok${tag}`, { exact: true })).toHaveCount(0);
+});
+
+test("admins can put up an announcement and add another admin", async ({ browser }) => {
+  const admin = await signedUp(browser);
+  grantAdmin(admin.username);
+  const other = await signedUp(browser);
+  const page = admin.page;
+  const notice = `Quiz night on Friday ${Math.random().toString(36).slice(2, 6)}`;
+
+  await page.goto("/admin/settings");
+  await page.getByLabel(/^Announcement/).fill(notice);
+  await page.getByRole("button", { name: "Save announcement" }).click();
+  await expect(page.getByText("Announcement is up.")).toBeVisible();
+  const visitor = await (await browser.newContext()).newPage();
+  await visitor.goto("/");
+  await expect(visitor.getByRole("status").filter({ hasText: notice })).toBeVisible();
+  await visitor.getByRole("button", { name: "Close the announcement" }).click();
+  await expect(visitor.getByText(notice)).toHaveCount(0);
+
+  await page.getByLabel(/^Announcement/).fill("");
+  await page.getByRole("button", { name: "Save announcement" }).click();
+  await expect(page.getByText("Announcement taken down.")).toBeVisible();
+
+  await page.getByLabel("Make someone an admin").fill(other.username);
+  await page.getByRole("button", { name: "Add admin" }).click();
+  const row = page.locator(".admin-row", { hasText: `@${other.username}` });
+  await expect(row).toBeVisible();
+  await other.page.goto("/admin");
+  await expect(other.page.getByRole("heading", { name: "Admin Dashboard" })).toBeVisible();
+  await row.getByRole("button", { name: "Remove admin" }).click();
+  await expect(row).toHaveCount(0);
+  await expect(page.locator(".log-list")).toContainText(`took admin away from @${other.username}`);
+});

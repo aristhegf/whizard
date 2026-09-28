@@ -15,6 +15,8 @@ export const CloseCode = {
   RoomExpired: 4410,
   /** Closed by a Whizard admin. */
   RoomClosed: 4403,
+  /** This player was removed from the room by a Whizard admin. */
+  Removed: 4406,
 } as const;
 
 export const FINAL_CLOSE_CODES: ReadonlySet<number> = new Set(Object.values(CloseCode));
@@ -129,3 +131,4 @@ export * from "./presence";
 export * from "./stats";
 export * from "./reports";
 export * from "./admin";
+export * from "./moderation";

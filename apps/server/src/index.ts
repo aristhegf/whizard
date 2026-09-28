@@ -52,6 +52,7 @@ import { COUNTRY_HEADER, NETWORK_HEADER } from "./presence";
 import { ACCOUNT_HEADER } from "./room";
 import { decideReport, getAdminActivity, getAdminOverview, getAdminReports } from "./admin";
 import { getAdminAnalytics } from "./adminAnalytics";
+import { actOnName, addBlockedWord, getModeration, removeBlockedWord } from "./adminModeration";
 import {
   addQuestion,
   getQuestion,
@@ -61,7 +62,9 @@ import {
   updateQuestion,
 } from "./adminQuestions";
 import { loadBank } from "./bank";
+import { getSite, siteSettings } from "./settings";
 import { closeRoom, getAdminRooms } from "./adminRooms";
+import { getAdminSettings, grantAdmin, revokeAdmin, updateSettings } from "./adminSettings";
 import { getAdminUsers, manageUser } from "./adminUsers";
 import { reportQuestion } from "./reports";
 import { getSiteStats } from "./stats";
@@ -94,6 +97,10 @@ async function createRoom({ env, request, ctx }: RequestContext): Promise<Respon
       "too_many_rooms",
       "That’s a lot of rooms at once. Try again in a minute.",
     );
+  }
+  // The deploy's smoke test still gets a room, so a pause can't fail a deploy.
+  if ((await siteSettings(env)).roomsPaused && !request.headers.has("X-Whizard-Smoke-Test")) {
+    return jsonError(503, "rooms_paused", "New rooms are paused. Try again soon.");
   }
   const text = await request.text();
   let settings: unknown;
@@ -197,6 +204,7 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/presence$/, presenceSocket],
   ["GET", /^\/api\/stats$/, getSiteStats],
   ["GET", /^\/api\/community$/, getCommunityStats],
+  ["GET", /^\/api\/site$/, getSite],
   ["POST", /^\/api\/questions\/([^/]+)\/report$/, reportQuestion],
 
   ["GET", /^\/api\/admin\/overview$/, getAdminOverview],
@@ -214,6 +222,14 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/admin\/questions\/([^/]+)$/, getQuestion],
   ["PATCH", /^\/api\/admin\/questions\/([^/]+)$/, updateQuestion],
   ["DELETE", /^\/api\/admin\/questions\/([^/]+)$/, revertQuestion],
+  ["GET", /^\/api\/admin\/moderation$/, getModeration],
+  ["POST", /^\/api\/admin\/moderation\/words$/, addBlockedWord],
+  ["DELETE", /^\/api\/admin\/moderation\/words\/([^/]+)$/, removeBlockedWord],
+  ["POST", /^\/api\/admin\/moderation\/names\/(\d+)$/, actOnName],
+  ["GET", /^\/api\/admin\/settings$/, getAdminSettings],
+  ["PATCH", /^\/api\/admin\/settings$/, updateSettings],
+  ["POST", /^\/api\/admin\/admins$/, grantAdmin],
+  ["DELETE", /^\/api\/admin\/admins\/([^/]+)$/, revokeAdmin],
 
   ["POST", /^\/api\/auth\/signup\/options$/, signUpOptions],
   ["POST", /^\/api\/auth\/signup\/verify$/, signUpVerify],

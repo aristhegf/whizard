@@ -108,6 +108,12 @@ export function PrivacyScreen() {
             got it right and which wrong answers were picked, as totals with nothing about who
             answered.
           </p>
+          <p>
+            Names people choose (room nicknames, account names and group names) are checked against
+            a list of words that aren’t allowed, and kept for 7 days so admins can look over them,
+            with the room code or the account’s username. An admin can remove a player from a room,
+            or reset an account or group name to a plain one.
+          </p>
 
           <h2>Your choices</h2>
           <p>

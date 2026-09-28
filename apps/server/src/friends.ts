@@ -17,6 +17,7 @@ import { requireUser } from "./account";
 import type { Env } from "./env";
 import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./http";
 import { asAvatar, currentSession } from "./sessions";
+import { recordName, requireAllowedName } from "./moderation";
 
 interface PublicRow {
   id: string;
@@ -286,8 +287,12 @@ export async function createGroup(context: RequestContext): Promise<Response> {
   const { user } = await requireUser(context);
   const body = await readJson(context.request, groupRequestSchema);
   const name = groupName(body.name);
+  await requireAllowedName(context.env, name);
   const members = await memberIds(context.env, user.id, body.members);
   const id = randomToken(12);
+  context.ctx.waitUntil(
+    recordName(context.env, { name, kind: "group", target: id, detail: `@${user.username}` }),
+  );
   const db = context.env.DB;
   await db.batch([
     db
@@ -311,6 +316,17 @@ export async function updateGroup(context: RequestContext): Promise<Response> {
   }
   const body = await readJson(context.request, groupRequestSchema);
   const name = groupName(body.name);
+  if (name !== group.name) {
+    await requireAllowedName(context.env, name);
+    context.ctx.waitUntil(
+      recordName(context.env, {
+        name,
+        kind: "group",
+        target: group.id,
+        detail: `@${user.username}`,
+      }),
+    );
+  }
   const members = await memberIds(context.env, user.id, body.members);
   const db = context.env.DB;
   await db.batch([

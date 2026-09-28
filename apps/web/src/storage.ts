@@ -102,3 +102,14 @@ export function clearSession(code: string): void {
   delete sessions[code];
   write(SESSIONS_KEY, sessions);
 }
+
+const DISMISSED_KEY = "whizard:dismissed-announcement";
+
+/** The announcement this browser closed, so it stays closed until there's a new one. */
+export function dismissedAnnouncement(): string | null {
+  return read<string>(DISMISSED_KEY);
+}
+
+export function dismissAnnouncement(text: string): void {
+  write(DISMISSED_KEY, text);
+}

@@ -14,7 +14,9 @@ import { count, countryCode, logActivity } from "./analytics";
 import { claimGuestGames } from "./matches";
 import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./http";
 import { requireUser } from "./account";
+import { recordName, requireAllowedName } from "./moderation";
 import { createSession, toAccountUser, type UserRow } from "./sessions";
+import { siteSettings } from "./settings";
 
 const RP_NAME = "Whizard";
 const CHALLENGE_TTL_MS = 5 * 60_000;
@@ -180,6 +182,14 @@ export async function signUpOptions(context: RequestContext): Promise<Response> 
   if (!displayName) {
     throw new HttpError(400, "display_name_invalid", "Pick a name between 1 and 20 characters.");
   }
+  if ((await siteSettings(context.env)).signupsPaused) {
+    throw new HttpError(
+      403,
+      "signups_paused",
+      "New accounts are paused for now. You can still play as a guest.",
+    );
+  }
+  await requireAllowedName(context.env, username, displayName);
   if (await usernameTaken(context, username)) {
     throw new HttpError(409, "username_taken", "That username is taken.");
   }
@@ -240,6 +250,12 @@ export async function signUpVerify(context: RequestContext): Promise<Response> {
   context.ctx.waitUntil(
     Promise.all([
       count(context.env, { accounts_created: 1 }, now),
+      recordName(context.env, {
+        name: user.display_name,
+        kind: "account",
+        target: user.id,
+        detail: `@${user.username}`,
+      }),
       logActivity(context.env, "account_created", {
         country: countryCode((context.request.cf as { country?: unknown } | undefined)?.country),
       }),
