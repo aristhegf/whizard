@@ -110,3 +110,68 @@ test("two players race the same puzzle, and the faster one wins", async ({ brows
     await expect(rankings.getByRole("listitem").nth(1)).toContainText("Ada");
   }
 });
+
+test("the host frames their own photo, and everyone plays it", async ({ browser }) => {
+  const host = await newPlayer(browser);
+  await host.goto("/games/jigsaw");
+  await host.getByRole("button", { name: /Easy · 9 pieces/ }).click();
+  // Choosing the photo on the picture page opens a room, then the framing step.
+  await host
+    .getByLabel("Choose your photo")
+    .setInputFiles(new URL("./fixtures/photo.jpg", import.meta.url).pathname);
+  await joinAs(host, "Ada");
+
+  const cropper = host.getByRole("dialog", { name: "Frame your jigsaw" });
+  await expect(cropper).toBeVisible();
+  const frame = cropper.getByRole("slider", { name: /The square to use/ });
+  await expect(frame).toBeVisible();
+  // The photo is wider than tall, so the frame starts in the middle and can move sideways.
+  const before = await frame.boundingBox();
+  await frame.hover();
+  await host.mouse.down();
+  await host.mouse.move(before!.x + before!.width / 2 - 60, before!.y + before!.height / 2);
+  await host.mouse.up();
+  await expect.poll(async () => (await frame.boundingBox())!.x).toBeLessThan(before!.x - 20);
+  await cropper.getByLabel("Size").fill("0.6");
+  await cropper.getByRole("button", { name: "Use this photo" }).click();
+  await expect(cropper).toBeHidden();
+
+  await expect(host.getByLabel("Picture", { exact: true })).toHaveValue("photo");
+  const art = host.locator(".game-summary img");
+  await expect(art).toHaveAttribute("src", /\/api\/rooms\/[A-Z0-9]+\/photo\/[a-z0-9]+$/);
+  const src = (await art.getAttribute("src"))!;
+  const photo = await host.request.get(src);
+  expect(photo.status()).toBe(200);
+  expect(photo.headers()["content-type"]).toBe("image/jpeg");
+
+  // Only the host can change it.
+  const guest = await newPlayer(browser);
+  await guest.goto(host.url());
+  await joinAs(guest, "Tolu");
+  const refused = await guest.evaluate(async (url) => {
+    const code = /\/r\/([^/]+)/.exec(url)![1]!;
+    const sessions = JSON.parse(localStorage.getItem("whizard:sessions") ?? "{}") as Record<
+      string,
+      { sessionToken: string }
+    >;
+    const token = sessions[code]?.sessionToken ?? "missing-token";
+    const response = await fetch(`/api/rooms/${code}/photo`, {
+      method: "POST",
+      headers: { "Content-Type": "image/jpeg", Authorization: `Bearer ${token}` },
+      body: new Uint8Array([0xff, 0xd8, 0xff, 0xe0]),
+    });
+    return response.status;
+  }, host.url());
+  expect(refused).toBe(403);
+
+  await host.getByRole("button", { name: /start game/i }).press("Enter");
+  for (const page of [host, guest]) {
+    await expect(page.locator(".jigsaw-piece")).toHaveCount(9);
+    await expect(page.locator(".jigsaw-piece").first()).toHaveAttribute(
+      "style",
+      new RegExp(src.replace(/[/]/g, "\\/")),
+    );
+  }
+  await solve(host);
+  await expect(host.getByText("Solved in")).toBeVisible({ timeout: 10_000 });
+});

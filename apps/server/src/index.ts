@@ -69,6 +69,7 @@ import {
   updateQuestion,
 } from "./adminQuestions";
 import { loadBank } from "./bank";
+import { getPhoto, uploadPhoto } from "./photos";
 import { getSite, siteSettings } from "./settings";
 import { closeRoom, getAdminRooms } from "./adminRooms";
 import { getAdminSettings, grantAdmin, revokeAdmin, updateSettings } from "./adminSettings";
@@ -231,6 +232,8 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["POST", /^\/api\/rooms$/, createRoom],
   ["GET", /^\/api\/rooms\/([^/]+)$/, roomStatus],
   ["GET", /^\/api\/rooms\/([^/]+)\/ws$/, roomSocket],
+  ["POST", /^\/api\/rooms\/([^/]+)\/photo$/, uploadPhoto],
+  ["GET", /^\/api\/rooms\/([^/]+)\/photo\/([^/]+)$/, getPhoto],
   ["GET", /^\/api\/presence$/, presenceSocket],
   ["GET", /^\/api\/stats$/, getSiteStats],
   ["GET", /^\/api\/community$/, getCommunityStats],

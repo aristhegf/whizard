@@ -1,6 +1,7 @@
 import {
   ELIMINATION_MIN_PLAYERS,
   JIGSAW_PICTURES,
+  photoPicture,
   LEVEL_NAMES,
   MAX_PLAYERS,
   NICKNAME_INPUT_MAX_LENGTH,
@@ -31,6 +32,7 @@ import {
   ConnectionsSettingsRows,
   parseConnectionsSettings,
 } from "./games/connections/ConnectionsSettingsRows";
+import { useJigsawPhoto } from "./games/jigsaw/JigsawPhoto";
 import { JigsawScreen } from "./games/jigsaw/JigsawScreen";
 import {
   JigsawSettingsRows,
@@ -395,6 +397,7 @@ function Lobby({
   const settings = gameId === "quiz" ? parseQuizSettings(room.game.settings) : null;
   const rounds = isRoundsGame(gameId) ? parseRoundsSettings(gameId, room.game.settings) : null;
   const jigsaw = gameId === "jigsaw" ? parseJigsawSettings(room.game.settings) : null;
+  const photo = useJigsawPhoto(room.code, isHost && gameId === "jigsaw");
   const connections =
     gameId === "connections" ? parseConnectionsSettings(room.game.settings) : null;
   const logic = gameId === "logic" ? parseLogicSettings(room.game.settings) : null;
@@ -422,6 +425,7 @@ function Lobby({
 
   return (
     <>
+      {photo.element}
       <header className="room-bar">
         <button className="btn-link back-link" onClick={() => onLeave("/games")}>
           <Icon name="chevronLeft" size={20} />
@@ -455,7 +459,9 @@ function Lobby({
             <span className={jigsaw ? "summary-art picture" : "summary-art"}>
               <img
                 src={
-                  (jigsaw && JIGSAW_PICTURES.find((p) => p.id === jigsaw.picture)?.src) ||
+                  (jigsaw?.picture === "photo" && jigsaw.photo
+                    ? photoPicture(room.code, jigsaw.photo).src
+                    : jigsaw && JIGSAW_PICTURES.find((p) => p.id === jigsaw.picture)?.src) ||
                   (game?.art ?? "/art/games/quiz.webp")
                 }
                 alt=""
@@ -581,6 +587,7 @@ function Lobby({
                   settings={jigsaw}
                   editable={canEdit}
                   onChange={(next) => client.configure(next)}
+                  onPickPhoto={photo.pick}
                 />
               )}
               <div className="setting-row toggle-row">

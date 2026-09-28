@@ -57,6 +57,30 @@ export async function createRoom(
   return body.code;
 }
 
+/**
+ * Sends the host's cropped jigsaw photo to their room, which makes it the picture. Returns the
+ * photo's ID. `sessionToken` is the host's token for the room.
+ */
+export async function uploadRoomPhoto(
+  code: string,
+  sessionToken: string,
+  photo: Blob,
+): Promise<string> {
+  const response = await fetch(`/api/rooms/${encodeURIComponent(code)}/photo`, {
+    method: "POST",
+    headers: { "Content-Type": photo.type, Authorization: `Bearer ${sessionToken}` },
+    body: photo,
+  });
+  const body = (await response.json().catch(() => null)) as {
+    id?: string;
+    error?: { message?: string };
+  } | null;
+  if (!response.ok || !body?.id) {
+    throw new ServerRefusal(body?.error?.message ?? "That photo didn’t upload. Try again.");
+  }
+  return body.id;
+}
+
 export interface RoomStatus {
   code: string;
   phase: "lobby" | "playing" | "finished";
