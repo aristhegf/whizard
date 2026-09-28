@@ -1,4 +1,9 @@
-import { NICKNAME_INPUT_MAX_LENGTH, QUIZ_CATEGORIES, normalizeNickname } from "@whizard/game-core";
+import {
+  JIGSAW_PICTURES,
+  NICKNAME_INPUT_MAX_LENGTH,
+  QUIZ_CATEGORIES,
+  normalizeNickname,
+} from "@whizard/game-core";
 import {
   AVATAR_IDS,
   USERNAME_MAX_LENGTH,
@@ -349,9 +354,19 @@ const ordinal = (n: number) => {
 
 const shortDate = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short" });
 
+/** A game's name for history: the quiz topic and level, or the jigsaw picture and size. */
+function matchTitle(match: MatchRecord): string {
+  if (match.game === "jigsaw") {
+    const picture = JIGSAW_PICTURES.find((p) => p.id === match.category)?.name;
+    return picture ? `Jigsaw · ${picture}` : "Jigsaw";
+  }
+  return `${categoryName(match.category)} · ${difficultyName(match.difficulty)}`;
+}
+
 function MatchRow({ match }: { match: MatchRecord }) {
   const me = match.players.find((p) => p.isMe);
   const others = match.players.filter((p) => !p.isMe);
+  const jigsaw = match.game === "jigsaw";
   const details = [
     others.length === 0
       ? "Solo"
@@ -359,16 +374,16 @@ function MatchRow({ match }: { match: MatchRecord }) {
           .slice(0, 3)
           .map((p) => p.nickname)
           .join(", ")}${others.length > 3 ? ` +${others.length - 3}` : ""}`,
-    match.myCorrect === null ? null : `${match.myCorrect}/${match.rounds} correct`,
+    match.myCorrect === null
+      ? null
+      : `${match.myCorrect}/${match.rounds} ${jigsaw ? "pieces" : "correct"}`,
     shortDate.format(match.finishedAt),
   ].filter(Boolean);
 
   return (
     <li>
       <div className="match-main">
-        <span className="match-title">
-          {categoryName(match.category)} · {difficultyName(match.difficulty)}
-        </span>
+        <span className="match-title">{matchTitle(match)}</span>
         <span className="muted small">{details.join(" · ")}</span>
       </div>
       <div className="match-result">

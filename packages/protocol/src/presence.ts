@@ -10,6 +10,7 @@ export const PAGE_NAMES = [
   "home",
   "games",
   "topics",
+  "jigsaw",
   "room",
   "account",
   "friends",

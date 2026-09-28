@@ -34,11 +34,15 @@ import { guestId } from "./storage";
 export class ServerRefusal extends Error {}
 
 /** Makes a room, optionally with game settings already chosen (such as a topic). */
-export async function createRoom(settings?: Record<string, unknown>): Promise<string> {
+/** Opens a room for a game (the quiz unless named), optionally with its settings preset. */
+export async function createRoom(
+  settings?: Record<string, unknown>,
+  game?: string,
+): Promise<string> {
   const response = await fetch("/api/rooms", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(settings ? { settings } : {}),
+    body: JSON.stringify({ ...(game ? { game } : {}), ...(settings ? { settings } : {}) }),
   });
   if (!response.ok) {
     const refusal = (await response.json().catch(() => null)) as {

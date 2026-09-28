@@ -1,7 +1,9 @@
 import {
+  JIGSAW_PICTURES,
   MAX_PLAYERS,
   NICKNAME_INPUT_MAX_LENGTH,
   QUIZ_CATEGORIES,
+  type JigsawView,
   type QuizView,
 } from "@whizard/game-core";
 import { AVATAR_IDS } from "@whizard/protocol";
@@ -15,6 +17,13 @@ import { SlideActionButton } from "@/components/motion/slide-action-button";
 import { Tooltip } from "@/components/motion/tooltip";
 import { useAccount } from "./account";
 import { PingFriends } from "./FriendsScreen";
+import { JigsawScreen } from "./games/jigsaw/JigsawScreen";
+import {
+  JigsawSettingsRows,
+  parseJigsawSettings,
+  pictureName,
+  sizeName,
+} from "./games/jigsaw/JigsawSettingsPanel";
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { Notice } from "./Notice";
@@ -45,8 +54,13 @@ export function RoomScreen({ code }: { code: string }) {
   const joined = !!(state.playerId && room);
   const inGame = joined && room!.phase !== "lobby" && !!state.game;
 
-  const stage = inGame ? (state.game as QuizView).stage.kind : null;
-  const midGame = room?.phase === "playing" && (stage === "question" || stage === "answer");
+  const view = inGame ? (state.game as QuizView | JigsawView) : null;
+  // Leaving asks first while you're in the middle of playing.
+  const midGame =
+    room?.phase === "playing" &&
+    (view?.game === "jigsaw"
+      ? view.board !== null && !view.me?.finished && !view.final
+      : view?.stage.kind === "question" || view?.stage.kind === "answer");
 
   const leave = (to: string) => {
     if (midGame && !window.confirm("Leave this game? You can’t rejoin it.")) return;
@@ -57,7 +71,17 @@ export function RoomScreen({ code }: { code: string }) {
   return (
     <div className="page room-page">
       <h1 className="sr-only">Whizard room {code}</h1>
-      {inGame ? (
+      {inGame && view?.game === "jigsaw" ? (
+        <JigsawScreen
+          view={view}
+          client={client}
+          room={room!}
+          playerId={state.playerId!}
+          isHost={room!.hostId === state.playerId}
+          latency={<Latency state={state} />}
+          onQuit={() => leave("/")}
+        />
+      ) : inGame ? (
         <QuizScreen
           view={state.game as QuizView}
           client={client}
@@ -280,16 +304,18 @@ function Lobby({
   onLeave: (to: string) => void;
 }) {
   const isHost = room.hostId === playerId;
-  const settings = parseQuizSettings(room.game.settings);
+  const jigsaw = room.game.id === "jigsaw" ? parseJigsawSettings(room.game.settings) : null;
+  const settings = room.game.id === "quiz" ? parseQuizSettings(room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
   const url = `${location.origin}${roomPath(room.code)}`;
 
-  // The countdown's generating effect needs three.js; fetch it while everyone gathers.
+  // The quiz countdown's generating effect needs three.js; fetch it while everyone gathers.
+  const isQuiz = room.game.id === "quiz";
   useEffect(() => {
-    if (canGenerateArt()) void preloadGeneratingArt().catch(() => {});
-  }, []);
+    if (isQuiz && canGenerateArt()) void preloadGeneratingArt().catch(() => {});
+  }, [isQuiz]);
 
   // A soft pop when someone new arrives in the lobby.
   const joined = useRef(connected.length);
@@ -330,27 +356,48 @@ function Lobby({
       <div className="lobby">
         <section className="lobby-main">
           <div className="panel game-summary">
-            <span className="summary-art">
-              <img src="/art/games/quiz.webp" alt="" />
-            </span>
-            <div className="summary-text">
-              <h2 className="summary-title">Quiz</h2>
-              <span className="pill">{category?.name ?? "Quiz"}</span>
-              {!isHost && settings && (
-                <p className="summary muted small">
-                  {settings.variant === "speed" ? "Speed" : "Classic"} quiz · {category?.name} ·{" "}
-                  {settings.difficulty[0]!.toUpperCase() + settings.difficulty.slice(1)} ·{" "}
-                  {settings.count} questions
-                  {settings.variant === "speed" && ` · ${settings.timeLimitSeconds}s each`}
-                </p>
-              )}
-            </div>
+            {jigsaw ? (
+              <>
+                <span className="summary-art picture">
+                  <img
+                    src={
+                      JIGSAW_PICTURES.find((p) => p.id === jigsaw.picture)?.src ??
+                      "/art/games/jigsaw.webp"
+                    }
+                    alt=""
+                  />
+                </span>
+                <div className="summary-text">
+                  <h2 className="summary-title">Jigsaw</h2>
+                  <span className="pill">{pictureName(jigsaw.picture)}</span>
+                  {!isHost && <p className="summary muted small">{sizeName(jigsaw.side)}</p>}
+                </div>
+              </>
+            ) : (
+              <>
+                <span className="summary-art">
+                  <img src="/art/games/quiz.webp" alt="" />
+                </span>
+                <div className="summary-text">
+                  <h2 className="summary-title">Quiz</h2>
+                  <span className="pill">{category?.name ?? "Quiz"}</span>
+                  {!isHost && settings && (
+                    <p className="summary muted small">
+                      {settings.variant === "speed" ? "Speed" : "Classic"} quiz · {category?.name} ·{" "}
+                      {settings.difficulty[0]!.toUpperCase() + settings.difficulty.slice(1)} ·{" "}
+                      {settings.count} questions
+                      {settings.variant === "speed" && ` · ${settings.timeLimitSeconds}s each`}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
             {isHost && (
-              <Tooltip content="Change topic">
+              <Tooltip content={jigsaw ? "Change picture" : "Change topic"}>
                 <button
                   className="icon-btn edit-btn"
-                  aria-label="Change topic"
-                  onClick={() => focusSetting("category")}
+                  aria-label={jigsaw ? "Change picture" : "Change topic"}
+                  onClick={() => focusSetting(jigsaw ? "picture" : "category")}
                 >
                   <Icon name="pencil" size={20} />
                 </button>
@@ -380,6 +427,13 @@ function Lobby({
               {settings && (
                 <QuizSettingsRows
                   settings={settings}
+                  editable={isHost}
+                  onChange={(next) => client.configure(next)}
+                />
+              )}
+              {jigsaw && (
+                <JigsawSettingsRows
+                  settings={jigsaw}
                   editable={isHost}
                   onChange={(next) => client.configure(next)}
                 />

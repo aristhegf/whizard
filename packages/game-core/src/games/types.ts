@@ -1,4 +1,5 @@
 import type { z } from "zod";
+import type { JigsawContentRequest } from "./jigsaw/settings";
 import type { QuizContentRequest } from "./quiz/settings";
 
 export interface GamePlayer {
@@ -7,7 +8,7 @@ export interface GamePlayer {
 }
 
 /** What a game needs from the content bank before it can start. */
-export type ContentRequest = QuizContentRequest;
+export type ContentRequest = QuizContentRequest | JigsawContentRequest;
 
 /** How a finished game went, for match history. The same shape for every game. */
 export interface GameSummary {

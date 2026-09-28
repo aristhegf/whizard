@@ -1,3 +1,4 @@
+import { jigsawGame } from "./jigsaw/jigsaw";
 import { quizGame } from "./quiz/quiz";
 import type { GameModule } from "./types";
 
@@ -5,6 +6,7 @@ export type AnyGameModule = GameModule<unknown, unknown, unknown, unknown, unkno
 
 export const GAMES = {
   quiz: quizGame as unknown as AnyGameModule,
+  jigsaw: jigsawGame as unknown as AnyGameModule,
 } as const;
 
 export type GameId = keyof typeof GAMES;

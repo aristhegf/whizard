@@ -172,7 +172,8 @@ export async function getStats(context: RequestContext): Promise<Response> {
         `SELECT m.category, COUNT(*) AS games,
                 CAST(SUM(mp.correct) AS REAL) / SUM(m.rounds) AS accuracy
            FROM match_players mp JOIN matches m ON m.id = mp.match_id
-          WHERE mp.user_id = ? AND m.category IS NOT NULL AND mp.correct IS NOT NULL
+          WHERE mp.user_id = ? AND m.game = 'quiz' AND m.category IS NOT NULL
+            AND mp.correct IS NOT NULL
           GROUP BY m.category
           ORDER BY accuracy DESC, games DESC`,
       )

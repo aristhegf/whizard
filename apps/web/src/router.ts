@@ -4,6 +4,7 @@ export type Route =
   | { name: "home" }
   | { name: "games" }
   | { name: "topics" }
+  | { name: "jigsaw" }
   | { name: "room"; code: string }
   | { name: "account" }
   | { name: "friends" }
@@ -28,6 +29,7 @@ export function useRoute(): Route {
   if (match) return { name: "room", code: decodeURIComponent(match[1] ?? "") };
   if (/^\/games\/?$/.test(path)) return { name: "games" };
   if (/^\/games\/quiz\/?$/.test(path)) return { name: "topics" };
+  if (/^\/games\/jigsaw\/?$/.test(path)) return { name: "jigsaw" };
   if (/^\/account\/?$/.test(path)) return { name: "account" };
   if (/^\/friends\/?$/.test(path)) return { name: "friends" };
   const add = /^\/add\/([^/]+)\/?$/.exec(path);

@@ -21,7 +21,7 @@ async function buildCommunityStats(db: D1Database, now: number): Promise<Communi
   const [totals, rooms, games, topics, countries, trending, leaders] = await db.batch<Row>([
     db.prepare(
       `SELECT COUNT(*) AS games, SUM(player_count) AS players,
-              SUM(rounds * player_count) AS questions
+              SUM(CASE WHEN game = 'quiz' THEN rounds * player_count ELSE 0 END) AS questions
          FROM matches`,
     ),
     db.prepare("SELECT SUM(count) AS n FROM daily_counts WHERE metric = 'rooms_created'"),
@@ -40,8 +40,9 @@ async function buildCommunityStats(db: D1Database, now: number): Promise<Communi
     ),
     db
       .prepare(
-        `SELECT game, category, COUNT(*) AS count FROM matches
-          WHERE finished_at >= ? GROUP BY game, category
+        `SELECT game, CASE WHEN game = 'quiz' THEN category END AS category, COUNT(*) AS count
+           FROM matches
+          WHERE finished_at >= ? GROUP BY 1, 2
           ORDER BY count DESC LIMIT ${TRENDING}`,
       )
       .bind(now - DAY_MS),

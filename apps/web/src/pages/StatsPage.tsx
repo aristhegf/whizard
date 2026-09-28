@@ -433,7 +433,7 @@ function CurrentlyPopular({ entries }: { entries: TrendingEntry[] | undefined })
               <li key={`${entry.game}:${entry.topic ?? ""}`}>
                 <a
                   className="trending-card"
-                  {...linkTo(entry.game === "quiz" ? "/games/quiz" : "/games")}
+                  {...linkTo(CATALOG.find((g) => g.id === entry.game)?.href ?? "/games")}
                 >
                   <span className="trending-art" aria-hidden="true">
                     {art && <img src={art} alt="" loading="lazy" />}

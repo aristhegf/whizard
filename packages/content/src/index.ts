@@ -1,5 +1,7 @@
 // Server-only: this package contains the answers, so the web app must never import it.
 import {
+  jigsawContentId,
+  pickJigsawPicture,
   seededRng,
   shuffled,
   type ContentRequest,
@@ -137,5 +139,9 @@ export function drawContent(
         options,
         questions,
       );
+    case "jigsaw-picture": {
+      const picture = pickJigsawPicture(request, seed, options.recent);
+      return [{ id: jigsawContentId(picture.id), picture }];
+    }
   }
 }

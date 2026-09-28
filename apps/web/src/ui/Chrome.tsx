@@ -26,8 +26,8 @@ export function Brand() {
 }
 
 /** Opens a new room and goes to its lobby. */
-export async function startRoom(settings?: Record<string, unknown>) {
-  navigate(roomPath(await createRoom(settings)));
+export async function startRoom(settings?: Record<string, unknown>, game?: string) {
+  navigate(roomPath(await createRoom(settings, game)));
 }
 
 const CREATE_FAILED = "Couldn’t create a room. Check your connection and try again.";
