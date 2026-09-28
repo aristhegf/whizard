@@ -15,7 +15,7 @@ export const DEFAULT_PARTS: AvatarParts = {
   hair: NONE,
   hairColour: "0",
   eyes: "e2",
-  brows: NONE,
+  brows: "b5",
   mouth: "m28",
   facialHair: NONE,
   glasses: NONE,

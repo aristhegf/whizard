@@ -100,6 +100,7 @@ const ALL_TABS: Tab[] = [
     id: "brows",
     label: "Brows",
     view: EYES,
+    note: "Eyebrows are the same colour as the hair.",
     rows: [{ kind: "options", field: "brows", category: "brows", view: EYES }],
   },
   {

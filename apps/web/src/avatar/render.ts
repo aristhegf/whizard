@@ -76,7 +76,7 @@ const BROWS: Record<BrowPose, { dy: number; tilt: number }> = {
 
 /** The middle of the face on the head's art: pairs are flipped around it. */
 const FACE_MIDDLE = 509;
-const BROW_Y = 352;
+const BROW_Y = 375;
 const BROW_X = { left: 382, right: 636 };
 
 function drawLayer(ctx: CanvasRenderingContext2D, img: HTMLImageElement, layer: Layer) {

@@ -154,7 +154,18 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
       poses: ["front"],
     })),
   ],
-  brows: [none()],
+  // Drawn in grey and coloured with the hair colour.
+  brows: [
+    none(),
+    ...Array.from({ length: 20 }, (_, i) => ({
+      id: `b${i + 1}`,
+      name: `Brows ${i + 1}`,
+      files: ["brows"],
+      ext: "webp" as const,
+      pair: true,
+      poses: ["front"],
+    })),
+  ],
   // Painted once, and tinted to each skin tone so the lips match the face.
   mouth: Array.from({ length: 30 }, (_, i) => ({
     id: `m${i + 1}`,
