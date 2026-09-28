@@ -7,6 +7,7 @@ import { Notice } from "./Notice";
 import { GamesPage } from "./pages/GamesPage";
 import { HomePage } from "./pages/HomePage";
 import { JigsawPage } from "./pages/JigsawPage";
+import { AboutPage } from "./pages/AboutPage";
 import { PricingPage } from "./pages/PricingPage";
 import { StatsPage } from "./pages/StatsPage";
 import { TopicsPage } from "./pages/TopicsPage";
@@ -51,6 +52,8 @@ export function App() {
           <AdminApp section={route.section} item={route.item} />
         ) : route.name === "pricing" ? (
           <PricingPage />
+        ) : route.name === "about" ? (
+          <AboutPage />
         ) : (
           <HomePage />
         )}

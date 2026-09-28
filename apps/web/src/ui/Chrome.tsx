@@ -11,7 +11,7 @@ import { useToast } from "./toast";
 import { LogoMark } from "./Logo";
 
 export type Section =
-  "home" | "games" | "topics" | "friends" | "profile" | "pricing" | "stats" | null;
+  "home" | "games" | "topics" | "friends" | "profile" | "pricing" | "about" | "stats" | null;
 
 export function Backdrop() {
   return <div className="backdrop" aria-hidden="true" />;
@@ -86,7 +86,7 @@ const SITE_LINKS: { label: string; href: string; section?: Section }[] = [
   { label: "Games", href: "/games" },
   { label: "How It Works", href: "/#how" },
   { label: "Pricing", href: "/pricing", section: "pricing" },
-  { label: "About", href: "/#about" },
+  { label: "About", href: "/about", section: "about" },
   { label: "Stats", href: "/stats", section: "stats" },
 ];
 
@@ -184,6 +184,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
     { label: "Friends", href: "/friends", icon: "users" },
     { label: signedIn ? "My profile" : "Sign in", href: "/account", icon: "user" },
     { label: "Pricing", href: "/pricing", icon: "crown" },
+    { label: "About", href: "/about", icon: "heart" },
     { label: "Stats", href: "/stats", icon: "chart" },
     { label: "Privacy", href: "/privacy", icon: "settings" },
   ];
@@ -340,7 +341,7 @@ export function SideLayout({
   );
 }
 
-/** Pages with the top bar: home, games, pricing and stats. */
+/** Pages with the top bar: home, games, pricing, about and stats. */
 export function TopLayout({
   variant,
   active,
