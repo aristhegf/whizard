@@ -57,8 +57,6 @@ export interface RoomStatus {
   code: string;
   phase: "lobby" | "playing" | "finished";
   online: number;
-  /** Whether people can join while a game is running. */
-  lateJoin: boolean;
   /** No room for anyone new. */
   full: boolean;
 }

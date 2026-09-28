@@ -104,13 +104,12 @@ export class Room extends DurableObject<Env> {
   }
 
   /**
-   * Whether the room still exists, for the "return to your room" bar, and whether someone new
-   * could join it, for the room code box.
+   * Whether the room still exists, for the "return to your room" bar, and whether it has room
+   * for someone new, for the room code box.
    */
   async status(): Promise<{
     phase: "lobby" | "playing" | "finished";
     online: number;
-    lateJoin: boolean;
     full: boolean;
   } | null> {
     const state = await this.current(Date.now());
@@ -119,7 +118,6 @@ export class Room extends DurableObject<Env> {
     return {
       phase: phaseOf(state),
       online: this.connectedIds().size,
-      lateJoin: settings.lateJoin,
       full: state.players.length >= Math.min(settings.maxPlayers, MAX_PLAYERS),
     };
   }

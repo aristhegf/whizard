@@ -81,15 +81,18 @@ test("the room code box says why a code won’t work", async ({ browser }) => {
   await expect(visitor.getByRole("alert")).toHaveText(/No room has that code/);
   await expect(visitor).toHaveURL(/\/$/);
 
-  // A game that started without late join.
+  // A game already running without late join still lets them in, to wait for the next one.
   const host = await newPlayer(browser);
   const code = (await createRoom(host, "Ada")).split("/").pop()!;
   await host.getByRole("button", { name: /play solo/i }).press("Enter");
   await expect(host.getByText("Get ready")).toBeVisible();
   await box.fill(code);
   await join.click();
-  await expect(visitor.getByRole("alert")).toHaveText(/already started.*late joining/);
-  await expect(visitor).toHaveURL(/\/$/);
+  await expect(visitor).toHaveURL(new RegExp(`/r/${code}$`));
+  await joinAs(visitor, "Tolu");
+  await expect(
+    visitor.getByText("A game is in progress. You’ll be in the next one."),
+  ).toBeVisible();
 });
 
 test("rejects a nickname that’s already taken", async ({ browser }) => {

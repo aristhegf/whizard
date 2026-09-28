@@ -26,10 +26,8 @@ async function codeProblem(code: string): Promise<string | null> {
   if (!status) return "No room has that code. Check it, or ask the host for a new one.";
   // Someone who's already in the room can always go back to it.
   if (loadSession(code)) return null;
+  // A game already running is fine: without late join, they wait in the room for the next one.
   if (status.full) return "That room is full.";
-  if (status.phase === "playing" && !status.lateJoin) {
-    return "That game has already started, and the host hasn’t allowed late joining.";
-  }
   return null;
 }
 
