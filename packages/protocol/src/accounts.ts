@@ -44,8 +44,10 @@ export type AvatarId = (typeof AVATAR_IDS)[number];
 
 /**
  * The parts of an avatar made in the avatar creator, in the order its code lists them. A code is
- * "w1" and then one short id per part, joined with dots: "w1.round.4.afro.0…". The server only
- * checks the shape; the web app knows the parts, and draws anything it doesn't know as the default.
+ * "w1" and then one short id per part, joined with dots: "w1.round.4.afro.0…". New parts are only
+ * ever added to the end, so older codes stay valid and simply leave the new parts at their default.
+ * The server only checks the shape; the web app knows the parts, and draws anything it doesn't
+ * know as the default.
  */
 export const AVATAR_FIELDS = [
   "face",
@@ -68,13 +70,17 @@ export const AVATAR_FIELDS = [
   "faceAccessory",
   "neckAccessory",
   "background",
+  "pose",
+  "expression",
 ] as const;
 export type AvatarField = (typeof AVATAR_FIELDS)[number];
 
 const PART_ID_MAX_LENGTH = 16;
-export const CUSTOM_AVATAR_MAX_LENGTH = 2 + AVATAR_FIELDS.length * (PART_ID_MAX_LENGTH + 1);
+/** Room for parts added later, without the server having to change. */
+const MAX_AVATAR_PARTS = 32;
+export const CUSTOM_AVATAR_MAX_LENGTH = 2 + MAX_AVATAR_PARTS * (PART_ID_MAX_LENGTH + 1);
 const CUSTOM_AVATAR_PATTERN = new RegExp(
-  `^w1(\\.[a-z0-9-]{1,${PART_ID_MAX_LENGTH}}){${AVATAR_FIELDS.length}}$`,
+  `^w1(\\.[a-z0-9-]{1,${PART_ID_MAX_LENGTH}}){1,${MAX_AVATAR_PARTS}}$`,
 );
 
 export type CustomAvatar = `w1.${string}`;

@@ -1,5 +1,5 @@
 import { isCustomAvatar, type AvatarField } from "@whizard/protocol";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { updateAccount, useAccount } from "../account";
 import { navigate } from "../router";
 import { loadAvatar, loadMyAvatar, saveAvatar, saveMyAvatar } from "../storage";
@@ -7,19 +7,35 @@ import { SideLayout } from "../ui/Chrome";
 import { useAction } from "../ui/common";
 import { Icon } from "../ui/Icon";
 import { decodeAvatar, DEFAULT_PARTS, encodeAvatar, randomParts, type AvatarParts } from "./code";
-import type { Pose } from "./layers";
-import { NONE, optionOf, PALETTES, PARTS, type PaletteName, type PartCategory } from "./parts";
+import {
+  EXPRESSIONS,
+  hasPose,
+  NONE,
+  optionOf,
+  PALETTES,
+  PARTS,
+  poseOf,
+  POSES,
+  swatchOf,
+  type PaletteName,
+  type PartCategory,
+} from "./parts";
 import { useAvatarPicture, type View } from "./render";
 
-// Close-ups for the option pictures, so small parts like eyes are easy to compare.
+// "Build your Whizard": the avatar is the hero on its stage, with the player's usual expression
+// under it, and a wardrobe of parts beside it. Every choice is shown on the player's own avatar.
+
+// Close-ups, so small parts like eyes are easy to compare.
 const EYES: View = { x: 262, y: 280, size: 500 };
 const MOUTH: View = { x: 262, y: 420, size: 500 };
 const EARS: View = { x: 162, y: 330, size: 700 };
 const BODY: View = { x: 162, y: 424, size: 600 };
 const FACE: View = { x: 162, y: 150, size: 700 };
+const HEAD: View = { x: 112, y: 40, size: 800 };
 
 type Row =
   | { kind: "options"; field: AvatarField; category: PartCategory; label?: string; view?: View }
+  | { kind: "poses"; label?: string }
   | {
       kind: "colours";
       field: AvatarField;
@@ -32,14 +48,22 @@ type Row =
 interface Tab {
   id: string;
   label: string;
+  /** The close-up of the player's avatar on the tab. */
+  view?: View;
   rows: Row[];
   note?: string;
 }
 
-const TABS: Tab[] = [
+const ALL_TABS: Tab[] = [
+  {
+    id: "pose",
+    label: "Pose",
+    rows: [{ kind: "poses" }],
+  },
   {
     id: "face",
-    label: "Face",
+    label: "Skin",
+    view: FACE,
     rows: [
       { kind: "colours", field: "skin", palette: "skin", label: "Skin tone" },
       { kind: "options", field: "face", category: "face", label: "Face shape", view: FACE },
@@ -48,6 +72,7 @@ const TABS: Tab[] = [
   {
     id: "hair",
     label: "Hair",
+    view: HEAD,
     rows: [
       { kind: "colours", field: "hairColour", palette: "hair", label: "Hair colour" },
       { kind: "options", field: "hair", category: "hair", label: "Style" },
@@ -56,38 +81,46 @@ const TABS: Tab[] = [
   {
     id: "eyes",
     label: "Eyes",
+    view: EYES,
     rows: [{ kind: "options", field: "eyes", category: "eyes", view: EYES }],
   },
   {
     id: "brows",
-    label: "Eyebrows",
+    label: "Brows",
+    view: EYES,
     note: "Eyebrows are the same colour as the hair.",
     rows: [{ kind: "options", field: "brows", category: "brows", view: EYES }],
   },
   {
     id: "mouth",
-    label: "Expression",
+    label: "Smile",
+    view: MOUTH,
+    note: "Your smile when your expression is Happy.",
     rows: [{ kind: "options", field: "mouth", category: "mouth", view: MOUTH }],
   },
   {
     id: "facial-hair",
-    label: "Facial hair",
+    label: "Beard",
+    view: MOUTH,
     note: "Facial hair is the same colour as the hair.",
     rows: [{ kind: "options", field: "facialHair", category: "facialHair", view: MOUTH }],
   },
   {
     id: "glasses",
     label: "Glasses",
+    view: EYES,
     rows: [{ kind: "options", field: "glasses", category: "glasses", view: EYES }],
   },
   {
     id: "earrings",
     label: "Earrings",
+    view: EARS,
     rows: [{ kind: "options", field: "earrings", category: "earrings", view: EARS }],
   },
   {
     id: "hats",
     label: "Hats",
+    view: HEAD,
     rows: [
       { kind: "options", field: "headwear", category: "headwear" },
       {
@@ -102,6 +135,7 @@ const TABS: Tab[] = [
   {
     id: "top",
     label: "Top",
+    view: BODY,
     rows: [
       { kind: "colours", field: "topColour", palette: "clothes", label: "Colour" },
       { kind: "options", field: "top", category: "top", label: "Style", view: BODY },
@@ -110,6 +144,7 @@ const TABS: Tab[] = [
   {
     id: "jacket",
     label: "Jacket",
+    view: BODY,
     rows: [
       { kind: "options", field: "jacket", category: "jacket", view: BODY },
       {
@@ -124,6 +159,7 @@ const TABS: Tab[] = [
   {
     id: "extras",
     label: "Extras",
+    view: HEAD,
     rows: [
       { kind: "options", field: "headAccessory", category: "headAccessory", label: "On your head" },
       {
@@ -144,18 +180,35 @@ const TABS: Tab[] = [
   },
   {
     id: "background",
-    label: "Background",
-    rows: [{ kind: "colours", field: "background", palette: "background", label: "Colour" }],
+    label: "Colour",
+    rows: [{ kind: "colours", field: "background", palette: "background", label: "Background" }],
   },
 ];
 
-/** Faces to try the avatar with: the ones it pulls during games. */
-const REACTIONS: { label: string; pose: Pose }[] = [
-  { label: "Right answer", pose: { eyes: "closed", mouth: "laugh", brows: "raised" } },
-  { label: "Wrong answer", pose: { mouth: "wince", brows: "worried" } },
-  { label: "Surprised", pose: { eyes: "wide", mouth: "surprised", brows: "raised" } },
-  { label: "Wink", pose: { eyes: "wink", mouth: "smirk" } },
-];
+/** There's something to pick in a row: more than one option (None counts) in the pose. */
+function rowShows(row: Row, parts: AvatarParts): boolean {
+  if (row.kind === "poses") return POSES.length > 1;
+  if (row.kind === "colours") return !row.when || row.when(parts);
+  const pose = poseOf(parts.pose);
+  return PARTS[row.category].filter((o) => hasPose(o, pose)).length > 1;
+}
+
+/**
+ * The tabs with something to pick. Art arrives one part at a time, so a part with nothing drawn
+ * yet isn't offered; colours count on their own only for the skin and the background.
+ */
+function tabsFor(parts: AvatarParts): Tab[] {
+  return ALL_TABS.filter((tab) =>
+    tab.rows.some((row) =>
+      row.kind === "colours"
+        ? (row.field === "skin" || row.field === "background") && rowShows(row, parts)
+        : rowShows(row, parts),
+    ),
+  );
+}
+
+/** Expressions only change anything once there are eyes or mouths to change. */
+const EXPRESSIONS_SHOW = PARTS.eyes.length > 1 || PARTS.mouth.length > 1;
 
 /** Where Save and Cancel go: the page that opened the creator, if it's one of ours. */
 function backPath(): string {
@@ -169,27 +222,60 @@ function startingParts(avatar: string | null | undefined): AvatarParts {
   return isCustomAvatar(mine) ? decodeAvatar(mine) : DEFAULT_PARTS;
 }
 
+/** Moving to a pose keeps each part the pose has art for, and swaps out any it hasn't. */
+function inPose(parts: AvatarParts, poseId: string): AvatarParts {
+  const pose = poseOf(poseId);
+  const next = { ...parts, pose: poseId };
+  for (const [field, category] of Object.entries(FIELD_CATEGORIES) as [
+    AvatarField,
+    PartCategory,
+  ][]) {
+    if (!hasPose(optionOf(category, next[field]), pose)) {
+      next[field] = PARTS[category].find((o) => hasPose(o, pose))?.id ?? NONE;
+    }
+  }
+  return next;
+}
+
+const FIELD_CATEGORIES: Partial<Record<AvatarField, PartCategory>> = {
+  face: "face",
+  hair: "hair",
+  eyes: "eyes",
+  brows: "brows",
+  mouth: "mouth",
+  facialHair: "facialHair",
+  glasses: "glasses",
+  earrings: "earrings",
+  headwear: "headwear",
+  top: "top",
+  jacket: "jacket",
+  headAccessory: "headAccessory",
+  faceAccessory: "faceAccessory",
+  neckAccessory: "neckAccessory",
+};
+
 export function AvatarCreator() {
   const account = useAccount();
   const user = account.status === "ready" ? account.user : null;
   return (
     <SideLayout active="profile" className="account-page avatar-page">
       {account.status === "loading" ? null : (
-        <Creator start={startingParts(user?.avatar ?? loadAvatar())} signedIn={user !== null} />
+        <Builder start={startingParts(user?.avatar ?? loadAvatar())} signedIn={user !== null} />
       )}
     </SideLayout>
   );
 }
 
-function Creator({ start, signedIn }: { start: AvatarParts; signedIn: boolean }) {
+function Builder({ start, signedIn }: { start: AvatarParts; signedIn: boolean }) {
   const [parts, setParts] = useState(start);
-  const [tabId, setTabId] = useState(TABS[0]!.id);
-  const [reaction, setReaction] = useState<number | null>(null);
+  const tabs = tabsFor(parts);
+  const [tabId, setTabId] = useState(tabs[0]!.id);
   const saving = useAction();
-  const tab = TABS.find((t) => t.id === tabId) ?? TABS[0]!;
+  const tab = tabs.find((t) => t.id === tabId) ?? tabs[0]!;
   const code = encodeAvatar(parts);
   const set = (field: AvatarField, id: string) => setParts((p) => ({ ...p, [field]: id }));
   const back = backPath();
+  const stage = { "--stage": swatchOf("background", parts.background).colour } as CSSProperties;
 
   const save = () =>
     saving.run(async () => {
@@ -200,91 +286,107 @@ function Creator({ start, signedIn }: { start: AvatarParts; signedIn: boolean })
     });
 
   return (
-    <div className="screen creator">
-      <header>
-        <h1 className="page-title">Your avatar</h1>
-        <p className="muted">Make one that looks like you, or nothing like you.</p>
-      </header>
-
-      <div className="creator-layout">
-        <section className="panel creator-preview" aria-label="Preview">
-          <Picture
-            code={code}
-            size={240}
-            pose={reaction === null ? undefined : REACTIONS[reaction]!.pose}
-            className="creator-picture"
-            label="Your avatar"
-          />
-          <div className="creator-reactions" role="group" aria-label="Try a reaction">
-            {REACTIONS.map((r, i) => (
+    <div className="builder">
+      <section className="builder-stage" style={stage} aria-labelledby="builder-title">
+        <h1 className="builder-title" id="builder-title">
+          Build your <span>Whizard</span>
+        </h1>
+        <div className="builder-hero">
+          <Picture code={code} size={300} className="builder-picture" label="Your avatar" />
+        </div>
+        {EXPRESSIONS_SHOW && (
+          <div className="builder-faces" role="radiogroup" aria-label="Expression">
+            {EXPRESSIONS.map((e) => (
               <button
-                key={r.label}
+                key={e.id}
                 type="button"
-                className="chip"
-                aria-pressed={reaction === i}
-                onClick={() => setReaction(reaction === i ? null : i)}
+                role="radio"
+                aria-checked={parts.expression === e.id}
+                title={e.name}
+                onClick={() => set("expression", e.id)}
               >
-                {r.label}
+                <Picture
+                  code={encodeAvatar({ ...parts, expression: e.id })}
+                  size={52}
+                  view={FACE}
+                />
+                <span>{e.name}</span>
               </button>
             ))}
           </div>
-          <div className="creator-actions">
-            <button type="button" className="btn" onClick={() => setParts(randomParts())}>
-              <Icon name="repeat" size={20} />
-              Surprise me
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              disabled={saving.busy}
-              onClick={() => void save()}
-            >
-              {saving.busy ? "Saving…" : "Save avatar"}
-            </button>
-          </div>
-          {saving.error && (
-            <p className="error" role="alert">
-              {saving.error}
-            </p>
-          )}
-          <button type="button" className="creator-cancel" onClick={() => navigate(back)}>
-            Cancel
-          </button>
-        </section>
-
-        <section className="panel creator-parts">
-          <div className="chips creator-tabs" role="tablist" aria-label="Parts">
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                role="tab"
-                id={`creator-tab-${t.id}`}
-                className="chip"
-                aria-selected={t.id === tab.id}
-                aria-controls="creator-panel"
-                onClick={() => setTabId(t.id)}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-          <div
-            className="creator-panel"
-            id="creator-panel"
-            role="tabpanel"
-            aria-labelledby={`creator-tab-${tab.id}`}
+        )}
+        <div className="builder-actions">
+          <button
+            type="button"
+            className="btn builder-dice"
+            onClick={() => setParts(randomParts())}
           >
-            {tab.rows.map((row) =>
+            <Icon name="repeat" size={20} />
+            Surprise me
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={saving.busy}
+            onClick={() => void save()}
+          >
+            {saving.busy ? "Saving…" : "Save my Whizard"}
+          </button>
+        </div>
+        {saving.error && (
+          <p className="error" role="alert">
+            {saving.error}
+          </p>
+        )}
+        <button type="button" className="builder-cancel" onClick={() => navigate(back)}>
+          Cancel
+        </button>
+      </section>
+
+      <section className="builder-wardrobe" aria-label="Wardrobe">
+        <div className="wardrobe-rail" role="tablist" aria-label="Parts">
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              role="tab"
+              id={`builder-tab-${t.id}`}
+              aria-selected={t.id === tab.id}
+              aria-controls="builder-panel"
+              onClick={() => setTabId(t.id)}
+            >
+              {t.view ? (
+                <Picture code={code} size={48} view={t.view} />
+              ) : t.id === "pose" ? (
+                <Picture code={code} size={48} />
+              ) : (
+                <i
+                  className="rail-swatch"
+                  style={{ background: swatchOf("background", parts.background).colour }}
+                />
+              )}
+              <span>{t.label}</span>
+            </button>
+          ))}
+        </div>
+        <div
+          className="wardrobe-panel"
+          id="builder-panel"
+          role="tabpanel"
+          aria-labelledby={`builder-tab-${tab.id}`}
+        >
+          {tab.rows
+            .filter((row) => rowShows(row, parts))
+            .map((row) =>
               row.kind === "colours" ? (
-                (!row.when || row.when(parts)) && (
-                  <Colours
-                    key={row.field}
-                    row={row}
-                    value={parts[row.field]}
-                    onPick={(id) => set(row.field, id)}
-                  />
-                )
+                <Colours
+                  key={row.field}
+                  row={row}
+                  value={parts[row.field]}
+                  onPick={(id) => set(row.field, id)}
+                />
+              ) : row.kind === "poses" ? (
+                <Poses key="poses" parts={parts} onPick={(id) => setParts(inPose(parts, id))} />
               ) : (
                 <Options
                   key={row.field}
@@ -295,10 +397,9 @@ function Creator({ start, signedIn }: { start: AvatarParts; signedIn: boolean })
                 />
               ),
             )}
-            {tab.note && <p className="muted small">{tab.note}</p>}
-          </div>
-        </section>
-      </div>
+          {tab.note && <p className="muted small">{tab.note}</p>}
+        </div>
+      </section>
     </div>
   );
 }
@@ -308,19 +409,17 @@ const BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAI
 function Picture({
   code,
   size,
-  pose,
   view,
   className,
   label = "",
 }: {
   code: string;
   size: number;
-  pose?: Pose;
   view?: View;
   className?: string;
   label?: string;
 }) {
-  const url = useAvatarPicture(code, size, pose, view);
+  const url = useAvatarPicture(code, size, undefined, view);
   return (
     <img
       className={className}
@@ -344,26 +443,50 @@ function Options({
   parts: AvatarParts;
   onPick: (id: string) => void;
 }) {
+  const pose = poseOf(parts.pose);
   return (
-    <div className="creator-row">
-      {row.label && <h2 className="creator-label">{row.label}</h2>}
-      <div className="creator-options" role="radiogroup" aria-label={label}>
-        {PARTS[row.category].map((option) => (
+    <div className="wardrobe-row">
+      {row.label && <h2 className="wardrobe-label">{row.label}</h2>}
+      <div className="wardrobe-options" role="radiogroup" aria-label={label}>
+        {PARTS[row.category]
+          .filter((option) => hasPose(option, pose))
+          .map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              role="radio"
+              aria-checked={parts[row.field] === option.id}
+              aria-label={option.name}
+              onClick={() => onPick(option.id)}
+            >
+              <Picture
+                code={encodeAvatar({ ...parts, [row.field]: option.id })}
+                size={88}
+                view={row.view}
+              />
+              <span>{option.name}</span>
+            </button>
+          ))}
+      </div>
+    </div>
+  );
+}
+
+function Poses({ parts, onPick }: { parts: AvatarParts; onPick: (id: string) => void }) {
+  return (
+    <div className="wardrobe-row">
+      <div className="wardrobe-options" role="radiogroup" aria-label="Pose">
+        {POSES.map((pose) => (
           <button
-            key={option.id}
+            key={pose.id}
             type="button"
             role="radio"
-            aria-checked={parts[row.field] === option.id}
-            aria-label={option.name}
-            title={option.name}
-            onClick={() => onPick(option.id)}
+            aria-checked={parts.pose === pose.id}
+            aria-label={pose.name}
+            onClick={() => onPick(pose.id)}
           >
-            <Picture
-              code={encodeAvatar({ ...parts, [row.field]: option.id })}
-              size={92}
-              view={row.view}
-            />
-            <span>{option.name}</span>
+            <Picture code={encodeAvatar(inPose(parts, pose.id))} size={88} />
+            <span>{pose.name}</span>
           </button>
         ))}
       </div>
@@ -380,13 +503,13 @@ function Colours({
   value: string;
   onPick: (id: string) => void;
 }) {
-  const labelId = `creator-${row.field}`;
+  const labelId = `builder-${row.field}`;
   return (
-    <div className="creator-row">
-      <h2 className="creator-label" id={labelId}>
+    <div className="wardrobe-row">
+      <h2 className="wardrobe-label" id={labelId}>
         {row.label}
       </h2>
-      <div className="creator-swatches" role="radiogroup" aria-labelledby={labelId}>
+      <div className="wardrobe-swatches" role="radiogroup" aria-labelledby={labelId}>
         {PALETTES[row.palette].map((swatch) => (
           <button
             key={swatch.id}
@@ -395,7 +518,7 @@ function Colours({
             aria-checked={value === swatch.id}
             aria-label={swatch.name}
             title={swatch.name}
-            style={{ background: swatch.colour }}
+            style={{ "--swatch": swatch.colour } as CSSProperties}
             onClick={() => onPick(swatch.id)}
           />
         ))}

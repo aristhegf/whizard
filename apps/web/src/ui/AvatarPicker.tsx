@@ -1,5 +1,7 @@
 import { AVATAR_IDS, isCustomAvatar } from "@whizard/protocol";
 import { useEffect } from "react";
+import { useAccount } from "../account";
+import { CREATOR_OPEN } from "../avatar/parts";
 import { navigate } from "../router";
 import { loadMyAvatar, saveMyAvatar } from "../storage";
 import { Avatar, avatarUrl } from "./Avatar";
@@ -33,20 +35,24 @@ export function AvatarPicker({
   useEffect(() => {
     if (isCustomAvatar(value)) saveMyAvatar(value);
   }, [value]);
+  const account = useAccount();
+  const canMake = CREATOR_OPEN || (account.status === "ready" && account.user?.admin === true);
   const saved = loadMyAvatar();
   const mine = isCustomAvatar(value) ? value : isCustomAvatar(saved) ? saved : null;
   return (
     <div className="avatar-picker" role="radiogroup" aria-labelledby={labelledBy}>
-      <button
-        type="button"
-        className="avatar-make"
-        aria-label={mine ? "Edit your avatar" : "Make your own avatar"}
-        title={mine ? "Edit your avatar" : "Make your own avatar"}
-        disabled={disabled}
-        onClick={onMake}
-      >
-        <Icon name={mine ? "pencil" : "plus"} size={Math.round(size * 0.45)} />
-      </button>
+      {canMake && (
+        <button
+          type="button"
+          className="avatar-make"
+          aria-label={mine ? "Edit your avatar" : "Make your own avatar"}
+          title={mine ? "Edit your avatar" : "Make your own avatar"}
+          disabled={disabled}
+          onClick={onMake}
+        >
+          <Icon name={mine ? "pencil" : "plus"} size={Math.round(size * 0.45)} />
+        </button>
+      )}
       {mine && (
         <button
           type="button"

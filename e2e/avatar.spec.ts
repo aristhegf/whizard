@@ -15,45 +15,46 @@ function playerRow(page: Page, nickname: string) {
     .filter({ hasText: nickname });
 }
 
-/** Picks an afro and a crown in the creator, and saves. */
+/** Picks a skin tone and a background in the creator, and saves. */
 async function makeAvatar(page: Page) {
-  await expect(page.getByRole("heading", { name: "Your avatar" })).toBeVisible();
-  await page.getByRole("tab", { name: "Hair", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Build your Whizard" })).toBeVisible();
   await page
-    .getByRole("radiogroup", { name: "Style" })
-    .getByRole("radio", { name: "Afro" })
+    .getByRole("radiogroup", { name: "Skin tone" })
+    .getByRole("radio", { name: "Tone 2" })
     .click();
-  await page.getByRole("tab", { name: "Hats", exact: true }).click();
-  await page.getByRole("radio", { name: "Crown" }).click();
-  await expect(page.getByRole("radio", { name: "Crown" })).toHaveAttribute("aria-checked", "true");
+  await page.getByRole("tab", { name: "Colour", exact: true }).click();
+  await page
+    .getByRole("radiogroup", { name: "Background" })
+    .getByRole("radio", { name: "Blue" })
+    .click();
   // The preview draws the avatar with both.
   await expect(page.getByRole("img", { name: "Your avatar" })).toHaveAttribute(
     "data-avatar",
-    /^w1\.[a-z0-9.-]*\.afro\..*\.crown\./,
+    /^w1\.classic\.1\..*\.1\.front\.happy$/,
   );
-  await page.getByRole("button", { name: "Save avatar" }).click();
+  await page.getByRole("button", { name: "Save my Whizard" }).click();
 }
 
-test("a guest makes an avatar on the way into a room, and friends see it", async ({ browser }) => {
+test("a guest's own avatar goes into the room, and friends see it", async ({ browser }) => {
   const host = await newPlayer(browser);
   await host.goto("/");
   await host.getByRole("button", { name: "Create a Room" }).click();
   await expect(host).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   const roomUrl = host.url();
 
-  await host.getByLabel("Choose a nickname").fill("Ada");
-  await host.getByRole("button", { name: "Make your own avatar" }).click();
-  await expect(host).toHaveURL(/\/avatar\?back=/);
+  // Players aren't offered the creator until more of the art is in, but the page works.
+  await expect(host.getByLabel("Choose a nickname")).toBeVisible();
+  await expect(host.getByRole("button", { name: "Make your own avatar" })).toBeHidden();
+  await host.goto(`/avatar?back=${encodeURIComponent(new URL(roomUrl).pathname)}`);
   await makeAvatar(host);
 
-  // Back on the join screen, with the nickname kept and the new avatar picked.
+  // Back on the join screen, with the new avatar picked.
   await expect(host).toHaveURL(roomUrl);
-  await expect(host.getByLabel("Choose a nickname")).toHaveValue("Ada");
+  await host.getByLabel("Choose a nickname").fill("Ada");
   await expect(host.getByRole("radio", { name: "Your avatar" })).toHaveAttribute(
     "aria-checked",
     "true",
   );
-  await expect(host.getByRole("button", { name: "Edit your avatar" })).toBeVisible();
   await host.getByRole("button", { name: "Join", exact: true }).click();
   await expect(playerRow(host, "Ada").locator("img.avatar")).toHaveAttribute(
     "src",
@@ -79,7 +80,7 @@ test("an account keeps its avatar", async ({ page }) => {
   await withPasskeys(page);
   await signUp(page, uniqueUsername(), "Ada");
 
-  await page.getByRole("button", { name: "Make your own avatar" }).click();
+  await page.goto("/avatar?back=/account");
   await makeAvatar(page);
   await expect(page).toHaveURL(/\/account$/);
   const mine = page.getByRole("radio", { name: "Your avatar" });

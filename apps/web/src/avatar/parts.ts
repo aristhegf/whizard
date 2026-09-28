@@ -1,8 +1,9 @@
 import type { AvatarField } from "@whizard/protocol";
 
-// Everything the avatar creator can put together. The art for each option sits in
-// /art/avatar-parts/<folder>/<option id>/<file>, drawn on the 1024 × 1024 grid from the art spec.
-// Replacing a file with the finished art needs no code change; a new option needs a line here.
+// Everything the avatar creator can put together. Each pose is its own template, with its own art
+// drawn for that angle: /art/avatar-parts/<pose>/<folder>/<option id>/<file>, on the 1024 × 1024
+// grid from the art spec. Replacing a file with the finished art needs no code change; a new
+// option or pose needs a line here.
 
 export type PartCategory =
   | "face"
@@ -36,100 +37,89 @@ export interface PartOption {
   recolour?: boolean;
   /** Head accessories that don't fit under a hat. */
   noHat?: boolean;
+  /** The poses this option has art for. */
+  poses?: readonly string[];
+  /**
+   * Painted once for each skin tone (`head-3.webp` for tone 3) instead of drawn in grey and
+   * coloured, for parts where the skin needs its own painting, like a face.
+   */
+  perTone?: boolean;
 }
+
+/** A face for the moment, from the player's expression or a game's reaction. */
+export interface Face {
+  eyes?: "open" | "closed" | "wide" | "wink";
+  /** A mouth option id, in place of the player's own. */
+  mouth?: string;
+  brows?: BrowPose;
+}
+
+export type BrowPose = "relaxed" | "raised" | "worried" | "cross";
+
+/**
+ * A pose template: how the character holds their head and hands. Every part is drawn for each
+ * pose it supports, so a tilted head gets hair drawn for a tilted head.
+ */
+export interface PoseTemplate {
+  /** Goes in the avatar code, so never rename one. */
+  id: string;
+  name: string;
+  /** Uses another pose's art, flipped left to right. */
+  mirrorOf?: string;
+}
+
+export const POSES: readonly PoseTemplate[] = [{ id: "front", name: "Straight on" }];
+
+export interface Expression extends Face {
+  /** Goes in the avatar code, so never rename one. */
+  id: string;
+  name: string;
+}
+
+/** The player's usual face. The game can still pull other faces for its reactions. */
+export const EXPRESSIONS: readonly Expression[] = [
+  { id: "happy", name: "Happy" },
+  { id: "laugh", name: "Laughing", eyes: "closed", mouth: "laugh", brows: "raised" },
+  { id: "wink", name: "Wink", eyes: "wink", mouth: "smirk" },
+  { id: "cheeky", name: "Cheeky", eyes: "wink", mouth: "tongue" },
+  { id: "surprised", name: "Surprised", eyes: "wide", mouth: "surprised", brows: "raised" },
+  { id: "thinking", name: "Thinking", mouth: "smirk", brows: "worried" },
+];
+
+/**
+ * Whether players are offered the avatar creator. Until enough finished art is in, only admins
+ * see it (and anyone with the link to /avatar).
+ */
+export const CREATOR_OPEN = false;
 
 export const NONE = "none";
 const none = (name = "None"): PartOption => ({ id: NONE, name, files: [] });
 
+/** The finished art arrives one part at a time; a category with only None isn't offered yet. */
 export const PARTS: Record<PartCategory, readonly PartOption[]> = {
   face: [
-    { id: "round", name: "Round", files: ["head", "cheeks"] },
-    { id: "oval", name: "Oval", files: ["head", "cheeks"] },
-    { id: "square", name: "Square", files: ["head", "cheeks"] },
-    { id: "heart", name: "Heart", files: ["head", "cheeks"] },
+    {
+      id: "classic",
+      name: "Classic",
+      files: ["head"],
+      ext: "webp",
+      perTone: true,
+      poses: ["front"],
+    },
   ],
-  hair: [
-    { id: "short", name: "Short", files: ["front", "hat-front"] },
-    { id: "curls", name: "Curls", files: ["front", "hat-front"] },
-    { id: "afro", name: "Afro", files: ["back", "front", "hat-front", "hat-back"] },
-    { id: "puffs", name: "Puffs", files: ["front", "hat-front"] },
-    { id: "braids", name: "Braids", files: ["back", "front", "hat-front", "hat-back"] },
-    { id: "bun", name: "Bun", files: ["front", "hat-front"] },
-    { id: "long", name: "Long", files: ["back", "front", "hat-front", "hat-back"] },
-    none("Bald"),
-  ],
-  eyes: [
-    { id: "round", name: "Round", files: ["open", "closed", "wide"] },
-    { id: "lashes", name: "Lashes", files: ["open", "closed", "wide"] },
-    { id: "sparkle", name: "Sparkle", files: ["open", "closed", "wide"] },
-    { id: "narrow", name: "Narrow", files: ["open", "closed", "wide"] },
-  ],
-  brows: [
-    { id: "soft", name: "Soft", files: ["brows"] },
-    { id: "thick", name: "Thick", files: ["brows"] },
-    { id: "arched", name: "Arched", files: ["brows"] },
-    { id: "straight", name: "Straight", files: ["brows"] },
-  ],
-  mouth: [
-    { id: "grin", name: "Grin", files: ["mouth"] },
-    { id: "smile", name: "Smile", files: ["mouth"] },
-    { id: "laugh", name: "Laugh", files: ["mouth"] },
-    { id: "smirk", name: "Smirk", files: ["mouth"] },
-    { id: "tongue", name: "Cheeky", files: ["mouth"] },
-    { id: "surprised", name: "Surprised", files: ["mouth"] },
-    { id: "wince", name: "Wince", files: ["mouth"] },
-    { id: "sad", name: "Sad", files: ["mouth"] },
-  ],
-  facialHair: [
-    none(),
-    { id: "stubble", name: "Stubble", files: ["facial-hair"] },
-    { id: "moustache", name: "Moustache", files: ["facial-hair"] },
-    { id: "goatee", name: "Goatee", files: ["facial-hair"] },
-    { id: "beard", name: "Beard", files: ["facial-hair"] },
-  ],
-  glasses: [
-    none(),
-    { id: "round", name: "Round", files: ["glasses"] },
-    { id: "square", name: "Square", files: ["glasses"] },
-    { id: "shades", name: "Shades", files: ["glasses"] },
-  ],
-  earrings: [
-    none(),
-    { id: "studs", name: "Studs", files: ["earrings"] },
-    { id: "hoops", name: "Hoops", files: ["earrings"] },
-  ],
-  headwear: [
-    none(),
-    { id: "cap", name: "Cap", files: ["front", "details"], covers: "top", recolour: true },
-    { id: "beanie", name: "Beanie", files: ["front"], covers: "top", recolour: true },
-    { id: "crown", name: "Crown", files: ["front"], covers: "none" },
-    { id: "hijab", name: "Hijab", files: ["back", "front"], covers: "all", recolour: true },
-  ],
-  top: [
-    { id: "hoodie", name: "Hoodie", files: ["back", "front", "details"] },
-    { id: "tee", name: "T-shirt", files: ["front"] },
-    { id: "shirt", name: "Shirt", files: ["front", "details"] },
-  ],
-  jacket: [
-    none(),
-    { id: "bomber", name: "Bomber", files: ["front", "details"] },
-    { id: "blazer", name: "Blazer", files: ["front", "details"] },
-  ],
-  headAccessory: [
-    none(),
-    { id: "headphones", name: "Headphones", files: ["accessory"], noHat: true },
-    { id: "flower", name: "Flower", files: ["accessory"] },
-  ],
-  faceAccessory: [
-    none(),
-    { id: "freckles", name: "Freckles", files: ["accessory"] },
-    { id: "star", name: "Star", files: ["accessory"] },
-  ],
-  neckAccessory: [
-    none(),
-    { id: "chain", name: "Chain", files: ["accessory"] },
-    { id: "bowtie", name: "Bow tie", files: ["accessory"] },
-  ],
+  hair: [none("Bald")],
+  eyes: [none()],
+  brows: [none()],
+  mouth: [none()],
+  facialHair: [none()],
+  glasses: [none()],
+  earrings: [none()],
+  headwear: [none()],
+  top: [none()],
+  jacket: [none()],
+  headAccessory: [none()],
+  faceAccessory: [none()],
+  neckAccessory: [none()],
 };
 
 export const FOLDERS: Record<PartCategory, string> = {
@@ -160,17 +150,16 @@ const swatches = (list: [string, string][]): Swatch[] =>
   list.map(([name, colour], i) => ({ id: String(i), name, colour }));
 
 export const PALETTES: Record<PaletteName, readonly Swatch[]> = {
+  // One painted head per tone: head-0 (lightest) to head-7.
   skin: swatches([
-    ["Tone 1", "#f6d5bc"],
-    ["Tone 2", "#edbf9c"],
-    ["Tone 3", "#e0a57e"],
-    ["Tone 4", "#c98a60"],
-    ["Tone 5", "#b0714a"],
-    ["Tone 6", "#95593a"],
-    ["Tone 7", "#7a452c"],
-    ["Tone 8", "#603421"],
-    ["Tone 9", "#4a2718"],
-    ["Tone 10", "#3a1e13"],
+    ["Tone 1", "#f7ac7a"],
+    ["Tone 2", "#ee9e67"],
+    ["Tone 3", "#dd844e"],
+    ["Tone 4", "#d2703b"],
+    ["Tone 5", "#c25e34"],
+    ["Tone 6", "#be5c2e"],
+    ["Tone 7", "#863e24"],
+    ["Tone 8", "#622d1e"],
   ]),
   hair: swatches([
     ["Black", "#2a201c"],
@@ -213,7 +202,7 @@ export const PALETTES: Record<PaletteName, readonly Swatch[]> = {
 /** Where each part of the avatar code comes from. */
 export const FIELD_SOURCES: Record<
   AvatarField,
-  { category: PartCategory } | { palette: PaletteName }
+  { category: PartCategory } | { palette: PaletteName } | { choices: readonly { id: string }[] }
 > = {
   face: { category: "face" },
   skin: { palette: "skin" },
@@ -235,10 +224,31 @@ export const FIELD_SOURCES: Record<
   faceAccessory: { category: "faceAccessory" },
   neckAccessory: { category: "neckAccessory" },
   background: { palette: "background" },
+  pose: { choices: POSES },
+  expression: { choices: EXPRESSIONS },
 };
 
-export function optionOf(category: PartCategory, id: string): PartOption {
-  const options = PARTS[category];
+export function poseOf(id: string): PoseTemplate {
+  return POSES.find((p) => p.id === id) ?? POSES[0]!;
+}
+
+export function expressionOf(id: string): Expression {
+  return EXPRESSIONS.find((e) => e.id === id) ?? EXPRESSIONS[0]!;
+}
+
+/** Whether an option has art for a pose (its own, or the pose it mirrors). */
+export function hasPose(option: PartOption, pose: PoseTemplate): boolean {
+  return option.id === NONE || (option.poses ?? ["front"]).includes(pose.mirrorOf ?? pose.id);
+}
+
+export type Catalogue = Record<PartCategory, readonly PartOption[]>;
+
+export function optionOf(
+  category: PartCategory,
+  id: string,
+  catalogue: Catalogue = PARTS,
+): PartOption {
+  const options = catalogue[category];
   return options.find((o) => o.id === id) ?? options[0]!;
 }
 

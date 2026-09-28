@@ -41,8 +41,7 @@ describe("avatars", () => {
       "",
       "a99",
       "w1",
-      code + ".extra",
-      code.split(".").slice(0, -1).join("."),
+      ["w1", ...Array.from({ length: 33 }, () => "x")].join("."),
       code.replace("part-0", "Part-0"),
       code.replace("part-0", "part_0"),
       code.replace("part-0", "x".repeat(17)),
@@ -54,8 +53,13 @@ describe("avatars", () => {
     }
   });
 
+  it("accepts codes from before and after parts are added", () => {
+    expect(isCustomAvatar(code.split(".").slice(0, -2).join("."))).toBe(true);
+    expect(isCustomAvatar(`${code}.later`)).toBe(true);
+  });
+
   it("keeps the longest code under the length the room accepts", () => {
-    const longest = ["w1", ...AVATAR_FIELDS.map(() => "x".repeat(16))].join(".");
+    const longest = ["w1", ...Array.from({ length: 32 }, () => "x".repeat(16))].join(".");
     expect(isCustomAvatar(longest)).toBe(true);
     expect(longest.length).toBeLessThanOrEqual(CUSTOM_AVATAR_MAX_LENGTH);
   });

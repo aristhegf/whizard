@@ -4,25 +4,25 @@ import {
   type AvatarField,
   type CustomAvatar,
 } from "@whizard/protocol";
-import { FIELD_SOURCES, NONE, PALETTES, PARTS } from "./parts";
+import { FIELD_SOURCES, hasPose, NONE, PALETTES, PARTS, poseOf, POSES } from "./parts";
 
 /** A made-up avatar: one option or colour id for each of its parts. */
 export type AvatarParts = Record<AvatarField, string>;
 
 export const DEFAULT_PARTS: AvatarParts = {
-  face: "round",
-  skin: "5",
-  hair: "curls",
+  face: "classic",
+  skin: "4",
+  hair: NONE,
   hairColour: "0",
-  eyes: "round",
-  brows: "soft",
-  mouth: "grin",
+  eyes: NONE,
+  brows: NONE,
+  mouth: NONE,
   facialHair: NONE,
   glasses: NONE,
   earrings: NONE,
   headwear: NONE,
   headwearColour: "5",
-  top: "hoodie",
+  top: NONE,
   topColour: "0",
   jacket: NONE,
   jacketColour: "8",
@@ -30,12 +30,19 @@ export const DEFAULT_PARTS: AvatarParts = {
   faceAccessory: NONE,
   neckAccessory: NONE,
   background: "4",
+  pose: "front",
+  expression: "happy",
 };
 
-function known(field: AvatarField, id: string): boolean {
+function choicesOf(field: AvatarField): readonly { id: string }[] {
   const source = FIELD_SOURCES[field];
-  const list = "category" in source ? PARTS[source.category] : PALETTES[source.palette];
-  return list.some((item) => item.id === id);
+  if ("category" in source) return PARTS[source.category];
+  if ("palette" in source) return PALETTES[source.palette];
+  return source.choices;
+}
+
+function known(field: AvatarField, id: string): boolean {
+  return choicesOf(field).some((item) => item.id === id);
 }
 
 export function encodeAvatar(parts: AvatarParts): CustomAvatar {
@@ -68,18 +75,22 @@ const EXTRA_CHANCE: Partial<Record<AvatarField, number>> = {
 
 export function randomParts(random: () => number = Math.random): AvatarParts {
   const pick = <T>(list: readonly T[]) => list[Math.floor(random() * list.length)]!;
-  const parts = { ...DEFAULT_PARTS };
+  const parts = { ...DEFAULT_PARTS, pose: pick(POSES).id };
+  const pose = poseOf(parts.pose);
   for (const field of AVATAR_FIELDS) {
     const source = FIELD_SOURCES[field];
-    if ("palette" in source) {
-      parts[field] = pick(PALETTES[source.palette]).id;
+    if (field === "pose") continue;
+    if (!("category" in source)) {
+      parts[field] = pick(choicesOf(field)).id;
       continue;
     }
-    const options = PARTS[source.category];
+    // Only parts drawn for the pose.
+    const options = PARTS[source.category].filter((o) => hasPose(o, pose));
     const chance = EXTRA_CHANCE[field];
     const hasNone = options.some((o) => o.id === NONE);
     if (chance !== undefined && hasNone) {
-      parts[field] = random() < chance ? pick(options.filter((o) => o.id !== NONE)).id : NONE;
+      const extras = options.filter((o) => o.id !== NONE);
+      parts[field] = extras.length > 0 && random() < chance ? pick(extras).id : NONE;
     } else {
       // Keep sad and wincing faces for the game's reactions, not a random look.
       const usable =

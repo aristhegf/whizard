@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { decodeAvatar, type AvatarParts } from "./code";
-import { avatarLayers, tintTable, type BrowPose, type Layer, type Pose } from "./layers";
+import { avatarLayers, tintTable, type BrowPose, type Face, type Layer } from "./layers";
 import { swatchOf } from "./parts";
 
 // Draws a made-up avatar from its parts on a canvas, in the browser. Nothing is uploaded, and
@@ -57,7 +57,8 @@ function tint(ctx: CanvasRenderingContext2D, px: number, colour: string) {
   const d = image.data;
   for (let i = 0; i < d.length; i += 4) {
     if (d[i + 3] === 0) continue;
-    const grey = ((d[i]! + d[i + 1]! + d[i + 2]!) / 3) | 0;
+    // Brightness, so painted parts colour as well as grey ones.
+    const grey = (0.2126 * d[i]! + 0.7152 * d[i + 1]! + 0.0722 * d[i + 2]!) | 0;
     d[i] = table[grey * 3]!;
     d[i + 1] = table[grey * 3 + 1]!;
     d[i + 2] = table[grey * 3 + 2]!;
@@ -102,9 +103,48 @@ function drawLayer(ctx: CanvasRenderingContext2D, img: HTMLImageElement, layer: 
   ctx.restore();
 }
 
-async function draw(parts: AvatarParts, px: number, pose: Pose, view: View) {
-  const layers = avatarLayers(parts, pose);
+/** The Whizard disc behind an avatar: a glowing circle with a bright rim, as in the art. */
+function drawDisc(ctx: CanvasRenderingContext2D, colour: string, round: boolean) {
+  const glow = ctx.createRadialGradient(512, 360, 30, 512, 470, 620);
+  glow.addColorStop(0, shade(colour, 0.42));
+  glow.addColorStop(0.5, colour);
+  glow.addColorStop(1, shade(colour, -0.32));
+  ctx.fillStyle = glow;
+  if (round) {
+    ctx.beginPath();
+    ctx.arc(512, 512, 512, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    ctx.fillRect(0, 0, GRID, GRID);
+  }
+}
+
+function drawRim(ctx: CanvasRenderingContext2D, colour: string) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(512, 512, 512, 0, Math.PI * 2);
+  ctx.clip();
+  // A soft inner glow, then the bright rim itself.
+  ctx.shadowColor = shade(colour, 0.5);
+  ctx.shadowBlur = 40;
+  ctx.beginPath();
+  ctx.arc(512, 512, 500, 0, Math.PI * 2);
+  ctx.lineWidth = 20;
+  ctx.strokeStyle = shade(colour, 0.55);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.lineWidth = 8;
+  ctx.strokeStyle = shade(colour, 0.8);
+  ctx.stroke();
+  ctx.restore();
+}
+
+async function draw(parts: AvatarParts, px: number, face: Face, view: View) {
+  const { layers, mirror } = avatarLayers(parts, face);
   const loaded = await Promise.all(layers.map((l) => loadPart(l.src)));
+  const full = view === FULL_VIEW;
+  // A mirrored pose draws the other side of its art, then flips the picture.
+  const area = mirror ? { ...view, x: GRID - view.x - view.size } : view;
 
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = px;
@@ -112,18 +152,13 @@ async function draw(parts: AvatarParts, px: number, pose: Pose, view: View) {
   const scratch = document.createElement("canvas");
   scratch.width = scratch.height = px;
   const sctx = scratch.getContext("2d", { willReadFrequently: true })!;
-  const scale = px / view.size;
+  const scale = px / area.size;
   const toView = (c: CanvasRenderingContext2D) =>
-    c.setTransform(scale, 0, 0, scale, -view.x * scale, -view.y * scale);
+    c.setTransform(scale, 0, 0, scale, -area.x * scale, -area.y * scale);
 
   const colour = swatchOf("background", parts.background).colour;
   toView(ctx);
-  const glow = ctx.createRadialGradient(420, 330, 40, 512, 512, 600);
-  glow.addColorStop(0, shade(colour, 0.45));
-  glow.addColorStop(0.55, colour);
-  glow.addColorStop(1, shade(colour, -0.3));
-  ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, GRID, GRID);
+  drawDisc(ctx, colour, full);
 
   layers.forEach((layer, i) => {
     const img = loaded[i];
@@ -137,19 +172,23 @@ async function draw(parts: AvatarParts, px: number, pose: Pose, view: View) {
     ctx.drawImage(scratch, 0, 0);
   });
 
-  if (view === FULL_VIEW) {
-    // A round avatar with a lighter rim, like the built-in pictures.
+  if (full) {
+    // Round, like the built-in pictures, with the rim over anything that reaches the edge.
     toView(ctx);
     ctx.globalCompositeOperation = "destination-in";
     ctx.beginPath();
     ctx.arc(512, 512, 512, 0, Math.PI * 2);
     ctx.fill();
     ctx.globalCompositeOperation = "source-over";
-    ctx.beginPath();
-    ctx.arc(512, 512, 496, 0, Math.PI * 2);
-    ctx.lineWidth = 32;
-    ctx.strokeStyle = shade(colour, 0.4);
-    ctx.stroke();
+    drawRim(ctx, colour);
+  }
+
+  if (mirror) {
+    sctx.setTransform(1, 0, 0, 1, 0, 0);
+    sctx.clearRect(0, 0, px, px);
+    sctx.setTransform(-1, 0, 0, 1, px, 0);
+    sctx.drawImage(canvas, 0, 0);
+    return scratch.toDataURL("image/png");
   }
   return canvas.toDataURL("image/png");
 }
@@ -161,13 +200,13 @@ const pictures = new Map<string, Promise<string>>();
 export function avatarPicture(
   code: string,
   px: number,
-  pose: Pose = {},
+  face: Face = {},
   view: View = FULL_VIEW,
 ): Promise<string> {
-  const key = [code, px, pose.eyes, pose.mouth, pose.brows, view.x, view.y, view.size].join("|");
+  const key = [code, px, face.eyes, face.mouth, face.brows, view.x, view.y, view.size].join("|");
   let picture = pictures.get(key);
   if (!picture) {
-    picture = draw(decodeAvatar(code), px, pose, view);
+    picture = draw(decodeAvatar(code), px, face, view);
     pictures.set(key, picture);
     if (pictures.size > MAX_KEPT) pictures.delete(pictures.keys().next().value!);
   }
@@ -183,22 +222,22 @@ export function picturePixels(size: number): number {
 export function useAvatarPicture(
   code: string | null,
   size: number,
-  pose?: Pose,
+  face?: Face,
   view?: View,
 ): string | null {
   const [picture, setPicture] = useState<{ key: string; url: string } | null>(null);
   const px = picturePixels(size);
-  const key = code === null ? "" : `${code}|${px}|${JSON.stringify(pose)}|${JSON.stringify(view)}`;
+  const key = code === null ? "" : `${code}|${px}|${JSON.stringify(face)}|${JSON.stringify(view)}`;
   useEffect(() => {
     if (code === null) return;
     let live = true;
-    void avatarPicture(code, px, pose, view).then((url) => {
+    void avatarPicture(code, px, face, view).then((url) => {
       if (live) setPicture({ key, url });
     });
     return () => {
       live = false;
     };
-    // The key covers the pose and view objects, which callers often make fresh each render.
+    // The key covers the face and view objects, which callers often make fresh each render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
   // While a new picture draws, the last one stays up, so the creator doesn't flicker.

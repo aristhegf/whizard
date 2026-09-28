@@ -1,18 +1,24 @@
 import type { AvatarParts } from "./code";
-import { FOLDERS, optionOf, swatchOf, type PartCategory, type PartOption } from "./parts";
+import {
+  expressionOf,
+  FOLDERS,
+  hasPose,
+  optionOf as pickOption,
+  PARTS,
+  poseOf,
+  swatchOf,
+  type BrowPose,
+  type Catalogue,
+  type Face,
+  type PartCategory,
+  type PartOption,
+  type PoseTemplate,
+} from "./parts";
 
 // Which files make up an avatar, in the order they're drawn, back to front. This is the layer
 // stack from the art spec; the drawing itself is in render.ts.
 
-/** A face for the moment: the game shows a grin for a right answer, a wince for a wrong one. */
-export interface Pose {
-  eyes?: "open" | "closed" | "wide" | "wink";
-  /** A mouth option id, in place of the player's own. */
-  mouth?: string;
-  brows?: BrowPose;
-}
-
-export type BrowPose = "relaxed" | "raised" | "worried" | "cross";
+export type { BrowPose, Face };
 
 export interface Layer {
   src: string;
@@ -23,25 +29,48 @@ export interface Layer {
   brows?: BrowPose;
 }
 
-const BASE = "/art/avatar-parts";
-
-function file(category: PartCategory, option: PartOption, name: string): string | null {
-  if (!option.files.includes(name)) return null;
-  return `${BASE}/${FOLDERS[category]}/${option.id}/${name}.${option.ext ?? "svg"}`;
+export interface AvatarDrawing {
+  layers: Layer[];
+  /** Draw everything flipped left to right, for a pose that mirrors another. */
+  mirror: boolean;
 }
 
-export function avatarLayers(parts: AvatarParts, pose: Pose = {}): Layer[] {
+const BASE = "/art/avatar-parts";
+
+/**
+ * The layers for an avatar. `face` is a face for the moment (a game's reaction) in place of the
+ * player's own expression.
+ */
+export function avatarLayers(
+  parts: AvatarParts,
+  face: Face = {},
+  pose: PoseTemplate = poseOf(parts.pose),
+  catalogue: Catalogue = PARTS,
+): AvatarDrawing {
+  const optionOf = (category: PartCategory, id: string) => pickOption(category, id, catalogue);
+  const art = pose.mirrorOf ?? pose.id;
   const layers: Layer[] = [];
+  const file = (category: PartCategory, option: PartOption, name: string): string | null => {
+    if (!option.files.includes(name) || !hasPose(option, pose)) return null;
+    const tone = option.perTone ? `-${parts.skin}` : "";
+    return `${BASE}/${art}/${FOLDERS[category]}/${option.id}/${name}${tone}.${option.ext ?? "svg"}`;
+  };
   const add = (
     category: PartCategory,
     id: string,
     name: string,
     extra: Omit<Layer, "src"> = {},
   ) => {
-    const src = file(category, optionOf(category, id), name);
-    if (src) layers.push({ src, ...extra });
+    const option = optionOf(category, id);
+    const src = file(category, option, name);
+    if (!src) return;
+    // Parts painted for each skin tone carry their own colour.
+    const { tint, ...rest } = extra;
+    layers.push(option.perTone || tint === undefined ? { src, ...rest } : { src, tint, ...rest });
   };
 
+  const usual = expressionOf(parts.expression);
+  const look: Face = { eyes: usual.eyes, mouth: usual.mouth, brows: usual.brows, ...face };
   const skin = swatchOf("skin", parts.skin).colour;
   const hairColour = swatchOf("hair", parts.hairColour).colour;
   const topColour = swatchOf("clothes", parts.topColour).colour;
@@ -58,29 +87,29 @@ export function avatarLayers(parts: AvatarParts, pose: Pose = {}): Layer[] {
   if (covers === "top") add("hair", parts.hair, "hat-back", { tint: hairColour });
   add("headwear", parts.headwear, "back", headwearTint);
 
-  layers.push({ src: `${BASE}/body/standard/body.svg`, tint: skin });
+  // The head comes with its neck and shoulders, so the clothes go over it.
+  add("face", parts.face, "head", { tint: skin });
+  add("face", parts.face, "cheeks");
   add("top", parts.top, "front", { tint: topColour });
   add("top", parts.top, "details");
   add("jacket", parts.jacket, "front", { tint: jacketColour });
   add("jacket", parts.jacket, "details");
   add("neckAccessory", parts.neckAccessory, "accessory");
 
-  add("face", parts.face, "head", { tint: skin });
-  add("face", parts.face, "cheeks");
   add("faceAccessory", parts.faceAccessory, "accessory");
   if (covers !== "all") add("earrings", parts.earrings, "earrings");
-  add("mouth", pose.mouth ?? parts.mouth, "mouth");
+  add("mouth", look.mouth ?? parts.mouth, "mouth");
   add("facialHair", parts.facialHair, "facial-hair", { tint: hairColour });
 
   const eyes = optionOf("eyes", parts.eyes);
-  if (pose.eyes === "wink") {
+  if (look.eyes === "wink") {
     add("eyes", eyes.id, "open", { half: "left" });
     add("eyes", eyes.id, "closed", { half: "right" });
   } else {
-    const state = pose.eyes && eyes.files.includes(pose.eyes) ? pose.eyes : "open";
+    const state = look.eyes && eyes.files.includes(look.eyes) ? look.eyes : "open";
     add("eyes", eyes.id, state);
   }
-  add("brows", parts.brows, "brows", { tint: hairColour, brows: pose.brows ?? "relaxed" });
+  add("brows", parts.brows, "brows", { tint: hairColour, brows: look.brows ?? "relaxed" });
   add("glasses", parts.glasses, "glasses");
 
   if (covers === "none") add("hair", parts.hair, "front", { tint: hairColour });
@@ -89,7 +118,7 @@ export function avatarLayers(parts: AvatarParts, pose: Pose = {}): Layer[] {
   add("headwear", parts.headwear, "details");
   const accessory = optionOf("headAccessory", parts.headAccessory);
   if (!(accessory.noHat && covers !== "none")) add("headAccessory", accessory.id, "accessory");
-  return layers;
+  return { layers, mirror: pose.mirrorOf !== undefined };
 }
 
 const hex = (colour: string): [number, number, number] => {
