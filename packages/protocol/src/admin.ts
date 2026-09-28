@@ -145,3 +145,89 @@ export interface AdminAnalytics {
   /** New visitors per UTC day, oldest first, every day of the range. */
   newVisitorsPerDay: { day: string; count: number }[];
 }
+
+// Questions and content ------------------------------------------------------------------------
+
+/** Where a question comes from: the bank that ships, an admin's edit of one, or an admin's own. */
+export type QuestionOrigin = "bank" | "edited" | "added";
+
+/** In play, left out after 3 reports, or retired by an admin. */
+export type QuestionPlay = "in_play" | "reported_out" | "retired";
+
+export interface QuestionStats {
+  /** Players who picked an answer, for the current wording. */
+  answered: number;
+  correct: number;
+  timedOut: number;
+  /** The wrong answers picked most, most first. */
+  wrongPicks: { choice: string; picks: number }[];
+}
+
+export interface AdminQuestion {
+  id: string;
+  category: string;
+  /** A sub-topic, e.g. "Genesis". */
+  topic: string;
+  difficulty: string;
+  prompt: string;
+  /** Four; the first is the correct answer. */
+  choices: string[];
+  explanation: string;
+  reference: string | null;
+  origin: QuestionOrigin;
+  play: QuestionPlay;
+  /** Reports on the current wording. */
+  reports: number;
+  stats: QuestionStats | null;
+}
+
+export interface AdminQuestionDetail extends AdminQuestion {
+  /** The shipped wording, for an edited question. */
+  original: QuestionInput | null;
+}
+
+export interface QuestionInput {
+  topic: string;
+  difficulty: string;
+  prompt: string;
+  choices: string[];
+  explanation: string;
+  reference: string | null;
+}
+
+export interface NewQuestionInput extends QuestionInput {
+  category: string;
+}
+
+export interface AdminQuestionsSummary {
+  totals: {
+    inPlay: number;
+    added: number;
+    edited: number;
+    outOfPlay: number;
+    /** Answers recorded, across every question's current wording. */
+    answers: number;
+  };
+  /** Questions in play for each topic and level. */
+  coverage: { category: string; easy: number; medium: number; hard: number }[];
+  /** Lowest share right, among questions with enough answers. */
+  hardest: AdminQuestion[];
+  easiest: AdminQuestion[];
+  /** Questions whose answers suggest another level. */
+  levelCheck: (AdminQuestion & { suggested: string })[];
+  /** How many answers a question needs before it's ranked. */
+  minAnswers: number;
+}
+
+export const QUESTION_FILTERS = ["all", "added", "edited", "out"] as const;
+export type QuestionFilter = (typeof QUESTION_FILTERS)[number];
+
+export const QUESTION_SORTS = ["id", "hardest", "played"] as const;
+export type QuestionSort = (typeof QUESTION_SORTS)[number];
+
+export interface AdminQuestionList {
+  questions: AdminQuestion[];
+  /** Questions matching the filters. */
+  total: number;
+  more: boolean;
+}

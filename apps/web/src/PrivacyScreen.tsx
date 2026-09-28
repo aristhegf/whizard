@@ -100,7 +100,8 @@ export function PrivacyScreen() {
           open right now, with the nicknames everyone in the room already sees; a room drops off the
           list as soon as it closes. To deal with abuse, an admin can close a room, suspend an
           account (it’s signed out and can’t sign in until it’s let back in) or delete it. Every one
-          of those actions is recorded.
+          of those actions is recorded. For each question, admins also see how many players got it
+          right and which wrong answers were picked, as totals with nothing about who answered.
         </p>
 
         <h2>Your choices</h2>

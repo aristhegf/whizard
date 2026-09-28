@@ -54,3 +54,7 @@ Quiz questions live in `packages/content/src/questions/`, one JSON file per cate
 2. **Fact-check independently.** Someone who didn't write the batch reviews every question as a skeptic: is the answer definitely right, is any wrong choice also defensible, is the wording ambiguous, could it go stale, is the level right? They fix or replace anything that fails. The first 600 questions changed 28 times at this step, so it's worth it.
 3. **Test** with `pnpm test`. The suite rejects bad shapes, repeated choices, giveaways, near-duplicates and missing Bible references, repeats of a fact another category asks, and makes sure every level of every category still has at least 60 questions.
 4. **Ship** through a normal commit. The deploy runs only when every check passes.
+
+## Fixing or adding one question from the admin page
+
+For a quick fix, or a single new question, admins can use **Content** at `/admin/content` instead. It runs the same checks, and the change reaches new games within a minute, with no deploy. The edit lives in the database on top of these files, so for anything lasting, copy it into the category's file through a pull request (with a fact-check as above) and then press **Undo my edits**. The **Questions** page shows which questions players get wrong most and which look easier or harder than their level, which is a good place to find what to fix.

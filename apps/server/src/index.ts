@@ -52,6 +52,15 @@ import { COUNTRY_HEADER, NETWORK_HEADER } from "./presence";
 import { ACCOUNT_HEADER } from "./room";
 import { decideReport, getAdminActivity, getAdminOverview, getAdminReports } from "./admin";
 import { getAdminAnalytics } from "./adminAnalytics";
+import {
+  addQuestion,
+  getQuestion,
+  getQuestionsSummary,
+  listQuestions,
+  revertQuestion,
+  updateQuestion,
+} from "./adminQuestions";
+import { loadBank } from "./bank";
 import { closeRoom, getAdminRooms } from "./adminRooms";
 import { getAdminUsers, manageUser } from "./adminUsers";
 import { reportQuestion } from "./reports";
@@ -68,13 +77,13 @@ async function health(): Promise<Response> {
   return Response.json({ ok: true, protocolVersion: PROTOCOL_VERSION });
 }
 
-async function quizCategories(): Promise<Response> {
-  const counts = questionCounts();
+async function quizCategories({ env }: RequestContext): Promise<Response> {
+  const counts = questionCounts((await loadBank(env)).questions);
   const categories = QUIZ_CATEGORIES.map((c) => ({
     ...c,
     questions: counts[c.id] ?? { easy: 0, medium: 0, hard: 0 },
   }));
-  return Response.json({ categories }, { headers: { "Cache-Control": "public, max-age=300" } });
+  return Response.json({ categories }, { headers: { "Cache-Control": "public, max-age=60" } });
 }
 
 /** Creates a room. The body can preset the game's settings, e.g. `{"settings":{"category":"music"}}`. */
@@ -199,6 +208,12 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/admin\/rooms$/, getAdminRooms],
   ["POST", /^\/api\/admin\/rooms\/([^/]+)\/close$/, closeRoom],
   ["GET", /^\/api\/admin\/analytics$/, getAdminAnalytics],
+  ["GET", /^\/api\/admin\/questions\/summary$/, getQuestionsSummary],
+  ["GET", /^\/api\/admin\/questions$/, listQuestions],
+  ["POST", /^\/api\/admin\/questions$/, addQuestion],
+  ["GET", /^\/api\/admin\/questions\/([^/]+)$/, getQuestion],
+  ["PATCH", /^\/api\/admin\/questions\/([^/]+)$/, updateQuestion],
+  ["DELETE", /^\/api\/admin\/questions\/([^/]+)$/, revertQuestion],
 
   ["POST", /^\/api\/auth\/signup\/options$/, signUpOptions],
   ["POST", /^\/api\/auth\/signup\/verify$/, signUpVerify],

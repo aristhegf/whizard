@@ -10,7 +10,9 @@ import { Icon, type IconName } from "../ui/Icon";
 import { Loading } from "../ui/Loading";
 import { LogoMark } from "../ui/Logo";
 import { Analytics } from "./Analytics";
+import { Content } from "./Content";
 import { Dashboard } from "./Dashboard";
+import { Questions } from "./Questions";
 import { Reports } from "./Reports";
 import { Rooms } from "./Rooms";
 import { Users } from "./Users";
@@ -29,6 +31,8 @@ const SUBTITLES: Record<string, string> = {
   rooms: "Rooms open right now and what they’re playing.",
   users: "Accounts, sign-ups and removing abusive ones.",
   analytics: "Who visits, where they come from and what they look at.",
+  questions: "The bank by topic and level, and how each question plays.",
+  content: "Browse, edit and add questions. Changes reach new games within a minute.",
 };
 
 const SECTIONS: Section[] = [
@@ -39,17 +43,12 @@ const SECTIONS: Section[] = [
     icon: "games",
     soon: "Each game's settings, and turning games on and off.",
   },
-  {
-    id: "questions",
-    label: "Questions",
-    icon: "help",
-    soon: "The question bank by topic and level, and the questions players get wrong most.",
-  },
+  { id: "questions", label: "Questions", icon: "help" },
   { id: "rooms", label: "Rooms", icon: "door" },
   { id: "users", label: "Users", icon: "users" },
   { id: "analytics", label: "Analytics", icon: "repeat" },
   { id: "reports", label: "Reports", icon: "flag" },
-  { id: "content", label: "Content", icon: "layers", soon: "Adding and editing questions." },
+  { id: "content", label: "Content", icon: "layers" },
   {
     id: "moderation",
     label: "Moderation",
@@ -66,7 +65,7 @@ const SECTIONS: Section[] = [
 ];
 
 /** `/admin`: only accounts marked as admin get in; the server checks every request too. */
-export function AdminApp({ section }: { section: string }) {
+export function AdminApp({ section, item }: { section: string; item: string | null }) {
   const account = useAccount();
   if (account.status === "loading") {
     return <Loading className="admin-loading" />;
@@ -74,10 +73,18 @@ export function AdminApp({ section }: { section: string }) {
   if (!account.user)
     return <Notice message="Sign in with an admin account to open the dashboard." />;
   if (!account.user.admin) return <Notice message="This page is for Whizard admins." />;
-  return <AdminShell section={section} user={account.user} />;
+  return <AdminShell section={section} item={item} user={account.user} />;
 }
 
-function AdminShell({ section, user }: { section: string; user: AccountUser }) {
+function AdminShell({
+  section,
+  item,
+  user,
+}: {
+  section: string;
+  item: string | null;
+  user: AccountUser;
+}) {
   const [range, setRange] = useState<StatsRange>(30);
   const [openReports, setOpenReports] = useState(0);
   const current = SECTIONS.find((s) => s.id === section) ?? SECTIONS[0]!;
@@ -169,6 +176,10 @@ function AdminShell({ section, user }: { section: string; user: AccountUser }) {
           <Rooms />
         ) : current.id === "users" ? (
           <Users />
+        ) : current.id === "questions" ? (
+          <Questions />
+        ) : current.id === "content" ? (
+          <Content item={item} />
         ) : (
           <section className="panel admin-soon">
             <Icon name={current.icon} size={40} />

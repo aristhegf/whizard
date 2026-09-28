@@ -3,6 +3,13 @@ import type {
   ActivityItem,
   AdminAnalytics,
   AdminOverview,
+  AdminQuestionDetail,
+  AdminQuestionList,
+  AdminQuestionsSummary,
+  NewQuestionInput,
+  QuestionFilter,
+  QuestionInput,
+  QuestionSort,
   AdminRooms,
   AdminUsers,
   CommunityStats,
@@ -90,10 +97,25 @@ export const fetchAdminRooms = () => adminGet<AdminRooms>("rooms");
 export const fetchAdminAnalytics = (range: StatsRange) =>
   adminGet<AdminAnalytics>(`analytics?range=${range}`);
 
+export const fetchQuestionsSummary = () => adminGet<AdminQuestionsSummary>("questions/summary");
+export const fetchAdminQuestions = (query: {
+  category: string;
+  difficulty: string;
+  q: string;
+  filter: QuestionFilter;
+  sort: QuestionSort;
+  offset: number;
+}) =>
+  adminGet<AdminQuestionList>(
+    `questions?${new URLSearchParams({ ...query, offset: String(query.offset) }).toString()}`,
+  );
+export const fetchAdminQuestion = (id: string) =>
+  adminGet<AdminQuestionDetail>(`questions/${encodeURIComponent(id)}`);
+
 /** An admin action; throws with the server's message when it's refused. */
-async function adminPost(path: string, body: unknown): Promise<void> {
+async function adminPost<T = unknown>(path: string, body: unknown, method = "POST"): Promise<T> {
   const response = await fetch(`/api/admin/${path}`, {
-    method: "POST",
+    method,
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
@@ -103,6 +125,7 @@ async function adminPost(path: string, body: unknown): Promise<void> {
     } | null;
     throw new Error(body?.error?.message ?? `Could not save that (${response.status})`);
   }
+  return (await response.json()) as T;
 }
 
 export const decideReport = (questionId: string, action: ReportAction) =>
@@ -110,6 +133,12 @@ export const decideReport = (questionId: string, action: ReportAction) =>
 export const manageUser = (userId: string, action: UserAction) =>
   adminPost(`users/${encodeURIComponent(userId)}`, { action });
 export const closeRoom = (code: string) => adminPost(`rooms/${encodeURIComponent(code)}/close`, {});
+export const saveQuestion = (id: string, input: QuestionInput) =>
+  adminPost<{ id: string }>(`questions/${encodeURIComponent(id)}`, input, "PATCH");
+export const addQuestion = (input: NewQuestionInput) =>
+  adminPost<{ id: string }>("questions", input);
+export const revertQuestion = (id: string) =>
+  adminPost(`questions/${encodeURIComponent(id)}`, undefined, "DELETE");
 
 export interface QuizCategoryInfo {
   id: QuizCategory;

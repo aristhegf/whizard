@@ -58,7 +58,13 @@ export {
   type RosterEntry,
 } from "./session";
 export { GAMES, GAME_IDS, gameModule, type GameId } from "./games/registry";
-export type { ContentRequest, GameModule, GamePlayer, GameSummary } from "./games/types";
+export type {
+  ContentRequest,
+  GameModule,
+  GamePlayer,
+  GameSummary,
+  ItemResult,
+} from "./games/types";
 export {
   AUTO_ADVANCE_MS,
   CLASSIC_IDLE_LIMIT_MS,

@@ -42,6 +42,7 @@ import {
 } from "@whizard/protocol";
 import type { Env } from "./env";
 import { count, logActivity, recordPlayerDays, sizeBucket } from "./analytics";
+import { loadBank, recordQuestionStats } from "./bank";
 import { liveRoomOf, removeLiveRoom, saveLiveRoom } from "./liveRooms";
 import { recordMatch } from "./matches";
 import { retiredQuestions } from "./reports";
@@ -269,17 +270,23 @@ export class Room extends DurableObject<Env> {
     const viewers = (before?.players ?? [])
       .filter((p) => connected.has(p.id))
       .flatMap((p) => viewerKey(p) ?? []);
+    const bank = await loadBank(this.env);
     const [seen, retired] = request
       ? await Promise.all([
           loadSeen(this.env, viewers, request.category),
-          retiredQuestions(this.env, request.category),
+          retiredQuestions(this.env, request.category, bank),
         ])
       : [new Map(), new Set<string>()];
 
     let drawn: string[] = [];
     const started = await this.handleGame(ws, (state, playerId, now) =>
       startGame(state, playerId, this.connectedIds(), now, randomSeed(), (req, seed, room) => {
-        const content = drawContent(req, seed, { recent: room.recent, seen, retired });
+        const content = drawContent(
+          req,
+          seed,
+          { recent: room.recent, seen, retired },
+          bank.questions,
+        );
         drawn = content.map((q) => (q as { id: string }).id);
         return content;
       }),
@@ -368,6 +375,7 @@ export class Room extends DurableObject<Env> {
         topic: summary.category,
         players: summary.players.length,
       });
+      await recordQuestionStats(this.env, summary.items ?? []);
       try {
         await recordMatch(this.env, result, Date.now());
       } catch (error) {

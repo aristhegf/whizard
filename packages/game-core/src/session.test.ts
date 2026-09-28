@@ -223,6 +223,21 @@ describe("match results", () => {
     expect(unrecordedResult(markRecorded(finished))).toBeNull();
   });
 
+  it("says how each question went", () => {
+    const { state, connected } = room("Ada", "Tolu");
+    const started = ok(startGame(state, "p1", connected, T0, 1, bank));
+    const move = { type: "answer", index: 0, choice: 0, clientElapsedMs: 500 };
+    const answered = ok(applyGameAction(started, "p1", move, T0 + COUNTDOWN_MS + 600));
+    const items = unrecordedResult(runOut(answered, connected))?.summary.items ?? [];
+    expect(items).toHaveLength(DEFAULT_QUIZ_SETTINGS.count);
+    // Ada answered the first question; everything else ran out of time.
+    const first = items[0]!;
+    expect(first.answered).toBe(1);
+    expect(first.timedOut).toBe(1);
+    expect(first.correct + Object.values(first.wrongPicks).reduce((a, b) => a + b, 0)).toBe(1);
+    expect(items.slice(1).every((i) => i.answered === 0 && i.timedOut === 2)).toBe(true);
+  });
+
   it("leaves out players who quit before the end", () => {
     const { state, connected } = room("Ada", "Tolu");
     const started = ok(startGame(state, "p1", connected, T0, 1, bank));
