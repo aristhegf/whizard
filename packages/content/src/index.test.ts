@@ -4,6 +4,7 @@ import {
   QUESTIONS,
   QUESTION_FILES,
   drawContent,
+  drawQuestionPlan,
   drawQuestions,
   type DrawOptions,
   findQuestion,
@@ -161,5 +162,20 @@ describe("drawContent for a jigsaw", () => {
       id: string;
     }[];
     expect(random!.id).toMatch(/^jigsaw:/);
+  });
+});
+
+describe("drawQuestionPlan", () => {
+  it("follows an Auto plan level by level, in order, without repeats", () => {
+    const plan = ["easy", "easy", "medium", "hard", "hard"] as const;
+    const drawn = drawQuestionPlan("music", plan, 3);
+    expect(drawn.map((q) => q.difficulty)).toEqual(plan);
+    expect(drawn.every((q) => q.category === "music")).toBe(true);
+    expect(new Set(drawn.map((q) => q.id)).size).toBe(plan.length);
+  });
+
+  it("draws a single level the same way as before", () => {
+    const levels = Array(10).fill("medium");
+    expect(drawQuestionPlan("bible", levels, 8)).toEqual(drawQuestions("bible", "medium", 10, 8));
   });
 });

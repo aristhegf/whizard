@@ -1,6 +1,6 @@
 import { shuffled } from "../../random";
 import type { ItemResult } from "../types";
-import type { QuizQuestion } from "./settings";
+import type { QuizDifficulty, QuizLevel, QuizQuestion } from "./settings";
 
 // What Classic and Speed share with Elimination.
 
@@ -12,6 +12,8 @@ export interface PreparedQuestion {
   prompt: string;
   choices: string[];
   correctChoice: number;
+  /** What it's worth depends on its level. */
+  level: QuizDifficulty;
   explanation: string | null;
   reference: string | null;
 }
@@ -39,7 +41,12 @@ export interface QuizReviewItem {
   reference: string | null;
 }
 
-export function prepare(question: QuizQuestion, rng: () => number): PreparedQuestion {
+/** `level` is the game's, for a question that doesn't say its own. */
+export function prepare(
+  question: QuizQuestion,
+  rng: () => number,
+  level: QuizLevel = "medium",
+): PreparedQuestion {
   const order = shuffled(
     question.choices.map((_, i) => i),
     rng,
@@ -49,6 +56,7 @@ export function prepare(question: QuizQuestion, rng: () => number): PreparedQues
     prompt: question.prompt,
     choices: order.map((i) => question.choices[i]!),
     correctChoice: order.indexOf(0),
+    level: question.difficulty ?? (level === "auto" ? "medium" : level),
     explanation: question.explanation ?? null,
     reference: question.reference ?? null,
   };

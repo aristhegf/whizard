@@ -1,4 +1,4 @@
-import { levelsFor, WORD_LEVELS } from "@whizard/game-core";
+import { levelPlan, WORD_LEVELS } from "@whizard/game-core";
 import { describe, expect, it } from "vitest";
 import { drawWords, WORDS } from "./index";
 
@@ -61,16 +61,16 @@ describe("word bank", () => {
 
 describe("drawWords", () => {
   it("draws one word per round at that round's level, without repeats", () => {
-    const levels = levelsFor(15);
+    const levels = levelPlan("auto", 15);
     const drawn = drawWords(levels, 1);
     expect(drawn.map((w) => w.level)).toEqual(levels);
     expect(new Set(drawn.map((w) => w.id)).size).toBe(15);
   });
 
   it("is repeatable for a seed and skips words the room used", () => {
-    const first = drawWords(levelsFor(10), 4).map((w) => w.id);
-    expect(drawWords(levelsFor(10), 4).map((w) => w.id)).toEqual(first);
-    const second = drawWords(levelsFor(10), 5, { recent: first }).map((w) => w.id);
+    const first = drawWords(levelPlan("auto", 10), 4).map((w) => w.id);
+    expect(drawWords(levelPlan("auto", 10), 4).map((w) => w.id)).toEqual(first);
+    const second = drawWords(levelPlan("auto", 10), 5, { recent: first }).map((w) => w.id);
     expect(second.filter((id) => first.includes(id))).toEqual([]);
   });
 

@@ -10,9 +10,10 @@ import {
   SPOT_IT_MIN_SIZE,
   spotItGame,
   spotItPuzzles,
-  type SpotItState,
-  type SpotItView,
+  type SpotItSpeedState as SpotItState,
+  type SpotItSpeedView as SpotItView,
 } from "./spotIt";
+import { levelPlan, type Level } from "../levels";
 
 const T0 = 1_000_000;
 const START = T0 + ROUNDS_COUNTDOWN_MS;
@@ -24,13 +25,13 @@ function setup(rounds: 5 | 10 | 15 = 10, seed = 3): SpotItState {
     content: [],
     seed,
     now: T0,
-  });
+  }) as SpotItState;
 }
 
 function act(state: SpotItState, action: RoundsAction<number>, now: number) {
   const result = spotItGame.onAction(spotItGame.tick(state, now), "ada", action, now);
   if (isRejection(result)) throw new Error(result.rejected);
-  return result;
+  return result as SpotItState;
 }
 
 const tap = (index: number, cell: number): RoundsAction<number> => ({
@@ -42,12 +43,12 @@ const tap = (index: number, cell: number): RoundsAction<number> => ({
 
 describe("Spot It", () => {
   it("needs nothing from the content bank", () => {
-    expect(spotItGame.contentNeeded(DEFAULT_SPOT_IT_SETTINGS)).toBeNull();
+    expect(spotItGame.contentNeeded(DEFAULT_SPOT_IT_SETTINGS, 1)).toBeNull();
   });
 
   it("has exactly one odd cell in every grid", () => {
     for (let seed = 0; seed < 50; seed++) {
-      for (const puzzle of spotItPuzzles(15, seededRng(seed))) {
+      for (const puzzle of spotItPuzzles(levelPlan("auto", 15), seededRng(seed))) {
         const cells: unknown[] = puzzle.view.cells;
         expect(cells).toHaveLength(puzzle.view.size ** 2);
         const odd = cells[puzzle.odd];
@@ -57,15 +58,25 @@ describe("Spot It", () => {
     }
   });
 
-  it("grows the grid, makes it subtler and takes turns with the kinds", () => {
-    const puzzles = spotItPuzzles(10, seededRng(1));
+  it("on Auto, grows the grid, makes it subtler and takes turns with the kinds", () => {
+    const puzzles = spotItPuzzles(levelPlan("auto", 10), seededRng(1));
     const sizes = puzzles.map((p) => p.view.size);
     expect(sizes[0]).toBe(SPOT_IT_MIN_SIZE);
     expect(sizes.at(-1)).toBe(SPOT_IT_MAX_SIZE);
-    expect([...sizes].sort((a, b) => a - b)).toEqual(sizes);
-    expect(puzzles[0]!.tier).toBe(0);
-    expect(puzzles.at(-1)!.tier).toBe(2);
+    // Auto mixes levels within a stage, so sizes climb overall rather than at every step.
+    const half = (part: number[]) => part.reduce((a, b) => a + b, 0) / part.length;
+    expect(half(sizes.slice(5))).toBeGreaterThan(half(sizes.slice(0, 5)) + 1.5);
+    expect(puzzles[0]!.level).toBe("easy");
+    expect(puzzles.at(-1)!.level).toBe("hard");
     expect(new Set(puzzles.slice(0, 4).map((p) => p.view.kind))).toEqual(new Set(SPOT_IT_KINDS));
+  });
+
+  it("keeps a fixed level's grids to that level's sizes", () => {
+    const sizes = (level: Level) =>
+      new Set(spotItPuzzles(levelPlan(level, 10), seededRng(2)).map((p) => p.view.size));
+    expect(sizes("easy")).toEqual(new Set([4, 5]));
+    expect(sizes("medium")).toEqual(new Set([5, 6]));
+    expect(sizes("hard")).toEqual(new Set([6, 7]));
   });
 
   it("makes the same grids from the same seed", () => {

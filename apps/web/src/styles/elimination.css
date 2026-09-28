@@ -146,3 +146,34 @@
   margin: 0;
   font-weight: 700;
 }
+
+/* "Round 2 of 4 · Question 5" stays on one line; on phones it gets a line of its own. */
+.elim-progress {
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .game-bar-row:has(.elim-progress) {
+    flex-wrap: wrap;
+  }
+
+  .elim-progress {
+    order: 3;
+    flex-basis: 100%;
+    font-size: 0.95rem;
+  }
+}
+
+/* Done with a word or grid, waiting for everyone else. */
+.elim-waiting {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding-top: 24px;
+  text-align: center;
+}
+
+.elim-waiting img {
+  width: 150px;
+  height: auto;
+}

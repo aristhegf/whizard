@@ -111,11 +111,11 @@ Each game's screens live in the web app under `src/games/<id>/`. Canvas-heavy ga
 
 ## Quiz (launch game)
 
-The host picks a **mode**, a **category**, a **level** (easy, medium or hard) and the **number of questions** (5, 10, 15 or 20). The room draws one question set. Quiz can be played solo.
+The host picks a **mode**, a **category**, a **level** (easy, medium, hard or Auto, see [Levels](#levels-and-auto)) and the **number of questions** (5, 10, 15 or 20). The room draws one question set. Quiz can be played solo.
 
 | Mode            | Questions                                                                      | Points                                                            |
 | --------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| **Classic**     | No clock. Answer, then move on.                                                | The full points for the level for each right answer               |
+| **Classic**     | No clock. Answer, then move on.                                                | The full points for the question's level for each right answer    |
 | **Speed**       | A countdown on every question: 10, 20 or 30 seconds, host's choice             | 50% to 100% of the points for a right answer, the faster the more |
 | **Elimination** | Everyone on the same question with a countdown; knock-out rounds, then a final | As in Speed                                                       |
 
@@ -144,7 +144,7 @@ This pacing is decided entirely on the player's own screen: the server only need
 
 ### Elimination
 
-A mode for 3 or more players, with its own rules (`games/quiz/elimination.ts`). Unlike Classic and Speed, **everyone plays each question together**: it opens for all at the same moment, and closes when time runs out or everyone still in has answered. Then everyone sees the right answer for 3.5 seconds.
+A mode for 3 or more players, in the quiz, Word Rush and Spot It. All three use the same knock-out rules (`games/knockout/knockout.ts`); each game only brings its items (questions, words or grids) and what a move on one is worth. Unlike Classic and Speed, **everyone plays each question together**: it opens for all at the same moment, and closes when time runs out or everyone still in is done with it (answered, solved, out of tries or given up). Then everyone sees the right answer for 3.5 seconds.
 
 - **Rounds.** The questions before a 3-question final are split between knock-out rounds (`planRounds`): as many rounds as there are players to knock out, at most 6, and never more than there are questions. With 5 players and 10 questions that's rounds of 3, 2 and 2 questions; with 12 players and 15 questions, six rounds of 2.
 - **Who goes.** At the end of each round the lowest total scores are knocked out (`keepCount`). Each round keeps the same share of the players still in, so the field shrinks geometrically to exactly two: with 20 players the rounds knock out 6, 5, 3, 2, 1 and 1; with 12, 3, 2, 2, 1, 1 and 1; with 5, one a round. Every round knocks out at least one, and leaves enough for later rounds to knock out one each. It's worked out from whoever is still in, so players leaving don't break it: if only two are left, the final starts early, and if only one is left, they win.
@@ -155,13 +155,31 @@ A mode for 3 or more players, with its own rules (`games/quiz/elimination.ts`). 
 
 Between phases there are short screens: each round's knock-outs (6 seconds, with "You're through" or "You're out, you finished 5th"), and the finalists' introduction (5 seconds). All the timing is on the server, in the game's state, so every player sees the same thing at the same time.
 
+### Levels and Auto
+
+Every game with levels offers **Easy**, **Medium**, **Hard** and **Auto** (`games/levels.ts`), in every mode. A fixed level keeps the whole game at it. **Auto** starts easy and gets harder, mixing the three levels as it goes. Harder items are worth more: 1,000, 1,250 and 1,500 points.
+
+Auto splits the game into stages: the knock-out rounds and the final in Elimination, or up to 5 even stages in Classic and Speed. With `p` running from 0 at the first stage to 1 at the last, each stage's share of easy, medium and hard is (1 − p)², 2p(1 − p) and p². They always add up to 1, all easy at the start, all hard at the end. Each stage's share becomes whole items by the nearest counts that add up, ties going to the harder level, with the easier ones first. The final and sudden death are all hard. For 20 players and 20 questions in Elimination:
+
+| Round | Easy / medium / hard | Questions                |
+| ----- | -------------------- | ------------------------ |
+| 1     | 100 / 0 / 0          | 3 easy                   |
+| 2     | 69 / 28 / 3          | 2 easy, 1 medium         |
+| 3     | 44 / 44 / 11         | 1 easy, 2 medium         |
+| 4     | 25 / 50 / 25         | 1 easy, 1 medium, 1 hard |
+| 5     | 11 / 44 / 44         | 2 medium, 1 hard         |
+| 6     | 3 / 28 / 69          | 1 medium, 1 hard         |
+| Final | 0 / 0 / 100          | 3 hard                   |
+
+The plan is made before the game starts (`levelPlan`, `knockoutLevelPlan`), from the settings and how many are playing, and the room draws content to match it (`drawQuestionPlan`, `drawWords`): each level's least-used items, in the plan's order.
+
 ## Word Rush and Spot It
 
-Both games share one set of rules (`games/rounds/rounds.ts`): everyone gets the same puzzles and the first one appears for everyone at the same moment, then each player works through them at their own pace, like a Classic or Speed quiz. A round ends when the player solves it, gives up, runs out of tries or runs out of time. The result shows for about 1.5 seconds, then the next round starts. Each game only brings its puzzles, how a guess is checked, and what a puzzle looks like to the player.
+Both games have two modes. **Elimination** is the quiz's, above. In **Speed** (`games/rounds/rounds.ts`) everyone gets the same puzzles and the first one appears for everyone at the same moment, then each player works through them at their own pace, like a Classic or Speed quiz. A round ends when the player solves it, gives up, runs out of tries or runs out of time. The result shows for about 1.5 seconds, then the next round starts. Each game only brings its puzzles, how a guess is checked, and what a puzzle looks like to the player.
 
 - **Points.** A solve earns 50% to 100% of the round's points by speed, less 10% for each wrong try, and never less than 10%. Giving up, running out of tries or time earns nothing. Ties are broken by total time.
 - **Tries.** A wrong try is shown to the player (the word crossed out, or the tapped cell marked) and shakes the puzzle. A guess that couldn't be right, such as a word of the wrong length, is turned down without costing a try, and so is the same guess twice.
-- **Settings:** 5, 10 or 15 rounds, and the time per round.
+- **Settings:** the mode, the level, 5, 10 or 15 rounds, and the time per round.
 - **Results:** a podium and final rankings as in the quiz, and each player's own rounds: the word, or which grid, and how it went.
 
 ### Word Rush
@@ -171,7 +189,7 @@ Each round is a word with a hint (Animal, Food, Nigerian food, City…), shown o
 - **Unscramble:** the letters in a shuffled order that never already spells an accepted word. Players type or tap the letter tiles.
 - **Missing letters:** the word with some letters hidden, never the first. Players type just the missing ones, which fill the gaps.
 
-Words get harder through the game: the first third easy, then medium, then hard. The words are in `packages/content/src/words/source.txt` (240 at launch: 97 easy, 80 medium, 63 hard). `pnpm --filter @whizard/content words` turns them into `words.json`, using an English word list (`an-array-of-english-words`, MIT) to work out two things for each word, so a real word is never marked wrong:
+The words come at the level picked, or on Auto from easy to hard. The words are in `packages/content/src/words/source.txt` (240 at launch: 97 easy, 80 medium, 63 hard). `pnpm --filter @whizard/content words` turns them into `words.json`, using an English word list (`an-array-of-english-words`, MIT) to work out two things for each word, so a real word is never marked wrong:
 
 - **Other words from the same letters** (LION: LOIN), which count when unscrambling.
 - **Which letters to hide:** 2 for easy words, 3 for medium, 4 for hard (at most half the word), spread out rather than in a run, picked so that at most two other words fit the pattern; those count too. Short words with too many look-alikes get fewer gaps.
@@ -180,7 +198,7 @@ A room draws one word per round at that round's level, avoiding words the room u
 
 ### Spot It
 
-Each round is a grid with exactly one cell that's different. Tap it. The grids are made from the room's seed, so everyone gets the same ones and nothing comes from the content bank. Four kinds take turns: look-alike emoji, look-alike letters (E and F, O and Q, 8 and B), a slightly different shade of a colour, and an arrow turned a little. Through the game the grid grows from 4 by 4 to 7 by 7, and the difference gets subtler: harder pairs, a closer shade (18% lighter or darker down to 7%) and a smaller turn (45° down to 12°). Three wrong taps lose the round. The result shows the grid again with the odd one marked.
+Each round is a grid with exactly one cell that's different. Tap it. The grids are made from the room's seed, so everyone gets the same ones and nothing comes from the content bank. Four kinds take turns: look-alike emoji, look-alike letters (E and F, O and Q, 8 and B), a slightly different shade of a colour, and an arrow turned a little. Each level sets the grid and how subtle the difference is: easy is 4 by 4 with obvious pairs, an 18% shade and a 45° turn; medium is 5 by 5, 12% and 25°; hard is 6 by 6 with the closest look-alikes, 7% and 12°. Grids grow by one in the second half of the game, so Auto runs from 4 by 4 to 7 by 7. Three wrong taps lose the round. The result shows the grid again with the odd one marked.
 
 ## Room lifecycle
 

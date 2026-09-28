@@ -1,8 +1,24 @@
 import { z } from "zod";
 import { seededRng, type Rng } from "../../random";
+import {
+  ELIMINATION_MIN_PLAYERS,
+  knockoutEngine,
+  knockoutPlacings,
+  knockoutView,
+  type KnockoutStage,
+  type KnockoutState,
+  type KnockoutViewBase,
+} from "../knockout/knockout";
+import { LEVEL_CHOICES, type LevelChoice } from "../levels";
 import type { QuizStanding } from "../quiz/quiz";
 import { creditedElapsed } from "../quiz/scoring";
-import type { ContentRequest, GameModule, GamePlayer, GameSummary, Rejection } from "../types";
+import {
+  isRejection,
+  type ContentRequest,
+  type GameModule,
+  type GamePlayer,
+  type Rejection,
+} from "../types";
 
 // Word Rush and Spot It share these rules: everyone gets the same puzzles and starts together,
 // then each player works through them on their own clock. A round ends when it's solved, given
@@ -19,7 +35,31 @@ export const WRONG_TRY_PENALTY = 0.1;
 /** A solve is always worth at least this share, however slow or messy. */
 export const SOLVE_FLOOR = 0.1;
 
+export const ROUNDS_MODES = [
+  {
+    id: "speed",
+    name: "Speed",
+    description:
+      "A timer on every round. Everyone plays at their own pace; faster solves score more.",
+  },
+  {
+    id: "elimination",
+    name: "Elimination",
+    description:
+      "Everyone plays each round together. The lowest scores are knocked out until two meet in the final. 3 or more players.",
+  },
+] as const;
+export type RoundsMode = (typeof ROUNDS_MODES)[number]["id"];
+
+/** The settings Word Rush and Spot It share. */
+export const roundsModeSchema = z.enum(
+  ROUNDS_MODES.map((m) => m.id) as [RoundsMode, ...RoundsMode[]],
+);
+export const levelChoiceSchema = z.enum(LEVEL_CHOICES);
+
 export interface RoundsSettings {
+  mode: RoundsMode;
+  level: LevelChoice;
   rounds: number;
   timeLimitSeconds: number;
 }
@@ -104,9 +144,9 @@ export interface RoundsRules<
   guessSchema: z.ZodType<Guess>;
   /** Wrong tries allowed before the round is lost. */
   maxMisses: number;
-  contentNeeded(settings: Settings): ContentRequest | null;
-  /** One puzzle per round, the same for everyone. */
-  puzzles(settings: Settings, content: Content, rng: Rng): Puzzle[];
+  contentNeeded(settings: Settings, players: number): ContentRequest | null;
+  /** One puzzle per round, the same for everyone, and in Elimination some spares. */
+  puzzles(settings: Settings, content: Content, rng: Rng, players: number): Puzzle[];
   points(puzzle: Puzzle): number;
   /** Puts a guess in a standard form, so the same guess twice is caught. */
   normalize?(guess: Guess): Guess;
@@ -114,7 +154,6 @@ export interface RoundsRules<
   check(puzzle: Puzzle, guess: Guess): boolean | Rejection;
   puzzleView(puzzle: Puzzle): PuzzleView;
   reveal(puzzle: Puzzle): Reveal;
-  summary(settings: Settings): Pick<GameSummary, "category" | "difficulty" | "mode">;
 }
 
 export function roundsActionSchema<Guess>(guess: z.ZodType<Guess>) {
@@ -142,7 +181,8 @@ export function solvePoints(base: number, elapsedMs: number, limitMs: number, mi
   return Math.round(Math.max(points, base * SOLVE_FLOOR));
 }
 
-export function roundsGame<
+/** Speed: everyone starts together, then plays through the rounds at their own pace. */
+function speedGame<
   Game extends string,
   Settings extends RoundsSettings,
   Content,
@@ -306,7 +346,7 @@ export function roundsGame<
     contentNeeded: rules.contentNeeded,
 
     setup({ settings, players, content, seed, now }) {
-      const puzzles = rules.puzzles(settings, content, seededRng(seed));
+      const puzzles = rules.puzzles(settings, content, seededRng(seed), players.length);
       const startsAt = now + ROUNDS_COUNTDOWN_MS;
       return {
         game: rules.id,
@@ -413,7 +453,9 @@ export function roundsGame<
     summarize(state) {
       const stayed = standingsOf(state).filter((s) => !s.left);
       return {
-        ...rules.summary(state.settings),
+        category: null,
+        difficulty: state.settings.level,
+        mode: state.settings.mode,
         rounds: state.puzzles.length,
         players: stayed.map((s, i) => ({
           playerId: s.playerId,
@@ -438,5 +480,197 @@ export function roundsGame<
         final: state.finishedAt !== null,
       };
     },
+  };
+}
+
+// Elimination ----------------------------------------------------------------------------------
+
+/** A player's round in Elimination: the knock-out rules count points and right answers. */
+export type RoundRecord = RoundResult & { correct: boolean };
+
+export type RoundsKnockoutState<Settings, Puzzle, Guess> = KnockoutState<
+  Settings,
+  Puzzle,
+  RoundRecord,
+  Guess
+>;
+
+export type RoundsKnockoutStage<PuzzleView, Guess, Reveal> = KnockoutStage<
+  {
+    puzzle: PuzzleView;
+    /** Wrong tries so far, oldest first. */
+    tried: Guess[];
+    triesLeft: number;
+    /** How you did, once you're done with it: solved, out of tries or skipped. */
+    myResult: RoundResult | null;
+  },
+  { reveal: Reveal; result: RoundResult | null },
+  { results: (RoundResult & { reveal: Reveal })[] }
+>;
+
+export interface RoundsKnockoutView<
+  Game extends string,
+  PuzzleView,
+  Guess,
+  Reveal,
+> extends KnockoutViewBase<RoundsKnockoutStage<PuzzleView, Guess, Reveal>> {
+  game: Game;
+  maxMisses: number;
+}
+
+const resultOf = (r: RoundRecord): RoundResult => ({
+  index: r.index,
+  outcome: r.outcome,
+  points: r.points,
+  elapsedMs: r.elapsedMs,
+  misses: r.misses,
+});
+
+/**
+ * Word Rush and Spot It, both modes: Speed plays straight through at your own pace, and
+ * Elimination uses the shared knock-out rules, everyone on the same puzzle at once.
+ */
+export function roundsGame<
+  Game extends string,
+  Settings extends RoundsSettings,
+  Content,
+  Puzzle,
+  Guess,
+  PuzzleView,
+  Reveal,
+>(
+  rules: RoundsRules<Settings, Content, Puzzle, Guess, PuzzleView, Reveal> & { id: Game },
+): GameModule<
+  Settings,
+  Content,
+  RoundsState<Settings, Puzzle, Guess> | RoundsKnockoutState<Settings, Puzzle, Guess>,
+  RoundsAction<Guess>,
+  RoundsView<Game, PuzzleView, Guess, Reveal> | RoundsKnockoutView<Game, PuzzleView, Guess, Reveal>
+> {
+  type Speed = RoundsState<Settings, Puzzle, Guess>;
+  type Knockout = RoundsKnockoutState<Settings, Puzzle, Guess>;
+  const speed = speedGame(rules);
+  const engine = knockoutEngine<Settings, Puzzle, RoundRecord, Guess>({
+    limitMs: (settings) => settings.timeLimitSeconds * 1000,
+    timedOut: (_puzzle, index, tried, limitMs) => ({
+      index,
+      outcome: "timeout",
+      correct: false,
+      points: 0,
+      elapsedMs: limitMs,
+      misses: tried.length,
+    }),
+  });
+  const isKnockout = (state: Speed | Knockout): state is Knockout =>
+    (state as Knockout).mode === "elimination";
+
+  function act(state: Knockout, playerId: string, action: RoundsAction<Guess>, now: number) {
+    if (action.type === "next") return { rejected: "Everyone moves on together." };
+    const limit = engine.limitMs(state);
+    return engine.move(state, playerId, action.index, now, (player, puzzle, serverMs) => {
+      const base = { index: action.index, misses: player.tried.length };
+      if (action.type === "skip") {
+        const elapsedMs = Math.min(Math.max(serverMs, 0), limit);
+        return { ...base, outcome: "skipped", correct: false, points: 0, elapsedMs };
+      }
+      const guess = rules.normalize ? rules.normalize(action.guess) : action.guess;
+      if (player.tried.includes(guess)) return { rejected: "You've tried that." };
+      const verdict = rules.check(puzzle, guess);
+      if (isRejection(verdict)) return verdict;
+      const elapsedMs = creditedElapsed(action.clientElapsedMs, serverMs, limit);
+      if (verdict) {
+        const points = solvePoints(rules.points(puzzle), elapsedMs, limit, player.tried.length);
+        return { ...base, outcome: "solved", correct: true, points, elapsedMs };
+      }
+      if (player.tried.length + 1 < rules.maxMisses) return { miss: guess };
+      return {
+        ...base,
+        outcome: "missed",
+        correct: false,
+        points: 0,
+        elapsedMs,
+        misses: player.tried.length + 1,
+      };
+    });
+  }
+
+  function view(
+    state: Knockout,
+    playerId: string,
+  ): RoundsKnockoutView<Game, PuzzleView, Guess, Reveal> {
+    const recordOf = (player: { answers: RoundRecord[] } | undefined, index: number) => {
+      const record = player?.answers.find((a) => a.index === index);
+      return record ? resultOf(record) : null;
+    };
+    return {
+      game: rules.id,
+      maxMisses: rules.maxMisses,
+      ...knockoutView(state, playerId, engine.limitMs(state), {
+        item: (puzzle, player) => ({
+          puzzle: rules.puzzleView(puzzle),
+          tried: player?.tried ?? [],
+          triesLeft: rules.maxMisses - (player?.tried.length ?? 0),
+          myResult: recordOf(player, state.index),
+        }),
+        reveal: (puzzle, index, player) => ({
+          reveal: rules.reveal(puzzle),
+          result: recordOf(player, index),
+        }),
+        done: (player) => ({
+          results: (player?.answers ?? []).map((a) => ({
+            ...resultOf(a),
+            reveal: rules.reveal(state.items[a.index]!),
+          })),
+        }),
+      }),
+    };
+  }
+
+  return {
+    ...speed,
+    playersNeeded: (settings) =>
+      settings.mode === "elimination"
+        ? {
+            min: ELIMINATION_MIN_PLAYERS,
+            message: `Elimination needs at least ${ELIMINATION_MIN_PLAYERS} players.`,
+          }
+        : null,
+
+    setup(args) {
+      if (args.settings.mode !== "elimination") return speed.setup(args);
+      const { settings, players, content, seed, now } = args;
+      return engine.setup({
+        settings,
+        players,
+        items: rules.puzzles(settings, content, seededRng(seed), players.length),
+        planned: settings.rounds,
+        now,
+      });
+    },
+    onAction: (state, playerId, action, now) =>
+      isKnockout(state)
+        ? act(state, playerId, action, now)
+        : speed.onAction(state, playerId, action, now),
+    onPlayerJoined: (state, player, now) =>
+      isKnockout(state) ? engine.join(state, player) : speed.onPlayerJoined(state, player, now),
+    onPlayerLeft: (state, playerId, now) =>
+      isKnockout(state)
+        ? engine.leave(state, playerId, now)
+        : speed.onPlayerLeft(state, playerId, now),
+    tick: (state, now) => (isKnockout(state) ? engine.tick(state, now) : speed.tick(state, now)),
+    nextWakeAt: (state) => (isKnockout(state) ? engine.nextWakeAt(state) : speed.nextWakeAt(state)),
+    isFinished: (state) => state.finishedAt !== null,
+    summarize(state) {
+      if (!isKnockout(state)) return speed.summarize(state);
+      return {
+        category: null,
+        difficulty: state.settings.level,
+        mode: "elimination",
+        rounds: state.index + 1,
+        players: knockoutPlacings(state),
+      };
+    },
+    viewFor: (state, playerId) =>
+      isKnockout(state) ? view(state, playerId) : speed.viewFor(state, playerId),
   };
 }

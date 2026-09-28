@@ -137,21 +137,25 @@ export function drawQuestions(
   return shuffled(leastUsed(pool, rng, options).slice(0, count), rng);
 }
 
-/** Picks one Word Rush word per round, at that round's level, avoiding repeats the same way. */
-export function drawWords(
-  levels: readonly WordLevel[],
+/**
+ * One item per entry in `levels`, at that level, in that order, the least used first. A level
+ * that runs short is skipped, so the game gets fewer.
+ */
+function drawByLevel<T extends { id: string }, L extends string>(
+  items: readonly T[],
+  levelOf: (item: T) => L,
+  levels: readonly L[],
   seed: number,
-  options: DrawOptions = {},
-  words: readonly StoredWord[] = WORDS,
-): StoredWord[] {
+  options: DrawOptions,
+): T[] {
   const rng = seededRng(seed);
-  const queues = new Map<WordLevel, StoredWord[]>();
+  const queues = new Map<L, T[]>();
   return levels.flatMap((level) => {
     if (!queues.has(level)) {
       queues.set(
         level,
         leastUsed(
-          words.filter((w) => w.level === level),
+          items.filter((item) => levelOf(item) === level),
           rng,
           options,
         ),
@@ -160,6 +164,34 @@ export function drawWords(
     const next = queues.get(level)!.shift();
     return next ? [next] : [];
   });
+}
+
+/**
+ * A game's questions for a level plan. A single level is drawn and shuffled as before; a
+ * mix (Auto) keeps the plan's order, so the game gets harder as it goes.
+ */
+export function drawQuestionPlan(
+  category: QuizCategory,
+  levels: readonly QuizDifficulty[],
+  seed: number,
+  options: DrawOptions = {},
+  questions: readonly StoredQuestion[] = QUESTIONS,
+): StoredQuestion[] {
+  if (levels.length > 0 && levels.every((l) => l === levels[0])) {
+    return drawQuestions(category, levels[0]!, levels.length, seed, options, questions);
+  }
+  const pool = questions.filter((q) => q.category === category);
+  return drawByLevel(pool, (q) => q.difficulty, levels, seed, options);
+}
+
+/** Picks one Word Rush word per round, at that round's level, avoiding repeats the same way. */
+export function drawWords(
+  levels: readonly WordLevel[],
+  seed: number,
+  options: DrawOptions = {},
+  words: readonly StoredWord[] = WORDS,
+): StoredWord[] {
+  return drawByLevel(words, (w) => w.level, levels, seed, options);
 }
 
 /** `questions` is the bank to draw from: the one that ships, or it with admin edits applied. */
@@ -171,14 +203,7 @@ export function drawContent(
 ): unknown[] {
   switch (request.kind) {
     case "quiz-questions":
-      return drawQuestions(
-        request.category,
-        request.difficulty,
-        request.count,
-        seed,
-        options,
-        questions,
-      );
+      return drawQuestionPlan(request.category, request.levels, seed, options, questions);
     case "jigsaw-picture": {
       const picture = pickJigsawPicture(request, seed, options.recent);
       return [{ id: jigsawContentId(picture.id), picture }];

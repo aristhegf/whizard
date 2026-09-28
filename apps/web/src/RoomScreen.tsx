@@ -1,10 +1,12 @@
 import {
   ELIMINATION_MIN_PLAYERS,
   JIGSAW_PICTURES,
+  LEVEL_NAMES,
   MAX_PLAYERS,
   NICKNAME_INPUT_MAX_LENGTH,
   QUIZ_CATEGORIES,
   QUIZ_VARIANTS,
+  ROUNDS_MODES,
   type AnyQuizView,
   type JigsawView,
   type SpotItView,
@@ -31,6 +33,7 @@ import {
 } from "./games/jigsaw/JigsawSettingsPanel";
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
+import { RoundsEliminationScreen } from "./games/rounds/RoundsEliminationScreen";
 import { RoundsScreen } from "./games/rounds/RoundsScreen";
 import {
   RoundsSettingsRows,
@@ -107,6 +110,8 @@ export function RoomScreen({ code }: { code: string }) {
       <h1 className="sr-only">Whizard room {code}</h1>
       {view?.game === "jigsaw" ? (
         <JigsawScreen {...gameProps} view={view} />
+      ) : view && view.game !== "quiz" && "mode" in view ? (
+        <RoundsEliminationScreen {...gameProps} view={view} />
       ) : view && view.game !== "quiz" ? (
         <RoundsScreen {...gameProps} view={view} />
       ) : view ? (
@@ -332,7 +337,7 @@ function Lobby({
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
   const needMore =
-    settings?.variant === "elimination"
+    settings?.variant === "elimination" || rounds?.mode === "elimination"
       ? Math.max(0, ELIMINATION_MIN_PLAYERS - connected.length)
       : 0;
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
@@ -404,7 +409,9 @@ function Lobby({
               {!isHost && jigsaw && <p className="summary muted small">{sizeName(jigsaw.side)}</p>}
               {!isHost && rounds && (
                 <p className="summary muted small">
-                  {rounds.rounds} rounds · {rounds.timeLimitSeconds}s each
+                  {ROUNDS_MODES.find((m) => m.id === rounds.mode)?.name} ·{" "}
+                  {LEVEL_NAMES[rounds.level]} · {rounds.rounds} rounds · {rounds.timeLimitSeconds}s
+                  each
                 </p>
               )}
               {!isHost && settings && (

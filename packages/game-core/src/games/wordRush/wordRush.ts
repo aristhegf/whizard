@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { shuffled, type Rng } from "../../random";
-import { roundsGame, type RoundsState, type RoundsView } from "../rounds/rounds";
+import {
+  roundsGame,
+  type RoundsKnockoutState,
+  type RoundsKnockoutView,
+  type RoundsState,
+  type RoundsView,
+} from "../rounds/rounds";
 import {
   DEFAULT_WORD_RUSH_SETTINGS,
   levelsFor,
@@ -38,8 +44,17 @@ export interface WordReveal {
   hint: string;
 }
 
-export type WordRushState = RoundsState<WordRushSettings, WordPuzzle, string>;
-export type WordRushView = RoundsView<"word-rush", WordPuzzleView, string, WordReveal>;
+export type WordRushSpeedState = RoundsState<WordRushSettings, WordPuzzle, string>;
+export type WordRushEliminationState = RoundsKnockoutState<WordRushSettings, WordPuzzle, string>;
+export type WordRushState = WordRushSpeedState | WordRushEliminationState;
+export type WordRushSpeedView = RoundsView<"word-rush", WordPuzzleView, string, WordReveal>;
+export type WordRushEliminationView = RoundsKnockoutView<
+  "word-rush",
+  WordPuzzleView,
+  string,
+  WordReveal
+>;
+export type WordRushView = WordRushSpeedView | WordRushEliminationView;
 
 export const normalizeGuess = (guess: string) => guess.toUpperCase().replace(/[^A-Z]/g, "");
 
@@ -76,9 +91,9 @@ export const wordRushGame = roundsGame({
   defaultSettings: DEFAULT_WORD_RUSH_SETTINGS,
   guessSchema: z.string().min(1).max(GUESS_MAX_LENGTH),
   maxMisses: WORD_RUSH_MAX_MISSES,
-  contentNeeded: (settings: WordRushSettings) => ({
+  contentNeeded: (settings: WordRushSettings, players: number) => ({
     kind: "words",
-    levels: levelsFor(settings.rounds),
+    levels: levelsFor(settings, players),
   }),
   puzzles: (_settings, content: WordEntry[], rng) => content.map((entry) => wordPuzzle(entry, rng)),
   points: (puzzle: WordPuzzle) => WORD_POINTS[puzzle.level],
@@ -103,5 +118,4 @@ export const wordRushGame = roundsGame({
       ? { type: "unscramble", hint: puzzle.hint, level: puzzle.level, letters: puzzle.letters }
       : { type: "missing", hint: puzzle.hint, level: puzzle.level, pattern: puzzle.pattern },
   reveal: (puzzle): WordReveal => ({ word: puzzle.word, hint: puzzle.hint }),
-  summary: () => ({ category: null, difficulty: null, mode: null }),
 });

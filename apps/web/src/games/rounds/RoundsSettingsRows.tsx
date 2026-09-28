@@ -1,10 +1,15 @@
 import {
+  LEVEL_CHOICES,
+  LEVEL_NAMES,
+  ROUNDS_MODES,
   SPOT_IT_ROUNDS,
   SPOT_IT_TIME_LIMITS_SECONDS,
   WORD_RUSH_ROUNDS,
   WORD_RUSH_TIME_LIMITS_SECONDS,
   spotItSettingsSchema,
   wordRushSettingsSchema,
+  type LevelChoice,
+  type RoundsMode,
 } from "@whizard/game-core";
 import { SettingSelect } from "../../ui/SettingSelect";
 import { Icon } from "../../ui/Icon";
@@ -12,6 +17,8 @@ import { Icon } from "../../ui/Icon";
 export type RoundsGameId = "word-rush" | "spot-it";
 
 export interface RoundsSettings {
+  mode: RoundsMode;
+  level: LevelChoice;
   rounds: number;
   timeLimitSeconds: number;
 }
@@ -20,6 +27,9 @@ const OPTIONS: Record<RoundsGameId, { rounds: readonly number[]; seconds: readon
   "word-rush": { rounds: WORD_RUSH_ROUNDS, seconds: WORD_RUSH_TIME_LIMITS_SECONDS },
   "spot-it": { rounds: SPOT_IT_ROUNDS, seconds: SPOT_IT_TIME_LIMITS_SECONDS },
 };
+
+/** What Auto means, under the Level row. */
+export const AUTO_HINT = "Starts easy and gets harder each round, mixing easy, medium and hard.";
 
 export const isRoundsGame = (id: string): id is RoundsGameId => id in OPTIONS;
 
@@ -44,6 +54,34 @@ export function RoundsSettingsRows({
   const options = OPTIONS[game];
   return (
     <>
+      <div className="setting-row">
+        <Icon name="games" size={20} />
+        <label htmlFor="game-mode">Game Mode</label>
+        <SettingSelect
+          id="game-mode"
+          label="Game Mode"
+          value={settings.mode}
+          disabled={!editable}
+          options={ROUNDS_MODES.map((m) => ({ value: m.id, label: m.name }))}
+          onChange={(value) => onChange({ ...settings, mode: value as RoundsMode })}
+        />
+      </div>
+      <p className="setting-hint dim small">
+        {ROUNDS_MODES.find((m) => m.id === settings.mode)?.description}
+      </p>
+      <div className="setting-row">
+        <Icon name="trophy" size={20} />
+        <label htmlFor="level">Level</label>
+        <SettingSelect
+          id="level"
+          label="Level"
+          value={settings.level}
+          disabled={!editable}
+          options={LEVEL_CHOICES.map((l) => ({ value: l, label: LEVEL_NAMES[l] }))}
+          onChange={(value) => onChange({ ...settings, level: value as LevelChoice })}
+        />
+      </div>
+      {settings.level === "auto" && <p className="setting-hint dim small">{AUTO_HINT}</p>}
       <div className="setting-row">
         <Icon name="copy" size={20} />
         <label htmlFor="rounds">Rounds</label>

@@ -1,7 +1,8 @@
 import {
   DEFAULT_QUIZ_SETTINGS,
   QUIZ_CATEGORIES,
-  QUIZ_DIFFICULTIES,
+  LEVEL_CHOICES,
+  LEVEL_NAMES as LEVEL_CHOICE_NAMES,
   QUIZ_QUESTION_COUNTS,
   QUIZ_TIME_LIMITS_SECONDS,
   QUIZ_VARIANTS,
@@ -13,7 +14,7 @@ import { CATALOG, isPlayable } from "../catalog";
 import { formatNumber } from "../format";
 import { useLoaded } from "../ui/common";
 import { KpiTiles, PanelHead } from "./parts";
-import { LEVEL_NAMES, topicArt, topicName } from "./questionParts";
+import { topicArt, topicName } from "./questionParts";
 
 /** `/admin/games`: which games and topics are on, and what new rooms start with. */
 export function Games() {
@@ -247,9 +248,9 @@ function Defaults({
           <label className="form-field">
             <span className="form-label">Level</span>
             <select value={form.difficulty} onChange={(e) => set("difficulty", e.target.value)}>
-              {QUIZ_DIFFICULTIES.map((d) => (
+              {LEVEL_CHOICES.map((d) => (
                 <option key={d} value={d}>
-                  {LEVEL_NAMES[d]}
+                  {LEVEL_CHOICE_NAMES[d]}
                 </option>
               ))}
             </select>

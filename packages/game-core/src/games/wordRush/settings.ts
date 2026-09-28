@@ -1,19 +1,29 @@
 import { z } from "zod";
+import { knockoutLevelPlan } from "../knockout/knockout";
+import { LEVELS, levelPlan, type Level } from "../levels";
+import { levelChoiceSchema, roundsModeSchema, type RoundsMode } from "../rounds/rounds";
 
-export const WORD_LEVELS = ["easy", "medium", "hard"] as const;
-export type WordLevel = (typeof WORD_LEVELS)[number];
+export const WORD_LEVELS = LEVELS;
+export type WordLevel = Level;
 
 export const WORD_RUSH_ROUNDS = [5, 10, 15] as const;
 export const WORD_RUSH_TIME_LIMITS_SECONDS = [20, 30, 45] as const;
 
 export const wordRushSettingsSchema = z.object({
+  mode: roundsModeSchema,
+  level: levelChoiceSchema,
   rounds: z.literal(WORD_RUSH_ROUNDS),
   timeLimitSeconds: z.literal(WORD_RUSH_TIME_LIMITS_SECONDS),
 });
 
 export type WordRushSettings = z.infer<typeof wordRushSettingsSchema>;
 
-export const DEFAULT_WORD_RUSH_SETTINGS: WordRushSettings = { rounds: 10, timeLimitSeconds: 30 };
+export const DEFAULT_WORD_RUSH_SETTINGS: WordRushSettings = {
+  mode: "speed",
+  level: "auto",
+  rounds: 10,
+  timeLimitSeconds: 30,
+};
 
 /** One word per round, at the level given for that round. */
 export interface WordsContentRequest {
@@ -37,7 +47,15 @@ export interface WordEntry {
   fits: string[];
 }
 
-/** Easy words first, harder ones as the game goes on. */
-export function levelsFor(rounds: number): WordLevel[] {
-  return Array.from({ length: rounds }, (_, i) => WORD_LEVELS[Math.floor((i * 3) / rounds)]!);
+/**
+ * The level of each word a game draws: one level throughout, or Auto's blend from easy to
+ * hard. Elimination plans by its knock-out rounds and adds spares for sudden death.
+ */
+export function levelsFor(
+  settings: { mode: RoundsMode; level: WordRushSettings["level"]; rounds: number },
+  players = 1,
+): WordLevel[] {
+  return settings.mode === "elimination"
+    ? knockoutLevelPlan(settings.level, players, settings.rounds)
+    : levelPlan(settings.level, settings.rounds);
 }

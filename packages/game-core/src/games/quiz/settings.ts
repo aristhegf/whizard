@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { LEVEL_CHOICES, type LevelChoice } from "../levels";
 
 export const QUIZ_CATEGORIES = [
   { id: "bible", name: "Bible" },
@@ -18,6 +19,8 @@ export type QuizCategory = (typeof QUIZ_CATEGORIES)[number]["id"];
 
 export const QUIZ_DIFFICULTIES = ["easy", "medium", "hard"] as const;
 export type QuizDifficulty = (typeof QUIZ_DIFFICULTIES)[number];
+/** What the host picks: one level, or Auto, which starts easy and gets harder. */
+export type QuizLevel = LevelChoice;
 
 export const QUIZ_VARIANTS = [
   { id: "classic", name: "Classic", description: "No clock. Answer, then move on." },
@@ -40,7 +43,7 @@ export const QUIZ_TIME_LIMITS_SECONDS = [10, 20, 30] as const;
 
 export const quizSettingsSchema = z.object({
   category: z.enum(QUIZ_CATEGORIES.map((c) => c.id) as [QuizCategory, ...QuizCategory[]]),
-  difficulty: z.enum(QUIZ_DIFFICULTIES),
+  difficulty: z.enum(LEVEL_CHOICES),
   count: z.literal(QUIZ_QUESTION_COUNTS),
   variant: z.enum(QUIZ_VARIANTS.map((v) => v.id) as [QuizVariant, ...QuizVariant[]]),
   /** Speed and Elimination. */
@@ -57,11 +60,11 @@ export const DEFAULT_QUIZ_SETTINGS: QuizSettings = {
   timeLimitSeconds: 20,
 };
 
+/** One question per entry in `levels`, at that level, in that order. */
 export interface QuizContentRequest {
   kind: "quiz-questions";
   category: QuizCategory;
-  difficulty: QuizDifficulty;
-  count: number;
+  levels: QuizDifficulty[];
 }
 
 /** A question as stored in the content bank. `choices[0]` is the correct answer. */
@@ -69,6 +72,7 @@ export interface QuizQuestion {
   id: string;
   prompt: string;
   choices: string[];
+  difficulty?: QuizDifficulty;
   explanation?: string | null;
   reference?: string | null;
 }
