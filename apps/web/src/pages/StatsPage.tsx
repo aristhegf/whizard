@@ -1,4 +1,5 @@
 import { ActionSwapCascadeText } from "@/components/motion/action-swap-cascade";
+import { Tooltip } from "@/components/motion/tooltip";
 import { QUIZ_CATEGORIES, type QuizCategory } from "@whizard/game-core";
 import type {
   CommunityStats,
@@ -13,6 +14,7 @@ import { linkTo } from "../router";
 import { Avatar } from "../ui/Avatar";
 import { CreateRoomButton, TopLayout } from "../ui/Chrome";
 import { useLoaded } from "../ui/common";
+import { Loading } from "../ui/Loading";
 import { Icon, type IconName } from "../ui/Icon";
 import { countryShares } from "./communityStats";
 import { WORLD_PINS } from "./worldPins";
@@ -64,7 +66,6 @@ const loadStats = () => fetchCommunityStats();
 /** The public stats page: what the Whizard community plays, and who wins. */
 export function StatsPage() {
   const { data: stats, error, reload } = useLoaded(loadStats);
-  const [createError, setCreateError] = useState<string | null>(null);
 
   return (
     <TopLayout variant="site" active="stats">
@@ -121,6 +122,7 @@ export function StatsPage() {
             icon="users"
             tone="blue"
             label="Players joined"
+            hint="Each player in each game counts once, so one player in three games counts three times."
             value={stats?.totals.playersJoined}
           />
           <Total
@@ -133,6 +135,7 @@ export function StatsPage() {
             icon="bolt"
             tone="pink"
             label="Questions played"
+            hint="Each question counts once for every player in the game."
             value={stats?.totals.questionsPlayed}
           />
         </dl>
@@ -160,16 +163,11 @@ export function StatsPage() {
               </div>
             </div>
             <div className="community-cta-actions">
-              <CreateRoomButton className="btn btn-gold community-btn" onError={setCreateError} />
+              <CreateRoomButton className="btn btn-gold community-btn" />
               <a className="btn community-btn" {...linkTo("/games")}>
                 Explore Games
               </a>
             </div>
-            {createError && (
-              <p className="error small" role="alert">
-                {createError}
-              </p>
-            )}
           </div>
           <img
             className="community-cta-art"
@@ -190,11 +188,14 @@ function Total({
   icon,
   tone,
   label,
+  hint,
   value,
 }: {
   icon: IconName;
   tone: string;
   label: string;
+  /** How the number is counted, in a tooltip beside the label. */
+  hint?: string;
   value: number | undefined;
 }) {
   return (
@@ -204,7 +205,16 @@ function Total({
       </span>
       <div className="total-text">
         <dd>{value === undefined ? "–" : n(value)}</dd>
-        <dt>{label}</dt>
+        <dt>
+          {label}
+          {hint && (
+            <Tooltip content={hint} className="hint-tip">
+              <button className="hint-btn" aria-label={`About ${label.toLowerCase()}`}>
+                <Icon name="info" size={15} />
+              </button>
+            </Tooltip>
+          )}
+        </dt>
       </div>
     </div>
   );
@@ -521,5 +531,5 @@ function winsLabel(wins: number): string {
 }
 
 function PanelLoading() {
-  return <p className="muted panel-empty">Loading…</p>;
+  return <Loading />;
 }

@@ -12,6 +12,9 @@
 @import "tailwindcss/utilities.css" layer(utilities) source(none);
 @source "../components";
 
+/* Whizard is always dark, so BeUI's `dark:` styles always apply. */
+@custom-variant dark (&:where(:root, :root *));
+
 /* shadcn's colour names, pointed at Whizard's palette. */
 @theme inline {
   --color-background: var(--bg);
@@ -28,5 +31,6 @@
   --color-accent-foreground: #221400;
   --color-border: var(--line-strong);
   --color-ring: var(--focus);
+  --color-destructive: var(--bad);
   --font-sans: var(--body);
 }

@@ -313,11 +313,29 @@
 }
 
 .browse-head {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+}
+
+/* Search and the kind-of-game chips: stacked, then side by side once the chips fit on one line. */
+.browse-tools {
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 1200px) {
+  .browse-tools {
+    grid-template-columns: minmax(0, 1fr) 280px;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .browse-tools .search {
+    grid-column: 2;
+    grid-row: 1;
+  }
 }
 
 .head-mascot {
@@ -329,11 +347,12 @@
     gap: 30px;
   }
 
+  /* Ends on the column's right edge, and stays inside the header. */
   .head-mascot {
     display: block;
-    width: 220px;
+    width: 160px;
     height: auto;
-    margin: -10px 60px -70px 0;
+    flex: none;
     filter: drop-shadow(0 16px 30px rgb(120 40 255 / 40%));
   }
 }
@@ -416,8 +435,10 @@
 .game-foot {
   grid-area: foot;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 6px 10px;
+  min-width: 0;
 }
 
 .players {
@@ -430,12 +451,22 @@
   background: rgb(0 0 0 / 18%);
   font-size: 0.85rem;
   font-weight: 700;
+  white-space: nowrap;
 }
 
+/* Cards for games still being made have no arrow, so the text takes the full width. */
+.game-card.unavailable {
+  grid-template-areas:
+    "art text text"
+    "art foot foot";
+}
+
+/* On phones, beside the player count (or under it when there's no room). */
 .soon {
   font-size: 0.8rem;
   font-weight: 800;
   color: #ffe07a;
+  white-space: nowrap;
 }
 
 .go {
@@ -445,10 +476,6 @@
 .row-chevron {
   grid-area: chevron;
   color: var(--muted);
-}
-
-.game-card.unavailable .row-chevron {
-  display: none;
 }
 
 @media (min-width: 768px) {
@@ -463,10 +490,11 @@
       "art art"
       "text go"
       "foot foot";
-    align-content: start;
+    /* The last row takes the spare height, so every footer sits on its card's bottom edge. */
+    grid-template-rows: auto auto 1fr;
     row-gap: 12px;
     min-height: 300px;
-    padding: 22px 26px 24px;
+    padding: 22px 22px 24px;
     border-radius: 24px;
     background: var(--wash);
     border-color: rgb(255 255 255 / 16%);
@@ -507,21 +535,24 @@
     font-size: 1.1rem;
   }
 
-  .game-foot .soon {
-    margin-left: auto;
+  /* One line, as tall as Quiz's round Go button, so every card's pill sits on the same line. */
+  .game-foot {
+    align-self: end;
+    flex-wrap: nowrap;
+    min-height: 46px;
   }
 
   .players {
-    padding: 8px 20px;
-    font-size: 1rem;
+    padding: 7px 14px;
+    font-size: 0.95rem;
   }
 
   .go {
-    grid-area: go;
     display: grid;
+    flex: none;
     place-items: center;
-    width: 50px;
-    height: 50px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     border: 1.5px solid rgb(255 255 255 / 40%);
     background: rgb(0 0 0 / 15%);
@@ -533,6 +564,24 @@
 
   .game-card:hover .go {
     background: rgb(255 255 255 / 18%);
+  }
+
+  .game-card.unavailable {
+    grid-template-areas:
+      "art art"
+      "text go"
+      "foot foot";
+  }
+
+  /* A badge in the card's top corner. */
+  .soon {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgb(12 8 40 / 55%);
+    border: 1.5px solid rgb(255 224 122 / 45%);
   }
 
   .game-card.unavailable .game-art img {
@@ -698,5 +747,24 @@ button.topic-tile {
     width: 230px;
     height: auto;
     filter: drop-shadow(0 16px 30px rgb(120 40 255 / 45%));
+  }
+}
+
+/* Cards that tilt toward the mouse (BeUI tilt-card). The wrapper takes the card's shape. */
+.tilt {
+  display: grid;
+}
+
+.tilt-game {
+  border-radius: 20px;
+}
+
+.tilt-topic {
+  border-radius: 20px;
+}
+
+@media (min-width: 768px) {
+  .tilt-game {
+    border-radius: 24px;
   }
 }

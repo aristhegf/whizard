@@ -1,3 +1,4 @@
+import { Tooltip } from "@/components/motion/tooltip";
 import { useEffect, useState } from "react";
 import { fetchRoomStatus, type RoomStatus } from "../api";
 import { linkTo, roomPath } from "../router";
@@ -42,9 +43,11 @@ export function ReturnToRoom({ page }: { page: string }) {
       <a className="btn btn-small btn-gold" {...linkTo(roomPath(room.code))}>
         Return
       </a>
-      <button className="icon-btn" aria-label="Hide" onClick={() => setDismissed(room.code)}>
-        <Icon name="close" size={20} />
-      </button>
+      <Tooltip content="Hide until you leave the room">
+        <button className="icon-btn" aria-label="Hide" onClick={() => setDismissed(room.code)}>
+          <Icon name="close" size={20} />
+        </button>
+      </Tooltip>
     </div>
   );
 }

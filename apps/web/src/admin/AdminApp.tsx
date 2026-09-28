@@ -7,6 +7,7 @@ import { linkTo } from "../router";
 import { Avatar } from "../ui/Avatar";
 import { Brand } from "../ui/Chrome";
 import { Icon, type IconName } from "../ui/Icon";
+import { Loading } from "../ui/Loading";
 import { LogoMark } from "../ui/Logo";
 import { Analytics } from "./Analytics";
 import { Dashboard } from "./Dashboard";
@@ -68,7 +69,7 @@ const SECTIONS: Section[] = [
 export function AdminApp({ section }: { section: string }) {
   const account = useAccount();
   if (account.status === "loading") {
-    return <p className="admin-loading">Loading…</p>;
+    return <Loading className="admin-loading" />;
   }
   if (!account.user)
     return <Notice message="Sign in with an admin account to open the dashboard." />;

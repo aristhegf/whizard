@@ -1,10 +1,12 @@
 import { StatefulButton, type ButtonState } from "@/components/motion/button/stateful";
+import { Tooltip } from "@/components/motion/tooltip";
 import { useState, type ReactNode } from "react";
 import { useAccount } from "../account";
 import { createRoom } from "../api";
 import { linkTo, navigate, roomPath } from "../router";
 import { Avatar } from "./Avatar";
 import { Icon, type IconName } from "./Icon";
+import { useToast } from "./toast";
 import { LogoMark } from "./Logo";
 
 export type Section =
@@ -31,15 +33,9 @@ export async function startRoom(settings?: Record<string, unknown>) {
 const CREATE_FAILED = "Couldn’t create a room. Check your connection and try again.";
 
 /** "Create a Room": says it's working, and offers to try again if the room couldn't be made. */
-export function CreateRoomButton({
-  className,
-  onError,
-}: {
-  className: string;
-  /** Told the error message, or null when trying again. */
-  onError?: (message: string | null) => void;
-}) {
+export function CreateRoomButton({ className }: { className: string }) {
   const [state, setState] = useState<ButtonState>("idle");
+  const toast = useToast();
   return (
     <StatefulButton
       className={className}
@@ -49,10 +45,9 @@ export function CreateRoomButton({
       icon={<Icon name="arrowRight" size={24} stroke={2.4} />}
       onClick={() => {
         setState("loading");
-        onError?.(null);
         startRoom().catch(() => {
           setState("error");
-          onError?.(CREATE_FAILED);
+          toast.show({ title: CREATE_FAILED, status: "error" });
         });
       }}
     >
@@ -109,6 +104,7 @@ export function TopNav({
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const account = useAccount();
+  const toast = useToast();
   const signedIn = account.status === "ready" && !!account.user;
 
   return (
@@ -145,7 +141,12 @@ export function TopNav({
               </a>
             ))}
         {variant === "app" && (
-          <button className="nav-link" onClick={() => void startRoom()}>
+          <button
+            className="nav-link"
+            onClick={() =>
+              startRoom().catch(() => toast.show({ title: CREATE_FAILED, status: "error" }))
+            }
+          >
             Create
           </button>
         )}
@@ -153,9 +154,11 @@ export function TopNav({
       <div className="nav-end">
         {children}
         {variant === "app" && signedIn && (
-          <a className="icon-btn" {...linkTo("/friends")} aria-label="Friend requests">
-            <Icon name="bell" size={24} />
-          </a>
+          <Tooltip content="Friend requests" side="bottom">
+            <a className="icon-btn" {...linkTo("/friends")} aria-label="Friend requests">
+              <Icon name="bell" size={24} />
+            </a>
+          </Tooltip>
         )}
         <MeLink />
       </div>
@@ -211,6 +214,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
 /** The bottom tabs on phones: Home, Games, Create and Profile. */
 export function TabBar({ active = null }: { active?: Section }) {
   const [creating, setCreating] = useState(false);
+  const toast = useToast();
   const tabs: { label: string; href: string; icon: IconName; section: Section }[] = [
     { label: "Home", href: "/", icon: "home", section: "home" },
     { label: "Games", href: "/games", icon: "games", section: "games" },
@@ -237,7 +241,10 @@ export function TabBar({ active = null }: { active?: Section }) {
         disabled={creating}
         onClick={() => {
           setCreating(true);
-          startRoom().catch(() => setCreating(false));
+          startRoom().catch(() => {
+            setCreating(false);
+            toast.show({ title: CREATE_FAILED, status: "error" });
+          });
         }}
       >
         <Icon name="plusCircle" size={24} />
@@ -324,23 +331,19 @@ export function SideLayout({
   );
 }
 
-/** Pages with the top bar: the landing page and the games list. */
+/** Pages with the top bar: home, games, pricing and stats. */
 export function TopLayout({
   variant,
   active,
-  navExtra,
   children,
 }: {
   variant: "site" | "app";
   active: Section;
-  navExtra?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <div className="page">
-      <TopNav variant={variant} active={active}>
-        {navExtra}
-      </TopNav>
+      <TopNav variant={variant} active={active} />
       {children}
       <TabBar active={active} />
     </div>

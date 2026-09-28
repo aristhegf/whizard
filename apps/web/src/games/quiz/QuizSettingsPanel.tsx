@@ -9,6 +9,7 @@ import {
 } from "@whizard/game-core";
 import { useEffect, useState, type ReactNode } from "react";
 import { fetchQuizCategories, type QuizCategoryInfo } from "../../api";
+import { SettingSelect } from "../../ui/SettingSelect";
 import { Icon, type IconName } from "../../ui/Icon";
 
 const DIFFICULTY_LABELS = { easy: "Easy", medium: "Medium", hard: "Hard" } as const;
@@ -35,18 +36,14 @@ export function QuizSettingsRows({
   return (
     <>
       <Row icon="games" id="game-mode" label="Game Mode">
-        <select
+        <SettingSelect
           id="game-mode"
+          label="Game Mode"
           value={settings.variant}
           disabled={!editable}
-          onChange={(event) => set("variant", event.target.value as QuizSettings["variant"])}
-        >
-          {QUIZ_VARIANTS.map((v) => (
-            <option key={v.id} value={v.id}>
-              {v.name}
-            </option>
-          ))}
-        </select>
+          options={QUIZ_VARIANTS.map((v) => ({ value: v.id, label: v.name }))}
+          onChange={(value) => set("variant", value as QuizSettings["variant"])}
+        />
       </Row>
       <p className="setting-hint dim small">
         {QUIZ_VARIANTS.find((v) => v.id === settings.variant)?.description}
@@ -59,52 +56,40 @@ export function QuizSettingsRows({
         />
       </Row>
       <Row icon="trophy" id="level" label="Level">
-        <select
+        <SettingSelect
           id="level"
+          label="Level"
           value={settings.difficulty}
           disabled={!editable}
-          onChange={(event) => set("difficulty", event.target.value as QuizSettings["difficulty"])}
-        >
-          {QUIZ_DIFFICULTIES.map((d) => (
-            <option key={d} value={d}>
-              {DIFFICULTY_LABELS[d]}
-            </option>
-          ))}
-        </select>
+          options={QUIZ_DIFFICULTIES.map((d) => ({ value: d, label: DIFFICULTY_LABELS[d] }))}
+          onChange={(value) => set("difficulty", value as QuizSettings["difficulty"])}
+        />
       </Row>
       <Row icon="copy" id="questions" label="Questions">
-        <select
+        <SettingSelect
           id="questions"
-          value={settings.count}
+          label="Questions"
+          value={String(settings.count)}
           disabled={!editable}
-          onChange={(event) => set("count", Number(event.target.value) as QuizSettings["count"])}
-        >
-          {QUIZ_QUESTION_COUNTS.map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </select>
+          options={QUIZ_QUESTION_COUNTS.map((n) => ({ value: String(n), label: String(n) }))}
+          onChange={(value) => set("count", Number(value) as QuizSettings["count"])}
+        />
       </Row>
       {speed && (
         <Row icon="clock" id="time-limit" label="Time per question">
-          <select
+          <SettingSelect
             id="time-limit"
-            value={settings.timeLimitSeconds}
+            label="Time per question"
+            value={String(settings.timeLimitSeconds)}
             disabled={!editable}
-            onChange={(event) =>
-              set(
-                "timeLimitSeconds",
-                Number(event.target.value) as QuizSettings["timeLimitSeconds"],
-              )
+            options={QUIZ_TIME_LIMITS_SECONDS.map((s) => ({
+              value: String(s),
+              label: `${s} seconds`,
+            }))}
+            onChange={(value) =>
+              set("timeLimitSeconds", Number(value) as QuizSettings["timeLimitSeconds"])
             }
-          >
-            {QUIZ_TIME_LIMITS_SECONDS.map((s) => (
-              <option key={s} value={s}>
-                {s} seconds
-              </option>
-            ))}
-          </select>
+          />
         </Row>
       )}
     </>
@@ -153,24 +138,23 @@ function CategorySelect({
   }, []);
 
   return (
-    <select
+    <SettingSelect
       id="category"
+      label="Category"
       value={value}
       disabled={disabled}
-      onChange={(event) => onChange(event.target.value as QuizSettings["category"])}
-    >
-      {QUIZ_CATEGORIES.map((c) => {
+      options={QUIZ_CATEGORIES.map((c) => {
         const info = available?.find((i) => i.id === c.id);
         const empty =
           !!available &&
           (!info || info.questions.easy + info.questions.medium + info.questions.hard === 0);
-        return (
-          <option key={c.id} value={c.id} disabled={empty && c.id !== value}>
-            {c.name}
-            {empty ? " (soon)" : ""}
-          </option>
-        );
+        return {
+          value: c.id,
+          label: empty ? `${c.name} (soon)` : c.name,
+          disabled: empty && c.id !== value,
+        };
       })}
-    </select>
+      onChange={(next) => onChange(next as QuizSettings["category"])}
+    />
   );
 }

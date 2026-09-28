@@ -4,29 +4,22 @@
   padding-bottom: calc(24px + env(safe-area-inset-bottom));
 }
 
+/* Connection badge (a BeUI animated badge): green when connected, gold while reconnecting. */
 .net {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--dim);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+  font-family: var(--body);
+  font-size: 0.8rem;
+  font-weight: 800;
 }
 
-.net::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--ok);
-  box-shadow: 0 0 8px var(--ok);
+.net.warn {
+  color: var(--gold);
+  border-color: rgb(255 212 63 / 35%);
+  background: rgb(255 212 63 / 10%);
 }
 
-.net.warn::before {
-  background: var(--gold-deep);
-  box-shadow: 0 0 8px var(--gold-deep);
+.offline-badge {
+  font-family: var(--body);
+  font-weight: 800;
 }
 
 /* Join -------------------------------------------------------------------------------------- */
@@ -234,6 +227,49 @@
   color: var(--muted);
   background-image: none;
   cursor: default;
+}
+
+/* The morphing dropdown (BeUI select-morph) on tablets and computers, sized and coloured like
+   the built-in one phones get. Its invisible sizer keeps the row's height. */
+.setting-morph {
+  min-width: 0;
+}
+
+.setting-morph [inert],
+.setting-morph-trigger {
+  min-height: 46px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.setting-morph-trigger {
+  padding-inline: 16px;
+  color: var(--text);
+  background: var(--field);
+  border: 1.5px solid var(--line);
+}
+
+.setting-morph-trigger:disabled {
+  opacity: 1;
+  color: var(--muted);
+  cursor: default;
+}
+
+.setting-morph-trigger:disabled svg {
+  display: none;
+}
+
+.setting-morph-list {
+  font-size: 1rem;
+  font-weight: 700;
+  background: #13113a;
+  border: 1.5px solid var(--line-strong);
+  box-shadow: var(--shadow);
+}
+
+/* Same text size as the closed dropdown, for the open one's header and its options. */
+.setting-morph-list :where(div, span, button) {
+  font-size: 1rem;
 }
 
 .setting-hint {

@@ -817,3 +817,32 @@
     width: 440px;
   }
 }
+
+/* The ⓘ beside a total's label, which explains how it's counted. */
+.total dt {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hint-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin: -4px 0;
+  border-radius: 50%;
+  color: var(--dim);
+}
+
+@media (hover: hover) {
+  .hint-btn:hover {
+    color: var(--text);
+  }
+}
+
+/* The tooltip sets its own max-width inline, so a width is what makes long hints wrap. */
+.hint-tip {
+  width: min(260px, calc(100vw - 16px));
+  line-height: 1.35;
+}
