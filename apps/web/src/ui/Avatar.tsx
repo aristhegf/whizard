@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 
 export const avatarUrl = (id: AvatarId) => `/art/avatars/${id}.webp`;
 
-function isAvatar(value: string | null | undefined): value is AvatarId {
+export function isAvatar(value: string | null | undefined): value is AvatarId {
   return (AVATAR_IDS as readonly string[]).includes(value ?? "");
 }
 

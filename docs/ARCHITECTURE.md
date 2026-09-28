@@ -443,6 +443,10 @@ A dark, cozy game-night look: deep navy and purple with warm lamp glows behind e
 
 Sounds are made in the browser with the Web Audio API (`apps/web/src/sounds.ts`), so there are no audio files to download or license: a tick for each second of the countdown and a higher note as the question appears, a two-note chime for a right answer and a low slide for a wrong one, quiet ticks in the last five seconds of a Speed question, a short fanfare on the final results, and a soft pop when someone joins the lobby. Browsers only allow sound after a tap, so audio starts on the first one. A speaker button in the lobby and game bars mutes everything, remembered on the device.
 
+### Sharing results
+
+Every results screen's **Share** button makes a 1920 × 1080 (16:9) picture of the game (`apps/web/src/share/`): the game and its topic or picture, the mode and level, the winner and the podium with avatars (or, solo, the score), a line for the sharer ("I came 2nd with 7,250 pts"), and a QR code. The QR code opens the site at whatever address it's served from, so it will follow a domain once there is one; the address isn't written out. The picture is drawn in the browser on a canvas with the site's fonts and art, so nothing is uploaded. A dialog shows it with **Share** (the phone's share sheet, where it can share files) and **Download**.
+
 ## Canvas games (after launch)
 
 Jigsaw, Reaction and Draw & Guess use **Phaser**, loaded only when one of those games starts. Spot It turned out not to need it: its grids are plain buttons.

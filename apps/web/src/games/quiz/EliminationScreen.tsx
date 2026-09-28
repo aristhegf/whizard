@@ -53,6 +53,12 @@ export function EliminationScreen(props: Props) {
     avatarOf: (id) => avatars.get(id) ?? null,
     title: `${categoryName} Quiz`,
     noun: "Question",
+    art:
+      TOPIC_STYLES[settings?.category as keyof typeof TOPIC_STYLES]?.art ?? "/art/games/quiz.webp",
+    colors: TOPIC_STYLES[settings?.category as keyof typeof TOPIC_STYLES]?.colors ?? [
+      "#ff8c1a",
+      "#4a1530",
+    ],
   };
   const { stage } = view;
   switch (stage.kind) {

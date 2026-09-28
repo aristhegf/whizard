@@ -8,6 +8,8 @@ import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { MuteButton } from "../../ui/MuteButton";
 import { useServerNow } from "../../useServerNow";
+import { competitiveLines } from "../../share/cardText";
+import { useShareResults } from "../../share/ShareResults";
 
 // What every game's Elimination screens share: the bar, the knock-outs, the final's intro, the
 // board and the winner. Each game brings its own question and answer screens.
@@ -29,6 +31,9 @@ export interface EliminationContext {
   title: string;
   /** What one item is called: "Question", "Word", "Grid". */
   noun: string;
+  /** The picture and colours for the shareable results card. */
+  art: string;
+  colors: [string, string];
 }
 
 export const ordinal = (n: number) => {
@@ -262,23 +267,44 @@ export function Done({
   const winner = stage.winner;
   const iWon = winner?.playerId === playerId;
   const usernames = room.players.flatMap((p) => (p.username ? [p.username] : []));
-  const share = async () => {
-    const text = iWon
-      ? `I won an Elimination game of ${title} on Whizard! 🏆`
-      : `Play an Elimination game of ${title} with me on Whizard!`;
-    try {
-      if (navigator.share) await navigator.share({ title: "Whizard", text, url: location.origin });
-      else await navigator.clipboard.writeText(`${text} ${location.origin}`);
-    } catch {
-      // Dismissed or blocked.
-    }
-  };
+  const text = iWon
+    ? `I won an Elimination game of ${title} on Whizard! 🏆`
+    : `Play an Elimination game of ${title} with me on Whizard!`;
+  const placed = view.standings.filter((s) => s.status !== "left");
+  const rows = placed.map((s) => ({
+    ...s,
+    label:
+      s.status === "winner"
+        ? "Winner"
+        : s.status === "runner-up"
+          ? "Runner-up"
+          : s.outRound
+            ? `Out in round ${s.outRound}`
+            : STATUS[s.status],
+  }));
+  const lines = competitiveLines(rows, playerId, avatarOf);
+  const { open: share, dialog: shareDialog } = useShareResults(
+    {
+      title,
+      details: ["Elimination", `${view.playerCount} players`, `${view.rounds} rounds + final`],
+      art: context.art,
+      colors: context.colors,
+      ...lines,
+      // "I came 4th with Out in round 2" reads badly: say it plainly.
+      subline: iWon
+        ? `Beat ${view.playerCount - 1} other players`
+        : view.me?.rank
+          ? `I finished ${ordinal(view.me.rank)}`
+          : undefined,
+    },
+    text,
+  );
   return (
     <div className="results">
       <header className="results-bar">
         <Brand />
         <span className="bar-end">
-          <button className="btn bar-pill" onClick={() => void share()}>
+          <button className="btn bar-pill" onClick={share}>
             <Icon name="share" size={20} />
             <span>Share</span>
           </button>
@@ -365,6 +391,7 @@ export function Done({
       </div>
       <AddFromGame usernames={usernames} />
       {children}
+      {shareDialog}
     </div>
   );
 }

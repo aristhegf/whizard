@@ -1,13 +1,15 @@
-import type {
-  RoundOutcome,
-  RoundResult,
-  RoundsStage,
-  SpotItPuzzleView,
-  SpotItReveal,
-  SpotItSpeedView,
-  WordPuzzleView,
-  WordReveal,
-  WordRushSpeedView,
+import {
+  LEVEL_NAMES,
+  type LevelChoice,
+  type RoundOutcome,
+  type RoundResult,
+  type RoundsStage,
+  type SpotItPuzzleView,
+  type SpotItReveal,
+  type SpotItSpeedView,
+  type WordPuzzleView,
+  type WordReveal,
+  type WordRushSpeedView,
 } from "@whizard/game-core";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode, type Ref } from "react";
 import { CATALOG } from "../../catalog";
@@ -20,6 +22,8 @@ import { Icon } from "../../ui/Icon";
 import { MuteButton } from "../../ui/MuteButton";
 import { useServerNow } from "../../useServerNow";
 import { Podium } from "../../ui/Podium";
+import { competitiveLines } from "../../share/cardText";
+import { useShareResults } from "../../share/ShareResults";
 import { elapsedSince, Leaderboard, ScoreBoard, useCountdown } from "../quiz/QuizScreen";
 
 // Word Rush and Spot It in Speed: everyone gets the same puzzles and plays through them at
@@ -255,8 +259,6 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
     </div>
   );
 }
-
-const LEVEL_NAMES = { easy: "Easy", medium: "Medium", hard: "Hard" } as const;
 
 /** Shakes `ref` each time `count` goes up, i.e. after each wrong try. */
 function useShakeOnMiss<T extends HTMLElement>(count: number) {
@@ -611,24 +613,40 @@ function Results({
     if (view.final) play("fanfare");
   }, [view.final]);
 
-  const share = async () => {
-    const text = view.me
-      ? `I scored ${view.me.score.toLocaleString()} in ${name} on Whizard!`
-      : `Play ${name} with me on Whizard!`;
-    try {
-      if (navigator.share) await navigator.share({ title: "Whizard", text, url: location.origin });
-      else await navigator.clipboard.writeText(`${text} ${location.origin}`);
-    } catch {
-      // Dismissed or blocked.
-    }
-  };
+  const text = view.me
+    ? `I scored ${view.me.score.toLocaleString()} in ${name} on Whizard!`
+    : `Play ${name} with me on Whizard!`;
+  const catalogGame = CATALOG.find((g) => g.id === view.game);
+  const level = (room.game.settings as { level?: LevelChoice } | null)?.level;
+  const rows = view.standings
+    .filter((s) => !s.left)
+    .map((s) => ({ ...s, label: `${s.score.toLocaleString()} pts` }));
+  const { open: share, dialog: shareDialog } = useShareResults(
+    {
+      title: name,
+      details: ["Speed", level ? LEVEL_NAMES[level] : "", `${view.total} rounds`].filter(Boolean),
+      art: context.art,
+      colors: catalogGame?.colors ?? ["#6b45ff", "#23145a"],
+      ...(podium.length > 0
+        ? competitiveLines(rows, playerId, avatarOf)
+        : {
+            headline: "Can you beat me?",
+            podium: [],
+            score: {
+              value: (view.me?.score ?? 0).toLocaleString(),
+              detail: `${view.me?.solvedCount ?? 0} of ${view.total} solved`,
+            },
+          }),
+    },
+    text,
+  );
 
   return (
     <div className="results">
       <header className="results-bar">
         <Brand />
         <span className="bar-end">
-          <button className="btn bar-pill" onClick={() => void share()}>
+          <button className="btn bar-pill" onClick={share}>
             <Icon name="share" size={20} />
             <span>Share</span>
           </button>
@@ -686,7 +704,7 @@ function Results({
                   <Icon name="games" size={22} />
                   Change Game
                 </button>
-                <button className="btn" onClick={() => void share()}>
+                <button className="btn" onClick={share}>
                   <Icon name="share" size={20} />
                   Share Results
                 </button>
@@ -710,6 +728,7 @@ function Results({
       {view.final && !solo && <AddFromGame usernames={usernames} />}
 
       <RoundsReview game={view.game} results={results} />
+      {shareDialog}
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import {
+  LEVEL_NAMES,
   QUIZ_CATEGORIES,
+  QUIZ_VARIANTS,
   type AnyQuizView,
   type QuizReviewItem,
   type QuizStage,
@@ -22,6 +24,8 @@ import { ReportQuestion } from "./ReportQuestion";
 import { play } from "../../sounds";
 import { MuteButton } from "../../ui/MuteButton";
 import { Podium } from "../../ui/Podium";
+import { competitiveLines } from "../../share/cardText";
+import { useShareResults } from "../../share/ShareResults";
 
 type QuestionStage = Extract<QuizStage, { kind: "question" }>;
 type AnswerStage = Extract<QuizStage, { kind: "answer" }>;
@@ -358,24 +362,44 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
     if (view.final) play("fanfare");
   }, [view.final]);
 
-  const share = async () => {
-    const text = view.me
-      ? `I scored ${view.me.score.toLocaleString()} in a ${categoryName} quiz on Whizard!`
-      : `Play a ${categoryName} quiz with me on Whizard!`;
-    try {
-      if (navigator.share) await navigator.share({ title: "Whizard", text, url: location.origin });
-      else await navigator.clipboard.writeText(`${text} ${location.origin}`);
-    } catch {
-      // Dismissed or blocked.
-    }
-  };
+  const text = view.me
+    ? `I scored ${view.me.score.toLocaleString()} in a ${categoryName} quiz on Whizard!`
+    : `Play a ${categoryName} quiz with me on Whizard!`;
+  const settings = parseQuizSettings(room.game.settings);
+  const topic = TOPIC_STYLES[context.categoryId as keyof typeof TOPIC_STYLES];
+  const rows = view.standings
+    .filter((s) => !s.left)
+    .map((s) => ({ ...s, label: `${s.score.toLocaleString()} pts` }));
+  const { open: share, dialog: shareDialog } = useShareResults(
+    {
+      title: `${categoryName} Quiz`,
+      details: [
+        QUIZ_VARIANTS.find((v) => v.id === settings?.variant)?.name ?? "Quiz",
+        settings ? LEVEL_NAMES[settings.difficulty] : "",
+        `${view.total} questions`,
+      ].filter(Boolean),
+      art: topic?.art ?? "/art/games/quiz.webp",
+      colors: topic?.colors ?? ["#ff8c1a", "#4a1530"],
+      ...(podium.length > 0
+        ? competitiveLines(rows, playerId, avatarOf)
+        : {
+            headline: "Can you beat me?",
+            podium: [],
+            score: {
+              value: (view.me?.score ?? 0).toLocaleString(),
+              detail: `${view.me?.correctCount ?? 0} of ${view.total} correct`,
+            },
+          }),
+    },
+    text,
+  );
 
   return (
     <div className="results">
       <header className="results-bar">
         <Brand />
         <span className="bar-end">
-          <button className="btn bar-pill" onClick={() => void share()}>
+          <button className="btn bar-pill" onClick={share}>
             <Icon name="share" size={20} />
             <span>Share</span>
           </button>
@@ -433,7 +457,7 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
                   <Icon name="games" size={22} />
                   Change Game
                 </button>
-                <button className="btn" onClick={() => void share()}>
+                <button className="btn" onClick={share}>
                   <Icon name="share" size={20} />
                   Share Results
                 </button>
@@ -455,6 +479,7 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
       </div>
 
       {view.final && !solo && <AddFromGame usernames={usernames} />}
+      {shareDialog}
 
       {review.length > 0 && (
         <section className="panel review-panel" aria-labelledby="review-title">
