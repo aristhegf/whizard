@@ -1,6 +1,12 @@
 export { randomToken, type RandomBytes } from "./ids";
 export { randomSeed, seededRng, shuffled, type Rng } from "./random";
-export { NICKNAME_MAX_LENGTH, normalizeNickname, sameNickname } from "./nickname";
+export {
+  NICKNAME_INPUT_MAX_LENGTH,
+  NICKNAME_MAX_LENGTH,
+  nicknameLength,
+  normalizeNickname,
+  sameNickname,
+} from "./nickname";
 export {
   DEFAULT_ROOM_SETTINGS,
   DISCONNECTED_PLAYER_TTL_MS,

@@ -1,6 +1,6 @@
 import {
   MAX_PLAYERS,
-  NICKNAME_MAX_LENGTH,
+  NICKNAME_INPUT_MAX_LENGTH,
   QUIZ_CATEGORIES,
   type QuizView,
 } from "@whizard/game-core";
@@ -212,7 +212,7 @@ function JoinScreen({
               id="nickname"
               name="nickname"
               value={nickname}
-              maxLength={NICKNAME_MAX_LENGTH}
+              maxLength={NICKNAME_INPUT_MAX_LENGTH}
               autoComplete="nickname"
               autoFocus
               onChange={(event) => setTyped(event.target.value)}

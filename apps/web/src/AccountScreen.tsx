@@ -1,7 +1,8 @@
-import { NICKNAME_MAX_LENGTH, QUIZ_CATEGORIES, normalizeNickname } from "@whizard/game-core";
+import { NICKNAME_INPUT_MAX_LENGTH, QUIZ_CATEGORIES, normalizeNickname } from "@whizard/game-core";
 import {
   AVATAR_IDS,
   USERNAME_MAX_LENGTH,
+  nextUsernameChange,
   normalizeUsername,
   usernameProblem,
   type AccountPasskey,
@@ -12,6 +13,8 @@ import {
 import { useEffect, useState, type FormEvent } from "react";
 import {
   addPasskey,
+  changeUsername,
+  checkUsername,
   deleteAccount,
   fetchMatches,
   fetchPasskeys,
@@ -29,7 +32,7 @@ import { Avatar, avatarUrl } from "./ui/Avatar";
 import { SideLayout } from "./ui/Chrome";
 import { useAction, useLoaded } from "./ui/common";
 import { Loading } from "./ui/Loading";
-import { useToastAction } from "./ui/toast";
+import { useToast, useToastAction } from "./ui/toast";
 import { disablePings, enablePings, localTimeZone, pingSupport, pingsOnThisDevice } from "./pings";
 import { loadNickname } from "./storage";
 
@@ -56,6 +59,63 @@ const USERNAME_HINTS = {
   reserved: "That username isn’t available.",
 } as const;
 
+const USERNAME_ABOUT = "Unique, and how friends find you. You can change it once every 7 days.";
+const DISPLAY_NAME_ABOUT = "What everyone sees in games and on leaderboards. Emojis welcome.";
+
+/**
+ * Checks a username as it's typed: the rules at once, and whether it's free after a short
+ * pause. `current` is the account's own username, which needs no check.
+ */
+function useUsernameCheck(input: string, current?: string) {
+  const username = normalizeUsername(input);
+  const problem = username ? usernameProblem(username) : null;
+  const [result, setResult] = useState<{ username: string; available: boolean; reason?: string }>();
+
+  useEffect(() => {
+    if (!username || problem || username === current) return;
+    const timer = setTimeout(() => {
+      checkUsername(username).then(
+        (check) => setResult({ username, ...check }),
+        () => {},
+      );
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [username, problem, current]);
+
+  const checked = result?.username === username ? result : undefined;
+  return {
+    username,
+    /** Why it can't be used, if we know. */
+    problem: problem
+      ? USERNAME_HINTS[problem]
+      : checked && !checked.available
+        ? (checked.reason ?? "That username isn’t available.")
+        : null,
+    available: checked?.available === true,
+  };
+}
+
+/** The line under a username field: what's wrong, that it's free, or what it's for. */
+function UsernameHint({
+  id,
+  check,
+  about,
+}: {
+  id: string;
+  check: ReturnType<typeof useUsernameCheck>;
+  about: string;
+}) {
+  return (
+    <p
+      id={id}
+      className={`small ${check.problem ? "error" : check.available ? "ok-text" : "muted"}`}
+      aria-live="polite"
+    >
+      {check.problem ?? (check.available ? `@${check.username} is available.` : about)}
+    </p>
+  );
+}
+
 /** Where to go after signing in, from `?next=`. Only paths on this site. */
 function afterSignIn() {
   const next = new URLSearchParams(location.search).get("next");
@@ -69,6 +129,7 @@ function SignedOut() {
   const [username, setUsername] = useState("");
   const [name, setName] = useState(loadNickname);
   const [agreed, setAgreed] = useState(false);
+  const check = useUsernameCheck(username);
 
   if (!passkeysSupported()) {
     return (
@@ -82,9 +143,8 @@ function SignedOut() {
     );
   }
 
-  const normalized = normalizeUsername(username);
-  const problem = normalized ? usernameProblem(normalized) : null;
-  const canCreate = !!normalized && !problem && !!normalizeNickname(name) && agreed;
+  const normalized = check.username;
+  const canCreate = !!normalized && !check.problem && !!normalizeNickname(name) && agreed;
 
   const handleCreate = (event: FormEvent) => {
     event.preventDefault();
@@ -139,21 +199,21 @@ function SignedOut() {
           aria-describedby="username-hint"
           onChange={(event) => setUsername(event.target.value)}
         />
-        <p id="username-hint" className={`small ${problem ? "error" : "muted"}`}>
-          {problem ? USERNAME_HINTS[problem] : "Friends find you by this. It can’t be changed."}
-        </p>
+        <UsernameHint id="username-hint" check={check} about={USERNAME_ABOUT} />
 
         <label className="label" htmlFor="display-name">
-          Name
+          Display name
         </label>
         <input
           id="display-name"
           name="display-name"
           value={name}
-          maxLength={NICKNAME_MAX_LENGTH}
+          maxLength={NICKNAME_INPUT_MAX_LENGTH}
           autoComplete="nickname"
+          aria-describedby="display-name-hint"
           onChange={(event) => setName(event.target.value)}
         />
+        <DisplayNameHint id="display-name-hint" name={name} />
 
         <label className="check">
           <input
@@ -343,6 +403,96 @@ function History() {
   );
 }
 
+/** Under a display name field: too long, or what it's for. */
+function DisplayNameHint({
+  id,
+  name,
+  className = "",
+}: {
+  id: string;
+  name: string;
+  className?: string;
+}) {
+  const tooLong = name.trim() !== "" && normalizeNickname(name) === null;
+  return (
+    <p id={id} className={`${className} small ${tooLong ? "error" : "muted"}`}>
+      {tooLong ? "Up to 20 characters. An emoji counts as one." : DISPLAY_NAME_ABOUT}
+    </p>
+  );
+}
+
+const changeDay = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "long" });
+
+function UsernameSetting({ user }: { user: AccountUser }) {
+  const [value, setValue] = useState(user.username);
+  const check = useUsernameCheck(value, user.username);
+  const saving = useToastAction();
+  const toast = useToast();
+  const [openedAt] = useState(Date.now);
+  const lockedUntil = nextUsernameChange(user.usernameChangedAt, openedAt);
+  const changed = !!check.username && check.username !== user.username;
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    const username = check.username;
+    if (!changed || check.problem || lockedUntil !== null) return;
+    if (
+      !window.confirm(`Change your username to @${username}? You can’t change it again for 7 days.`)
+    ) {
+      return;
+    }
+    void saving.run(async () => {
+      await changeUsername(username);
+      toast.show({
+        title: "Username changed",
+        description: `Friends can find you as @${username} now.`,
+        status: "success",
+      });
+    });
+  };
+
+  return (
+    <form className="setting" onSubmit={handleSubmit}>
+      <label className="setting-name" htmlFor="profile-username">
+        Username
+      </label>
+      <div className="inline-form">
+        <span className="handle-input">
+          <span aria-hidden="true">@</span>
+          <input
+            id="profile-username"
+            name="username"
+            value={value}
+            maxLength={USERNAME_MAX_LENGTH + 1}
+            autoCapitalize="none"
+            autoComplete="username"
+            spellCheck={false}
+            disabled={lockedUntil !== null}
+            aria-describedby="profile-username-hint"
+            onChange={(event) => setValue(event.target.value)}
+          />
+        </span>
+        <button
+          className="btn btn-small"
+          type="submit"
+          disabled={!changed || !!check.problem || lockedUntil !== null || saving.busy}
+        >
+          Change
+        </button>
+      </div>
+      {lockedUntil !== null ? (
+        <p id="profile-username-hint" className="setting-hint muted small">
+          You changed it recently. You can change it again on {changeDay.format(lockedUntil)}.
+        </p>
+      ) : (
+        <div className="setting-hint">
+          <UsernameHint id="profile-username-hint" check={check} about={USERNAME_ABOUT} />
+        </div>
+      )}
+    </form>
+  );
+}
+
 function Settings({ user }: { user: AccountUser }) {
   const [name, setName] = useState(user.displayName);
   const saving = useToastAction();
@@ -361,22 +511,25 @@ function Settings({ user }: { user: AccountUser }) {
       <div className="settings wide">
         <form className="setting" onSubmit={handleName}>
           <label className="setting-name" htmlFor="profile-name">
-            Name
+            Display name
           </label>
           <div className="inline-form">
             <input
               id="profile-name"
               name="display-name"
               value={name}
-              maxLength={NICKNAME_MAX_LENGTH}
+              maxLength={NICKNAME_INPUT_MAX_LENGTH}
               autoComplete="nickname"
+              aria-describedby="profile-name-hint"
               onChange={(event) => setName(event.target.value)}
             />
             <button className="btn btn-small" type="submit" disabled={!changed || saving.busy}>
               Save
             </button>
           </div>
+          <DisplayNameHint id="profile-name-hint" name={name} className="setting-hint" />
         </form>
+        <UsernameSetting user={user} />
         <div className="setting">
           <span className="setting-name" id="avatar-setting">
             Avatar

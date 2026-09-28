@@ -61,10 +61,48 @@ test("rejects a username that's already taken", async ({ browser }) => {
   await withPasskeys(second);
   await second.goto("/account");
   await second.getByLabel("Username").fill(username);
-  await second.getByLabel("Name", { exact: true }).fill("Tolu");
+  await second.getByLabel("Display name").fill("Tolu");
   await second.getByLabel(/13 or older/).check();
-  await second.getByRole("button", { name: "Create account" }).click();
-  await expect(second.getByRole("alert")).toHaveText("That username is taken.");
+  // Checked while typing, so there's no passkey prompt for a name that can't be had.
+  await expect(second.getByText("That username is taken.")).toBeVisible();
+  await expect(second.getByRole("button", { name: "Create account" })).toBeDisabled();
+});
+
+test("changes the username, then not again for a week", async ({ browser }) => {
+  const taken = uniqueUsername();
+  const other = await browser.newPage();
+  await withPasskeys(other);
+  await signUp(other, taken);
+
+  const page = await browser.newPage();
+  await withPasskeys(page);
+  await signUp(page, uniqueUsername(), "Ada 🧙‍♀️");
+
+  const field = page.getByLabel("Username");
+  const change = page.getByRole("button", { name: "Change", exact: true });
+  await field.fill(taken);
+  await expect(page.getByText("That username is taken.")).toBeVisible();
+  await expect(change).toBeDisabled();
+
+  const fresh = uniqueUsername();
+  await field.fill(`@${fresh.toUpperCase()}`);
+  await expect(page.getByText(`@${fresh} is available.`)).toBeVisible();
+  page.once("dialog", (dialog) => void dialog.accept());
+  await change.click();
+  await expect(page.getByText(`Friends can find you as @${fresh} now.`)).toBeVisible();
+  await expect(page.locator(".profile-id").getByText(`@${fresh}`)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Ada 🧙‍♀️", level: 1 })).toBeVisible();
+
+  // Locked for 7 days, and it sticks after a reload.
+  await page.reload();
+  await expect(field).toBeDisabled();
+  await expect(page.getByText(/You can change it again on/)).toBeVisible();
+
+  // Friends find the account by its new name.
+  await other.goto("/friends");
+  await other.getByLabel("Friend’s username").fill(fresh);
+  await other.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(other.getByText("Request sent", { exact: true })).toBeVisible();
 });
 
 test("keeps a guest's game when they sign up, and records new ones", async ({ page }) => {
@@ -87,7 +125,7 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
   await withPasskeys(page);
   await signUp(page, uniqueUsername(), "Ada");
 
-  await page.getByLabel("Name", { exact: true }).fill("Ada L");
+  await page.getByLabel("Display name").fill("Ada L");
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("heading", { name: "Ada L", level: 1 })).toBeVisible();
 

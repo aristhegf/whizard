@@ -21,7 +21,7 @@ export const uniqueUsername = () => `ada_${Math.random().toString(36).slice(2, 1
 export async function signUp(page: Page, username: string, name = "Ada") {
   await page.goto("/account");
   await page.getByLabel("Username").fill(username);
-  await page.getByLabel("Name", { exact: true }).fill(name);
+  await page.getByLabel("Display name").fill(name);
   await page.getByLabel(/13 or older/).check();
   await page.getByRole("button", { name: "Create account" }).click();
   await expect(page.getByRole("heading", { name, level: 1 })).toBeVisible();

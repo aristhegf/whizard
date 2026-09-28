@@ -13,6 +13,7 @@ import type {
   ApiErrorBody,
   MatchRecord,
   PlayerStats,
+  UsernameCheck,
 } from "@whizard/protocol";
 import { useSyncExternalStore } from "react";
 import { guestId } from "./storage";
@@ -165,6 +166,51 @@ export async function signOut(): Promise<void> {
 export async function updateAccount(update: AccountUpdate): Promise<void> {
   const { user } = await api<{ user: AccountUser }>("/api/me", { method: "PATCH", body: update });
   setUser(user);
+  if (update.displayName !== undefined) refreshSavedPasskeys(user);
+}
+
+export async function changeUsername(username: string): Promise<AccountUser> {
+  const { user } = await api<{ user: AccountUser }>("/api/me/username", {
+    method: "POST",
+    body: { username },
+  });
+  setUser(user);
+  refreshSavedPasskeys(user);
+  return user;
+}
+
+export const checkUsername = (username: string) =>
+  api<UsernameCheck>(`/api/usernames/${encodeURIComponent(username)}`);
+
+type SignalUserDetails = (details: {
+  rpId: string;
+  userId: string;
+  name: string;
+  displayName: string;
+}) => Promise<void>;
+
+/**
+ * Asks the phone or password manager to show the new names beside this site's passkey, where
+ * the browser supports it. Sign-in works either way; this only tidies the label.
+ */
+function refreshSavedPasskeys(user: AccountUser) {
+  const signal = (
+    globalThis.PublicKeyCredential as unknown as { signalCurrentUserDetails?: SignalUserDetails }
+  )?.signalCurrentUserDetails;
+  if (!signal) return;
+  // The server registers passkeys with the account ID's bytes as the user handle.
+  const userId = btoa(String.fromCharCode(...new TextEncoder().encode(user.id)))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+  signal
+    .call(PublicKeyCredential, {
+      rpId: location.hostname,
+      userId,
+      name: user.username,
+      displayName: user.displayName,
+    })
+    .catch(() => {});
 }
 
 export async function deleteAccount(): Promise<void> {
