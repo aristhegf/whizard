@@ -12,17 +12,29 @@ const where =
   process.env.STATS_LOCAL === "1"
     ? ["--local", "--persist-to", "../web/.wrangler/state"]
     : ["--remote"];
-const run = (sql) =>
-  JSON.parse(
-    execFileSync(
-      "pnpm",
-      ["exec", "wrangler", "d1", "execute", "DB", ...where, "--json", "--command", sql],
-      {
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "inherit"],
-      },
-    ),
-  )[0];
+const execute = (sql) =>
+  execFileSync(
+    "pnpm",
+    ["exec", "wrangler", "d1", "execute", "DB", ...where, "--json", "--command", sql],
+    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
+  );
+const pause = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
+// A local database can be locked for a moment by another run opening it (the end-to-end tests
+// make several admins at once), so a busy database is tried again.
+const run = (sql) => {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return JSON.parse(execute(sql))[0];
+    } catch (error) {
+      const busy = /SQLITE_BUSY|database is locked/.test(`${error.stdout}${error.stderr}`);
+      if (!busy || attempt === 8) {
+        process.stderr.write(`${error.stderr ?? ""}${error.stdout ?? ""}`);
+        throw error;
+      }
+      pause(250 * attempt + Math.random() * 250);
+    }
+  }
+};
 
 const found = run(`SELECT id FROM users WHERE username = '${username}'`).results;
 if (found.length === 0) {
