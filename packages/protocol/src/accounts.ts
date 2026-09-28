@@ -4,6 +4,8 @@ import { z } from "zod";
 
 export const USERNAME_MIN_LENGTH = 3;
 export const USERNAME_MAX_LENGTH = 20;
+/** How long after changing a username before it can change again. */
+export const USERNAME_CHANGE_INTERVAL_MS = 7 * 24 * 60 * 60 * 1000;
 
 const USERNAME_PATTERN = /^[a-z][a-z0-9_]*$/;
 
@@ -48,6 +50,19 @@ export function normalizeUsername(input: string): string {
   return input.trim().replace(/^@/, "").toLowerCase();
 }
 
+export const USERNAME_PROBLEMS: Record<UsernameProblem, string> = {
+  length: "Usernames are 3 to 20 characters.",
+  characters: "Use lowercase letters, numbers and underscores, starting with a letter.",
+  reserved: "That username isn’t available.",
+};
+
+/** When a username last changed at `changedAt` can next change, or null if it can now. */
+export function nextUsernameChange(changedAt: number | null, now: number): number | null {
+  if (changedAt === null) return null;
+  const next = changedAt + USERNAME_CHANGE_INTERVAL_MS;
+  return next > now ? next : null;
+}
+
 export function usernameProblem(username: string): UsernameProblem | null {
   if (username.length < USERNAME_MIN_LENGTH || username.length > USERNAME_MAX_LENGTH) {
     return "length";
@@ -59,8 +74,12 @@ export function usernameProblem(username: string): UsernameProblem | null {
 
 export interface AccountUser {
   id: string;
+  /** Unique, and how friends find you. Changes at most once every 7 days. */
   username: string;
+  /** Shown in games and on leaderboards. Anything, emojis included, and not unique. */
   displayName: string;
+  /** When the username last changed, if ever. */
+  usernameChangedAt: number | null;
   avatar: AvatarId | null;
   /** Show the answer's explanation during group games too, not only when playing solo. */
   showExplanations: boolean;
@@ -205,6 +224,15 @@ export const groupRequestSchema = z.object({
   /** Usernames, not counting the owner. They must all be the owner's friends. */
   members: z.array(z.string().max(40)).max(GROUP_MAX_MEMBERS),
 });
+
+export const usernameChangeSchema = z.object({ username: z.string().max(40) });
+
+/** Whether a username could be taken, for the live check as someone types. */
+export interface UsernameCheck {
+  available: boolean;
+  /** Why not, when it isn't. */
+  reason?: string;
+}
 
 export const friendRequestSchema = z.object({ username: z.string().max(40) });
 

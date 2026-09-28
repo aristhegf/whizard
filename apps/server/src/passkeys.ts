@@ -8,7 +8,12 @@ import {
 } from "@simplewebauthn/server";
 import { isoBase64URL } from "@simplewebauthn/server/helpers";
 import { normalizeNickname, randomToken } from "@whizard/game-core";
-import { normalizeUsername, signUpRequestSchema, usernameProblem } from "@whizard/protocol";
+import {
+  USERNAME_PROBLEMS,
+  normalizeUsername,
+  signUpRequestSchema,
+  usernameProblem,
+} from "@whizard/protocol";
 import { z } from "zod";
 import { count, countryCode, logActivity } from "./analytics";
 import { claimGuestGames } from "./matches";
@@ -44,12 +49,6 @@ const verifySchema = z.object({
   response: credentialSchema,
   guestId: z.string().max(64).optional(),
 });
-
-const USERNAME_MESSAGES = {
-  length: "Usernames are 3 to 20 characters.",
-  characters: "Use lowercase letters, numbers and underscores, starting with a letter.",
-  reserved: "That username isn’t available.",
-} as const;
 
 async function saveChallenge(
   { env }: RequestContext,
@@ -88,7 +87,7 @@ function relyingParty({ url }: RequestContext) {
   return { rpID: url.hostname, origin: url.origin };
 }
 
-async function usernameTaken(context: RequestContext, username: string): Promise<boolean> {
+export async function usernameTaken(context: RequestContext, username: string): Promise<boolean> {
   const row = await context.env.DB.prepare("SELECT 1 FROM users WHERE username = ?")
     .bind(username)
     .first();
@@ -177,7 +176,7 @@ export async function signUpOptions(context: RequestContext): Promise<Response> 
   const body = await readJson(context.request, signUpRequestSchema);
   const username = normalizeUsername(body.username);
   const problem = usernameProblem(username);
-  if (problem) throw new HttpError(400, "username_invalid", USERNAME_MESSAGES[problem]);
+  if (problem) throw new HttpError(400, "username_invalid", USERNAME_PROBLEMS[problem]);
   const displayName = normalizeNickname(body.displayName);
   if (!displayName) {
     throw new HttpError(400, "display_name_invalid", "Pick a name between 1 and 20 characters.");
@@ -224,6 +223,7 @@ export async function signUpVerify(context: RequestContext): Promise<Response> {
   const user: UserRow = {
     id: data.userId,
     username: data.username,
+    username_changed_at: null,
     display_name: data.displayName,
     avatar: null,
     show_explanations: 0,

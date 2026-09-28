@@ -77,6 +77,34 @@
   min-height: 44px;
 }
 
+/* A username field with its @ drawn in front. */
+.handle-input {
+  position: relative;
+  display: grid;
+}
+
+.handle-input > span {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 800;
+  color: var(--dim);
+  pointer-events: none;
+}
+
+.handle-input input {
+  padding-left: 34px;
+}
+
+.handle-input input:disabled {
+  opacity: 0.6;
+}
+
+.setting-hint > p {
+  margin: 0;
+}
+
 @media (max-width: 520px) {
   .setting {
     grid-template-columns: 1fr;

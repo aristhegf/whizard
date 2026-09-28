@@ -11,6 +11,7 @@ const SESSION_REFRESH_MS = 30 * DAY_MS;
 export interface UserRow {
   id: string;
   username: string;
+  username_changed_at: number | null;
   display_name: string;
   avatar: string | null;
   show_explanations: number;
@@ -39,6 +40,7 @@ export function toAccountUser(row: UserRow): AccountUser {
     id: row.id,
     username: row.username,
     displayName: row.display_name,
+    usernameChangedAt: row.username_changed_at,
     avatar: asAvatar(row.avatar),
     showExplanations: row.show_explanations === 1,
     pings: row.pings === 1,

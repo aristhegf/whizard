@@ -1,9 +1,19 @@
 import { normalizeNickname } from "@whizard/game-core";
-import { accountUpdateSchema, type AccountPasskey } from "@whizard/protocol";
+import {
+  USERNAME_PROBLEMS,
+  accountUpdateSchema,
+  nextUsernameChange,
+  normalizeUsername,
+  usernameChangeSchema,
+  usernameProblem,
+  type AccountPasskey,
+  type UsernameCheck,
+} from "@whizard/protocol";
 import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./http";
 import { exportSocial } from "./friends";
 import { exportMatches } from "./matches";
 import { recordName, requireAllowedName } from "./moderation";
+import { usernameTaken } from "./passkeys";
 import {
   clearedSessionCookie,
   currentSession,
@@ -88,6 +98,76 @@ export async function updateMe(context: RequestContext): Promise<Response> {
     )
     .run();
   return Response.json({ user: toAccountUser(next) });
+}
+
+/**
+ * `GET /api/usernames/:name`: whether a username is free, for the live check while someone picks
+ * one. The name rules are checked here too; the blocked word list only when it's saved.
+ */
+export async function checkUsername(context: RequestContext): Promise<Response> {
+  const username = normalizeUsername(decodeURIComponent(context.params[0] ?? ""));
+  const problem = usernameProblem(username);
+  const body: UsernameCheck = problem
+    ? { available: false, reason: USERNAME_PROBLEMS[problem] }
+    : (await usernameTaken(context, username))
+      ? { available: false, reason: "That username is taken." }
+      : { available: true };
+  return Response.json(body, { headers: { "Cache-Control": "no-store" } });
+}
+
+const changeDate = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "long",
+  timeZone: "UTC",
+});
+
+/** `POST /api/me/username` with `{ username }`: a new username, at most once every 7 days. */
+export async function changeUsername(context: RequestContext): Promise<Response> {
+  requireSameOrigin(context);
+  const { user } = await requireUser(context);
+  const body = await readJson(context.request, usernameChangeSchema);
+  const username = normalizeUsername(body.username);
+  const now = Date.now();
+
+  if (username === user.username) {
+    throw new HttpError(400, "username_unchanged", "That’s already your username.");
+  }
+  const problem = usernameProblem(username);
+  if (problem) throw new HttpError(400, "username_invalid", USERNAME_PROBLEMS[problem]);
+  const next = nextUsernameChange(user.username_changed_at, now);
+  if (next !== null) {
+    throw new HttpError(
+      429,
+      "username_too_soon",
+      `You can change your username again on ${changeDate.format(next)}.`,
+    );
+  }
+  await requireAllowedName(context.env, username);
+  if (await usernameTaken(context, username)) {
+    throw new HttpError(409, "username_taken", "That username is taken.");
+  }
+
+  try {
+    await context.env.DB.prepare(
+      "UPDATE users SET username = ?, username_changed_at = ? WHERE id = ?",
+    )
+      .bind(username, now, user.id)
+      .run();
+  } catch {
+    // Free a moment ago; someone else just took it.
+    throw new HttpError(409, "username_taken", "That username was just taken. Try another.");
+  }
+  context.ctx.waitUntil(
+    recordName(context.env, {
+      name: user.display_name,
+      kind: "account",
+      target: user.id,
+      detail: `@${username}`,
+    }),
+  );
+  return Response.json({
+    user: toAccountUser({ ...user, username, username_changed_at: now }),
+  });
 }
 
 function validTimeZone(timeZone: string): string {

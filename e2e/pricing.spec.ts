@@ -26,7 +26,8 @@ test("the pricing page shows the three plans and answers questions", async ({ pa
 
   // Pro can't be bought yet, so the button says it's coming.
   await page.getByRole("button", { name: "Upgrade to Pro" }).click();
-  await expect(page.getByRole("status")).toHaveText(/Pro is coming soon/);
+  // Filtered, since a site announcement is a status too.
+  await expect(page.getByRole("status").filter({ hasText: /Pro is coming soon/ })).toBeVisible();
 
   // Organizations reach us on WhatsApp with a message ready to send.
   const talk = page.getByRole("link", { name: "Talk to Us" });
