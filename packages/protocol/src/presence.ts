@@ -19,6 +19,7 @@ export const PAGE_NAMES = [
   "privacy",
   "stats",
   "pricing",
+  "about",
   "admin",
   "other",
 ] as const;

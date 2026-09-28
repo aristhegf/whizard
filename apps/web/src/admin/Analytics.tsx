@@ -22,6 +22,7 @@ const PAGE_LABELS: Record<string, string> = {
   home: "Home",
   games: "Games",
   topics: "Quiz topics",
+  jigsaw: "Jigsaw",
   room: "In a room",
   account: "Account",
   friends: "Friends",
@@ -29,6 +30,7 @@ const PAGE_LABELS: Record<string, string> = {
   privacy: "Privacy",
   stats: "Stats",
   pricing: "Pricing",
+  about: "About",
   admin: "Admin",
 };
 

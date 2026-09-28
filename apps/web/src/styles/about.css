@@ -1,0 +1,398 @@
+/* About ---------------------------------------------------------------------------------------- */
+
+.about-page {
+  display: grid;
+  gap: 18px;
+  padding: 8px 0 24px;
+}
+
+.about-page .panel {
+  position: relative;
+  overflow: hidden;
+  padding: 26px 20px;
+}
+
+.about-page .tone-purple {
+  --tone: #8b4dff;
+  --tone-deep: #5a2fe0;
+}
+
+.about-page .tone-gold {
+  --tone: #ffc94a;
+  --tone-deep: #f59a12;
+}
+
+.about-page .tone-green {
+  --tone: #3ccc6a;
+  --tone-deep: #13905a;
+}
+
+.about-pill {
+  justify-self: start;
+  padding: 5px 14px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e7deff;
+  background: rgb(40 26 120 / 45%);
+}
+
+.about-pill svg {
+  color: var(--gold);
+  stroke: none;
+}
+
+.about-copy,
+.about-hero-copy {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  align-content: center;
+  justify-items: start;
+}
+
+.about-title {
+  font-size: clamp(2.6rem, 9vw, 4.2rem);
+  line-height: 1.02;
+}
+
+.about-heading {
+  font-size: clamp(1.9rem, 5.5vw, 2.6rem);
+  line-height: 1.08;
+}
+
+.about-lead,
+.about-text {
+  max-width: 34rem;
+  font-size: clamp(1rem, 1.6vw, 1.08rem);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.about-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.about-btn {
+  min-height: 52px;
+  padding: 0 26px;
+}
+
+/* Hero: the mascot fills the right of the panel and fades into it. */
+
+.about-hero {
+  display: grid;
+  gap: 8px;
+}
+
+.about-hero-art {
+  width: calc(100% + 40px);
+  max-width: none;
+  height: auto;
+  margin: 0 -20px -26px;
+  mask-image: linear-gradient(180deg, transparent, #000 14%);
+}
+
+/* Story */
+
+.about-story {
+  display: grid;
+  gap: 22px;
+}
+
+.about-story-art {
+  position: relative;
+  container-type: inline-size;
+  margin: 0;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.about-story-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.story-labels {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Sized from the picture's width so each label covers the one drawn in the art. */
+.story-label {
+  --tone: #b17cff;
+
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 2.2cqw;
+  padding: 0 2.2cqw;
+  border: 1px solid rgb(160 130 255 / 35%);
+  border-radius: 2.2cqw;
+  font-size: 1.9cqw;
+  line-height: 1.4;
+  white-space: nowrap;
+  color: #e7e2ff;
+  background: #1d1450;
+  box-shadow: 0 1.5cqw 4cqw rgb(10 5 40 / 45%);
+}
+
+.story-label svg {
+  flex: none;
+  width: 4cqw;
+  height: 4cqw;
+  color: var(--tone);
+}
+
+.story-label strong {
+  display: block;
+  font-weight: 700;
+}
+
+.story-label.tone-blue {
+  --tone: #b6a4ff;
+}
+
+/* Beliefs */
+
+.about-beliefs {
+  display: grid;
+  gap: 16px;
+}
+
+.beliefs {
+  display: grid;
+  gap: 12px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.belief {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  padding: 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 18px;
+  background: rgb(22 14 64 / 55%);
+}
+
+.belief-icon,
+.impact-icon {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  margin-bottom: 6px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--tone), var(--tone-deep));
+  box-shadow:
+    0 8px 22px color-mix(in srgb, var(--tone) 40%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 30%);
+}
+
+@media (max-width: 759px) {
+  .belief {
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 14px;
+    row-gap: 2px;
+  }
+
+  .belief-icon {
+    grid-row: span 2;
+    margin: 0;
+  }
+}
+
+.belief h3 {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.belief p {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* Impact */
+
+.about-impact {
+  display: grid;
+  gap: 22px;
+}
+
+.impact-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.impact-stat {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  background: rgb(22 14 64 / 55%);
+}
+
+.impact-icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  border-radius: 12px;
+}
+
+.impact-text {
+  display: grid;
+  min-width: 0;
+}
+
+.impact-text strong {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.impact-text span {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.impact-world {
+  display: grid;
+  gap: 16px;
+  align-content: center;
+}
+
+.impact-map {
+  max-width: 560px;
+}
+
+.impact-people {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.impact-faces {
+  display: flex;
+}
+
+.impact-faces > * + * {
+  margin-left: -10px;
+}
+
+.impact-players {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #e7e2ff;
+  background: rgb(22 14 64 / 70%);
+  text-decoration: none;
+}
+
+.impact-players svg {
+  color: #b392ff;
+}
+
+/* Call to action */
+
+.about-cta {
+  display: grid;
+  gap: 18px;
+}
+
+.about-cta-title {
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+@media (min-width: 760px) {
+  .beliefs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .impact-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1000px) {
+  .about-page {
+    gap: 22px;
+    padding: 16px 0 24px;
+  }
+
+  .about-page .panel {
+    padding: 34px 36px;
+  }
+
+  .about-lead {
+    max-width: 27rem;
+  }
+
+  .about-hero {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    min-height: 420px;
+    padding-block: 40px;
+  }
+
+  .about-hero-art {
+    position: absolute;
+    inset: 0 0 0 auto;
+    width: 62%;
+    height: 100%;
+    margin: 0;
+    object-fit: cover;
+    object-position: 50% 30%;
+    mask-image: linear-gradient(90deg, transparent, #000 22%);
+  }
+
+  .about-story {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    align-items: center;
+    gap: 36px;
+  }
+
+  .beliefs {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .about-impact {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    align-items: center;
+  }
+
+  .about-cta {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
