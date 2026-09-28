@@ -160,9 +160,9 @@ describe("pickJigsawPicture", () => {
 });
 
 describe("the picture library", () => {
-  it("has pictures in every theme, each with its own ID and file", () => {
+  it("has five or more pictures in every theme, each with its own ID and file", () => {
     for (const theme of JIGSAW_THEMES) {
-      expect(JIGSAW_PICTURES.some((p) => p.theme === theme.id)).toBe(true);
+      expect(JIGSAW_PICTURES.filter((p) => p.theme === theme.id).length).toBeGreaterThanOrEqual(5);
     }
     const ids = JIGSAW_PICTURES.map((p) => p.id);
     expect(new Set(ids).size).toBe(ids.length);
