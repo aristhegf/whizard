@@ -90,7 +90,8 @@ const GAME_ERROR_MESSAGES: Record<GameError, string> = {
 
 /** What a player's history of seen content is kept under: the quiz topic, or the game. */
 function historyCategory(request: ContentRequest): string {
-  return request.kind === "quiz-questions" ? request.category : "word-rush";
+  if (request.kind === "quiz-questions") return request.category;
+  return request.kind === "connections-puzzle" ? "connections" : "word-rush";
 }
 
 /**
@@ -349,7 +350,7 @@ export class Room extends DurableObject<Env> {
     const playing = (before?.players ?? []).filter((p) => connected.has(p.id)).length;
     const needed =
       before && gameModule(before.game.id).contentNeeded(before.game.settings, playing);
-    // Questions and words are tracked per player as seen; jigsaw pictures aren't.
+    // Questions, words and Connections puzzles are tracked per player as seen; pictures aren't.
     const request = needed && needed.kind !== "jigsaw-picture" ? needed : null;
     const viewers = (before?.players ?? [])
       .filter((p) => connected.has(p.id))

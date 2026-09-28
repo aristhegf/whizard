@@ -1,0 +1,165 @@
+/* Connections ------------------------------------------------------------------------------ */
+
+.conn-main {
+  padding-top: 8px;
+  gap: 14px;
+}
+
+.conn-help {
+  max-width: 34rem;
+}
+
+.conn-board {
+  display: grid;
+  gap: 8px;
+  width: min(100%, 620px);
+}
+
+.conn-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+/* Shaken by a wrong guess, like a field that turned a value down. */
+.conn-grid.is-shaking {
+  animation: t-input-shake calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2) linear;
+}
+
+.conn-tile {
+  display: grid;
+  place-items: center;
+  min-height: 72px;
+  padding: 6px 4px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(0.72rem, 2.6vw, 1rem);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  background: rgb(40 26 110 / 70%);
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    background-color 120ms ease;
+}
+
+.conn-tile:hover {
+  background: rgb(60 38 150 / 80%);
+}
+
+.conn-tile:active {
+  transform: scale(0.96);
+}
+
+.conn-tile.selected {
+  border-color: transparent;
+  color: #fff;
+  background: linear-gradient(135deg, #8b4dff, #5a2fe0);
+  box-shadow: 0 8px 22px rgb(120 60 255 / 40%);
+}
+
+.conn-group {
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  min-height: 72px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  color: #1b1036;
+  text-align: center;
+  animation: conn-found 320ms ease-out;
+}
+
+.conn-group strong {
+  font-family: var(--display);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.conn-group span {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.conn-0 {
+  background: #f7cf55;
+}
+
+.conn-1 {
+  background: #7fd88a;
+}
+
+.conn-2 {
+  background: #7fb3ff;
+}
+
+.conn-3 {
+  background: #c49bff;
+}
+
+/* Groups you didn't find, shown when your puzzle is over. */
+.conn-group.missed {
+  opacity: 0.7;
+  outline: 2px dashed rgb(255 255 255 / 50%);
+  outline-offset: -4px;
+}
+
+@keyframes conn-found {
+  from {
+    transform: scale(0.94);
+    opacity: 0.4;
+  }
+}
+
+.conn-mistakes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.conn-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #b392ff;
+  transition: opacity 200ms ease;
+}
+
+.conn-dot.used {
+  opacity: 0.2;
+}
+
+.conn-message {
+  min-height: 1.4em;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.conn-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.conn-wait {
+  display: grid;
+  gap: 4px;
+}
+
+.conn-answer {
+  justify-self: center;
+  margin: 8px 0 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .conn-group,
+  .conn-grid.is-shaking {
+    animation: none;
+  }
+}

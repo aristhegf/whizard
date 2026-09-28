@@ -1,0 +1,794 @@
+[
+  {
+    "id": "connections-001",
+    "level": "easy",
+    "groups": [
+      {
+        "name": "Fruits",
+        "words": ["MANGO", "PAWPAW", "GUAVA", "PINEAPPLE"]
+      },
+      {
+        "name": "Colours",
+        "words": ["RED", "BLUE", "GREEN", "YELLOW"]
+      },
+      {
+        "name": "Animals",
+        "words": ["LION", "GOAT", "ZEBRA", "CAMEL"]
+      },
+      {
+        "name": "Joints",
+        "words": ["KNEE", "ELBOW", "ANKLE", "WRIST"]
+      }
+    ]
+  },
+  {
+    "id": "connections-002",
+    "level": "easy",
+    "groups": [
+      {
+        "name": "Planets",
+        "words": ["MARS", "VENUS", "SATURN", "JUPITER"]
+      },
+      {
+        "name": "Months",
+        "words": ["MAY", "JUNE", "MARCH", "AUGUST"]
+      },
+      {
+        "name": "Weather",
+        "words": ["RAIN", "SNOW", "THUNDER", "FOG"]
+      },
+      {
+        "name": "Shapes",
+        "words": ["CIRCLE", "SQUARE", "TRIANGLE", "OVAL"]
+      }
+    ]
+  },
+  {
+    "id": "connections-003",
+    "level": "easy",
+    "groups": [
+      {
+        "name": "Nigerian food",
+        "words": ["JOLLOF", "EGUSI", "SUYA", "AMALA"]
+      },
+      {
+        "name": "Instruments",
+        "words": ["GUITAR", "DRUM", "PIANO", "FLUTE"]
+      },
+      {
+        "name": "Sports",
+        "words": ["TENNIS", "BOXING", "HOCKEY", "GOLF"]
+      },
+      {
+        "name": "In the kitchen",
+        "words": ["SPOON", "KETTLE", "POT", "LADLE"]
+      }
+    ]
+  },
+  {
+    "id": "connections-004",
+    "level": "easy",
+    "groups": [
+      {
+        "name": "Birds",
+        "words": ["EAGLE", "PARROT", "OWL", "PIGEON"]
+      },
+      {
+        "name": "Vehicles",
+        "words": ["BUS", "TRAIN", "BICYCLE", "TRUCK"]
+      },
+      {
+        "name": "In a school bag",
+        "words": ["PENCIL", "RULER", "ERASER", "CHALK"]
+      },
+      {
+        "name": "Drinks",
+        "words": ["TEA", "COFFEE", "JUICE", "ZOBO"]
+      }
+    ]
+  },
+  {
+    "id": "connections-005",
+    "level": "easy",
+    "groups": [
+      {
+        "name": "Continents",
+        "words": ["AFRICA", "ASIA", "EUROPE", "ANTARCTICA"]
+      },
+      {
+        "name": "Clothes",
+        "words": ["SHIRT", "TROUSERS", "SKIRT", "AGBADA"]
+      },
+      {
+        "name": "Jobs",
+        "words": ["DOCTOR", "TEACHER", "FARMER", "PILOT"]
+      },
+      {
+        "name": "Numbers",
+        "words": ["SEVEN", "TWELVE", "NINE", "TWENTY"]
+      }
+    ]
+  },
+  {
+    "id": "connections-006",
+    "level": "easy",
+    "groups": [
+      {
+        "name": "Sea creatures",
+        "words": ["SHARK", "WHALE", "OCTOPUS", "CRAB"]
+      },
+      {
+        "name": "Tools",
+        "words": ["HAMMER", "SAW", "DRILL", "SPANNER"]
+      },
+      {
+        "name": "Feelings",
+        "words": ["HAPPY", "ANGRY", "SAD", "SCARED"]
+      },
+      {
+        "name": "Furniture",
+        "words": ["SOFA", "TABLE", "WARDROBE", "STOOL"]
+      }
+    ]
+  },
+  {
+    "id": "connections-007",
+    "level": "easy",
+    "groups": [
+      {
+        "name": "Nigerian cities",
+        "words": ["LAGOS", "KANO", "ENUGU", "IBADAN"]
+      },
+      {
+        "name": "Money",
+        "words": ["NAIRA", "DOLLAR", "EURO", "POUND"]
+      },
+      {
+        "name": "Languages",
+        "words": ["YORUBA", "HAUSA", "IGBO", "FRENCH"]
+      },
+      {
+        "name": "Metals",
+        "words": ["GOLD", "SILVER", "IRON", "COPPER"]
+      }
+    ]
+  },
+  {
+    "id": "connections-008",
+    "level": "easy",
+    "groups": [
+      {
+        "name": "Vegetables",
+        "words": ["CARROT", "ONION", "CABBAGE", "OKRO"]
+      },
+      {
+        "name": "Insects",
+        "words": ["ANT", "BEE", "BUTTERFLY", "MOSQUITO"]
+      },
+      {
+        "name": "Music styles",
+        "words": ["AFROBEATS", "JAZZ", "REGGAE", "HIGHLIFE"]
+      },
+      {
+        "name": "Rooms",
+        "words": ["KITCHEN", "BEDROOM", "BATHROOM", "PARLOUR"]
+      }
+    ]
+  },
+  {
+    "id": "connections-009",
+    "level": "easy",
+    "groups": [
+      {
+        "name": "In the sky",
+        "words": ["SUN", "MOON", "STAR", "CLOUD"]
+      },
+      {
+        "name": "Pets",
+        "words": ["DOG", "CAT", "RABBIT", "HAMSTER"]
+      },
+      {
+        "name": "Footwear",
+        "words": ["SANDALS", "SNEAKERS", "BOOTS", "SLIPPERS"]
+      },
+      {
+        "name": "Sweet treats",
+        "words": ["CAKE", "ICE CREAM", "PUDDING", "DOUGHNUT"]
+      }
+    ]
+  },
+  {
+    "id": "connections-010",
+    "level": "easy",
+    "groups": [
+      {
+        "name": "Football positions",
+        "words": ["GOALKEEPER", "DEFENDER", "MIDFIELDER", "STRIKER"]
+      },
+      {
+        "name": "Seasons",
+        "words": ["SPRING", "SUMMER", "AUTUMN", "WINTER"]
+      },
+      {
+        "name": "Organs",
+        "words": ["HEART", "LUNGS", "LIVER", "KIDNEY"]
+      },
+      {
+        "name": "Farm animals",
+        "words": ["COW", "SHEEP", "PIG", "HEN"]
+      }
+    ]
+  },
+  {
+    "id": "connections-011",
+    "level": "easy",
+    "groups": [
+      {
+        "name": "Books of the Bible",
+        "words": ["GENESIS", "EXODUS", "PSALMS", "ROMANS"]
+      },
+      {
+        "name": "Board games",
+        "words": ["CHESS", "LUDO", "SCRABBLE", "DRAUGHTS"]
+      },
+      {
+        "name": "Trees",
+        "words": ["PALM", "BAOBAB", "OAK", "IROKO"]
+      },
+      {
+        "name": "On a desk",
+        "words": ["STAPLER", "SCISSORS", "GLUE", "TAPE"]
+      }
+    ]
+  },
+  {
+    "id": "connections-012",
+    "level": "easy",
+    "groups": [
+      {
+        "name": "Apps",
+        "words": ["WHATSAPP", "INSTAGRAM", "TIKTOK", "SNAPCHAT"]
+      },
+      {
+        "name": "Breakfast",
+        "words": ["BREAD", "EGGS", "CEREAL", "AKARA"]
+      },
+      {
+        "name": "At the beach",
+        "words": ["SAND", "WAVES", "SHELLS", "TOWEL"]
+      },
+      {
+        "name": "Big cats",
+        "words": ["LEOPARD", "TIGER", "CHEETAH", "JAGUAR"]
+      }
+    ]
+  },
+  {
+    "id": "connections-013",
+    "level": "medium",
+    "groups": [
+      {
+        "name": "___ball",
+        "words": ["FOOT", "BASKET", "HAND", "SNOW"]
+      },
+      {
+        "name": "Chess pieces",
+        "words": ["KING", "QUEEN", "KNIGHT", "BISHOP"]
+      },
+      {
+        "name": "Things with scales",
+        "words": ["FISH", "MAP", "PIANO", "SNAKE"]
+      },
+      {
+        "name": "Things that ring",
+        "words": ["BELL", "PHONE", "ALARM", "EARS"]
+      }
+    ]
+  },
+  {
+    "id": "connections-014",
+    "level": "medium",
+    "groups": [
+      {
+        "name": "Doubled words",
+        "words": ["CHIN CHIN", "PUFF PUFF", "KULI KULI", "TOM TOM"]
+      },
+      {
+        "name": "Tech companies",
+        "words": ["APPLE", "AMAZON", "GOOGLE", "META"]
+      },
+      {
+        "name": "Rivers",
+        "words": ["NILE", "NIGER", "BENUE", "THAMES"]
+      },
+      {
+        "name": "Things with teeth",
+        "words": ["COMB", "SAW", "ZIP", "GEAR"]
+      }
+    ]
+  },
+  {
+    "id": "connections-015",
+    "level": "medium",
+    "groups": [
+      {
+        "name": "Palindromes",
+        "words": ["LEVEL", "RADAR", "KAYAK", "CIVIC"]
+      },
+      {
+        "name": "Shades of blue",
+        "words": ["NAVY", "TEAL", "SKY", "ROYAL"]
+      },
+      {
+        "name": "Keyboard keys",
+        "words": ["SHIFT", "ENTER", "SPACE", "ESCAPE"]
+      },
+      {
+        "name": "Things you can break",
+        "words": ["RECORD", "PROMISE", "SILENCE", "NEWS"]
+      }
+    ]
+  },
+  {
+    "id": "connections-016",
+    "level": "medium",
+    "groups": [
+      {
+        "name": "___fish",
+        "words": ["STAR", "JELLY", "CAT", "SWORD"]
+      },
+      {
+        "name": "___cake",
+        "words": ["CUP", "PAN", "CHEESE", "SPONGE"]
+      },
+      {
+        "name": "Things you draw",
+        "words": ["CURTAINS", "WATER", "BREATH", "CONCLUSIONS"]
+      },
+      {
+        "name": "Greek letters",
+        "words": ["ALPHA", "BETA", "GAMMA", "DELTA"]
+      }
+    ]
+  },
+  {
+    "id": "connections-017",
+    "level": "medium",
+    "groups": [
+      {
+        "name": "Currencies",
+        "words": ["YEN", "RAND", "CEDI", "RUPEE"]
+      },
+      {
+        "name": "Coffee drinks",
+        "words": ["LATTE", "MOCHA", "ESPRESSO", "CAPPUCCINO"]
+      },
+      {
+        "name": "Dances",
+        "words": ["SALSA", "TANGO", "WALTZ", "AZONTO"]
+      },
+      {
+        "name": "Card games",
+        "words": ["POKER", "WHOT", "SNAP", "UNO"]
+      }
+    ]
+  },
+  {
+    "id": "connections-018",
+    "level": "medium",
+    "groups": [
+      {
+        "name": "___house",
+        "words": ["LIGHT", "GREEN", "WARE", "FARM"]
+      },
+      {
+        "name": "___line",
+        "words": ["DEAD", "HEAD", "SKY", "FINISH"]
+      },
+      {
+        "name": "Units of time",
+        "words": ["SECOND", "MINUTE", "HOUR", "DECADE"]
+      },
+      {
+        "name": "Tastes",
+        "words": ["SWEET", "SOUR", "BITTER", "SALTY"]
+      }
+    ]
+  },
+  {
+    "id": "connections-019",
+    "level": "medium",
+    "groups": [
+      {
+        "name": "Superheroes",
+        "words": ["BATMAN", "SUPERMAN", "SPIDER-MAN", "BLACK PANTHER"]
+      },
+      {
+        "name": "Nigerian singers",
+        "words": ["WIZKID", "DAVIDO", "BURNA BOY", "TIWA SAVAGE"]
+      },
+      {
+        "name": "In a wallet",
+        "words": ["CASH", "CARD", "RECEIPT", "ID"]
+      },
+      {
+        "name": "Chess words",
+        "words": ["CHECKMATE", "CASTLE", "PAWN", "STALEMATE"]
+      }
+    ]
+  },
+  {
+    "id": "connections-020",
+    "level": "medium",
+    "groups": [
+      {
+        "name": "___board",
+        "words": ["KEY", "CARD", "SKATE", "SURF"]
+      },
+      {
+        "name": "___work",
+        "words": ["HOME", "TEAM", "FRAME", "NET"]
+      },
+      {
+        "name": "Soft drinks",
+        "words": ["FANTA", "SPRITE", "PEPSI", "MALTA"]
+      },
+      {
+        "name": "Sewing kit",
+        "words": ["NEEDLE", "THREAD", "THIMBLE", "BUTTON"]
+      }
+    ]
+  },
+  {
+    "id": "connections-021",
+    "level": "medium",
+    "groups": [
+      {
+        "name": "Radio alphabet",
+        "words": ["BRAVO", "CHARLIE", "DELTA", "TANGO"]
+      },
+      {
+        "name": "Scientists",
+        "words": ["NEWTON", "EINSTEIN", "DARWIN", "CURIE"]
+      },
+      {
+        "name": "Pasta",
+        "words": ["PENNE", "FUSILLI", "LASAGNE", "SPAGHETTI"]
+      },
+      {
+        "name": "Things with shells",
+        "words": ["EGG", "SNAIL", "TORTOISE", "PEANUT"]
+      }
+    ]
+  },
+  {
+    "id": "connections-022",
+    "level": "medium",
+    "groups": [
+      {
+        "name": "Silent K",
+        "words": ["KNIFE", "KNEE", "KNOT", "KNOCK"]
+      },
+      {
+        "name": "Slang for money",
+        "words": ["DOUGH", "BREAD", "BUCKS", "WONGA"]
+      },
+      {
+        "name": "Moon words",
+        "words": ["CRESCENT", "FULL", "NEW", "ECLIPSE"]
+      },
+      {
+        "name": "Clouds",
+        "words": ["CUMULUS", "NIMBUS", "CIRRUS", "STRATUS"]
+      }
+    ]
+  },
+  {
+    "id": "connections-023",
+    "level": "medium",
+    "groups": [
+      {
+        "name": "Things that go flat",
+        "words": ["TYRE", "BATTERY", "DRINK", "JOKE"]
+      },
+      {
+        "name": "Things with keys",
+        "words": ["PIANO", "MAP", "LAPTOP", "TYPEWRITER"]
+      },
+      {
+        "name": "Birds that can't fly",
+        "words": ["OSTRICH", "PENGUIN", "EMU", "KIWI"]
+      },
+      {
+        "name": "Nigerian states",
+        "words": ["KOGI", "EDO", "IMO", "ONDO"]
+      }
+    ]
+  },
+  {
+    "id": "connections-024",
+    "level": "medium",
+    "groups": [
+      {
+        "name": "___man",
+        "words": ["POST", "SNOW", "FIRE", "SPIDER"]
+      },
+      {
+        "name": "Sun___",
+        "words": ["FLOWER", "GLASSES", "RISE", "BURN"]
+      },
+      {
+        "name": "Web browsers",
+        "words": ["CHROME", "SAFARI", "FIREFOX", "EDGE"]
+      },
+      {
+        "name": "Ways to cook",
+        "words": ["FRY", "BOIL", "ROAST", "STEAM"]
+      }
+    ]
+  },
+  {
+    "id": "connections-025",
+    "level": "hard",
+    "groups": [
+      {
+        "name": "Hidden body parts",
+        "words": ["CHINA", "HIPPO", "EARTH", "LEGEND"]
+      },
+      {
+        "name": "Hidden numbers",
+        "words": ["OFTEN", "ATONE", "WEIGHT", "CANINE"]
+      },
+      {
+        "name": "___stone",
+        "words": ["KIDNEY", "MILE", "STEP", "CORNER"]
+      },
+      {
+        "name": "Nigerian writers",
+        "words": ["ACHEBE", "SOYINKA", "ADICHIE", "OKRI"]
+      }
+    ]
+  },
+  {
+    "id": "connections-026",
+    "level": "hard",
+    "groups": [
+      {
+        "name": "Sound like letters",
+        "words": ["SEA", "TEA", "EYE", "WHY"]
+      },
+      {
+        "name": "Sound like numbers",
+        "words": ["WON", "FOR", "ATE", "TOO"]
+      },
+      {
+        "name": "Sticky things",
+        "words": ["GLUE", "HONEY", "TAPE", "GUM"]
+      },
+      {
+        "name": "Things with bark",
+        "words": ["TREE", "DOG", "SEAL", "FOX"]
+      }
+    ]
+  },
+  {
+    "id": "connections-027",
+    "level": "hard",
+    "groups": [
+      {
+        "name": "___paper",
+        "words": ["NEWS", "SAND", "WALL", "TOILET"]
+      },
+      {
+        "name": "___print",
+        "words": ["FOOT", "FINGER", "BLUE", "PAW"]
+      },
+      {
+        "name": "Grand ___",
+        "words": ["PIANO", "SLAM", "CANYON", "FINALE"]
+      },
+      {
+        "name": "In a deck of cards",
+        "words": ["ACE", "JOKER", "HEARTS", "CLUBS"]
+      }
+    ]
+  },
+  {
+    "id": "connections-028",
+    "level": "hard",
+    "groups": [
+      {
+        "name": "Hidden countries",
+        "words": ["WOMAN", "PERUSE", "SCUBA", "PIRANHA"]
+      },
+      {
+        "name": "Fish",
+        "words": ["TUNA", "TILAPIA", "SARDINE", "CATFISH"]
+      },
+      {
+        "name": "Things with tails",
+        "words": ["COMET", "KITE", "COIN", "SHIRT"]
+      },
+      {
+        "name": "___room",
+        "words": ["MUSH", "BED", "CLASS", "BALL"]
+      }
+    ]
+  },
+  {
+    "id": "connections-029",
+    "level": "hard",
+    "groups": [
+      {
+        "name": "Start with a body part",
+        "words": ["EARLY", "HANDSOME", "ARMY", "LEGACY"]
+      },
+      {
+        "name": "Things you raise",
+        "words": ["EYEBROWS", "CHILDREN", "FLAG", "BAR"]
+      },
+      {
+        "name": "Knots",
+        "words": ["REEF", "BOWLINE", "GRANNY", "SLIP"]
+      },
+      {
+        "name": "___worm",
+        "words": ["BOOK", "SILK", "GLOW", "INCH"]
+      }
+    ]
+  },
+  {
+    "id": "connections-030",
+    "level": "hard",
+    "groups": [
+      {
+        "name": "Naija slang",
+        "words": ["WAHALA", "JAPA", "OGA", "GIST"]
+      },
+      {
+        "name": "Things you pitch",
+        "words": ["TENT", "IDEA", "BALL", "CAMP"]
+      },
+      {
+        "name": "Dog breeds",
+        "words": ["POODLE", "BEAGLE", "PUG", "HUSKY"]
+      },
+      {
+        "name": "Sportspeople",
+        "words": ["BOXER", "GOLFER", "JOCKEY", "SPRINTER"]
+      }
+    ]
+  },
+  {
+    "id": "connections-031",
+    "level": "hard",
+    "groups": [
+      {
+        "name": "Car parts",
+        "words": ["HORN", "BOOT", "WHEEL", "CLUTCH"]
+      },
+      {
+        "name": "Hats",
+        "words": ["BOWLER", "BERET", "FEDORA", "BONNET"]
+      },
+      {
+        "name": "Cricket words",
+        "words": ["WICKET", "OVER", "DUCK", "INNINGS"]
+      },
+      {
+        "name": "Things you blow",
+        "words": ["BUBBLES", "CANDLES", "KISS", "WHISTLE"]
+      }
+    ]
+  },
+  {
+    "id": "connections-032",
+    "level": "hard",
+    "groups": [
+      {
+        "name": "Hidden colours",
+        "words": ["CREDIT", "TANGO", "GREYHOUND", "BLUETOOTH"]
+      },
+      {
+        "name": "Dances",
+        "words": ["SALSA", "WALTZ", "SHAKU SHAKU", "FOXTROT"]
+      },
+      {
+        "name": "___card",
+        "words": ["SIM", "POST", "BIRTHDAY", "SCORE"]
+      },
+      {
+        "name": "Fast animals",
+        "words": ["CHEETAH", "FALCON", "HARE", "ANTELOPE"]
+      }
+    ]
+  },
+  {
+    "id": "connections-033",
+    "level": "hard",
+    "groups": [
+      {
+        "name": "Black___",
+        "words": ["BERRY", "SMITH", "MAIL", "OUT"]
+      },
+      {
+        "name": "White ___",
+        "words": ["WASH", "NOISE", "HOUSE", "LIE"]
+      },
+      {
+        "name": "Green ___",
+        "words": ["GROCER", "BACK", "CARD", "ROOM"]
+      },
+      {
+        "name": "Red ___",
+        "words": ["CARPET", "CROSS", "HANDED", "ALERT"]
+      }
+    ]
+  },
+  {
+    "id": "connections-034",
+    "level": "hard",
+    "groups": [
+      {
+        "name": "___bank",
+        "words": ["RIVER", "BLOOD", "PIGGY", "FOOD"]
+      },
+      {
+        "name": "Nigerian footballers",
+        "words": ["OKOCHA", "KANU", "OSIMHEN", "IGHALO"]
+      },
+      {
+        "name": "Things you save",
+        "words": ["FACE", "TIME", "GOAL", "DATE"]
+      },
+      {
+        "name": "___bath",
+        "words": ["BUBBLE", "SUN", "BIRD", "STEAM"]
+      }
+    ]
+  },
+  {
+    "id": "connections-035",
+    "level": "hard",
+    "groups": [
+      {
+        "name": "Animal + a letter",
+        "words": ["BRAT", "SCOW", "WHEN", "PANT"]
+      },
+      {
+        "name": "Things that spin",
+        "words": ["WEB", "YARN", "TOP", "WHEEL"]
+      },
+      {
+        "name": "___ship",
+        "words": ["FRIEND", "CHAMPION", "HARD", "WAR"]
+      },
+      {
+        "name": "Nigerian dances",
+        "words": ["SHAKU SHAKU", "ZANKU", "GWARA GWARA", "ATILOGWU"]
+      }
+    ]
+  },
+  {
+    "id": "connections-036",
+    "level": "hard",
+    "groups": [
+      {
+        "name": "___hand",
+        "words": ["FARM", "DECK", "SHORT", "SECOND"]
+      },
+      {
+        "name": "Things with faces",
+        "words": ["CLOCK", "DICE", "CLIFF", "COIN"]
+      },
+      {
+        "name": "Things with necks",
+        "words": ["BOTTLE", "GUITAR", "GIRAFFE", "SHIRT"]
+      },
+      {
+        "name": "Things with legs",
+        "words": ["TABLE", "SPIDER", "CHAIR", "JOURNEY"]
+      }
+    ]
+  }
+]

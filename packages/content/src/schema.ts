@@ -1,4 +1,6 @@
 import {
+  CONNECTIONS_GROUP_SIZE,
+  LEVELS,
   QUIZ_CATEGORIES,
   QUIZ_DIFFICULTIES,
   WORD_LEVELS,
@@ -39,3 +41,29 @@ export const storedWordSchema = z.object({
 });
 
 export type StoredWord = z.infer<typeof storedWordSchema>;
+
+/** A word on a Connections tile: capitals, with spaces or hyphens inside. */
+const tileWord = z
+  .string()
+  .regex(/^[A-Z][A-Z -]*[A-Z]$/)
+  .max(14);
+
+/** A Connections puzzle: four groups of four, from the plainest link to the trickiest. */
+export const storedConnectionsSchema = z
+  .object({
+    id: z.string().regex(/^connections-\d{3}$/),
+    level: z.enum(LEVELS),
+    groups: z
+      .array(
+        z.object({
+          name: z.string().min(1).max(28),
+          words: z.array(tileWord).length(CONNECTIONS_GROUP_SIZE),
+        }),
+      )
+      .length(4),
+  })
+  .refine((p) => new Set(p.groups.flatMap((g) => g.words)).size === 16, {
+    message: "Every word on the board must be different.",
+  });
+
+export type StoredConnections = z.infer<typeof storedConnectionsSchema>;
