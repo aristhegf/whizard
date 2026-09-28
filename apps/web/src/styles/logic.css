@@ -1,0 +1,129 @@
+/* Logic ------------------------------------------------------------------------------------ */
+
+.logic-main {
+  padding-top: 8px;
+  gap: 14px;
+}
+
+.logic-help {
+  max-width: 34rem;
+}
+
+.logic-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--size), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--size), minmax(0, 1fr));
+  width: min(100%, 520px);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 3px solid #b392ff;
+  border-radius: 14px;
+  background: rgb(22 14 64 / 80%);
+}
+
+.logic-cell {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  line-height: 1;
+  border: 0;
+  border-right: 1px solid rgb(179 146 255 / 25%);
+  border-bottom: 1px solid rgb(179 146 255 / 25%);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: calc(min(100vw - 32px, 520px) / var(--size) * 0.5);
+  color: #cdb8ff;
+  background: transparent;
+  cursor: pointer;
+}
+
+.logic-cell.box-right {
+  border-right: 3px solid #b392ff;
+}
+
+.logic-cell.box-bottom {
+  border-bottom: 3px solid #b392ff;
+}
+
+.logic-cell.given {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.logic-cell.related {
+  background: rgb(120 80 255 / 14%);
+}
+
+.logic-cell.same {
+  background: rgb(150 100 255 / 30%);
+}
+
+.logic-cell.selected {
+  background: rgb(160 110 255 / 55%);
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.logic-cell.mine {
+  animation: logic-placed 260ms ease-out;
+}
+
+.logic-cell.wrong {
+  color: #ff6b8a;
+  background: rgb(255 80 120 / 18%);
+}
+
+/* Cells you didn't fill, shown when your puzzle is over. */
+.logic-cell.missed {
+  color: rgb(255 255 255 / 45%);
+}
+
+.logic-cell:disabled {
+  cursor: default;
+}
+
+@keyframes logic-placed {
+  from {
+    transform: scale(0.7);
+  }
+}
+
+/* One row of number keys, as wide as the grid. */
+.logic-pad {
+  display: grid;
+  grid-template-columns: repeat(var(--size), minmax(0, 64px));
+  justify-content: center;
+  gap: 6px;
+  width: min(100%, 520px);
+}
+
+.logic-key {
+  min-width: 0;
+  height: 52px;
+  padding: 0;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text);
+  background: rgb(40 26 110 / 70%);
+  cursor: pointer;
+}
+
+.logic-key:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.logic-wait {
+  display: grid;
+  gap: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logic-cell.mine {
+    animation: none;
+  }
+}

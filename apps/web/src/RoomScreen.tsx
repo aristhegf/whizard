@@ -8,7 +8,9 @@ import {
   QUIZ_VARIANTS,
   ROUNDS_MODES,
   type AnyQuizView,
+  type ConnectionsView,
   type JigsawView,
+  type LogicView,
   type SpotItView,
   type WordRushView,
 } from "@whizard/game-core";
@@ -24,6 +26,11 @@ import { Tooltip } from "@/components/motion/tooltip";
 import { useAccount } from "./account";
 import { PingFriends } from "./FriendsScreen";
 import { CATALOG, isPlayable } from "./catalog";
+import { ConnectionsScreen } from "./games/connections/ConnectionsScreen";
+import {
+  ConnectionsSettingsRows,
+  parseConnectionsSettings,
+} from "./games/connections/ConnectionsSettingsRows";
 import { JigsawScreen } from "./games/jigsaw/JigsawScreen";
 import {
   JigsawSettingsRows,
@@ -31,6 +38,8 @@ import {
   pictureName,
   sizeName,
 } from "./games/jigsaw/JigsawSettingsPanel";
+import { LogicScreen } from "./games/logic/LogicScreen";
+import { gridName, LogicSettingsRows, parseLogicSettings } from "./games/logic/LogicSettingsRows";
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { RoundsEliminationScreen } from "./games/rounds/RoundsEliminationScreen";
@@ -71,13 +80,20 @@ export function RoomScreen({ code }: { code: string }) {
     joined && room!.phase !== "lobby" && room!.sittingOut.includes(state.playerId!);
   const inGame = joined && room!.phase !== "lobby" && !!state.game && !sittingOut;
 
-  const view = inGame ? (state.game as AnyQuizView | WordRushView | SpotItView | JigsawView) : null;
+  const view = inGame
+    ? (state.game as
+        AnyQuizView | WordRushView | SpotItView | JigsawView | ConnectionsView | LogicView)
+    : null;
   // Leaving mid-game can't be undone, so it asks first while you're still playing: in a
   // jigsaw until you finish, in Elimination only while you're still in it.
   let midGame = false;
   if (room?.phase === "playing" && view) {
     if (view.game === "jigsaw") {
       midGame = view.board !== null && !view.me?.finished && !view.final;
+    } else if (view.game === "connections") {
+      midGame = view.words !== null && view.answer === null;
+    } else if (view.game === "logic") {
+      midGame = view.grid !== null && view.solution === null;
     } else {
       const stage = view.stage.kind;
       const stillIn =
@@ -129,6 +145,10 @@ export function RoomScreen({ code }: { code: string }) {
       <h1 className="sr-only">Whizard room {code}</h1>
       {view?.game === "jigsaw" ? (
         <JigsawScreen {...gameProps} view={view} />
+      ) : view?.game === "connections" ? (
+        <ConnectionsScreen {...gameProps} view={view} />
+      ) : view?.game === "logic" ? (
+        <LogicScreen {...gameProps} view={view} />
       ) : view && view.game !== "quiz" && "mode" in view ? (
         <RoundsEliminationScreen {...gameProps} view={view} />
       ) : view && view.game !== "quiz" ? (
@@ -375,6 +395,9 @@ function Lobby({
   const settings = gameId === "quiz" ? parseQuizSettings(room.game.settings) : null;
   const rounds = isRoundsGame(gameId) ? parseRoundsSettings(gameId, room.game.settings) : null;
   const jigsaw = gameId === "jigsaw" ? parseJigsawSettings(room.game.settings) : null;
+  const connections =
+    gameId === "connections" ? parseConnectionsSettings(room.game.settings) : null;
+  const logic = gameId === "logic" ? parseLogicSettings(room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
   const needMore =
@@ -448,6 +471,16 @@ function Lobby({
                     : (game?.description ?? "")}
               </span>
               {!isHost && jigsaw && <p className="summary muted small">{sizeName(jigsaw.side)}</p>}
+              {!isHost && connections && (
+                <p className="summary muted small">
+                  {LEVEL_NAMES[connections.level]} · {connections.minutes} minutes
+                </p>
+              )}
+              {!isHost && logic && (
+                <p className="summary muted small">
+                  {gridName(logic.size)} · {logic.minutes} minutes
+                </p>
+              )}
               {!isHost && rounds && (
                 <p className="summary muted small">
                   {ROUNDS_MODES.find((m) => m.id === rounds.mode)?.name} ·{" "}
@@ -526,6 +559,20 @@ function Lobby({
                   settings={settings}
                   players={connected.length}
                   editable={canEdit}
+                  onChange={(next) => client.configure(next)}
+                />
+              )}
+              {connections && (
+                <ConnectionsSettingsRows
+                  settings={connections}
+                  editable={isHost}
+                  onChange={(next) => client.configure(next)}
+                />
+              )}
+              {logic && (
+                <LogicSettingsRows
+                  settings={logic}
+                  editable={isHost}
                   onChange={(next) => client.configure(next)}
                 />
               )}

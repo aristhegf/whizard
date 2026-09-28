@@ -1,5 +1,6 @@
 // Server-only: this package contains the answers, so the web app must never import it.
 import {
+  type ConnectionsPuzzle,
   jigsawContentId,
   pickJigsawPicture,
   seededRng,
@@ -7,6 +8,7 @@ import {
   type ContentRequest,
   type QuizCategory,
   type QuizDifficulty,
+  type Level,
   type WordLevel,
 } from "@whizard/game-core";
 import { z } from "zod";
@@ -21,9 +23,12 @@ import music from "./questions/music.json";
 import nigerianCulture from "./questions/nigerian-culture.json";
 import popCulture from "./questions/pop-culture.json";
 import science from "./questions/science.json";
+import connectionsFile from "./connections/puzzles.json";
 import {
+  storedConnectionsSchema,
   storedQuestionSchema,
   storedWordSchema,
+  type StoredConnections,
   type StoredQuestion,
   type StoredWord,
 } from "./schema";
@@ -52,6 +57,10 @@ export const QUESTIONS: readonly StoredQuestion[] = Object.values(QUESTION_FILES
 );
 
 export const WORDS: readonly StoredWord[] = z.array(storedWordSchema).parse(wordFile);
+
+export const CONNECTIONS: readonly StoredConnections[] = z
+  .array(storedConnectionsSchema)
+  .parse(connectionsFile);
 
 export type QuestionCounts = Partial<Record<QuizCategory, Record<QuizDifficulty, number>>>;
 
@@ -202,6 +211,17 @@ export function drawWords(
   return drawByLevel(words, (w) => w.level, levels, seed, options);
 }
 
+/** A Connections puzzle at the level asked for, the least used one, as with questions. */
+export function drawConnections(
+  level: Level,
+  seed: number,
+  options: DrawOptions = {},
+  puzzles: readonly StoredConnections[] = CONNECTIONS,
+): ConnectionsPuzzle[] {
+  const pool = puzzles.filter((p) => p.level === level);
+  return leastUsed(pool.length > 0 ? pool : puzzles, seededRng(seed), options).slice(0, 1);
+}
+
 /** `questions` is the bank to draw from: the one that ships, or it with admin edits applied. */
 export function drawContent(
   request: ContentRequest,
@@ -218,5 +238,7 @@ export function drawContent(
     }
     case "words":
       return drawWords(request.levels, seed, options);
+    case "connections-puzzle":
+      return drawConnections(request.level, seed, options);
   }
 }
