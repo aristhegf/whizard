@@ -1625,3 +1625,121 @@ button.choice:disabled {
     animation: none;
   }
 }
+
+/* The host's own jigsaw photo: framing the square to use. */
+
+.photo-cropper {
+  width: min(560px, calc(100vw - 2 * var(--gutter)));
+  max-height: calc(100dvh - 2 * var(--gutter));
+  padding: 22px;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--line-strong);
+  background: var(--panel-strong);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  overflow: auto;
+}
+
+.photo-cropper::backdrop {
+  background: rgb(8 4 30 / 70%);
+  backdrop-filter: blur(4px);
+}
+
+.photo-cropper .section-title {
+  margin-bottom: 4px;
+}
+
+.photo-stage {
+  display: grid;
+  place-items: center;
+  margin: 14px 0 10px;
+  min-height: 160px;
+}
+
+.photo-shown {
+  position: relative;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+  line-height: 0;
+  touch-action: none;
+  user-select: none;
+}
+
+.photo-shown img {
+  max-width: 100%;
+  max-height: min(56dvh, 460px);
+  border-radius: 10px;
+}
+
+/* The square: clear inside, the rest of the photo dimmed around it. */
+.photo-frame {
+  position: absolute;
+  border: 2px solid #fff;
+  border-radius: 6px;
+  box-shadow: 0 0 0 9999px rgb(8 4 30 / 62%);
+  cursor: grab;
+}
+
+.photo-frame:active {
+  cursor: grabbing;
+}
+
+.photo-frame:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Thirds, as a guide to where the pieces fall. */
+.photo-grid {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      transparent calc(33.33% - 0.5px),
+      rgb(255 255 255 / 45%) 33.33%,
+      transparent calc(33.33% + 0.5px)
+    ),
+    linear-gradient(
+      90deg,
+      transparent calc(66.66% - 0.5px),
+      rgb(255 255 255 / 45%) 66.66%,
+      transparent calc(66.66% + 0.5px)
+    ),
+    linear-gradient(
+      transparent calc(33.33% - 0.5px),
+      rgb(255 255 255 / 45%) 33.33%,
+      transparent calc(33.33% + 0.5px)
+    ),
+    linear-gradient(
+      transparent calc(66.66% - 0.5px),
+      rgb(255 255 255 / 45%) 66.66%,
+      transparent calc(66.66% + 0.5px)
+    );
+  pointer-events: none;
+}
+
+.photo-size {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.photo-size input {
+  width: 100%;
+  accent-color: #8b4dff;
+}
+
+.photo-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.photo-row {
+  grid-template-columns: 22px 1fr auto;
+}

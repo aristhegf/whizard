@@ -832,6 +832,14 @@ button.topic-tile {
     rgb(30 22 90);
 }
 
+.picture-tile.own-photo .picture-art {
+  color: #b392ff;
+  background:
+    radial-gradient(70% 70% at 50% 40%, rgb(150 100 255 / 25%), transparent 70%), rgb(30 22 90);
+  outline: 2px dashed rgb(179 146 255 / 45%);
+  outline-offset: -10px;
+}
+
 .picture-name {
   padding: 0 4px;
   font-weight: 850;

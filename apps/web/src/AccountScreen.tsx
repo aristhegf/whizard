@@ -359,7 +359,10 @@ function matchTitle(match: MatchRecord): string {
   if (match.game === "connections") return `Connections · ${difficultyName(match.difficulty)}`;
   if (match.game === "logic") return `Logic · ${(match.difficulty ?? "").replace("x", "×")}`;
   if (match.game === "jigsaw") {
-    const picture = JIGSAW_PICTURES.find((p) => p.id === match.category)?.name;
+    const picture =
+      match.category === "photo"
+        ? "Your photo"
+        : JIGSAW_PICTURES.find((p) => p.id === match.category)?.name;
     return picture ? `Jigsaw · ${picture}` : "Jigsaw";
   }
   return `${categoryName(match.category)} · ${difficultyName(match.difficulty)}`;

@@ -6,11 +6,12 @@ import {
   type JigsawPictureId,
   type JigsawSide,
 } from "@whizard/game-core";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { setPendingPhoto } from "../games/jigsaw/PhotoCropper";
 import { createFailed, SideLayout, startRoom } from "../ui/Chrome";
 import { Icon } from "../ui/Icon";
 
-type Choice = JigsawPictureId | "random";
+type Choice = JigsawPictureId | "random" | "photo";
 
 /** `/games/jigsaw`: pick the pieces and a picture (or a surprise), and a room opens with it. */
 export function JigsawPage() {
@@ -18,11 +19,14 @@ export function JigsawPage() {
   const [starting, setStarting] = useState<Choice | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const photoInput = useRef<HTMLInputElement>(null);
+
   const start = async (picture: Choice) => {
     setStarting(picture);
     setError(null);
     try {
-      await startRoom({ picture, side }, "jigsaw");
+      // Your own photo is framed and sent from the lobby, once the room exists.
+      await startRoom({ picture: picture === "photo" ? "random" : picture, side }, "jigsaw");
     } catch (e) {
       setError(createFailed(e));
       setStarting(null);
@@ -77,6 +81,36 @@ export function JigsawPage() {
               </span>
             </button>
           </TiltCard>
+        </li>
+        <li>
+          <TiltCard className="tilt tilt-topic" max={10}>
+            <button
+              className="picture-tile own-photo"
+              disabled={starting !== null}
+              onClick={() => photoInput.current?.click()}
+            >
+              <span className="picture-art">
+                <Icon name="plusCircle" size={56} />
+              </span>
+              <span className="picture-name">
+                {starting === "photo" ? "Starting…" : "Your photo"}
+              </span>
+            </button>
+          </TiltCard>
+          <input
+            ref={photoInput}
+            type="file"
+            accept="image/*"
+            hidden
+            aria-label="Choose your photo"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              event.target.value = "";
+              if (!file) return;
+              setPendingPhoto(file);
+              void start("photo");
+            }}
+          />
         </li>
         {JIGSAW_PICTURES.map((p) => (
           <li key={p.id}>

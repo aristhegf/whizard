@@ -135,10 +135,12 @@ export {
 } from "./games/jigsaw/jigsaw";
 export {
   DEFAULT_JIGSAW_SETTINGS,
+  JIGSAW_PHOTO_ID,
   JIGSAW_PICTURES,
   JIGSAW_SIZES,
   jigsawContentId,
   jigsawSettingsSchema,
+  photoPicture,
   pickJigsawPicture,
   type JigsawContentRequest,
   type JigsawPicture,

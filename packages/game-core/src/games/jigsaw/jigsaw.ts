@@ -224,7 +224,11 @@ export const jigsawGame: GameModule<
   defaultSettings: DEFAULT_JIGSAW_SETTINGS,
   actionSchema: jigsawActionSchema,
 
-  contentNeeded: (settings) => ({ kind: "jigsaw-picture", picture: settings.picture }),
+  contentNeeded: (settings) => ({
+    kind: "jigsaw-picture",
+    picture: settings.picture,
+    ...(settings.picture === "photo" && settings.photo ? { photo: settings.photo } : {}),
+  }),
 
   setup({ settings, players, content, seed, now }) {
     const picture = content[0]!.picture;

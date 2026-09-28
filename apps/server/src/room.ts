@@ -19,6 +19,7 @@ import {
   phaseOf,
   quitGame,
   nextDeadline,
+  photoPicture,
   randomSeed,
   randomToken,
   returnToLobby,
@@ -61,6 +62,17 @@ import { loadSeen, recordSeen, viewerKey } from "./seen";
 import { siteSettings } from "./settings";
 
 const STATE_KEY = "room";
+/** The host's jigsaw photo, if they've brought one. Deleted with the room. */
+const PHOTO_KEY = "photo";
+
+interface StoredPhoto {
+  id: string;
+  type: string;
+  data: ArrayBuffer;
+}
+
+export type PhotoResult =
+  { ok: true; id: string } | { ok: false; status: number; error: string; message: string };
 const OPEN = 1;
 
 /** Set by the Worker after it checks the sign-in cookie. Never taken from the client. */
@@ -132,6 +144,49 @@ export class Room extends DurableObject<Env> {
       online: this.connectedIds().size,
       full: state.players.length >= Math.min(settings.maxPlayers, MAX_PLAYERS),
     };
+  }
+
+  /**
+   * The host's own photo for a jigsaw: kept with the room, and chosen as the picture. Only the
+   * host can set it, between games, and only while the room is playing Jigsaw.
+   */
+  async setPhoto(sessionToken: string, type: string, data: ArrayBuffer): Promise<PhotoResult> {
+    const state = await this.current(Date.now());
+    if (!state) {
+      return { ok: false, status: 404, error: "room_not_found", message: "This room has closed." };
+    }
+    const host = state.players.find((p) => p.id === state.hostId);
+    if (!host || host.sessionToken !== sessionToken) {
+      return { ok: false, status: 403, error: "not_host", message: "Only the host can do that." };
+    }
+    if (phaseOf(state) === "playing") {
+      return {
+        ok: false,
+        status: 409,
+        error: "game_in_progress",
+        message: "Choose a photo between games.",
+      };
+    }
+    if (state.game.id !== "jigsaw") {
+      return { ok: false, status: 409, error: "bad_settings", message: "Photos are for Jigsaw." };
+    }
+    const id = [...crypto.getRandomValues(new Uint8Array(12))]
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+    await this.ctx.storage.put(PHOTO_KEY, { id, type, data } satisfies StoredPhoto);
+    const settings = { ...(state.game.settings as object), picture: "photo", photo: id };
+    const result = configureGame(state, state.hostId!, settings);
+    if (!result.ok) {
+      return { ok: false, status: 400, error: "bad_settings", message: "That photo didn’t work." };
+    }
+    await this.commit(result.state);
+    return { ok: true, id };
+  }
+
+  /** The room's photo, if it has this one. */
+  async photo(id: string): Promise<{ type: string; data: ArrayBuffer } | null> {
+    const photo = await this.ctx.storage.get<StoredPhoto>(PHOTO_KEY);
+    return photo && photo.id === id ? { type: photo.type, data: photo.data } : null;
   }
 
   override async fetch(request: Request): Promise<Response> {
@@ -367,6 +422,12 @@ export class Room extends DurableObject<Env> {
     let drawn: string[] = [];
     const started = await this.handleGame(ws, (state, playerId, now) =>
       startGame(state, playerId, this.connectedIds(), now, randomSeed(), (req, seed, room) => {
+        // The host's own photo is served by this room, so the room fills it in.
+        if (req.kind === "jigsaw-picture" && req.picture === "photo" && req.photo) {
+          const picture = photoPicture(state.code, req.photo);
+          drawn = [];
+          return [{ id: `jigsaw:photo:${req.photo}`, picture }];
+        }
         const content = drawContent(
           req,
           seed,
