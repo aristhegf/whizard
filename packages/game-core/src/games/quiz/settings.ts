@@ -26,6 +26,12 @@ export const QUIZ_VARIANTS = [
     name: "Speed",
     description: "A timer on every question. Faster answers score more.",
   },
+  {
+    id: "elimination",
+    name: "Elimination",
+    description:
+      "Everyone answers together. The lowest scores are knocked out each round until two meet in the final. 3 or more players.",
+  },
 ] as const;
 export type QuizVariant = (typeof QUIZ_VARIANTS)[number]["id"];
 
@@ -37,7 +43,7 @@ export const quizSettingsSchema = z.object({
   difficulty: z.enum(QUIZ_DIFFICULTIES),
   count: z.literal(QUIZ_QUESTION_COUNTS),
   variant: z.enum(QUIZ_VARIANTS.map((v) => v.id) as [QuizVariant, ...QuizVariant[]]),
-  /** Speed only. */
+  /** Speed and Elimination. */
   timeLimitSeconds: z.literal(QUIZ_TIME_LIMITS_SECONDS),
 });
 

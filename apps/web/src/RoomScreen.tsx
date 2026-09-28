@@ -1,8 +1,10 @@
 import {
+  ELIMINATION_MIN_PLAYERS,
   MAX_PLAYERS,
   NICKNAME_INPUT_MAX_LENGTH,
   QUIZ_CATEGORIES,
-  type QuizView,
+  QUIZ_VARIANTS,
+  type AnyQuizView,
 } from "@whizard/game-core";
 import { AVATAR_IDS } from "@whizard/protocol";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -45,8 +47,19 @@ export function RoomScreen({ code }: { code: string }) {
   const joined = !!(state.playerId && room);
   const inGame = joined && room!.phase !== "lobby" && !!state.game;
 
-  const stage = inGame ? (state.game as QuizView).stage.kind : null;
-  const midGame = room?.phase === "playing" && (stage === "question" || stage === "answer");
+  const view = inGame ? (state.game as AnyQuizView) : null;
+  const stage = view?.stage.kind ?? null;
+  // Leaving mid-game can't be undone; in Elimination only while you're still in it.
+  const stillIn =
+    view && "mode" in view ? view.me?.status === "in" || view.me?.status === "finalist" : true;
+  const midGame =
+    room?.phase === "playing" &&
+    stillIn &&
+    (stage === "question" ||
+      stage === "answer" ||
+      stage === "reveal" ||
+      stage === "cut" ||
+      stage === "final");
 
   const leave = (to: string) => {
     if (midGame && !window.confirm("Leave this game? You can’t rejoin it.")) return;
@@ -59,7 +72,7 @@ export function RoomScreen({ code }: { code: string }) {
       <h1 className="sr-only">Whizard room {code}</h1>
       {inGame ? (
         <QuizScreen
-          view={state.game as QuizView}
+          view={state.game as AnyQuizView}
           client={client}
           room={room!}
           playerId={state.playerId!}
@@ -283,6 +296,10 @@ function Lobby({
   const settings = parseQuizSettings(room.game.settings);
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
+  const needMore =
+    settings?.variant === "elimination"
+      ? Math.max(0, ELIMINATION_MIN_PLAYERS - connected.length)
+      : 0;
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
   const url = `${location.origin}${roomPath(room.code)}`;
 
@@ -338,10 +355,11 @@ function Lobby({
               <span className="pill">{category?.name ?? "Quiz"}</span>
               {!isHost && settings && (
                 <p className="summary muted small">
-                  {settings.variant === "speed" ? "Speed" : "Classic"} quiz · {category?.name} ·{" "}
+                  {QUIZ_VARIANTS.find((v) => v.id === settings.variant)?.name} quiz ·{" "}
+                  {category?.name} ·{" "}
                   {settings.difficulty[0]!.toUpperCase() + settings.difficulty.slice(1)} ·{" "}
                   {settings.count} questions
-                  {settings.variant === "speed" && ` · ${settings.timeLimitSeconds}s each`}
+                  {settings.variant !== "classic" && ` · ${settings.timeLimitSeconds}s each`}
                 </p>
               )}
             </div>
@@ -452,7 +470,12 @@ function Lobby({
           <PingFriends code={room.code} />
 
           <div className="lobby-dock">
-            {isHost ? (
+            {isHost && needMore > 0 ? (
+              <p className="muted center need-more" role="status">
+                Elimination needs at least {ELIMINATION_MIN_PLAYERS} players. Invite {needMore} more
+                to start.
+              </p>
+            ) : isHost ? (
               <StartButton alone={alone} onStart={() => client.startGame()} />
             ) : (
               <p className="muted center">Waiting for the host to start the game.</p>

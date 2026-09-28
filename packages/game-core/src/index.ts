@@ -82,7 +82,18 @@ export {
   type QuizStanding,
   type QuizState,
   type QuizView,
+  type AnyQuizView,
 } from "./games/quiz/quiz";
+export {
+  ELIMINATION_MIN_PLAYERS,
+  FINAL_QUESTIONS,
+  keepCount,
+  planRounds,
+  type EliminationStage,
+  type EliminationStanding,
+  type EliminationStatus,
+  type EliminationView,
+} from "./games/quiz/elimination";
 export {
   BASE_POINTS,
   NETWORK_ALLOWANCE_MS,

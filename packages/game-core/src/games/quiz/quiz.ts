@@ -1,6 +1,31 @@
 import { z } from "zod";
-import { seededRng, shuffled } from "../../random";
-import type { GameModule, GamePlayer, ItemResult, Rejection } from "../types";
+import { seededRng } from "../../random";
+import type { GameModule, GamePlayer, Rejection } from "../types";
+import {
+  EARLY_TOLERANCE_MS,
+  itemResults,
+  prepare,
+  type AnswerRecord,
+  type PreparedQuestion,
+  type QuizReviewItem,
+} from "./common";
+
+import {
+  answerElimination,
+  ELIMINATION_MIN_PLAYERS,
+  joinElimination,
+  leaveElimination,
+  nextWakeElimination,
+  setupElimination,
+  SPARE_QUESTIONS,
+  summarizeElimination,
+  tickElimination,
+  viewElimination,
+  type EliminationState,
+  type EliminationView,
+} from "./elimination";
+
+export type { QuizReviewItem } from "./common";
 import { BASE_POINTS, creditedElapsed, pointsFor } from "./scoring";
 import {
   DEFAULT_QUIZ_SETTINGS,
@@ -21,8 +46,6 @@ export const AUTO_ADVANCE_MS = 8000;
  * can't hold up everyone's final results.
  */
 export const CLASSIC_IDLE_LIMIT_MS = 5 * 60_000;
-/** Answers this early are accepted, to allow for small clock differences. */
-const EARLY_TOLERANCE_MS = 1000;
 
 export const quizActionSchema = z.discriminatedUnion("type", [
   z.object({
@@ -35,24 +58,6 @@ export const quizActionSchema = z.discriminatedUnion("type", [
 ]);
 
 export type QuizAction = z.infer<typeof quizActionSchema>;
-
-interface PreparedQuestion {
-  id: string;
-  prompt: string;
-  choices: string[];
-  correctChoice: number;
-  explanation: string | null;
-  reference: string | null;
-}
-
-interface AnswerRecord {
-  index: number;
-  /** null when time ran out. */
-  choice: number | null;
-  correct: boolean;
-  points: number;
-  elapsedMs: number;
-}
 
 /** Everyone starts together, then each player moves through the questions on their own clock. */
 interface QuizPlayer {
@@ -85,20 +90,6 @@ export interface QuizStanding {
   score: number;
   finished: boolean;
   left: boolean;
-}
-
-export interface QuizReviewItem {
-  index: number;
-  /** The bank's ID for the question, so a player can report it. */
-  questionId: string;
-  prompt: string;
-  choices: string[];
-  myChoice: number | null;
-  correctChoice: number;
-  correct: boolean;
-  points: number;
-  explanation: string | null;
-  reference: string | null;
 }
 
 export type QuizStage =
@@ -135,21 +126,6 @@ const limitMs = (state: QuizState) =>
 const active = (state: QuizState) => state.players.filter((p) => !p.left);
 const answerFor = (player: QuizPlayer, index: number) =>
   player.answers.find((a) => a.index === index);
-
-function prepare(question: QuizQuestion, rng: () => number): PreparedQuestion {
-  const order = shuffled(
-    question.choices.map((_, i) => i),
-    rng,
-  );
-  return {
-    id: question.id,
-    prompt: question.prompt,
-    choices: order.map((i) => question.choices[i]!),
-    correctChoice: order.indexOf(0),
-    explanation: question.explanation ?? null,
-    reference: question.reference ?? null,
-  };
-}
 
 function newPlayer(player: GamePlayer, startsAt: number): QuizPlayer {
   return {
@@ -337,7 +313,20 @@ function viewFor(state: QuizState, playerId: string): QuizView {
 
 // Module -----------------------------------------------------------------------------------
 
-export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizAction, QuizView> = {
+/** Classic and Speed share one set of rules; Elimination has its own. */
+export type AnyQuizState = QuizState | EliminationState;
+export type AnyQuizView = QuizView | EliminationView;
+
+const isElimination = (state: AnyQuizState): state is EliminationState =>
+  (state as EliminationState).mode === "elimination";
+
+export const quizGame: GameModule<
+  QuizSettings,
+  QuizQuestion[],
+  AnyQuizState,
+  QuizAction,
+  AnyQuizView
+> = {
   id: "quiz",
   name: "Quiz",
   minPlayers: 1,
@@ -346,14 +335,26 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
   defaultSettings: DEFAULT_QUIZ_SETTINGS,
   actionSchema: quizActionSchema,
 
+  playersNeeded: (settings) =>
+    settings.variant === "elimination"
+      ? {
+          min: ELIMINATION_MIN_PLAYERS,
+          message: `Elimination needs at least ${ELIMINATION_MIN_PLAYERS} players.`,
+        }
+      : null,
+
   contentNeeded: (settings) => ({
     kind: "quiz-questions",
     category: settings.category,
     difficulty: settings.difficulty,
-    count: settings.count,
+    // Elimination keeps a few back for sudden death.
+    count: settings.count + (settings.variant === "elimination" ? SPARE_QUESTIONS : 0),
   }),
 
   setup({ settings, players, content, seed, now }) {
+    if (settings.variant === "elimination") {
+      return setupElimination({ settings, players, content, seed, now });
+    }
     const rng = seededRng(seed);
     const questions = content.map((q) => prepare(q, rng));
     const startsAt = now + COUNTDOWN_MS;
@@ -367,6 +368,10 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
 
   onAction(state, playerId, action, now) {
     if (state.finishedAt !== null) return { rejected: "The game is over." };
+    if (isElimination(state)) {
+      if (action.type === "next") return { rejected: "Everyone moves on together." };
+      return answerElimination(state, playerId, action, now);
+    }
     const player = state.players.find((p) => p.id === playerId);
     if (!player || player.left) return { rejected: "You're watching this game." };
     if (player.finishedAt !== null) return { rejected: "You've finished." };
@@ -383,24 +388,29 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
   },
 
   onPlayerJoined(state, player, now) {
+    // Someone joining an Elimination game watches it.
+    if (isElimination(state)) return joinElimination(state, player);
     if (state.finishedAt !== null || state.players.some((p) => p.id === player.id)) return state;
     // A late joiner starts from question one with their own countdown, like everyone did.
     return { ...state, players: [...state.players, newPlayer(player, now + COUNTDOWN_MS)] };
   },
 
   onPlayerLeft(state, playerId, now) {
+    if (isElimination(state)) return leaveElimination(state, playerId, now);
     const players = state.players.map((p) => (p.id === playerId ? { ...p, left: true } : p));
     return finishIfEveryoneDone({ ...state, players }, now);
   },
 
   tick(state, now) {
     if (state.finishedAt !== null) return state;
+    if (isElimination(state)) return tickElimination(state, now);
     const players = state.players.map((p) => tickPlayer(state, p, now));
     return finishIfEveryoneDone({ ...state, players }, now);
   },
 
   nextWakeAt(state) {
     if (state.finishedAt !== null) return null;
+    if (isElimination(state)) return nextWakeElimination(state);
     const times = active(state).flatMap((p) =>
       p.finishedAt !== null
         ? []
@@ -416,6 +426,7 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
   isFinished: (state) => state.finishedAt !== null,
 
   summarize(state) {
+    if (isElimination(state)) return summarizeElimination(state);
     const stayed = standingsOf(state).filter((s) => !s.left);
     return {
       category: state.settings.category,
@@ -429,26 +440,10 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
         correct: state.players.find((p) => p.id === s.playerId)?.correctCount ?? null,
       })),
       // Everyone's answers count here, including players who left before the end.
-      items: state.questions.map((q, index) => {
-        const item: ItemResult = { id: q.id, answered: 0, correct: 0, timedOut: 0, wrongPicks: {} };
-        for (const player of state.players) {
-          const answer = player.answers.find((a) => a.index === index);
-          if (!answer) continue;
-          if (answer.choice === null) {
-            item.timedOut++;
-            continue;
-          }
-          item.answered++;
-          if (answer.correct) item.correct++;
-          else {
-            const text = q.choices[answer.choice] ?? "";
-            item.wrongPicks[text] = (item.wrongPicks[text] ?? 0) + 1;
-          }
-        }
-        return item;
-      }),
+      items: itemResults(state.questions, state.players),
     };
   },
 
-  viewFor,
+  viewFor: (state, playerId) =>
+    isElimination(state) ? viewElimination(state, playerId) : viewFor(state, playerId),
 };
