@@ -1,7 +1,7 @@
 /* Sharing a finished game as a picture. */
 
 .share-dialog {
-  width: min(960px, calc(100vw - 2 * var(--gutter)));
+  width: min(480px, calc(100vw - 2 * var(--gutter)));
   max-height: calc(100dvh - 2 * var(--gutter));
   padding: 20px;
   border-radius: var(--radius-lg);
@@ -27,7 +27,10 @@
 .share-preview {
   display: grid;
   place-items: center;
-  aspect-ratio: 16 / 9;
+  /* The picture is 9:16; it shrinks to fit short screens. */
+  aspect-ratio: 9 / 16;
+  max-height: calc(100dvh - 240px);
+  margin: 0 auto;
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--field);

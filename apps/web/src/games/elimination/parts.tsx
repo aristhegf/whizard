@@ -8,7 +8,7 @@ import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { MuteButton } from "../../ui/MuteButton";
 import { useServerNow } from "../../useServerNow";
-import { competitiveLines } from "../../share/cardText";
+import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
 
 // What every game's Elimination screens share: the bar, the knock-outs, the final's intro, the
@@ -271,32 +271,34 @@ export function Done({
     ? `I won an Elimination game of ${title} on Whizard! 🏆`
     : `Play an Elimination game of ${title} with me on Whizard!`;
   const placed = view.standings.filter((s) => s.status !== "left");
-  const rows = placed.map((s) => ({
-    ...s,
-    label:
-      s.status === "winner"
-        ? "Winner"
-        : s.status === "runner-up"
-          ? "Runner-up"
-          : s.outRound
-            ? `Out in round ${s.outRound}`
-            : STATUS[s.status],
-  }));
-  const lines = competitiveLines(rows, playerId, avatarOf);
   const { open: share, dialog: shareDialog } = useShareResults(
-    {
+    buildCard({
       title,
-      details: ["Elimination", `${view.playerCount} players`, `${view.rounds} rounds + final`],
+      subtitle: `Elimination · ${view.playerCount} players`,
       art: context.art,
       colors: context.colors,
-      ...lines,
-      // "I came 4th with Out in round 2" reads badly: say it plainly.
-      subline: iWon
-        ? `Beat ${view.playerCount - 1} other players`
-        : view.me?.rank
-          ? `I finished ${ordinal(view.me.rank)}`
-          : undefined,
-    },
+      // Placings, not points, decide Elimination: the bars follow the placing.
+      rows: placed.map((s, i) => ({
+        playerId: s.playerId,
+        nickname: s.nickname,
+        avatar: avatarOf(s.playerId),
+        value: placed.length - i,
+        label:
+          s.status === "winner"
+            ? "Winner"
+            : s.status === "runner-up"
+              ? "Final"
+              : s.outRound
+                ? `Out · R${s.outRound}`
+                : STATUS[s.status],
+      })),
+      me: playerId,
+      score: { value: (view.me?.score ?? 0).toLocaleString(), unit: "points" },
+      correct: null,
+      items: view.questionNumber,
+      facts: [],
+      elimination: { outRound: view.me?.outRound ?? null },
+    }),
     text,
   );
   return (

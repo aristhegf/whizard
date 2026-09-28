@@ -192,8 +192,10 @@ describe("results", () => {
     expect(results.final).toBe(false);
     for (const row of results.standings) {
       expect(Object.keys(row).sort()).toEqual(
-        ["finished", "left", "nickname", "playerId", "rank", "score"].sort(),
+        ["finished", "left", "nickname", "playerId", "rank", "score", "timeMs"].sort(),
       );
+      // Times only show once everyone is done.
+      expect(row.timeMs).toBeNull();
     }
     expect(results.standings.map((s) => [s.nickname, s.finished])).toEqual([
       ["ADA", true],

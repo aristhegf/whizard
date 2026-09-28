@@ -89,6 +89,8 @@ export interface QuizStanding {
   nickname: string;
   rank: number;
   score: number;
+  /** Total answer time, once the game is over (for the share picture's speed champion). */
+  timeMs: number | null;
   finished: boolean;
   left: boolean;
 }
@@ -249,6 +251,7 @@ export function standingsOf(state: QuizState): QuizStanding[] {
     nickname: p.nickname,
     rank: i + 1,
     score: p.score,
+    timeMs: state.finishedAt !== null ? p.totalTimeMs : null,
     finished: state.finishedAt !== null || p.finishedAt !== null,
     left: p.left,
   }));

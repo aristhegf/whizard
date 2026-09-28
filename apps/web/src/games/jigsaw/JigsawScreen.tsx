@@ -10,7 +10,7 @@ import { Icon } from "../../ui/Icon";
 import { MuteButton } from "../../ui/MuteButton";
 import { Podium } from "../../ui/Podium";
 import { CATALOG } from "../../catalog";
-import { competitiveLines } from "../../share/cardText";
+import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
 import { sizeName } from "./JigsawSettingsPanel";
 
@@ -330,25 +330,37 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
   const text = me?.finished
     ? `I finished a ${me.total}-piece jigsaw in ${clock(me.timeMs ?? 0)} on Whizard!`
     : "Race me at a jigsaw on Whizard!";
-  const rows = view.standings
-    .filter((s) => !s.left)
-    .map((s) => ({ ...s, label: progressLabel(s) }));
   const { open: share, dialog: shareDialog } = useShareResults(
-    {
+    buildCard({
       title: "Jigsaw",
-      details: [sizeName(view.side), view.picture.name],
+      subtitle: `${sizeName(view.side)} · ${view.picture.name}`,
       art: view.picture.src,
       colors: CATALOG.find((g) => g.id === "jigsaw")?.colors ?? ["#ff9f2e", "#3a1a5c"],
-      ...(podium.length > 0
-        ? competitiveLines(rows, playerId, avatarOf)
-        : {
-            headline: me?.finished ? "Can you beat my time?" : "Can you finish it?",
-            podium: [],
-            score: me?.finished
-              ? { value: clock(me.timeMs ?? 0), detail: `${me.total} pieces` }
-              : { value: `${me?.placed ?? 0}/${me?.total ?? 0}`, detail: "pieces in place" },
-          }),
-    },
+      rows: solo
+        ? []
+        : view.standings
+            .filter((s) => !s.left)
+            .map((s) => ({
+              playerId: s.playerId,
+              nickname: s.nickname,
+              avatar: avatarOf(s.playerId),
+              value: s.placed,
+              label: progressLabel(s),
+              timeMs: s.timeMs,
+            })),
+      me: playerId,
+      score: me?.finished
+        ? { value: clock(me.timeMs ?? 0), unit: "to finish" }
+        : { value: `${me?.placed ?? 0}/${me?.total ?? 0}`, unit: "pieces in place" },
+      correct: null,
+      items: 1,
+      finished: me?.finished ?? false,
+      facts: [
+        { icon: "🧩", value: String(me?.total ?? view.side * view.side), label: "Pieces" },
+        { icon: "🔁", value: String(me?.moves ?? 0), label: "Moves" },
+        { icon: "⏱️", value: me?.finished ? clock(me.timeMs ?? 0) : "–", label: "Time" },
+      ],
+    }),
     text,
   );
 

@@ -332,7 +332,7 @@ test("Auto starts easy and gets harder", async ({ browser }) => {
   await expect(page.locator(".review li")).toHaveCount(5);
 });
 
-test("the results can be shared as a 16:9 picture", async ({ browser }) => {
+test("the results can be shared as a 9:16 picture", async ({ browser }) => {
   const page = await newPlayer(browser);
   await openRoom(page);
   await page.getByLabel("Questions").selectOption("5");
@@ -352,7 +352,7 @@ test("the results can be shared as a 16:9 picture", async ({ browser }) => {
     img.naturalWidth,
     img.naturalHeight,
   ]);
-  expect(size).toEqual([1920, 1080]);
+  expect(size).toEqual([1080, 1920]);
   await expect(dialog.getByRole("link", { name: "Download" })).toHaveAttribute(
     "download",
     "whizard-results.png",

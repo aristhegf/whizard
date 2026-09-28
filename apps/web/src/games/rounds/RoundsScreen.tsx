@@ -22,7 +22,7 @@ import { Icon } from "../../ui/Icon";
 import { MuteButton } from "../../ui/MuteButton";
 import { useServerNow } from "../../useServerNow";
 import { Podium } from "../../ui/Podium";
-import { competitiveLines } from "../../share/cardText";
+import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
 import { elapsedSince, Leaderboard, ScoreBoard, useCountdown } from "../quiz/QuizScreen";
 
@@ -618,26 +618,35 @@ function Results({
     : `Play ${name} with me on Whizard!`;
   const catalogGame = CATALOG.find((g) => g.id === view.game);
   const level = (room.game.settings as { level?: LevelChoice } | null)?.level;
-  const rows = view.standings
-    .filter((s) => !s.left)
-    .map((s) => ({ ...s, label: `${s.score.toLocaleString()} pts` }));
   const { open: share, dialog: shareDialog } = useShareResults(
-    {
+    buildCard({
       title: name,
-      details: ["Speed", level ? LEVEL_NAMES[level] : "", `${view.total} rounds`].filter(Boolean),
+      subtitle: ["Speed", level ? LEVEL_NAMES[level] : ""].filter(Boolean).join(" · "),
       art: context.art,
       colors: catalogGame?.colors ?? ["#6b45ff", "#23145a"],
-      ...(podium.length > 0
-        ? competitiveLines(rows, playerId, avatarOf)
-        : {
-            headline: "Can you beat me?",
-            podium: [],
-            score: {
-              value: (view.me?.score ?? 0).toLocaleString(),
-              detail: `${view.me?.solvedCount ?? 0} of ${view.total} solved`,
-            },
-          }),
-    },
+      rows:
+        view.final && !solo
+          ? view.standings
+              .filter((s) => !s.left)
+              .map((s) => ({
+                playerId: s.playerId,
+                nickname: s.nickname,
+                avatar: avatarOf(s.playerId),
+                value: s.score,
+                label: `${s.score.toLocaleString()} pts`,
+                timeMs: s.timeMs,
+              }))
+          : [],
+      me: playerId,
+      score: { value: (view.me?.score ?? 0).toLocaleString(), unit: "points" },
+      correct: view.me ? { got: view.me.solvedCount, of: view.total } : null,
+      items: view.total,
+      facts: [
+        { icon: "🎯", value: String(view.total), label: "Rounds" },
+        { icon: "✅", value: `${view.me?.solvedCount ?? 0}/${view.total}`, label: "Solved" },
+        { icon: "📈", value: level ? LEVEL_NAMES[level] : "Speed", label: "Level" },
+      ],
+    }),
     text,
   );
 

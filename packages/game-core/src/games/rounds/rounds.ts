@@ -292,6 +292,7 @@ function speedGame<
       nickname: p.nickname,
       rank: i + 1,
       score: p.score,
+      timeMs: state.finishedAt !== null ? p.totalTimeMs : null,
       finished: state.finishedAt !== null || p.finishedAt !== null,
       left: p.left,
     }));

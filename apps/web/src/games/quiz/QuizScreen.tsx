@@ -24,7 +24,7 @@ import { ReportQuestion } from "./ReportQuestion";
 import { play } from "../../sounds";
 import { MuteButton } from "../../ui/MuteButton";
 import { Podium } from "../../ui/Podium";
-import { competitiveLines } from "../../share/cardText";
+import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
 
 type QuestionStage = Extract<QuizStage, { kind: "question" }>;
@@ -367,30 +367,39 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
     : `Play a ${categoryName} quiz with me on Whizard!`;
   const settings = parseQuizSettings(room.game.settings);
   const topic = TOPIC_STYLES[context.categoryId as keyof typeof TOPIC_STYLES];
-  const rows = view.standings
-    .filter((s) => !s.left)
-    .map((s) => ({ ...s, label: `${s.score.toLocaleString()} pts` }));
+  const level = settings ? LEVEL_NAMES[settings.difficulty] : "";
   const { open: share, dialog: shareDialog } = useShareResults(
-    {
+    buildCard({
       title: `${categoryName} Quiz`,
-      details: [
-        QUIZ_VARIANTS.find((v) => v.id === settings?.variant)?.name ?? "Quiz",
-        settings ? LEVEL_NAMES[settings.difficulty] : "",
-        `${view.total} questions`,
-      ].filter(Boolean),
+      subtitle: [QUIZ_VARIANTS.find((v) => v.id === settings?.variant)?.name, level]
+        .filter(Boolean)
+        .join(" · "),
       art: topic?.art ?? "/art/games/quiz.webp",
       colors: topic?.colors ?? ["#ff8c1a", "#4a1530"],
-      ...(podium.length > 0
-        ? competitiveLines(rows, playerId, avatarOf)
-        : {
-            headline: "Can you beat me?",
-            podium: [],
-            score: {
-              value: (view.me?.score ?? 0).toLocaleString(),
-              detail: `${view.me?.correctCount ?? 0} of ${view.total} correct`,
-            },
-          }),
-    },
+      // The board once everyone's done; until then, the sharer's own result.
+      rows:
+        view.final && !solo
+          ? view.standings
+              .filter((s) => !s.left)
+              .map((s) => ({
+                playerId: s.playerId,
+                nickname: s.nickname,
+                avatar: avatarOf(s.playerId),
+                value: s.score,
+                label: `${s.score.toLocaleString()} pts`,
+                timeMs: s.timeMs,
+              }))
+          : [],
+      me: playerId,
+      score: { value: (view.me?.score ?? 0).toLocaleString(), unit: "points" },
+      correct: view.me ? { got: view.me.correctCount, of: view.total } : null,
+      items: view.total,
+      facts: [
+        { icon: "❓", value: String(view.total), label: "Questions" },
+        { icon: "✅", value: `${view.me?.correctCount ?? 0}/${view.total}`, label: "Correct" },
+        { icon: "🎯", value: level || "Quiz", label: "Level" },
+      ],
+    }),
     text,
   );
 
