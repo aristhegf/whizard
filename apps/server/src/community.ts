@@ -51,6 +51,7 @@ async function buildCommunityStats(db: D1Database, now: number): Promise<Communi
          JOIN matches m ON m.id = mp.match_id
          JOIN users u ON u.id = mp.user_id
         WHERE mp.placing = 1 AND m.player_count >= 2 AND u.public_leaderboard = 1
+          AND u.suspended_at IS NULL
         GROUP BY u.id
         ORDER BY wins DESC, MIN(m.finished_at) ASC
         LIMIT ${LEADERBOARD_SIZE}`,

@@ -21,6 +21,7 @@ export interface UserRow {
   public_leaderboard: number;
   created_at: number;
   is_admin: number;
+  suspended_at: number | null;
 }
 
 export interface SignedIn {
@@ -100,7 +101,7 @@ export async function currentSession(
   const row = await env.DB.prepare(
     `SELECT u.*, s.expires_at AS session_expires_at
        FROM sessions s JOIN users u ON u.id = s.user_id
-      WHERE s.id = ? AND s.expires_at > ?`,
+      WHERE s.id = ? AND s.expires_at > ? AND u.suspended_at IS NULL`,
   )
     .bind(sessionId, now)
     .first<UserRow & { session_expires_at: number }>();

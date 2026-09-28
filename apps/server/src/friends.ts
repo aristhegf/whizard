@@ -33,7 +33,7 @@ const toPublic = (row: Omit<PublicRow, "id">): PublicUser => ({
 
 async function findUser(env: Env, username: string): Promise<PublicRow> {
   const row = await env.DB.prepare(
-    "SELECT id, username, display_name, avatar FROM users WHERE username = ?",
+    "SELECT id, username, display_name, avatar FROM users WHERE username = ? AND suspended_at IS NULL",
   )
     .bind(normalizeUsername(username))
     .first<PublicRow>();

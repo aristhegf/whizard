@@ -93,6 +93,16 @@ export function PrivacyScreen() {
           with no names in it; each entry is deleted after 7 days.
         </p>
 
+        <h2>What admins can see</h2>
+        <p>
+          Whizard’s admins can see the list of accounts, with each one’s username, name, sign-up
+          date, number of games and wins, and the last day it played. They can see rooms that are
+          open right now, with the nicknames everyone in the room already sees; a room drops off the
+          list as soon as it closes. To deal with abuse, an admin can close a room, suspend an
+          account (it’s signed out and can’t sign in until it’s let back in) or delete it. Every one
+          of those actions is recorded.
+        </p>
+
         <h2>Your choices</h2>
         <p>
           On your account page you can download everything stored about you, or delete your account.

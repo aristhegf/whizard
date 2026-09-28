@@ -212,6 +212,8 @@ export async function cleanUp(env: Env, now: number) {
     env.DB.prepare("DELETE FROM auth_challenges WHERE expires_at < ?").bind(now),
     env.DB.prepare("DELETE FROM seen_questions WHERE seen_at < ?").bind(now - SEEN_KEEP_MS),
     env.DB.prepare("DELETE FROM activity WHERE at < ?").bind(now - 7 * 24 * 60 * 60 * 1000),
+    // Rooms remove themselves when they close; this catches any that couldn't.
+    env.DB.prepare("DELETE FROM live_rooms WHERE updated_at < ?").bind(now - 24 * 60 * 60 * 1000),
     env.DB.prepare("DELETE FROM player_days WHERE day < ?").bind(
       dayOf(now - 400 * 24 * 60 * 60 * 1000),
     ),

@@ -30,12 +30,19 @@ export async function requireAdmin(context: RequestContext): Promise<SignedIn> {
   return session;
 }
 
-function parseRange(value: string | null): StatsRange {
+/** An admin's action, for the record. */
+export function logAdmin(db: D1Database, userId: string, action: string, target: string) {
+  return db
+    .prepare("INSERT INTO admin_log (at, user_id, action, target) VALUES (?, ?, ?, ?)")
+    .bind(Date.now(), userId, action, target);
+}
+
+export function parseRange(value: string | null): StatsRange {
   const n = Number(value);
   return (STATS_RANGES as readonly number[]).includes(n) ? (n as StatsRange) : 30;
 }
 
-const ratio = (part: number, whole: number) => (whole > 0 ? part / whole : null);
+export const ratio = (part: number, whole: number) => (whole > 0 ? part / whole : null);
 /** A share that can't pass 100%, e.g. while one count started being recorded before another. */
 const share = (part: number, whole: number) => (whole > 0 ? Math.min(1, part / whole) : null);
 
@@ -308,12 +315,6 @@ export async function decideReport(context: RequestContext): Promise<Response> {
               .bind(question.id, version, now),
           ]
         : [];
-  await db.batch([
-    ...clear,
-    ...decide,
-    db
-      .prepare("INSERT INTO admin_log (at, user_id, action, target) VALUES (?, ?, ?, ?)")
-      .bind(now, user.id, `report:${action}`, question.id),
-  ]);
+  await db.batch([...clear, ...decide, logAdmin(db, user.id, `report:${action}`, question.id)]);
   return Response.json({ ok: true });
 }

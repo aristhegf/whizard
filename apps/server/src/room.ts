@@ -42,6 +42,7 @@ import {
 } from "@whizard/protocol";
 import type { Env } from "./env";
 import { count, logActivity, recordPlayerDays, sizeBucket } from "./analytics";
+import { liveRoomOf, removeLiveRoom, saveLiveRoom } from "./liveRooms";
 import { recordMatch } from "./matches";
 import { retiredQuestions } from "./reports";
 import { loadSeen, recordSeen, viewerKey } from "./seen";
@@ -80,6 +81,8 @@ const GAME_ERROR_MESSAGES: Record<GameError, string> = {
  */
 export class Room extends DurableObject<Env> {
   private cached: RoomState | null | undefined;
+  /** What was last written to the admin rooms list, so unchanged rooms aren't rewritten. */
+  private listed: string | undefined;
 
   /**
    * Claims this room for a newly generated code, optionally with game settings picked before
@@ -174,8 +177,7 @@ export class Room extends DurableObject<Env> {
 
     if (isExpired(state, connected, now)) {
       for (const ws of this.ctx.getWebSockets()) ws.close(CloseCode.RoomExpired, "Room expired");
-      this.cached = null;
-      await this.ctx.storage.deleteAll();
+      await this.remove(state);
       return;
     }
 
@@ -349,6 +351,7 @@ export class Room extends DurableObject<Env> {
       if (ws !== joined?.ws) ws.send(roomMessage);
       if (state.session) send(ws, { type: "game", view: gameViewFor(state, playerId) });
     }
+    await this.list(state);
 
     if (result) {
       const { summary } = result;
@@ -371,6 +374,44 @@ export class Room extends DurableObject<Env> {
         // History is a nice-to-have: a failed write must never break the room.
         console.error("Couldn’t record match", error);
       }
+    }
+  }
+
+  /** `Close room` on the admin Rooms page: everyone is sent away and the room is deleted. */
+  async closeByAdmin(): Promise<boolean> {
+    const state = await this.load();
+    if (!state) return false;
+    for (const ws of this.ctx.getWebSockets()) {
+      ws.serializeAttachment(null);
+      ws.close(CloseCode.RoomClosed, "Room closed");
+    }
+    await this.remove(state);
+    return true;
+  }
+
+  private async remove(state: RoomState) {
+    this.cached = null;
+    this.listed = undefined;
+    await this.ctx.storage.deleteAlarm();
+    await this.ctx.storage.deleteAll();
+    try {
+      await removeLiveRoom(this.env, state.code);
+    } catch (error) {
+      console.error("Couldn’t remove the room from the admin list", error);
+    }
+  }
+
+  /** Keeps the admin rooms list up to date, writing only when something shown there changed. */
+  private async list(state: RoomState) {
+    const room = liveRoomOf(state, this.connectedIds());
+    const signature = JSON.stringify(room);
+    if (signature === this.listed) return;
+    this.listed = signature;
+    try {
+      await saveLiveRoom(this.env, room, Date.now());
+    } catch (error) {
+      this.listed = undefined;
+      console.error("Couldn’t update the admin rooms list", error);
     }
   }
 
