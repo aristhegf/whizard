@@ -93,9 +93,9 @@ export const EYE_GAPS: readonly { id: string; name: string }[] = [-3, -2, -1, 0,
 export const EXPRESSIONS: readonly Expression[] = [
   { id: "happy", name: "Happy" },
   { id: "laugh", name: "Laughing", eyes: "closed", mouth: "m6", brows: "raised" },
-  { id: "wink", name: "Wink", eyes: "wink", mouth: "m27" },
-  { id: "cheeky", name: "Cheeky", eyes: "wink", mouth: "m24" },
-  { id: "surprised", name: "Surprised", eyes: "wide", mouth: "m23", brows: "raised" },
+  { id: "wink", name: "Wink", eyes: "wink", mouth: "m4" },
+  { id: "cheeky", name: "Cheeky", eyes: "wink", mouth: "m22" },
+  { id: "surprised", name: "Surprised", eyes: "wide", mouth: "m21", brows: "raised" },
   { id: "thinking", name: "Thinking", mouth: "m3", brows: "worried" },
 ];
 
@@ -156,7 +156,7 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
   ],
   brows: [none()],
   // Painted once, and tinted to each skin tone so the lips match the face.
-  mouth: Array.from({ length: 49 }, (_, i) => ({
+  mouth: Array.from({ length: 30 }, (_, i) => ({
     id: `m${i + 1}`,
     name: `Mouth ${i + 1}`,
     files: ["mouth"],

@@ -31,7 +31,7 @@ const TEST_PARTS: Catalogue = {
   face: [option("classic", ["head"], { paintedFor: "skin" })],
   hair: [none, option("afro", ["back", "front", "hat-front", "hat-back"])],
   eyes: [option("round", ["open", "closed", "wide"])],
-  mouth: [option("grin", ["mouth"]), option("m27", ["mouth"]), option("m6", ["mouth"])],
+  mouth: [option("grin", ["mouth"]), option("m4", ["mouth"]), option("m6", ["mouth"])],
   earrings: [none, option("hoops", ["earrings"])],
   glasses: [none, option("round", ["glasses"])],
   headwear: [
@@ -200,7 +200,7 @@ describe("avatar layers", () => {
     ]);
     // A laugh from the game wins over the player's wink.
     expect(eyes({ eyes: "closed" }, "wink")).toEqual([["closed.png", undefined]]);
-    expect(srcs({ expression: "wink" })).toContain("/art/avatar-parts/front/mouth/m27/mouth.png");
+    expect(srcs({ expression: "wink" })).toContain("/art/avatar-parts/front/mouth/m4/mouth.png");
   });
 
   it("draws a mirrored pose from the pose it mirrors, flipped", () => {
