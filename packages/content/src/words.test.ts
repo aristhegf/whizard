@@ -74,8 +74,10 @@ describe("drawWords", () => {
     expect(second.filter((id) => first.includes(id))).toEqual([]);
   });
 
-  it("returns what it has when a level runs short", () => {
+  it("borrows from another level when one runs short, and returns what it has", () => {
     const easy = WORDS.filter((w) => w.level === "easy").slice(0, 2);
-    expect(drawWords(["easy", "easy", "easy"], 1, {}, easy)).toHaveLength(2);
+    const medium = WORDS.filter((w) => w.level === "medium").slice(0, 1);
+    const drawn = drawWords(["easy", "easy", "easy", "easy"], 1, {}, [...easy, ...medium]);
+    expect(drawn.map((w) => w.level)).toEqual(["easy", "easy", "medium"]);
   });
 });

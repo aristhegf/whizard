@@ -6,14 +6,13 @@ import { autoLevels, type Level, type LevelChoice } from "../levels";
  * grid) at the same time. The game is split into rounds; at the end of each, the lowest scores
  * are knocked out. Each round cuts about the same share of the players still in, so a big group
  * loses several at once early on and a small one loses one at a time, always landing on two.
- * The two finalists start again from zero for a short final, with sudden death if it's level.
+ * The host picks how many items each round has; the final has as many. The two finalists start
+ * again from zero, with sudden death if it's level.
  *
  * A game brings its items and decides what a move is worth; this file owns everything else.
  */
 
 export const ELIMINATION_MIN_PLAYERS = 3;
-/** Items in the final, before any sudden death. */
-export const FINAL_QUESTIONS = 3;
 /** At most this many knock-out rounds, however many play. */
 export const MAX_ROUNDS = 6;
 /** Extra items drawn for sudden death and tie-breaks. */
@@ -63,8 +62,10 @@ export interface KnockoutState<Settings, Item, R extends KnockoutRecord, Guess> 
   mode: "elimination";
   settings: Settings;
   items: Item[];
-  /** The items the host asked for; the rest are spares. */
+  /** The items the rounds and the final need; the rest are spares. */
   planned: number;
+  /** Items in the final before any sudden death: the same as a round. */
+  finalLength: number;
   /** For each round, the item index it ends before: [2, 4, 6] is three rounds of two. */
   roundEnds: number[];
   players: KnockoutPlayer<R, Guess>[];
@@ -86,20 +87,22 @@ export interface KnockoutState<Settings, Item, R extends KnockoutRecord, Guess> 
 
 // The numbers ---------------------------------------------------------------------------------
 
+/** How many knock-out rounds a group plays: one per player to knock out, at most 6. */
+export function roundCount(players: number): number {
+  return Math.max(1, Math.min(players - 2, MAX_ROUNDS));
+}
+
 /**
- * When each knock-out round ends. The items before the final are split as evenly as they go
- * between the rounds, and there are never more rounds than players to knock out.
+ * When each knock-out round ends, with `perRound` items in every round: [10, 20, 30] is three
+ * rounds of ten. The final comes after, with `perRound` more.
  */
-export function planRounds(players: number, questions: number): number[] {
-  const before = Math.max(1, questions - FINAL_QUESTIONS);
-  const rounds = Math.max(1, Math.min(players - 2, MAX_ROUNDS, before));
-  const ends: number[] = [];
-  let at = 0;
-  for (let i = 0; i < rounds; i++) {
-    at += Math.floor(before / rounds) + (i < before % rounds ? 1 : 0);
-    ends.push(at);
-  }
-  return ends;
+export function planRounds(players: number, perRound: number): number[] {
+  return Array.from({ length: roundCount(players) }, (_, i) => (i + 1) * perRound);
+}
+
+/** Every item a game with this many players plays, rounds and final, before any spares. */
+export function plannedItems(players: number, perRound: number): number {
+  return (roundCount(players) + 1) * perRound;
 }
 
 /**
@@ -117,17 +120,15 @@ export function keepCount(alive: number, roundsLeft: number): number {
 }
 
 /**
- * The level of every item an Elimination game draws: `planned` for the rounds and the final,
- * then the spares. Auto blends each knock-out round from easy towards hard, and the final and
- * sudden death are hard.
+ * The level of every item an Elimination game draws: each knock-out round and the final, then
+ * the spares. Auto blends each round from easy towards hard, and the final and sudden death
+ * are hard.
  */
-export function knockoutLevelPlan(choice: LevelChoice, players: number, planned: number): Level[] {
-  if (choice !== "auto") return Array<Level>(planned + SPARE_QUESTIONS).fill(choice);
-  const ends = planRounds(Math.max(players, ELIMINATION_MIN_PLAYERS), planned);
-  const sizes = ends.map((end, i) => end - (i === 0 ? 0 : ends[i - 1]!));
-  const final = Math.max(0, planned - ends[ends.length - 1]!);
+export function knockoutLevelPlan(choice: LevelChoice, players: number, perRound: number): Level[] {
+  const stages = roundCount(Math.max(players, ELIMINATION_MIN_PLAYERS)) + 1;
+  if (choice !== "auto") return Array<Level>(stages * perRound + SPARE_QUESTIONS).fill(choice);
   // The final is the last stage, so it comes out all hard.
-  const levels = autoLevels(final > 0 ? [...sizes, final] : sizes).slice(0, planned);
+  const levels = autoLevels(Array<number>(stages).fill(perRound));
   return [...levels, ...Array<Level>(SPARE_QUESTIONS).fill("hard")];
 }
 
@@ -237,7 +238,7 @@ export function knockoutEngine<Settings, Item, R extends KnockoutRecord, Guess>(
     const itemsLeft = state.items.length - state.index - 1;
     while (
       keep < ranked.length &&
-      itemsLeft > FINAL_QUESTIONS &&
+      itemsLeft > state.finalLength &&
       byScore(ranked[keep - 1]!, ranked[keep]!) === 0
     ) {
       keep++;
@@ -284,7 +285,7 @@ export function knockoutEngine<Settings, Item, R extends KnockoutRecord, Guess>(
     if (alive.length <= 1) return finish(state, at);
     if (inFinal(state)) {
       const played = state.index + 1 - state.finalStart!;
-      if (played < FINAL_QUESTIONS) return nextItem(state, at);
+      if (played < state.finalLength) return nextItem(state, at);
       const [first, second] = [...alive].sort(byFinal);
       const level = first!.finalScore === second!.finalScore;
       // Sudden death while it's level and there are items left.
@@ -305,22 +306,24 @@ export function knockoutEngine<Settings, Item, R extends KnockoutRecord, Guess>(
   const allDone = (state: State) => contenders(state).every((p) => answered(p, state.index));
 
   return {
+    /** `perRound` is how many items each round has, and the final too. */
     setup(args: {
       settings: Settings;
       players: GamePlayer[];
       items: Item[];
-      planned: number;
+      perRound: number;
       now: number;
     }): State {
-      const { settings, players, items, now } = args;
-      const planned = Math.min(args.planned, items.length);
+      const { settings, players, items, perRound, now } = args;
+      const planned = Math.min(plannedItems(players.length, perRound), items.length);
       const startsAt = now + START_COUNTDOWN_MS;
       return {
         mode: "elimination",
         settings,
         items,
         planned,
-        roundEnds: planRounds(players.length, planned),
+        finalLength: perRound,
+        roundEnds: planRounds(players.length, perRound),
         players: players.map((p) => newPlayer<R, Guess>(p, false)),
         index: 0,
         phase: "question",
@@ -498,6 +501,8 @@ export type KnockoutStage<ItemStage, RevealStage, DoneStage> =
   | {
       kind: "final";
       finalists: { playerId: string; nickname: string; score: number }[];
+      /** Items in the final, before any sudden death. */
+      length: number;
       until: number;
     }
   | ({ kind: "done"; winner: { playerId: string; nickname: string } | null } & DoneStage);
@@ -515,6 +520,8 @@ export interface KnockoutViewBase<Stage> {
   rounds: number;
   /** Item number in the game, 1-based. */
   questionNumber: number;
+  /** Where the current item is in its round or the final; null in sudden death. */
+  roundItem: { number: number; of: number } | null;
   inFinal: boolean;
   suddenDeath: boolean;
   /** The finalists' scores in the final, which started from zero. */
@@ -585,6 +592,7 @@ export function knockoutView<
     stage = {
       kind: "final",
       finalists: alive.map((p) => ({ playerId: p.id, nickname: p.nickname, score: p.score })),
+      length: state.finalLength,
       until: state.phaseEndsAt,
     };
   } else if (state.phase === "reveal") {
@@ -621,8 +629,9 @@ export function knockoutView<
         : Math.min(state.round, state.roundEnds.length - 1) + 1,
     rounds: state.roundEnds.length,
     questionNumber: state.index + 1,
+    roundItem: roundItem(state),
     inFinal: final,
-    suddenDeath: final && state.index - state.finalStart! >= FINAL_QUESTIONS,
+    suddenDeath: final && state.index - state.finalStart! >= state.finalLength,
     finalScores: final
       ? contenders(state)
           .sort(byFinal)
@@ -641,6 +650,17 @@ export function knockoutView<
     standings,
     final: state.finishedAt !== null,
   };
+}
+
+function roundItem(state: AnyState): { number: number; of: number } | null {
+  if (state.finalStart !== null) {
+    const number = state.index - state.finalStart + 1;
+    return number <= state.finalLength ? { number, of: state.finalLength } : null;
+  }
+  const round = Math.min(state.round, state.roundEnds.length - 1);
+  const start = round === 0 ? 0 : state.roundEnds[round - 1]!;
+  const end = state.roundEnds[round]!;
+  return { number: Math.min(state.index - start + 1, end - start), of: end - start };
 }
 
 /** The placings for match history, best first. */

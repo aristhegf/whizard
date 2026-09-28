@@ -38,9 +38,12 @@ export function splitCount(count: number, mix: readonly number[]): [number, numb
   const want = mix.map((share) => share * count);
   const counts = want.map((w) => Math.floor(w + 1e-9)) as [number, number, number];
   let rest = count - counts[0] - counts[1] - counts[2];
-  const byRemainder = [2, 1, 0].sort(
-    (a, b) => want[b]! - counts[b]! - (want[a]! - counts[a]!) || b - a,
-  );
+  // Largest remainder first; remainders within rounding error of each other are a tie.
+  const remainder = (level: number) => want[level]! - counts[level]!;
+  const byRemainder = [2, 1, 0].sort((a, b) => {
+    const diff = remainder(b) - remainder(a);
+    return Math.abs(diff) > 1e-9 ? diff : b - a;
+  });
   for (const level of byRemainder) {
     if (rest <= 0) break;
     counts[level]!++;

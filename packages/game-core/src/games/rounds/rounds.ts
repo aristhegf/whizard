@@ -643,7 +643,7 @@ export function roundsGame<
         settings,
         players,
         items: rules.puzzles(settings, content, seededRng(seed), players.length),
-        planned: settings.rounds,
+        perRound: settings.rounds,
         now,
       });
     },

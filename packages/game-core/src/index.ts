@@ -87,7 +87,8 @@ export {
 } from "./games/quiz/quiz";
 export {
   ELIMINATION_MIN_PLAYERS,
-  FINAL_QUESTIONS,
+  plannedItems,
+  roundCount,
   keepCount,
   planRounds,
   type EliminationStage,

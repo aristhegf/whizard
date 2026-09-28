@@ -25,7 +25,6 @@ export {
   CUT_MS,
   ELIMINATION_MIN_PLAYERS,
   FINAL_INTRO_MS,
-  FINAL_QUESTIONS,
   MAX_ROUNDS,
   REVEAL_MS,
   SPARE_QUESTIONS,
@@ -33,6 +32,8 @@ export {
   eliminationStandings,
   keepCount,
   planRounds,
+  plannedItems,
+  roundCount,
   type EliminationStanding,
   type EliminationStatus,
 } from "../knockout/knockout";
@@ -68,7 +69,7 @@ export function setupElimination(args: {
     settings: args.settings,
     players: args.players,
     items: args.content.map((q) => prepare(q, rng, args.settings.difficulty)),
-    planned: args.settings.count,
+    perRound: args.settings.count,
     now: args.now,
   });
 }

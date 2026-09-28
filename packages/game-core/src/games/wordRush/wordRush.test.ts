@@ -76,10 +76,10 @@ describe("Word Rush", () => {
       kind: "words",
       levels: levelsFor(DEFAULT_WORD_RUSH_SETTINGS),
     });
-    // Elimination draws spares for sudden death, hard on Auto.
-    const knockout = levelsFor({ ...auto, mode: "elimination", rounds: 10 }, 6);
-    expect(knockout).toHaveLength(15);
-    expect(knockout.slice(7)).toEqual(Array(8).fill("hard"));
+    // Elimination: 6 players play four rounds and a final of 5 words each, then 5 hard spares.
+    const knockout = levelsFor({ ...auto, mode: "elimination" }, 6);
+    expect(knockout).toHaveLength(30);
+    expect(knockout.slice(20)).toEqual(Array(10).fill("hard"));
   });
 
   it("never scrambles a word into one that counts", () => {

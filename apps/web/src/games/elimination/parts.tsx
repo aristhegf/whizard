@@ -59,7 +59,9 @@ export function Bar({ context, timer }: { context: EliminationContext; timer?: R
           {where}
           {/* Between items (knock-outs, the final's intro) there's nothing to count. */}
           {(view.stage.kind === "question" || view.stage.kind === "reveal") &&
-            ` · ${context.noun} ${view.questionNumber}`}
+            (view.roundItem
+              ? ` · ${context.noun} ${view.roundItem.number} of ${view.roundItem.of}`
+              : ` · ${context.noun} ${view.questionNumber}`)}
         </span>
         <span className="bar-end">
           <span className="pill elim-left" title="Players still in">
@@ -196,8 +198,9 @@ export function FinalIntro({
           {face(b)}
         </div>
         <p className="muted">
-          Scores go back to zero. Three {context.noun.toLowerCase()}s, most points wins; if it’s
-          level, sudden death.
+          Scores go back to zero.{" "}
+          {`${stage.length} ${context.noun.toLowerCase()}${stage.length === 1 ? "" : "s"}`}, most
+          points wins; if it’s level, sudden death.
         </p>
         <p className="countdown-number small">{seconds}</p>
       </section>

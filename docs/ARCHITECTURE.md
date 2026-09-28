@@ -111,7 +111,7 @@ Each game's screens live in the web app under `src/games/<id>/`. Canvas-heavy ga
 
 ## Quiz (launch game)
 
-The host picks a **mode**, a **category**, a **level** (easy, medium, hard or Auto, see [Levels](#levels-and-auto)) and the **number of questions** (5, 10, 15 or 20). The room draws one question set. Quiz can be played solo.
+The host picks a **mode**, a **category**, a **level** (easy, medium, hard or Auto, see [Levels](#levels-and-auto)) and the **number of questions** (5, 10, 15 or 20): the game's length in Classic and Speed, which are one round, and each round's in Elimination. The room draws one question set. Quiz can be played solo.
 
 | Mode            | Questions                                                                      | Points                                                            |
 | --------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
@@ -146,11 +146,11 @@ This pacing is decided entirely on the player's own screen: the server only need
 
 A mode for 3 or more players, in the quiz, Word Rush and Spot It. All three use the same knock-out rules (`games/knockout/knockout.ts`); each game only brings its items (questions, words or grids) and what a move on one is worth. Unlike Classic and Speed, **everyone plays each question together**: it opens for all at the same moment, and closes when time runs out or everyone still in is done with it (answered, solved, out of tries or given up). Then everyone sees the right answer for 3.5 seconds.
 
-- **Rounds.** The questions before a 3-question final are split between knock-out rounds (`planRounds`): as many rounds as there are players to knock out, at most 6, and never more than there are questions. With 5 players and 10 questions that's rounds of 3, 2 and 2 questions; with 12 players and 15 questions, six rounds of 2.
+- **Rounds.** The number the host picks is **per round**: every knock-out round has that many questions, and so does the final. There are as many knock-out rounds as players to knock out, at most 6 (`roundCount`, `planRounds`). At 10 a round, 3 players play one round and the final (20 questions), 5 players three rounds and the final (40), and 8 or more six rounds and the final (70). The lobby says how long the game will be for the players there.
 - **Who goes.** At the end of each round the lowest total scores are knocked out (`keepCount`). Each round keeps the same share of the players still in, so the field shrinks geometrically to exactly two: with 20 players the rounds knock out 6, 5, 3, 2, 1 and 1; with 12, 3, 2, 2, 1, 1 and 1; with 5, one a round. Every round knocks out at least one, and leaves enough for later rounds to knock out one each. It's worked out from whoever is still in, so players leaving don't break it: if only two are left, the final starts early, and if only one is left, they win.
 - **Ties.** Totals are compared by points, then by answer time (faster stays). Two players level on both at the cut line both stay, so that round knocks out one fewer; if that leaves more than two after the last round, one extra one-question round follows, using one of 5 spare questions drawn for the game.
 - **Knocked out.** Players who go out stay in the room and watch: they see each question, the answers and the rest of the game, but can't answer. Late joiners watch too.
-- **The final.** The two finalists start again from zero for 3 questions. If they're level, sudden-death questions follow from the spares until one leads; if the spares run out, the faster player wins.
+- **The final.** The two finalists start again from zero for a round's worth of questions. If they're level, sudden-death questions follow from the spares until one leads; if the spares run out, the faster player wins.
 - **Placings.** The winner, the runner-up, then everyone knocked out, later knock-outs placing higher; within a round, the higher score places higher. Match history and the stats record the game with mode `elimination`.
 
 Between phases there are short screens: each round's knock-outs (6 seconds, with "You're through" or "You're out, you finished 5th"), and the finalists' introduction (5 seconds). All the timing is on the server, in the game's state, so every player sees the same thing at the same time.
@@ -159,19 +159,19 @@ Between phases there are short screens: each round's knock-outs (6 seconds, with
 
 Every game with levels offers **Easy**, **Medium**, **Hard** and **Auto** (`games/levels.ts`), in every mode. A fixed level keeps the whole game at it. **Auto** starts easy and gets harder, mixing the three levels as it goes. Harder items are worth more: 1,000, 1,250 and 1,500 points.
 
-Auto splits the game into stages: the knock-out rounds and the final in Elimination, or up to 5 even stages in Classic and Speed. With `p` running from 0 at the first stage to 1 at the last, each stage's share of easy, medium and hard is (1 − p)², 2p(1 − p) and p². They always add up to 1, all easy at the start, all hard at the end. Each stage's share becomes whole items by the nearest counts that add up, ties going to the harder level, with the easier ones first. The final and sudden death are all hard. For 20 players and 20 questions in Elimination:
+Auto splits the game into stages: the knock-out rounds and the final in Elimination, or up to 5 even stages in Classic and Speed. With `p` running from 0 at the first stage to 1 at the last, each stage's share of easy, medium and hard is (1 − p)², 2p(1 − p) and p². They always add up to 1, all easy at the start, all hard at the end. Each stage's share becomes whole items by the nearest counts that add up, ties going to the harder level, with the easier ones first. The final and sudden death are all hard. For 20 players at 10 questions a round:
 
-| Round | Easy / medium / hard | Questions                |
-| ----- | -------------------- | ------------------------ |
-| 1     | 100 / 0 / 0          | 3 easy                   |
-| 2     | 69 / 28 / 3          | 2 easy, 1 medium         |
-| 3     | 44 / 44 / 11         | 1 easy, 2 medium         |
-| 4     | 25 / 50 / 25         | 1 easy, 1 medium, 1 hard |
-| 5     | 11 / 44 / 44         | 2 medium, 1 hard         |
-| 6     | 3 / 28 / 69          | 1 medium, 1 hard         |
-| Final | 0 / 0 / 100          | 3 hard                   |
+| Round | Easy / medium / hard share | Questions (easy, medium, hard) |
+| ----- | -------------------------- | ------------------------------ |
+| 1     | 100 / 0 / 0                | 10, 0, 0                       |
+| 2     | 69 / 28 / 3                | 7, 3, 0                        |
+| 3     | 44 / 44 / 11               | 4, 5, 1                        |
+| 4     | 25 / 50 / 25               | 2, 5, 3                        |
+| 5     | 11 / 44 / 44               | 1, 4, 5                        |
+| 6     | 3 / 28 / 69                | 0, 3, 7                        |
+| Final | 0 / 0 / 100                | 0, 0, 10                       |
 
-The plan is made before the game starts (`levelPlan`, `knockoutLevelPlan`), from the settings and how many are playing, and the room draws content to match it (`drawQuestionPlan`, `drawWords`): each level's least-used items, in the plan's order.
+The plan is made before the game starts (`levelPlan`, `knockoutLevelPlan`), from the settings and how many are playing, and the room draws content to match it (`drawQuestionPlan`, `drawWords`): each level's least-used items, in the plan's order. A long game can need more of a level than the bank has (hard throughout for 20 players at 20 a round is 145 questions, and a topic has 60 hard ones); then that level borrows from the nearest one (hard from medium, then easy), so nothing repeats within a game.
 
 ## Word Rush and Spot It
 

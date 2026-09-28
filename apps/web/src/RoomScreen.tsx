@@ -410,8 +410,11 @@ function Lobby({
               {!isHost && rounds && (
                 <p className="summary muted small">
                   {ROUNDS_MODES.find((m) => m.id === rounds.mode)?.name} ·{" "}
-                  {LEVEL_NAMES[rounds.level]} · {rounds.rounds} rounds · {rounds.timeLimitSeconds}s
-                  each
+                  {LEVEL_NAMES[rounds.level]} ·{" "}
+                  {rounds.mode === "elimination"
+                    ? `${rounds.rounds} ${gameId === "word-rush" ? "words" : "grids"} a round`
+                    : `${rounds.rounds} rounds`}{" "}
+                  · {rounds.timeLimitSeconds}s each
                 </p>
               )}
               {!isHost && settings && (
@@ -419,7 +422,7 @@ function Lobby({
                   {QUIZ_VARIANTS.find((v) => v.id === settings.variant)?.name} quiz ·{" "}
                   {category?.name} ·{" "}
                   {settings.difficulty[0]!.toUpperCase() + settings.difficulty.slice(1)} ·{" "}
-                  {settings.count} questions
+                  {settings.count} questions{settings.variant === "elimination" && " a round"}
                   {settings.variant !== "classic" && ` · ${settings.timeLimitSeconds}s each`}
                 </p>
               )}
@@ -472,6 +475,7 @@ function Lobby({
                 <RoundsSettingsRows
                   game={gameId}
                   settings={rounds}
+                  players={connected.length}
                   editable={isHost}
                   onChange={(next) => client.configure(next)}
                 />
@@ -479,6 +483,7 @@ function Lobby({
               {settings && (
                 <QuizSettingsRows
                   settings={settings}
+                  players={connected.length}
                   editable={isHost}
                   onChange={(next) => client.configure(next)}
                 />

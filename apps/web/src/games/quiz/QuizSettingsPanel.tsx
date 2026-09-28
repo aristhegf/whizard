@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { fetchQuizCategories, type QuizCategoryInfo } from "../../api";
 import { SettingRow as Row, SettingSelect } from "../../ui/SettingSelect";
-import { AUTO_HINT } from "../rounds/RoundsSettingsRows";
+import { AUTO_HINT, EliminationLength } from "../rounds/RoundsSettingsRows";
 
 export function parseQuizSettings(settings: unknown): QuizSettings | null {
   const parsed = quizSettingsSchema.safeParse(settings);
@@ -21,14 +21,20 @@ export function parseQuizSettings(settings: unknown): QuizSettings | null {
 /** The quiz's rows in the lobby's Room Settings list. Only the host can change them. */
 export function QuizSettingsRows({
   settings,
+  players,
   editable,
   onChange,
 }: {
   settings: QuizSettings;
+  /** Players in the room now, for how long an Elimination game will be. */
+  players: number;
   editable: boolean;
   onChange: (settings: QuizSettings) => void;
 }) {
-  const speed = settings.variant === "speed" || settings.variant === "elimination";
+  const elimination = settings.variant === "elimination";
+  const speed = settings.variant === "speed" || elimination;
+  // In Elimination the number is each round's; played straight through, it's the game's.
+  const countLabel = elimination ? "Questions per round" : "Questions";
   const set = <K extends keyof QuizSettings>(key: K, value: QuizSettings[K]) =>
     onChange({ ...settings, [key]: value });
 
@@ -65,16 +71,19 @@ export function QuizSettingsRows({
         />
       </Row>
       {settings.difficulty === "auto" && <p className="setting-hint dim small">{AUTO_HINT}</p>}
-      <Row icon="copy" id="questions" label="Questions">
+      <Row icon="copy" id="questions" label={countLabel}>
         <SettingSelect
           id="questions"
-          label="Questions"
+          label={countLabel}
           value={String(settings.count)}
           disabled={!editable}
           options={QUIZ_QUESTION_COUNTS.map((n) => ({ value: String(n), label: String(n) }))}
           onChange={(value) => set("count", Number(value) as QuizSettings["count"])}
         />
       </Row>
+      {elimination && (
+        <EliminationLength players={players} perRound={settings.count} noun="questions" />
+      )}
       {speed && (
         <Row icon="clock" id="time-limit" label="Time per question">
           <SettingSelect

@@ -174,8 +174,15 @@ describe("drawQuestionPlan", () => {
     expect(new Set(drawn.map((q) => q.id)).size).toBe(plan.length);
   });
 
-  it("draws a single level the same way as before", () => {
-    const levels = Array(10).fill("medium");
-    expect(drawQuestionPlan("bible", levels, 8)).toEqual(drawQuestions("bible", "medium", 10, 8));
+  it("borrows from the nearest level when one runs out, without repeats", () => {
+    // Hard throughout for 20 players at 20 a round: far more than the 60 hard questions.
+    const levels = Array(145).fill("hard");
+    const drawn = drawQuestionPlan("science", levels, 2);
+    expect(drawn).toHaveLength(145);
+    expect(new Set(drawn.map((q) => q.id)).size).toBe(145);
+    const count = (level: string) => drawn.filter((q) => q.difficulty === level).length;
+    // All the hard ones first, then medium, then easy.
+    expect([count("hard"), count("medium"), count("easy")]).toEqual([60, 60, 25]);
+    expect(drawn.slice(0, 60).every((q) => q.difficulty === "hard")).toBe(true);
   });
 });

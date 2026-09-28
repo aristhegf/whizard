@@ -137,20 +137,28 @@ export function drawQuestions(
   return shuffled(leastUsed(pool, rng, options).slice(0, count), rng);
 }
 
+/** Where to borrow from when a level runs out: the nearest level first, the one below on a tie. */
+const BORROW: Record<QuizDifficulty, QuizDifficulty[]> = {
+  easy: ["medium", "hard"],
+  medium: ["easy", "hard"],
+  hard: ["medium", "easy"],
+};
+
 /**
  * One item per entry in `levels`, at that level, in that order, the least used first. A level
- * that runs short is skipped, so the game gets fewer.
+ * that runs out borrows from the nearest one, so a long game still gets enough and nothing
+ * repeats within it. Only when every level has run out does the game get fewer.
  */
-function drawByLevel<T extends { id: string }, L extends string>(
+function drawByLevel<T extends { id: string }>(
   items: readonly T[],
-  levelOf: (item: T) => L,
-  levels: readonly L[],
+  levelOf: (item: T) => QuizDifficulty,
+  levels: readonly QuizDifficulty[],
   seed: number,
   options: DrawOptions,
 ): T[] {
   const rng = seededRng(seed);
-  const queues = new Map<L, T[]>();
-  return levels.flatMap((level) => {
+  const queues = new Map<QuizDifficulty, T[]>();
+  const queue = (level: QuizDifficulty) => {
     if (!queues.has(level)) {
       queues.set(
         level,
@@ -161,14 +169,17 @@ function drawByLevel<T extends { id: string }, L extends string>(
         ),
       );
     }
-    const next = queues.get(level)!.shift();
-    return next ? [next] : [];
+    return queues.get(level)!;
+  };
+  return levels.flatMap((level) => {
+    const from = [level, ...BORROW[level]].find((l) => queue(l).length > 0);
+    return from ? [queue(from).shift()!] : [];
   });
 }
 
 /**
- * A game's questions for a level plan. A single level is drawn and shuffled as before; a
- * mix (Auto) keeps the plan's order, so the game gets harder as it goes.
+ * A game's questions for a level plan, in the plan's order, so an Auto game gets harder as it
+ * goes. A level that runs out borrows from the nearest one.
  */
 export function drawQuestionPlan(
   category: QuizCategory,
@@ -177,9 +188,6 @@ export function drawQuestionPlan(
   options: DrawOptions = {},
   questions: readonly StoredQuestion[] = QUESTIONS,
 ): StoredQuestion[] {
-  if (levels.length > 0 && levels.every((l) => l === levels[0])) {
-    return drawQuestions(category, levels[0]!, levels.length, seed, options, questions);
-  }
   const pool = questions.filter((q) => q.category === category);
   return drawByLevel(pool, (q) => q.difficulty, levels, seed, options);
 }

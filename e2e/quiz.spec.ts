@@ -260,10 +260,14 @@ test("an Elimination game knocks players out until two meet in the final", async
   // Each change is sent with the settings the room last confirmed, so wait for each one.
   await host.getByLabel("Game Mode").selectOption("elimination");
   await expect(host.getByLabel("Game Mode")).toHaveValue("elimination");
-  await host.getByLabel("Questions").selectOption("5");
-  await expect(host.getByLabel("Questions")).toHaveValue("5");
+  // In Elimination the number is each round's.
+  await host.getByLabel("Questions per round").selectOption("5");
+  await expect(host.getByLabel("Questions per round")).toHaveValue("5");
   await host.getByLabel("Time per question").selectOption("10");
   await expect(host.getByLabel("Time per question")).toHaveValue("10");
+  await expect(
+    host.getByText(/With 3 players that’s 1 knock-out round and the final: 10/),
+  ).toBeVisible();
   // Alone, the host is told how many more are needed.
   await expect(host.getByText("Elimination needs at least 3 players. Invite 2 more")).toBeVisible();
 
@@ -275,12 +279,12 @@ test("an Elimination game knocks players out until two meet in the final", async
     players.push(page);
   }
   await expect(
-    players[1]!.getByText(/Elimination quiz · Bible · Easy · 5 questions/),
+    players[1]!.getByText(/Elimination quiz · Bible · Easy · 5 questions a round/),
   ).toBeVisible();
   await host.getByRole("button", { name: /start game/i }).press("Enter");
 
   // Everyone answers every question they can until the game ends. With three players there's
-  // one knock-out round of two questions, then a three-question final.
+  // one knock-out round of five questions, then a final of five.
   const seen = new Set<string>();
   const deadline = Date.now() + 100_000;
   while (Date.now() < deadline && !seen.has("done")) {

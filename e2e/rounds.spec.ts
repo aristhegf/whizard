@@ -187,14 +187,15 @@ test("the host can switch the room to another game", async ({ browser }) => {
 });
 
 test("three players play Word Rush Elimination down to a winner", async ({ browser }) => {
+  test.setTimeout(180_000);
   const host = await newPlayer(browser);
   await openGame(host, "Word Rush");
   await host.getByLabel("Game Mode").selectOption("elimination");
   await expect(host.getByText(/Elimination needs at least 3 players/)).toBeVisible();
   await host.getByLabel(/^Level/).selectOption("easy");
   await expect(host.getByLabel(/^Level/)).toHaveValue("easy");
-  await host.getByLabel("Rounds").selectOption("5");
-  await expect(host.getByLabel("Rounds")).toHaveValue("5");
+  await host.getByLabel("Words per round").selectOption("5");
+  await expect(host.getByLabel("Words per round")).toHaveValue("5");
 
   const tolu = await newPlayer(browser);
   const kemi = await newPlayer(browser);
@@ -205,15 +206,16 @@ test("three players play Word Rush Elimination down to a winner", async ({ brows
     await page.goto(host.url());
     await joinAs(page, name);
   }
-  await expect(kemi.getByText("Elimination · Easy · 5 rounds · 30s each")).toBeVisible();
+  await expect(kemi.getByText("Elimination · Easy · 5 words a round · 30s each")).toBeVisible();
   await host.getByRole("button", { name: /start game/i }).press("Enter");
 
-  // Three players, five words: one knock-out round of two words, then a final of three.
-  for (let word = 1; word <= 2; word++) {
+  // Three players at five words a round: one knock-out round of five, then a final of five.
+  for (let word = 1; word <= 5; word++) {
     for (const page of [host, tolu, kemi]) {
-      await expect(page.locator(".elim-progress")).toContainText(`Round 1 of 1 · Word ${word}`, {
-        timeout: 10_000,
-      });
+      await expect(page.locator(".elim-progress")).toContainText(
+        `Round 1 of 1 · Word ${word} of 5`,
+        { timeout: 10_000 },
+      );
     }
     await solveWord(host);
     await expect(host.getByText(/Waiting for the others… 1 of 3 done/)).toBeVisible();
@@ -229,8 +231,10 @@ test("three players play Word Rush Elimination down to a winner", async ({ brows
   await expect(host.getByText("You’re in the final!")).toBeVisible();
   await expect(host.getByRole("heading", { name: "The Final" })).toBeVisible({ timeout: 10_000 });
 
-  for (let word = 1; word <= 3; word++) {
-    await expect(host.locator(".elim-progress")).toContainText("The Final", { timeout: 10_000 });
+  for (let word = 1; word <= 5; word++) {
+    await expect(host.locator(".elim-progress")).toContainText(`The Final · Word ${word} of 5`, {
+      timeout: 10_000,
+    });
     await expect(host.getByRole("button", { name: "Check" })).toBeVisible({ timeout: 10_000 });
     // Kemi watches the final.
     await expect(kemi.getByText(/You’re out \(round 1\)/)).toBeVisible();
@@ -242,5 +246,5 @@ test("three players play Word Rush Elimination down to a winner", async ({ brows
   await expect(host.getByRole("heading", { name: "You won!" })).toBeVisible({ timeout: 10_000 });
   await expect(tolu.getByRole("heading", { name: "Ada wins!" })).toBeVisible();
   await expect(host.getByRole("heading", { name: "Your rounds" })).toBeVisible();
-  await expect(host.locator(".rounds-review li")).toHaveCount(5);
+  await expect(host.locator(".rounds-review li")).toHaveCount(10);
 });

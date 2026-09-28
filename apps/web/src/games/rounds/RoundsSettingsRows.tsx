@@ -1,8 +1,11 @@
 import {
+  ELIMINATION_MIN_PLAYERS,
   LEVEL_CHOICES,
   LEVEL_NAMES,
   ROUNDS_MODES,
   SPOT_IT_ROUNDS,
+  plannedItems,
+  roundCount,
   SPOT_IT_TIME_LIMITS_SECONDS,
   WORD_RUSH_ROUNDS,
   WORD_RUSH_TIME_LIMITS_SECONDS,
@@ -28,6 +31,31 @@ const OPTIONS: Record<RoundsGameId, { rounds: readonly number[]; seconds: readon
   "spot-it": { rounds: SPOT_IT_ROUNDS, seconds: SPOT_IT_TIME_LIMITS_SECONDS },
 };
 
+/**
+ * How long an Elimination game will be with this group: every round and the final have the
+ * number picked, and bigger groups play more rounds.
+ */
+export function EliminationLength({
+  players,
+  perRound,
+  noun,
+}: {
+  players: number;
+  perRound: number;
+  /** Plural: "questions", "words", "grids". */
+  noun: string;
+}) {
+  const group = Math.max(players, ELIMINATION_MIN_PLAYERS);
+  const rounds = roundCount(group);
+  return (
+    <p className="setting-hint dim small">
+      {perRound} {noun} in every round and in the final. With {group} players that’s {rounds}{" "}
+      knock-out {rounds === 1 ? "round" : "rounds"} and the final: {plannedItems(group, perRound)}{" "}
+      {noun} in all.
+    </p>
+  );
+}
+
 /** What Auto means, under the Level row. */
 export const AUTO_HINT = "Starts easy and gets harder each round, mixing easy, medium and hard.";
 
@@ -43,15 +71,22 @@ export function parseRoundsSettings(id: RoundsGameId, settings: unknown): Rounds
 export function RoundsSettingsRows({
   game,
   settings,
+  players,
   editable,
   onChange,
 }: {
   game: RoundsGameId;
   settings: RoundsSettings;
+  /** Players in the room now, for how long an Elimination game will be. */
+  players: number;
   editable: boolean;
   onChange: (settings: RoundsSettings) => void;
 }) {
   const options = OPTIONS[game];
+  const elimination = settings.mode === "elimination";
+  const noun = game === "word-rush" ? "words" : "grids";
+  // In Elimination the number is each round's; played straight through, it's the game's.
+  const countLabel = elimination ? `${noun[0]!.toUpperCase()}${noun.slice(1)} per round` : "Rounds";
   return (
     <>
       <div className="setting-row">
@@ -84,16 +119,19 @@ export function RoundsSettingsRows({
       {settings.level === "auto" && <p className="setting-hint dim small">{AUTO_HINT}</p>}
       <div className="setting-row">
         <Icon name="copy" size={20} />
-        <label htmlFor="rounds">Rounds</label>
+        <label htmlFor="rounds">{countLabel}</label>
         <SettingSelect
           id="rounds"
-          label="Rounds"
+          label={countLabel}
           value={String(settings.rounds)}
           disabled={!editable}
           options={options.rounds.map((n) => ({ value: String(n), label: String(n) }))}
           onChange={(value) => onChange({ ...settings, rounds: Number(value) })}
         />
       </div>
+      {elimination && (
+        <EliminationLength players={players} perRound={settings.rounds} noun={noun} />
+      )}
       <div className="setting-row">
         <Icon name="clock" size={20} />
         <label htmlFor="time-limit">Time per round</label>

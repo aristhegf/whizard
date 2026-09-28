@@ -17,7 +17,7 @@ const T0 = 1_000_000;
 const START = T0 + START_COUNTDOWN_MS;
 const LIMIT = 30_000;
 
-const words: WordEntry[] = Array.from({ length: 15 }, (_, i) => ({
+const words: WordEntry[] = Array.from({ length: 20 }, (_, i) => ({
   id: `w${i}`,
   level: "easy",
   hint: "Test",
@@ -100,10 +100,11 @@ describe("Word Rush Elimination", () => {
 
   it("knocks out the lowest score after a round, then plays a final", () => {
     let s = setup(["ada", "bola", "chidi"]);
-    // 3 players, 5 rounds: one knock-out round of 2 words, then a final of 3.
-    expect(s.roundEnds).toEqual([2]);
+    // 3 players at 5 words a round: one knock-out round, then a final of 5.
+    expect(s.roundEnds).toEqual([5]);
+    expect(s.finalLength).toBe(5);
     let at = START;
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 5; i++) {
       s = act(s, "ada", guess(s, answer(s)), at + 500);
       s = act(s, "bola", guess(s, answer(s)), at + 900);
       // Chidi lets the time run out.
