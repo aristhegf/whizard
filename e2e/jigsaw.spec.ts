@@ -167,9 +167,9 @@ test("the host frames their own photo, and everyone plays it", async ({ browser 
   await host.getByRole("button", { name: /start game/i }).press("Enter");
   for (const page of [host, guest]) {
     await expect(page.locator(".jigsaw-piece")).toHaveCount(9);
-    await expect(page.locator(".jigsaw-piece").first()).toHaveAttribute(
-      "style",
-      new RegExp(src.replace(/[/]/g, "\\/")),
+    await expect(page.locator(".jigsaw-piece").first().locator("image")).toHaveAttribute(
+      "href",
+      src,
     );
   }
   await solve(host);

@@ -10,3 +10,6 @@ test-results/
 playwright-report/
 *.log
 .DS_Store
+
+# Python bytecode, from running the banana skill scripts.
+__pycache__/
