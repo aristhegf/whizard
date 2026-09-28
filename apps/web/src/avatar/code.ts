@@ -16,7 +16,7 @@ export const DEFAULT_PARTS: AvatarParts = {
   hairColour: "0",
   eyes: "e2",
   brows: NONE,
-  mouth: NONE,
+  mouth: "m4",
   facialHair: NONE,
   glasses: NONE,
   earrings: NONE,
@@ -96,10 +96,7 @@ export function randomParts(random: () => number = Math.random): AvatarParts {
       const extras = options.filter((o) => o.id !== NONE);
       parts[field] = extras.length > 0 && random() < chance ? pick(extras).id : NONE;
     } else {
-      // Keep sad and wincing faces for the game's reactions, not a random look.
-      const usable =
-        field === "mouth" ? options.filter((o) => !["sad", "wince"].includes(o.id)) : options;
-      parts[field] = pick(usable).id;
+      parts[field] = pick(options).id;
     }
   }
   return parts;

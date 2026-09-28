@@ -28,7 +28,7 @@ import { useAvatarPicture, type View } from "./render";
 
 // Close-ups, so small parts like eyes are easy to compare.
 const EYES: View = { x: 292, y: 250, size: 440 };
-const MOUTH: View = { x: 262, y: 420, size: 500 };
+const MOUTH: View = { x: 309, y: 470, size: 400 };
 const EARS: View = { x: 162, y: 330, size: 700 };
 const BODY: View = { x: 162, y: 424, size: 600 };
 const FACE: View = { x: 162, y: 150, size: 700 };
@@ -104,9 +104,9 @@ const ALL_TABS: Tab[] = [
   },
   {
     id: "mouth",
-    label: "Smile",
+    label: "Mouth",
     view: MOUTH,
-    note: "Your smile when your expression is Happy.",
+    note: "Your mouth when your expression is Happy. The other expressions pick their own.",
     rows: [{ kind: "options", field: "mouth", category: "mouth", view: MOUTH }],
   },
   {
@@ -219,8 +219,14 @@ function tabsFor(parts: AvatarParts): Tab[] {
   );
 }
 
-/** Expressions only change anything once there are mouths (and closed eyes) to change. */
+/** Expressions only change anything once there are mouths to change. */
 const EXPRESSIONS_SHOW = PARTS.mouth.length > 1;
+
+/** A wink needs eyes drawn closed; until then it isn't offered. */
+function expressionsFor(parts: AvatarParts) {
+  const winks = optionOf("eyes", parts.eyes).files.includes("closed");
+  return EXPRESSIONS.filter((e) => e.eyes !== "wink" || winks);
+}
 
 /** Where Save and Cancel go: the page that opened the creator, if it's one of ours. */
 function backPath(): string {
@@ -308,7 +314,7 @@ function Builder({ start, signedIn }: { start: AvatarParts; signedIn: boolean })
         </div>
         {EXPRESSIONS_SHOW && (
           <div className="builder-faces" role="radiogroup" aria-label="Expression">
-            {EXPRESSIONS.map((e) => (
+            {expressionsFor(parts).map((e) => (
               <button
                 key={e.id}
                 type="button"

@@ -92,11 +92,11 @@ export const EYE_GAPS: readonly { id: string; name: string }[] = [-3, -2, -1, 0,
 /** The player's usual face. The game can still pull other faces for its reactions. */
 export const EXPRESSIONS: readonly Expression[] = [
   { id: "happy", name: "Happy" },
-  { id: "laugh", name: "Laughing", eyes: "closed", mouth: "laugh", brows: "raised" },
-  { id: "wink", name: "Wink", eyes: "wink", mouth: "smirk" },
-  { id: "cheeky", name: "Cheeky", eyes: "wink", mouth: "tongue" },
-  { id: "surprised", name: "Surprised", eyes: "wide", mouth: "surprised", brows: "raised" },
-  { id: "thinking", name: "Thinking", mouth: "smirk", brows: "worried" },
+  { id: "laugh", name: "Laughing", eyes: "closed", mouth: "m6", brows: "raised" },
+  { id: "wink", name: "Wink", eyes: "wink", mouth: "m27" },
+  { id: "cheeky", name: "Cheeky", eyes: "wink", mouth: "m24" },
+  { id: "surprised", name: "Surprised", eyes: "wide", mouth: "m23", brows: "raised" },
+  { id: "thinking", name: "Thinking", mouth: "m3", brows: "worried" },
 ];
 
 /**
@@ -155,7 +155,15 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
     })),
   ],
   brows: [none()],
-  mouth: [none()],
+  // Painted once, and tinted to each skin tone so the lips match the face.
+  mouth: Array.from({ length: 49 }, (_, i) => ({
+    id: `m${i + 1}`,
+    name: `Mouth ${i + 1}`,
+    files: ["mouth"],
+    ext: "webp" as const,
+    paintedFor: "skin" as const,
+    poses: ["front"],
+  })),
   facialHair: [none()],
   glasses: [none()],
   earrings: [none()],
