@@ -9,7 +9,7 @@ import {
   scrambled,
   type JigsawState,
 } from "./jigsaw";
-import { JIGSAW_PICTURES, jigsawContentId, pickJigsawPicture } from "./settings";
+import { JIGSAW_PICTURES, JIGSAW_THEMES, jigsawContentId, pickJigsawPicture } from "./settings";
 
 const T0 = 1_000_000;
 const START = T0 + JIGSAW_COUNTDOWN_MS;
@@ -155,6 +155,39 @@ describe("pickJigsawPicture", () => {
       expect(
         pickJigsawPicture({ kind: "jigsaw-picture", picture: "random" }, seed, recent).id,
       ).toBe(unused);
+    }
+  });
+});
+
+describe("the picture library", () => {
+  it("has pictures in every theme, each with its own ID and file", () => {
+    for (const theme of JIGSAW_THEMES) {
+      expect(JIGSAW_PICTURES.some((p) => p.theme === theme.id)).toBe(true);
+    }
+    const ids = JIGSAW_PICTURES.map((p) => p.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const p of JIGSAW_PICTURES) {
+      expect(JIGSAW_THEMES.map((t) => t.id)).toContain(p.theme);
+      expect(p.src).toBe(`/art/jigsaw/${p.id}.webp`);
+    }
+  });
+
+  it("surprises a fresh room with pictures from every theme", () => {
+    const themeOf = (id: string) => JIGSAW_PICTURES.find((p) => p.id === id)?.theme;
+    const themes = new Set(
+      Array.from({ length: 200 }, (_, seed) =>
+        themeOf(pickJigsawPicture({ kind: "jigsaw-picture", picture: "random" }, seed, []).id),
+      ),
+    );
+    expect([...themes].sort()).toEqual(JIGSAW_THEMES.map((t) => t.id).sort());
+  });
+
+  it("keeps surprising a room with pictures it hasn't had until it's seen them all", () => {
+    const recent: string[] = [];
+    for (let game = 0; game < JIGSAW_PICTURES.length; game++) {
+      const picked = pickJigsawPicture({ kind: "jigsaw-picture", picture: "random" }, game, recent);
+      expect(recent).not.toContain(jigsawContentId(picked.id));
+      recent.unshift(jigsawContentId(picked.id));
     }
   });
 });

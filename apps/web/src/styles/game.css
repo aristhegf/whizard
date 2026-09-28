@@ -275,6 +275,23 @@
   box-shadow: var(--shadow);
 }
 
+/* A long list scrolls rather than running off the page. */
+.setting-morph-list ul {
+  max-height: min(60vh, 440px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* A group's name, above its options. */
+.setting-morph-group {
+  padding: 10px 10px 4px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
 /* Same text size as the closed dropdown, for the open one's header and its options. */
 .setting-morph-list :where(div, span, button) {
   font-size: 1rem;

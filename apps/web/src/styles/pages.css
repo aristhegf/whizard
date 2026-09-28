@@ -786,6 +786,17 @@ button.topic-tile {
   gap: 12px;
 }
 
+/* A theme's pictures, under its name. */
+.picture-theme {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.picture-theme .section-title {
+  margin: 0;
+}
+
 .picture-tile {
   display: grid;
   gap: 10px;

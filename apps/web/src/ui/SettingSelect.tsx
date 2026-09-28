@@ -5,7 +5,7 @@ import {
   MorphSelectTrigger,
   MorphSelectValue,
 } from "@/components/motion/select-morph";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { useMediaQuery } from "./common";
 import { Icon, type IconName } from "./Icon";
 
@@ -13,6 +13,19 @@ export interface SettingOption {
   value: string;
   label: string;
   disabled?: boolean;
+  /** Options with the same group sit together under its name. Keep each group's options together. */
+  group?: string;
+}
+
+/** Runs of options by group, in order; options without one are a run of their own. */
+function grouped(options: SettingOption[]) {
+  const runs: { group?: string; options: SettingOption[] }[] = [];
+  for (const o of options) {
+    const last = runs.at(-1);
+    if (last && last.group === o.group) last.options.push(o);
+    else runs.push({ group: o.group, options: [o] });
+  }
+  return runs;
 }
 
 /**
@@ -44,11 +57,20 @@ export function SettingSelect({
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
       >
-        {options.map((o) => (
-          <option key={o.value} value={o.value} disabled={o.disabled}>
-            {o.label}
-          </option>
-        ))}
+        {grouped(options).map((run, i) => {
+          const items = run.options.map((o) => (
+            <option key={o.value} value={o.value} disabled={o.disabled}>
+              {o.label}
+            </option>
+          ));
+          return run.group ? (
+            <optgroup key={run.group} label={run.group}>
+              {items}
+            </optgroup>
+          ) : (
+            <Fragment key={i}>{items}</Fragment>
+          );
+        })}
       </select>
     );
   }
@@ -60,10 +82,19 @@ export function SettingSelect({
           <MorphSelectValue />
         </MorphSelectTrigger>
         <MorphSelectContent className="setting-morph-list">
-          {options.map((o) => (
-            <MorphSelectItem key={o.value} value={o.value} disabled={o.disabled}>
-              {o.label}
-            </MorphSelectItem>
+          {grouped(options).map((run, i) => (
+            <Fragment key={run.group ?? i}>
+              {run.group && (
+                <li className="setting-morph-group" role="presentation">
+                  {run.group}
+                </li>
+              )}
+              {run.options.map((o) => (
+                <MorphSelectItem key={o.value} value={o.value} disabled={o.disabled}>
+                  {o.label}
+                </MorphSelectItem>
+              ))}
+            </Fragment>
           ))}
         </MorphSelectContent>
       </MorphSelect>
