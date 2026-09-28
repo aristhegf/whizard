@@ -217,67 +217,63 @@ function drawHeadline(
   });
 }
 
-function drawBackground(ctx: CanvasRenderingContext2D, card: ShareCard) {
-  const bg = ctx.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0, card.celebrate ? "#2a1270" : "#1c1450");
-  bg.addColorStop(0.55, "#140c44");
-  bg.addColorStop(1, "#08061f");
-  ctx.fillStyle = bg;
+function drawBackground(
+  ctx: CanvasRenderingContext2D,
+  card: ShareCard,
+  stage: HTMLImageElement | null,
+) {
+  if (stage) {
+    // The arena, with its lights and confetti. A bad day gets it dim and grey.
+    ctx.save();
+    if (!card.celebrate) ctx.filter = "saturate(0.3) brightness(0.55)";
+    ctx.drawImage(stage, 0, 0, W, H);
+    ctx.restore();
+  } else {
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, card.celebrate ? "#2a1270" : "#1c1450");
+    bg.addColorStop(0.55, "#140c44");
+    bg.addColorStop(1, "#08061f");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Darker at the top and bottom, so the headline, the score and the board stand out.
+  const shade = ctx.createLinearGradient(0, 0, 0, H);
+  shade.addColorStop(0, "rgb(10 6 40 / 55%)");
+  shade.addColorStop(0.2, "rgb(10 6 40 / 10%)");
+  shade.addColorStop(0.45, "rgb(10 6 40 / 0%)");
+  shade.addColorStop(0.7, "rgb(10 6 40 / 45%)");
+  shade.addColorStop(1, "rgb(8 5 30 / 85%)");
+  ctx.fillStyle = shade;
   ctx.fillRect(0, 0, W, H);
 
-  // A stage light from the top, and the finish's colour glowing behind the mascot.
-  const light = ctx.createRadialGradient(W * 0.62, -80, 20, W * 0.62, -80, 1100);
-  light.addColorStop(0, card.celebrate ? "rgb(255 190 120 / 45%)" : "rgb(170 150 255 / 25%)");
-  light.addColorStop(1, "transparent");
-  ctx.fillStyle = light;
-  ctx.fillRect(0, 0, W, H);
+  // The finish's colour glowing behind the mascot.
   const glow = ctx.createRadialGradient(780, 760, 30, 780, 760, 560);
-  glow.addColorStop(0, `${card.accent}66`);
+  glow.addColorStop(0, `${card.accent}55`);
   glow.addColorStop(1, "transparent");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, W, H);
-  const game = ctx.createRadialGradient(80, 1500, 10, 80, 1500, 700);
-  game.addColorStop(0, `${card.game.colors[0]}40`);
-  game.addColorStop(1, "transparent");
-  ctx.fillStyle = game;
-  ctx.fillRect(0, 0, W, H);
 
+  if (card.celebrate) return;
   const rng = seeded(card.game.title + card.outcome);
-  if (card.celebrate) {
-    const colours = ["#ffd43f", "#ff6fcf", "#5ce1ff", "#9a6bff", "#ffffff"];
-    for (let i = 0; i < 46; i++) {
-      const x = rng() * W;
-      const y = 160 + rng() * 1000;
-      const w = 14 + rng() * 22;
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(rng() * Math.PI);
-      ctx.globalAlpha = 0.55 + rng() * 0.45;
-      ctx.fillStyle = colours[i % colours.length]!;
-      rounded(ctx, -w / 2, -w / 4, w, w / 2, 4);
-      ctx.fill();
-      ctx.restore();
-    }
-  } else {
-    // A few floating question marks instead of confetti.
-    for (let i = 0; i < 5; i++) {
-      const x = 600 + rng() * 400;
-      const y = 320 + rng() * 360;
-      const s = 70 + rng() * 40;
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate((rng() - 0.5) * 0.7);
-      ctx.globalAlpha = 0.6;
-      rounded(ctx, -s / 2, -s / 2, s, s, 18);
-      ctx.fillStyle = i % 2 ? "#8b5cf6" : "#ec4899";
-      ctx.fill();
-      ctx.fillStyle = "#fff";
-      ctx.font = `800 ${Math.round(s * 0.6)}px ${FONT}`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("?", 0, 4);
-      ctx.restore();
-    }
+  // A few floating question marks instead of confetti.
+  for (let i = 0; i < 5; i++) {
+    const x = 600 + rng() * 400;
+    const y = 320 + rng() * 360;
+    const s = 70 + rng() * 40;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate((rng() - 0.5) * 0.7);
+    ctx.globalAlpha = 0.6;
+    rounded(ctx, -s / 2, -s / 2, s, s, 18);
+    ctx.fillStyle = i % 2 ? "#8b5cf6" : "#ec4899";
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.font = `800 ${Math.round(s * 0.6)}px ${FONT}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("?", 0, 4);
+    ctx.restore();
   }
 }
 
@@ -589,14 +585,15 @@ export async function drawShareCard(card: ShareCard, link: string): Promise<Blob
   await loadFonts();
   const avatarSrc = (id: string | null, name: string) =>
     avatarUrl(isAvatar(id) ? id : fallbackAvatar(name));
-  const [logo, art, mascot, ...faces] = await Promise.all([
+  const [stage, logo, art, mascot, ...faces] = await Promise.all([
+    loadImage("/art/share/stage.webp"),
     loadImage("/art/logo-mark.webp"),
     loadImage(card.game.art),
     loadImage(card.mascot),
     ...card.board.map((r) => loadImage(avatarSrc(r.avatar, r.nickname))),
   ]);
 
-  drawBackground(ctx, card);
+  drawBackground(ctx, card, stage);
   drawTop(ctx, card, logo, art);
 
   const drawMascot = (x: number, y: number, w: number, h: number) => {

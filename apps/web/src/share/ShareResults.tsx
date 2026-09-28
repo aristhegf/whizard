@@ -8,7 +8,7 @@ type Picture =
   { status: "drawing" } | { status: "ready"; url: string; file: File } | { status: "failed" };
 
 /**
- * Sharing a finished game as a picture: `open()` draws the 16:9 card and shows it, with Share
+ * Sharing a finished game as a picture: `open()` draws the 9:16 card and shows it, with Share
  * (on phones that can share files) and Download. Put `dialog` anywhere on the results screen.
  */
 export function useShareResults(card: ShareCard, text: string) {

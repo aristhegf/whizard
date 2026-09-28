@@ -18,7 +18,7 @@ import { Icon } from "../../ui/Icon";
 import { MuteButton } from "../../ui/MuteButton";
 import { Podium } from "../../ui/Podium";
 import { CATALOG } from "../../catalog";
-import { competitiveLines } from "../../share/cardText";
+import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
 import { clock } from "../jigsaw/JigsawScreen";
 
@@ -333,28 +333,38 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
   const text = me?.solved
     ? `I found all four Connections groups in ${clock(me.timeMs ?? 0)} on Whizard!`
     : "Can you find the four groups? Play Connections on Whizard!";
-  const rows = view.standings
-    .filter((s) => !s.left)
-    .map((s) => ({ ...s, label: progressLabel(s) }));
   const { open: share, dialog: shareDialog } = useShareResults(
-    {
+    buildCard({
       title: "Connections",
-      details: [`${LEVEL_NAMES[view.level]} puzzle`],
+      subtitle: `${LEVEL_NAMES[view.level]} puzzle`,
       art: "/art/games/connections.webp",
       colors: CATALOG.find((g) => g.id === "connections")?.colors ?? ["#8b4dff", "#23145a"],
-      ...(podium.length > 0
-        ? competitiveLines(rows, playerId, avatarOf)
-        : {
-            headline: me?.solved ? "Can you beat my time?" : "Can you find all four?",
-            podium: [],
-            score: me?.solved
-              ? {
-                  value: clock(me.timeMs ?? 0),
-                  detail: `${me.mistakes} ${me.mistakes === 1 ? "mistake" : "mistakes"}`,
-                }
-              : { value: `${me?.found ?? 0}/${GROUPS}`, detail: "groups found" },
-          }),
-    },
+      rows: solo
+        ? []
+        : view.standings
+            .filter((s) => !s.left)
+            .map((s) => ({
+              playerId: s.playerId,
+              nickname: s.nickname,
+              avatar: avatarOf(s.playerId),
+              value: s.found,
+              label: progressLabel(s),
+              timeMs: s.timeMs,
+            })),
+      me: playerId,
+      score: me?.solved
+        ? { value: clock(me.timeMs ?? 0), unit: "to find all four" }
+        : { value: `${me?.found ?? 0}/${GROUPS}`, unit: "groups found" },
+      // Every group without a mistake is a perfect game.
+      correct: me?.solved && me.mistakes === 0 ? { got: GROUPS, of: GROUPS } : null,
+      items: 1,
+      finished: me?.solved ?? false,
+      facts: [
+        { icon: "🔗", value: `${me?.found ?? 0}/${GROUPS}`, label: "Groups" },
+        { icon: "❌", value: String(me?.mistakes ?? 0), label: "Mistakes" },
+        { icon: "⏱️", value: me?.solved ? clock(me.timeMs ?? 0) : "–", label: "Time" },
+      ],
+    }),
     text,
   );
 

@@ -10,7 +10,7 @@ import { Icon } from "../../ui/Icon";
 import { MuteButton } from "../../ui/MuteButton";
 import { Podium } from "../../ui/Podium";
 import { CATALOG } from "../../catalog";
-import { competitiveLines } from "../../share/cardText";
+import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
 import { clock } from "../jigsaw/JigsawScreen";
 import { gridName } from "./LogicSettingsRows";
@@ -348,28 +348,38 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
   const text = me?.solved
     ? `I cracked a ${view.size}×${view.size} Logic grid in ${clock(me.timeMs ?? 0)} on Whizard!`
     : "Race me at a Logic grid on Whizard!";
-  const rows = view.standings
-    .filter((s) => !s.left)
-    .map((s) => ({ ...s, label: progressLabel(s) }));
   const { open: share, dialog: shareDialog } = useShareResults(
-    {
+    buildCard({
       title: "Logic",
-      details: [gridName(view.size)],
+      subtitle: gridName(view.size),
       art: "/art/games/logic.webp",
       colors: CATALOG.find((g) => g.id === "logic")?.colors ?? ["#8b4dff", "#23145a"],
-      ...(podium.length > 0
-        ? competitiveLines(rows, playerId, avatarOf)
-        : {
-            headline: me?.solved ? "Can you beat my time?" : "Can you crack it?",
-            podium: [],
-            score: me?.solved
-              ? {
-                  value: clock(me.timeMs ?? 0),
-                  detail: `${me.mistakes} ${me.mistakes === 1 ? "mistake" : "mistakes"}`,
-                }
-              : { value: `${me?.filled ?? 0}/${me?.total ?? 0}`, detail: "cells filled" },
-          }),
-    },
+      rows: solo
+        ? []
+        : view.standings
+            .filter((s) => !s.left)
+            .map((s) => ({
+              playerId: s.playerId,
+              nickname: s.nickname,
+              avatar: avatarOf(s.playerId),
+              value: s.filled,
+              label: progressLabel(s),
+              timeMs: s.timeMs,
+            })),
+      me: playerId,
+      score: me?.solved
+        ? { value: clock(me.timeMs ?? 0), unit: "to solve" }
+        : { value: `${me?.filled ?? 0}/${me?.total ?? 0}`, unit: "cells filled" },
+      // Solved without a mistake is a perfect game.
+      correct: me?.solved && me.mistakes === 0 ? { got: me.total, of: me.total } : null,
+      items: 1,
+      finished: me?.solved ?? false,
+      facts: [
+        { icon: "🔢", value: gridName(view.size), label: "Grid" },
+        { icon: "❌", value: String(me?.mistakes ?? 0), label: "Mistakes" },
+        { icon: "⏱️", value: me?.solved ? clock(me.timeMs ?? 0) : "–", label: "Time" },
+      ],
+    }),
     text,
   );
 
