@@ -541,7 +541,7 @@
   gap: 22px;
 }
 
-.podium {
+.top-podium {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -551,7 +551,7 @@
   gap: 10px;
 }
 
-.podium-step {
+.top-step {
   --step: rgb(60 70 170 / 55%);
   --edge: rgb(120 140 255 / 55%);
 
@@ -568,7 +568,7 @@
   border-bottom: none;
 }
 
-.podium-step.place-1 {
+.top-step.top-1 {
   --step: rgb(150 90 30 / 55%);
   --edge: rgb(255 180 60 / 75%);
 
@@ -576,12 +576,12 @@
   box-shadow: 0 0 40px rgb(255 160 40 / 20%);
 }
 
-.podium-step.place-3 {
+.top-step.top-3 {
   --step: rgb(140 50 60 / 50%);
   --edge: rgb(255 130 110 / 55%);
 }
 
-.podium-avatar {
+.top-avatar {
   position: relative;
   display: grid;
   justify-items: center;
@@ -589,15 +589,15 @@
   margin-bottom: 14px;
 }
 
-.place-1 .podium-avatar {
+.top-1 .top-avatar {
   margin-top: -64px;
 }
 
-.podium-avatar .avatar {
+.top-avatar .avatar {
   --ring: #8fa3ff;
 }
 
-.place-1 .podium-avatar .avatar {
+.top-1 .top-avatar .avatar {
   --ring: var(--gold);
 
   box-shadow:
@@ -605,17 +605,17 @@
     0 0 24px rgb(255 190 60 / 50%);
 }
 
-.place-3 .podium-avatar .avatar {
+.top-3 .top-avatar .avatar {
   --ring: #ff9a7a;
 }
 
-.podium-crown {
+.top-crown {
   margin-bottom: -10px;
   color: var(--gold);
   filter: drop-shadow(0 4px 10px rgb(255 180 40 / 50%));
 }
 
-.podium-place {
+.top-rank {
   position: absolute;
   bottom: -14px;
   left: 50%;
@@ -632,25 +632,25 @@
   border: 2px solid #0d0c2e;
 }
 
-.place-1 .podium-place {
+.top-1 .top-rank {
   color: #2a1600;
   background: linear-gradient(180deg, #ffe14a, #ffb52c);
 }
 
-.place-3 .podium-place {
+.top-3 .top-rank {
   background: #e0634f;
 }
 
-.podium-step:not(.place-1) {
+.top-step:not(.top-1) {
   padding-top: 0;
   min-height: 150px;
 }
 
-.place-1 {
+.top-1 {
   min-height: 190px;
 }
 
-.podium-name {
+.top-name {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -659,12 +659,12 @@
   font-size: 1.05rem;
 }
 
-.podium-wins {
+.top-wins {
   font-weight: 700;
   color: var(--muted);
 }
 
-.place-1 .podium-wins {
+.top-1 .top-wins {
   color: var(--gold);
 }
 
@@ -718,23 +718,23 @@
     gap: 32px;
   }
 
-  .podium {
+  .top-podium {
     padding-top: 96px;
     gap: 18px;
   }
 }
 
 @media (max-width: 899px) {
-  .podium {
+  .top-podium {
     padding-top: 90px;
     gap: 6px;
   }
 
-  .podium-step {
+  .top-step {
     padding-inline: 4px;
   }
 
-  .podium-name {
+  .top-name {
     font-size: 0.95rem;
   }
 }

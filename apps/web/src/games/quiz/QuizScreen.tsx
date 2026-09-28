@@ -346,7 +346,7 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
         </span>
       </header>
 
-      <div className="results-layout">
+      <div className={`results-layout${solo ? " solo" : ""}`}>
         <section className="results-main">
           <img
             className="results-mascot"
