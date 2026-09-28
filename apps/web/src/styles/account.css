@@ -3,7 +3,6 @@
 .account-page .side-main > .screen,
 .account-page .side-main > .panel {
   width: 100%;
-  max-width: 900px;
 }
 
 .account-page .screen {
@@ -295,8 +294,13 @@ fieldset {
 .prose {
   display: grid;
   gap: 14px;
-  padding: 28px;
+  padding: 22px;
   line-height: 1.6;
+}
+
+/* Lines short enough to read comfortably, whatever the panel's width. */
+.prose > * {
+  max-width: 72ch;
 }
 
 .prose h2 {

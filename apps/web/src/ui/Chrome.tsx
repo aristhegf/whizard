@@ -307,7 +307,9 @@ export function SideLayout({
               key={l.label}
               className="side-link"
               aria-current={
-                active === l.section || (l.section === "games" && active === "topics")
+                // Pages without a sidebar entry (like Privacy) mark none of them.
+                (active !== null && active === l.section) ||
+                (l.section === "games" && active === "topics")
                   ? "page"
                   : undefined
               }

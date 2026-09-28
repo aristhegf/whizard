@@ -805,10 +805,6 @@ select option {
   display: none;
 }
 
-.page.wide {
-  max-width: 1960px;
-}
-
 @media (min-width: 1100px) {
   .side-layout {
     grid-template-columns: 300px minmax(0, 1fr);
