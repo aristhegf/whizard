@@ -1,3 +1,4 @@
+import { TiltCard } from "@/components/motion/tilt-card";
 import type { QuizCategory } from "@whizard/game-core";
 import { useState, type CSSProperties } from "react";
 import { useAccount } from "../account";
@@ -126,20 +127,22 @@ export function TopicsPage() {
             const style = TOPIC_STYLES[c.id];
             return (
               <li key={c.id}>
-                <button
-                  className="topic-tile"
-                  style={{ "--wash": cardWash(style.colors) } as CSSProperties}
-                  disabled={starting !== null}
-                  onClick={() => void start(c.id)}
-                >
-                  <span className="topic-art">
-                    <img src={style.art} alt="" loading="lazy" />
-                  </span>
-                  <span className="topic-foot">
-                    <span className="topic-name">{starting === c.id ? "Starting…" : c.name}</span>
-                    <span className="topic-count">{questionTotal(c)} questions</span>
-                  </span>
-                </button>
+                <TiltCard className="tilt tilt-topic" max={10}>
+                  <button
+                    className="topic-tile"
+                    style={{ "--wash": cardWash(style.colors) } as CSSProperties}
+                    disabled={starting !== null}
+                    onClick={() => void start(c.id)}
+                  >
+                    <span className="topic-art">
+                      <img src={style.art} alt="" loading="lazy" />
+                    </span>
+                    <span className="topic-foot">
+                      <span className="topic-name">{starting === c.id ? "Starting…" : c.name}</span>
+                      <span className="topic-count">{questionTotal(c)} questions</span>
+                    </span>
+                  </button>
+                </TiltCard>
               </li>
             );
           })}

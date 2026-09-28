@@ -134,7 +134,7 @@ test("friends add each other, play together and see their record", async ({ brow
   await ada.goto("/friends");
   await ada.getByLabel("Friend’s username").fill(toluName);
   await ada.getByRole("button", { name: "Add", exact: true }).click();
-  await expect(ada.getByRole("status")).toContainText("Request sent");
+  await expect(ada.getByText("Request sent", { exact: true })).toBeVisible();
 
   await tolu.goto(`/add/${adaName}`);
   await tolu.getByRole("button", { name: "Accept friend request" }).click();
@@ -148,7 +148,9 @@ test("friends add each other, play together and see their record", async ({ brow
   await openRoom(ada);
   await tolu.goto(ada.url());
   await tolu.getByRole("button", { name: "Join", exact: true }).click();
-  await expect(ada.getByRole("listitem").filter({ hasText: "Tolu" })).toBeVisible();
+  await expect(
+    ada.getByRole("list", { name: "Players" }).getByRole("listitem").filter({ hasText: "Tolu" }),
+  ).toBeVisible();
   await ada.getByRole("button", { name: /start game/i }).press("Enter");
   for (const page of [ada, tolu]) {
     for (let i = 1; i <= 5; i++) {

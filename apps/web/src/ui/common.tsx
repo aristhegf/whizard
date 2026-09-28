@@ -4,8 +4,11 @@ export function errorText(error: unknown): string {
   return error instanceof Error ? error.message : "Something went wrong. Please try again.";
 }
 
-/** Runs an async action, tracking whether it's busy and what went wrong. */
-export function useAction() {
+/**
+ * Runs an async action, tracking whether it's busy and what went wrong. With `onError`, the
+ * error goes there (say, to a toast) instead of into `error`.
+ */
+export function useAction(onError?: (message: string) => void) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const run = async (action: () => Promise<unknown>) => {
@@ -14,7 +17,8 @@ export function useAction() {
     try {
       await action();
     } catch (e) {
-      setError(errorText(e));
+      if (onError) onError(errorText(e));
+      else setError(errorText(e));
     } finally {
       setBusy(false);
     }

@@ -1,3 +1,4 @@
+import { TiltCard } from "@/components/motion/tilt-card";
 import { useState, type CSSProperties } from "react";
 import { CATALOG, GAME_GROUPS, cardWash, type CatalogGame, type GameGroup } from "../catalog";
 import { linkTo } from "../router";
@@ -110,19 +111,21 @@ function GameCard({ game }: { game: CatalogGame }) {
   const style = { "--wash": cardWash(game.colors) } as CSSProperties;
   return (
     <li>
-      {game.href ? (
-        <a className="game-card" style={style} {...linkTo(game.href)}>
-          {body}
-        </a>
-      ) : (
-        <div
-          className="game-card unavailable"
-          style={style}
-          aria-label={`${game.name}, coming soon`}
-        >
-          {body}
-        </div>
-      )}
+      <TiltCard className="tilt tilt-game" max={8}>
+        {game.href ? (
+          <a className="game-card" style={style} {...linkTo(game.href)}>
+            {body}
+          </a>
+        ) : (
+          <div
+            className="game-card unavailable"
+            style={style}
+            aria-label={`${game.name}, coming soon`}
+          >
+            {body}
+          </div>
+        )}
+      </TiltCard>
     </li>
   );
 }

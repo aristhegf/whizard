@@ -26,7 +26,9 @@ import {
 } from "./social";
 import { Avatar } from "./ui/Avatar";
 import { SideLayout } from "./ui/Chrome";
-import { useAction, useLoaded } from "./ui/common";
+import { errorText, useLoaded } from "./ui/common";
+import { Loading } from "./ui/Loading";
+import { useToast, useToastAction } from "./ui/toast";
 
 /** Wraps a screen that needs an account, offering sign-in first. */
 function SignedInOnly({
@@ -42,7 +44,7 @@ function SignedInOnly({
   return (
     <SideLayout active="friends" className="account-page">
       {account.status === "loading" ? (
-        <p className="muted">Loading…</p>
+        <Loading />
       ) : account.user ? (
         children(account.user)
       ) : (
@@ -108,9 +110,9 @@ export function FriendsScreen() {
 function Friends({ username }: { username: string }) {
   const friends = useLoaded(fetchFriends);
   const groups = useLoaded(fetchGroups);
-  const action = useAction();
+  const action = useToastAction();
+  const toast = useToast();
   const [addName, setAddName] = useState("");
-  const [added, setAdded] = useState<string | null>(null);
 
   const act = (work: () => Promise<unknown>) =>
     void action.run(async () => {
@@ -123,14 +125,17 @@ function Friends({ username }: { username: string }) {
     event.preventDefault();
     const name = addName.trim().replace(/^@/, "");
     if (!name) return;
-    setAdded(null);
     act(async () => {
       const { relation } = await addFriend(name);
       setAddName("");
-      setAdded(
+      toast.show(
         relation === "friend"
-          ? `You and @${name} are now friends.`
-          : `Request sent. You’ll be friends when @${name} accepts.`,
+          ? { title: `You and @${name} are now friends`, status: "success" }
+          : {
+              title: "Request sent",
+              description: `You’ll be friends when @${name} accepts.`,
+              status: "success",
+            },
       );
     });
   };
@@ -162,12 +167,6 @@ function Friends({ username }: { username: string }) {
             Add
           </button>
         </form>
-        {added && (
-          <p className="small" role="status">
-            {added}
-          </p>
-        )}
-        <ErrorLine error={action.error} />
         <div className="link-row">
           <span className="muted small">Or send them your link.</span>
           <ShareButton url={inviteLink(username)} label="Share my link" />
@@ -376,7 +375,7 @@ function GroupForm({
 }) {
   const [name, setName] = useState(initialName);
   const [members, setMembers] = useState<Set<string>>(() => new Set(initialMembers));
-  const saving = useAction();
+  const saving = useToastAction();
 
   const toggle = (username: string, on: boolean) =>
     setMembers((current) => {
@@ -429,7 +428,6 @@ function GroupForm({
           Cancel
         </button>
       </div>
-      <ErrorLine error={saving.error} />
     </form>
   );
 }
@@ -447,12 +445,12 @@ function Group({ id, me }: { id: string; me: string }) {
   const friends = useLoaded(fetchFriends);
   const [category, setCategory] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
-  const leaving = useAction();
+  const leaving = useToastAction();
   const loadBoard = useCallback(() => fetchLeaderboard(id, category), [id, category]);
   const board = useLoaded(loadBoard);
 
   if (groups.error) return <ErrorLine error={groups.error} />;
-  if (!groups.data) return <p className="muted">Loading…</p>;
+  if (!groups.data) return <Loading />;
   const group = groups.data.groups.find((g) => g.id === id);
   if (!group) {
     return (
@@ -564,7 +562,6 @@ function Group({ id, me }: { id: string; me: string }) {
           </button>
         </div>
       )}
-      <ErrorLine error={leaving.error} />
     </div>
   );
 }
@@ -575,7 +572,8 @@ export function AddFriendScreen({ username }: { username: string }) {
   const account = useAccount();
   const load = useCallback(() => fetchUser(username), [username]);
   const profile = useLoaded(load);
-  const action = useAction();
+  const action = useToastAction();
+  const toast = useToast();
   const signedIn = account.status === "ready" && !!account.user;
 
   return (
@@ -624,7 +622,11 @@ export function AddFriendScreen({ username }: { username: string }) {
                   disabled={action.busy}
                   onClick={() =>
                     void action.run(async () => {
-                      await addFriend(username);
+                      const { relation } = await addFriend(username);
+                      toast.show({
+                        title: relation === "friend" ? "You’re friends now" : "Request sent",
+                        status: "success",
+                      });
                       profile.reload();
                     })
                   }
@@ -633,7 +635,6 @@ export function AddFriendScreen({ username }: { username: string }) {
                 </button>
               </div>
             )}
-            <ErrorLine error={action.error} />
           </>
         )}
       </div>
@@ -657,7 +658,8 @@ function AddFromGameList({ usernames }: { usernames: string[] }) {
   const friends = useLoaded(fetchFriends);
   /** What happened to each request made here: "Friends" or "Request sent". */
   const [sent, setSent] = useState<Map<string, string>>(new Map());
-  const action = useAction();
+  const action = useToastAction();
+  const toast = useToast();
   if (!friends.data) return null;
   const known = new Set([
     ...friends.data.friends.map((f) => f.username),
@@ -686,6 +688,11 @@ function AddFromGameList({ usernames }: { usernames: string[] }) {
                     const { relation } = await addFriend(u);
                     const label = relation === "friend" ? "Friends" : "Request sent";
                     setSent((s) => new Map(s).set(u, label));
+                    toast.show({
+                      title:
+                        relation === "friend" ? `You and @${u} are now friends` : "Request sent",
+                      status: "success",
+                    });
                   })
                 }
               >
@@ -695,7 +702,6 @@ function AddFromGameList({ usernames }: { usernames: string[] }) {
           </li>
         ))}
       </ul>
-      <ErrorLine error={action.error} />
     </section>
   );
 }
@@ -716,6 +722,7 @@ function PingFriendsList({ code }: { code: string }) {
   const [open, setOpen] = useState(autoPing !== null);
   const [status, setStatus] = useState<Map<string, PingStatus>>(new Map());
   const friends = useLoaded(fetchFriends);
+  const toast = useToast();
 
   const ping = useCallback(
     async (username: string) => {
@@ -724,11 +731,26 @@ function PingFriendsList({ code }: { code: string }) {
       try {
         const { sent } = await pingFriend(username, code);
         set(sent ? "sent" : "held");
+        toast.show(
+          sent
+            ? {
+                title: `Pinged @${username}`,
+                description: "They’ll get a notification with a link to this room.",
+                status: "success",
+              }
+            : {
+                title: `@${username} can’t get pings now`,
+                description: "They may have pings off or be in quiet hours.",
+                status: "info",
+              },
+        );
       } catch (error) {
-        set(error instanceof Error ? error.message : "Couldn’t ping them.");
+        const message = errorText(error);
+        set(message);
+        toast.show({ title: "Couldn’t ping them", description: message, status: "error" });
       }
     },
-    [code],
+    [code, toast],
   );
 
   // A ref, so a remount (React's strict mode does one in development) can't ping twice.

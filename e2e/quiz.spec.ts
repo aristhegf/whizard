@@ -10,7 +10,9 @@ async function newPlayer(browser: Browser): Promise<Page> {
 async function joinAs(page: Page, nickname: string) {
   await page.getByLabel("Choose a nickname").fill(nickname);
   await page.getByRole("button", { name: "Join", exact: true }).click();
-  await expect(page.getByRole("listitem").filter({ hasText: nickname })).toBeVisible();
+  await expect(
+    page.getByRole("list", { name: "Players" }).getByRole("listitem").filter({ hasText: nickname }),
+  ).toBeVisible();
 }
 
 async function openRoom(page: Page, nickname = "Ada") {
@@ -159,7 +161,10 @@ test("shows live scores on tablets and computers, but not on phones", async ({ b
     await browser.newContext({ viewport: { width: 1280, height: 800 } })
   ).newPage();
   await openRoom(desktop);
-  await desktop.getByLabel("Questions").selectOption("5");
+  // Wider screens get the morphing dropdown instead of the built-in one.
+  await desktop.getByRole("button", { name: /^Questions/ }).click();
+  await desktop.getByRole("option", { name: "5", exact: true }).click();
+  await expect(desktop.getByRole("button", { name: /^Questions/ })).toContainText("5");
   const phone = await newPlayer(browser);
   await phone.goto(desktop.url());
   await joinAs(phone, "Tolu");

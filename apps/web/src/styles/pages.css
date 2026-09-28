@@ -749,3 +749,22 @@ button.topic-tile {
     filter: drop-shadow(0 16px 30px rgb(120 40 255 / 45%));
   }
 }
+
+/* Cards that tilt toward the mouse (BeUI tilt-card). The wrapper takes the card's shape. */
+.tilt {
+  display: grid;
+}
+
+.tilt-game {
+  border-radius: 20px;
+}
+
+.tilt-topic {
+  border-radius: 20px;
+}
+
+@media (min-width: 768px) {
+  .tilt-game {
+    border-radius: 24px;
+  }
+}

@@ -18,8 +18,13 @@ async function joinAs(page: Page, nickname: string) {
   await page.getByRole("button", { name: "Join", exact: true }).click();
 }
 
+/** The lobby's players (not toasts, which are list items too). */
+function players(page: Page) {
+  return page.getByRole("list", { name: "Players" }).getByRole("listitem");
+}
+
 function playerRow(page: Page, nickname: string) {
-  return page.getByRole("listitem").filter({ hasText: nickname });
+  return players(page).filter({ hasText: nickname });
 }
 
 test("two players meet in the lobby", async ({ browser }) => {
@@ -34,9 +39,11 @@ test("two players meet in the lobby", async ({ browser }) => {
   await joinAs(guest, "Tolu");
 
   for (const page of [host, guest]) {
-    await expect(page.getByRole("listitem")).toHaveCount(2);
+    await expect(players(page)).toHaveCount(2);
     await expect(page.getByText(/^\d+\sms$/)).toBeVisible();
   }
+  // The host is told who joined.
+  await expect(host.getByText("Tolu joined")).toBeVisible();
   await expect(playerRow(guest, "Tolu")).toContainText("You");
   await expect(playerRow(guest, "Tolu")).not.toContainText("Host");
   await expect(guest.getByText("Waiting for the host")).toBeVisible();
@@ -52,7 +59,7 @@ test("joins by typing the room code", async ({ browser }) => {
   await guest.getByLabel("Room code").fill(` ${code.toLowerCase()} `);
   await guest.getByRole("button", { name: "Join" }).click();
   await joinAs(guest, "Tolu");
-  await expect(guest.getByRole("listitem")).toHaveCount(2);
+  await expect(players(guest)).toHaveCount(2);
 });
 
 test("rejects a nickname that’s already taken", async ({ browser }) => {
@@ -65,7 +72,7 @@ test("rejects a nickname that’s already taken", async ({ browser }) => {
   await expect(guest.getByRole("alert")).toHaveText(/already has that nickname/);
 
   await joinAs(guest, "Ada 2");
-  await expect(guest.getByRole("listitem")).toHaveCount(2);
+  await expect(players(guest)).toHaveCount(2);
 });
 
 test("reloading keeps your place in the room", async ({ browser }) => {
@@ -74,12 +81,12 @@ test("reloading keeps your place in the room", async ({ browser }) => {
   const guest = await newPlayer(browser);
   await guest.goto(roomUrl);
   await joinAs(guest, "Tolu");
-  await expect(host.getByRole("listitem")).toHaveCount(2);
+  await expect(players(host)).toHaveCount(2);
 
   await guest.reload();
   await expect(playerRow(guest, "Tolu")).toContainText("You");
   await expect(guest.getByLabel("Choose a nickname")).toHaveCount(0);
-  await expect(host.getByRole("listitem")).toHaveCount(2);
+  await expect(players(host)).toHaveCount(2);
   await expect(playerRow(host, "Tolu")).not.toContainText("Offline");
 });
 
@@ -89,7 +96,7 @@ test("shows players who lose connection as offline", async ({ browser }) => {
   const guest = await newPlayer(browser);
   await guest.goto(roomUrl);
   await joinAs(guest, "Tolu");
-  await expect(host.getByRole("listitem")).toHaveCount(2);
+  await expect(players(host)).toHaveCount(2);
 
   await guest.close();
   await expect(playerRow(host, "Tolu")).toContainText("Offline");
@@ -101,12 +108,12 @@ test("the host role passes on when the host leaves", async ({ browser }) => {
   const guest = await newPlayer(browser);
   await guest.goto(roomUrl);
   await joinAs(guest, "Tolu");
-  await expect(guest.getByRole("listitem")).toHaveCount(2);
+  await expect(players(guest)).toHaveCount(2);
 
   await host.getByRole("button", { name: "Leave" }).click();
   await expect(host).toHaveURL(/\/$/);
 
-  await expect(guest.getByRole("listitem")).toHaveCount(1);
+  await expect(players(guest)).toHaveCount(1);
   await expect(playerRow(guest, "Tolu")).toContainText("Host");
   await expect(guest.getByRole("button", { name: /play solo/i })).toBeVisible();
 });

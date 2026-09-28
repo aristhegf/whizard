@@ -1019,3 +1019,50 @@ select option {
     bottom: 24px;
   }
 }
+
+/* Toasts (a BeUI toast stack): top of the screen on phones, bottom right on wider screens,
+   clear of the tab bar and the "return to your room" bar. */
+.toast-stack {
+  z-index: 60;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .toast-stack {
+    right: var(--gutter);
+    bottom: calc(150px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (min-width: 1100px) {
+  .toast-stack {
+    bottom: 100px;
+  }
+}
+
+.toast-surface {
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--panel-strong);
+  box-shadow: var(--shadow);
+}
+
+.toast-title {
+  font-family: var(--body);
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.toast-description {
+  color: var(--muted);
+}
+
+.loading {
+  display: grid;
+  place-items: center;
+  min-height: 72px;
+  color: #b392ff;
+}

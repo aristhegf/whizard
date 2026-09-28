@@ -28,6 +28,8 @@ import { linkTo, navigate } from "./router";
 import { Avatar, avatarUrl } from "./ui/Avatar";
 import { SideLayout } from "./ui/Chrome";
 import { useAction, useLoaded } from "./ui/common";
+import { Loading } from "./ui/Loading";
+import { useToastAction } from "./ui/toast";
 import { disablePings, enablePings, localTimeZone, pingSupport, pingsOnThisDevice } from "./pings";
 import { loadNickname } from "./storage";
 
@@ -36,7 +38,7 @@ export function AccountScreen() {
   return (
     <SideLayout active="profile" className="account-page">
       {account.status === "loading" ? (
-        <p className="muted">Loading…</p>
+        <Loading />
       ) : account.user ? (
         <Profile user={account.user} />
       ) : (
@@ -62,7 +64,7 @@ function afterSignIn() {
 }
 
 function SignedOut() {
-  const signingIn = useAction();
+  const signingIn = useToastAction();
   const creating = useAction();
   const [username, setUsername] = useState("");
   const [name, setName] = useState(loadNickname);
@@ -117,11 +119,6 @@ function SignedOut() {
         >
           {signingIn.busy ? "Waiting for your passkey…" : "Sign in with a passkey"}
         </button>
-        {signingIn.error && (
-          <p className="error small" role="alert">
-            {signingIn.error}
-          </p>
-        )}
       </div>
 
       <div className="or">new here?</div>
@@ -305,7 +302,7 @@ function History() {
   const { data, error } = useLoaded(fetchMatches);
   const [older, setOlder] = useState<MatchRecord[]>([]);
   const [more, setMore] = useState<boolean | null>(null);
-  const loading = useAction();
+  const loading = useToastAction();
 
   if (error) return <p className="error small">{error}</p>;
   if (!data) return null;
@@ -348,7 +345,7 @@ function History() {
 
 function Settings({ user }: { user: AccountUser }) {
   const [name, setName] = useState(user.displayName);
-  const saving = useAction();
+  const saving = useToastAction();
   const changed = normalizeNickname(name) !== null && name.trim() !== user.displayName;
 
   const handleName = (event: FormEvent) => {
@@ -447,11 +444,6 @@ function Settings({ user }: { user: AccountUser }) {
           </p>
         </div>
       </div>
-      {saving.error && (
-        <p className="error small" role="alert">
-          {saving.error}
-        </p>
-      )}
     </section>
   );
 }
@@ -466,7 +458,7 @@ const hourLabel = (minutes: number) =>
 function Pings({ user }: { user: AccountUser }) {
   const support = pingSupport();
   const device = useLoaded(pingsOnThisDevice);
-  const action = useAction();
+  const action = useToastAction();
   const quiet = user.quietHours;
 
   const setQuiet = (next: { start: number; end: number } | null) =>
@@ -606,11 +598,6 @@ function Pings({ user }: { user: AccountUser }) {
           </>
         )}
       </div>
-      {action.error && (
-        <p className="error small" role="alert">
-          {action.error}
-        </p>
-      )}
     </section>
   );
 }
@@ -623,7 +610,7 @@ const longDate = new Intl.DateTimeFormat(undefined, {
 
 function Passkeys() {
   const [passkeys, setPasskeys] = useState<AccountPasskey[] | null>(null);
-  const action = useAction();
+  const action = useToastAction();
   const [version, setVersion] = useState(0);
 
   useEffect(() => {
@@ -688,17 +675,12 @@ function Passkeys() {
       >
         Add a passkey
       </button>
-      {action.error && (
-        <p className="error small" role="alert">
-          {action.error}
-        </p>
-      )}
     </section>
   );
 }
 
 function Data() {
-  const action = useAction();
+  const action = useToastAction();
   return (
     <section className="stack" aria-labelledby="data-title">
       <h2 id="data-title" className="section-title">
@@ -744,11 +726,6 @@ function Data() {
           Delete account
         </button>
       </div>
-      {action.error && (
-        <p className="error small" role="alert">
-          {action.error}
-        </p>
-      )}
     </section>
   );
 }

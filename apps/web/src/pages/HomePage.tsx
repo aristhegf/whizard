@@ -48,7 +48,7 @@ export function HomePage() {
             Fun multiplayer games for friends, families, couples and teams. No downloads. Just play.
           </p>
           <div className="hero-actions">
-            <CreateRoomButton className="btn btn-gold btn-hero" onError={setError} />
+            <CreateRoomButton className="btn btn-gold btn-hero" />
             <a className="btn btn-hero" {...linkTo("/games")}>
               Explore Games
             </a>

@@ -10,7 +10,9 @@ import {
   ActionSwapCascadeIcon,
   ActionSwapCascadeText,
 } from "@/components/motion/action-swap-cascade";
+import { AnimatedBadge } from "@/components/motion/animated-badge";
 import { SlideActionButton } from "@/components/motion/slide-action-button";
+import { Tooltip } from "@/components/motion/tooltip";
 import { useAccount } from "./account";
 import { PingFriends } from "./FriendsScreen";
 import { QuizScreen } from "./games/quiz/QuizScreen";
@@ -22,6 +24,8 @@ import { loadAvatar, loadNickname } from "./storage";
 import { Avatar, avatarUrl } from "./ui/Avatar";
 import { Brand } from "./ui/Chrome";
 import { useMediaQuery } from "./ui/common";
+import { focusSetting, SettingSelect } from "./ui/SettingSelect";
+import { useToast } from "./ui/toast";
 import { Icon } from "./ui/Icon";
 import { QrCode } from "./ui/QrCode";
 import { reportInvite } from "./presence";
@@ -31,6 +35,7 @@ import { useRoom } from "./useRoom";
 
 export function RoomScreen({ code }: { code: string }) {
   const { client, state } = useRoom(code);
+  useRoomToasts(state);
 
   if (state.fatal) return <Notice message={state.fatal} />;
 
@@ -75,10 +80,78 @@ export function RoomScreen({ code }: { code: string }) {
   );
 }
 
+/** Toasts for who comes and goes, a new host, the connection dropping and coming back, and errors. */
+function useRoomToasts(state: RoomClientState) {
+  const toast = useToast();
+  const seen = useRef<{ players: Map<string, string>; hostId: string | null } | null>(null);
+  const offline = useRef<string | null>(null);
+
+  const { room, playerId, connection, notice } = state;
+
+  // Something the server turned down, like starting a game without enough players.
+  useEffect(() => {
+    if (notice) toast.show({ title: notice, status: "error" });
+  }, [notice, toast]);
+
+  useEffect(() => {
+    if (!room || !playerId) return;
+    const players = new Map(room.players.map((p) => [p.id, p.nickname]));
+    const before = seen.current;
+    seen.current = { players, hostId: room.hostId };
+    // The first snapshot after joining is just who's already here.
+    if (!before) return;
+    for (const [id, nickname] of players) {
+      if (!before.players.has(id)) toast.show({ title: `${nickname} joined`, status: "info" });
+    }
+    for (const [id, nickname] of before.players) {
+      if (!players.has(id)) toast.show({ title: `${nickname} left`, status: "neutral" });
+    }
+    if (room.hostId === playerId && before.hostId !== playerId) {
+      toast.show({
+        title: "You’re the host now",
+        description: "You choose the settings and start the game.",
+        status: "success",
+      });
+    }
+  }, [room, playerId, toast]);
+
+  useEffect(() => {
+    if (connection === "reconnecting" && !offline.current) {
+      offline.current = toast.show({
+        title: "Connection lost",
+        description: "Reconnecting…",
+        status: "loading",
+        duration: 0,
+        dismissible: false,
+      });
+    } else if (connection === "open" && offline.current) {
+      toast.update(offline.current, {
+        title: "Back online",
+        description: undefined,
+        status: "success",
+        duration: 2500,
+        dismissible: true,
+      });
+      offline.current = null;
+    } else if (connection === "closed" && offline.current) {
+      toast.dismiss(offline.current);
+      offline.current = null;
+    }
+  }, [connection, toast]);
+}
+
+/** How the connection is doing: a green badge with the round trip, or a spinning one while
+    (re)connecting. It only animates when the state changes, not on every new ping. */
 export function Latency({ state }: { state: RoomClientState }) {
   const connected = state.connection === "open";
   return (
-    <span className={`net${connected ? "" : " warn"}`} aria-live="polite">
+    <AnimatedBadge
+      className={`net${connected ? "" : " warn"}`}
+      status={connected ? "success" : "loading"}
+      size="sm"
+      contentKey={state.connection}
+      aria-live="polite"
+    >
       {connected
         ? state.latencyMs === null
           ? "Connected"
@@ -86,7 +159,7 @@ export function Latency({ state }: { state: RoomClientState }) {
         : state.connection === "connecting"
           ? "Connecting…"
           : "Reconnecting…"}
-    </span>
+    </AnimatedBadge>
   );
 }
 
@@ -259,13 +332,15 @@ function Lobby({
               )}
             </div>
             {isHost && (
-              <button
-                className="icon-btn edit-btn"
-                aria-label="Change topic"
-                onClick={() => document.getElementById("category")?.focus()}
-              >
-                <Icon name="pencil" size={20} />
-              </button>
+              <Tooltip content="Change topic">
+                <button
+                  className="icon-btn edit-btn"
+                  aria-label="Change topic"
+                  onClick={() => focusSetting("category")}
+                >
+                  <Icon name="pencil" size={20} />
+                </button>
+              </Tooltip>
             )}
           </div>
 
@@ -275,20 +350,18 @@ function Lobby({
               <div className="setting-row">
                 <Icon name="users" size={20} />
                 <label htmlFor="max-players">Max Players</label>
-                <select
+                <SettingSelect
                   id="max-players"
-                  value={room.settings.maxPlayers}
+                  label="Max Players"
+                  value={String(room.settings.maxPlayers)}
                   disabled={!isHost}
-                  onChange={(event) =>
-                    client.configureRoom({ maxPlayers: Number(event.target.value) })
-                  }
-                >
-                  {CAPACITY_OPTIONS.map((n) => (
-                    <option key={n} value={n} disabled={n < room.players.length}>
-                      {n}
-                    </option>
-                  ))}
-                </select>
+                  options={CAPACITY_OPTIONS.map((n) => ({
+                    value: String(n),
+                    label: String(n),
+                    disabled: n < room.players.length,
+                  }))}
+                  onChange={(value) => client.configureRoom({ maxPlayers: Number(value) })}
+                />
               </div>
               {settings && (
                 <QuizSettingsRows
@@ -353,7 +426,11 @@ function Lobby({
                   </span>
                 )}
                 {player.id === playerId && <span className="dim small">You</span>}
-                {!player.connected && <span className="dim small">Offline</span>}
+                {!player.connected && (
+                  <AnimatedBadge status="warning" size="sm" className="offline-badge">
+                    Offline
+                  </AnimatedBadge>
+                )}
               </li>
             ))}
           </ul>
@@ -361,11 +438,6 @@ function Lobby({
           <PingFriends code={room.code} />
 
           <div className="lobby-dock">
-            {state.notice && (
-              <p className="error small" role="alert">
-                {state.notice}
-              </p>
-            )}
             {isHost ? (
               <StartButton alone={alone} onStart={() => client.startGame()} />
             ) : (
@@ -420,24 +492,26 @@ function StartButton({ alone, onStart }: { alone: boolean; onStart: () => void }
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   return (
-    <button
-      className="icon-btn copy-btn"
-      aria-label={copied ? "Copied" : "Copy room code"}
-      onClick={async () => {
-        try {
-          await navigator.clipboard.writeText(text);
-          reportInvite();
-          setCopied(true);
-          setTimeout(() => setCopied(false), 1500);
-        } catch {
-          // Clipboard blocked; the code is on screen.
-        }
-      }}
-    >
-      <ActionSwapCascadeIcon value={copied ? "copied" : "copy"}>
-        <Icon name={copied ? "check" : "copy"} size={26} />
-      </ActionSwapCascadeIcon>
-    </button>
+    <Tooltip content={copied ? "Copied" : "Copy room code"}>
+      <button
+        className="icon-btn copy-btn"
+        aria-label={copied ? "Copied" : "Copy room code"}
+        onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(text);
+            reportInvite();
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+          } catch {
+            // Clipboard blocked; the code is on screen.
+          }
+        }}
+      >
+        <ActionSwapCascadeIcon value={copied ? "copied" : "copy"}>
+          <Icon name={copied ? "check" : "copy"} size={26} />
+        </ActionSwapCascadeIcon>
+      </button>
+    </Tooltip>
   );
 }
 
