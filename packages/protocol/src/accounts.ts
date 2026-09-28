@@ -41,7 +41,59 @@ export const AVATAR_IDS = [
   "a12",
 ] as const;
 export type AvatarId = (typeof AVATAR_IDS)[number];
-export const avatarSchema = z.enum(AVATAR_IDS);
+
+/**
+ * The parts of an avatar made in the avatar creator, in the order its code lists them. A code is
+ * "w1" and then one short id per part, joined with dots: "w1.round.4.afro.0…". The server only
+ * checks the shape; the web app knows the parts, and draws anything it doesn't know as the default.
+ */
+export const AVATAR_FIELDS = [
+  "face",
+  "skin",
+  "hair",
+  "hairColour",
+  "eyes",
+  "brows",
+  "mouth",
+  "facialHair",
+  "glasses",
+  "earrings",
+  "headwear",
+  "headwearColour",
+  "top",
+  "topColour",
+  "jacket",
+  "jacketColour",
+  "headAccessory",
+  "faceAccessory",
+  "neckAccessory",
+  "background",
+] as const;
+export type AvatarField = (typeof AVATAR_FIELDS)[number];
+
+const PART_ID_MAX_LENGTH = 16;
+export const CUSTOM_AVATAR_MAX_LENGTH = 2 + AVATAR_FIELDS.length * (PART_ID_MAX_LENGTH + 1);
+const CUSTOM_AVATAR_PATTERN = new RegExp(
+  `^w1(\\.[a-z0-9-]{1,${PART_ID_MAX_LENGTH}}){${AVATAR_FIELDS.length}}$`,
+);
+
+export type CustomAvatar = `w1.${string}`;
+/** One of the built-in pictures, or an avatar from the avatar creator. */
+export type Avatar = AvatarId | CustomAvatar;
+
+export function isCustomAvatar(value: unknown): value is CustomAvatar {
+  return (
+    typeof value === "string" &&
+    value.length <= CUSTOM_AVATAR_MAX_LENGTH &&
+    CUSTOM_AVATAR_PATTERN.test(value)
+  );
+}
+
+export function isAvatarValue(value: unknown): value is Avatar {
+  return (AVATAR_IDS as readonly unknown[]).includes(value) || isCustomAvatar(value);
+}
+
+export const avatarSchema = z.custom<Avatar>(isAvatarValue, { message: "Not an avatar" });
 
 export type UsernameProblem = "length" | "characters" | "reserved";
 
@@ -80,7 +132,7 @@ export interface AccountUser {
   displayName: string;
   /** When the username last changed, if ever. */
   usernameChangedAt: number | null;
-  avatar: AvatarId | null;
+  avatar: Avatar | null;
   /** Show the answer's explanation during group games too, not only when playing solo. */
   showExplanations: boolean;
   /** Whether friends can ping this account at all. */
@@ -143,7 +195,7 @@ export type AccountUpdate = z.infer<typeof accountUpdateSchema>;
 
 export interface MatchPlayer {
   nickname: string;
-  avatar: AvatarId | null;
+  avatar: Avatar | null;
   /** Set for players with an account. */
   username: string | null;
   placing: number;
@@ -182,7 +234,7 @@ export interface PlayerStats {
 export interface PublicUser {
   username: string;
   displayName: string;
-  avatar: AvatarId | null;
+  avatar: Avatar | null;
 }
 
 export type Relation = "self" | "friend" | "incoming" | "outgoing" | "none";

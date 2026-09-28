@@ -1,4 +1,7 @@
-import { AVATAR_IDS, type AvatarId } from "@whizard/protocol";
+import { AVATAR_IDS, isCustomAvatar, type AvatarId } from "@whizard/protocol";
+import { decodeAvatar } from "../avatar/code";
+import { swatchOf } from "../avatar/parts";
+import { useAvatarPicture } from "../avatar/render";
 import type { CSSProperties } from "react";
 
 export const avatarUrl = (id: AvatarId) => `/art/avatars/${id}.webp`;
@@ -28,12 +31,19 @@ export function Avatar({
   size?: number;
   ring?: string;
 }) {
+  const custom = isCustomAvatar(id) ? id : null;
+  const picture = useAvatarPicture(custom, size);
   const avatar = isAvatar(id) ? id : fallbackAvatar(name);
-  const colour = ring ?? RINGS[AVATAR_IDS.indexOf(avatar) % RINGS.length];
+  const colour =
+    ring ??
+    (custom
+      ? swatchOf("background", decodeAvatar(custom).background).colour
+      : RINGS[AVATAR_IDS.indexOf(avatar) % RINGS.length]);
   return (
     <img
       className="avatar"
-      src={avatarUrl(avatar)}
+      // A made-up avatar shows the plain circle for the moment it takes to draw.
+      src={custom ? (picture ?? BLANK) : avatarUrl(avatar)}
       alt=""
       width={size}
       height={size}
@@ -43,3 +53,5 @@ export function Avatar({
     />
   );
 }
+
+const BLANK = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";

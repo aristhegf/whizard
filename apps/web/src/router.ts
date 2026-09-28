@@ -7,6 +7,8 @@ export type Route =
   | { name: "jigsaw" }
   | { name: "room"; code: string }
   | { name: "account" }
+  /** The avatar creator. Its `?back=` is where Save and Cancel go. */
+  | { name: "avatar" }
   | { name: "friends" }
   | { name: "add"; username: string }
   | { name: "group"; id: string }
@@ -32,6 +34,7 @@ export function useRoute(): Route {
   if (/^\/games\/quiz\/?$/.test(path)) return { name: "topics" };
   if (/^\/games\/jigsaw\/?$/.test(path)) return { name: "jigsaw" };
   if (/^\/account\/?$/.test(path)) return { name: "account" };
+  if (/^\/avatar\/?$/.test(path)) return { name: "avatar" };
   if (/^\/friends\/?$/.test(path)) return { name: "friends" };
   const add = /^\/add\/([^/]+)\/?$/.exec(path);
   if (add) return { name: "add", username: decodeURIComponent(add[1] ?? "") };

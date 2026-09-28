@@ -1,6 +1,8 @@
 import caveatUrl from "@fontsource/caveat/files/caveat-latin-700-normal.woff2?url";
 import luckiestUrl from "@fontsource/luckiest-guy/files/luckiest-guy-latin-400-normal.woff2?url";
 import qrcode from "qrcode-generator";
+import { isCustomAvatar } from "@whizard/protocol";
+import { avatarPicture } from "../avatar/render";
 import { avatarUrl, fallbackAvatar, isAvatar } from "../ui/Avatar";
 import type { Outcome } from "./outcomes";
 
@@ -549,14 +551,16 @@ export async function drawShareCard(card: ShareCard, link: string): Promise<Blob
   const ctx = canvas.getContext("2d")!;
 
   await loadFonts();
-  const avatarSrc = (id: string | null, name: string) =>
-    avatarUrl(isAvatar(id) ? id : fallbackAvatar(name));
+  const avatarSrc = async (id: string | null, name: string) =>
+    isCustomAvatar(id)
+      ? avatarPicture(id, 256)
+      : avatarUrl(isAvatar(id) ? id : fallbackAvatar(name));
   const [stage, logo, art, mascot, ...faces] = await Promise.all([
     loadImage("/art/share/stage.webp"),
     loadImage("/art/logo-mark.webp"),
     loadImage(card.game.art),
     loadImage(card.mascot),
-    ...card.board.map((r) => loadImage(avatarSrc(r.avatar, r.nickname))),
+    ...card.board.map(async (r) => loadImage(await avatarSrc(r.avatar, r.nickname))),
   ]);
 
   drawBackground(ctx, card, stage);

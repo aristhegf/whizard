@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CUSTOM_AVATAR_MAX_LENGTH } from "./accounts";
 
 export const PROTOCOL_VERSION = 10;
 
@@ -67,7 +68,7 @@ export const clientMessageSchema = z.discriminatedUnion("type", [
     nickname: z.string().max(100),
     sessionToken: z.string().max(100).optional(),
     guestId: z.string().max(64).optional(),
-    avatar: z.string().max(16).optional(),
+    avatar: z.string().max(CUSTOM_AVATAR_MAX_LENGTH).optional(),
   }),
   z.object({ type: z.literal("leave") }),
   z.object({ type: z.literal("ping"), t: z.number() }),

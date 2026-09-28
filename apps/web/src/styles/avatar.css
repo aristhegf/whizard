@@ -1,0 +1,191 @@
+/* Avatar creator ---------------------------------------------------------------------------- */
+
+.creator-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .creator-layout {
+    grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  }
+
+  .creator-preview {
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 18px);
+  }
+}
+
+.creator-preview {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  padding: 24px 20px;
+}
+
+.creator-picture {
+  width: min(240px, 50vw);
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 4px rgb(255 255 255 / 10%),
+    0 18px 40px rgb(3 2 20 / 55%);
+}
+
+.creator-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.creator-reactions .chip {
+  min-height: 36px;
+  padding: 0 14px;
+  font-size: 0.875rem;
+}
+
+.creator-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.creator-actions .btn {
+  flex: 1 1 140px;
+}
+
+.creator-cancel {
+  color: var(--muted);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 6px 10px;
+}
+
+.creator-parts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  padding: 18px 20px 22px;
+  min-width: 0;
+}
+
+.creator-tabs {
+  margin: 0 -20px;
+  padding: 2px 20px 10px;
+}
+
+.creator-tabs .chip {
+  min-height: 40px;
+  padding: 0 16px;
+}
+
+.creator-tabs .chip[aria-selected="true"] {
+  background: linear-gradient(135deg, #9a4dff, #6f35ff);
+  border-color: rgb(200 170 255 / 60%);
+  box-shadow: 0 6px 22px rgb(122 58 255 / 50%);
+}
+
+.creator-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+.creator-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.creator-label {
+  font: 700 0.8rem/1 var(--display);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.creator-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 10px;
+}
+
+.creator-options button {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 6px 6px 8px;
+  border-radius: var(--radius);
+  border: 2px solid var(--line);
+  background: var(--field);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition:
+    border-color 120ms ease,
+    transform 120ms ease;
+}
+
+.creator-options button img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 5%);
+}
+
+.creator-options button:hover {
+  border-color: var(--line-strong);
+}
+
+.creator-options button[aria-checked="true"] {
+  border-color: var(--gold);
+  box-shadow: 0 0 16px rgb(255 212 63 / 35%);
+}
+
+.creator-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(34px, 1fr));
+  gap: 8px;
+  max-width: 600px;
+}
+
+.creator-swatches button {
+  width: 100%;
+  max-width: 44px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 3px solid rgb(255 255 255 / 18%);
+  box-shadow: inset 0 -6px 10px rgb(0 0 0 / 25%);
+}
+
+.creator-swatches button[aria-checked="true"] {
+  border-color: var(--gold);
+  box-shadow:
+    inset 0 -6px 10px rgb(0 0 0 / 25%),
+    0 0 0 3px rgb(255 212 63 / 30%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .creator-options button:active {
+    transform: scale(0.97);
+  }
+}
+
+/* The "make your own" tile in the avatar pickers. */
+.avatar-picker .avatar-make {
+  border: 2.5px dashed var(--line-strong);
+  color: var(--gold);
+  background: rgb(255 255 255 / 4%);
+}
+
+.avatar-picker .avatar-make:hover {
+  border-color: var(--gold);
+}

@@ -7,6 +7,7 @@ const NICKNAME_KEY = "whizard:nickname";
 const GUEST_ID_KEY = "whizard:guest";
 const VISITOR_ID_KEY = "whizard:visitor";
 const AVATAR_KEY = "whizard:avatar";
+const MY_AVATAR_KEY = "whizard:my-avatar";
 const SESSIONS_KEY = "whizard:sessions";
 const SESSION_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 
@@ -64,6 +65,15 @@ export function loadAvatar(): string | null {
 
 export function saveAvatar(avatar: string): void {
   write(AVATAR_KEY, avatar);
+}
+
+/** The avatar made in the avatar creator, kept even while a built-in one is picked. */
+export function loadMyAvatar(): string | null {
+  return read<string>(MY_AVATAR_KEY);
+}
+
+export function saveMyAvatar(avatar: string): void {
+  write(MY_AVATAR_KEY, avatar);
 }
 
 export function loadNickname(): string {

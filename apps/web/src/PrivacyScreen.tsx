@@ -18,8 +18,9 @@ export function PrivacyScreen() {
           <h2>Playing as a guest</h2>
           <p>
             You only give a nickname. It lives in the room while you play, and the room is deleted
-            about 30 minutes after everyone leaves. Your browser also keeps a random ID and your
-            nickname, so you can rejoin after a reload.
+            about 30 minutes after everyone leaves. Your browser also keeps a random ID, your
+            nickname and your avatar, so you can rejoin after a reload. An avatar you make is a list
+            of the parts you picked, drawn on your device; no photo is ever taken or uploaded.
           </p>
           <p>
             When a game finishes, its result is saved with that random ID for 7 days. That’s so the

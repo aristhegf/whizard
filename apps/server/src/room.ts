@@ -41,11 +41,11 @@ import {
   type RoomState,
 } from "@whizard/game-core";
 import {
-  AVATAR_IDS,
   CloseCode,
   ErrorCode,
   PROTOCOL_VERSION,
   encode,
+  isAvatarValue,
   parseClientMessage,
   type ClientMessage,
   type ServerMessage,
@@ -318,9 +318,7 @@ export class Room extends DurableObject<Env> {
       return;
     }
 
-    const avatar = (AVATAR_IDS as readonly string[]).includes(message.avatar ?? "")
-      ? message.avatar
-      : undefined;
+    const avatar = isAvatarValue(message.avatar) ? message.avatar : undefined;
     const result = joinRoom(
       state,
       { ...message, avatar, account },

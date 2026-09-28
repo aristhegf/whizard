@@ -1,5 +1,5 @@
 import { randomToken } from "@whizard/game-core";
-import { AVATAR_IDS, type AccountUser, type AvatarId } from "@whizard/protocol";
+import { isAvatarValue, type AccountUser, type Avatar } from "@whizard/protocol";
 import type { Env } from "./env";
 
 const COOKIE_NAME = "__Host-whizard_session";
@@ -31,8 +31,8 @@ export interface SignedIn {
   expiresAt: number;
 }
 
-export function asAvatar(value: string | null | undefined): AvatarId | null {
-  return (AVATAR_IDS as readonly string[]).includes(value ?? "") ? (value as AvatarId) : null;
+export function asAvatar(value: string | null | undefined): Avatar | null {
+  return isAvatarValue(value) ? value : null;
 }
 
 export function toAccountUser(row: UserRow): AccountUser {

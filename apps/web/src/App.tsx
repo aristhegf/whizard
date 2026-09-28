@@ -2,6 +2,7 @@ import { normalizeRoomCode } from "@whizard/game-core";
 import { useEffect } from "react";
 import { AdminApp } from "./admin/AdminApp";
 import { AccountScreen } from "./AccountScreen";
+import { AvatarCreator } from "./avatar/AvatarCreator";
 import { AddFriendScreen, FriendsScreen, GroupScreen } from "./FriendsScreen";
 import { Notice } from "./Notice";
 import { GamesPage } from "./pages/GamesPage";
@@ -38,6 +39,8 @@ export function App() {
           <JigsawPage />
         ) : route.name === "account" ? (
           <AccountScreen />
+        ) : route.name === "avatar" ? (
+          <AvatarCreator />
         ) : route.name === "friends" ? (
           <FriendsScreen />
         ) : route.name === "add" ? (

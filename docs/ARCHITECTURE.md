@@ -222,7 +222,7 @@ stateDiagram-v2
 - **Toasts** tell everyone in the room who joined, who left the game, who left the room, and who the host is now.
 - **Cleanup** runs from a Durable Object alarm. A room is deleted 30 minutes after the last player disconnects, or straight away when the last player in it leaves.
 - **Room settings** belong to the host: the most players the room takes (2 to 20) and whether late joiners can enter a running game.
-- **Limits:** up to 20 players per room, nicknames up to 20 characters (emoji welcome), unique within the room. Each player picks an avatar from a built-in set.
+- **Limits:** up to 20 players per room, nicknames up to 20 characters (emoji welcome), unique within the room. Each player picks an avatar from a built-in set, or makes their own (see Avatars).
 - **Rooms can be opened with a game already set up**, such as a topic picked on the Quiz Topics page, or Word Rush or Spot It from their cards on the Games page. In the lobby the host can switch to another game, which starts from that game's settings.
 
 ## Real-time protocol
@@ -437,11 +437,20 @@ A dark, cozy game-night look: deep navy and purple with warm lamp glows behind e
 - **Type:** Poppins for headings, Nunito for everything else, both bundled with the app.
 - **Colour:** purple for primary actions, gold for the big "Create a Room" call to action and for scores, green and red for right and wrong answers. Tokens live at the top of `apps/web/src/styles/base.css`.
 - **Layouts:** a top bar on the landing and games pages, a sidebar for app pages on wide screens, and a bottom tab bar (Home, Games, Create, Profile) on phones. Game screens drop the navigation to give the question room.
-- **Artwork** is plain image files in `apps/web/public/art/`: `mascot/`, `games/` (one per game), `topics/` (one per quiz category), `avatars/` (`a01` to `a12`), and the logo (`logo-mark.webp` for the crown W, `logo-lockup.webp` for the full logo). To update a picture, replace the file with one of the same name; transparent WebP works best. The favicon and app icons in `apps/web/public/` are made from the crown W.
+- **Artwork** is plain image files in `apps/web/public/art/`: `mascot/`, `games/` (one per game), `topics/` (one per quiz category), `avatars/` (`a01` to `a12`), `avatar-parts/` (the avatar creator's parts, see Avatars), and the logo (`logo-mark.webp` for the crown W, `logo-lockup.webp` for the full logo). To update a picture, replace the file with one of the same name; transparent WebP works best. The favicon and app icons in `apps/web/public/` are made from the crown W.
 
 ### Sound
 
 Sounds are made in the browser with the Web Audio API (`apps/web/src/sounds.ts`), so there are no audio files to download or license: a tick for each second of the countdown and a higher note as the question appears, a two-note chime for a right answer and a low slide for a wrong one, quiet ticks in the last five seconds of a Speed question, a short fanfare on the final results, and a soft pop when someone joins the lobby. Browsers only allow sound after a tap, so audio starts on the first one. A speaker button in the lobby and game bars mutes everything, remembered on the device.
+
+### Avatars
+
+Players pick one of the 12 built-in pictures, or make their own in the **avatar creator** at `/avatar` (from the join screen's and the account page's avatar pickers). The creator has tabs for the face and skin tone, hair and hair colour, eyes, eyebrows, expression, facial hair, glasses, earrings, hats, tops, jackets, extras (head, face and neck) and the background. It has a **Surprise me** button, and buttons to preview the faces made for reactions in games: a right answer, a wrong answer, surprised and a wink. The games don't show reactions yet; `avatarPicture` takes a `Pose` for when they do.
+
+- **The code.** A made-up avatar is stored and sent as a short code, `w1.` followed by one id per part in the order of `AVATAR_FIELDS` (`packages/protocol/src/accounts.ts`), e.g. `w1.round.5.afro.0.round.soft.grin.none…`. It goes wherever a built-in avatar id goes: the join message, the account, the room and match history. The server only checks its shape (`isAvatarValue`). The web app draws any part it doesn't know as the default, so parts can be added later without breaking old codes. Part and colour ids are never renamed, and colours are only ever added to the end of a palette.
+- **The parts** are listed in `apps/web/src/avatar/parts.ts`, with the files each option has, and whether a hat covers the top of the hair, all of it or none. The art is in `apps/web/public/art/avatar-parts/<category>/<option>/<file>`, drawn on the 1024 × 1024 grid from the avatar art spec. Today's parts are simple stand-ins; the finished art replaces them file by file, as PNG or WebP (set `ext` on the option). A unit test checks that every listed file exists.
+- **Colours.** Skin, hair (with the eyebrows and facial hair), clothes and some hats are drawn in grey with the main colour at 55% grey. The browser colours them with a gradient map: dark greys become the shadow colour, the main grey the chosen colour, light greys the highlight, and white stays white.
+- **Drawing.** `avatar/layers.ts` works out which files to draw, back to front: pressing hair under a hat, hiding hair and earrings under a hijab, and leaving headphones off under a hat. It also handles the faces for reactions, joining half of the open eyes with half of the closed ones for a wink and moving the eyebrows. `avatar/render.ts` draws the layers on a canvas and keeps each picture once drawn. Nothing is uploaded.
 
 ### Sharing results
 

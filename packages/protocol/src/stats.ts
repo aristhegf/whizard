@@ -77,7 +77,7 @@ export interface TrendingEntry {
 export interface LeaderboardEntry {
   username: string;
   displayName: string;
-  /** One of the built-in avatars, or null. */
+  /** A built-in avatar or one from the avatar creator, or null. */
   avatar: string | null;
   wins: number;
 }

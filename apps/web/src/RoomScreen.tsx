@@ -54,8 +54,9 @@ import {
 import { Notice } from "./Notice";
 import type { RoomClient, RoomClientState, RoomSnapshot } from "./roomClient";
 import { navigate, roomPath } from "./router";
-import { loadAvatar, loadNickname } from "./storage";
-import { Avatar, avatarUrl } from "./ui/Avatar";
+import { loadAvatar, loadNickname, saveNickname } from "./storage";
+import { Avatar } from "./ui/Avatar";
+import { AvatarPicker, openAvatarCreator } from "./ui/AvatarPicker";
 import { Brand } from "./ui/Chrome";
 import { useMediaQuery } from "./ui/common";
 import { useShakeOnError } from "./ui/errorShake";
@@ -336,20 +337,17 @@ function JoinScreen({
             <span className="label" id="avatar-label">
               Pick your avatar
             </span>
-            <div className="avatar-picker" role="radiogroup" aria-labelledby="avatar-label">
-              {AVATAR_IDS.map((id, i) => (
-                <button
-                  key={id}
-                  type="button"
-                  role="radio"
-                  aria-checked={avatar === id}
-                  aria-label={`Avatar ${i + 1}`}
-                  onClick={() => setPicked(id)}
-                >
-                  <img src={avatarUrl(id)} alt="" width={56} height={56} />
-                </button>
-              ))}
-            </div>
+            <AvatarPicker
+              value={avatar}
+              onPick={setPicked}
+              onMake={() => {
+                // Keep what they typed for when they come back.
+                if (nickname.trim()) saveNickname(nickname);
+                openAvatarCreator();
+              }}
+              labelledBy="avatar-label"
+              size={56}
+            />
             <button
               className="btn btn-primary btn-block"
               type="submit"

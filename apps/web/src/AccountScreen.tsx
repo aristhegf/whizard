@@ -5,9 +5,9 @@ import {
   normalizeNickname,
 } from "@whizard/game-core";
 import {
-  AVATAR_IDS,
   USERNAME_MAX_LENGTH,
   USERNAME_MIN_LENGTH,
+  isAvatarValue,
   nextUsernameChange,
   normalizeUsername,
   usernameProblem,
@@ -34,7 +34,8 @@ import {
   useAccount,
 } from "./account";
 import { linkTo, navigate } from "./router";
-import { Avatar, avatarUrl } from "./ui/Avatar";
+import { Avatar } from "./ui/Avatar";
+import { AvatarPicker } from "./ui/AvatarPicker";
 import { SideLayout } from "./ui/Chrome";
 import { useAction, useLoaded } from "./ui/common";
 import { Loading } from "./ui/Loading";
@@ -619,21 +620,15 @@ function Settings({ user }: { user: AccountUser }) {
           <span className="setting-name" id="avatar-setting">
             Avatar
           </span>
-          <div className="avatar-picker" role="radiogroup" aria-labelledby="avatar-setting">
-            {AVATAR_IDS.map((id, i) => (
-              <button
-                key={id}
-                type="button"
-                role="radio"
-                aria-checked={(user.avatar ?? null) === id}
-                aria-label={`Avatar ${i + 1}`}
-                disabled={saving.busy}
-                onClick={() => void saving.run(() => updateAccount({ avatar: id }))}
-              >
-                <img src={avatarUrl(id)} alt="" width={48} height={48} />
-              </button>
-            ))}
-          </div>
+          <AvatarPicker
+            value={user.avatar ?? null}
+            onPick={(avatar) => {
+              if (isAvatarValue(avatar)) void saving.run(() => updateAccount({ avatar }));
+            }}
+            labelledBy="avatar-setting"
+            size={48}
+            disabled={saving.busy}
+          />
         </div>
         <div className="setting">
           <span className="setting-name" id="explain-label">
