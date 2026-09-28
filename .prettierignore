@@ -10,3 +10,5 @@ apps/web/src/styles/transitions.css
 # The transitions.dev agent skills (npx skills add Jakubantalik/transitions.dev), kept as published.
 .agents/
 skills-lock.json
+# The banana-claude skill (MIT, vendored standalone), kept as published.
+.claude/skills/banana/
