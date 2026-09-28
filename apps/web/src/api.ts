@@ -57,6 +57,8 @@ export interface RoomStatus {
   code: string;
   phase: "lobby" | "playing" | "finished";
   online: number;
+  /** No room for anyone new. */
+  full: boolean;
 }
 
 /** A room's status, or null if it no longer exists. */

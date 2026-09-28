@@ -24,7 +24,9 @@ import { loadAvatar, loadNickname } from "./storage";
 import { Avatar, avatarUrl } from "./ui/Avatar";
 import { Brand } from "./ui/Chrome";
 import { useMediaQuery } from "./ui/common";
+import { useShakeOnError } from "./ui/errorShake";
 import { focusSetting, SettingSelect } from "./ui/SettingSelect";
+import { canGenerateArt, preloadGeneratingArt } from "./ui/GeneratingArt";
 import { useToast } from "./ui/toast";
 import { Icon } from "./ui/Icon";
 import { QrCode } from "./ui/QrCode";
@@ -182,10 +184,14 @@ function JoinScreen({
   const [picked, setPicked] = useState<string | null>(null);
   const avatar = picked ?? user?.avatar ?? loadAvatar() ?? AVATAR_IDS[0];
   const disabled = state.connection !== "open";
+  const [attempt, setAttempt] = useState(0);
+  const { ref, isError } = useShakeOnError<HTMLInputElement>(state.joinError, attempt);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if (nickname.trim()) client.join(nickname, avatar);
+    if (!nickname.trim()) return;
+    setAttempt((n) => n + 1);
+    client.join(nickname, avatar);
   };
 
   return (
@@ -209,8 +215,11 @@ function JoinScreen({
               Choose a nickname
             </label>
             <input
+              ref={ref}
+              className={`t-input${isError ? " is-error" : ""}`}
               id="nickname"
               name="nickname"
+              aria-invalid={isError}
               value={nickname}
               maxLength={NICKNAME_INPUT_MAX_LENGTH}
               autoComplete="nickname"
@@ -276,6 +285,11 @@ function Lobby({
   const alone = connected.length <= 1;
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
   const url = `${location.origin}${roomPath(room.code)}`;
+
+  // The countdown's generating effect needs three.js; fetch it while everyone gathers.
+  useEffect(() => {
+    if (canGenerateArt()) void preloadGeneratingArt().catch(() => {});
+  }, []);
 
   // A soft pop when someone new arrives in the lobby.
   const joined = useRef(connected.length);

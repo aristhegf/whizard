@@ -113,6 +113,17 @@
   width: min(100%, 26rem);
 }
 
+.join-code-wrap {
+  display: grid;
+  gap: 6px;
+  width: min(100%, 26rem);
+}
+
+.join-code-wrap .t-error-msg {
+  margin: 0;
+  padding-inline: 20px;
+}
+
 .join-code input {
   flex: 1;
   min-height: 48px;

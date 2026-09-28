@@ -728,6 +728,28 @@ button.choice:disabled {
   filter: drop-shadow(0 12px 24px rgb(120 40 255 / 45%));
 }
 
+/* The topic "generating" through the countdown (img-fx). */
+.generating-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 28px;
+  box-shadow: 0 16px 40px rgb(80 30 200 / 45%);
+}
+
+.generating-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.countdown .generating-art img {
+  filter: none;
+}
+
 .countdown-label {
   font-family: var(--display);
   font-weight: 700;
