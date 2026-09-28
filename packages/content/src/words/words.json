@@ -1,0 +1,2162 @@
+[
+  {
+    "id": "word-001",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "LION",
+    "also": ["LINO", "LOIN", "NOIL"],
+    "gaps": [3],
+    "fits": []
+  },
+  {
+    "id": "word-002",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "BEAR",
+    "also": ["BARE", "BRAE"],
+    "gaps": [1],
+    "fits": ["BOAR"]
+  },
+  {
+    "id": "word-003",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "GOAT",
+    "also": ["TOGA"],
+    "gaps": [2],
+    "fits": ["GOUT"]
+  },
+  {
+    "id": "word-004",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "FROG",
+    "also": [],
+    "gaps": [1],
+    "fits": ["FLOG"]
+  },
+  {
+    "id": "word-005",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "DUCK",
+    "also": [],
+    "gaps": [2],
+    "fits": ["DUNK", "DUSK"]
+  },
+  {
+    "id": "word-006",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "WOLF",
+    "also": ["FLOW", "FOWL"],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-007",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "CRAB",
+    "also": ["CARB"],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-008",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "SNAKE",
+    "also": ["KANES", "SKEAN", "SNEAK"],
+    "gaps": [2, 4],
+    "fits": ["SNAKY", "SNOKE"]
+  },
+  {
+    "id": "word-009",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "HORSE",
+    "also": ["HEROS", "HOERS", "HOSER", "SHOER", "SHORE"],
+    "gaps": [1],
+    "fits": ["HERSE"]
+  },
+  {
+    "id": "word-010",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "ZEBRA",
+    "also": ["BRAZE"],
+    "gaps": [2, 4],
+    "fits": []
+  },
+  {
+    "id": "word-011",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "TIGER",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": []
+  },
+  {
+    "id": "word-012",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "SHEEP",
+    "also": ["PHESE"],
+    "gaps": [3],
+    "fits": []
+  },
+  {
+    "id": "word-013",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "MOUSE",
+    "also": ["MEOUS", "MOUES"],
+    "gaps": [3],
+    "fits": []
+  },
+  {
+    "id": "word-014",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "EAGLE",
+    "also": ["AGLEE"],
+    "gaps": [1, 4],
+    "fits": []
+  },
+  {
+    "id": "word-015",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "CAMEL",
+    "also": ["CLAME", "MACLE"],
+    "gaps": [1, 3],
+    "fits": ["COMAL", "CYMOL"]
+  },
+  {
+    "id": "word-016",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "SHARK",
+    "also": ["HARKS"],
+    "gaps": [2],
+    "fits": ["SHIRK"]
+  },
+  {
+    "id": "word-017",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "WHALE",
+    "also": ["WHEAL"],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-018",
+    "level": "easy",
+    "hint": "Animal",
+    "word": "PANDA",
+    "also": [],
+    "gaps": [1, 2],
+    "fits": ["PURDA"]
+  },
+  {
+    "id": "word-019",
+    "level": "easy",
+    "hint": "Food",
+    "word": "RICE",
+    "also": ["CIRE", "ERIC", "ICER"],
+    "gaps": [1],
+    "fits": ["RACE"]
+  },
+  {
+    "id": "word-020",
+    "level": "easy",
+    "hint": "Food",
+    "word": "CAKE",
+    "also": [],
+    "gaps": [3],
+    "fits": ["CAKY"]
+  },
+  {
+    "id": "word-021",
+    "level": "easy",
+    "hint": "Food",
+    "word": "SOUP",
+    "also": ["OPUS", "OUPS"],
+    "gaps": [1],
+    "fits": ["SCUP"]
+  },
+  {
+    "id": "word-022",
+    "level": "easy",
+    "hint": "Food",
+    "word": "MILK",
+    "also": [],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-023",
+    "level": "easy",
+    "hint": "Food",
+    "word": "BREAD",
+    "also": ["ARDEB", "BARDE", "BARED", "BEARD", "DEBAR"],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-024",
+    "level": "easy",
+    "hint": "Food",
+    "word": "PIZZA",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": []
+  },
+  {
+    "id": "word-025",
+    "level": "easy",
+    "hint": "Food",
+    "word": "HONEY",
+    "also": [],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-026",
+    "level": "easy",
+    "hint": "Food",
+    "word": "MANGO",
+    "also": ["AMONG", "NGOMA"],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-027",
+    "level": "easy",
+    "hint": "Food",
+    "word": "LEMON",
+    "also": ["MELON"],
+    "gaps": [1, 4],
+    "fits": ["LIMOS"]
+  },
+  {
+    "id": "word-028",
+    "level": "easy",
+    "hint": "Food",
+    "word": "GRAPE",
+    "also": ["GAPER", "PAGER", "PARGE"],
+    "gaps": [1, 4],
+    "fits": ["GRAPH", "GRAPY"]
+  },
+  {
+    "id": "word-029",
+    "level": "easy",
+    "hint": "Food",
+    "word": "APPLE",
+    "also": ["APPEL", "PEPLA"],
+    "gaps": [1, 3],
+    "fits": ["AMPLE"]
+  },
+  {
+    "id": "word-030",
+    "level": "easy",
+    "hint": "Food",
+    "word": "PEACH",
+    "also": ["CHAPE", "CHEAP"],
+    "gaps": [1, 3],
+    "fits": ["PLASH", "POACH"]
+  },
+  {
+    "id": "word-031",
+    "level": "easy",
+    "hint": "Food",
+    "word": "SUGAR",
+    "also": ["ARGUS", "GAURS", "GUARS", "RAGUS"],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-032",
+    "level": "easy",
+    "hint": "Nigerian food",
+    "word": "SUYA",
+    "also": ["AYUS"],
+    "gaps": [3],
+    "fits": []
+  },
+  {
+    "id": "word-033",
+    "level": "easy",
+    "hint": "Colour",
+    "word": "BLUE",
+    "also": ["LUBE"],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-034",
+    "level": "easy",
+    "hint": "Colour",
+    "word": "PINK",
+    "also": [],
+    "gaps": [2],
+    "fits": ["PICK"]
+  },
+  {
+    "id": "word-035",
+    "level": "easy",
+    "hint": "Colour",
+    "word": "GOLD",
+    "also": [],
+    "gaps": [1],
+    "fits": ["GELD", "GILD"]
+  },
+  {
+    "id": "word-036",
+    "level": "easy",
+    "hint": "Colour",
+    "word": "GREEN",
+    "also": ["GENRE", "GERNE"],
+    "gaps": [1, 3],
+    "fits": ["GLEAN", "GREIN"]
+  },
+  {
+    "id": "word-037",
+    "level": "easy",
+    "hint": "Colour",
+    "word": "BROWN",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": ["BLOWN"]
+  },
+  {
+    "id": "word-038",
+    "level": "easy",
+    "hint": "Colour",
+    "word": "BLACK",
+    "also": [],
+    "gaps": [2, 4],
+    "fits": ["BLOCK", "BLOCS"]
+  },
+  {
+    "id": "word-039",
+    "level": "easy",
+    "hint": "Colour",
+    "word": "WHITE",
+    "also": ["WITHE"],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-040",
+    "level": "easy",
+    "hint": "Body",
+    "word": "HAND",
+    "also": [],
+    "gaps": [1],
+    "fits": ["HEND", "HIND", "HOND"]
+  },
+  {
+    "id": "word-041",
+    "level": "easy",
+    "hint": "Body",
+    "word": "FOOT",
+    "also": [],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-042",
+    "level": "easy",
+    "hint": "Body",
+    "word": "KNEE",
+    "also": ["KEEN"],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-043",
+    "level": "easy",
+    "hint": "Body",
+    "word": "NOSE",
+    "also": ["EONS", "NOES", "ONES", "SONE"],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-044",
+    "level": "easy",
+    "hint": "Body",
+    "word": "HEART",
+    "also": ["EARTH", "HATER", "RATHE", "THRAE"],
+    "gaps": [1, 2],
+    "fits": []
+  },
+  {
+    "id": "word-045",
+    "level": "easy",
+    "hint": "Body",
+    "word": "MOUTH",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": ["MOUCH"]
+  },
+  {
+    "id": "word-046",
+    "level": "easy",
+    "hint": "Body",
+    "word": "TOOTH",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": ["TROTH"]
+  },
+  {
+    "id": "word-047",
+    "level": "easy",
+    "hint": "Body",
+    "word": "ELBOW",
+    "also": ["BELOW", "BOWEL"],
+    "gaps": [2, 4],
+    "fits": []
+  },
+  {
+    "id": "word-048",
+    "level": "easy",
+    "hint": "Body",
+    "word": "THUMB",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": []
+  },
+  {
+    "id": "word-049",
+    "level": "easy",
+    "hint": "Home",
+    "word": "DOOR",
+    "also": ["ODOR", "ORDO", "ROOD"],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-050",
+    "level": "easy",
+    "hint": "Home",
+    "word": "LAMP",
+    "also": ["PALM"],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-051",
+    "level": "easy",
+    "hint": "Home",
+    "word": "SOFA",
+    "also": ["OAFS"],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-052",
+    "level": "easy",
+    "hint": "Home",
+    "word": "CHAIR",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": ["CHARR"]
+  },
+  {
+    "id": "word-053",
+    "level": "easy",
+    "hint": "Home",
+    "word": "TABLE",
+    "also": ["ABLET", "BLATE", "BLEAT"],
+    "gaps": [1, 3],
+    "fits": ["TUBAE"]
+  },
+  {
+    "id": "word-054",
+    "level": "easy",
+    "hint": "Home",
+    "word": "CLOCK",
+    "also": [],
+    "gaps": [4],
+    "fits": []
+  },
+  {
+    "id": "word-055",
+    "level": "easy",
+    "hint": "Home",
+    "word": "SPOON",
+    "also": ["NOOPS", "POONS", "SNOOP"],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-056",
+    "level": "easy",
+    "hint": "Home",
+    "word": "PLATE",
+    "also": ["LEAPT", "LEPTA", "PALET", "PELTA", "PETAL", "PLEAT", "TEPAL"],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-057",
+    "level": "easy",
+    "hint": "Home",
+    "word": "BROOM",
+    "also": ["BROMO"],
+    "gaps": [1, 3],
+    "fits": ["BLOOM"]
+  },
+  {
+    "id": "word-058",
+    "level": "easy",
+    "hint": "Nature",
+    "word": "TREE",
+    "also": ["RETE", "TEER"],
+    "gaps": [1],
+    "fits": ["THEE", "TWEE", "TYEE"]
+  },
+  {
+    "id": "word-059",
+    "level": "easy",
+    "hint": "Nature",
+    "word": "RAIN",
+    "also": ["AIRN", "RANI"],
+    "gaps": [2],
+    "fits": ["RAUN", "RAWN"]
+  },
+  {
+    "id": "word-060",
+    "level": "easy",
+    "hint": "Nature",
+    "word": "WIND",
+    "also": [],
+    "gaps": [2],
+    "fits": ["WILD"]
+  },
+  {
+    "id": "word-061",
+    "level": "easy",
+    "hint": "Nature",
+    "word": "LEAF",
+    "also": ["ALEF", "FEAL", "FLEA"],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-062",
+    "level": "easy",
+    "hint": "Nature",
+    "word": "CLOUD",
+    "also": ["COULD"],
+    "gaps": [1, 2],
+    "fits": []
+  },
+  {
+    "id": "word-063",
+    "level": "easy",
+    "hint": "Nature",
+    "word": "RIVER",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": ["RAVER", "ROVER"]
+  },
+  {
+    "id": "word-064",
+    "level": "easy",
+    "hint": "Nature",
+    "word": "STONE",
+    "also": ["NOTES", "ONSET", "SETON", "STENO", "TONES"],
+    "gaps": [2],
+    "fits": ["STANE"]
+  },
+  {
+    "id": "word-065",
+    "level": "easy",
+    "hint": "Nature",
+    "word": "OCEAN",
+    "also": ["CANOE"],
+    "gaps": [1, 3],
+    "fits": ["ODEON", "OLEIN"]
+  },
+  {
+    "id": "word-066",
+    "level": "easy",
+    "hint": "Nature",
+    "word": "STORM",
+    "also": ["MORTS"],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-067",
+    "level": "easy",
+    "hint": "Nature",
+    "word": "BEACH",
+    "also": [],
+    "gaps": [4],
+    "fits": []
+  },
+  {
+    "id": "word-068",
+    "level": "easy",
+    "hint": "Sport",
+    "word": "GOLF",
+    "also": ["FLOG"],
+    "gaps": [1],
+    "fits": ["GULF"]
+  },
+  {
+    "id": "word-069",
+    "level": "easy",
+    "hint": "Sport",
+    "word": "GOAL",
+    "also": ["GAOL"],
+    "gaps": [1],
+    "fits": ["GEAL", "GYAL"]
+  },
+  {
+    "id": "word-070",
+    "level": "easy",
+    "hint": "Sport",
+    "word": "CHESS",
+    "also": ["SECHS"],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-071",
+    "level": "easy",
+    "hint": "City",
+    "word": "LAGOS",
+    "also": ["GAOLS", "GOALS"],
+    "gaps": [2, 4],
+    "fits": ["LABOR", "LAZOS"]
+  },
+  {
+    "id": "word-072",
+    "level": "easy",
+    "hint": "City",
+    "word": "ABUJA",
+    "also": [],
+    "gaps": [1, 4],
+    "fits": []
+  },
+  {
+    "id": "word-073",
+    "level": "easy",
+    "hint": "City",
+    "word": "PARIS",
+    "also": ["PAIRS"],
+    "gaps": [4],
+    "fits": []
+  },
+  {
+    "id": "word-074",
+    "level": "easy",
+    "hint": "City",
+    "word": "ROME",
+    "also": ["MOER", "MORE", "OMER"],
+    "gaps": [1],
+    "fits": ["RIME", "RUME"]
+  },
+  {
+    "id": "word-075",
+    "level": "easy",
+    "hint": "City",
+    "word": "CAIRO",
+    "also": ["CORIA"],
+    "gaps": [1, 2],
+    "fits": ["CHIRO", "CLARO"]
+  },
+  {
+    "id": "word-076",
+    "level": "easy",
+    "hint": "Music",
+    "word": "DRUM",
+    "also": [],
+    "gaps": [1],
+    "fits": ["DOUM"]
+  },
+  {
+    "id": "word-077",
+    "level": "easy",
+    "hint": "Music",
+    "word": "SONG",
+    "also": ["GONS", "NOGS", "SNOG"],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-078",
+    "level": "easy",
+    "hint": "Music",
+    "word": "FLUTE",
+    "also": [],
+    "gaps": [1],
+    "fits": []
+  },
+  {
+    "id": "word-079",
+    "level": "easy",
+    "hint": "Music",
+    "word": "PIANO",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": []
+  },
+  {
+    "id": "word-080",
+    "level": "easy",
+    "hint": "Transport",
+    "word": "SHIP",
+    "also": ["HIPS", "PHIS", "PISH"],
+    "gaps": [2],
+    "fits": ["SHOP"]
+  },
+  {
+    "id": "word-081",
+    "level": "easy",
+    "hint": "Transport",
+    "word": "BIKE",
+    "also": ["KIBE"],
+    "gaps": [3],
+    "fits": []
+  },
+  {
+    "id": "word-082",
+    "level": "easy",
+    "hint": "Transport",
+    "word": "TRAIN",
+    "also": ["INTRA", "RIANT"],
+    "gaps": [1, 3],
+    "fits": ["TWAIN"]
+  },
+  {
+    "id": "word-083",
+    "level": "easy",
+    "hint": "Transport",
+    "word": "TRUCK",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": ["THUNK", "TRUNK"]
+  },
+  {
+    "id": "word-084",
+    "level": "easy",
+    "hint": "Transport",
+    "word": "PLANE",
+    "also": ["PANEL", "PENAL", "PLENA"],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-085",
+    "level": "easy",
+    "hint": "Transport",
+    "word": "CANOE",
+    "also": ["OCEAN"],
+    "gaps": [1, 4],
+    "fits": ["CANON"]
+  },
+  {
+    "id": "word-086",
+    "level": "easy",
+    "hint": "Clothing",
+    "word": "SHOE",
+    "also": ["HOES", "HOSE"],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-087",
+    "level": "easy",
+    "hint": "Clothing",
+    "word": "SOCK",
+    "also": [],
+    "gaps": [3],
+    "fits": ["SOCA", "SOCS"]
+  },
+  {
+    "id": "word-088",
+    "level": "easy",
+    "hint": "Clothing",
+    "word": "COAT",
+    "also": ["ATOC", "OCTA", "TACO"],
+    "gaps": [1],
+    "fits": ["CHAT", "CLAT"]
+  },
+  {
+    "id": "word-089",
+    "level": "easy",
+    "hint": "Clothing",
+    "word": "SHIRT",
+    "also": [],
+    "gaps": [2],
+    "fits": ["SHART", "SHORT"]
+  },
+  {
+    "id": "word-090",
+    "level": "easy",
+    "hint": "Clothing",
+    "word": "SKIRT",
+    "also": ["STIRK"],
+    "gaps": [3],
+    "fits": ["SKINT"]
+  },
+  {
+    "id": "word-091",
+    "level": "easy",
+    "hint": "Clothing",
+    "word": "SCARF",
+    "also": [],
+    "gaps": [2],
+    "fits": ["SCURF"]
+  },
+  {
+    "id": "word-092",
+    "level": "easy",
+    "hint": "Clothing",
+    "word": "BELT",
+    "also": ["BLET"],
+    "gaps": [1],
+    "fits": ["BOLT"]
+  },
+  {
+    "id": "word-093",
+    "level": "easy",
+    "hint": "Job",
+    "word": "CHEF",
+    "also": [],
+    "gaps": [2],
+    "fits": []
+  },
+  {
+    "id": "word-094",
+    "level": "easy",
+    "hint": "Job",
+    "word": "NURSE",
+    "also": ["RUNES"],
+    "gaps": [1, 4],
+    "fits": []
+  },
+  {
+    "id": "word-095",
+    "level": "easy",
+    "hint": "Job",
+    "word": "JUDGE",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": []
+  },
+  {
+    "id": "word-096",
+    "level": "easy",
+    "hint": "Job",
+    "word": "PILOT",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": ["PALET"]
+  },
+  {
+    "id": "word-097",
+    "level": "easy",
+    "hint": "Job",
+    "word": "BAKER",
+    "also": ["BRAKE", "BREAK", "KEBAR"],
+    "gaps": [1, 3],
+    "fits": ["BIKER"]
+  },
+  {
+    "id": "word-098",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "MONKEY",
+    "also": [],
+    "gaps": [1, 4, 5],
+    "fits": ["MINKES"]
+  },
+  {
+    "id": "word-099",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "RABBIT",
+    "also": [],
+    "gaps": [2, 4],
+    "fits": ["RABBET"]
+  },
+  {
+    "id": "word-100",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "TURTLE",
+    "also": [],
+    "gaps": [1, 4],
+    "fits": []
+  },
+  {
+    "id": "word-101",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "PARROT",
+    "also": ["RAPTOR"],
+    "gaps": [1, 2, 4],
+    "fits": ["PEARST", "PIERST"]
+  },
+  {
+    "id": "word-102",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "DONKEY",
+    "also": [],
+    "gaps": [2, 4],
+    "fits": []
+  },
+  {
+    "id": "word-103",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "JAGUAR",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": ["JAGRAS", "JIGSAW"]
+  },
+  {
+    "id": "word-104",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "GIRAFFE",
+    "also": ["RIFFAGE"],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-105",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "DOLPHIN",
+    "also": [],
+    "gaps": [2, 4, 6],
+    "fits": []
+  },
+  {
+    "id": "word-106",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "PENGUIN",
+    "also": [],
+    "gaps": [2, 4, 6],
+    "fits": []
+  },
+  {
+    "id": "word-107",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "OSTRICH",
+    "also": ["CHORIST"],
+    "gaps": [2, 4, 6],
+    "fits": ["OSTRACA"]
+  },
+  {
+    "id": "word-108",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "GORILLA",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-109",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "LEOPARD",
+    "also": ["PAROLED", "PRELOAD"],
+    "gaps": [1, 3, 5],
+    "fits": ["LEOTARD"]
+  },
+  {
+    "id": "word-110",
+    "level": "medium",
+    "hint": "Animal",
+    "word": "HAMSTER",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-111",
+    "level": "medium",
+    "hint": "Food",
+    "word": "BANANA",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": ["BANING", "BONING"]
+  },
+  {
+    "id": "word-112",
+    "level": "medium",
+    "hint": "Food",
+    "word": "CARROT",
+    "also": ["TROCAR"],
+    "gaps": [1, 4],
+    "fits": ["CARRAT"]
+  },
+  {
+    "id": "word-113",
+    "level": "medium",
+    "hint": "Food",
+    "word": "TOMATO",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": ["TEMPTS"]
+  },
+  {
+    "id": "word-114",
+    "level": "medium",
+    "hint": "Food",
+    "word": "CHEESE",
+    "also": ["EECHES"],
+    "gaps": [2, 4],
+    "fits": []
+  },
+  {
+    "id": "word-115",
+    "level": "medium",
+    "hint": "Food",
+    "word": "BUTTER",
+    "also": [],
+    "gaps": [2, 4],
+    "fits": ["BUNTER", "BUSTER"]
+  },
+  {
+    "id": "word-116",
+    "level": "medium",
+    "hint": "Food",
+    "word": "ORANGE",
+    "also": ["ONAGER"],
+    "gaps": [1, 2, 4],
+    "fits": []
+  },
+  {
+    "id": "word-117",
+    "level": "medium",
+    "hint": "Food",
+    "word": "PEPPER",
+    "also": [],
+    "gaps": [1, 4],
+    "fits": ["POPPER"]
+  },
+  {
+    "id": "word-118",
+    "level": "medium",
+    "hint": "Food",
+    "word": "CHICKEN",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-119",
+    "level": "medium",
+    "hint": "Food",
+    "word": "AVOCADO",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-120",
+    "level": "medium",
+    "hint": "Food",
+    "word": "PAPAYA",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-121",
+    "level": "medium",
+    "hint": "Food",
+    "word": "POTATO",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": ["PETITE"]
+  },
+  {
+    "id": "word-122",
+    "level": "medium",
+    "hint": "Food",
+    "word": "BISCUIT",
+    "also": [],
+    "gaps": [1, 3, 6],
+    "fits": []
+  },
+  {
+    "id": "word-123",
+    "level": "medium",
+    "hint": "Food",
+    "word": "PANCAKE",
+    "also": [],
+    "gaps": [1, 3, 6],
+    "fits": []
+  },
+  {
+    "id": "word-124",
+    "level": "medium",
+    "hint": "Nigerian food",
+    "word": "JOLLOF",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": ["JELLOS", "JOLLOP"]
+  },
+  {
+    "id": "word-125",
+    "level": "medium",
+    "hint": "Nigerian clothing",
+    "word": "AGBADA",
+    "also": ["DAGABA"],
+    "gaps": [1, 3, 5],
+    "fits": ["ALBEDO", "AUBADE"]
+  },
+  {
+    "id": "word-126",
+    "level": "medium",
+    "hint": "Country",
+    "word": "NIGERIA",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-127",
+    "level": "medium",
+    "hint": "Country",
+    "word": "BRAZIL",
+    "also": [],
+    "gaps": [1, 4],
+    "fits": []
+  },
+  {
+    "id": "word-128",
+    "level": "medium",
+    "hint": "Country",
+    "word": "FRANCE",
+    "also": [],
+    "gaps": [1, 3],
+    "fits": ["FIANCE"]
+  },
+  {
+    "id": "word-129",
+    "level": "medium",
+    "hint": "Country",
+    "word": "CANADA",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": ["CANIDS"]
+  },
+  {
+    "id": "word-130",
+    "level": "medium",
+    "hint": "Country",
+    "word": "SENEGAL",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-131",
+    "level": "medium",
+    "hint": "Country",
+    "word": "MEXICO",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-132",
+    "level": "medium",
+    "hint": "Country",
+    "word": "GERMANY",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": ["GARBAGY"]
+  },
+  {
+    "id": "word-133",
+    "level": "medium",
+    "hint": "Country",
+    "word": "JAMAICA",
+    "also": [],
+    "gaps": [1, 3, 6],
+    "fits": []
+  },
+  {
+    "id": "word-134",
+    "level": "medium",
+    "hint": "Body",
+    "word": "FINGER",
+    "also": ["FRINGE"],
+    "gaps": [1, 4],
+    "fits": []
+  },
+  {
+    "id": "word-135",
+    "level": "medium",
+    "hint": "Body",
+    "word": "STOMACH",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-136",
+    "level": "medium",
+    "hint": "Body",
+    "word": "EYEBROW",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-137",
+    "level": "medium",
+    "hint": "Body",
+    "word": "KIDNEY",
+    "also": ["DINKEY"],
+    "gaps": [1, 3, 4],
+    "fits": []
+  },
+  {
+    "id": "word-138",
+    "level": "medium",
+    "hint": "Home",
+    "word": "WINDOW",
+    "also": [],
+    "gaps": [1, 2, 4],
+    "fits": []
+  },
+  {
+    "id": "word-139",
+    "level": "medium",
+    "hint": "Home",
+    "word": "KETTLE",
+    "also": [],
+    "gaps": [2, 5],
+    "fits": []
+  },
+  {
+    "id": "word-140",
+    "level": "medium",
+    "hint": "Home",
+    "word": "PILLOW",
+    "also": [],
+    "gaps": [1, 3, 4],
+    "fits": []
+  },
+  {
+    "id": "word-141",
+    "level": "medium",
+    "hint": "Home",
+    "word": "MIRROR",
+    "also": [],
+    "gaps": [1, 2, 4],
+    "fits": ["MARRER"]
+  },
+  {
+    "id": "word-142",
+    "level": "medium",
+    "hint": "Home",
+    "word": "BLANKET",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": ["BRACKET"]
+  },
+  {
+    "id": "word-143",
+    "level": "medium",
+    "hint": "Home",
+    "word": "CARPET",
+    "also": ["PREACT"],
+    "gaps": [1, 2, 4],
+    "fits": ["COMPOT", "COWPAT"]
+  },
+  {
+    "id": "word-144",
+    "level": "medium",
+    "hint": "Home",
+    "word": "CURTAIN",
+    "also": ["TURACIN"],
+    "gaps": [2, 4, 6],
+    "fits": ["CURTAIL"]
+  },
+  {
+    "id": "word-145",
+    "level": "medium",
+    "hint": "Nature",
+    "word": "FOREST",
+    "also": ["FETORS", "FORTES", "FOSTER", "SOFTER"],
+    "gaps": [1, 3, 5],
+    "fits": ["FEREST"]
+  },
+  {
+    "id": "word-146",
+    "level": "medium",
+    "hint": "Nature",
+    "word": "ISLAND",
+    "also": [],
+    "gaps": [2, 4, 5],
+    "fits": ["ISTANA"]
+  },
+  {
+    "id": "word-147",
+    "level": "medium",
+    "hint": "Nature",
+    "word": "VALLEY",
+    "also": [],
+    "gaps": [1, 2, 4],
+    "fits": ["VAULTY", "VOLLEY"]
+  },
+  {
+    "id": "word-148",
+    "level": "medium",
+    "hint": "Nature",
+    "word": "DESERT",
+    "also": ["DETERS", "RESTED"],
+    "gaps": [1, 4],
+    "fits": []
+  },
+  {
+    "id": "word-149",
+    "level": "medium",
+    "hint": "Nature",
+    "word": "VOLCANO",
+    "also": [],
+    "gaps": [1, 4, 6],
+    "fits": ["VULCANS"]
+  },
+  {
+    "id": "word-150",
+    "level": "medium",
+    "hint": "Nature",
+    "word": "THUNDER",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-151",
+    "level": "medium",
+    "hint": "Nature",
+    "word": "RAINBOW",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-152",
+    "level": "medium",
+    "hint": "Sport",
+    "word": "TENNIS",
+    "also": ["SENNIT", "SINNET"],
+    "gaps": [2, 5],
+    "fits": []
+  },
+  {
+    "id": "word-153",
+    "level": "medium",
+    "hint": "Sport",
+    "word": "SOCCER",
+    "also": ["ESCROC", "RECCOS"],
+    "gaps": [1, 4],
+    "fits": ["SICCAR", "SUCCOR"]
+  },
+  {
+    "id": "word-154",
+    "level": "medium",
+    "hint": "Sport",
+    "word": "BOXING",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-155",
+    "level": "medium",
+    "hint": "Sport",
+    "word": "CRICKET",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": ["CLICKET"]
+  },
+  {
+    "id": "word-156",
+    "level": "medium",
+    "hint": "Sport",
+    "word": "HOCKEY",
+    "also": ["CHOKEY"],
+    "gaps": [1, 3, 4],
+    "fits": ["HACKLY", "HICKEY"]
+  },
+  {
+    "id": "word-157",
+    "level": "medium",
+    "hint": "Sport",
+    "word": "CYCLING",
+    "also": [],
+    "gaps": [1, 4, 6],
+    "fits": ["CYCLINS", "CYCLONE"]
+  },
+  {
+    "id": "word-158",
+    "level": "medium",
+    "hint": "Music",
+    "word": "GUITAR",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": ["GAITAS"]
+  },
+  {
+    "id": "word-159",
+    "level": "medium",
+    "hint": "Music",
+    "word": "VIOLIN",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-160",
+    "level": "medium",
+    "hint": "Music",
+    "word": "TRUMPET",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-161",
+    "level": "medium",
+    "hint": "Music",
+    "word": "CHORUS",
+    "also": [],
+    "gaps": [1, 5],
+    "fits": []
+  },
+  {
+    "id": "word-162",
+    "level": "medium",
+    "hint": "Job",
+    "word": "DOCTOR",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": ["DACRON", "DECKOS"]
+  },
+  {
+    "id": "word-163",
+    "level": "medium",
+    "hint": "Job",
+    "word": "LAWYER",
+    "also": [],
+    "gaps": [1, 4, 5],
+    "fits": []
+  },
+  {
+    "id": "word-164",
+    "level": "medium",
+    "hint": "Job",
+    "word": "FARMER",
+    "also": ["FRAMER"],
+    "gaps": [2, 4, 5],
+    "fits": ["FARMED"]
+  },
+  {
+    "id": "word-165",
+    "level": "medium",
+    "hint": "Job",
+    "word": "TEACHER",
+    "also": ["CHEATER", "HECTARE", "RECHATE", "RECHEAT", "RETEACH"],
+    "gaps": [1, 3, 5],
+    "fits": ["TRASHER"]
+  },
+  {
+    "id": "word-166",
+    "level": "medium",
+    "hint": "Job",
+    "word": "PAINTER",
+    "also": ["PERTAIN", "REPAINT"],
+    "gaps": [2, 3, 5],
+    "fits": ["PARITOR"]
+  },
+  {
+    "id": "word-167",
+    "level": "medium",
+    "hint": "Job",
+    "word": "DENTIST",
+    "also": ["DISTENT", "STINTED"],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-168",
+    "level": "medium",
+    "hint": "Job",
+    "word": "TAILOR",
+    "also": ["RIALTO"],
+    "gaps": [1, 3],
+    "fits": []
+  },
+  {
+    "id": "word-169",
+    "level": "medium",
+    "hint": "Job",
+    "word": "BARBER",
+    "also": [],
+    "gaps": [1, 4],
+    "fits": []
+  },
+  {
+    "id": "word-170",
+    "level": "medium",
+    "hint": "Transport",
+    "word": "BICYCLE",
+    "also": [],
+    "gaps": [1, 3, 5],
+    "fits": []
+  },
+  {
+    "id": "word-171",
+    "level": "medium",
+    "hint": "Transport",
+    "word": "ROCKET",
+    "also": [],
+    "gaps": [1, 2, 4],
+    "fits": ["RACKET", "RICKET"]
+  },
+  {
+    "id": "word-172",
+    "level": "medium",
+    "hint": "Transport",
+    "word": "TRACTOR",
+    "also": [],
+    "gaps": [1, 4, 6],
+    "fits": []
+  },
+  {
+    "id": "word-173",
+    "level": "medium",
+    "hint": "Clothing",
+    "word": "JACKET",
+    "also": [],
+    "gaps": [1, 2, 4],
+    "fits": ["JUNKET"]
+  },
+  {
+    "id": "word-174",
+    "level": "medium",
+    "hint": "Clothing",
+    "word": "SANDAL",
+    "also": ["ALANDS"],
+    "gaps": [1, 4],
+    "fits": ["SENDAL"]
+  },
+  {
+    "id": "word-175",
+    "level": "medium",
+    "hint": "Clothing",
+    "word": "GLOVES",
+    "also": [],
+    "gaps": [2, 4, 5],
+    "fits": ["GLOVED", "GLOVER"]
+  },
+  {
+    "id": "word-176",
+    "level": "medium",
+    "hint": "Clothing",
+    "word": "JERSEY",
+    "also": [],
+    "gaps": [1, 4, 5],
+    "fits": []
+  },
+  {
+    "id": "word-177",
+    "level": "medium",
+    "hint": "Clothing",
+    "word": "SWEATER",
+    "also": [],
+    "gaps": [2, 4, 5],
+    "fits": ["SWEARER"]
+  },
+  {
+    "id": "word-178",
+    "level": "hard",
+    "hint": "Animal",
+    "word": "ELEPHANT",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": ["EYESHINE"]
+  },
+  {
+    "id": "word-179",
+    "level": "hard",
+    "hint": "Animal",
+    "word": "KANGAROO",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": ["KINKAJOU"]
+  },
+  {
+    "id": "word-180",
+    "level": "hard",
+    "hint": "Animal",
+    "word": "CROCODILE",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-181",
+    "level": "hard",
+    "hint": "Animal",
+    "word": "SQUIRREL",
+    "also": [],
+    "gaps": [1, 3, 4, 6],
+    "fits": []
+  },
+  {
+    "id": "word-182",
+    "level": "hard",
+    "hint": "Animal",
+    "word": "FLAMINGO",
+    "also": [],
+    "gaps": [1, 3, 5, 6],
+    "fits": []
+  },
+  {
+    "id": "word-183",
+    "level": "hard",
+    "hint": "Animal",
+    "word": "BUTTERFLY",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-184",
+    "level": "hard",
+    "hint": "Animal",
+    "word": "HEDGEHOG",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": ["HEDGEHOP", "HEDGEROW"]
+  },
+  {
+    "id": "word-185",
+    "level": "hard",
+    "hint": "Animal",
+    "word": "TORTOISE",
+    "also": ["ROOTIEST"],
+    "gaps": [1, 3, 5, 7],
+    "fits": ["TARBOOSH", "TARBOUSH"]
+  },
+  {
+    "id": "word-186",
+    "level": "hard",
+    "hint": "Animal",
+    "word": "PORCUPINE",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": ["PERFUSIVE"]
+  },
+  {
+    "id": "word-187",
+    "level": "hard",
+    "hint": "Animal",
+    "word": "CHAMELEON",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-188",
+    "level": "hard",
+    "hint": "Animal",
+    "word": "SCORPION",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": ["SNOWPLOW"]
+  },
+  {
+    "id": "word-189",
+    "level": "hard",
+    "hint": "Food",
+    "word": "PINEAPPLE",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-190",
+    "level": "hard",
+    "hint": "Food",
+    "word": "CHOCOLATE",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-191",
+    "level": "hard",
+    "hint": "Food",
+    "word": "SANDWICH",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-192",
+    "level": "hard",
+    "hint": "Food",
+    "word": "SPAGHETTI",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-193",
+    "level": "hard",
+    "hint": "Food",
+    "word": "PLANTAIN",
+    "also": ["PLAINANT"],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-194",
+    "level": "hard",
+    "hint": "Food",
+    "word": "CUCUMBER",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-195",
+    "level": "hard",
+    "hint": "Food",
+    "word": "BROCCOLI",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-196",
+    "level": "hard",
+    "hint": "Country",
+    "word": "CAMEROON",
+    "also": ["COENAMOR"],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-197",
+    "level": "hard",
+    "hint": "Country",
+    "word": "ETHIOPIA",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-198",
+    "level": "hard",
+    "hint": "Country",
+    "word": "AUSTRALIA",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-199",
+    "level": "hard",
+    "hint": "Country",
+    "word": "ARGENTINA",
+    "also": ["TANAGRINE"],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-200",
+    "level": "hard",
+    "hint": "Country",
+    "word": "PORTUGAL",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": ["PORTULAN", "PURPURAS"]
+  },
+  {
+    "id": "word-201",
+    "level": "hard",
+    "hint": "Country",
+    "word": "INDONESIA",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-202",
+    "level": "hard",
+    "hint": "Science",
+    "word": "ELECTRON",
+    "also": [],
+    "gaps": [1, 3, 4, 6],
+    "fits": []
+  },
+  {
+    "id": "word-203",
+    "level": "hard",
+    "hint": "Science",
+    "word": "MOLECULE",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-204",
+    "level": "hard",
+    "hint": "Science",
+    "word": "TELESCOPE",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-205",
+    "level": "hard",
+    "hint": "Science",
+    "word": "MAGNET",
+    "also": [],
+    "gaps": [1, 2, 4],
+    "fits": []
+  },
+  {
+    "id": "word-206",
+    "level": "hard",
+    "hint": "Science",
+    "word": "OXYGEN",
+    "also": [],
+    "gaps": [1, 3, 4],
+    "fits": []
+  },
+  {
+    "id": "word-207",
+    "level": "hard",
+    "hint": "Home",
+    "word": "TELEVISION",
+    "also": ["OLIVENITES"],
+    "gaps": [1, 3, 5, 9],
+    "fits": []
+  },
+  {
+    "id": "word-208",
+    "level": "hard",
+    "hint": "Home",
+    "word": "CUPBOARD",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-209",
+    "level": "hard",
+    "hint": "Home",
+    "word": "MATTRESS",
+    "also": ["SMARTEST", "SMATTERS"],
+    "gaps": [1, 4, 5, 7],
+    "fits": ["MATTRASS", "MOTTIEST"]
+  },
+  {
+    "id": "word-210",
+    "level": "hard",
+    "hint": "Home",
+    "word": "SAUCEPAN",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-211",
+    "level": "hard",
+    "hint": "Home",
+    "word": "UMBRELLA",
+    "also": ["UMBELLAR"],
+    "gaps": [1, 3, 5, 7],
+    "fits": ["UMBRELLO"]
+  },
+  {
+    "id": "word-212",
+    "level": "hard",
+    "hint": "Job",
+    "word": "ENGINEER",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": ["ENGENDER"]
+  },
+  {
+    "id": "word-213",
+    "level": "hard",
+    "hint": "Job",
+    "word": "SCIENTIST",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-214",
+    "level": "hard",
+    "hint": "Job",
+    "word": "ARCHITECT",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-215",
+    "level": "hard",
+    "hint": "Job",
+    "word": "MUSICIAN",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-216",
+    "level": "hard",
+    "hint": "Job",
+    "word": "JOURNALIST",
+    "also": [],
+    "gaps": [1, 3, 6, 8],
+    "fits": []
+  },
+  {
+    "id": "word-217",
+    "level": "hard",
+    "hint": "Job",
+    "word": "PHARMACIST",
+    "also": [],
+    "gaps": [1, 3, 5, 9],
+    "fits": []
+  },
+  {
+    "id": "word-218",
+    "level": "hard",
+    "hint": "Music",
+    "word": "SAXOPHONE",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-219",
+    "level": "hard",
+    "hint": "Music",
+    "word": "TROMBONE",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-220",
+    "level": "hard",
+    "hint": "Music",
+    "word": "KEYBOARD",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-221",
+    "level": "hard",
+    "hint": "Music",
+    "word": "CLARINET",
+    "also": [],
+    "gaps": [1, 3, 4, 6],
+    "fits": []
+  },
+  {
+    "id": "word-222",
+    "level": "hard",
+    "hint": "Music",
+    "word": "ORCHESTRA",
+    "also": ["CARTHORSE"],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-223",
+    "level": "hard",
+    "hint": "Sport",
+    "word": "BASKETBALL",
+    "also": [],
+    "gaps": [1, 3, 5, 9],
+    "fits": []
+  },
+  {
+    "id": "word-224",
+    "level": "hard",
+    "hint": "Sport",
+    "word": "VOLLEYBALL",
+    "also": [],
+    "gaps": [1, 3, 5, 9],
+    "fits": []
+  },
+  {
+    "id": "word-225",
+    "level": "hard",
+    "hint": "Sport",
+    "word": "BADMINTON",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-226",
+    "level": "hard",
+    "hint": "Sport",
+    "word": "MARATHON",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-227",
+    "level": "hard",
+    "hint": "Sport",
+    "word": "SWIMMING",
+    "also": [],
+    "gaps": [2, 3, 5, 7],
+    "fits": ["SWARMING"]
+  },
+  {
+    "id": "word-228",
+    "level": "hard",
+    "hint": "Sport",
+    "word": "WRESTLING",
+    "also": [],
+    "gaps": [1, 4, 6, 8],
+    "fits": []
+  },
+  {
+    "id": "word-229",
+    "level": "hard",
+    "hint": "Transport",
+    "word": "AIRPLANE",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-230",
+    "level": "hard",
+    "hint": "Transport",
+    "word": "HELICOPTER",
+    "also": [],
+    "gaps": [1, 3, 6, 8],
+    "fits": []
+  },
+  {
+    "id": "word-231",
+    "level": "hard",
+    "hint": "Transport",
+    "word": "MOTORBIKE",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-232",
+    "level": "hard",
+    "hint": "Transport",
+    "word": "SUBMARINE",
+    "also": ["SEMIURBAN"],
+    "gaps": [1, 3, 6, 8],
+    "fits": []
+  },
+  {
+    "id": "word-233",
+    "level": "hard",
+    "hint": "Nature",
+    "word": "WATERFALL",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-234",
+    "level": "hard",
+    "hint": "Nature",
+    "word": "EARTHQUAKE",
+    "also": [],
+    "gaps": [1, 3, 5, 9],
+    "fits": []
+  },
+  {
+    "id": "word-235",
+    "level": "hard",
+    "hint": "Nature",
+    "word": "HURRICANE",
+    "also": ["RAUNCHIER"],
+    "gaps": [1, 3, 5, 7],
+    "fits": ["HERMITAGE"]
+  },
+  {
+    "id": "word-236",
+    "level": "hard",
+    "hint": "Nature",
+    "word": "MOUNTAIN",
+    "also": ["ANTIMUON"],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-237",
+    "level": "hard",
+    "hint": "Nature",
+    "word": "LIGHTNING",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-238",
+    "level": "hard",
+    "hint": "Body",
+    "word": "SHOULDER",
+    "also": [],
+    "gaps": [1, 2, 4, 6],
+    "fits": ["SMOULDER"]
+  },
+  {
+    "id": "word-239",
+    "level": "hard",
+    "hint": "Body",
+    "word": "SKELETON",
+    "also": [],
+    "gaps": [1, 3, 5, 7],
+    "fits": []
+  },
+  {
+    "id": "word-240",
+    "level": "hard",
+    "hint": "Body",
+    "word": "EYELASHES",
+    "also": [],
+    "gaps": [1, 4, 6, 8],
+    "fits": []
+  }
+]

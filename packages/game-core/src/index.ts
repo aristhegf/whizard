@@ -44,6 +44,7 @@ export {
 } from "./roomCode";
 export {
   applyGameAction,
+  chooseGame,
   configureGame,
   defaultGameConfig,
   gameViewFor,
@@ -63,7 +64,7 @@ export {
   type RoomPhase,
   type RosterEntry,
 } from "./session";
-export { GAMES, GAME_IDS, gameModule, type GameId } from "./games/registry";
+export { GAMES, GAME_IDS, gameModule, isGameId, type GameId } from "./games/registry";
 export type {
   ContentRequest,
   GameModule,
@@ -115,3 +116,58 @@ export {
   type QuizSettings,
   type QuizVariant,
 } from "./games/quiz/settings";
+export {
+  ROUNDS_AUTO_ADVANCE_MS,
+  ROUNDS_COUNTDOWN_MS,
+  SOLVE_FLOOR,
+  WRONG_TRY_PENALTY,
+  solvePoints,
+  type RoundOutcome,
+  type RoundResult,
+  type RoundsAction,
+  type RoundsStage,
+  type RoundsView,
+} from "./games/rounds/rounds";
+export {
+  DEFAULT_WORD_RUSH_SETTINGS,
+  WORD_LEVELS,
+  WORD_RUSH_ROUNDS,
+  WORD_RUSH_TIME_LIMITS_SECONDS,
+  levelsFor,
+  wordRushSettingsSchema,
+  type WordEntry,
+  type WordLevel,
+  type WordRushSettings,
+  type WordsContentRequest,
+} from "./games/wordRush/settings";
+export {
+  GUESS_MAX_LENGTH,
+  WORD_POINTS,
+  WORD_RUSH_MAX_MISSES,
+  normalizeGuess,
+  wordRushGame,
+  type WordPuzzleView,
+  type WordReveal,
+  type WordRushState,
+  type WordRushView,
+} from "./games/wordRush/wordRush";
+export {
+  DEFAULT_SPOT_IT_SETTINGS,
+  SPOT_IT_ROUNDS,
+  SPOT_IT_TIME_LIMITS_SECONDS,
+  spotItSettingsSchema,
+  type SpotItSettings,
+} from "./games/spotIt/settings";
+export {
+  SPOT_IT_KINDS,
+  SPOT_IT_MAX_MISSES,
+  SPOT_IT_MAX_SIZE,
+  SPOT_IT_MIN_SIZE,
+  spotItGame,
+  spotItPuzzles,
+  type SpotItKind,
+  type SpotItPuzzleView,
+  type SpotItReveal,
+  type SpotItState,
+  type SpotItView,
+} from "./games/spotIt/spotIt";

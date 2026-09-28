@@ -1,4 +1,4 @@
-import type { QuizCategory } from "@whizard/game-core";
+import type { GameId, QuizCategory } from "@whizard/game-core";
 
 export type GameGroup = "quiz" | "word" | "puzzle" | "skill" | "social" | "party" | "couples";
 
@@ -22,9 +22,14 @@ export interface CatalogGame {
   art: string;
   /** Top and bottom of the card's colour wash. */
   colors: [string, string];
-  /** Where the card goes, or null while the game is still being made. */
+  /** Where the card goes, or null if it opens a room straight away or is still being made. */
   href: string | null;
+  /** The game a room opens with, for games without a page of their own. */
+  starts?: GameId;
 }
+
+/** Whether people can play it yet. */
+export const isPlayable = (game: CatalogGame) => game.href !== null || !!game.starts;
 
 export const CATALOG: CatalogGame[] = [
   {
@@ -40,12 +45,13 @@ export const CATALOG: CatalogGame[] = [
   {
     id: "word-rush",
     name: "Word Rush",
-    description: "Unscramble, find and build words fast",
-    players: "2–20 players",
+    description: "Unscramble and fill in words fast",
+    players: "1–20 players",
     groups: ["word"],
     art: "/art/games/word-rush.webp",
     colors: ["#6b45ff", "#23145a"],
     href: null,
+    starts: "word-rush",
   },
   {
     id: "memory",
@@ -70,12 +76,13 @@ export const CATALOG: CatalogGame[] = [
   {
     id: "spot-it",
     name: "Spot It",
-    description: "Find the difference and spot the odd one",
-    players: "2–12 players",
+    description: "Spot the odd one out before time runs out",
+    players: "1–20 players",
     groups: ["puzzle", "skill"],
     art: "/art/games/spot-it.webp",
     colors: ["#3ccc45", "#0d3230"],
     href: null,
+    starts: "spot-it",
   },
   {
     id: "most-likely-to",

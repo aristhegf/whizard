@@ -9,7 +9,7 @@ import {
 import type { QuizDefaults, SiteSettings } from "@whizard/protocol";
 import { useState } from "react";
 import { fetchAdminGames, updateSettings } from "../api";
-import { CATALOG } from "../catalog";
+import { CATALOG, isPlayable } from "../catalog";
 import { formatNumber } from "../format";
 import { useLoaded } from "../ui/common";
 import { KpiTiles, PanelHead } from "./parts";
@@ -42,7 +42,7 @@ export function Games() {
   }
   const settings = data?.settings;
   const played = (id: string) => data?.games.find((g) => g.id === id);
-  const live = CATALOG.filter((g) => g.href !== null);
+  const live = CATALOG.filter(isPlayable);
   const on = live.filter((g) => !settings?.gamesOff.includes(g.id));
   const topicsOn = QUIZ_CATEGORIES.filter((c) => !settings?.topicsOff.includes(c.id));
   const top = [...(data?.topics ?? [])].sort((a, b) => b.last30 - a.last30)[0];
@@ -102,7 +102,7 @@ export function Games() {
         <ul className="game-admin-list">
           {CATALOG.map((game) => {
             const stats = played(game.id);
-            const playable = game.href !== null;
+            const playable = isPlayable(game);
             const isOn = playable && !settings?.gamesOff.includes(game.id);
             return (
               <li key={game.id} className="game-admin-row">

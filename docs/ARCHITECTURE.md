@@ -2,7 +2,7 @@
 
 Whizard is a free, real-time platform for playing games with friends: a couple on a long-distance call, or a room full of people on game night. Players join a room with a nickname and a room code, everyone gets the same challenge at the same time, and results appear live.
 
-Quiz is the launch game. The platform is built so that more games (Word Rush, Memory, Reaction, social and party games) plug into the same room system. The full list is in [GAMES.md](GAMES.md).
+Quiz was the launch game, followed by Word Rush and Spot It. The platform is built so that more games (Memory, Reaction, social and party games) plug into the same room system. The full list is in [GAMES.md](GAMES.md).
 
 This document covers the system design, the key decisions behind it, and the order we build it in.
 
@@ -86,7 +86,7 @@ interface GameModule<Settings, Content, State, Action, View> {
   maxPlayers: number;
   settingsSchema: ZodType<Settings>; // what the host can choose in the lobby
   actionSchema: ZodType<Action>; // what a player can send during the game
-  contentNeeded(settings: Settings): ContentRequest; // e.g. 20 easy Bible questions
+  contentNeeded(settings: Settings): ContentRequest | null; // e.g. 20 easy Bible questions; null if it makes its own
   setup(args: { settings; players; content: Content; seed: number; now: number }): State;
   onAction(state: State, playerId: string, action: Action, now: number): State | Rejection;
   onPlayerLeft(state: State, playerId: string, now: number): State;
@@ -155,6 +155,33 @@ A mode for 3 or more players, with its own rules (`games/quiz/elimination.ts`). 
 
 Between phases there are short screens: each round's knock-outs (6 seconds, with "You're through" or "You're out, you finished 5th"), and the finalists' introduction (5 seconds). All the timing is on the server, in the game's state, so every player sees the same thing at the same time.
 
+## Word Rush and Spot It
+
+Both games share one set of rules (`games/rounds/rounds.ts`): everyone gets the same puzzles and the first one appears for everyone at the same moment, then each player works through them at their own pace, like a Classic or Speed quiz. A round ends when the player solves it, gives up, runs out of tries or runs out of time. The result shows for about 1.5 seconds, then the next round starts. Each game only brings its puzzles, how a guess is checked, and what a puzzle looks like to the player.
+
+- **Points.** A solve earns 50% to 100% of the round's points by speed, less 10% for each wrong try, and never less than 10%. Giving up, running out of tries or time earns nothing. Ties are broken by total time.
+- **Tries.** A wrong try is shown to the player (the word crossed out, or the tapped cell marked) and shakes the puzzle. A guess that couldn't be right, such as a word of the wrong length, is turned down without costing a try, and so is the same guess twice.
+- **Settings:** 5, 10 or 15 rounds, and the time per round.
+- **Results:** a podium and final rankings as in the quiz, and each player's own rounds: the word, or which grid, and how it went.
+
+### Word Rush
+
+Each round is a word with a hint (Animal, Food, Nigerian food, City…), shown one of two ways, chosen from the seed:
+
+- **Unscramble:** the letters in a shuffled order that never already spells an accepted word. Players type or tap the letter tiles.
+- **Missing letters:** the word with some letters hidden, never the first. Players type just the missing ones, which fill the gaps.
+
+Words get harder through the game: the first third easy, then medium, then hard. The words are in `packages/content/src/words/source.txt` (240 at launch: 97 easy, 80 medium, 63 hard). `pnpm --filter @whizard/content words` turns them into `words.json`, using an English word list (`an-array-of-english-words`, MIT) to work out two things for each word, so a real word is never marked wrong:
+
+- **Other words from the same letters** (LION: LOIN), which count when unscrambling.
+- **Which letters to hide:** 2 for easy words, 3 for medium, 4 for hard (at most half the word), spread out rather than in a run, picked so that at most two other words fit the pattern; those count too. Short words with too many look-alikes get fewer gaps.
+
+A room draws one word per round at that round's level, avoiding words the room used and ones its players have seen before, the same way as quiz questions.
+
+### Spot It
+
+Each round is a grid with exactly one cell that's different. Tap it. The grids are made from the room's seed, so everyone gets the same ones and nothing comes from the content bank. Four kinds take turns: look-alike emoji, look-alike letters (E and F, O and Q, 8 and B), a slightly different shade of a colour, and an arrow turned a little. Through the game the grid grows from 4 by 4 to 7 by 7, and the difference gets subtler: harder pairs, a closer shade (18% lighter or darker down to 7%) and a smaller turn (45° down to 12°). Three wrong taps lose the round. The result shows the grid again with the odd one marked.
+
 ## Room lifecycle
 
 ```mermaid
@@ -176,7 +203,7 @@ stateDiagram-v2
 - **Cleanup** runs from a Durable Object alarm. A room is deleted 30 minutes after the last player disconnects.
 - **Room settings** belong to the host: the most players the room takes (2 to 20) and whether late joiners can enter a running game.
 - **Limits:** up to 20 players per room, nicknames up to 20 characters (emoji welcome), unique within the room. Each player picks an avatar from a built-in set.
-- **Rooms can be opened with a game already set up**, such as a topic picked on the Quiz Topics page.
+- **Rooms can be opened with a game already set up**, such as a topic picked on the Quiz Topics page, or Word Rush or Spot It from their cards on the Games page. In the lobby the host can switch to another game, which starts from that game's settings.
 
 ## Real-time protocol
 
@@ -187,6 +214,7 @@ JSON messages over one WebSocket per player. Every message has a `type` and is v
 | `join { protocolVersion, nickname, avatar?, guestId?, sessionToken? }` | Join, or rejoin with the token from an earlier `welcome`            |
 | `leave {}`                                                             | Leave the room for good                                             |
 | `ping { t }`                                                           | Measure round-trip time and clock offset                            |
+| `chooseGame { game }`                                                  | Host switches the room to another game in the lobby                 |
 | `configure { settings }`                                               | Host changes the game settings in the lobby                         |
 | `roomSettings { maxPlayers?, lateJoin? }`                              | Host changes who can join                                           |
 | `start {}`                                                             | Host starts a game, or plays again from the results                 |
@@ -236,7 +264,7 @@ A correct answer earns between 50% and 100% of the base points, depending on spe
 
 Game content is prepared ahead of time and stored, not written while players wait. That keeps games starting instantly, keeps the cost fixed however many people play, and means everything has been checked before anyone sees it.
 
-Each game that needs content gets its own set: quiz questions first, later word lists (Word Rush), group sets (Connections), and prompts for the social games (Most Likely To, Would You Rather, Predict Me).
+Each game that needs content gets its own set: quiz questions first, then Word Rush's words (see [Word Rush](#word-rush)), later group sets (Connections) and prompts for the social games (Most Likely To, Would You Rather, Predict Me).
 
 ### Where questions live
 
@@ -396,9 +424,9 @@ Sounds are made in the browser with the Web Audio API (`apps/web/src/sounds.ts`)
 
 ## Canvas games (after launch)
 
-Jigsaw, Spot It, Reaction and Draw & Guess use **Phaser**, loaded only when one of those games starts.
+Jigsaw, Reaction and Draw & Guess use **Phaser**, loaded only when one of those games starts. Spot It turned out not to need it: its grids are plain buttons.
 
-- **Identical boards:** the server sends a seed, and every player's jigsaw pieces or Spot It grid are generated from it, so everyone gets the same challenge.
+- **Identical boards:** every player's jigsaw pieces are generated from the room's seed, as Spot It's grids are, so everyone gets the same challenge.
 - **Draw & Guess** sends the drawer's strokes in small batches through the room to the other players, who redraw them as they arrive.
 - **Images** come from a curated set, or the host uploads one. Uploads are resized in the browser, stored in R2 under the room, and deleted when the room expires.
 

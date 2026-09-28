@@ -1,4 +1,4 @@
-import { createRoomState } from "@whizard/game-core";
+import { createRoomState, defaultGameConfig } from "@whizard/game-core";
 import { describe, expect, it } from "vitest";
 import { addMonths } from "./adminPayments";
 import { newRoomSettings } from "./gameRules";
@@ -32,6 +32,19 @@ describe("new room settings", () => {
     };
     expect(settings.count).toBe(10);
     expect(["bible", "music"]).not.toContain(settings.category);
+  });
+
+  it("leave the quiz defaults out of other games", () => {
+    const site = { ...DEFAULT_SETTINGS, quizDefaults: { count: 15 } };
+    const wordRush = { ...room(), game: defaultGameConfig("word-rush") };
+    expect(newRoomSettings(wordRush, site, undefined)).toEqual({
+      rounds: 10,
+      timeLimitSeconds: 30,
+    });
+    expect(newRoomSettings(wordRush, site, { rounds: 5, colour: "red" })).toEqual({
+      rounds: 5,
+      timeLimitSeconds: 30,
+    });
   });
 });
 

@@ -28,10 +28,10 @@ export function PrivacyScreen() {
             other players’ history still makes sense.
           </p>
           <p>
-            So you don’t get the same questions again, the ID of each question you’re asked is kept
-            with that random ID (or your account, if you have one) for 60 days, then deleted. If you
-            report a question, the report (just the reason you picked) is kept with the same ID for
-            up to a year, so each person counts once.
+            So you don’t get the same questions again, the ID of each question you’re asked (and
+            each Word Rush word) is kept with that random ID (or your account, if you have one) for
+            60 days, then deleted. If you report a question, the report (just the reason you picked)
+            is kept with the same ID for up to a year, so each person counts once.
           </p>
 
           <h2>With an account</h2>

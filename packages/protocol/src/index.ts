@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const PROTOCOL_VERSION = 7;
+export const PROTOCOL_VERSION = 8;
 
 /** The most a player may send in one message. Server messages can be far bigger: a finished
  * game's review or a full lobby easily passes this, so they have their own, looser cap. */
@@ -69,6 +69,7 @@ export const clientMessageSchema = z.discriminatedUnion("type", [
   }),
   z.object({ type: z.literal("leave") }),
   z.object({ type: z.literal("ping"), t: z.number() }),
+  z.object({ type: z.literal("chooseGame"), game: z.string().max(32) }),
   z.object({ type: z.literal("configure"), settings: z.unknown() }),
   z.object({
     type: z.literal("roomSettings"),

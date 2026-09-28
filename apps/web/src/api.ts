@@ -1,4 +1,4 @@
-import type { QuizCategory, QuizDifficulty } from "@whizard/game-core";
+import type { GameId, QuizCategory, QuizDifficulty } from "@whizard/game-core";
 import type {
   ActivityItem,
   AdminAnalytics,
@@ -34,11 +34,15 @@ import { guestId } from "./storage";
 export class ServerRefusal extends Error {}
 
 /** Makes a room, optionally with game settings already chosen (such as a topic). */
-export async function createRoom(settings?: Record<string, unknown>): Promise<string> {
+/** Makes a room for `game` (the quiz if not given), optionally with some of its settings. */
+export async function createRoom(
+  settings?: Record<string, unknown>,
+  game?: GameId,
+): Promise<string> {
   const response = await fetch("/api/rooms", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(settings ? { settings } : {}),
+    body: JSON.stringify({ ...(settings && { settings }), ...(game && { game }) }),
   });
   if (!response.ok) {
     const refusal = (await response.json().catch(() => null)) as {

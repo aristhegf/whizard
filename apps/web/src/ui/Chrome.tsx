@@ -1,5 +1,6 @@
 import { StatefulButton, type ButtonState } from "@/components/motion/button/stateful";
 import { Tooltip } from "@/components/motion/tooltip";
+import type { GameId } from "@whizard/game-core";
 import { useState, type ReactNode } from "react";
 import { useAccount } from "../account";
 import { createRoom, ServerRefusal } from "../api";
@@ -26,8 +27,8 @@ export function Brand() {
 }
 
 /** Opens a new room and goes to its lobby. */
-export async function startRoom(settings?: Record<string, unknown>) {
-  navigate(roomPath(await createRoom(settings)));
+export async function startRoom(settings?: Record<string, unknown>, game?: GameId) {
+  navigate(roomPath(await createRoom(settings, game)));
 }
 
 const CREATE_FAILED = "Couldn’t create a room. Check your connection and try again.";

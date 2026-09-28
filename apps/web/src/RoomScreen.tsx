@@ -5,6 +5,8 @@ import {
   QUIZ_CATEGORIES,
   QUIZ_VARIANTS,
   type AnyQuizView,
+  type SpotItView,
+  type WordRushView,
 } from "@whizard/game-core";
 import { AVATAR_IDS } from "@whizard/protocol";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -17,8 +19,15 @@ import { SlideActionButton } from "@/components/motion/slide-action-button";
 import { Tooltip } from "@/components/motion/tooltip";
 import { useAccount } from "./account";
 import { PingFriends } from "./FriendsScreen";
+import { CATALOG, isPlayable } from "./catalog";
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
+import { RoundsScreen } from "./games/rounds/RoundsScreen";
+import {
+  RoundsSettingsRows,
+  isRoundsGame,
+  parseRoundsSettings,
+} from "./games/rounds/RoundsSettingsRows";
 import { Notice } from "./Notice";
 import type { RoomClient, RoomClientState, RoomSnapshot } from "./roomClient";
 import { navigate, roomPath } from "./router";
@@ -47,7 +56,7 @@ export function RoomScreen({ code }: { code: string }) {
   const joined = !!(state.playerId && room);
   const inGame = joined && room!.phase !== "lobby" && !!state.game;
 
-  const view = inGame ? (state.game as AnyQuizView) : null;
+  const view = inGame ? (state.game as AnyQuizView | WordRushView | SpotItView) : null;
   const stage = view?.stage.kind ?? null;
   // Leaving mid-game can't be undone; in Elimination only while you're still in it.
   const stillIn =
@@ -59,7 +68,17 @@ export function RoomScreen({ code }: { code: string }) {
       stage === "answer" ||
       stage === "reveal" ||
       stage === "cut" ||
-      stage === "final");
+      stage === "final" ||
+      stage === "puzzle" ||
+      stage === "result");
+  const gameProps = {
+    client,
+    room: room!,
+    playerId: state.playerId!,
+    isHost: room?.hostId === state.playerId,
+    latency: <Latency state={state} />,
+    onQuit: () => leave("/"),
+  };
 
   const leave = (to: string) => {
     if (midGame && !window.confirm("Leave this game? You can’t rejoin it.")) return;
@@ -70,16 +89,10 @@ export function RoomScreen({ code }: { code: string }) {
   return (
     <div className="page room-page">
       <h1 className="sr-only">Whizard room {code}</h1>
-      {inGame ? (
-        <QuizScreen
-          view={state.game as AnyQuizView}
-          client={client}
-          room={room!}
-          playerId={state.playerId!}
-          isHost={room!.hostId === state.playerId}
-          latency={<Latency state={state} />}
-          onQuit={() => leave("/")}
-        />
+      {view && view.game !== "quiz" ? (
+        <RoundsScreen {...gameProps} view={view} />
+      ) : view ? (
+        <QuizScreen {...gameProps} view={view} />
       ) : joined ? (
         <Lobby
           client={client}
@@ -293,7 +306,10 @@ function Lobby({
   onLeave: (to: string) => void;
 }) {
   const isHost = room.hostId === playerId;
-  const settings = parseQuizSettings(room.game.settings);
+  const gameId = room.game.id;
+  const game = CATALOG.find((g) => g.id === gameId);
+  const settings = gameId === "quiz" ? parseQuizSettings(room.game.settings) : null;
+  const rounds = isRoundsGame(gameId) ? parseRoundsSettings(gameId, room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
   const needMore =
@@ -348,11 +364,18 @@ function Lobby({
         <section className="lobby-main">
           <div className="panel game-summary">
             <span className="summary-art">
-              <img src="/art/games/quiz.webp" alt="" />
+              <img src={game?.art ?? "/art/games/quiz.webp"} alt="" />
             </span>
             <div className="summary-text">
-              <h2 className="summary-title">Quiz</h2>
-              <span className="pill">{category?.name ?? "Quiz"}</span>
+              <h2 className="summary-title">{game?.name ?? "Quiz"}</h2>
+              <span className="pill">
+                {settings ? (category?.name ?? "Quiz") : (game?.description ?? "")}
+              </span>
+              {!isHost && rounds && (
+                <p className="summary muted small">
+                  {rounds.rounds} rounds · {rounds.timeLimitSeconds}s each
+                </p>
+              )}
               {!isHost && settings && (
                 <p className="summary muted small">
                   {QUIZ_VARIANTS.find((v) => v.id === settings.variant)?.name} quiz ·{" "}
@@ -363,7 +386,7 @@ function Lobby({
                 </p>
               )}
             </div>
-            {isHost && (
+            {isHost && settings && (
               <Tooltip content="Change topic">
                 <button
                   className="icon-btn edit-btn"
@@ -395,6 +418,26 @@ function Lobby({
                   onChange={(value) => client.configureRoom({ maxPlayers: Number(value) })}
                 />
               </div>
+              <div className="setting-row">
+                <Icon name="layers" size={20} />
+                <label htmlFor="game">Game</label>
+                <SettingSelect
+                  id="game"
+                  label="Game"
+                  value={gameId}
+                  disabled={!isHost}
+                  options={CATALOG.filter(isPlayable).map((g) => ({ value: g.id, label: g.name }))}
+                  onChange={(value) => client.chooseGame(value)}
+                />
+              </div>
+              {rounds && isRoundsGame(gameId) && (
+                <RoundsSettingsRows
+                  game={gameId}
+                  settings={rounds}
+                  editable={isHost}
+                  onChange={(next) => client.configure(next)}
+                />
+              )}
               {settings && (
                 <QuizSettingsRows
                   settings={settings}

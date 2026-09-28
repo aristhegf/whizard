@@ -1,5 +1,5 @@
 import { questionCounts } from "@whizard/content";
-import { QUIZ_CATEGORIES } from "@whizard/game-core";
+import { GAME_IDS, QUIZ_CATEGORIES } from "@whizard/game-core";
 import type { AdminGames } from "@whizard/protocol";
 import { requireAdmin } from "./admin";
 import { dayOf } from "./analytics";
@@ -39,7 +39,7 @@ export async function getAdminGames(context: RequestContext): Promise<Response> 
 
   const body: AdminGames = {
     settings,
-    games: [...new Set(["quiz", ...gameIds])].map((id) => ({
+    games: [...new Set([...GAME_IDS, ...gameIds])].map((id) => ({
       id,
       last30: sum(`game:${id}`),
       last7: sum(`game:${id}`, weekStart),

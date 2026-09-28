@@ -1,4 +1,9 @@
-import { QUIZ_CATEGORIES, QUIZ_DIFFICULTIES, type QuizCategory } from "@whizard/game-core";
+import {
+  QUIZ_CATEGORIES,
+  QUIZ_DIFFICULTIES,
+  WORD_LEVELS,
+  type QuizCategory,
+} from "@whizard/game-core";
 import { z } from "zod";
 
 export const PROMPT_MAX = 120;
@@ -19,3 +24,18 @@ export const storedQuestionSchema = z.object({
 });
 
 export type StoredQuestion = z.infer<typeof storedQuestionSchema>;
+
+const upperWord = z.string().regex(/^[A-Z]+$/);
+
+/** A Word Rush word. Built from words/source.txt by `pnpm --filter @whizard/content words`. */
+export const storedWordSchema = z.object({
+  id: z.string().regex(/^word-\d{3}$/),
+  level: z.enum(WORD_LEVELS),
+  hint: z.string().min(1).max(24),
+  word: upperWord.min(4).max(10),
+  also: z.array(upperWord),
+  gaps: z.array(z.number().int().min(1)),
+  fits: z.array(upperWord),
+});
+
+export type StoredWord = z.infer<typeof storedWordSchema>;

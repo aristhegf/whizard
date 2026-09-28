@@ -1,9 +1,17 @@
 import { TiltCard } from "@/components/motion/tilt-card";
 import { useState, type CSSProperties } from "react";
-import { CATALOG, GAME_GROUPS, cardWash, type CatalogGame, type GameGroup } from "../catalog";
+import {
+  CATALOG,
+  GAME_GROUPS,
+  cardWash,
+  isPlayable,
+  type CatalogGame,
+  type GameGroup,
+} from "../catalog";
 import { linkTo } from "../router";
-import { TopLayout } from "../ui/Chrome";
+import { createFailed, startRoom, TopLayout } from "../ui/Chrome";
 import { Icon } from "../ui/Icon";
+import { useToast } from "../ui/toast";
 
 export function GamesPage() {
   const [group, setGroup] = useState<GameGroup | "all">("all");
@@ -83,6 +91,9 @@ export function GamesPage() {
 }
 
 function GameCard({ game }: { game: CatalogGame }) {
+  const toast = useToast();
+  const [opening, setOpening] = useState(false);
+  const playable = isPlayable(game);
   const body = (
     <>
       <span className="game-art">
@@ -97,7 +108,9 @@ function GameCard({ game }: { game: CatalogGame }) {
           <Icon name="users" size={18} />
           {game.players}
         </span>
-        {game.href ? (
+        {opening ? (
+          <span className="soon">Opening…</span>
+        ) : playable ? (
           <span className="go" aria-hidden="true">
             <Icon name="arrowRight" size={20} stroke={2.4} />
           </span>
@@ -105,7 +118,7 @@ function GameCard({ game }: { game: CatalogGame }) {
           <span className="soon">Coming soon</span>
         )}
       </span>
-      {game.href && <Icon name="chevronRight" className="row-chevron" size={20} />}
+      {playable && <Icon name="chevronRight" className="row-chevron" size={20} />}
     </>
   );
   const style = { "--wash": cardWash(game.colors) } as CSSProperties;
@@ -116,6 +129,24 @@ function GameCard({ game }: { game: CatalogGame }) {
           <a className="game-card" style={style} {...linkTo(game.href)}>
             {body}
           </a>
+        ) : game.starts ? (
+          // Games without a page of their own open a room straight away.
+          <button
+            className="game-card"
+            style={style}
+            aria-label={`Play ${game.name}`}
+            aria-busy={opening}
+            disabled={opening}
+            onClick={() => {
+              setOpening(true);
+              startRoom(undefined, game.starts).catch((error: unknown) => {
+                setOpening(false);
+                toast.show({ title: createFailed(error), status: "error" });
+              });
+            }}
+          >
+            {body}
+          </button>
         ) : (
           <div
             className="game-card unavailable"

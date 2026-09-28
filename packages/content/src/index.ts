@@ -5,6 +5,7 @@ import {
   type ContentRequest,
   type QuizCategory,
   type QuizDifficulty,
+  type WordLevel,
 } from "@whizard/game-core";
 import { z } from "zod";
 import animals from "./questions/animals.json";
@@ -18,7 +19,13 @@ import music from "./questions/music.json";
 import nigerianCulture from "./questions/nigerian-culture.json";
 import popCulture from "./questions/pop-culture.json";
 import science from "./questions/science.json";
-import { storedQuestionSchema, type StoredQuestion } from "./schema";
+import {
+  storedQuestionSchema,
+  storedWordSchema,
+  type StoredQuestion,
+  type StoredWord,
+} from "./schema";
+import wordFile from "./words/words.json";
 
 export * from "./quality";
 export * from "./schema";
@@ -41,6 +48,8 @@ export const QUESTION_FILES: Record<QuizCategory, unknown> = {
 export const QUESTIONS: readonly StoredQuestion[] = Object.values(QUESTION_FILES).flatMap((file) =>
   z.array(storedQuestionSchema).parse(file),
 );
+
+export const WORDS: readonly StoredWord[] = z.array(storedWordSchema).parse(wordFile);
 
 export type QuestionCounts = Partial<Record<QuizCategory, Record<QuizDifficulty, number>>>;
 
@@ -90,10 +99,29 @@ export interface DrawOptions {
 }
 
 /**
- * Picks a game's questions, avoiding repeats as far as the bank allows: first questions this
- * room hasn't used and none of the players has seen, then ones fewer players have seen, then
- * the ones seen longest ago. Ties are broken by the seed, and the chosen set is shuffled.
+ * Puts the least used items first: ones this room hasn't used and none of the players has seen,
+ * then ones fewer players have seen, then the ones seen longest ago. Ties are broken by the seed.
  */
+function leastUsed<T extends { id: string }>(
+  pool: readonly T[],
+  rng: () => number,
+  options: DrawOptions,
+): T[] {
+  const recent = new Map((options.recent ?? []).map((id, i, all) => [id, all.length - i]));
+  return shuffled(
+    pool.filter((item) => !options.retired?.has(item.id)),
+    rng,
+  )
+    .map((item) => {
+      const seen = options.seen?.get(item.id);
+      // Higher is worse: used in this room lately, seen by more players, seen more recently.
+      return { item, key: [recent.get(item.id) ?? 0, seen?.players ?? 0, seen?.lastSeenAt ?? 0] };
+    })
+    .sort((a, b) => a.key[0]! - b.key[0]! || a.key[1]! - b.key[1]! || a.key[2]! - b.key[2]!)
+    .map((r) => r.item);
+}
+
+/** Picks a game's questions, avoiding repeats as far as the bank allows, in a shuffled order. */
 export function drawQuestions(
   category: QuizCategory,
   difficulty: QuizDifficulty,
@@ -103,21 +131,33 @@ export function drawQuestions(
   questions: readonly StoredQuestion[] = QUESTIONS,
 ): StoredQuestion[] {
   const rng = seededRng(seed);
-  const recent = new Map((options.recent ?? []).map((id, i, all) => [id, all.length - i]));
-  const pool = questions
-    .filter((q) => q.category === category && q.difficulty === difficulty)
-    .filter((q) => !options.retired?.has(q.id));
-  const ranked = shuffled(pool, rng)
-    .map((q) => {
-      const seen = options.seen?.get(q.id);
-      // Higher is worse: used in this room lately, seen by more players, seen more recently.
-      return { q, key: [recent.get(q.id) ?? 0, seen?.players ?? 0, seen?.lastSeenAt ?? 0] };
-    })
-    .sort((a, b) => a.key[0]! - b.key[0]! || a.key[1]! - b.key[1]! || a.key[2]! - b.key[2]!);
-  return shuffled(
-    ranked.slice(0, count).map((r) => r.q),
-    rng,
-  );
+  const pool = questions.filter((q) => q.category === category && q.difficulty === difficulty);
+  return shuffled(leastUsed(pool, rng, options).slice(0, count), rng);
+}
+
+/** Picks one Word Rush word per round, at that round's level, avoiding repeats the same way. */
+export function drawWords(
+  levels: readonly WordLevel[],
+  seed: number,
+  options: DrawOptions = {},
+  words: readonly StoredWord[] = WORDS,
+): StoredWord[] {
+  const rng = seededRng(seed);
+  const queues = new Map<WordLevel, StoredWord[]>();
+  return levels.flatMap((level) => {
+    if (!queues.has(level)) {
+      queues.set(
+        level,
+        leastUsed(
+          words.filter((w) => w.level === level),
+          rng,
+          options,
+        ),
+      );
+    }
+    const next = queues.get(level)!.shift();
+    return next ? [next] : [];
+  });
 }
 
 /** `questions` is the bank to draw from: the one that ships, or it with admin edits applied. */
@@ -137,5 +177,7 @@ export function drawContent(
         options,
         questions,
       );
+    case "words":
+      return drawWords(request.levels, seed, options);
   }
 }

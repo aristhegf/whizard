@@ -2,9 +2,12 @@ import { questionCounts } from "@whizard/content";
 import {
   DEFAULT_QUIZ_SETTINGS,
   QUIZ_CATEGORIES,
+  gameModule,
   generateRoomCode,
+  isGameId,
   normalizeRoomCode,
   type AccountIdentity,
+  type GameId,
 } from "@whizard/game-core";
 import { PROTOCOL_VERSION } from "@whizard/protocol";
 import {
@@ -95,7 +98,10 @@ async function quizCategories({ env }: RequestContext): Promise<Response> {
   return Response.json({ categories }, { headers: { "Cache-Control": "public, max-age=60" } });
 }
 
-/** Creates a room. The body can preset the game's settings, e.g. `{"settings":{"category":"music"}}`. */
+/**
+ * Creates a room. The body can pick the game and preset its settings, e.g.
+ * `{"settings":{"category":"music"}}` or `{"game":"word-rush"}`. The quiz is the default.
+ */
 async function createRoom({ env, request, ctx }: RequestContext): Promise<Response> {
   if (!(await withinLimit(env.ROOM_LIMIT, request))) {
     return jsonError(
@@ -104,29 +110,37 @@ async function createRoom({ env, request, ctx }: RequestContext): Promise<Respon
       "That’s a lot of rooms at once. Try again in a minute.",
     );
   }
+  const text = await request.text();
+  let settings: unknown;
+  let game: GameId = "quiz";
+  if (text.length > 0 && text.length < 2048) {
+    try {
+      const body = JSON.parse(text) as { settings?: unknown; game?: unknown };
+      settings = body.settings;
+      if (body.game !== undefined) {
+        if (typeof body.game !== "string" || !isGameId(body.game)) {
+          return jsonError(400, "bad_request", "There's no game by that name.");
+        }
+        game = body.game;
+      }
+    } catch {
+      return jsonError(400, "bad_request", "Request body must be JSON.");
+    }
+  }
   // The deploy's smoke test still gets a room, so a pause can't fail a deploy.
   const site = await siteSettings(env);
   if (!request.headers.has("X-Whizard-Smoke-Test")) {
     if (site.roomsPaused) {
       return jsonError(503, "rooms_paused", "New rooms are paused. Try again soon.");
     }
-    // Every room starts with the quiz for now.
-    if (site.gamesOff.includes("quiz")) {
-      return jsonError(503, "game_off", "Quiz is turned off for now. Try again soon.");
-    }
-  }
-  const text = await request.text();
-  let settings: unknown;
-  if (text.length > 0 && text.length < 2048) {
-    try {
-      settings = (JSON.parse(text) as { settings?: unknown }).settings;
-    } catch {
-      return jsonError(400, "bad_request", "Request body must be JSON.");
+    if (site.gamesOff.includes(game)) {
+      const name = gameModule(game).name;
+      return jsonError(503, "game_off", `${name} is turned off for now. Try again soon.`);
     }
   }
   for (let attempt = 0; attempt < CREATE_ATTEMPTS; attempt++) {
     const code = generateRoomCode();
-    if (await env.ROOMS.getByName(code).create(code, settings)) {
+    if (await env.ROOMS.getByName(code).create(code, settings, game)) {
       // The deploy's smoke test makes a room each time; it isn't a real one.
       if (!request.headers.has("X-Whizard-Smoke-Test")) {
         const topic = (settings as { category?: unknown } | undefined)?.category;
@@ -134,10 +148,13 @@ async function createRoom({ env, request, ctx }: RequestContext): Promise<Respon
           Promise.all([
             count(env, { rooms_created: 1 }),
             logActivity(env, "room_created", {
-              game: "quiz",
-              topic: QUIZ_CATEGORIES.some((c) => c.id === topic)
-                ? (topic as string)
-                : DEFAULT_QUIZ_SETTINGS.category,
+              game,
+              topic:
+                game !== "quiz"
+                  ? null
+                  : QUIZ_CATEGORIES.some((c) => c.id === topic)
+                    ? (topic as string)
+                    : DEFAULT_QUIZ_SETTINGS.category,
             }),
           ]),
         );

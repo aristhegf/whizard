@@ -2,12 +2,15 @@ import { DurableObject } from "cloudflare:workers";
 import { drawContent } from "@whizard/content";
 import {
   applyGameAction,
+  chooseGame,
   configureGame,
   configureRoom,
   createRoomState,
+  defaultGameConfig,
   gameModule,
   gameViewFor,
   isExpired,
+  isGameId,
   joinRoom,
   leaveRoom,
   markDisconnected,
@@ -27,7 +30,9 @@ import {
   unrecordedResult,
   type AccountIdentity,
   type ConnectedIds,
+  type ContentRequest,
   type GameError,
+  type GameId,
   type GameResult,
   type JoinError,
   type Player,
@@ -82,6 +87,11 @@ const GAME_ERROR_MESSAGES: Record<GameError, string> = {
   bad_action: "That move isn’t allowed right now.",
 };
 
+/** What a player's history of seen content is kept under: the quiz topic, or the game. */
+function historyCategory(request: ContentRequest): string {
+  return request.kind === "quiz-questions" ? request.category : "word-rush";
+}
+
 /**
  * One instance per room code, holding the authoritative room state. Uses the WebSocket
  * hibernation API so rooms aren’t billed while they wait for messages.
@@ -95,9 +105,9 @@ export class Room extends DurableObject<Env> {
    * Claims this room for a newly generated code, optionally with game settings picked before
    * the room existed (such as a topic). Returns false if the code is already in use.
    */
-  async create(code: string, gameSettings?: unknown): Promise<boolean> {
+  async create(code: string, gameSettings?: unknown, gameId: GameId = "quiz"): Promise<boolean> {
     if (await this.load()) return false;
-    const state = createRoomState(code, Date.now());
+    const state = { ...createRoomState(code, Date.now()), game: defaultGameConfig(gameId) };
     const settings = newRoomSettings(state, await siteSettings(this.env), gameSettings);
     await this.save({ ...state, game: { ...state.game, settings } });
     return true;
@@ -156,6 +166,22 @@ export class Room extends DurableObject<Env> {
           return result.ok ? result : { ok: false, error: result.error };
         });
         return;
+      case "chooseGame": {
+        const site = await siteSettings(this.env);
+        const game = message.game;
+        if (!isGameId(game) || site.gamesOff.includes(game)) {
+          sendError(ws, ErrorCode.BadSettings, GAME_OFF_MESSAGE);
+          return;
+        }
+        await this.handleGame(ws, (state, playerId) => {
+          const result = chooseGame(state, playerId, game);
+          if (!result.ok || result.state === state) return result;
+          // Admins' defaults and topics that are off apply here too, as for a new room.
+          const settings = newRoomSettings(result.state, site, null);
+          return { ok: true, state: { ...result.state, game: { id: game, settings } } };
+        });
+        return;
+      }
       case "configure": {
         const topic = topicOf(message.settings);
         const off = topic !== null && (await siteSettings(this.env)).topicsOff.includes(topic);
@@ -315,12 +341,13 @@ export class Room extends DurableObject<Env> {
       .filter((p) => connected.has(p.id))
       .flatMap((p) => viewerKey(p) ?? []);
     const bank = await loadBank(this.env);
-    const [seen, retired] = request
-      ? await Promise.all([
-          loadSeen(this.env, viewers, request.category),
-          retiredQuestions(this.env, request.category, bank),
-        ])
-      : [new Map(), new Set<string>()];
+    const history = request && historyCategory(request);
+    const [seen, retired] = await Promise.all([
+      history ? loadSeen(this.env, viewers, history) : new Map(),
+      request?.kind === "quiz-questions"
+        ? retiredQuestions(this.env, request.category, bank)
+        : new Set<string>(),
+    ]);
 
     let drawn: string[] = [];
     const started = await this.handleGame(ws, (state, playerId, now) =>
@@ -343,11 +370,11 @@ export class Room extends DurableObject<Env> {
       this.env,
       roster.flatMap((p) => viewerKey(p) ?? []),
     );
-    if (request) {
+    if (history) {
       await recordSeen(
         this.env,
         roster.flatMap((p) => viewerKey(p) ?? []),
-        request.category,
+        history,
         drawn,
         Date.now(),
       );
