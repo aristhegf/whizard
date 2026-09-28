@@ -218,7 +218,9 @@ stateDiagram-v2
 - **Room state** lives in Durable Object storage, so it survives hibernation and restarts. The rules for joining, leaving, host handover and expiry are pure functions in `game-core`, and the Durable Object applies them.
 - **Players who drop** stay in the room, shown as offline, for 10 minutes so they can come back.
 - **Host handover:** if the host leaves, the longest-connected player becomes host right away. If the host only loses connection or taps back by mistake, they keep the role for 2 minutes first, so a locked phone doesn't hand it over. Every other page shows a "Return to your room" bar while the room is still open, so a host who went back can walk straight back in, with everyone still there.
-- **Cleanup** runs from a Durable Object alarm. A room is deleted 30 minutes after the last player disconnects.
+- **Quitting a game** mid-game takes a player back to the room page, not home: they stay in the room while the others play on, and they're in the next game (`quitGame`; the room snapshot lists them in `sittingOut`). If nobody is left playing, the game ends. Once a game is over, the host can start the next one or change the settings from there, which brings everyone back to the lobby.
+- **Toasts** tell everyone in the room who joined, who left the game, who left the room, and who the host is now.
+- **Cleanup** runs from a Durable Object alarm. A room is deleted 30 minutes after the last player disconnects, or straight away when the last player in it leaves.
 - **Room settings** belong to the host: the most players the room takes (2 to 20) and whether late joiners can enter a running game.
 - **Limits:** up to 20 players per room, nicknames up to 20 characters (emoji welcome), unique within the room. Each player picks an avatar from a built-in set.
 - **Rooms can be opened with a game already set up**, such as a topic picked on the Quiz Topics page, or Word Rush or Spot It from their cards on the Games page. In the lobby the host can switch to another game, which starts from that game's settings.
@@ -238,6 +240,7 @@ JSON messages over one WebSocket per player. Every message has a `type` and is v
 | `start {}`                                                             | Host starts a game, or plays again from the results                 |
 | `action { action }`                                                    | A game move (an answer, "next"), validated by the game's own schema |
 | `backToLobby {}`                                                       | Host returns everyone to the lobby to change settings               |
+| `quitGame {}`                                                          | Quit the running game but stay in the room for the next one         |
 
 | Server → Client                                        | Purpose                                                                 |
 | ------------------------------------------------------ | ----------------------------------------------------------------------- |

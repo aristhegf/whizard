@@ -17,6 +17,7 @@ import {
   configureGame,
   gameViewFor,
   markRecorded,
+  quitGame,
   returnToLobby,
   startGame,
   tickGame,
@@ -304,5 +305,45 @@ describe("late joiners", () => {
     }));
     if (!result.ok) throw new Error(result.error);
     expect((gameViewFor(result.state, "p2") as QuizView).stage.kind).toBe("watching");
+  });
+});
+
+describe("quitting a game", () => {
+  it("keeps the player in the room while the others play on", () => {
+    const { state, connected } = room("Ada", "Tolu");
+    const started = ok(startGame(state, "p1", connected, T0, 1, bank));
+    const quit = ok(quitGame(started, "p2", T0 + 5000));
+    const snapshot = toSnapshot(quit, connected);
+    expect(snapshot.players.map((p) => p.id)).toEqual(["p1", "p2"]);
+    expect(snapshot.phase).toBe("playing");
+    expect(snapshot.sittingOut).toEqual(["p2"]);
+    // Quitting twice is harmless; there's nothing to quit in the lobby.
+    expect(ok(quitGame(quit, "p2", T0 + 6000))).toBe(quit);
+    expect(quitGame(state, "p1", T0)).toEqual({ ok: false, error: "no_game" });
+  });
+
+  it("ends the game when nobody is left playing, and the next game starts afresh", () => {
+    const { state, connected } = room("Ada");
+    const started = ok(startGame(state, "p1", connected, T0, 1, bank));
+    // No changing the game while it runs.
+    expect(configureGame(started, "p1", DEFAULT_QUIZ_SETTINGS)).toMatchObject({
+      error: "game_in_progress",
+    });
+    const quit = ok(quitGame(started, "p1", T0 + 5000));
+    expect(toSnapshot(quit, connected)).toMatchObject({ phase: "finished", sittingOut: ["p1"] });
+
+    // Once it's over, changing settings brings the room back to the lobby.
+    const settings = { ...DEFAULT_QUIZ_SETTINGS, count: 5 };
+    const lobby = ok(configureGame(quit, "p1", settings));
+    expect(toSnapshot(lobby, connected)).toMatchObject({ phase: "lobby", sittingOut: [] });
+    // Or the host starts the next game straight away, with everyone in it.
+    const again = ok(startGame(quit, "p1", connected, T0 + 9000, 2, bank));
+    expect(toSnapshot(again, connected)).toMatchObject({ phase: "playing", sittingOut: [] });
+  });
+
+  it("passes the host role on when the host leaves the room", () => {
+    const { state, connected } = room("Ada", "Tolu", "Kemi");
+    const left = leaveRoom(state, "p1", connected, T0 + 1000);
+    expect(left.hostId).toBe("p2");
   });
 });

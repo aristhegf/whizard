@@ -17,6 +17,7 @@ import {
   markRecorded,
   MAX_PLAYERS,
   phaseOf,
+  quitGame,
   nextDeadline,
   randomSeed,
   randomToken,
@@ -203,6 +204,9 @@ export class Room extends DurableObject<Env> {
       case "backToLobby":
         await this.handleGame(ws, (state, playerId) => returnToLobby(state, playerId));
         return;
+      case "quitGame":
+        await this.handleGame(ws, (state, playerId, now) => quitGame(state, playerId, now));
+        return;
     }
   }
 
@@ -305,8 +309,14 @@ export class Room extends DurableObject<Env> {
       return;
     }
     ws.serializeAttachment(null);
-    await this.commit(leaveRoom(state, playerId, this.connectedIds(), now));
+    const next = leaveRoom(state, playerId, this.connectedIds(), now);
     ws.close(1000, "Left the room");
+    // The last one out closes the room, rather than leaving it open for half an hour.
+    if (next.players.length === 0) {
+      await this.remove(next);
+      return;
+    }
+    await this.commit(next);
   }
 
   private async handleDisconnect(ws: WebSocket) {

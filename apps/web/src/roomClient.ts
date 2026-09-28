@@ -147,6 +147,11 @@ export class RoomClient {
     this.send({ type: "backToLobby" });
   }
 
+  /** Quits the running game but stays in the room, for the next one. */
+  quitGame(): void {
+    this.send({ type: "quitGame" });
+  }
+
   leave(): void {
     this.send({ type: "leave" });
     clearSession(this.code);

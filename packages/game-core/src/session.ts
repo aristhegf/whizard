@@ -25,6 +25,11 @@ export interface GameSession {
   roster: RosterEntry[];
   /** Set once the result has been saved to match history. */
   recorded: boolean;
+  /**
+   * Players who quit this game but stayed in the room. They wait in the lobby for the next
+   * one. Missing in rooms saved before players could quit a game.
+   */
+  quit?: string[];
 }
 
 export interface FinishedGame {
@@ -81,20 +86,49 @@ export function phaseOf(state: RoomState): RoomPhase {
 const fail = (error: GameError, message?: string): GameResult =>
   message === undefined ? { ok: false, error } : { ok: false, error, message };
 
+/**
+ * The host changes the game's settings: in the lobby, or once a game has finished, which
+ * brings everyone back to the lobby.
+ */
 export function configureGame(state: RoomState, playerId: string, settings: unknown): GameResult {
   if (state.hostId !== playerId) return fail("not_host");
-  if (state.session) return fail("game_in_progress");
+  if (phaseOf(state) === "playing") return fail("game_in_progress");
   const parsed = gameModule(state.game.id).settingsSchema.safeParse(settings);
   if (!parsed.success) return fail("bad_settings");
-  return { ok: true, state: { ...state, game: { ...state.game, settings: parsed.data } } };
+  return {
+    ok: true,
+    state: { ...state, session: null, game: { ...state.game, settings: parsed.data } },
+  };
 }
 
-/** The host picks which game the room plays next, with that game's default settings. */
+/**
+ * The host picks which game the room plays next, with that game's default settings. Like
+ * changing settings, it works in the lobby or once a game has finished.
+ */
 export function chooseGame(state: RoomState, playerId: string, id: GameId): GameResult {
   if (state.hostId !== playerId) return fail("not_host");
-  if (state.session) return fail("game_in_progress");
-  if (state.game.id === id) return { ok: true, state };
-  return { ok: true, state: { ...state, game: defaultGameConfig(id) } };
+  if (phaseOf(state) === "playing") return fail("game_in_progress");
+  if (state.game.id === id && !state.session) return { ok: true, state };
+  return { ok: true, state: { ...state, session: null, game: defaultGameConfig(id) } };
+}
+
+/**
+ * A player quits the running game but stays in the room: the game carries on without them,
+ * and they wait in the lobby for the next one. If nobody is left playing, the game ends.
+ */
+export function quitGame(state: RoomState, playerId: string, now: number): GameResult {
+  if (phaseOf(state) !== "playing") return fail("no_game");
+  if (!state.players.some((p) => p.id === playerId)) return fail("no_game");
+  const session = state.session!;
+  const quit = session.quit ?? [];
+  if (quit.includes(playerId)) return { ok: true, state };
+  const marked = { ...state, session: { ...session, quit: [...quit, playerId] } };
+  return { ok: true, state: gamePlayerLeft(marked, playerId, now) };
+}
+
+/** Who quit the current game and is waiting for the next one. */
+export function sittingOut(state: RoomState): string[] {
+  return state.session?.quit ?? [];
 }
 
 export function startGame(
@@ -134,6 +168,7 @@ export function startGame(
         startedAt: now,
         roster: playing.map(rosterEntry),
         recorded: false,
+        quit: [],
       },
     },
   };

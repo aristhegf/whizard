@@ -66,7 +66,10 @@ export function RoomScreen({ code }: { code: string }) {
 
   const room = state.room;
   const joined = !!(state.playerId && room);
-  const inGame = joined && room!.phase !== "lobby" && !!state.game;
+  // Someone who quit the game waits in the room for the next one.
+  const sittingOut =
+    joined && room!.phase !== "lobby" && room!.sittingOut.includes(state.playerId!);
+  const inGame = joined && room!.phase !== "lobby" && !!state.game && !sittingOut;
 
   const view = inGame ? (state.game as AnyQuizView | WordRushView | SpotItView | JigsawView) : null;
   // Leaving mid-game can't be undone, so it asks first while you're still playing: in a
@@ -96,7 +99,23 @@ export function RoomScreen({ code }: { code: string }) {
     playerId: state.playerId!,
     isHost: room?.hostId === state.playerId,
     latency: <Latency state={state} />,
-    onQuit: () => leave("/"),
+    onQuit: () => quit(),
+  };
+
+  // Quitting a game that's still going takes you back to the room; the others play on, and
+  // you're in the next game. Once it's over, the results' Home button leaves the room.
+  const quit = () => {
+    if (room?.phase !== "playing") {
+      leave("/");
+      return;
+    }
+    if (
+      midGame &&
+      !window.confirm("Quit this game? You’ll go back to the room for the next one.")
+    ) {
+      return;
+    }
+    client.quitGame();
   };
 
   const leave = (to: string) => {
@@ -122,6 +141,7 @@ export function RoomScreen({ code }: { code: string }) {
           state={state}
           room={room!}
           playerId={state.playerId!}
+          sittingOut={sittingOut}
           onLeave={leave}
         />
       ) : (
@@ -134,7 +154,11 @@ export function RoomScreen({ code }: { code: string }) {
 /** Toasts for who comes and goes, a new host, the connection dropping and coming back, and errors. */
 function useRoomToasts(state: RoomClientState) {
   const toast = useToast();
-  const seen = useRef<{ players: Map<string, string>; hostId: string | null } | null>(null);
+  const seen = useRef<{
+    players: Map<string, string>;
+    hostId: string | null;
+    sittingOut: Set<string>;
+  } | null>(null);
   const offline = useRef<string | null>(null);
 
   const { room, playerId, connection, notice } = state;
@@ -147,15 +171,27 @@ function useRoomToasts(state: RoomClientState) {
   useEffect(() => {
     if (!room || !playerId) return;
     const players = new Map(room.players.map((p) => [p.id, p.nickname]));
+    const sittingOut = new Set(room.sittingOut);
     const before = seen.current;
-    seen.current = { players, hostId: room.hostId };
+    seen.current = { players, hostId: room.hostId, sittingOut };
     // The first snapshot after joining is just who's already here.
     if (!before) return;
     for (const [id, nickname] of players) {
       if (!before.players.has(id)) toast.show({ title: `${nickname} joined`, status: "info" });
     }
     for (const [id, nickname] of before.players) {
-      if (!players.has(id)) toast.show({ title: `${nickname} left`, status: "neutral" });
+      if (!players.has(id)) toast.show({ title: `${nickname} left the room`, status: "neutral" });
+    }
+    // Quitting a game keeps you in the room: the others hear you've left the game.
+    for (const id of sittingOut) {
+      const nickname = players.get(id);
+      if (id !== playerId && nickname && !before.sittingOut.has(id)) {
+        toast.show({ title: `${nickname} left the game`, status: "neutral" });
+      }
+    }
+    const newHost = room.hostId && room.hostId !== playerId ? players.get(room.hostId) : null;
+    if (newHost && before.hostId !== room.hostId) {
+      toast.show({ title: `${newHost} is the host now`, status: "info" });
     }
     if (room.hostId === playerId && before.hostId !== playerId) {
       toast.show({
@@ -320,15 +356,20 @@ function Lobby({
   state,
   room,
   playerId,
+  sittingOut,
   onLeave,
 }: {
   client: RoomClient;
   state: RoomClientState;
   room: RoomSnapshot;
   playerId: string;
+  /** Quit the game that's running (or just finished), and waiting for the next one. */
+  sittingOut: boolean;
   onLeave: (to: string) => void;
 }) {
   const isHost = room.hostId === playerId;
+  // The game's settings can change in the lobby, or once a game is over, not while it runs.
+  const canEdit = isHost && room.phase !== "playing";
   const gameId = room.game.id;
   const game = CATALOG.find((g) => g.id === gameId);
   const settings = gameId === "quiz" ? parseQuizSettings(room.game.settings) : null;
@@ -466,7 +507,7 @@ function Lobby({
                   id="game"
                   label="Game"
                   value={gameId}
-                  disabled={!isHost}
+                  disabled={!canEdit}
                   options={CATALOG.filter(isPlayable).map((g) => ({ value: g.id, label: g.name }))}
                   onChange={(value) => client.chooseGame(value)}
                 />
@@ -476,7 +517,7 @@ function Lobby({
                   game={gameId}
                   settings={rounds}
                   players={connected.length}
-                  editable={isHost}
+                  editable={canEdit}
                   onChange={(next) => client.configure(next)}
                 />
               )}
@@ -484,14 +525,14 @@ function Lobby({
                 <QuizSettingsRows
                   settings={settings}
                   players={connected.length}
-                  editable={isHost}
+                  editable={canEdit}
                   onChange={(next) => client.configure(next)}
                 />
               )}
               {jigsaw && (
                 <JigsawSettingsRows
                   settings={jigsaw}
-                  editable={isHost}
+                  editable={canEdit}
                   onChange={(next) => client.configure(next)}
                 />
               )}
@@ -563,7 +604,11 @@ function Lobby({
           <PingFriends code={room.code} />
 
           <div className="lobby-dock">
-            {isHost && needMore > 0 ? (
+            {sittingOut && room.phase === "playing" ? (
+              <p className="muted center sitting-out" role="status">
+                You quit this game. The others are still playing; you’ll be in the next one.
+              </p>
+            ) : isHost && needMore > 0 ? (
               <p className="muted center need-more" role="status">
                 Elimination needs at least {ELIMINATION_MIN_PLAYERS} players. Invite {needMore} more
                 to start.

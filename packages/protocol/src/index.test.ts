@@ -77,6 +77,7 @@ describe("parseServerMessage", () => {
         phase: "lobby",
         game: { id: "quiz", settings: { count: 10 } },
         settings: { maxPlayers: 20, lateJoin: false },
+        sittingOut: [],
       },
       serverTime: 123,
     };

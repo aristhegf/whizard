@@ -223,6 +223,7 @@ describe("toSnapshot", () => {
       phase: "lobby",
       game: { id: "quiz", settings: DEFAULT_QUIZ_SETTINGS },
       settings: { maxPlayers: MAX_PLAYERS, lateJoin: false },
+      sittingOut: [],
     });
     expect(JSON.stringify(snapshot)).not.toContain("token");
   });

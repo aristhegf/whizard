@@ -5,6 +5,7 @@ import {
   gamePlayerLeft,
   gameWakeAt,
   phaseOf,
+  sittingOut,
   type GameConfig,
   type GameSession,
   type RoomPhase,
@@ -81,6 +82,8 @@ export interface RoomSnapshot {
   phase: RoomPhase;
   game: GameConfig;
   settings: RoomSettings;
+  /** Players who quit the current game and are waiting in the lobby for the next one. */
+  sittingOut: string[];
 }
 
 /** IDs of players with an open connection right now. */
@@ -275,6 +278,7 @@ export function toSnapshot(state: RoomState, connected: ConnectedIds): RoomSnaps
     phase: phaseOf(state),
     game: state.game,
     settings: roomSettings(state),
+    sittingOut: sittingOut(state),
   };
 }
 

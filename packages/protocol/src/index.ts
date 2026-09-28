@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const PROTOCOL_VERSION = 9;
+export const PROTOCOL_VERSION = 10;
 
 /** The most a player may send in one message. Server messages can be far bigger: a finished
  * game's review or a full lobby easily passes this, so they have their own, looser cap. */
@@ -56,6 +56,8 @@ export const roomSnapshotSchema = z.object({
   // Game settings and views are validated by each game's own schema in game-core.
   game: z.object({ id: z.string(), settings: z.unknown() }),
   settings: z.object({ maxPlayers: z.number().int(), lateJoin: z.boolean() }),
+  /** Players who quit the current game and wait in the lobby for the next one. */
+  sittingOut: z.array(z.string()),
 });
 
 export const clientMessageSchema = z.discriminatedUnion("type", [
@@ -80,6 +82,8 @@ export const clientMessageSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("start") }),
   z.object({ type: z.literal("action"), action: z.unknown() }),
   z.object({ type: z.literal("backToLobby") }),
+  /** Quit the running game but stay in the room, for the next one. */
+  z.object({ type: z.literal("quitGame") }),
 ]);
 
 export const serverMessageSchema = z.discriminatedUnion("type", [
