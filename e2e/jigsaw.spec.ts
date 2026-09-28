@@ -26,12 +26,15 @@ async function solve(page: Page) {
     if (spot === -1) return;
     await pieces.nth(board.indexOf(spot)).click();
     await pieces.nth(spot).click();
-    // The last swap can end the game, and the board with it.
+    // The last swap can end the game and take the board with it, so both are checked in one
+    // read of the page: checking one then the other can wait forever on a board that's gone.
     await expect
-      .poll(
-        async () =>
-          (await pieces.count()) === 0 ||
-          (await pieces.nth(spot).getAttribute("data-piece")) === String(spot),
+      .poll(() =>
+        pieces.evaluateAll(
+          (els, at) =>
+            els.length === 0 || (els[at] as HTMLElement | undefined)?.dataset.piece === String(at),
+          spot,
+        ),
       )
       .toBe(true);
     if ((await pieces.count()) === 0) return;
