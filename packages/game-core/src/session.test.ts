@@ -13,6 +13,7 @@ import {
 } from "./room";
 import {
   applyGameAction,
+  chooseGame,
   configureGame,
   gameViewFor,
   markRecorded,
@@ -75,6 +76,26 @@ describe("configureGame", () => {
     const { state } = room("Ada");
     const bad = { ...DEFAULT_QUIZ_SETTINGS, count: 7 };
     expect(configureGame(state, "p1", bad)).toEqual({ ok: false, error: "bad_settings" });
+  });
+});
+
+describe("chooseGame", () => {
+  it("lets the host switch games in the lobby, with that game's defaults", () => {
+    const { state } = room("Ada", "Tolu");
+    expect(chooseGame(state, "p2", "spot-it")).toEqual({ ok: false, error: "not_host" });
+    const next = ok(chooseGame(state, "p1", "word-rush"));
+    expect(next.game).toEqual({ id: "word-rush", settings: { rounds: 10, timeLimitSeconds: 30 } });
+  });
+
+  it("starts Spot It without anything from the content bank", () => {
+    const { state, connected } = room("Ada");
+    const chosen = ok(chooseGame(state, "p1", "spot-it"));
+    const none: ContentSource = () => {
+      throw new Error("Spot It shouldn't draw content");
+    };
+    const started = ok(startGame(chosen, "p1", connected, T0, 1, none));
+    expect(started.session?.gameId).toBe("spot-it");
+    expect(chooseGame(started, "p1", "quiz")).toEqual({ ok: false, error: "game_in_progress" });
   });
 });
 

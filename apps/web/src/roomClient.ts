@@ -123,6 +123,12 @@ export class RoomClient {
     this.send({ type: "roomSettings", settings });
   }
 
+  /** Host only: which game the room plays next. */
+  chooseGame(game: string): void {
+    this.update({ notice: null });
+    this.send({ type: "chooseGame", game });
+  }
+
   configure(settings: unknown): void {
     this.update({ notice: null });
     this.send({ type: "configure", settings });

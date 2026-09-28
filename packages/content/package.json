@@ -7,10 +7,14 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -p .",
+    "words": "node scripts/build-words.mjs && prettier --write src/words/words.json"
   },
   "dependencies": {
     "@whizard/game-core": "workspace:*",
     "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "an-array-of-english-words": "2.0.0"
   }
 }

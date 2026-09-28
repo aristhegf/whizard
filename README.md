@@ -9,13 +9,15 @@ Free to play, with no sign-up needed. An optional account keeps your stats and l
 ## Games
 
 - **Quiz** (launch game): Bible, Geography, History, Science, Animals, Football, Movies, Music, Nigerian culture, General knowledge and Pop culture, in Classic (no clock), Speed (a timer on every question) and Elimination (everyone answers together; the lowest scores are knocked out each round until two meet in a final)
-- **Coming later:** Word Rush, Memory, Reaction, Spot It, Pattern, Connections, social games like Most Likely To and How Well Do You Know Me?, and party games like Impostor and Draw & Guess
+- **Word Rush:** unscramble words or fill in their missing letters, with a hint for each, getting harder as you go
+- **Spot It:** find the odd one out in a grid that grows and gets subtler each round
+- **Coming later:** Memory, Reaction, Pattern, Connections, social games like Most Likely To and How Well Do You Know Me?, and party games like Impostor and Draw & Guess
 
 The full list is in [docs/GAMES.md](docs/GAMES.md).
 
 ## Status
 
-Launched. The quiz has 1,980 fact-checked questions across 11 categories, 60 at every level of each: pick a topic, then play solo or invite friends with a link, code or QR code. Choose Classic, Speed or Elimination, a level and the number of questions. Everyone starts together and plays at their own pace; on tablets and computers a live scoreboard shows everyone's points. At the end there's a podium, the final rankings and a private review of your own answers, where any question can be reported. Games avoid questions you or your friends have already had, and there are sounds, with a mute button.
+Launched. The quiz has 1,980 fact-checked questions across 11 categories, 60 at every level of each: pick a topic, then play solo or invite friends with a link, code or QR code. Choose Classic, Speed or Elimination, a level and the number of questions. Everyone starts together and plays at their own pace; on tablets and computers a live scoreboard shows everyone's points. At the end there's a podium, the final rankings and a private review of your own answers, where any question can be reported. Games avoid questions you or your friends have already had, and there are sounds, with a mute button. Word Rush (240 words) and Spot It can be started from their cards on the Games page, or picked in any lobby, and play the same way: same puzzles for everyone, own pace, a podium at the end.
 
 Optional accounts sign in with a passkey (no passwords) and keep your game history and stats, including games you played as a guest just before signing up. Add friends by username, invite link or straight from a game's results to see your record against each of them, and save groups with their own leaderboards. Ping a friend and they get a notification that opens your room, with mute and quiet hours on their side. The home page shows how many people have visited and how many are here now, and `/stats` has the numbers behind them: visits, rooms created, games played, where visitors came from and more. Admins get a dashboard at `/admin` with the site's numbers, live rooms, accounts, reported questions, a question editor whose changes reach games without a redeploy, blocked words for names, site switches such as an announcement or pausing new rooms, games and topics on and off, and Pro members with payments recorded by hand. See the [architecture and build plan](docs/ARCHITECTURE.md).
 

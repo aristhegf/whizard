@@ -9,7 +9,7 @@ import type {
 } from "@whizard/protocol";
 import { useState, type CSSProperties, type ReactNode } from "react";
 import { fetchCommunityStats } from "../api";
-import { CATALOG, TOPIC_STYLES } from "../catalog";
+import { CATALOG, isPlayable, TOPIC_STYLES } from "../catalog";
 import { linkTo } from "../router";
 import { Avatar } from "../ui/Avatar";
 import { CreateRoomButton, TopLayout } from "../ui/Chrome";
@@ -305,7 +305,7 @@ function MostPlayedGames({ entries }: { entries: StatsEntry[] | undefined }) {
     key: game.id,
     name: game.name,
     art: game.art,
-    count: entries?.find((e) => e.name === game.id)?.count ?? (game.href ? 0 : null),
+    count: entries?.find((e) => e.name === game.id)?.count ?? (isPlayable(game) ? 0 : null),
   })).sort((a, b) => (b.count ?? -1) - (a.count ?? -1));
   return (
     <Panel

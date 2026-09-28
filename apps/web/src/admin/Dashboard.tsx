@@ -186,8 +186,8 @@ const ACTIVITY: Record<
     tone: "gold",
     detail: (d) => {
       const players = Number(d.players ?? 0);
-      const what = d.topic ? topicName(d.topic as string) : gameName(String(d.game ?? "quiz"));
-      return `${what} • ${players} ${players === 1 ? "player" : "players"}`;
+      const name = d.topic ? topicName(String(d.topic)) : gameName(String(d.game ?? "quiz"));
+      return `${name} • ${players} ${players === 1 ? "player" : "players"}`;
     },
   },
   account_created: {

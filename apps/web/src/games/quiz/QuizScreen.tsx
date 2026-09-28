@@ -311,17 +311,29 @@ function Answer({ context, stage }: { context: GameContext; stage: AnswerStage }
   );
 }
 
-/** Everyone's points as they play. Only on tablets and computers; phones leave it out. */
 function LiveBoard({ context }: { context: GameContext }) {
   const { view, playerId, avatarOf } = context;
-  if (view.standings.length === 0) return null;
+  return <ScoreBoard standings={view.standings} playerId={playerId} avatarOf={avatarOf} />;
+}
+
+/** Everyone's points as they play. Only on tablets and computers; phones leave it out. */
+export function ScoreBoard({
+  standings,
+  playerId,
+  avatarOf,
+}: {
+  standings: QuizStanding[];
+  playerId: string;
+  avatarOf: (id: string) => string | null;
+}) {
+  if (standings.length === 0) return null;
   return (
     <aside className="panel live-board" aria-label="Live scores">
       <h2 className="live-title">
-        {view.standings.length} {view.standings.length === 1 ? "player" : "players"}
+        {standings.length} {standings.length === 1 ? "player" : "players"}
       </h2>
       <ol>
-        {view.standings.map((s) => (
+        {standings.map((s) => (
           <li
             key={s.playerId}
             className={`${s.playerId === playerId ? "me" : ""}${s.left ? " gone" : ""}`}
@@ -472,7 +484,7 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
   );
 }
 
-function Leaderboard({
+export function Leaderboard({
   standings,
   me,
   avatarOf,
@@ -525,7 +537,7 @@ function Explanation({ item }: { item: Pick<QuizReviewItem, "explanation" | "ref
 }
 
 /** Counts down from `ms`, calling `onDone` once at zero. Returns the milliseconds left. */
-function useCountdown(ms: number, onDone: () => void): number {
+export function useCountdown(ms: number, onDone: () => void): number {
   const [left, setLeft] = useState(ms);
   const done = useEffectEvent(onDone);
 
@@ -546,6 +558,6 @@ function useCountdown(ms: number, onDone: () => void): number {
 }
 
 /** Milliseconds since a `performance.now()` reading, or 0 if there isn’t one yet. */
-function elapsedSince(start: number | null): number {
+export function elapsedSince(start: number | null): number {
   return start === null ? 0 : Math.round(performance.now() - start);
 }

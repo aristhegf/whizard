@@ -407,6 +407,18 @@ p .btn-link {
   isolation: isolate;
 }
 
+/* Cards that open a room straight away are buttons. */
+button.game-card {
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.game-card:disabled {
+  cursor: progress;
+}
+
 .game-art {
   grid-area: art;
   display: flex;

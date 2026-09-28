@@ -89,6 +89,14 @@ export function configureGame(state: RoomState, playerId: string, settings: unkn
   return { ok: true, state: { ...state, game: { ...state.game, settings: parsed.data } } };
 }
 
+/** The host picks which game the room plays next, with that game's default settings. */
+export function chooseGame(state: RoomState, playerId: string, id: GameId): GameResult {
+  if (state.hostId !== playerId) return fail("not_host");
+  if (state.session) return fail("game_in_progress");
+  if (state.game.id === id) return { ok: true, state };
+  return { ok: true, state: { ...state, game: defaultGameConfig(id) } };
+}
+
 export function startGame(
   state: RoomState,
   playerId: string,
@@ -108,8 +116,9 @@ export function startGame(
   if (needed && players.length < needed.min) return fail("not_enough_players", needed.message);
 
   const recent = state.recentContent ?? [];
-  const content = drawContent(module.contentNeeded(state.game.settings), seed, { recent });
-  if (content.length === 0) return fail("no_content");
+  const request = module.contentNeeded(state.game.settings);
+  const content = request ? drawContent(request, seed, { recent }) : [];
+  if (request && content.length === 0) return fail("no_content");
 
   const gameState = module.setup({ settings: state.game.settings, players, content, seed, now });
   return {

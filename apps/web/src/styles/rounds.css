@@ -1,0 +1,211 @@
+/* Word Rush and Spot It. */
+
+.rounds-main {
+  gap: 18px;
+}
+
+.word-puzzle,
+.spot-puzzle {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.word-kind {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.word-entry {
+  position: relative;
+  max-width: 100%;
+}
+
+.word-slots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  border-radius: var(--radius);
+  border: 1.5px solid transparent;
+}
+
+.word-entry:focus-within .word-slots {
+  border-color: var(--line-strong);
+}
+
+.word-slot {
+  display: grid;
+  place-items: center;
+  width: clamp(30px, 8.5vw, 52px);
+  aspect-ratio: 5 / 6;
+  border-radius: 12px;
+  border: 1.5px dashed rgb(150 140 255 / 45%);
+  background: rgb(24 28 70 / 60%);
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(1.1rem, 5vw, 1.8rem);
+}
+
+.word-slot.filled {
+  border-style: solid;
+  border-color: rgb(150 140 255 / 55%);
+  background: rgb(60 44 170 / 80%);
+}
+
+.word-slot.given {
+  border-color: transparent;
+  background: rgb(255 255 255 / 12%);
+  color: var(--muted);
+}
+
+.word-slots.revealed .word-slot {
+  border-color: rgb(15 198 128 / 70%);
+  background: rgb(15 198 128 / 22%);
+}
+
+/* Covers the slots so a tap on them brings up the keyboard; its own text stays hidden. */
+.word-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  font-size: 16px;
+  cursor: text;
+}
+
+.word-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.word-tile {
+  width: clamp(40px, 11vw, 56px);
+  aspect-ratio: 1;
+  border-radius: 14px;
+  border: 1.5px solid rgb(255 212 63 / 55%);
+  background: linear-gradient(180deg, #3a2a9e, #22186a);
+  box-shadow: 0 6px 0 #140e45;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(1.2rem, 5vw, 1.6rem);
+  color: #fff;
+  cursor: pointer;
+  transition:
+    transform 120ms ease-out,
+    opacity 120ms ease-out;
+}
+
+.word-tile:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 #140e45;
+}
+
+.word-tile:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.word-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.word-actions .btn-primary {
+  min-width: 140px;
+}
+
+.word-tries {
+  min-height: 1.5em;
+  text-align: center;
+}
+
+.word-tries s {
+  margin: 0 4px;
+  color: #ff8a98;
+}
+
+.give-up {
+  color: var(--dim);
+}
+
+.spot-grid {
+  display: grid;
+  gap: clamp(4px, 1.2vw, 8px);
+  width: min(100%, 460px);
+  padding: 10px;
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--line);
+  background: rgb(10 10 40 / 60%);
+}
+
+.spot-cell {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  min-width: 0;
+  padding: 0;
+  border-radius: 12px;
+  border: 1.5px solid rgb(150 140 255 / 25%);
+  background: rgb(28 30 80 / 90%);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 100ms ease-out;
+}
+
+button.spot-cell:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.spot-cell.missed {
+  border-color: var(--bad);
+  opacity: 0.5;
+  cursor: default;
+}
+
+.spot-cell.odd {
+  border-color: var(--ok);
+  box-shadow: 0 0 0 3px var(--ok);
+}
+
+.spot-shade .spot-cell {
+  border-color: transparent;
+}
+
+.spot-glyph {
+  font-size: clamp(1rem, 6vw, 2rem);
+  line-height: 1;
+}
+
+.spot-letter .spot-glyph {
+  font-family: var(--display);
+  font-weight: 700;
+}
+
+.spot-grid[style*="repeat(6"] .spot-glyph,
+.spot-grid[style*="repeat(7"] .spot-glyph {
+  font-size: clamp(0.9rem, 4.6vw, 1.6rem);
+}
+
+.spot-arrow {
+  display: inline-flex;
+}
+
+.rounds-review li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+
+.countdown img.countdown-game-art {
+  width: 180px;
+  border-radius: 28px;
+}

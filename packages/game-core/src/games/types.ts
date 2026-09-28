@@ -1,6 +1,7 @@
 import type { z } from "zod";
 import type { JigsawContentRequest } from "./jigsaw/settings";
 import type { QuizContentRequest } from "./quiz/settings";
+import type { WordsContentRequest } from "./wordRush/settings";
 
 export interface GamePlayer {
   id: string;
@@ -8,7 +9,7 @@ export interface GamePlayer {
 }
 
 /** What a game needs from the content bank before it can start. */
-export type ContentRequest = QuizContentRequest | JigsawContentRequest;
+export type ContentRequest = QuizContentRequest | JigsawContentRequest | WordsContentRequest;
 
 /** How a finished game went, for match history. The same shape for every game. */
 export interface GameSummary {
@@ -62,7 +63,8 @@ export interface GameModule<Settings, Content, State, Action, View> {
   settingsSchema: z.ZodType<Settings>;
   defaultSettings: Settings;
   actionSchema: z.ZodType<Action>;
-  contentNeeded(settings: Settings): ContentRequest;
+  /** null for games that make their own, such as Spot It's grids. */
+  contentNeeded(settings: Settings): ContentRequest | null;
   setup(args: {
     settings: Settings;
     players: GamePlayer[];
