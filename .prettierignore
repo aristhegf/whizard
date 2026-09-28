@@ -7,3 +7,6 @@ apps/web/src/components/motion/
 apps/web/src/lib/
 # transitions.dev snippets, kept as published.
 apps/web/src/styles/transitions.css
+# The transitions.dev agent skills (npx skills add Jakubantalik/transitions.dev), kept as published.
+.agents/
+skills-lock.json
