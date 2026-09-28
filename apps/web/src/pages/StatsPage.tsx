@@ -495,16 +495,16 @@ function TopPlayers({ leaders }: { leaders: LeaderboardEntry[] | undefined }) {
         </p>
       ) : (
         <div className="top-players-body">
-          <ol className="podium">
+          <ol className="top-podium">
             {podiumOrder.map(({ leader, place }) => (
-              <li key={leader.username} className={`podium-step place-${place}`}>
-                <span className="podium-avatar">
-                  {place === 1 && <Icon name="crown" size={34} fill className="podium-crown" />}
+              <li key={leader.username} className={`top-step top-${place}`}>
+                <span className="top-avatar">
+                  {place === 1 && <Icon name="crown" size={34} fill className="top-crown" />}
                   <Avatar id={leader.avatar} name={leader.username} size={place === 1 ? 76 : 64} />
-                  <span className="podium-place">{place}</span>
+                  <span className="top-rank">{place}</span>
                 </span>
-                <strong className="podium-name">{leader.displayName}</strong>
-                <span className="podium-wins">{winsLabel(leader.wins)}</span>
+                <strong className="top-name">{leader.displayName}</strong>
+                <span className="top-wins">{winsLabel(leader.wins)}</span>
               </li>
             ))}
           </ol>

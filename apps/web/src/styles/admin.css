@@ -674,7 +674,7 @@
   min-height: 36px;
 }
 
-.rank {
+.rank-list .rank {
   display: grid;
   place-items: center;
   width: 28px;
