@@ -25,6 +25,19 @@ export interface GameSummary {
     /** Correct answers, for games that have them. */
     correct: number | null;
   }[];
+  /** How each piece of content (such as a question) went, for games that have them. */
+  items?: ItemResult[];
+}
+
+export interface ItemResult {
+  id: string;
+  /** Players who picked an answer. */
+  answered: number;
+  correct: number;
+  /** Players whose time ran out. */
+  timedOut: number;
+  /** Wrong answers picked, by their text. */
+  wrongPicks: Record<string, number>;
 }
 
 export interface Rejection {

@@ -1324,8 +1324,18 @@
     flex-wrap: wrap;
   }
 
+  /* The title keeps most of the row; a button beside it drops below when there isn't room. */
   .admin-panel-head > div:not([role]) {
-    flex: 1 1 0;
+    flex: 1 1 180px;
+  }
+
+  .content-filter {
+    width: 100%;
+  }
+
+  .admin-switch button {
+    white-space: normal;
+    line-height: 1.15;
   }
 
   .admin-panel-head .admin-switch {
@@ -1338,4 +1348,343 @@
     min-width: 0;
     padding: 0 8px;
   }
+}
+
+/* Questions and content --------------------------------------------------------------------- */
+
+.span-6 {
+  grid-column: span 6;
+}
+
+.admin-head-action {
+  margin-left: auto;
+  flex: none;
+}
+
+/* Topics down, levels across. Each cell is shaded by how many questions it has. */
+.coverage {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.coverage th,
+.coverage td {
+  padding: 5px 6px;
+  text-align: center;
+}
+
+.coverage thead th {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.coverage thead th:first-child,
+.coverage tbody th {
+  text-align: left;
+}
+
+.coverage tbody th {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.coverage tbody th .rank-art img {
+  width: 26px;
+  height: 26px;
+}
+
+.coverage-cell {
+  display: block;
+  padding: 6px 0;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    rgb(139 92 255 / 45%) var(--fill),
+    rgb(255 255 255 / 5%) var(--fill)
+  );
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.coverage-cell.thin {
+  outline: 1.5px solid rgb(255 212 63 / 60%);
+  color: var(--gold);
+}
+
+.coverage-cell:hover {
+  outline: 2px solid #8b5cff;
+}
+
+.coverage-total {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.question-lines,
+.content-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.question-lines li + li,
+.content-list li + li {
+  border-top: 1.5px solid var(--line);
+}
+
+.question-line,
+.content-row {
+  display: grid;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 4px;
+  border-radius: 12px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.question-line {
+  grid-template-columns: 34px minmax(0, 1fr) 120px;
+}
+
+.content-row {
+  grid-template-columns: 34px minmax(0, 1fr) 90px 200px;
+}
+
+.question-line:hover,
+.content-row:hover {
+  background: rgb(255 255 255 / 4%);
+}
+
+.question-line-text,
+.content-text {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.question-line-text > span,
+.content-meta {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.question-line-wrong {
+  color: #ffc2cb !important;
+}
+
+.question-line-share {
+  display: grid;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.content-share {
+  display: grid;
+  font-family: var(--display);
+  font-weight: 700;
+  text-align: right;
+}
+
+.content-share span {
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.content-status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.editor-side .content-status {
+  justify-content: flex-start;
+}
+
+.content-tools {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.content-tools select,
+.content-tools input {
+  width: 100%;
+  min-height: 46px;
+}
+
+.content-filter {
+  justify-self: start;
+  margin-left: 0;
+}
+
+.editor-side {
+  display: grid;
+  align-content: start;
+  gap: var(--admin-gap);
+  min-width: 0;
+}
+
+.question-form {
+  display: grid;
+  gap: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.form-row.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-field {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+}
+
+.form-field textarea {
+  min-height: 0;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line);
+  background: var(--field);
+  color: var(--text);
+  font: inherit;
+  resize: vertical;
+}
+
+.form-field.right input {
+  border-color: rgb(15 198 128 / 55%);
+}
+
+.form-field input:disabled {
+  color: var(--muted);
+}
+
+.form-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.form-field.right .form-label {
+  color: #5dffb0;
+}
+
+.form-count {
+  color: var(--dim);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.form-count.near {
+  color: var(--gold);
+}
+
+.form-hint {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.form-saved {
+  margin: 0;
+  color: #5dffb0;
+  font-weight: 700;
+}
+
+@media (max-width: 1100px) {
+  .span-6 {
+    grid-column: 1 / -1;
+  }
+
+  .content-tools {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .content-tools .admin-search {
+    grid-column: 1 / -1;
+  }
+
+  .editor-side {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .content-row {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+  }
+
+  .content-status {
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+  }
+
+  .question-line {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .question-line-share {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .content-tools,
+  .form-row,
+  .form-row.two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .coverage th,
+  .coverage td {
+    padding: 4px 3px;
+  }
+
+  .coverage tbody th .rank-art {
+    display: none;
+  }
+}
+
+.tips {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.tips strong {
+  color: var(--text);
 }

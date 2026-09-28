@@ -99,3 +99,48 @@ test("an admin sees open rooms and can close one", async ({ browser }) => {
   await expect(row).toHaveCount(0);
   await expect(host.getByText("This room was closed by Whizard.")).toBeVisible();
 });
+
+test("an admin can edit a question, undo it, and add their own", async ({ browser }) => {
+  const admin = await signedUp(browser);
+  grantAdmin(admin.username);
+  const page = admin.page;
+
+  await page.goto("/admin/questions");
+  await expect(page.getByRole("heading", { name: "Questions by Topic and Level" })).toBeVisible();
+
+  // Edit a shipped question, then put it back.
+  await page.goto("/admin/content");
+  await page.getByLabel("Search questions").fill("baby kangaroo");
+  await page.locator(".content-row").first().click();
+  await expect(page).toHaveURL(/\/admin\/content\/animals-\d+$/);
+  const explanation = page.getByLabel(/^Explanation/);
+  await explanation.fill(`${await explanation.inputValue()} Checked.`);
+  await page.getByRole("button", { name: "Save changes" }).click();
+  await expect(page.getByText("Saved. New games use it within a minute.")).toBeVisible();
+  await expect(page.locator(".status-pill", { hasText: "Edited" })).toBeVisible();
+  await page.getByRole("button", { name: "Undo my edits" }).click();
+  await expect(page.getByText("Back to how it ships.")).toBeVisible();
+  await expect(page.locator(".status-pill", { hasText: "Edited" })).toHaveCount(0);
+
+  // A new question goes through the same checks as the bank's.
+  const word = `Zq${Math.random().toString(36).slice(2, 8)}`;
+  await page.goto("/admin/content/new");
+  await page.getByLabel(/^Topic/).selectOption("pop-culture");
+  await page.getByLabel(/^Level/).selectOption("hard");
+  await page.getByLabel(/^Sub-topic/).fill("Testing");
+  await page.getByLabel(/^Question/).fill(`Which of these is the test word ${word.length}?`);
+  await page.getByLabel(/^Correct answer/).fill(word);
+  await page.getByLabel(/^Wrong answer 1/).fill(word);
+  await page.getByLabel(/^Wrong answer 2/).fill(`${word}b`);
+  await page.getByLabel(/^Wrong answer 3/).fill(`${word}c`);
+  await page.getByLabel(/^Explanation/).fill("It was made up for this test.");
+  await page.getByRole("button", { name: "Add question" }).click();
+  await expect(page.getByText("The four answers must all be different.")).toBeVisible();
+
+  await page.getByLabel(/^Wrong answer 1/).fill(`${word}a`);
+  await page.getByRole("button", { name: "Add question" }).click();
+  await expect(page).toHaveURL(/\/admin\/content\/pop-culture-a[a-z0-9]+$/);
+  await expect(page.locator(".status-pill", { hasText: "Added" })).toBeVisible();
+  await page.getByRole("button", { name: "Delete question" }).click();
+  await expect(page).toHaveURL(/\/admin\/content$/);
+});

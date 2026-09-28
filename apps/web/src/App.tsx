@@ -43,7 +43,7 @@ export function App() {
         ) : route.name === "stats" ? (
           <StatsPage />
         ) : route.name === "admin" ? (
-          <AdminApp section={route.section} />
+          <AdminApp section={route.section} item={route.item} />
         ) : route.name === "pricing" ? (
           <PricingPage />
         ) : (

@@ -120,13 +120,22 @@ export function drawQuestions(
   );
 }
 
+/** `questions` is the bank to draw from: the one that ships, or it with admin edits applied. */
 export function drawContent(
   request: ContentRequest,
   seed: number,
   options: DrawOptions = {},
+  questions: readonly StoredQuestion[] = QUESTIONS,
 ): unknown[] {
   switch (request.kind) {
     case "quiz-questions":
-      return drawQuestions(request.category, request.difficulty, request.count, seed, options);
+      return drawQuestions(
+        request.category,
+        request.difficulty,
+        request.count,
+        seed,
+        options,
+        questions,
+      );
   }
 }

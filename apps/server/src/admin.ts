@@ -1,4 +1,4 @@
-import { findQuestion, questionVersion } from "@whizard/content";
+import { questionVersion } from "@whizard/content";
 import {
   REPORT_ACTIONS,
   STATS_RANGES,
@@ -12,8 +12,10 @@ import {
 import { z } from "zod";
 import { requireUser } from "./account";
 import { dayOf } from "./analytics";
+import { loadBank } from "./bank";
 import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./http";
 import { RETIRE_AFTER_REPORTS } from "./reports";
+import type { Env } from "./env";
 import type { SignedIn } from "./sessions";
 import { groupBreakdown, rangeDays } from "./stats";
 
@@ -183,7 +185,7 @@ export async function getAdminOverview(context: RequestContext): Promise<Respons
           ? Math.max(0, 1 - cur("rooms_shared") / cur("rooms_created"))
           : null,
     },
-    openReports: (await reportedQuestions(env.DB)).filter(
+    openReports: (await reportedQuestions(env)).filter(
       (q) => q.status === "open" || q.status === "out",
     ).length,
   };
@@ -209,7 +211,9 @@ export async function getAdminActivity(context: RequestContext): Promise<Respons
 // Reports -------------------------------------------------------------------------------------
 
 /** Every reported question's current wording, with its reports and where it stands. */
-export async function reportedQuestions(db: D1Database): Promise<ReportedQuestion[]> {
+export async function reportedQuestions(env: Env): Promise<ReportedQuestion[]> {
+  const db = env.DB;
+  const { find: findQuestion } = await loadBank(env);
   const [reports, kept, retired] = await db.batch<Record<string, string | number>>([
     db.prepare(
       `SELECT question_id, version, reason, COUNT(*) AS n, MAX(created_at) AS last
@@ -268,7 +272,7 @@ export async function reportedQuestions(db: D1Database): Promise<ReportedQuestio
 export async function getAdminReports(context: RequestContext): Promise<Response> {
   await requireAdmin(context);
   return Response.json(
-    { questions: await reportedQuestions(context.env.DB) },
+    { questions: await reportedQuestions(context.env) },
     { headers: { "Cache-Control": "no-store" } },
   );
 }
@@ -285,7 +289,7 @@ export async function decideReport(context: RequestContext): Promise<Response> {
   requireSameOrigin(context);
   const { user } = await requireAdmin(context);
   const { env, params, request } = context;
-  const question = findQuestion(decodeURIComponent(params[0] ?? ""));
+  const question = (await loadBank(env)).find(decodeURIComponent(params[0] ?? ""));
   if (!question) throw new HttpError(404, "not_found", "That question doesn’t exist.");
   const { action } = await readJson(request, reportActionSchema);
   const version = questionVersion(question);

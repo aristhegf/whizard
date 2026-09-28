@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { seededRng, shuffled } from "../../random";
-import type { GameModule, GamePlayer, Rejection } from "../types";
+import type { GameModule, GamePlayer, ItemResult, Rejection } from "../types";
 import { BASE_POINTS, creditedElapsed, pointsFor } from "./scoring";
 import {
   DEFAULT_QUIZ_SETTINGS,
@@ -428,6 +428,25 @@ export const quizGame: GameModule<QuizSettings, QuizQuestion[], QuizState, QuizA
         score: s.score,
         correct: state.players.find((p) => p.id === s.playerId)?.correctCount ?? null,
       })),
+      // Everyone's answers count here, including players who left before the end.
+      items: state.questions.map((q, index) => {
+        const item: ItemResult = { id: q.id, answered: 0, correct: 0, timedOut: 0, wrongPicks: {} };
+        for (const player of state.players) {
+          const answer = player.answers.find((a) => a.index === index);
+          if (!answer) continue;
+          if (answer.choice === null) {
+            item.timedOut++;
+            continue;
+          }
+          item.answered++;
+          if (answer.correct) item.correct++;
+          else {
+            const text = q.choices[answer.choice] ?? "";
+            item.wrongPicks[text] = (item.wrongPicks[text] ?? 0) + 1;
+          }
+        }
+        return item;
+      }),
     };
   },
 
