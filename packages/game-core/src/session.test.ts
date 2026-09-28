@@ -27,11 +27,14 @@ import {
 const T0 = 1_000_000;
 
 const bank: ContentSource = (request: ContentRequest) =>
-  Array.from({ length: request.kind === "words" ? 0 : request.count }, (_, i): QuizQuestion => ({
-    id: `q${i}`,
-    prompt: `Q${i}?`,
-    choices: ["a", "b", "c", "d"],
-  }));
+  Array.from(
+    { length: request.kind === "quiz-questions" ? request.count : 0 },
+    (_, i): QuizQuestion => ({
+      id: `q${i}`,
+      prompt: `Q${i}?`,
+      choices: ["a", "b", "c", "d"],
+    }),
+  );
 
 function room(...nicknames: string[]): { state: RoomState; connected: Set<string> } {
   let state = createRoomState("ABCDEF", T0);

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   QUESTIONS,
   QUESTION_FILES,
+  drawContent,
   drawQuestions,
   type DrawOptions,
   findQuestion,
@@ -148,5 +149,17 @@ describe("question versions", () => {
     expect(questionVersion({ ...q, choices: [...q.choices].reverse() })).not.toBe(
       questionVersion(q),
     );
+  });
+});
+
+describe("drawContent for a jigsaw", () => {
+  it("draws the picture asked for, or a random one, with a history ID", () => {
+    expect(drawContent({ kind: "jigsaw-picture", picture: "crew" }, 1)).toEqual([
+      { id: "jigsaw:crew", picture: expect.objectContaining({ id: "crew" }) },
+    ]);
+    const [random] = drawContent({ kind: "jigsaw-picture", picture: "random" }, 5) as {
+      id: string;
+    }[];
+    expect(random!.id).toMatch(/^jigsaw:/);
   });
 });

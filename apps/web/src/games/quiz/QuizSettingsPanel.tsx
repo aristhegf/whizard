@@ -7,10 +7,9 @@ import {
   quizSettingsSchema,
   type QuizSettings,
 } from "@whizard/game-core";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { fetchQuizCategories, type QuizCategoryInfo } from "../../api";
-import { SettingSelect } from "../../ui/SettingSelect";
-import { Icon, type IconName } from "../../ui/Icon";
+import { SettingRow as Row, SettingSelect } from "../../ui/SettingSelect";
 
 const DIFFICULTY_LABELS = { easy: "Easy", medium: "Medium", hard: "Hard" } as const;
 
@@ -93,26 +92,6 @@ export function QuizSettingsRows({
         </Row>
       )}
     </>
-  );
-}
-
-function Row({
-  icon,
-  id,
-  label,
-  children,
-}: {
-  icon: IconName;
-  id: string;
-  label: string;
-  children: ReactNode;
-}) {
-  return (
-    <div className="setting-row">
-      <Icon name={icon} size={20} />
-      <label htmlFor={id}>{label}</label>
-      {children}
-    </div>
   );
 }
 

@@ -6,6 +6,7 @@ import { AddFriendScreen, FriendsScreen, GroupScreen } from "./FriendsScreen";
 import { Notice } from "./Notice";
 import { GamesPage } from "./pages/GamesPage";
 import { HomePage } from "./pages/HomePage";
+import { JigsawPage } from "./pages/JigsawPage";
 import { PricingPage } from "./pages/PricingPage";
 import { StatsPage } from "./pages/StatsPage";
 import { TopicsPage } from "./pages/TopicsPage";
@@ -32,6 +33,8 @@ export function App() {
           <GamesPage />
         ) : route.name === "topics" ? (
           <TopicsPage />
+        ) : route.name === "jigsaw" ? (
+          <JigsawPage />
         ) : route.name === "account" ? (
           <AccountScreen />
         ) : route.name === "friends" ? (

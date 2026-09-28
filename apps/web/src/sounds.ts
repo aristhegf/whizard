@@ -5,7 +5,7 @@ import { useSyncExternalStore } from "react";
  * plays until the player has tapped something (browsers require that). Muting is remembered.
  */
 
-export type Sound = "tick" | "go" | "correct" | "wrong" | "hurry" | "fanfare" | "join";
+export type Sound = "tick" | "go" | "correct" | "wrong" | "hurry" | "fanfare" | "join" | "place";
 
 const MUTED_KEY = "whizard:muted";
 
@@ -95,6 +95,8 @@ const SOUNDS: Record<Sound, Note[]> = {
     { freq: C6, at: 0.39, length: 0.45, type: "triangle", gain: 0.35 },
   ],
   join: [{ freq: 700, at: 0, length: 0.1, type: "sine", gain: 0.2, to: 1000 }],
+  /** A jigsaw piece clicking into its place. */
+  place: [{ freq: 620, at: 0, length: 0.12, type: "sine", gain: 0.16, to: 930 }],
 };
 
 export function play(sound: Sound): void {

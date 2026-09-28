@@ -1,3 +1,4 @@
+import { jigsawGame } from "./jigsaw/jigsaw";
 import { quizGame } from "./quiz/quiz";
 import { spotItGame } from "./spotIt/spotIt";
 import { wordRushGame } from "./wordRush/wordRush";
@@ -7,6 +8,7 @@ export type AnyGameModule = GameModule<unknown, unknown, unknown, unknown, unkno
 
 export const GAMES = {
   quiz: quizGame as unknown as AnyGameModule,
+  jigsaw: jigsawGame as unknown as AnyGameModule,
   "word-rush": wordRushGame as unknown as AnyGameModule,
   "spot-it": spotItGame as unknown as AnyGameModule,
 } as const;

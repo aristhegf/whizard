@@ -19,7 +19,8 @@ import { useErrorShake } from "../../ui/errorShake";
 import { Icon } from "../../ui/Icon";
 import { MuteButton } from "../../ui/MuteButton";
 import { useServerNow } from "../../useServerNow";
-import { elapsedSince, Leaderboard, Podium, ScoreBoard, useCountdown } from "../quiz/QuizScreen";
+import { Podium } from "../../ui/Podium";
+import { elapsedSince, Leaderboard, ScoreBoard, useCountdown } from "../quiz/QuizScreen";
 
 // Word Rush and Spot It: everyone gets the same puzzles and plays through them at their own
 // pace. This screen holds what they share; each game brings its own puzzle.
@@ -664,7 +665,10 @@ function Results({
               </p>
             </div>
           ) : podium.length > 0 ? (
-            <Podium standings={podium} avatarOf={avatarOf} />
+            <Podium
+              entries={podium.map((p) => ({ ...p, label: p.score.toLocaleString() }))}
+              avatarOf={avatarOf}
+            />
           ) : (
             <p className="muted center waiting-note">Waiting for everyone to finish…</p>
           )}

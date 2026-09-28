@@ -1,10 +1,12 @@
 import {
   ELIMINATION_MIN_PLAYERS,
+  JIGSAW_PICTURES,
   MAX_PLAYERS,
   NICKNAME_INPUT_MAX_LENGTH,
   QUIZ_CATEGORIES,
   QUIZ_VARIANTS,
   type AnyQuizView,
+  type JigsawView,
   type SpotItView,
   type WordRushView,
 } from "@whizard/game-core";
@@ -20,6 +22,13 @@ import { Tooltip } from "@/components/motion/tooltip";
 import { useAccount } from "./account";
 import { PingFriends } from "./FriendsScreen";
 import { CATALOG, isPlayable } from "./catalog";
+import { JigsawScreen } from "./games/jigsaw/JigsawScreen";
+import {
+  JigsawSettingsRows,
+  parseJigsawSettings,
+  pictureName,
+  sizeName,
+} from "./games/jigsaw/JigsawSettingsPanel";
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { RoundsScreen } from "./games/rounds/RoundsScreen";
@@ -56,21 +65,28 @@ export function RoomScreen({ code }: { code: string }) {
   const joined = !!(state.playerId && room);
   const inGame = joined && room!.phase !== "lobby" && !!state.game;
 
-  const view = inGame ? (state.game as AnyQuizView | WordRushView | SpotItView) : null;
-  const stage = view?.stage.kind ?? null;
-  // Leaving mid-game can't be undone; in Elimination only while you're still in it.
-  const stillIn =
-    view && "mode" in view ? view.me?.status === "in" || view.me?.status === "finalist" : true;
-  const midGame =
-    room?.phase === "playing" &&
-    stillIn &&
-    (stage === "question" ||
-      stage === "answer" ||
-      stage === "reveal" ||
-      stage === "cut" ||
-      stage === "final" ||
-      stage === "puzzle" ||
-      stage === "result");
+  const view = inGame ? (state.game as AnyQuizView | WordRushView | SpotItView | JigsawView) : null;
+  // Leaving mid-game can't be undone, so it asks first while you're still playing: in a
+  // jigsaw until you finish, in Elimination only while you're still in it.
+  let midGame = false;
+  if (room?.phase === "playing" && view) {
+    if (view.game === "jigsaw") {
+      midGame = view.board !== null && !view.me?.finished && !view.final;
+    } else {
+      const stage = view.stage.kind;
+      const stillIn =
+        "mode" in view ? view.me?.status === "in" || view.me?.status === "finalist" : true;
+      midGame =
+        stillIn &&
+        (stage === "question" ||
+          stage === "answer" ||
+          stage === "reveal" ||
+          stage === "cut" ||
+          stage === "final" ||
+          stage === "puzzle" ||
+          stage === "result");
+    }
+  }
   const gameProps = {
     client,
     room: room!,
@@ -89,7 +105,9 @@ export function RoomScreen({ code }: { code: string }) {
   return (
     <div className="page room-page">
       <h1 className="sr-only">Whizard room {code}</h1>
-      {view && view.game !== "quiz" ? (
+      {view?.game === "jigsaw" ? (
+        <JigsawScreen {...gameProps} view={view} />
+      ) : view && view.game !== "quiz" ? (
         <RoundsScreen {...gameProps} view={view} />
       ) : view ? (
         <QuizScreen {...gameProps} view={view} />
@@ -310,6 +328,7 @@ function Lobby({
   const game = CATALOG.find((g) => g.id === gameId);
   const settings = gameId === "quiz" ? parseQuizSettings(room.game.settings) : null;
   const rounds = isRoundsGame(gameId) ? parseRoundsSettings(gameId, room.game.settings) : null;
+  const jigsaw = gameId === "jigsaw" ? parseJigsawSettings(room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
   const needMore =
@@ -319,10 +338,11 @@ function Lobby({
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
   const url = `${location.origin}${roomPath(room.code)}`;
 
-  // The countdown's generating effect needs three.js; fetch it while everyone gathers.
+  // The quiz countdown's generating effect needs three.js; fetch it while everyone gathers.
+  const isQuiz = room.game.id === "quiz";
   useEffect(() => {
-    if (canGenerateArt()) void preloadGeneratingArt().catch(() => {});
-  }, []);
+    if (isQuiz && canGenerateArt()) void preloadGeneratingArt().catch(() => {});
+  }, [isQuiz]);
 
   // A soft pop when someone new arrives in the lobby.
   const joined = useRef(connected.length);
@@ -363,14 +383,25 @@ function Lobby({
       <div className="lobby">
         <section className="lobby-main">
           <div className="panel game-summary">
-            <span className="summary-art">
-              <img src={game?.art ?? "/art/games/quiz.webp"} alt="" />
+            <span className={jigsaw ? "summary-art picture" : "summary-art"}>
+              <img
+                src={
+                  (jigsaw && JIGSAW_PICTURES.find((p) => p.id === jigsaw.picture)?.src) ||
+                  (game?.art ?? "/art/games/quiz.webp")
+                }
+                alt=""
+              />
             </span>
             <div className="summary-text">
               <h2 className="summary-title">{game?.name ?? "Quiz"}</h2>
               <span className="pill">
-                {settings ? (category?.name ?? "Quiz") : (game?.description ?? "")}
+                {settings
+                  ? (category?.name ?? "Quiz")
+                  : jigsaw
+                    ? pictureName(jigsaw.picture)
+                    : (game?.description ?? "")}
               </span>
+              {!isHost && jigsaw && <p className="summary muted small">{sizeName(jigsaw.side)}</p>}
               {!isHost && rounds && (
                 <p className="summary muted small">
                   {rounds.rounds} rounds · {rounds.timeLimitSeconds}s each
@@ -386,12 +417,12 @@ function Lobby({
                 </p>
               )}
             </div>
-            {isHost && settings && (
-              <Tooltip content="Change topic">
+            {isHost && (settings || jigsaw) && (
+              <Tooltip content={jigsaw ? "Change picture" : "Change topic"}>
                 <button
                   className="icon-btn edit-btn"
-                  aria-label="Change topic"
-                  onClick={() => focusSetting("category")}
+                  aria-label={jigsaw ? "Change picture" : "Change topic"}
+                  onClick={() => focusSetting(jigsaw ? "picture" : "category")}
                 >
                   <Icon name="pencil" size={20} />
                 </button>
@@ -441,6 +472,13 @@ function Lobby({
               {settings && (
                 <QuizSettingsRows
                   settings={settings}
+                  editable={isHost}
+                  onChange={(next) => client.configure(next)}
+                />
+              )}
+              {jigsaw && (
+                <JigsawSettingsRows
+                  settings={jigsaw}
                   editable={isHost}
                   onChange={(next) => client.configure(next)}
                 />

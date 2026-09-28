@@ -102,8 +102,8 @@ export class Room extends DurableObject<Env> {
   private listed: string | undefined;
 
   /**
-   * Claims this room for a newly generated code, optionally with game settings picked before
-   * the room existed (such as a topic). Returns false if the code is already in use.
+   * Claims this room for a newly generated code, for a game, optionally with settings picked
+   * before the room existed (such as a topic). Returns false if the code is already in use.
    */
   async create(code: string, gameSettings?: unknown, gameId: GameId = "quiz"): Promise<boolean> {
     if (await this.load()) return false;
@@ -335,7 +335,9 @@ export class Room extends DurableObject<Env> {
       sendError(ws, ErrorCode.BadSettings, TOPIC_OFF_MESSAGE);
       return;
     }
-    const request = before && gameModule(before.game.id).contentNeeded(before.game.settings);
+    const needed = before && gameModule(before.game.id).contentNeeded(before.game.settings);
+    // Questions and words are tracked per player as seen; jigsaw pictures aren't.
+    const request = needed && needed.kind !== "jigsaw-picture" ? needed : null;
     const connected = this.connectedIds();
     const viewers = (before?.players ?? [])
       .filter((p) => connected.has(p.id))
@@ -433,17 +435,19 @@ export class Room extends DurableObject<Env> {
 
     if (result) {
       const { summary } = result;
+      // Topics are quiz categories; other games use `category` for their own things.
+      const topic = result.gameId === "quiz" ? summary.category : null;
       await count(this.env, {
         games_finished: 1,
         game_players: summary.players.length,
         [`game_size:${sizeBucket(summary.players.length)}`]: 1,
         [`game:${result.gameId}`]: 1,
-        ...(summary.category ? { [`topic:${summary.category}`]: 1 } : {}),
+        ...(topic ? { [`topic:${topic}`]: 1 } : {}),
         ...(summary.mode ? { [`mode:${summary.mode}`]: 1 } : {}),
       });
       await logActivity(this.env, "game_finished", {
         game: result.gameId,
-        topic: summary.category,
+        topic,
         players: summary.players.length,
       });
       await recordQuestionStats(this.env, summary.items ?? []);

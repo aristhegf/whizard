@@ -39,6 +39,7 @@ export async function getAdminGames(context: RequestContext): Promise<Response> 
 
   const body: AdminGames = {
     settings,
+    // Every playable game, so it can be switched off before anyone has played it.
     games: [...new Set([...GAME_IDS, ...gameIds])].map((id) => ({
       id,
       last30: sum(`game:${id}`),

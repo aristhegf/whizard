@@ -5,7 +5,9 @@ import {
   MorphSelectTrigger,
   MorphSelectValue,
 } from "@/components/motion/select-morph";
+import type { ReactNode } from "react";
 import { useMediaQuery } from "./common";
+import { Icon, type IconName } from "./Icon";
 
 export interface SettingOption {
   value: string;
@@ -73,4 +75,25 @@ export function SettingSelect({
 export function focusSetting(id: string) {
   const el = document.getElementById(id);
   (el instanceof HTMLSelectElement ? el : el?.querySelector("button"))?.focus();
+}
+
+/** A row in the lobby's Room Settings list: icon, label and its control. */
+export function SettingRow({
+  icon,
+  id,
+  label,
+  children,
+}: {
+  icon: IconName;
+  id: string;
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="setting-row">
+      <Icon name={icon} size={20} />
+      <label htmlFor={id}>{label}</label>
+      {children}
+    </div>
+  );
 }

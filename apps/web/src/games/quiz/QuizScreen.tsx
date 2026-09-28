@@ -21,6 +21,7 @@ import { EliminationScreen } from "./EliminationScreen";
 import { ReportQuestion } from "./ReportQuestion";
 import { play } from "../../sounds";
 import { MuteButton } from "../../ui/MuteButton";
+import { Podium } from "../../ui/Podium";
 
 type QuestionStage = Extract<QuizStage, { kind: "question" }>;
 type AnswerStage = Extract<QuizStage, { kind: "answer" }>;
@@ -413,7 +414,10 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
               </p>
             </div>
           ) : podium.length > 0 ? (
-            <Podium standings={podium} avatarOf={avatarOf} />
+            <Podium
+              entries={podium.map((p) => ({ ...p, label: p.score.toLocaleString() }))}
+              avatarOf={avatarOf}
+            />
           ) : (
             <p className="muted center waiting-note">Waiting for everyone to finish…</p>
           )}
@@ -476,43 +480,6 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
           </ol>
         </section>
       )}
-    </div>
-  );
-}
-
-const PODIUM_ORDER = [1, 0, 2];
-
-export function Podium({
-  standings,
-  avatarOf,
-}: {
-  standings: QuizStanding[];
-  avatarOf: (id: string) => string | null;
-}) {
-  return (
-    <div className="podium" aria-label="Top three">
-      <span className="confetti" aria-hidden="true" />
-      {PODIUM_ORDER.map((i) => {
-        const s = standings[i];
-        if (!s) return <div key={i} className="podium-place empty" />;
-        return (
-          <div key={s.playerId} className={`podium-place place-${i + 1}`}>
-            <div className="podium-face">
-              {i === 0 && (
-                <span className="podium-crown" aria-hidden="true">
-                  <Icon name="crown" size={44} fill />
-                </span>
-              )}
-              <Avatar id={avatarOf(s.playerId)} name={s.nickname} size={i === 0 ? 150 : 118} />
-              <span className="podium-rank">{i + 1}</span>
-            </div>
-            <div className="podium-block">
-              <span className="podium-name">{s.nickname}</span>
-              <span className="podium-score">{s.score.toLocaleString()}</span>
-            </div>
-          </div>
-        );
-      })}
     </div>
   );
 }

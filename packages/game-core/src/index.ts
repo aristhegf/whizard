@@ -117,6 +117,32 @@ export {
   type QuizVariant,
 } from "./games/quiz/settings";
 export {
+  JIGSAW_COUNTDOWN_MS,
+  JIGSAW_TIME_LIMIT_MS,
+  POINTS_PER_PIECE,
+  jigsawGame,
+  placedCount,
+  scrambled,
+  type JigsawAction,
+  type JigsawContent,
+  type JigsawStanding,
+  type JigsawState,
+  type JigsawView,
+} from "./games/jigsaw/jigsaw";
+export {
+  DEFAULT_JIGSAW_SETTINGS,
+  JIGSAW_PICTURES,
+  JIGSAW_SIZES,
+  jigsawContentId,
+  jigsawSettingsSchema,
+  pickJigsawPicture,
+  type JigsawContentRequest,
+  type JigsawPicture,
+  type JigsawPictureId,
+  type JigsawSettings,
+  type JigsawSide,
+} from "./games/jigsaw/settings";
+export {
   ROUNDS_AUTO_ADVANCE_MS,
   ROUNDS_COUNTDOWN_MS,
   SOLVE_FLOOR,

@@ -52,7 +52,7 @@ test("the stats page shows what the community plays", async ({ page }) => {
   });
   await expect(games.getByText("Quiz", { exact: true })).toBeVisible();
   await games.getByRole("button", { name: "View all" }).click();
-  await expect(games.getByRole("listitem")).toHaveCount(8);
+  await expect(games.getByRole("listitem")).toHaveCount(11);
   await expect(games.getByRole("listitem").filter({ hasText: "Memory" })).toContainText(
     "Coming soon",
   );

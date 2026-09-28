@@ -113,6 +113,8 @@ test("two players race through Spot It", async ({ browser }) => {
   const host = await newPlayer(browser);
   await openGame(host, "Spot It");
   await host.getByLabel("Rounds").selectOption("5");
+  // Each change is sent with the settings the room last confirmed, so wait for this one.
+  await expect(host.getByLabel("Rounds")).toHaveValue("5");
   await host.getByLabel("Time per round").selectOption("30");
 
   const guest = await newPlayer(browser);
