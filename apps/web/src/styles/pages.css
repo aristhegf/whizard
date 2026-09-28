@@ -300,7 +300,10 @@
   gap: 8px 24px;
 }
 
-.about .link-row .btn-link {
+/* Links in a row, or inside a sentence, line up with the text around them. */
+.link-row .btn-link,
+.setting-hint .btn-link,
+p .btn-link {
   padding-inline: 0;
 }
 
@@ -686,17 +689,12 @@ button.topic-tile {
 }
 
 .topic-count {
-  margin-left: auto;
   padding: 3px 10px;
   border-radius: 999px;
   border: 1.5px solid rgb(255 255 255 / 30%);
   background: rgb(0 0 0 / 22%);
   font-size: 0.8rem;
   font-weight: 700;
-}
-
-.topics-mascot {
-  display: none;
 }
 
 @media (min-width: 768px) {
@@ -720,8 +718,9 @@ button.topic-tile {
 }
 
 @media (min-width: 1100px) {
+  /* As many tiles as fit at a readable size: 4 beside the sidebar on a laptop, 5 on wider screens. */
   .topic-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
   }
 
   .topic-name {
@@ -731,22 +730,6 @@ button.topic-tile {
   .topics-page .chip {
     min-height: 46px;
     padding: 0 22px;
-  }
-}
-
-@media (min-width: 1500px) {
-  .topics-wrap {
-    padding-right: 150px;
-  }
-
-  .topics-mascot {
-    display: block;
-    position: absolute;
-    right: -20px;
-    top: 150px;
-    width: 230px;
-    height: auto;
-    filter: drop-shadow(0 16px 30px rgb(120 40 255 / 45%));
   }
 }
 

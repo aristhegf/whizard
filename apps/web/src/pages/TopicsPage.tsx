@@ -147,7 +147,6 @@ export function TopicsPage() {
             );
           })}
         </ul>
-        <img className="topics-mascot" src="/art/mascot/fly.webp" alt="" width={477} height={520} />
       </div>
     </SideLayout>
   );
