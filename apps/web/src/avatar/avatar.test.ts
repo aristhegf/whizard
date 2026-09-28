@@ -129,10 +129,11 @@ describe("avatar layers", () => {
     const lashes = layers.find((l) => l.src.includes("/eyelashes/"));
     expect(lashes?.src).toBe("/art/avatar-parts/front/eyelashes/l12/lashes.webp");
     expect(lashes?.pair).toBe(true);
-    // Eyes 3 is wider and sits a little higher than the eye the lashes are drawn for.
+    // The lashes are drawn for a wider eye than any now, so they shrink to fit.
     const lid = PARTS.eyes.find((e) => e.id === "e3")!.lid!;
     expect(lashes?.fit?.scale).toBeCloseTo(lid.width / 173);
-    expect(lashes?.fit?.dy).toBe(lid.top + 22 - 420);
+    expect(lashes?.fit?.dy).toBeCloseTo(lid.top + (22 * lid.width) / 173 - 420);
+    expect(lashes?.fit?.dx).toBe(6);
   });
 
   it("moves the eyes and lashes apart, or closer, together", () => {

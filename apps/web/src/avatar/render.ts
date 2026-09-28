@@ -77,7 +77,7 @@ const BROWS: Record<BrowPose, { dy: number; tilt: number }> = {
 /** The middle of the face on the head's art: pairs are flipped around it. */
 const FACE_MIDDLE = 509;
 const BROW_Y = 352;
-const BROW_X = { left: 376, right: 642 };
+const BROW_X = { left: 382, right: 636 };
 
 function drawLayer(ctx: CanvasRenderingContext2D, img: HTMLImageElement, layer: Layer) {
   const brows = BROWS[layer.brows ?? "relaxed"];
@@ -110,8 +110,8 @@ function drawLayer(ctx: CanvasRenderingContext2D, img: HTMLImageElement, layer: 
       ctx.scale(-1, 1);
     }
     if (layer.fit) {
-      const { x, y, dy, scale } = layer.fit;
-      ctx.translate(x, y + dy);
+      const { x, y, dx, dy, scale } = layer.fit;
+      ctx.translate(x + dx, y + dy);
       ctx.scale(scale, scale);
       ctx.translate(-x, -y);
     }

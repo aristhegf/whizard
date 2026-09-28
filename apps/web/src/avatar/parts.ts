@@ -110,14 +110,14 @@ const none = (name = "None"): PartOption => ({ id: NONE, name, files: [] });
 
 /** The top and width of each eye shape on the grid, measured from the art. */
 const EYE_LIDS = [
-  { top: 408, width: 158 },
-  { top: 422, width: 173 },
-  { top: 420, width: 184 },
-  { top: 427, width: 182 },
-  { top: 427, width: 176 },
-  { top: 425, width: 176 },
-  { top: 425, width: 169 },
-  { top: 426, width: 163 },
+  { top: 418, width: 124 },
+  { top: 429, width: 136 },
+  { top: 427, width: 144 },
+  { top: 433, width: 143 },
+  { top: 433, width: 140 },
+  { top: 430, width: 138 },
+  { top: 431, width: 133 },
+  { top: 432, width: 127 },
 ];
 
 /** The finished art arrives one part at a time; a category with only None isn't offered yet. */
