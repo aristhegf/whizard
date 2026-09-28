@@ -65,13 +65,13 @@ const COPY: Record<
   winner: {
     headline: ["I WON!"],
     cta: "THINK YOU CAN BEAT ME?",
-    mascot: "/art/mascot/podium.webp",
+    mascot: "/art/mascot/trophy.webp",
     accent: "#ffd43f",
   },
   lastStanding: {
     headline: ["LAST ONE", "STANDING!"],
     cta: "THINK YOU'D SURVIVE?",
-    mascot: "/art/mascot/podium.webp",
+    mascot: "/art/mascot/trophy.webp",
     accent: "#ffd43f",
   },
   perfect: {
@@ -85,7 +85,7 @@ const COPY: Record<
     headline: ["LIGHTNING", "FAST!"],
     emoji: "⚡",
     cta: "CAN YOU KEEP UP?",
-    mascot: "/art/mascot/run.webp",
+    mascot: "/art/mascot/dash.webp",
     accent: "#5ce1ff",
   },
   runnerUp: {
@@ -122,14 +122,14 @@ const COPY: Record<
     headline: ["WE DON'T", "TALK ABOUT", "THIS ONE."],
     emoji: "💀",
     cta: "CAN YOU DO BETTER?",
-    mascot: "/art/mascot/wave.webp",
+    mascot: "/art/mascot/facepalm.webp",
     accent: "#b9a7ff",
   },
   knockedOut: {
     headline: ["KNOCKED", "OUT!"],
     emoji: "🥊",
     cta: "THINK YOU'D LAST LONGER?",
-    mascot: "/art/mascot/wave.webp",
+    mascot: "/art/mascot/dizzy.webp",
     accent: "#ff8a98",
   },
 };

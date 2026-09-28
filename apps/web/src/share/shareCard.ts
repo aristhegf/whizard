@@ -85,18 +85,6 @@ function loadImage(src: string): Promise<HTMLImageElement | null> {
   });
 }
 
-/** The same scattering every time for the same game, so a card doesn't change on redraw. */
-function seeded(seed: string) {
-  let a = [...seed].reduce((h, c) => Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0, 2166136261);
-  return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
 function rounded(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -253,28 +241,6 @@ function drawBackground(
   glow.addColorStop(1, "transparent");
   ctx.fillStyle = glow;
   ctx.fillRect(0, 0, W, H);
-
-  if (card.celebrate) return;
-  const rng = seeded(card.game.title + card.outcome);
-  // A few floating question marks instead of confetti.
-  for (let i = 0; i < 5; i++) {
-    const x = 600 + rng() * 400;
-    const y = 320 + rng() * 360;
-    const s = 70 + rng() * 40;
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate((rng() - 0.5) * 0.7);
-    ctx.globalAlpha = 0.6;
-    rounded(ctx, -s / 2, -s / 2, s, s, 18);
-    ctx.fillStyle = i % 2 ? "#8b5cf6" : "#ec4899";
-    ctx.fill();
-    ctx.fillStyle = "#fff";
-    ctx.font = `800 ${Math.round(s * 0.6)}px ${FONT}`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("?", 0, 4);
-    ctx.restore();
-  }
 }
 
 function drawTop(
@@ -598,11 +564,7 @@ export async function drawShareCard(card: ShareCard, link: string): Promise<Blob
 
   const drawMascot = (x: number, y: number, w: number, h: number) => {
     if (!mascot) return;
-    ctx.save();
-    // A bad day looks a little greyer.
-    if (!card.celebrate) ctx.filter = "saturate(0.65) brightness(0.9)";
     contain(ctx, mascot, x, y, w, h);
-    ctx.restore();
   };
 
   if (card.board.length === 0) {
