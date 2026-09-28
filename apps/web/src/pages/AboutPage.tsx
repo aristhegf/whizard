@@ -8,47 +8,6 @@ import { useLoaded } from "../ui/common";
 import { Icon, type IconName } from "../ui/Icon";
 import { WORLD_PINS } from "./worldPins";
 
-/**
- * Where Whizard is played, one label per corner of the story picture. Each sits over the same
- * label drawn into the art, as a share of the picture's size, so the text stays sharp.
- */
-const STORY_LABELS: {
-  icon: IconName;
-  tone: string;
-  lead: string;
-  rest: string;
-  at: [left: number, top: number, width: number, height: number];
-}[] = [
-  {
-    icon: "users",
-    tone: "purple",
-    lead: "From game nights",
-    rest: "with friends…",
-    at: [0, 15.8, 25.5, 20],
-  },
-  {
-    icon: "school",
-    tone: "blue",
-    lead: "…to classrooms",
-    rest: "and schools",
-    at: [73.6, 20.2, 25.6, 20],
-  },
-  {
-    icon: "users",
-    tone: "gold",
-    lead: "…to churches",
-    rest: "and communities",
-    at: [3.4, 66.2, 28, 20],
-  },
-  {
-    icon: "globe",
-    tone: "green",
-    lead: "…and people",
-    rest: "worldwide",
-    at: [75, 74.4, 24.2, 19.6],
-  },
-];
-
 const BELIEFS: { icon: IconName; tone: string; title: string; text: string }[] = [
   {
     icon: "users",
@@ -122,8 +81,8 @@ export function AboutPage() {
             src="/art/about/hero.webp"
             alt=""
             aria-hidden="true"
-            width={576}
-            height={384}
+            width={1100}
+            height={858}
             fetchPriority="high"
           />
         </section>
@@ -144,36 +103,14 @@ export function AboutPage() {
               world.
             </p>
           </div>
-          <figure className="about-story-art">
-            <img
-              src="/art/about/story.webp"
-              alt="The Whizard mascot lifts a trophy with its friends."
-              width={606}
-              height={310}
-              loading="lazy"
-            />
-            <ul className="story-labels">
-              {STORY_LABELS.map((label) => (
-                <li
-                  key={label.lead}
-                  className={`story-label tone-${label.tone}`}
-                  style={
-                    {
-                      left: `${label.at[0]}%`,
-                      top: `${label.at[1]}%`,
-                      width: `${label.at[2]}%`,
-                      height: `${label.at[3]}%`,
-                    } as CSSProperties
-                  }
-                >
-                  <Icon name={label.icon} size={20} />
-                  <span>
-                    {label.lead} <strong>{label.rest}</strong>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </figure>
+          <img
+            className="about-story-art"
+            src="/art/about/story.webp"
+            alt="The Whizard mascot lifts a trophy with its friends. From game nights with friends, to classrooms and schools, to churches and communities, and people worldwide."
+            width={1400}
+            height={724}
+            loading="lazy"
+          />
         </section>
 
         <section className="about-beliefs panel" aria-labelledby="beliefs-title">

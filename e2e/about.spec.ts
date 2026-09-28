@@ -18,7 +18,7 @@ test("the about page tells the story and shows the community's numbers", async (
   for (const belief of ["Connection First", "Learning Can Be Fun", "For Everyone"]) {
     await expect(page.getByRole("heading", { name: belief })).toBeVisible();
   }
-  await expect(page.getByText("…to churches and communities")).toBeAttached();
+  await expect(page.getByRole("img", { name: /to churches and communities/ })).toBeVisible();
 
   // The numbers come from the live stats, not the design.
   const played = page.locator(".impact-stat", { hasText: "Games played" }).locator("strong");

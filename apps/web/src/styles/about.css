@@ -81,19 +81,19 @@
   padding: 0 26px;
 }
 
-/* Hero: the mascot fills the right of the panel and fades into it. */
+/* Hero */
 
 .about-hero {
   display: grid;
   gap: 8px;
+  align-items: center;
 }
 
 .about-hero-art {
-  width: calc(100% + 40px);
-  max-width: none;
+  width: min(100%, 460px);
   height: auto;
-  margin: 0 -20px -26px;
-  mask-image: linear-gradient(180deg, transparent, #000 14%);
+  justify-self: center;
+  filter: drop-shadow(0 18px 40px rgb(120 40 255 / 35%));
 }
 
 /* Story */
@@ -104,58 +104,11 @@
 }
 
 .about-story-art {
-  position: relative;
-  container-type: inline-size;
-  margin: 0;
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-.about-story-art img {
-  display: block;
-  width: 100%;
+  width: calc(100% + 24px);
+  max-width: none;
   height: auto;
-}
-
-.story-labels {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* Sized from the picture's width so each label covers the one drawn in the art. */
-.story-label {
-  --tone: #b17cff;
-
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 2.2cqw;
-  padding: 0 2.2cqw;
-  border: 1px solid rgb(160 130 255 / 35%);
-  border-radius: 2.2cqw;
-  font-size: 1.9cqw;
-  line-height: 1.4;
-  white-space: nowrap;
-  color: #e7e2ff;
-  background: #1d1450;
-  box-shadow: 0 1.5cqw 4cqw rgb(10 5 40 / 45%);
-}
-
-.story-label svg {
-  flex: none;
-  width: 4cqw;
-  height: 4cqw;
-  color: var(--tone);
-}
-
-.story-label strong {
-  display: block;
-  font-weight: 700;
-}
-
-.story-label.tone-blue {
-  --tone: #b6a4ff;
+  margin: 0 -12px;
+  filter: drop-shadow(0 18px 40px rgb(120 40 255 / 30%));
 }
 
 /* Beliefs */
@@ -355,25 +308,19 @@
     padding: 34px 36px;
   }
 
-  .about-lead {
-    max-width: 27rem;
-  }
-
   .about-hero {
     grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-    min-height: 420px;
-    padding-block: 40px;
+    padding-block: 28px;
   }
 
   .about-hero-art {
-    position: absolute;
-    inset: 0 0 0 auto;
-    width: 62%;
-    height: 100%;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  .about-story-art {
+    width: 100%;
     margin: 0;
-    object-fit: cover;
-    object-position: 50% 30%;
-    mask-image: linear-gradient(90deg, transparent, #000 22%);
   }
 
   .about-story {
