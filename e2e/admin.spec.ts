@@ -219,3 +219,63 @@ test("admins can put up an announcement and add another admin", async ({ browser
   await expect(row).toHaveCount(0);
   await expect(page.locator(".log-list")).toContainText(`took admin away from @${other.username}`);
 });
+
+test("an admin can turn a topic off and back on", async ({ browser }) => {
+  const admin = await signedUp(browser);
+  grantAdmin(admin.username);
+  const page = admin.page;
+  const topics = async () =>
+    (
+      (await (await page.request.get("/api/quiz/categories")).json()) as {
+        categories: { id: string }[];
+      }
+    ).categories.map((c) => c.id);
+
+  await page.goto("/admin/games");
+  await expect(page.getByRole("heading", { name: "New Room Defaults" })).toBeVisible();
+  const toggle = page.getByRole("switch", { name: "General knowledge on" });
+  await expect(toggle).toHaveAttribute("aria-checked", "true");
+  await toggle.click();
+  await expect(page.getByText("General knowledge is off.")).toBeVisible();
+  await expect(toggle).toHaveAttribute("aria-checked", "false");
+  expect(await topics()).not.toContain("general-knowledge");
+
+  await toggle.click();
+  await expect(page.getByText("General knowledge is on.")).toBeVisible();
+  expect(await topics()).toContain("general-knowledge");
+});
+
+test("an admin can record a payment, give Pro and end it", async ({ browser }) => {
+  const admin = await signedUp(browser);
+  grantAdmin(admin.username);
+  const buyer = await signedUp(browser);
+  const page = admin.page;
+
+  await page.goto("/admin/payments");
+  const record = page.locator("section", { has: page.locator("#record-title") });
+  await record.getByLabel("Username").fill(buyer.username);
+  await record.getByLabel(/^Pro for/).selectOption("3");
+  await expect(record.getByLabel(/^Amount/)).toHaveValue("15000");
+  await record.getByLabel(/^Note/).fill("Transfer ref 0042");
+  await record.getByRole("button", { name: "Record payment" }).click();
+  await expect(
+    record.getByText(`Recorded. @${buyer.username} has Pro for 3 months more.`),
+  ).toBeVisible();
+  await expect(page.locator(".payment-row", { hasText: `@${buyer.username}` })).toContainText(
+    "₦15,000",
+  );
+  const member = page.locator(".member-row", { hasText: `@${buyer.username}` });
+  await expect(member.getByText("Paid")).toBeVisible();
+
+  const give = page.locator("section", { has: page.locator("#give-title") });
+  await give.getByLabel("Username").fill(admin.username);
+  await give.getByRole("button", { name: "Give Pro" }).click();
+  await expect(page.locator(".member-row", { hasText: `@${admin.username}` })).toContainText(
+    "Free",
+  );
+
+  await member.getByRole("button", { name: "End Pro" }).click();
+  await expect(member).toHaveCount(0);
+  // The payment stays on record.
+  await expect(page.locator(".payment-row", { hasText: `@${buyer.username}` })).toBeVisible();
+});

@@ -114,6 +114,12 @@ export function PrivacyScreen() {
             with the room code or the account’s username. An admin can remove a player from a room,
             or reset an account or group name to a plain one.
           </p>
+          <p>
+            If you pay for Pro, admins record the payment by hand for now: your username, the
+            amount, how you paid, a short note such as a transfer reference, and how long your Pro
+            lasts. Whizard never sees your card or bank details. If you delete your account, the
+            payment stays in the accounts without your username.
+          </p>
 
           <h2>Your choices</h2>
           <p>

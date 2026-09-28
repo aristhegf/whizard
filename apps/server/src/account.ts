@@ -208,6 +208,10 @@ export async function deleteAccount(db: D1Database, userId: string): Promise<voi
     db.prepare("DELETE FROM seen_questions WHERE viewer = ?").bind(`u:${userId}`),
     db.prepare("DELETE FROM player_days WHERE viewer = ?").bind(`u:${userId}`),
     db.prepare("DELETE FROM recent_names WHERE kind = 'account' AND target = ?").bind(userId),
+    // Payments stay in the accounts, without who made them.
+    db
+      .prepare("UPDATE payments SET user_id = NULL, username = 'Former member' WHERE user_id = ?")
+      .bind(userId),
     // Their reports still count, but no longer point at them.
     db
       .prepare(
@@ -235,6 +239,18 @@ export async function exportMe(context: RequestContext): Promise<Response> {
         .bind(`u:${user.id}`)
         .all<{ question_id: string; seen_at: number }>()
     ).results.map((r) => ({ question: r.question_id, seenAt: new Date(r.seen_at).toISOString() })),
+    pro: await context.env.DB.prepare(
+      "SELECT since, until, source FROM pro_memberships WHERE user_id = ?",
+    )
+      .bind(user.id)
+      .first(),
+    payments: (
+      await context.env.DB.prepare(
+        "SELECT amount, currency, months, method, paid_at FROM payments WHERE user_id = ? ORDER BY paid_at",
+      )
+        .bind(user.id)
+        .all()
+    ).results,
     daysPlayed: (
       await context.env.DB.prepare("SELECT day FROM player_days WHERE viewer = ? ORDER BY day")
         .bind(`u:${user.id}`)

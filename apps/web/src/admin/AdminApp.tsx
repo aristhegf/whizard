@@ -12,7 +12,9 @@ import { LogoMark } from "../ui/Logo";
 import { Analytics } from "./Analytics";
 import { Content } from "./Content";
 import { Dashboard } from "./Dashboard";
+import { Games } from "./Games";
 import { Moderation } from "./Moderation";
+import { Payments } from "./Payments";
 import { Questions } from "./Questions";
 import { Reports } from "./Reports";
 import { Rooms } from "./Rooms";
@@ -23,8 +25,6 @@ interface Section {
   id: string;
   label: string;
   icon: IconName;
-  /** What the section will hold, shown until it's built. */
-  soon?: string;
 }
 
 const SUBTITLES: Record<string, string> = {
@@ -37,16 +37,13 @@ const SUBTITLES: Record<string, string> = {
   content: "Browse, edit and add questions. Changes reach new games within a minute.",
   moderation: "The names players choose, and the words they can’t use.",
   settings: "Site switches, admins, and what admins have done.",
+  games: "Which games and topics are on, and what new rooms start with.",
+  payments: "Pro members, and payments recorded by hand.",
 };
 
 const SECTIONS: Section[] = [
   { id: "dashboard", label: "Dashboard", icon: "chart" },
-  {
-    id: "games",
-    label: "Games",
-    icon: "games",
-    soon: "Each game's settings, and turning games on and off.",
-  },
+  { id: "games", label: "Games", icon: "games" },
   { id: "questions", label: "Questions", icon: "help" },
   { id: "rooms", label: "Rooms", icon: "door" },
   { id: "users", label: "Users", icon: "users" },
@@ -54,12 +51,7 @@ const SECTIONS: Section[] = [
   { id: "reports", label: "Reports", icon: "flag" },
   { id: "content", label: "Content", icon: "layers" },
   { id: "moderation", label: "Moderation", icon: "shield" },
-  {
-    id: "payments",
-    label: "Payments",
-    icon: "wallet",
-    soon: "Pro subscriptions, once they exist.",
-  },
+  { id: "payments", label: "Payments", icon: "wallet" },
   { id: "settings", label: "Settings", icon: "settings" },
 ];
 
@@ -119,7 +111,7 @@ function AdminShell({
           <LogoMark className="admin-head-mark" />
           <div className="admin-head-text">
             <h1>{current.id === "dashboard" ? "Admin Dashboard" : current.label}</h1>
-            <p>{SUBTITLES[current.id] ?? "Coming in a later update."}</p>
+            <p>{SUBTITLES[current.id]}</p>
           </div>
           <div className="admin-head-end">
             {(current.id === "dashboard" || current.id === "analytics") && (
@@ -183,15 +175,10 @@ function AdminShell({
           <Moderation />
         ) : current.id === "settings" ? (
           <Settings me={user.id} />
+        ) : current.id === "games" ? (
+          <Games />
         ) : (
-          <section className="panel admin-soon">
-            <Icon name={current.icon} size={40} />
-            <h2>{current.label} is coming soon</h2>
-            <p>{current.soon}</p>
-            <a className="btn" {...linkTo("/admin")}>
-              Back to the dashboard
-            </a>
-          </section>
+          <Payments />
         )}
       </div>
     </div>

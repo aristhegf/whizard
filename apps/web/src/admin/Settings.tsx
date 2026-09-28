@@ -26,12 +26,30 @@ const ACTIONS: Record<string, string> = {
   "setting:announcement": "set the announcement",
   "setting:rooms_paused": "set new rooms paused to",
   "setting:signups_paused": "set sign-ups paused to",
+  "setting:quiz_defaults": "changed new room defaults",
+  "setting:topics_off": "changed which topics are off:",
+  "setting:games_off": "changed which games are off:",
+  "pro:payment": "recorded a payment from",
+  "pro:give": "gave Pro to",
+  "pro:end": "ended Pro for",
   "admin:grant": "made an admin:",
   "admin:revoke": "took admin away from",
 };
 
+/** A list setting such as the topics turned off, in words. */
+function listTarget(target: string): string {
+  try {
+    const list = JSON.parse(target) as string[];
+    return list.length > 0 ? list.join(", ") : "none";
+  } catch {
+    return target;
+  }
+}
+
 function describe(entry: AdminLogEntry): string {
   const what = ACTIONS[entry.action] ?? entry.action;
+  if (entry.action === "setting:quiz_defaults") return what;
+  if (entry.target.startsWith("[")) return `${what} ${listTarget(entry.target)}`;
   const target = entry.targetName
     ? `@${entry.targetName}`
     : entry.action.startsWith("setting:")
