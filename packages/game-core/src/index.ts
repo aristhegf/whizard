@@ -228,3 +228,44 @@ export {
   type SpotItState,
   type SpotItView,
 } from "./games/spotIt/spotIt";
+export {
+  CONNECTIONS_COUNTDOWN_MS,
+  CONNECTIONS_GROUP_SIZE,
+  CONNECTIONS_MAX_MISTAKES,
+  GROUP_POINTS,
+  connectionsGame,
+  type ConnectionsAction,
+  type ConnectionsFoundGroup,
+  type ConnectionsStanding,
+  type ConnectionsState,
+  type ConnectionsView,
+} from "./games/connections/connections";
+export {
+  CONNECTIONS_MINUTES,
+  DEFAULT_CONNECTIONS_SETTINGS,
+  connectionsSettingsSchema,
+  type ConnectionsContentRequest,
+  type ConnectionsGroup,
+  type ConnectionsPuzzle,
+  type ConnectionsSettings,
+} from "./games/connections/settings";
+export {
+  LOGIC_COUNTDOWN_MS,
+  LOGIC_MAX_MISTAKES,
+  LOGIC_POINTS_PER_CELL,
+  logicGame,
+  type LogicAction,
+  type LogicStanding,
+  type LogicState,
+  type LogicView,
+} from "./games/logic/logic";
+export { countSolutions, logicPuzzle, type LogicPuzzle } from "./games/logic/grid";
+export {
+  DEFAULT_LOGIC_SETTINGS,
+  LOGIC_MINUTES,
+  LOGIC_SIZES,
+  logicSettingsSchema,
+  logicShape,
+  type LogicSettings,
+  type LogicSize,
+} from "./games/logic/settings";

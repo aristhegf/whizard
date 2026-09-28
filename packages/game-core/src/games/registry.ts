@@ -1,4 +1,6 @@
+import { connectionsGame } from "./connections/connections";
 import { jigsawGame } from "./jigsaw/jigsaw";
+import { logicGame } from "./logic/logic";
 import { quizGame } from "./quiz/quiz";
 import { spotItGame } from "./spotIt/spotIt";
 import { wordRushGame } from "./wordRush/wordRush";
@@ -11,6 +13,8 @@ export const GAMES = {
   jigsaw: jigsawGame as unknown as AnyGameModule,
   "word-rush": wordRushGame as unknown as AnyGameModule,
   "spot-it": spotItGame as unknown as AnyGameModule,
+  connections: connectionsGame as unknown as AnyGameModule,
+  logic: logicGame as unknown as AnyGameModule,
 } as const;
 
 export type GameId = keyof typeof GAMES;

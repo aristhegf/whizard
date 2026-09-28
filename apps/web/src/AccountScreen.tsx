@@ -356,6 +356,8 @@ const shortDate = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "s
 
 /** A game's name for history: the quiz topic and level, or the jigsaw picture and size. */
 function matchTitle(match: MatchRecord): string {
+  if (match.game === "connections") return `Connections · ${difficultyName(match.difficulty)}`;
+  if (match.game === "logic") return `Logic · ${(match.difficulty ?? "").replace("x", "×")}`;
   if (match.game === "jigsaw") {
     const picture = JIGSAW_PICTURES.find((p) => p.id === match.category)?.name;
     return picture ? `Jigsaw · ${picture}` : "Jigsaw";
@@ -376,7 +378,15 @@ function MatchRow({ match }: { match: MatchRecord }) {
           .join(", ")}${others.length > 3 ? ` +${others.length - 3}` : ""}`,
     match.myCorrect === null
       ? null
-      : `${match.myCorrect}/${match.rounds} ${jigsaw ? "pieces" : "correct"}`,
+      : `${match.myCorrect}/${match.rounds} ${
+          jigsaw
+            ? "pieces"
+            : match.game === "connections"
+              ? "groups"
+              : match.game === "logic"
+                ? "cells"
+                : "correct"
+        }`,
     shortDate.format(match.finishedAt),
   ].filter(Boolean);
 
