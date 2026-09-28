@@ -26,7 +26,7 @@ import { useAvatarPicture, type View } from "./render";
 // under it, and a wardrobe of parts beside it. Every choice is shown on the player's own avatar.
 
 // Close-ups, so small parts like eyes are easy to compare.
-const EYES: View = { x: 262, y: 280, size: 500 };
+const EYES: View = { x: 292, y: 250, size: 440 };
 const MOUTH: View = { x: 262, y: 420, size: 500 };
 const EARS: View = { x: 162, y: 330, size: 700 };
 const BODY: View = { x: 162, y: 424, size: 600 };
@@ -82,13 +82,15 @@ const ALL_TABS: Tab[] = [
     id: "eyes",
     label: "Eyes",
     view: EYES,
-    rows: [{ kind: "options", field: "eyes", category: "eyes", view: EYES }],
+    rows: [
+      { kind: "colours", field: "eyeColour", palette: "eyes", label: "Eye colour" },
+      { kind: "options", field: "eyes", category: "eyes", label: "Shape", view: EYES },
+    ],
   },
   {
     id: "brows",
     label: "Brows",
     view: EYES,
-    note: "Eyebrows are the same colour as the hair.",
     rows: [{ kind: "options", field: "brows", category: "brows", view: EYES }],
   },
   {
@@ -207,8 +209,8 @@ function tabsFor(parts: AvatarParts): Tab[] {
   );
 }
 
-/** Expressions only change anything once there are eyes or mouths to change. */
-const EXPRESSIONS_SHOW = PARTS.eyes.length > 1 || PARTS.mouth.length > 1;
+/** Expressions only change anything once there are mouths (and closed eyes) to change. */
+const EXPRESSIONS_SHOW = PARTS.mouth.length > 1;
 
 /** Where Save and Cancel go: the page that opened the creator, if it's one of ours. */
 function backPath(): string {

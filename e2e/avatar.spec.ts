@@ -30,7 +30,7 @@ async function makeAvatar(page: Page) {
   // The preview draws the avatar with both.
   await expect(page.getByRole("img", { name: "Your avatar" })).toHaveAttribute(
     "data-avatar",
-    /^w1\.classic\.1\..*\.1\.front\.happy$/,
+    /^w1\.classic\.1\..*\.1\.front\.happy\.0$/,
   );
   await page.getByRole("button", { name: "Save my Whizard" }).click();
 }

@@ -72,6 +72,7 @@ export const AVATAR_FIELDS = [
   "background",
   "pose",
   "expression",
+  "eyeColour",
 ] as const;
 export type AvatarField = (typeof AVATAR_FIELDS)[number];
 

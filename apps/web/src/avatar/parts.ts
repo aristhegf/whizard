@@ -21,7 +21,7 @@ export type PartCategory =
   | "faceAccessory"
   | "neckAccessory";
 
-export type PaletteName = "skin" | "hair" | "clothes" | "background";
+export type PaletteName = "skin" | "eyes" | "hair" | "clothes" | "background";
 
 export interface PartOption {
   /** Goes in the avatar code, so never rename one: lowercase letters, digits and hyphens. */
@@ -40,10 +40,15 @@ export interface PartOption {
   /** The poses this option has art for. */
   poses?: readonly string[];
   /**
-   * Painted once for each skin tone (`head-3.webp` for tone 3) instead of drawn in grey and
-   * coloured, for parts where the skin needs its own painting, like a face.
+   * Painted once for each value of another part, instead of drawn in grey and coloured: a head
+   * for each skin tone (`head-3.webp` for tone 3), an eye for each eye colour.
    */
-  perTone?: boolean;
+  paintedFor?: "skin" | "eyeColour";
+  /**
+   * Drawn for the left of the picture only; the right is the same art flipped, around the middle
+   * of the face.
+   */
+  pair?: boolean;
 }
 
 /** A face for the moment, from the player's expression or a game's reaction. */
@@ -103,13 +108,28 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
       name: "Classic",
       files: ["head"],
       ext: "webp",
-      perTone: true,
+      paintedFor: "skin",
       poses: ["front"],
     },
   ],
   hair: [none("Bald")],
-  eyes: [none()],
-  brows: [none()],
+  eyes: Array.from({ length: 8 }, (_, i) => ({
+    id: `e${i + 1}`,
+    name: `Eyes ${i + 1}`,
+    files: ["open"],
+    ext: "webp" as const,
+    paintedFor: "eyeColour" as const,
+    pair: true,
+    poses: ["front"],
+  })),
+  brows: Array.from({ length: 24 }, (_, i) => ({
+    id: `b${i + 1}`,
+    name: `Brows ${i + 1}`,
+    files: ["brows"],
+    ext: "webp" as const,
+    pair: true,
+    poses: ["front"],
+  })),
   mouth: [none()],
   facialHair: [none()],
   glasses: [none()],
@@ -160,6 +180,13 @@ export const PALETTES: Record<PaletteName, readonly Swatch[]> = {
     ["Tone 6", "#be5c2e"],
     ["Tone 7", "#863e24"],
     ["Tone 8", "#622d1e"],
+  ]),
+  eyes: swatches([
+    ["Dark brown", "#4b261c"],
+    ["Brown", "#7a3e12"],
+    ["Hazel", "#6b6224"],
+    ["Blue", "#4a6386"],
+    ["Grey", "#6e6660"],
   ]),
   hair: swatches([
     ["Black", "#2a201c"],
@@ -226,6 +253,7 @@ export const FIELD_SOURCES: Record<
   background: { palette: "background" },
   pose: { choices: POSES },
   expression: { choices: EXPRESSIONS },
+  eyeColour: { palette: "eyes" },
 };
 
 export function poseOf(id: string): PoseTemplate {

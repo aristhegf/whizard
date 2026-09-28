@@ -73,34 +73,40 @@ const BROWS: Record<BrowPose, { dy: number; tilt: number }> = {
   worried: { dy: -8, tilt: -10 },
   cross: { dy: 8, tilt: 12 },
 };
-const BROW_Y = 398;
-const BROW_X = { left: 421, right: 603 };
+
+/** The middle of the face on the head's art: pairs are flipped around it. */
+const FACE_MIDDLE = 509;
+const BROW_Y = 352;
+const BROW_X = { left: 376, right: 642 };
 
 function drawLayer(ctx: CanvasRenderingContext2D, img: HTMLImageElement, layer: Layer) {
-  const clipTo = (side: "left" | "right") => {
-    ctx.beginPath();
-    ctx.rect(side === "left" ? 0 : GRID / 2, 0, GRID / 2, GRID);
-    ctx.clip();
-  };
   const brows = BROWS[layer.brows ?? "relaxed"];
-  if (layer.brows && (brows.dy !== 0 || brows.tilt !== 0)) {
-    for (const side of ["left", "right"] as const) {
-      ctx.save();
-      clipTo(side);
+  const moved = layer.brows !== undefined && (brows.dy !== 0 || brows.tilt !== 0);
+  if (!layer.pair && !moved && !layer.half) {
+    ctx.drawImage(img, 0, 0, GRID, GRID);
+    return;
+  }
+  const sides = layer.half ? [layer.half] : (["left", "right"] as const);
+  for (const side of sides) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(side === "left" ? 0 : FACE_MIDDLE, 0, side === "left" ? FACE_MIDDLE : GRID, GRID);
+    ctx.clip();
+    if (moved) {
       const x = BROW_X[side];
       const tilt = ((side === "left" ? brows.tilt : -brows.tilt) * Math.PI) / 180;
       ctx.translate(x, BROW_Y + brows.dy);
       ctx.rotate(tilt);
       ctx.translate(-x, -BROW_Y);
-      ctx.drawImage(img, 0, 0, GRID, GRID);
-      ctx.restore();
     }
-    return;
+    // A pair's art is the left one; the right is the same, flipped.
+    if (layer.pair && side === "right") {
+      ctx.translate(FACE_MIDDLE * 2, 0);
+      ctx.scale(-1, 1);
+    }
+    ctx.drawImage(img, 0, 0, GRID, GRID);
+    ctx.restore();
   }
-  ctx.save();
-  if (layer.half) clipTo(layer.half);
-  ctx.drawImage(img, 0, 0, GRID, GRID);
-  ctx.restore();
 }
 
 /** The Whizard disc behind an avatar: a glowing circle with a bright rim, as in the art. */

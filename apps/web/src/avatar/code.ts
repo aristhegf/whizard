@@ -14,8 +14,8 @@ export const DEFAULT_PARTS: AvatarParts = {
   skin: "4",
   hair: NONE,
   hairColour: "0",
-  eyes: NONE,
-  brows: NONE,
+  eyes: "e2",
+  brows: "b1",
   mouth: NONE,
   facialHair: NONE,
   glasses: NONE,
@@ -32,6 +32,7 @@ export const DEFAULT_PARTS: AvatarParts = {
   background: "4",
   pose: "front",
   expression: "happy",
+  eyeColour: "0",
 };
 
 function choicesOf(field: AvatarField): readonly { id: string }[] {

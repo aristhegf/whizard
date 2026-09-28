@@ -28,7 +28,7 @@ const option = (id: string, files: string[], extra: Partial<PartOption> = {}): P
 });
 const TEST_PARTS: Catalogue = {
   ...(Object.fromEntries(Object.keys(PARTS).map((c) => [c, [none]])) as unknown as Catalogue),
-  face: [option("classic", ["head"], { perTone: true })],
+  face: [option("classic", ["head"], { paintedFor: "skin" })],
   hair: [none, option("afro", ["back", "front", "hat-front", "hat-back"])],
   eyes: [option("round", ["open", "closed", "wide"])],
   mouth: [option("grin", ["mouth"]), option("smirk", ["mouth"]), option("laugh", ["mouth"])],
@@ -98,7 +98,10 @@ describe("the parts' art", () => {
       for (const o of options) {
         for (const pose of o.poses ?? ["front"]) {
           for (const file of o.files) {
-            const names = o.perTone ? PALETTES.skin.map((t) => `${file}-${t.id}`) : [file];
+            const palette = { skin: PALETTES.skin, eyeColour: PALETTES.eyes };
+            const names = o.paintedFor
+              ? palette[o.paintedFor].map((t) => `${file}-${t.id}`)
+              : [file];
             for (const name of names) {
               const path = `/art/avatar-parts/${pose}/${folder}/${o.id}/${name}.${o.ext ?? "svg"}`;
               if (!exists(path)) missing.push(path);
@@ -115,6 +118,22 @@ describe("avatar layers", () => {
   it("draws the painted head for the skin tone, without colouring it", () => {
     const [head] = avatarLayers(parts({ skin: "6" })).layers;
     expect(head).toEqual({ src: "/art/avatar-parts/front/face-shape/classic/head-6.webp" });
+  });
+
+  it("draws one eye and one eyebrow, in the eye colour, and flips them for the other side", () => {
+    const p = parts({ eyes: "e5", eyeColour: "3", brows: "b12", hairColour: "5" });
+    const { layers } = avatarLayers(p);
+    expect(layers).toContainEqual({
+      src: "/art/avatar-parts/front/eyes/e5/open-3.webp",
+      pair: true,
+    });
+    // Eyebrows follow the hair colour.
+    expect(layers).toContainEqual({
+      src: "/art/avatar-parts/front/eyebrows/b12/brows.webp",
+      tint: PALETTES.hair[5]!.colour,
+      brows: "relaxed",
+      pair: true,
+    });
   });
 
   it("stacks the parts back to front, with the clothes over the head's shoulders", () => {

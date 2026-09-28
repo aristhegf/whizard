@@ -26,6 +26,8 @@ export interface Layer {
   tint?: string;
   /** Draw only this side of the centre line, for winks. */
   half?: "left" | "right";
+  /** Draw it again, flipped, for the other side of the face. */
+  pair?: boolean;
   brows?: BrowPose;
 }
 
@@ -52,8 +54,8 @@ export function avatarLayers(
   const layers: Layer[] = [];
   const file = (category: PartCategory, option: PartOption, name: string): string | null => {
     if (!option.files.includes(name) || !hasPose(option, pose)) return null;
-    const tone = option.perTone ? `-${parts.skin}` : "";
-    return `${BASE}/${art}/${FOLDERS[category]}/${option.id}/${name}${tone}.${option.ext ?? "svg"}`;
+    const variant = option.paintedFor ? `-${parts[option.paintedFor]}` : "";
+    return `${BASE}/${art}/${FOLDERS[category]}/${option.id}/${name}${variant}.${option.ext ?? "svg"}`;
   };
   const add = (
     category: PartCategory,
@@ -64,9 +66,12 @@ export function avatarLayers(
     const option = optionOf(category, id);
     const src = file(category, option, name);
     if (!src) return;
-    // Parts painted for each skin tone carry their own colour.
+    // Parts painted for each skin tone (or eye colour) carry their own colour.
     const { tint, ...rest } = extra;
-    layers.push(option.perTone || tint === undefined ? { src, ...rest } : { src, tint, ...rest });
+    const layer: Layer =
+      option.paintedFor || tint === undefined ? { src, ...rest } : { src, tint, ...rest };
+    if (option.pair) layer.pair = true;
+    layers.push(layer);
   };
 
   const usual = expressionOf(parts.expression);
@@ -102,7 +107,8 @@ export function avatarLayers(
   add("facialHair", parts.facialHair, "facial-hair", { tint: hairColour });
 
   const eyes = optionOf("eyes", parts.eyes);
-  if (look.eyes === "wink") {
+  // Eyes without a closed version stay open for a wink.
+  if (look.eyes === "wink" && eyes.files.includes("closed")) {
     add("eyes", eyes.id, "open", { half: "left" });
     add("eyes", eyes.id, "closed", { half: "right" });
   } else {
