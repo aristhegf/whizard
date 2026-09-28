@@ -1,5 +1,13 @@
 import { type JigsawStanding, type JigsawView } from "@whizard/game-core";
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import { AddFromGame } from "../../FriendsScreen";
 import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { play } from "../../sounds";
@@ -13,6 +21,7 @@ import { CATALOG } from "../../catalog";
 import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
 import { sizeName } from "./JigsawSettingsPanel";
+import { KNOB_REACH, PIECE_SIZE, pieceShapes } from "./pieceShape";
 
 interface Props {
   view: JigsawView;
@@ -176,7 +185,13 @@ function Playing(props: Props & { board: number[]; startsAt: number }) {
   );
 }
 
-/** The puzzle: tap one piece then another, or drag one onto another, to swap them. */
+/** Where a piece's outline and picture are drawn: its square, with room for knobs all round. */
+const VIEW_BOX = `${-KNOB_REACH} ${-KNOB_REACH} ${PIECE_SIZE + 2 * KNOB_REACH} ${PIECE_SIZE + 2 * KNOB_REACH}`;
+
+/**
+ * The puzzle: tap one piece then another, or drag one onto another, to swap them. Pieces are
+ * jigsaw-shaped, so they only lock together in their own places.
+ */
 function Board({
   side,
   src,
@@ -187,6 +202,7 @@ function Board({
   onSwap,
 }: {
   side: number;
+  /** The picture, which also picks how it's cut. */
   src: string;
   board: number[];
   selected: number | null;
@@ -197,6 +213,8 @@ function Board({
   const dragFrom = useRef<number | null>(null);
   // On touch screens the piece a drag started on also gets a click; that one isn't a tap.
   const dragged = useRef(false);
+  const shapes = useMemo(() => pieceShapes(side, src), [side, src]);
+  const clipId = `jigsaw${useId().replace(/[^a-zA-Z0-9]/g, "")}-`;
   const spotAt = (x: number, y: number) => {
     const target = document.elementFromPoint(x, y)?.closest<HTMLElement>("[data-spot]");
     return target ? Number(target.dataset.spot) : null;
@@ -220,11 +238,6 @@ function Board({
             data-spot={spot}
             data-piece={piece}
             className={`jigsaw-piece${placed ? " placed" : ""}${selected === spot ? " selected" : ""}`}
-            style={{
-              backgroundImage: `url(${src})`,
-              backgroundSize: `${side * 100}%`,
-              backgroundPosition: `${(col / (side - 1)) * 100}% ${(row / (side - 1)) * 100}%`,
-            }}
             aria-label={`Row ${Math.floor(spot / side) + 1}, column ${(spot % side) + 1}${placed ? ", in place" : ""}`}
             aria-pressed={selected === spot}
             disabled={placed || done}
@@ -245,7 +258,23 @@ function Board({
                 onSwap(from, to);
               }
             }}
-          />
+          >
+            <svg className="jigsaw-shape" viewBox={VIEW_BOX} aria-hidden="true">
+              <clipPath id={`${clipId}${piece}`}>
+                <path d={shapes[piece]} />
+              </clipPath>
+              <image
+                href={src}
+                x={-col * PIECE_SIZE}
+                y={-row * PIECE_SIZE}
+                width={side * PIECE_SIZE}
+                height={side * PIECE_SIZE}
+                preserveAspectRatio="none"
+                clipPath={`url(#${clipId}${piece})`}
+              />
+              <path className="jigsaw-edge" d={shapes[piece]} />
+            </svg>
+          </button>
         );
       })}
     </div>

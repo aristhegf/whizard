@@ -1460,13 +1460,13 @@ button.choice:disabled {
   padding-top: 8px;
 }
 
+/* Pieces sit edge to edge; their knobs reach into the next square, drawn from each piece's SVG. */
 .jigsaw-board {
   display: grid;
   grid-template-columns: repeat(var(--side), minmax(0, 1fr));
-  gap: 3px;
   width: min(100%, 560px);
   aspect-ratio: 1;
-  padding: 3px;
+  padding: 10px;
   border-radius: 18px;
   background: rgb(10 8 36 / 85%);
   border: 1.5px solid var(--line-strong);
@@ -1474,18 +1474,37 @@ button.choice:disabled {
   touch-action: none;
 }
 
+/* The square you tap. The piece's shape spills over it, so the SVG ignores the pointer. */
 .jigsaw-piece {
+  position: relative;
+  z-index: 1;
   min-width: 0;
   aspect-ratio: 1;
   padding: 0;
   border: 0;
-  border-radius: 6px;
-  background-repeat: no-repeat;
+  background: none;
   cursor: grab;
-  transition:
-    transform 120ms ease,
-    box-shadow 160ms ease,
-    border-radius 200ms ease;
+  transition: transform 120ms ease;
+}
+
+.jigsaw-shape {
+  position: absolute;
+  /* KNOB_REACH (32) of a 100-unit piece on every side. */
+  inset: -32%;
+  width: 164%;
+  height: 164%;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 4px rgb(3 2 20 / 55%));
+  transition: filter 200ms ease;
+}
+
+.jigsaw-edge {
+  fill: none;
+  stroke: rgb(255 255 255 / 60%);
+  stroke-width: 1.2px;
+  vector-effect: non-scaling-stroke;
+  transition: stroke 200ms ease;
 }
 
 .jigsaw-piece:disabled {
@@ -1499,34 +1518,48 @@ button.choice:disabled {
 }
 
 .jigsaw-piece.selected {
-  transform: scale(0.9);
-  box-shadow:
-    0 0 0 3px var(--gold),
-    0 0 18px rgb(255 212 63 / 60%);
+  z-index: 2;
+  transform: scale(0.92);
 }
 
-/* In its place: the gaps close up and it glows once. */
+.jigsaw-piece.selected .jigsaw-shape {
+  filter: drop-shadow(0 0 6px rgb(255 212 63 / 85%));
+}
+
+.jigsaw-piece.selected .jigsaw-edge {
+  stroke: var(--gold);
+  stroke-width: 3px;
+}
+
+/* In its place: it settles into the board, below loose pieces, and glows once. */
 .jigsaw-piece.placed {
-  border-radius: 2px;
+  z-index: 0;
+}
+
+.jigsaw-piece.placed .jigsaw-shape {
+  filter: none;
   animation: jigsaw-placed 520ms ease-out;
+}
+
+.jigsaw-piece.placed .jigsaw-edge {
+  stroke: rgb(255 255 255 / 18%);
 }
 
 @keyframes jigsaw-placed {
   0% {
-    box-shadow: 0 0 0 3px rgb(63 240 168 / 90%);
+    filter: drop-shadow(0 0 5px rgb(63 240 168 / 95%));
   }
   100% {
-    box-shadow: 0 0 0 0 rgb(63 240 168 / 0%);
+    filter: drop-shadow(0 0 0 rgb(63 240 168 / 0%));
   }
 }
 
 .jigsaw-board.done {
-  gap: 0;
   box-shadow: 0 0 60px rgb(63 240 168 / 35%);
 }
 
-.jigsaw-board.done .jigsaw-piece {
-  border-radius: 0;
+.jigsaw-board.done .jigsaw-edge {
+  stroke: transparent;
 }
 
 .jigsaw-peek {
@@ -1620,7 +1653,9 @@ button.choice:disabled {
 
 @media (prefers-reduced-motion: reduce) {
   .jigsaw-piece,
-  .jigsaw-piece.placed {
+  .jigsaw-shape,
+  .jigsaw-edge,
+  .jigsaw-piece.placed .jigsaw-shape {
     transition: none;
     animation: none;
   }
