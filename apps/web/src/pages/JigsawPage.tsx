@@ -3,6 +3,7 @@ import {
   DEFAULT_JIGSAW_SETTINGS,
   JIGSAW_PICTURES,
   JIGSAW_SIZES,
+  JIGSAW_THEMES,
   type JigsawPictureId,
   type JigsawSide,
 } from "@whizard/game-core";
@@ -13,7 +14,10 @@ import { Icon } from "../ui/Icon";
 
 type Choice = JigsawPictureId | "random" | "photo";
 
-/** `/games/jigsaw`: pick the pieces and a picture (or a surprise), and a room opens with it. */
+/**
+ * `/games/jigsaw`: pick the pieces and a picture (a surprise, your own photo, or one of ours by
+ * theme), and a room opens with it.
+ */
 export function JigsawPage() {
   const [side, setSide] = useState<JigsawSide>(DEFAULT_JIGSAW_SETTINGS.side);
   const [starting, setStarting] = useState<Choice | null>(null);
@@ -112,23 +116,33 @@ export function JigsawPage() {
             }}
           />
         </li>
-        {JIGSAW_PICTURES.map((p) => (
-          <li key={p.id}>
-            <TiltCard className="tilt tilt-topic" max={10}>
-              <button
-                className="picture-tile"
-                disabled={starting !== null}
-                onClick={() => void start(p.id)}
-              >
-                <span className="picture-art">
-                  <img src={p.src} alt="" loading="lazy" />
-                </span>
-                <span className="picture-name">{starting === p.id ? "Starting…" : p.name}</span>
-              </button>
-            </TiltCard>
-          </li>
-        ))}
       </ul>
+
+      {JIGSAW_THEMES.map((theme) => (
+        <section key={theme.id} className="picture-theme" aria-labelledby={`theme-${theme.id}`}>
+          <h2 className="section-title" id={`theme-${theme.id}`}>
+            {theme.name}
+          </h2>
+          <ul className="picture-grid">
+            {JIGSAW_PICTURES.filter((p) => p.theme === theme.id).map((p) => (
+              <li key={p.id}>
+                <TiltCard className="tilt tilt-topic" max={10}>
+                  <button
+                    className="picture-tile"
+                    disabled={starting !== null}
+                    onClick={() => void start(p.id)}
+                  >
+                    <span className="picture-art">
+                      <img src={p.src} alt="" loading="lazy" />
+                    </span>
+                    <span className="picture-name">{starting === p.id ? "Starting…" : p.name}</span>
+                  </button>
+                </TiltCard>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
     </SideLayout>
   );
 }

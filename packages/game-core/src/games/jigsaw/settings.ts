@@ -1,14 +1,51 @@
 import { z } from "zod";
 import { seededRng, shuffled } from "../../random";
 
-/** The pictures to put together. Square, so every piece is too. */
+/** The themes the pictures come in, in the order they're shown. */
+export const JIGSAW_THEMES = [
+  { id: "animals", name: "Animals" },
+  { id: "food", name: "Food" },
+  { id: "nigeria", name: "Nigeria" },
+  { id: "football", name: "Football" },
+  { id: "places", name: "Places" },
+  { id: "whizard", name: "Whizard" },
+] as const;
+
+export type JigsawThemeId = (typeof JIGSAW_THEMES)[number]["id"];
+
+const picture = <Id extends string>(theme: JigsawThemeId, id: Id, name: string) => ({
+  id,
+  name,
+  theme,
+  src: `/art/jigsaw/${id}.webp` as const,
+});
+
+/** The pictures to put together, by theme. Square, so every piece is too. */
 export const JIGSAW_PICTURES = [
-  { id: "game-night", name: "Game night", src: "/art/jigsaw/game-night.webp" },
-  { id: "crew", name: "The crew", src: "/art/jigsaw/crew.webp" },
-  { id: "cards", name: "Quiz cards", src: "/art/jigsaw/cards.webp" },
-  { id: "mascot", name: "Whizard", src: "/art/jigsaw/mascot.webp" },
-  { id: "game-on", name: "Game on", src: "/art/jigsaw/game-on.webp" },
-  { id: "lets-play", name: "Let’s play", src: "/art/jigsaw/lets-play.webp" },
+  picture("animals", "lion-cub", "Lion cub"),
+  picture("animals", "parrot", "Jungle parrot"),
+  picture("animals", "elephants", "Elephant family"),
+  picture("animals", "tortoise-hare", "Tortoise and hare"),
+  picture("animals", "aquarium", "Aquarium"),
+  picture("food", "jollof", "Jollof party"),
+  picture("food", "suya", "Suya at night"),
+  picture("food", "fruit-market", "Fruit stall"),
+  picture("food", "birthday-cake", "Birthday cake"),
+  picture("food", "ice-cream", "Ice cream parlour"),
+  picture("nigeria", "lagos", "Lagos sunset"),
+  picture("nigeria", "danfo", "Danfo bus"),
+  picture("nigeria", "owambe", "Owambe party"),
+  picture("nigeria", "market-women", "Market women"),
+  picture("nigeria", "zuma-rock", "Zuma Rock"),
+  picture("football", "stadium", "Stadium night"),
+  picture("football", "street-football", "Street football"),
+  picture("places", "beach", "Beach boats"),
+  picture("whizard", "game-night", "Game night"),
+  picture("whizard", "crew", "The crew"),
+  picture("whizard", "cards", "Quiz cards"),
+  picture("whizard", "mascot", "Whizard"),
+  picture("whizard", "game-on", "Game on"),
+  picture("whizard", "lets-play", "Let’s play"),
 ] as const;
 
 export type JigsawPictureId = (typeof JIGSAW_PICTURES)[number]["id"];

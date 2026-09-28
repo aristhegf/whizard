@@ -138,6 +138,7 @@ export {
   JIGSAW_PHOTO_ID,
   JIGSAW_PICTURES,
   JIGSAW_SIZES,
+  JIGSAW_THEMES,
   jigsawContentId,
   jigsawSettingsSchema,
   photoPicture,
@@ -147,6 +148,7 @@ export {
   type JigsawPictureId,
   type JigsawSettings,
   type JigsawSide,
+  type JigsawThemeId,
 } from "./games/jigsaw/settings";
 export {
   ROUNDS_AUTO_ADVANCE_MS,

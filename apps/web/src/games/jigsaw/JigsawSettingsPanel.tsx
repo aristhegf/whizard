@@ -1,6 +1,7 @@
 import {
   JIGSAW_PICTURES,
   JIGSAW_SIZES,
+  JIGSAW_THEMES,
   jigsawSettingsSchema,
   type JigsawSettings,
 } from "@whizard/game-core";
@@ -47,7 +48,13 @@ export function JigsawSettingsRows({
           options={[
             { value: "random", label: "Surprise me" },
             { value: "photo", label: "Your photo" },
-            ...JIGSAW_PICTURES.map((p) => ({ value: p.id, label: p.name })),
+            ...JIGSAW_THEMES.flatMap((theme) =>
+              JIGSAW_PICTURES.filter((p) => p.theme === theme.id).map((p) => ({
+                value: p.id,
+                label: p.name,
+                group: theme.name,
+              })),
+            ),
           ]}
           onChange={(value) => {
             // Your photo needs a photo first; the room picks it once it's sent.
