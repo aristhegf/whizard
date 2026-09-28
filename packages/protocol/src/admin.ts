@@ -231,3 +231,52 @@ export interface AdminQuestionList {
   total: number;
   more: boolean;
 }
+
+// Payments --------------------------------------------------------------------------------------
+
+/** Pro's monthly price in naira, as on the pricing page. */
+export const PRO_MONTHLY_PRICE = 5000;
+
+export const PAYMENT_METHODS = ["transfer", "cash", "other"] as const;
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+
+/** How long Pro can be recorded or given for, in months. 0 means it doesn't end. */
+export const PRO_DURATIONS = [1, 3, 6, 12, 0] as const;
+
+export interface ProMember {
+  userId: string;
+  username: string;
+  displayName: string;
+  avatar: string | null;
+  since: number;
+  /** null: doesn't end. */
+  until: number | null;
+  source: "paid" | "free";
+}
+
+export interface PaymentRecord {
+  id: string;
+  /** The payer's username when it was recorded; "Former member" once they delete their account. */
+  username: string;
+  amount: number;
+  currency: string;
+  months: number;
+  method: PaymentMethod;
+  note: string | null;
+  paidAt: number;
+  recordedBy: string | null;
+}
+
+export interface AdminPayments {
+  totals: {
+    members: number;
+    /** Memberships ending in the next 7 days. */
+    endingSoon: number;
+    last30: number;
+    allTime: number;
+  };
+  members: ProMember[];
+  payments: PaymentRecord[];
+  /** Whether a card payment provider is connected. Not yet. */
+  provider: null;
+}

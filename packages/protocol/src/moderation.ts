@@ -98,6 +98,20 @@ export interface SiteSettings {
   roomsPaused: boolean;
   /** Nobody can create an account; signing in still works. */
   signupsPaused: boolean;
+  /** Settings new quiz rooms start with, over the built-in ones; hosts can still change them. */
+  quizDefaults: QuizDefaults;
+  /** Quiz topics turned off: hidden, and can't be picked or played. */
+  topicsOff: string[];
+  /** Games turned off: no new rooms for them. */
+  gamesOff: string[];
+}
+
+export interface QuizDefaults {
+  category?: string;
+  difficulty?: string;
+  count?: number;
+  variant?: string;
+  timeLimitSeconds?: number;
 }
 
 export const ANNOUNCEMENT_MAX = 160;
@@ -110,6 +124,14 @@ export interface AdminLogEntry {
   target: string;
   /** A username when the target is an account. */
   targetName: string | null;
+}
+
+export interface AdminGames {
+  settings: SiteSettings;
+  /** Finished games over the last 30 and 7 days, by game id. */
+  games: { id: string; last30: number; last7: number }[];
+  /** Quiz topics: questions in play and finished games over the last 30 days. */
+  topics: { id: string; questions: number; last30: number }[];
 }
 
 export interface AdminSettings {

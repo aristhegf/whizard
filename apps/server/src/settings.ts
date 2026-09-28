@@ -6,7 +6,22 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   announcement: null,
   roomsPaused: false,
   signupsPaused: false,
+  quizDefaults: {},
+  topicsOff: [],
+  gamesOff: [],
 };
+
+function json<T>(value: string | undefined, fallback: T, valid: (v: unknown) => boolean): T {
+  if (!value) return fallback;
+  try {
+    const parsed: unknown = JSON.parse(value);
+    return valid(parsed) ? (parsed as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+const stringList = (v: unknown) => Array.isArray(v) && v.every((x) => typeof x === "string");
 
 const CACHE_MS = 15_000;
 let cached: { at: number; settings: SiteSettings } | null = null;
@@ -28,6 +43,9 @@ export async function siteSettings(env: Env, now = Date.now()): Promise<SiteSett
       announcement: values.get("announcement") || null,
       roomsPaused: values.get("rooms_paused") === "1",
       signupsPaused: values.get("signups_paused") === "1",
+      quizDefaults: json(values.get("quiz_defaults"), {}, (v) => typeof v === "object" && !!v),
+      topicsOff: json(values.get("topics_off"), [], stringList),
+      gamesOff: json(values.get("games_off"), [], stringList),
     };
     cached = { at: now, settings };
     return settings;

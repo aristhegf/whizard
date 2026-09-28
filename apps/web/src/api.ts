@@ -2,7 +2,10 @@ import type { QuizCategory, QuizDifficulty } from "@whizard/game-core";
 import type {
   ActivityItem,
   AdminAnalytics,
+  AdminGames,
   AdminModeration,
+  AdminPayments,
+  PaymentMethod,
   AdminSettings,
   NameAction,
   SiteSettings,
@@ -161,6 +164,19 @@ export const actOnName = (id: number, action: NameAction) =>
   adminPost(`moderation/names/${id}`, { action });
 
 export const fetchAdminSettings = () => adminGet<AdminSettings>("settings");
+export const fetchAdminGames = () => adminGet<AdminGames>("games");
+export const fetchAdminPayments = () => adminGet<AdminPayments>("payments");
+export const recordPayment = (payment: {
+  username: string;
+  amount: number;
+  months: number;
+  method: PaymentMethod;
+  note: string | null;
+}) => adminPost("payments", payment);
+export const giveProFree = (username: string, months: number) =>
+  adminPost("pro", { username, months });
+export const endPro = (userId: string) =>
+  adminPost(`pro/${encodeURIComponent(userId)}`, undefined, "DELETE");
 export const updateSettings = (update: Partial<SiteSettings>) =>
   adminPost("settings", update, "PATCH");
 export const grantAdmin = (username: string) => adminPost("admins", { username });

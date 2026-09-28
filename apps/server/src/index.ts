@@ -52,6 +52,8 @@ import { COUNTRY_HEADER, NETWORK_HEADER } from "./presence";
 import { ACCOUNT_HEADER } from "./room";
 import { decideReport, getAdminActivity, getAdminOverview, getAdminReports } from "./admin";
 import { getAdminAnalytics } from "./adminAnalytics";
+import { getAdminGames } from "./adminGames";
+import { endPro, getAdminPayments, giveProFree, recordPayment } from "./adminPayments";
 import { actOnName, addBlockedWord, getModeration, removeBlockedWord } from "./adminModeration";
 import {
   addQuestion,
@@ -82,7 +84,9 @@ async function health(): Promise<Response> {
 
 async function quizCategories({ env }: RequestContext): Promise<Response> {
   const counts = questionCounts((await loadBank(env)).questions);
-  const categories = QUIZ_CATEGORIES.map((c) => ({
+  // Topics an admin turned off aren't offered.
+  const { topicsOff } = await siteSettings(env);
+  const categories = QUIZ_CATEGORIES.filter((c) => !topicsOff.includes(c.id)).map((c) => ({
     ...c,
     questions: counts[c.id] ?? { easy: 0, medium: 0, hard: 0 },
   }));
@@ -99,8 +103,15 @@ async function createRoom({ env, request, ctx }: RequestContext): Promise<Respon
     );
   }
   // The deploy's smoke test still gets a room, so a pause can't fail a deploy.
-  if ((await siteSettings(env)).roomsPaused && !request.headers.has("X-Whizard-Smoke-Test")) {
-    return jsonError(503, "rooms_paused", "New rooms are paused. Try again soon.");
+  const site = await siteSettings(env);
+  if (!request.headers.has("X-Whizard-Smoke-Test")) {
+    if (site.roomsPaused) {
+      return jsonError(503, "rooms_paused", "New rooms are paused. Try again soon.");
+    }
+    // Every room starts with the quiz for now.
+    if (site.gamesOff.includes("quiz")) {
+      return jsonError(503, "game_off", "Quiz is turned off for now. Try again soon.");
+    }
   }
   const text = await request.text();
   let settings: unknown;
@@ -227,6 +238,11 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["DELETE", /^\/api\/admin\/moderation\/words\/([^/]+)$/, removeBlockedWord],
   ["POST", /^\/api\/admin\/moderation\/names\/(\d+)$/, actOnName],
   ["GET", /^\/api\/admin\/settings$/, getAdminSettings],
+  ["GET", /^\/api\/admin\/games$/, getAdminGames],
+  ["GET", /^\/api\/admin\/payments$/, getAdminPayments],
+  ["POST", /^\/api\/admin\/payments$/, recordPayment],
+  ["POST", /^\/api\/admin\/pro$/, giveProFree],
+  ["DELETE", /^\/api\/admin\/pro\/([^/]+)$/, endPro],
   ["PATCH", /^\/api\/admin\/settings$/, updateSettings],
   ["POST", /^\/api\/admin\/admins$/, grantAdmin],
   ["DELETE", /^\/api\/admin\/admins\/([^/]+)$/, revokeAdmin],

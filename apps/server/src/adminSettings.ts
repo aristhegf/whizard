@@ -4,6 +4,12 @@ import {
   type AdminLogEntry,
   type AdminSettings,
 } from "@whizard/protocol";
+import {
+  DEFAULT_QUIZ_SETTINGS,
+  GAME_IDS,
+  QUIZ_CATEGORIES,
+  quizSettingsSchema,
+} from "@whizard/game-core";
 import { z } from "zod";
 import { logAdmin, requireAdmin } from "./admin";
 import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./http";
@@ -11,6 +17,7 @@ import { asAvatar } from "./sessions";
 import { forgetSettings, siteSettings } from "./settings";
 
 const LOG_SIZE = 50;
+const TOPIC_IDS = QUIZ_CATEGORIES.map((c) => c.id) as [string, ...string[]];
 
 /** `GET /api/admin/settings`: the site switches, the admins and what admins did lately. */
 export async function getAdminSettings(context: RequestContext): Promise<Response> {
@@ -73,6 +80,9 @@ const settingsSchema = z.object({
     .optional(),
   roomsPaused: z.boolean().optional(),
   signupsPaused: z.boolean().optional(),
+  quizDefaults: quizSettingsSchema.partial().optional(),
+  topicsOff: z.array(z.enum(TOPIC_IDS)).optional(),
+  gamesOff: z.array(z.enum(GAME_IDS as unknown as [string, ...string[]])).optional(),
 });
 
 /** `PATCH /api/admin/settings` with any of `{ announcement, roomsPaused, signupsPaused }`. */
@@ -80,6 +90,20 @@ export async function updateSettings(context: RequestContext): Promise<Response>
   requireSameOrigin(context);
   const { user } = await requireAdmin(context);
   const update = await readJson(context.request, settingsSchema);
+  const current = await siteSettings(context.env);
+  const topicsOff = update.topicsOff ?? current.topicsOff;
+  const defaultTopic =
+    (update.quizDefaults ?? current.quizDefaults).category ?? DEFAULT_QUIZ_SETTINGS.category;
+  if (topicsOff.length >= TOPIC_IDS.length) {
+    throw new HttpError(400, "all_topics_off", "Keep at least one topic on.");
+  }
+  if (topicsOff.includes(defaultTopic)) {
+    throw new HttpError(
+      400,
+      "default_topic_off",
+      "New rooms start on that topic. Pick another default topic first.",
+    );
+  }
   const db = context.env.DB;
   const now = Date.now();
   const values: [string, string][] = [];
@@ -89,6 +113,11 @@ export async function updateSettings(context: RequestContext): Promise<Response>
   if (update.signupsPaused !== undefined) {
     values.push(["signups_paused", update.signupsPaused ? "1" : "0"]);
   }
+  if (update.quizDefaults !== undefined) {
+    values.push(["quiz_defaults", JSON.stringify(update.quizDefaults)]);
+  }
+  if (update.topicsOff !== undefined) values.push(["topics_off", JSON.stringify(update.topicsOff)]);
+  if (update.gamesOff !== undefined) values.push(["games_off", JSON.stringify(update.gamesOff)]);
   if (values.length === 0) return Response.json({ ok: true });
   await db.batch(
     values.flatMap(([key, value]) => [
@@ -99,7 +128,7 @@ export async function updateSettings(context: RequestContext): Promise<Response>
              updated_at = excluded.updated_at, updated_by = excluded.updated_by`,
         )
         .bind(key, value, now, user.id),
-      logAdmin(db, user.id, `setting:${key}`, key === "announcement" ? value.slice(0, 60) : value),
+      logAdmin(db, user.id, `setting:${key}`, value.slice(0, 120)),
     ]),
   );
   forgetSettings();

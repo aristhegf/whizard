@@ -44,11 +44,13 @@ import {
 import type { Env } from "./env";
 import { count, logActivity, recordPlayerDays, sizeBucket } from "./analytics";
 import { loadBank, recordQuestionStats } from "./bank";
+import { GAME_OFF_MESSAGE, newRoomSettings, TOPIC_OFF_MESSAGE, topicOf } from "./gameRules";
 import { liveRoomOf, removeLiveRoom, saveLiveRoom } from "./liveRooms";
 import { recordMatch } from "./matches";
 import { NAME_BLOCKED_MESSAGE, recordName, refusedName } from "./moderation";
 import { retiredQuestions } from "./reports";
 import { loadSeen, recordSeen, viewerKey } from "./seen";
+import { siteSettings } from "./settings";
 
 const STATE_KEY = "room";
 const OPEN = 1;
@@ -94,13 +96,8 @@ export class Room extends DurableObject<Env> {
   async create(code: string, gameSettings?: unknown): Promise<boolean> {
     if (await this.load()) return false;
     const state = createRoomState(code, Date.now());
-    const game = gameModule(state.game.id).settingsSchema.safeParse({
-      ...(state.game.settings as object),
-      ...(typeof gameSettings === "object" ? gameSettings : {}),
-    });
-    await this.save(
-      game.success ? { ...state, game: { ...state.game, settings: game.data } } : state,
-    );
+    const settings = newRoomSettings(state, await siteSettings(this.env), gameSettings);
+    await this.save({ ...state, game: { ...state.game, settings } });
     return true;
   }
 
@@ -145,11 +142,16 @@ export class Room extends DurableObject<Env> {
           return result.ok ? result : { ok: false, error: result.error };
         });
         return;
-      case "configure":
+      case "configure": {
+        const topic = topicOf(message.settings);
+        const off = topic !== null && (await siteSettings(this.env)).topicsOff.includes(topic);
         await this.handleGame(ws, (state, playerId) =>
-          configureGame(state, playerId, message.settings),
+          off
+            ? { ok: false, error: "bad_settings", message: TOPIC_OFF_MESSAGE }
+            : configureGame(state, playerId, message.settings),
         );
         return;
+      }
       case "start":
         await this.handleStart(ws);
         return;
@@ -282,6 +284,17 @@ export class Room extends DurableObject<Env> {
    */
   private async handleStart(ws: WebSocket) {
     const before = await this.current(Date.now());
+    // Admins can turn a game or a topic off after a room picked it.
+    const site = await siteSettings(this.env);
+    if (before && site.gamesOff.includes(before.game.id)) {
+      sendError(ws, ErrorCode.BadSettings, GAME_OFF_MESSAGE);
+      return;
+    }
+    const topic = before ? topicOf(before.game.settings) : null;
+    if (topic && site.topicsOff.includes(topic)) {
+      sendError(ws, ErrorCode.BadSettings, TOPIC_OFF_MESSAGE);
+      return;
+    }
     const request = before && gameModule(before.game.id).contentNeeded(before.game.settings);
     const connected = this.connectedIds();
     const viewers = (before?.players ?? [])
