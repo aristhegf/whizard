@@ -1,6 +1,7 @@
 import {
   QUIZ_CATEGORIES,
-  QUIZ_DIFFICULTIES,
+  LEVEL_CHOICES,
+  LEVEL_NAMES,
   QUIZ_QUESTION_COUNTS,
   QUIZ_TIME_LIMITS_SECONDS,
   QUIZ_VARIANTS,
@@ -10,8 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { fetchQuizCategories, type QuizCategoryInfo } from "../../api";
 import { SettingRow as Row, SettingSelect } from "../../ui/SettingSelect";
-
-const DIFFICULTY_LABELS = { easy: "Easy", medium: "Medium", hard: "Hard" } as const;
+import { AUTO_HINT } from "../rounds/RoundsSettingsRows";
 
 export function parseQuizSettings(settings: unknown): QuizSettings | null {
   const parsed = quizSettingsSchema.safeParse(settings);
@@ -60,10 +60,11 @@ export function QuizSettingsRows({
           label="Level"
           value={settings.difficulty}
           disabled={!editable}
-          options={QUIZ_DIFFICULTIES.map((d) => ({ value: d, label: DIFFICULTY_LABELS[d] }))}
+          options={LEVEL_CHOICES.map((d) => ({ value: d, label: LEVEL_NAMES[d] }))}
           onChange={(value) => set("difficulty", value as QuizSettings["difficulty"])}
         />
       </Row>
+      {settings.difficulty === "auto" && <p className="setting-hint dim small">{AUTO_HINT}</p>}
       <Row icon="copy" id="questions" label="Questions">
         <SettingSelect
           id="questions"

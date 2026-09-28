@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const PROTOCOL_VERSION = 8;
+export const PROTOCOL_VERSION = 9;
 
 /** The most a player may send in one message. Server messages can be far bigger: a finished
  * game's review or a full lobby easily passes this, so they have their own, looser cap. */

@@ -28,7 +28,7 @@ const T0 = 1_000_000;
 
 const bank: ContentSource = (request: ContentRequest) =>
   Array.from(
-    { length: request.kind === "quiz-questions" ? request.count : 0 },
+    { length: request.kind === "quiz-questions" ? request.levels.length : 0 },
     (_, i): QuizQuestion => ({
       id: `q${i}`,
       prompt: `Q${i}?`,
@@ -84,7 +84,10 @@ describe("chooseGame", () => {
     const { state } = room("Ada", "Tolu");
     expect(chooseGame(state, "p2", "spot-it")).toEqual({ ok: false, error: "not_host" });
     const next = ok(chooseGame(state, "p1", "word-rush"));
-    expect(next.game).toEqual({ id: "word-rush", settings: { rounds: 10, timeLimitSeconds: 30 } });
+    expect(next.game).toEqual({
+      id: "word-rush",
+      settings: { mode: "speed", level: "auto", rounds: 10, timeLimitSeconds: 30 },
+    });
   });
 
   it("starts Spot It without anything from the content bank", () => {

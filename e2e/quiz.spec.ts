@@ -257,9 +257,13 @@ test("an Elimination game knocks players out until two meet in the final", async
   test.setTimeout(120_000);
   const host = await newPlayer(browser);
   await openRoom(host);
+  // Each change is sent with the settings the room last confirmed, so wait for each one.
   await host.getByLabel("Game Mode").selectOption("elimination");
+  await expect(host.getByLabel("Game Mode")).toHaveValue("elimination");
   await host.getByLabel("Questions").selectOption("5");
+  await expect(host.getByLabel("Questions")).toHaveValue("5");
   await host.getByLabel("Time per question").selectOption("10");
+  await expect(host.getByLabel("Time per question")).toHaveValue("10");
   // Alone, the host is told how many more are needed.
   await expect(host.getByText("Elimination needs at least 3 players. Invite 2 more")).toBeVisible();
 
@@ -304,4 +308,22 @@ test("an Elimination game knocks players out until two meet in the final", async
     // Round 1, or a tie-break round after it if two tied exactly.
     await expect(board.nth(2)).toContainText(/Out in round \d/);
   }
+});
+
+test("Auto starts easy and gets harder", async ({ browser }) => {
+  const page = await newPlayer(browser);
+  await openRoom(page);
+  await page.getByLabel(/^Level/).selectOption("auto");
+  await expect(page.getByLabel(/^Level/)).toHaveValue("auto");
+  await expect(page.getByText(/Starts easy and gets harder each round/)).toBeVisible();
+  await page.getByLabel("Questions").selectOption("5");
+  await expect(page.getByLabel("Questions")).toHaveValue("5");
+  await page.getByRole("button", { name: /play solo/i }).press("Enter");
+
+  for (let i = 1; i <= 5; i++) {
+    await answerFirstChoice(page, i, 5);
+    await page.getByRole("button", { name: "Skip" }).click();
+  }
+  await expect(page.getByText("Your score")).toBeVisible();
+  await expect(page.locator(".review li")).toHaveCount(5);
 });

@@ -335,10 +335,12 @@ export class Room extends DurableObject<Env> {
       sendError(ws, ErrorCode.BadSettings, TOPIC_OFF_MESSAGE);
       return;
     }
-    const needed = before && gameModule(before.game.id).contentNeeded(before.game.settings);
+    const connected = this.connectedIds();
+    const playing = (before?.players ?? []).filter((p) => connected.has(p.id)).length;
+    const needed =
+      before && gameModule(before.game.id).contentNeeded(before.game.settings, playing);
     // Questions and words are tracked per player as seen; jigsaw pictures aren't.
     const request = needed && needed.kind !== "jigsaw-picture" ? needed : null;
-    const connected = this.connectedIds();
     const viewers = (before?.players ?? [])
       .filter((p) => connected.has(p.id))
       .flatMap((p) => viewerKey(p) ?? []);

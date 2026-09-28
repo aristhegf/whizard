@@ -13,8 +13,8 @@ import {
   WORD_RUSH_MAX_MISSES,
   wordPuzzle,
   wordRushGame,
-  type WordRushState,
-  type WordRushView,
+  type WordRushSpeedState as WordRushState,
+  type WordRushSpeedView as WordRushView,
 } from "./wordRush";
 
 const T0 = 1_000_000;
@@ -42,13 +42,13 @@ function setup(players = ["ada", "tolu"], seed = 7): WordRushState {
     content: WORDS,
     seed,
     now: T0,
-  });
+  }) as WordRushState;
 }
 
 function act(state: WordRushState, player: string, action: RoundsAction<string>, now: number) {
   const result = wordRushGame.onAction(wordRushGame.tick(state, now), player, action, now);
   if (isRejection(result)) throw new Error(result.rejected);
-  return result;
+  return result as WordRushState;
 }
 
 function reject(state: WordRushState, player: string, action: RoundsAction<string>, now: number) {
@@ -68,13 +68,18 @@ const view = (state: WordRushState, player: string) =>
   wordRushGame.viewFor(state, player) as WordRushView;
 
 describe("Word Rush", () => {
-  it("ramps from easy words to hard ones", () => {
-    expect(levelsFor(5)).toEqual(["easy", "easy", "medium", "medium", "hard"]);
-    expect(levelsFor(10).filter((l) => l === "hard")).toHaveLength(3);
-    expect(wordRushGame.contentNeeded(DEFAULT_WORD_RUSH_SETTINGS)).toEqual({
+  it("ramps from easy words to hard ones on Auto, and keeps to one level otherwise", () => {
+    const auto = { ...DEFAULT_WORD_RUSH_SETTINGS, rounds: 5 as const };
+    expect(levelsFor(auto)).toEqual(["easy", "easy", "medium", "hard", "hard"]);
+    expect(levelsFor({ ...auto, level: "medium" })).toEqual(Array(5).fill("medium"));
+    expect(wordRushGame.contentNeeded(DEFAULT_WORD_RUSH_SETTINGS, 2)).toEqual({
       kind: "words",
-      levels: levelsFor(10),
+      levels: levelsFor(DEFAULT_WORD_RUSH_SETTINGS),
     });
+    // Elimination draws spares for sudden death, hard on Auto.
+    const knockout = levelsFor({ ...auto, mode: "elimination", rounds: 10 }, 6);
+    expect(knockout).toHaveLength(15);
+    expect(knockout.slice(7)).toEqual(Array(8).fill("hard"));
   });
 
   it("never scrambles a word into one that counts", () => {
@@ -152,13 +157,13 @@ describe("Word Rush", () => {
 
   it("times out, moves on by itself, and finishes when everyone is done", () => {
     let s = setup();
-    s = wordRushGame.tick(s, START + LIMIT);
+    s = wordRushGame.tick(s, START + LIMIT) as WordRushState;
     expect(view(s, "ada").stage).toMatchObject({ kind: "result", outcome: "timeout" });
     expect(wordRushGame.nextWakeAt(s)).toBe(START + LIMIT + ROUNDS_AUTO_ADVANCE_MS);
-    s = wordRushGame.tick(s, START + LIMIT + ROUNDS_AUTO_ADVANCE_MS);
+    s = wordRushGame.tick(s, START + LIMIT + ROUNDS_AUTO_ADVANCE_MS) as WordRushState;
     expect(view(s, "ada").stage).toMatchObject({ kind: "puzzle", index: 1 });
 
-    s = wordRushGame.tick(s, START + 10 * (LIMIT + ROUNDS_AUTO_ADVANCE_MS));
+    s = wordRushGame.tick(s, START + 10 * (LIMIT + ROUNDS_AUTO_ADVANCE_MS)) as WordRushState;
     expect(wordRushGame.isFinished(s)).toBe(true);
     const done = view(s, "tolu").stage;
     expect(done.kind === "done" && done.results.map((r) => r.reveal.word)).toEqual([
@@ -172,13 +177,17 @@ describe("Word Rush", () => {
   it("lets a late joiner start from round one", () => {
     let s = setup(["ada"]);
     s = act(s, "ada", { type: "skip", index: 0 }, START);
-    s = wordRushGame.onPlayerJoined(s, { id: "kemi", nickname: "KEMI" }, START + 5000);
+    s = wordRushGame.onPlayerJoined(
+      s,
+      { id: "kemi", nickname: "KEMI" },
+      START + 5000,
+    ) as WordRushState;
     expect(view(s, "kemi").stage).toMatchObject({
       kind: "puzzle",
       index: 0,
       startsAt: START + 5000 + ROUNDS_COUNTDOWN_MS,
     });
-    s = wordRushGame.onPlayerLeft(s, "kemi", START + 6000);
+    s = wordRushGame.onPlayerLeft(s, "kemi", START + 6000) as WordRushState;
     expect(view(s, "kemi").stage.kind).toBe("watching");
   });
 });

@@ -180,7 +180,67 @@ test("the host can switch the room to another game", async ({ browser }) => {
   for (const page of [host, guest]) {
     await expect(page.getByRole("heading", { name: "Word Rush" })).toBeVisible();
     await expect(page.getByLabel("Time per round")).toHaveValue("30");
-    await expect(page.getByLabel("Game Mode")).toHaveCount(0);
+    await expect(page.getByLabel("Game Mode")).toHaveValue("speed");
+    await expect(page.getByLabel(/^Level/)).toHaveValue("auto");
   }
-  await expect(guest.getByText("10 rounds · 30s each")).toBeVisible();
+  await expect(guest.getByText("Speed · Auto · 10 rounds · 30s each")).toBeVisible();
+});
+
+test("three players play Word Rush Elimination down to a winner", async ({ browser }) => {
+  const host = await newPlayer(browser);
+  await openGame(host, "Word Rush");
+  await host.getByLabel("Game Mode").selectOption("elimination");
+  await expect(host.getByText(/Elimination needs at least 3 players/)).toBeVisible();
+  await host.getByLabel(/^Level/).selectOption("easy");
+  await expect(host.getByLabel(/^Level/)).toHaveValue("easy");
+  await host.getByLabel("Rounds").selectOption("5");
+  await expect(host.getByLabel("Rounds")).toHaveValue("5");
+
+  const tolu = await newPlayer(browser);
+  const kemi = await newPlayer(browser);
+  for (const [page, name] of [
+    [tolu, "Tolu"],
+    [kemi, "Kemi"],
+  ] as const) {
+    await page.goto(host.url());
+    await joinAs(page, name);
+  }
+  await expect(kemi.getByText("Elimination · Easy · 5 rounds · 30s each")).toBeVisible();
+  await host.getByRole("button", { name: /start game/i }).press("Enter");
+
+  // Three players, five words: one knock-out round of two words, then a final of three.
+  for (let word = 1; word <= 2; word++) {
+    for (const page of [host, tolu, kemi]) {
+      await expect(page.locator(".elim-progress")).toContainText(`Round 1 of 1 · Word ${word}`, {
+        timeout: 10_000,
+      });
+    }
+    await solveWord(host);
+    await expect(host.getByText(/Waiting for the others… 1 of 3 done/)).toBeVisible();
+    await solveWord(tolu);
+    await kemi.getByRole("button", { name: "Give up on this word" }).click();
+    // Everyone is done, so the word shows straight away.
+    for (const page of [host, tolu, kemi]) {
+      await expect(page.locator(".word-slots.revealed")).toBeVisible();
+    }
+  }
+
+  await expect(kemi.getByText(/You’re out!/)).toBeVisible({ timeout: 10_000 });
+  await expect(host.getByText("You’re in the final!")).toBeVisible();
+  await expect(host.getByRole("heading", { name: "The Final" })).toBeVisible({ timeout: 10_000 });
+
+  for (let word = 1; word <= 3; word++) {
+    await expect(host.locator(".elim-progress")).toContainText("The Final", { timeout: 10_000 });
+    await expect(host.getByRole("button", { name: "Check" })).toBeVisible({ timeout: 10_000 });
+    // Kemi watches the final.
+    await expect(kemi.getByText(/You’re out \(round 1\)/)).toBeVisible();
+    await solveWord(host);
+    await tolu.getByRole("button", { name: "Give up on this word" }).click();
+    await expect(host.locator(".word-slots.revealed")).toBeVisible();
+  }
+
+  await expect(host.getByRole("heading", { name: "You won!" })).toBeVisible({ timeout: 10_000 });
+  await expect(tolu.getByRole("heading", { name: "Ada wins!" })).toBeVisible();
+  await expect(host.getByRole("heading", { name: "Your rounds" })).toBeVisible();
+  await expect(host.locator(".rounds-review li")).toHaveCount(5);
 });

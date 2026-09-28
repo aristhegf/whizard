@@ -4,10 +4,10 @@ import type {
   RoundsStage,
   SpotItPuzzleView,
   SpotItReveal,
-  SpotItView,
+  SpotItSpeedView,
   WordPuzzleView,
   WordReveal,
-  WordRushView,
+  WordRushSpeedView,
 } from "@whizard/game-core";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode, type Ref } from "react";
 import { CATALOG } from "../../catalog";
@@ -22,10 +22,12 @@ import { useServerNow } from "../../useServerNow";
 import { Podium } from "../../ui/Podium";
 import { elapsedSince, Leaderboard, ScoreBoard, useCountdown } from "../quiz/QuizScreen";
 
-// Word Rush and Spot It: everyone gets the same puzzles and plays through them at their own
-// pace. This screen holds what they share; each game brings its own puzzle.
+// Word Rush and Spot It in Speed: everyone gets the same puzzles and plays through them at
+// their own pace. This screen holds what they share; each game brings its own puzzle. The
+// puzzles, answers and review are used by their Elimination screen too.
 
-type AnyView = WordRushView | SpotItView;
+type AnyView = WordRushSpeedView | SpotItSpeedView;
+export type RoundsGame = AnyView["game"];
 type Stage<K extends string> = Extract<
   RoundsStage<WordPuzzleView | SpotItPuzzleView, string | number, WordReveal | SpotItReveal>,
   { kind: K }
@@ -265,7 +267,7 @@ function useShakeOnMiss<T extends HTMLElement>(count: number) {
   return ref;
 }
 
-function WordPuzzle({
+export function WordPuzzle({
   puzzle,
   tried,
   triesLeft,
@@ -425,7 +427,7 @@ function fill(pattern: readonly (string | null)[], typed: string): (string | nul
   return pattern.map((letter) => letter ?? typed[next++] ?? null);
 }
 
-function SpotPuzzle({
+export function SpotPuzzle({
   grid,
   tried,
   triesLeft,
@@ -452,14 +454,14 @@ function SpotPuzzle({
   );
 }
 
-const SPOT_PROMPTS: Record<SpotItPuzzleView["kind"], string> = {
+export const SPOT_PROMPTS: Record<SpotItPuzzleView["kind"], string> = {
   emoji: "Find the odd one out",
   letter: "Find the odd letter",
   shade: "Find the different shade",
   rotation: "Find the arrow that points differently",
 };
 
-function SpotGrid({
+export function SpotGrid({
   ref,
   grid,
   tried = [],
@@ -518,7 +520,7 @@ function SpotGrid({
 
 // After a round ----------------------------------------------------------------------------------
 
-const VERDICTS: Record<RoundOutcome, string> = {
+export const VERDICTS: Record<RoundOutcome, string> = {
   solved: "Solved",
   missed: "Out of tries",
   timeout: "Time’s up",
@@ -566,7 +568,7 @@ function Result({ context, stage }: { context: Context; stage: Stage<"result"> }
   );
 }
 
-function Reveal({ game, reveal }: { game: AnyView["game"]; reveal: WordReveal | SpotItReveal }) {
+export function Reveal({ game, reveal }: { game: RoundsGame; reveal: WordReveal | SpotItReveal }) {
   if (game === "word-rush") {
     const { word, hint } = reveal as WordReveal;
     return (
@@ -707,29 +709,41 @@ function Results({
 
       {view.final && !solo && <AddFromGame usernames={usernames} />}
 
-      {results.length > 0 && (
-        <section className="panel review-panel" aria-labelledby="review-title">
-          <h2 className="section-title" id="review-title">
-            Your rounds
-          </h2>
-          <ol className="review rounds-review">
-            {results.map((r) => (
-              <li key={r.index}>
-                <span className="q">
-                  {r.index + 1}.{" "}
-                  {view.game === "word-rush"
-                    ? `${(r.reveal as WordReveal).word} (${(r.reveal as WordReveal).hint})`
-                    : SPOT_PROMPTS[(r.reveal as SpotItReveal).grid.kind]}
-                </span>
-                <span className={`line ${r.outcome === "solved" ? "good" : "bad"}`}>
-                  {r.outcome === "solved" ? "✓" : "✗"} {VERDICTS[r.outcome]}
-                  {r.points > 0 && ` · +${r.points}`}
-                </span>
-              </li>
-            ))}
-          </ol>
-        </section>
-      )}
+      <RoundsReview game={view.game} results={results} />
     </div>
+  );
+}
+
+/** Each player's own rounds at the end: the word or grid, and how it went. */
+export function RoundsReview({
+  game,
+  results,
+}: {
+  game: RoundsGame;
+  results: (RoundResult & { reveal: WordReveal | SpotItReveal })[];
+}) {
+  if (results.length === 0) return null;
+  return (
+    <section className="panel review-panel" aria-labelledby="review-title">
+      <h2 className="section-title" id="review-title">
+        Your rounds
+      </h2>
+      <ol className="review rounds-review">
+        {results.map((r) => (
+          <li key={r.index}>
+            <span className="q">
+              {r.index + 1}.{" "}
+              {game === "word-rush"
+                ? `${(r.reveal as WordReveal).word} (${(r.reveal as WordReveal).hint})`
+                : SPOT_PROMPTS[(r.reveal as SpotItReveal).grid.kind]}
+            </span>
+            <span className={`line ${r.outcome === "solved" ? "good" : "bad"}`}>
+              {r.outcome === "solved" ? "✓" : "✗"} {VERDICTS[r.outcome]}
+              {r.points > 0 && ` · +${r.points}`}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }

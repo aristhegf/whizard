@@ -280,3 +280,37 @@ describe("Classic", () => {
     expect(quizGame.nextWakeAt(classic())).toBe(START + CLASSIC_IDLE_LIMIT_MS);
   });
 });
+
+describe("Auto level", () => {
+  it("asks for a plan that climbs from easy to hard", () => {
+    const settings = { ...DEFAULT_QUIZ_SETTINGS, difficulty: "auto" as const, count: 10 as const };
+    const request = quizGame.contentNeeded(settings, 1);
+    expect(request).toMatchObject({ kind: "quiz-questions", category: "bible" });
+    const levels = (request as { levels: string[] }).levels;
+    expect(levels).toHaveLength(10);
+    expect(levels[0]).toBe("easy");
+    expect(levels.at(-1)).toBe("hard");
+  });
+
+  it("scores each question by its own level", () => {
+    const leveled = QUESTIONS.map((q, i) => ({
+      ...q,
+      difficulty: (["easy", "medium", "hard"] as const)[i],
+    }));
+    let s = quizGame.setup({
+      settings: { ...DEFAULT_QUIZ_SETTINGS, variant: "classic", difficulty: "auto" },
+      players: [{ id: "ada", nickname: "ADA" }],
+      content: leveled,
+      seed: 1,
+      now: T0,
+    }) as QuizState;
+    const scores: number[] = [];
+    for (let i = 0; i < 3; i++) {
+      const before = (quizGame.viewFor(s, "ada") as QuizView).me!.score;
+      s = answer(s, "ada", i, true, START + i * 1000);
+      scores.push((quizGame.viewFor(s, "ada") as QuizView).me!.score - before);
+      s = act(s, "ada", { type: "next" }, START + i * 1000 + 10);
+    }
+    expect(scores).toEqual([1000, 1250, 1500]);
+  });
+});

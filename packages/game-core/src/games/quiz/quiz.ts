@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { seededRng } from "../../random";
+import { knockoutLevelPlan } from "../knockout/knockout";
+import { levelPlan } from "../levels";
 import type { GameModule, GamePlayer, Rejection } from "../types";
 import {
   EARLY_TOLERANCE_MS,
@@ -17,7 +19,6 @@ import {
   leaveElimination,
   nextWakeElimination,
   setupElimination,
-  SPARE_QUESTIONS,
   summarizeElimination,
   tickElimination,
   viewElimination,
@@ -220,9 +221,9 @@ function answer(
     elapsedMs,
     // Speed rewards fast answers; Classic only counts being right.
     points: timed(state)
-      ? pointsFor(correct, elapsedMs, limitMs(state), state.settings.difficulty)
+      ? pointsFor(correct, elapsedMs, limitMs(state), question.level)
       : correct
-        ? BASE_POINTS[state.settings.difficulty]
+        ? BASE_POINTS[question.level]
         : 0,
   };
   const updated = {
@@ -343,12 +344,14 @@ export const quizGame: GameModule<
         }
       : null,
 
-  contentNeeded: (settings) => ({
+  contentNeeded: (settings, players) => ({
     kind: "quiz-questions",
     category: settings.category,
-    difficulty: settings.difficulty,
     // Elimination keeps a few back for sudden death.
-    count: settings.count + (settings.variant === "elimination" ? SPARE_QUESTIONS : 0),
+    levels:
+      settings.variant === "elimination"
+        ? knockoutLevelPlan(settings.difficulty, players, settings.count)
+        : levelPlan(settings.difficulty, settings.count),
   }),
 
   setup({ settings, players, content, seed, now }) {
@@ -356,7 +359,7 @@ export const quizGame: GameModule<
       return setupElimination({ settings, players, content, seed, now });
     }
     const rng = seededRng(seed);
-    const questions = content.map((q) => prepare(q, rng));
+    const questions = content.map((q) => prepare(q, rng, settings.difficulty));
     const startsAt = now + COUNTDOWN_MS;
     return {
       settings,

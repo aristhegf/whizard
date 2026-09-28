@@ -116,7 +116,7 @@ export function startGame(
   if (needed && players.length < needed.min) return fail("not_enough_players", needed.message);
 
   const recent = state.recentContent ?? [];
-  const request = module.contentNeeded(state.game.settings);
+  const request = module.contentNeeded(state.game.settings, players.length);
   const content = request ? drawContent(request, seed, { recent }) : [];
   if (request && content.length === 0) return fail("no_content");
 

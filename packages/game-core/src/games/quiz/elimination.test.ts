@@ -90,7 +90,7 @@ function play(
   wrong: string[] = [],
 ): { state: EliminationState; now: number } {
   let state = tick(s, now);
-  const q = state.questions[state.index]!;
+  const q = state.items[state.index]!;
   for (const [id, ms] of Object.entries(right)) {
     const r = quizGame.onAction(
       state,

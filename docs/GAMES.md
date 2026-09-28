@@ -11,7 +11,8 @@ Everyone answers the same questions. This is the foundation game and has the big
 - **Categories:** Bible, Geography, History, Science, Animals, Football, Movies, Music, Nigerian culture, General knowledge, Pop culture
 - **How it plays:** everyone starts together on the same questions, then plays at their own pace. The leaderboard shows points only, and each player reviews their own answers at the end (details in [ARCHITECTURE.md](ARCHITECTURE.md#quiz-launch-game))
 - **Players:** 1 to 16. Play solo, or with friends
-- **Modes:** Classic (no clock, points for right answers) and Speed (a timer on every question, faster answers score more)
+- **Modes:** Classic (no clock, points for right answers), Speed (a timer on every question, faster answers score more) and Elimination (knock-out rounds, 3 or more players)
+- **Levels:** Easy, Medium, Hard, or Auto, which starts easy and gets harder, mixing the three
 - **Settings:** mode, category, level (easy, medium, hard), number of questions, and time per question for Speed
 
 ### 🔤 Word Rush
@@ -20,6 +21,8 @@ Everyone gets the same words, with a hint for each: unscramble one (`O I L N`, a
 
 - **How it plays:** own pace, like the quiz. Type the word or tap the letters; a wrong word shakes and costs a try (5 a round). Give up to see the word and move on
 - **Players:** 1 to 20
+- **Modes:** Speed (own pace) and Elimination (everyone on the same word, knock-outs until two meet in a final; 3 or more players)
+- **Levels:** Easy, Medium, Hard, or Auto, which starts easy and gets harder
 - **Settings:** 5, 10 or 15 rounds; 20, 30 or 45 seconds a round
 - **Points:** faster solves score more, less a little for each wrong try (details in [ARCHITECTURE.md](ARCHITECTURE.md#word-rush-and-spot-it))
 
@@ -29,6 +32,8 @@ Find the one cell in the grid that's different: an emoji, a letter, a shade of c
 
 - **How it plays:** own pace. Tap the odd one out; a wrong tap costs a try (3 a round)
 - **Players:** 1 to 20
+- **Modes:** Speed and Elimination, as in Word Rush
+- **Levels:** Easy, Medium, Hard, or Auto
 - **Settings:** 5, 10 or 15 rounds; 15, 20 or 30 seconds a round
 - **Grids** are made from the room's seed, so everyone gets the same ones
 

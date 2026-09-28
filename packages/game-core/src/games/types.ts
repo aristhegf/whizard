@@ -64,7 +64,7 @@ export interface GameModule<Settings, Content, State, Action, View> {
   defaultSettings: Settings;
   actionSchema: z.ZodType<Action>;
   /** null for games that make their own, such as Spot It's grids. */
-  contentNeeded(settings: Settings): ContentRequest | null;
+  contentNeeded(settings: Settings, players: number): ContentRequest | null;
   setup(args: {
     settings: Settings;
     players: GamePlayer[];
