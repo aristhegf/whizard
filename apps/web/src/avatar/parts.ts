@@ -157,8 +157,9 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
   // Drawn in grey and coloured with the hair colour.
   brows: [
     none(),
-    ...Array.from({ length: 20 }, (_, i) => ({
-      id: `b${i + 1}`,
+    // Ids are kept when styles are dropped, so saved avatars keep theirs.
+    ...[1, 2, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 18, 19].map((n, i) => ({
+      id: `b${n}`,
       name: `Brows ${i + 1}`,
       files: ["brows"],
       ext: "webp" as const,
