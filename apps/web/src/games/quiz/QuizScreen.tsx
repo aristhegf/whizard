@@ -7,10 +7,12 @@ import {
 } from "@whizard/game-core";
 import { useEffect, useEffectEvent, useRef, useState, type ReactNode } from "react";
 import { useAccount } from "../../account";
+import { TOPIC_STYLES } from "../../catalog";
 import { AddFromGame } from "../../FriendsScreen";
 import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { useServerNow } from "../../useServerNow";
 import { Avatar } from "../../ui/Avatar";
+import { GeneratingArt } from "../../ui/GeneratingArt";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { parseQuizSettings } from "./QuizSettingsPanel";
@@ -39,6 +41,7 @@ interface Props {
 }
 
 interface GameContext extends Props {
+  categoryId: string | null;
   categoryName: string;
   avatarOf: (playerId: string) => string | null;
 }
@@ -50,6 +53,7 @@ export function QuizScreen(props: Props) {
   const avatars = new Map(room.players.map((p) => [p.id, p.avatar]));
   const context: GameContext = {
     ...props,
+    categoryId: settings?.category ?? null,
     categoryName,
     avatarOf: (id) => avatars.get(id) ?? null,
   };
@@ -158,11 +162,23 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
   }, [visible, stage.startsAt, client]);
 
   if (!visible) {
+    const topic = TOPIC_STYLES[context.categoryId as keyof typeof TOPIC_STYLES];
     return (
       <div className="game">
         <GameBar context={context} index={null} />
         <div className="countdown" aria-live="polite">
-          <img src="/art/mascot/run.webp" alt="" width={441} height={480} />
+          {topic ? (
+            // The topic "generates" through the countdown, and appears for the last second.
+            <GeneratingArt
+              className="countdown-art"
+              src={topic.art}
+              colors={[topic.colors[0], "#8b24fd", "#4a8dff", topic.colors[0], "#b05bff"]}
+              background={topic.colors[1]}
+              reveal={countdown <= 1}
+            />
+          ) : (
+            <img src="/art/mascot/run.webp" alt="" width={441} height={480} />
+          )}
           <p className="countdown-label">Get ready</p>
           <p className="countdown-number">{countdown}</p>
           <span className="pill pill-glow">{context.categoryName}</span>

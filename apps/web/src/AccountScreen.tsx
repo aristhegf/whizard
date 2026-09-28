@@ -2,6 +2,7 @@ import { NICKNAME_INPUT_MAX_LENGTH, QUIZ_CATEGORIES, normalizeNickname } from "@
 import {
   AVATAR_IDS,
   USERNAME_MAX_LENGTH,
+  USERNAME_MIN_LENGTH,
   nextUsernameChange,
   normalizeUsername,
   usernameProblem,
@@ -32,6 +33,7 @@ import { Avatar, avatarUrl } from "./ui/Avatar";
 import { SideLayout } from "./ui/Chrome";
 import { useAction, useLoaded } from "./ui/common";
 import { Loading } from "./ui/Loading";
+import { useShakeOnError } from "./ui/errorShake";
 import { useToast, useToastAction } from "./ui/toast";
 import { disablePings, enablePings, localTimeZone, pingSupport, pingsOnThisDevice } from "./pings";
 import { loadNickname } from "./storage";
@@ -83,14 +85,21 @@ function useUsernameCheck(input: string, current?: string) {
   }, [username, problem, current]);
 
   const checked = result?.username === username ? result : undefined;
-  return {
-    username,
-    /** Why it can't be used, if we know. */
-    problem: problem
+  // Too short is only "not yet" while it's being typed, so it's a hint rather than an error.
+  const tooShort = problem === "length" && username.length < USERNAME_MIN_LENGTH;
+  const error =
+    problem && !tooShort
       ? USERNAME_HINTS[problem]
       : checked && !checked.available
         ? (checked.reason ?? "That username isn’t available.")
-        : null,
+        : null;
+  return {
+    username,
+    /** Why it can't be used, if we know: breaks a rule, or taken. */
+    problem: error,
+    /** Can't be used as it is, error or not. */
+    blocked: !!problem || !!error,
+    tooShort,
     available: checked?.available === true,
   };
 }
@@ -111,7 +120,12 @@ function UsernameHint({
       className={`small ${check.problem ? "error" : check.available ? "ok-text" : "muted"}`}
       aria-live="polite"
     >
-      {check.problem ?? (check.available ? `@${check.username} is available.` : about)}
+      {check.problem ??
+        (check.available
+          ? `@${check.username} is available.`
+          : check.tooShort
+            ? USERNAME_HINTS.length
+            : about)}
     </p>
   );
 }
@@ -130,6 +144,11 @@ function SignedOut() {
   const [name, setName] = useState(loadNickname);
   const [agreed, setAgreed] = useState(false);
   const check = useUsernameCheck(username);
+  const { ref: usernameRef, isError: usernameInvalid } = useShakeOnError<HTMLInputElement>(
+    check.problem,
+  );
+  const nameError = displayNameProblem(name);
+  const { ref: nameRef, isError: nameInvalid } = useShakeOnError<HTMLInputElement>(nameError);
 
   if (!passkeysSupported()) {
     return (
@@ -144,7 +163,7 @@ function SignedOut() {
   }
 
   const normalized = check.username;
-  const canCreate = !!normalized && !check.problem && !!normalizeNickname(name) && agreed;
+  const canCreate = !!normalized && !check.blocked && !!normalizeNickname(name) && agreed;
 
   const handleCreate = (event: FormEvent) => {
     event.preventDefault();
@@ -188,8 +207,11 @@ function SignedOut() {
           Username
         </label>
         <input
+          ref={usernameRef}
+          className={`t-input${usernameInvalid ? " is-error" : ""}`}
           id="username"
           name="username"
+          aria-invalid={usernameInvalid}
           value={username}
           maxLength={USERNAME_MAX_LENGTH + 1}
           autoCapitalize="none"
@@ -205,15 +227,18 @@ function SignedOut() {
           Display name
         </label>
         <input
+          ref={nameRef}
+          className={`t-input${nameInvalid ? " is-error" : ""}`}
           id="display-name"
           name="display-name"
+          aria-invalid={nameInvalid}
           value={name}
           maxLength={NICKNAME_INPUT_MAX_LENGTH}
           autoComplete="nickname"
           aria-describedby="display-name-hint"
           onChange={(event) => setName(event.target.value)}
         />
-        <DisplayNameHint id="display-name-hint" name={name} />
+        <DisplayNameHint id="display-name-hint" error={nameError} />
 
         <label className="check">
           <input
@@ -403,20 +428,26 @@ function History() {
   );
 }
 
-/** Under a display name field: too long, or what it's for. */
+/** What's wrong with a display name as typed, if anything. Empty is only "not yet". */
+function displayNameProblem(name: string): string | null {
+  return name.trim() !== "" && normalizeNickname(name) === null
+    ? "Up to 20 characters. An emoji counts as one."
+    : null;
+}
+
+/** Under a display name field: what's wrong, or what it's for. */
 function DisplayNameHint({
   id,
-  name,
+  error,
   className = "",
 }: {
   id: string;
-  name: string;
+  error: string | null;
   className?: string;
 }) {
-  const tooLong = name.trim() !== "" && normalizeNickname(name) === null;
   return (
-    <p id={id} className={`${className} small ${tooLong ? "error" : "muted"}`}>
-      {tooLong ? "Up to 20 characters. An emoji counts as one." : DISPLAY_NAME_ABOUT}
+    <p id={id} className={`${className} small ${error ? "error" : "muted"}`}>
+      {error ?? DISPLAY_NAME_ABOUT}
     </p>
   );
 }
@@ -426,6 +457,7 @@ const changeDay = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "l
 function UsernameSetting({ user }: { user: AccountUser }) {
   const [value, setValue] = useState(user.username);
   const check = useUsernameCheck(value, user.username);
+  const { ref, isError, shake } = useShakeOnError<HTMLSpanElement>(check.problem);
   const saving = useToastAction();
   const toast = useToast();
   const [openedAt] = useState(Date.now);
@@ -435,14 +467,20 @@ function UsernameSetting({ user }: { user: AccountUser }) {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     const username = check.username;
-    if (!changed || check.problem || lockedUntil !== null) return;
+    if (!changed || check.blocked || lockedUntil !== null) return;
     if (
       !window.confirm(`Change your username to @${username}? You can’t change it again for 7 days.`)
     ) {
       return;
     }
     void saving.run(async () => {
-      await changeUsername(username);
+      try {
+        await changeUsername(username);
+      } catch (error) {
+        // Turned down by the server (a blocked word, or taken a moment ago): shake, then say why.
+        shake();
+        throw error;
+      }
       toast.show({
         title: "Username changed",
         description: `Friends can find you as @${username} now.`,
@@ -457,7 +495,7 @@ function UsernameSetting({ user }: { user: AccountUser }) {
         Username
       </label>
       <div className="inline-form">
-        <span className="handle-input">
+        <span ref={ref} className={`handle-input t-input${isError ? " is-error" : ""}`}>
           <span aria-hidden="true">@</span>
           <input
             id="profile-username"
@@ -468,6 +506,7 @@ function UsernameSetting({ user }: { user: AccountUser }) {
             autoComplete="username"
             spellCheck={false}
             disabled={lockedUntil !== null}
+            aria-invalid={isError}
             aria-describedby="profile-username-hint"
             onChange={(event) => setValue(event.target.value)}
           />
@@ -475,7 +514,7 @@ function UsernameSetting({ user }: { user: AccountUser }) {
         <button
           className="btn btn-small"
           type="submit"
-          disabled={!changed || !!check.problem || lockedUntil !== null || saving.busy}
+          disabled={!changed || check.blocked || lockedUntil !== null || saving.busy}
         >
           Change
         </button>
@@ -497,10 +536,25 @@ function Settings({ user }: { user: AccountUser }) {
   const [name, setName] = useState(user.displayName);
   const saving = useToastAction();
   const changed = normalizeNickname(name) !== null && name.trim() !== user.displayName;
+  const nameError = displayNameProblem(name);
+  const {
+    ref: nameRef,
+    isError: nameInvalid,
+    shake: shakeName,
+  } = useShakeOnError<HTMLInputElement>(nameError);
 
   const handleName = (event: FormEvent) => {
     event.preventDefault();
-    if (changed) void saving.run(() => updateAccount({ displayName: name }));
+    if (!changed) return;
+    void saving.run(async () => {
+      try {
+        await updateAccount({ displayName: name });
+      } catch (error) {
+        // Turned down by the server, e.g. a blocked word: shake, then say why.
+        shakeName();
+        throw error;
+      }
+    });
   };
 
   return (
@@ -515,8 +569,11 @@ function Settings({ user }: { user: AccountUser }) {
           </label>
           <div className="inline-form">
             <input
+              ref={nameRef}
+              className={`t-input${nameInvalid ? " is-error" : ""}`}
               id="profile-name"
               name="display-name"
+              aria-invalid={nameInvalid}
               value={name}
               maxLength={NICKNAME_INPUT_MAX_LENGTH}
               autoComplete="nickname"
@@ -527,7 +584,7 @@ function Settings({ user }: { user: AccountUser }) {
               Save
             </button>
           </div>
-          <DisplayNameHint id="profile-name-hint" name={name} className="setting-hint" />
+          <DisplayNameHint id="profile-name-hint" error={nameError} className="setting-hint" />
         </form>
         <UsernameSetting user={user} />
         <div className="setting">

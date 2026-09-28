@@ -62,6 +62,36 @@ test("joins by typing the room code", async ({ browser }) => {
   await expect(players(guest)).toHaveCount(2);
 });
 
+test("the room code box says why a code won’t work", async ({ browser }) => {
+  const visitor = await newPlayer(browser);
+  await visitor.goto("/");
+  const box = visitor.getByLabel("Room code");
+  const join = visitor.getByRole("button", { name: "Join", exact: true });
+
+  await box.fill("AB1");
+  await join.click();
+  await expect(visitor.getByRole("alert")).toHaveText("Room codes are 6 letters and numbers.");
+  await expect(box).toHaveAttribute("aria-invalid", "true");
+  await expect(box).toHaveClass(/is-error/);
+
+  // A code in the right shape that no room has.
+  await box.fill("QQQQQQ");
+  await expect(box).toHaveAttribute("aria-invalid", "false");
+  await join.click();
+  await expect(visitor.getByRole("alert")).toHaveText(/No room has that code/);
+  await expect(visitor).toHaveURL(/\/$/);
+
+  // A game that started without late join.
+  const host = await newPlayer(browser);
+  const code = (await createRoom(host, "Ada")).split("/").pop()!;
+  await host.getByRole("button", { name: /play solo/i }).press("Enter");
+  await expect(host.getByText("Get ready")).toBeVisible();
+  await box.fill(code);
+  await join.click();
+  await expect(visitor.getByRole("alert")).toHaveText(/already started.*late joining/);
+  await expect(visitor).toHaveURL(/\/$/);
+});
+
 test("rejects a nickname that’s already taken", async ({ browser }) => {
   const host = await newPlayer(browser);
   const roomUrl = await createRoom(host, "Ada");
@@ -70,6 +100,7 @@ test("rejects a nickname that’s already taken", async ({ browser }) => {
   await guest.goto(roomUrl);
   await joinAs(guest, "ADA");
   await expect(guest.getByRole("alert")).toHaveText(/already has that nickname/);
+  await expect(guest.getByLabel("Choose a nickname")).toHaveAttribute("aria-invalid", "true");
 
   await joinAs(guest, "Ada 2");
   await expect(players(guest)).toHaveCount(2);

@@ -5,3 +5,5 @@ coverage/
 # BeUI components, added with `npx shadcn add @beui/…` and kept as published.
 apps/web/src/components/motion/
 apps/web/src/lib/
+# transitions.dev snippets, kept as published.
+apps/web/src/styles/transitions.css

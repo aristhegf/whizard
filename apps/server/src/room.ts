@@ -12,11 +12,13 @@ import {
   leaveRoom,
   markDisconnected,
   markRecorded,
+  MAX_PLAYERS,
   phaseOf,
   nextDeadline,
   randomSeed,
   randomToken,
   returnToLobby,
+  roomSettings,
   sameNickname,
   settle,
   startGame,
@@ -101,11 +103,25 @@ export class Room extends DurableObject<Env> {
     return true;
   }
 
-  /** Whether the room still exists, for the "return to your room" bar. */
-  async status(): Promise<{ phase: "lobby" | "playing" | "finished"; online: number } | null> {
+  /**
+   * Whether the room still exists, for the "return to your room" bar, and whether someone new
+   * could join it, for the room code box.
+   */
+  async status(): Promise<{
+    phase: "lobby" | "playing" | "finished";
+    online: number;
+    lateJoin: boolean;
+    full: boolean;
+  } | null> {
     const state = await this.current(Date.now());
     if (!state) return null;
-    return { phase: phaseOf(state), online: this.connectedIds().size };
+    const settings = roomSettings(state);
+    return {
+      phase: phaseOf(state),
+      online: this.connectedIds().size,
+      lateJoin: settings.lateJoin,
+      full: state.players.length >= Math.min(settings.maxPlayers, MAX_PLAYERS),
+    };
   }
 
   override async fetch(request: Request): Promise<Response> {

@@ -27,6 +27,7 @@ import {
 import { Avatar } from "./ui/Avatar";
 import { SideLayout } from "./ui/Chrome";
 import { errorText, useLoaded } from "./ui/common";
+import { useErrorShake, useShakeOnError } from "./ui/errorShake";
 import { Loading } from "./ui/Loading";
 import { useToast, useToastAction } from "./ui/toast";
 
@@ -113,6 +114,10 @@ function Friends({ username }: { username: string }) {
   const action = useToastAction();
   const toast = useToast();
   const [addName, setAddName] = useState("");
+  const [addError, setAddError] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const { ref, isError, message } = useShakeOnError<HTMLInputElement>(addError, attempt);
 
   const act = (work: () => Promise<unknown>) =>
     void action.run(async () => {
@@ -124,20 +129,28 @@ function Friends({ username }: { username: string }) {
   const handleAdd = (event: FormEvent) => {
     event.preventDefault();
     const name = addName.trim().replace(/^@/, "");
-    if (!name) return;
-    act(async () => {
-      const { relation } = await addFriend(name);
-      setAddName("");
-      toast.show(
-        relation === "friend"
-          ? { title: `You and @${name} are now friends`, status: "success" }
-          : {
-              title: "Request sent",
-              description: `You’ll be friends when @${name} accepts.`,
-              status: "success",
-            },
-      );
-    });
+    if (!name || adding) return;
+    setAdding(true);
+    addFriend(name)
+      .then(({ relation }) => {
+        setAddName("");
+        toast.show(
+          relation === "friend"
+            ? { title: `You and @${name} are now friends`, status: "success" }
+            : {
+                title: "Request sent",
+                description: `You’ll be friends when @${name} accepts.`,
+                status: "success",
+              },
+        );
+        friends.reload();
+      })
+      .catch((error: unknown) => {
+        // Shown under the field, which shakes: nobody by that name, or already friends.
+        setAddError(errorText(error));
+        setAttempt((n) => n + 1);
+      })
+      .finally(() => setAdding(false));
   };
 
   const list = friends.data;
@@ -147,26 +160,34 @@ function Friends({ username }: { username: string }) {
       <h1 className="page-title">Friends</h1>
 
       <section className="stack" aria-label="Add a friend">
-        <form className="inline-form" onSubmit={handleAdd}>
-          <input
-            name="friend"
-            aria-label="Friend’s username"
-            placeholder="Their username"
-            value={addName}
-            maxLength={USERNAME_MAX_LENGTH + 1}
-            autoCapitalize="none"
-            autoComplete="off"
-            spellCheck={false}
-            onChange={(event) => setAddName(event.target.value)}
-          />
-          <button
-            className="btn btn-primary"
-            type="submit"
-            disabled={action.busy || !addName.trim()}
-          >
-            Add
-          </button>
-        </form>
+        <div className={`t-input-wrap stack${isError ? " is-error" : ""}`}>
+          <form className="inline-form" onSubmit={handleAdd}>
+            <input
+              ref={ref}
+              className={`t-input${isError ? " is-error" : ""}`}
+              name="friend"
+              aria-label="Friend’s username"
+              aria-invalid={isError}
+              aria-describedby="add-friend-error"
+              placeholder="Their username"
+              value={addName}
+              maxLength={USERNAME_MAX_LENGTH + 1}
+              autoCapitalize="none"
+              autoComplete="off"
+              spellCheck={false}
+              onChange={(event) => {
+                setAddName(event.target.value);
+                setAddError(null);
+              }}
+            />
+            <button className="btn btn-primary" type="submit" disabled={adding || !addName.trim()}>
+              Add
+            </button>
+          </form>
+          <p id="add-friend-error" className="t-error-msg error small" role="alert">
+            {message}
+          </p>
+        </div>
         <div className="link-row">
           <span className="muted small">Or send them your link.</span>
           <ShareButton url={inviteLink(username)} label="Share my link" />
@@ -376,6 +397,7 @@ function GroupForm({
   const [name, setName] = useState(initialName);
   const [members, setMembers] = useState<Set<string>>(() => new Set(initialMembers));
   const saving = useToastAction();
+  const { ref, shake } = useErrorShake<HTMLInputElement>();
 
   const toggle = (username: string, on: boolean) =>
     setMembers((current) => {
@@ -387,7 +409,16 @@ function GroupForm({
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    if (name.trim()) void saving.run(() => onSubmit(name, [...members]));
+    if (!name.trim()) return;
+    void saving.run(async () => {
+      try {
+        await onSubmit(name, [...members]);
+      } catch (error) {
+        // Turned down, e.g. a blocked word in the name: shake, then say why.
+        shake();
+        throw error;
+      }
+    });
   };
 
   return (
@@ -396,6 +427,8 @@ function GroupForm({
         Group name
       </label>
       <input
+        ref={ref}
+        className="t-input"
         id="group-name"
         name="group-name"
         value={name}
