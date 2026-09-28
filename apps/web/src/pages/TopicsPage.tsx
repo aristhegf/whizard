@@ -6,7 +6,7 @@ import { fetchQuizCategories, type QuizCategoryInfo } from "../api";
 import { TOPIC_STYLES, cardWash } from "../catalog";
 import { linkTo } from "../router";
 import { Avatar } from "../ui/Avatar";
-import { SideLayout, startRoom } from "../ui/Chrome";
+import { createFailed, SideLayout, startRoom } from "../ui/Chrome";
 import { Icon } from "../ui/Icon";
 import { useLoaded } from "../ui/common";
 
@@ -48,8 +48,8 @@ export function TopicsPage() {
     setError(null);
     try {
       await startRoom({ category });
-    } catch {
-      setError("Couldn’t create a room. Check your connection and try again.");
+    } catch (e) {
+      setError(createFailed(e));
       setStarting(null);
     }
   };

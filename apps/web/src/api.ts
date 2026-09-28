@@ -2,6 +2,10 @@ import type { QuizCategory, QuizDifficulty } from "@whizard/game-core";
 import type {
   ActivityItem,
   AdminAnalytics,
+  AdminModeration,
+  AdminSettings,
+  NameAction,
+  SiteSettings,
   AdminOverview,
   AdminQuestionDetail,
   AdminQuestionList,
@@ -23,6 +27,9 @@ import type {
 } from "@whizard/protocol";
 import { guestId } from "./storage";
 
+/** The server said no and said why, e.g. "New rooms are paused for a little while." */
+export class ServerRefusal extends Error {}
+
 /** Makes a room, optionally with game settings already chosen (such as a topic). */
 export async function createRoom(settings?: Record<string, unknown>): Promise<string> {
   const response = await fetch("/api/rooms", {
@@ -30,7 +37,15 @@ export async function createRoom(settings?: Record<string, unknown>): Promise<st
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(settings ? { settings } : {}),
   });
-  if (!response.ok) throw new Error(`Could not create a room (${response.status})`);
+  if (!response.ok) {
+    const refusal = (await response.json().catch(() => null)) as {
+      error?: { message?: string };
+    } | null;
+    if (response.status !== 429 && refusal?.error?.message) {
+      throw new ServerRefusal(refusal.error.message);
+    }
+    throw new Error(`Could not create a room (${response.status})`);
+  }
   const body = (await response.json()) as { code: string };
   return body.code;
 }
@@ -137,6 +152,28 @@ export const saveQuestion = (id: string, input: QuestionInput) =>
   adminPost<{ id: string }>(`questions/${encodeURIComponent(id)}`, input, "PATCH");
 export const addQuestion = (input: NewQuestionInput) =>
   adminPost<{ id: string }>("questions", input);
+export const fetchModeration = () => adminGet<AdminModeration>("moderation");
+export const addBlockedWord = (word: string, anywhere: boolean) =>
+  adminPost("moderation/words", { word, anywhere });
+export const removeBlockedWord = (word: string) =>
+  adminPost(`moderation/words/${encodeURIComponent(word)}`, undefined, "DELETE");
+export const actOnName = (id: number, action: NameAction) =>
+  adminPost(`moderation/names/${id}`, { action });
+
+export const fetchAdminSettings = () => adminGet<AdminSettings>("settings");
+export const updateSettings = (update: Partial<SiteSettings>) =>
+  adminPost("settings", update, "PATCH");
+export const grantAdmin = (username: string) => adminPost("admins", { username });
+export const revokeAdmin = (id: string) =>
+  adminPost(`admins/${encodeURIComponent(id)}`, undefined, "DELETE");
+
+/** What every page needs to know, such as an announcement. */
+export async function fetchSite(): Promise<SiteSettings> {
+  const response = await fetch("/api/site");
+  if (!response.ok) throw new Error(`Could not load (${response.status})`);
+  return (await response.json()) as SiteSettings;
+}
+
 export const revertQuestion = (id: string) =>
   adminPost(`questions/${encodeURIComponent(id)}`, undefined, "DELETE");
 

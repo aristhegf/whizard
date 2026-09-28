@@ -3,6 +3,7 @@ import { accountUpdateSchema, type AccountPasskey } from "@whizard/protocol";
 import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./http";
 import { exportSocial } from "./friends";
 import { exportMatches } from "./matches";
+import { recordName, requireAllowedName } from "./moderation";
 import {
   clearedSessionCookie,
   currentSession,
@@ -36,6 +37,17 @@ export async function updateMe(context: RequestContext): Promise<Response> {
     const normalized = normalizeNickname(update.displayName);
     if (!normalized) {
       throw new HttpError(400, "display_name_invalid", "Pick a name between 1 and 20 characters.");
+    }
+    if (normalized !== user.display_name) {
+      await requireAllowedName(context.env, normalized);
+      context.ctx.waitUntil(
+        recordName(context.env, {
+          name: normalized,
+          kind: "account",
+          target: user.id,
+          detail: `@${user.username}`,
+        }),
+      );
     }
     displayName = normalized;
   }
@@ -115,6 +127,7 @@ export async function deleteAccount(db: D1Database, userId: string): Promise<voi
       .bind(userId),
     db.prepare("DELETE FROM seen_questions WHERE viewer = ?").bind(`u:${userId}`),
     db.prepare("DELETE FROM player_days WHERE viewer = ?").bind(`u:${userId}`),
+    db.prepare("DELETE FROM recent_names WHERE kind = 'account' AND target = ?").bind(userId),
     // Their reports still count, but no longer point at them.
     db
       .prepare(

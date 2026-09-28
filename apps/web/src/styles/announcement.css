@@ -1,0 +1,44 @@
+/* The admins' announcement, across the top of every page. */
+.announcement {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 52px 10px 16px;
+  background: linear-gradient(90deg, #6630f5, #9a4dff 50%, #6630f5);
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+}
+
+.announcement p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.announcement svg {
+  flex: none;
+}
+
+.announcement-close {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  transform: translateY(-50%);
+  border: none;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 14%);
+  color: #fff;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.announcement-close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}

@@ -13,6 +13,7 @@ import { pageOf, reportPage } from "./presence";
 import { PrivacyScreen } from "./PrivacyScreen";
 import { RoomScreen } from "./RoomScreen";
 import { useRoute } from "./router";
+import { Announcement } from "./ui/Announcement";
 import { Backdrop } from "./ui/Chrome";
 import { ReturnToRoom } from "./ui/ReturnToRoom";
 
@@ -23,6 +24,7 @@ export function App() {
   return (
     <>
       <Backdrop />
+      {route.name !== "room" && <Announcement />}
       <main>
         {route.name === "room" ? (
           <RoomRoute code={route.code} />

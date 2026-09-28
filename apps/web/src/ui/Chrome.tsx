@@ -2,7 +2,7 @@ import { StatefulButton, type ButtonState } from "@/components/motion/button/sta
 import { Tooltip } from "@/components/motion/tooltip";
 import { useState, type ReactNode } from "react";
 import { useAccount } from "../account";
-import { createRoom } from "../api";
+import { createRoom, ServerRefusal } from "../api";
 import { linkTo, navigate, roomPath } from "../router";
 import { Avatar } from "./Avatar";
 import { Icon, type IconName } from "./Icon";
@@ -32,6 +32,10 @@ export async function startRoom(settings?: Record<string, unknown>) {
 
 const CREATE_FAILED = "Couldn’t create a room. Check your connection and try again.";
 
+/** What to tell someone whose room couldn't be made: the server's reason, if it gave one. */
+export const createFailed = (error: unknown) =>
+  error instanceof ServerRefusal ? error.message : CREATE_FAILED;
+
 /** "Create a Room": says it's working, and offers to try again if the room couldn't be made. */
 export function CreateRoomButton({ className }: { className: string }) {
   const [state, setState] = useState<ButtonState>("idle");
@@ -45,9 +49,9 @@ export function CreateRoomButton({ className }: { className: string }) {
       icon={<Icon name="arrowRight" size={24} stroke={2.4} />}
       onClick={() => {
         setState("loading");
-        startRoom().catch(() => {
+        startRoom().catch((error: unknown) => {
           setState("error");
-          toast.show({ title: CREATE_FAILED, status: "error" });
+          toast.show({ title: createFailed(error), status: "error" });
         });
       }}
     >
@@ -144,7 +148,9 @@ export function TopNav({
           <button
             className="nav-link"
             onClick={() =>
-              startRoom().catch(() => toast.show({ title: CREATE_FAILED, status: "error" }))
+              startRoom().catch((error: unknown) =>
+                toast.show({ title: createFailed(error), status: "error" }),
+              )
             }
           >
             Create
@@ -241,9 +247,9 @@ export function TabBar({ active = null }: { active?: Section }) {
         disabled={creating}
         onClick={() => {
           setCreating(true);
-          startRoom().catch(() => {
+          startRoom().catch((error: unknown) => {
             setCreating(false);
-            toast.show({ title: CREATE_FAILED, status: "error" });
+            toast.show({ title: createFailed(error), status: "error" });
           });
         }}
       >
