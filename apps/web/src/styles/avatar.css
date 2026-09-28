@@ -330,6 +330,53 @@
   box-shadow: 0 2px 6px rgb(0 0 0 / 40%);
 }
 
+.eye-gap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.eye-gap button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  color: var(--text);
+  background: rgb(255 255 255 / 8%);
+  box-shadow:
+    0 0 0 2px rgb(255 255 255 / 14%),
+    0 4px 10px rgb(3 2 20 / 40%);
+}
+
+.eye-gap button:hover:not(:disabled) {
+  color: var(--gold);
+  box-shadow:
+    0 0 0 2px var(--gold),
+    0 4px 10px rgb(3 2 20 / 40%);
+}
+
+.eye-gap button:disabled {
+  opacity: 0.35;
+}
+
+.eye-gap-meter {
+  display: flex;
+  gap: 6px;
+}
+
+.eye-gap-meter i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 18%);
+}
+
+.eye-gap-meter i.on {
+  background: var(--gold);
+  box-shadow: 0 0 10px rgb(255 212 63 / 60%);
+}
+
 .wardrobe-swatches {
   display: flex;
   flex-wrap: wrap;

@@ -28,6 +28,10 @@ export interface Layer {
   half?: "left" | "right";
   /** Draw it again, flipped, for the other side of the face. */
   pair?: boolean;
+  /** Move a pair this far out from the middle of the face on each side (in by less than 0). */
+  shift?: number;
+  /** Move and scale it around (x, y) on the grid, to fit the part it sits on. */
+  fit?: { x: number; y: number; dy: number; scale: number };
   brows?: BrowPose;
 }
 
@@ -38,6 +42,16 @@ export interface AvatarDrawing {
 }
 
 const BASE = "/art/avatar-parts";
+
+/** Pixels on the grid each step of the eye gap moves each eye. */
+export const EYE_GAP_STEP = 6;
+
+// The lash art is drawn centred on the left eye, with its bottom on this line, for an eye this
+// wide. It's moved down into the top of the eye by LASH_OVERLAP.
+const LASH_CENTRE = 376;
+const LASH_BASELINE = 420;
+const LASH_EYE_WIDTH = 173;
+const LASH_OVERLAP = 22;
 
 /**
  * The layers for an avatar. `face` is a face for the moment (a game's reaction) in place of the
@@ -115,6 +129,23 @@ export function avatarLayers(
     const state = look.eyes && eyes.files.includes(look.eyes) ? look.eyes : "open";
     add("eyes", eyes.id, state);
   }
+  // Lashes sit along the top of whichever eye shape is picked, sized to it.
+  const lid = eyes.lid;
+  add(
+    "lashes",
+    parts.lashes,
+    "lashes",
+    lid
+      ? {
+          fit: {
+            x: LASH_CENTRE,
+            y: LASH_BASELINE,
+            dy: lid.top + LASH_OVERLAP - LASH_BASELINE,
+            scale: lid.width / LASH_EYE_WIDTH,
+          },
+        }
+      : {},
+  );
   add("brows", parts.brows, "brows", { tint: hairColour, brows: look.brows ?? "relaxed" });
   add("glasses", parts.glasses, "glasses");
 
@@ -124,6 +155,13 @@ export function avatarLayers(
   add("headwear", parts.headwear, "details");
   const accessory = optionOf("headAccessory", parts.headAccessory);
   if (!(accessory.noHat && covers !== "none")) add("headAccessory", accessory.id, "accessory");
+  // The space between the eyes moves the eyes, lashes and brows together.
+  const shift = (Number(parts.eyeGap) || 0) * EYE_GAP_STEP;
+  if (shift !== 0) {
+    for (const layer of layers) {
+      if (/\/(eyes|eyelashes|eyebrows)\//.test(layer.src)) layer.shift = shift;
+    }
+  }
   return { layers, mirror: pose.mirrorOf !== undefined };
 }
 

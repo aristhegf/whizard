@@ -9,6 +9,7 @@ import { Icon } from "../ui/Icon";
 import { decodeAvatar, DEFAULT_PARTS, encodeAvatar, randomParts, type AvatarParts } from "./code";
 import {
   EXPRESSIONS,
+  EYE_GAPS,
   hasPose,
   NONE,
   optionOf,
@@ -36,6 +37,7 @@ const HEAD: View = { x: 112, y: 40, size: 800 };
 type Row =
   | { kind: "options"; field: AvatarField; category: PartCategory; label?: string; view?: View }
   | { kind: "poses"; label?: string }
+  | { kind: "gap"; label: string }
   | {
       kind: "colours";
       field: AvatarField;
@@ -84,8 +86,15 @@ const ALL_TABS: Tab[] = [
     view: EYES,
     rows: [
       { kind: "colours", field: "eyeColour", palette: "eyes", label: "Eye colour" },
+      { kind: "gap", label: "Space between the eyes" },
       { kind: "options", field: "eyes", category: "eyes", label: "Shape", view: EYES },
     ],
+  },
+  {
+    id: "lashes",
+    label: "Lashes",
+    view: EYES,
+    rows: [{ kind: "options", field: "lashes", category: "lashes", view: EYES }],
   },
   {
     id: "brows",
@@ -190,6 +199,7 @@ const ALL_TABS: Tab[] = [
 /** There's something to pick in a row: more than one option (None counts) in the pose. */
 function rowShows(row: Row, parts: AvatarParts): boolean {
   if (row.kind === "poses") return POSES.length > 1;
+  if (row.kind === "gap") return PARTS.eyes.length > 1;
   if (row.kind === "colours") return !row.when || row.when(parts);
   const pose = poseOf(parts.pose);
   return PARTS[row.category].filter((o) => hasPose(o, pose)).length > 1;
@@ -387,6 +397,13 @@ function Builder({ start, signedIn }: { start: AvatarParts; signedIn: boolean })
                   value={parts[row.field]}
                   onPick={(id) => set(row.field, id)}
                 />
+              ) : row.kind === "gap" ? (
+                <EyeGap
+                  key="gap"
+                  label={row.label}
+                  value={parts.eyeGap}
+                  onPick={(id) => set("eyeGap", id)}
+                />
               ) : row.kind === "poses" ? (
                 <Poses key="poses" parts={parts} onPick={(id) => setParts(inPose(parts, id))} />
               ) : (
@@ -471,6 +488,71 @@ function Options({
           ))}
       </div>
     </div>
+  );
+}
+
+function EyeGap({
+  label,
+  value,
+  onPick,
+}: {
+  label: string;
+  value: string;
+  onPick: (id: string) => void;
+}) {
+  const at = Math.max(
+    0,
+    EYE_GAPS.findIndex((g) => g.id === value),
+  );
+  const step = (by: number) => {
+    const next = EYE_GAPS[at + by];
+    if (next) onPick(next.id);
+  };
+  return (
+    <div className="wardrobe-row">
+      <h2 className="wardrobe-label" id="builder-gap">
+        {label}
+      </h2>
+      <div className="eye-gap" role="group" aria-labelledby="builder-gap">
+        <button
+          type="button"
+          aria-label="Eyes closer together"
+          disabled={at === 0}
+          onClick={() => step(-1)}
+        >
+          <Chevron flip />
+        </button>
+        <span className="eye-gap-meter" aria-live="polite">
+          {EYE_GAPS.map((g, i) => (
+            <i key={g.id} className={i === at ? "on" : undefined} />
+          ))}
+          <span className="sr-only">{EYE_GAPS[at]!.name}</span>
+        </span>
+        <button
+          type="button"
+          aria-label="Eyes further apart"
+          disabled={at === EYE_GAPS.length - 1}
+          onClick={() => step(1)}
+        >
+          <Chevron />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Chevron({ flip = false }: { flip?: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+      <path
+        d={flip ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7"}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 

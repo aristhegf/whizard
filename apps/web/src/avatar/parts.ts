@@ -9,6 +9,7 @@ export type PartCategory =
   | "face"
   | "hair"
   | "eyes"
+  | "lashes"
   | "brows"
   | "mouth"
   | "facialHair"
@@ -49,6 +50,8 @@ export interface PartOption {
    * of the face.
    */
   pair?: boolean;
+  /** Eyes: where the top of the eye is on the grid, and how wide it is, for fitting lashes. */
+  lid?: { top: number; width: number };
 }
 
 /** A face for the moment, from the player's expression or a game's reaction. */
@@ -81,6 +84,11 @@ export interface Expression extends Face {
   name: string;
 }
 
+/** How far apart the eyes are, in steps either side of the head's own spacing. */
+export const EYE_GAPS: readonly { id: string; name: string }[] = [-3, -2, -1, 0, 1, 2, 3].map(
+  (step) => ({ id: String(step), name: step === 0 ? "Normal" : step < 0 ? "Closer" : "Wider" }),
+);
+
 /** The player's usual face. The game can still pull other faces for its reactions. */
 export const EXPRESSIONS: readonly Expression[] = [
   { id: "happy", name: "Happy" },
@@ -100,6 +108,18 @@ export const CREATOR_OPEN = false;
 export const NONE = "none";
 const none = (name = "None"): PartOption => ({ id: NONE, name, files: [] });
 
+/** The top and width of each eye shape on the grid, measured from the art. */
+const EYE_LIDS = [
+  { top: 408, width: 158 },
+  { top: 422, width: 173 },
+  { top: 420, width: 184 },
+  { top: 427, width: 182 },
+  { top: 427, width: 176 },
+  { top: 425, width: 176 },
+  { top: 425, width: 169 },
+  { top: 426, width: 163 },
+];
+
 /** The finished art arrives one part at a time; a category with only None isn't offered yet. */
 export const PARTS: Record<PartCategory, readonly PartOption[]> = {
   face: [
@@ -113,23 +133,28 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
     },
   ],
   hair: [none("Bald")],
-  eyes: Array.from({ length: 8 }, (_, i) => ({
+  eyes: EYE_LIDS.map((lid, i) => ({
     id: `e${i + 1}`,
     name: `Eyes ${i + 1}`,
     files: ["open"],
     ext: "webp" as const,
     paintedFor: "eyeColour" as const,
     pair: true,
+    lid,
     poses: ["front"],
   })),
-  brows: Array.from({ length: 24 }, (_, i) => ({
-    id: `b${i + 1}`,
-    name: `Brows ${i + 1}`,
-    files: ["brows"],
-    ext: "webp" as const,
-    pair: true,
-    poses: ["front"],
-  })),
+  lashes: [
+    none(),
+    ...Array.from({ length: 24 }, (_, i) => ({
+      id: `l${i + 1}`,
+      name: `Lashes ${i + 1}`,
+      files: ["lashes"],
+      ext: "webp" as const,
+      pair: true,
+      poses: ["front"],
+    })),
+  ],
+  brows: [none()],
   mouth: [none()],
   facialHair: [none()],
   glasses: [none()],
@@ -146,6 +171,7 @@ export const FOLDERS: Record<PartCategory, string> = {
   face: "face-shape",
   hair: "hair",
   eyes: "eyes",
+  lashes: "eyelashes",
   brows: "eyebrows",
   mouth: "mouth",
   facialHair: "facial-hair",
@@ -254,6 +280,8 @@ export const FIELD_SOURCES: Record<
   pose: { choices: POSES },
   expression: { choices: EXPRESSIONS },
   eyeColour: { palette: "eyes" },
+  lashes: { category: "lashes" },
+  eyeGap: { choices: EYE_GAPS },
 };
 
 export function poseOf(id: string): PoseTemplate {

@@ -120,20 +120,31 @@ describe("avatar layers", () => {
     expect(head).toEqual({ src: "/art/avatar-parts/front/face-shape/classic/head-6.webp" });
   });
 
-  it("draws one eye and one eyebrow, in the eye colour, and flips them for the other side", () => {
-    const p = parts({ eyes: "e5", eyeColour: "3", brows: "b12", hairColour: "5" });
-    const { layers } = avatarLayers(p);
+  it("draws one eye in its colour, with lashes fitted to it, and flips both for the other side", () => {
+    const { layers } = avatarLayers(parts({ eyes: "e3", eyeColour: "3", lashes: "l12" }));
     expect(layers).toContainEqual({
-      src: "/art/avatar-parts/front/eyes/e5/open-3.webp",
+      src: "/art/avatar-parts/front/eyes/e3/open-3.webp",
       pair: true,
     });
-    // Eyebrows follow the hair colour.
-    expect(layers).toContainEqual({
-      src: "/art/avatar-parts/front/eyebrows/b12/brows.webp",
-      tint: PALETTES.hair[5]!.colour,
-      brows: "relaxed",
-      pair: true,
-    });
+    const lashes = layers.find((l) => l.src.includes("/eyelashes/"));
+    expect(lashes?.src).toBe("/art/avatar-parts/front/eyelashes/l12/lashes.webp");
+    expect(lashes?.pair).toBe(true);
+    // Eyes 3 is wider and sits a little higher than the eye the lashes are drawn for.
+    const lid = PARTS.eyes.find((e) => e.id === "e3")!.lid!;
+    expect(lashes?.fit?.scale).toBeCloseTo(lid.width / 173);
+    expect(lashes?.fit?.dy).toBe(lid.top + 22 - 420);
+  });
+
+  it("moves the eyes and lashes apart, or closer, together", () => {
+    const shifts = (eyeGap: string) =>
+      avatarLayers(parts({ eyeGap }))
+        .layers.filter((l) => /\/(eyes|eyelashes)\//.test(l.src))
+        .map((l) => l.shift);
+    expect(shifts("0")).toEqual([undefined, undefined]);
+    expect(shifts("2")).toEqual([12, 12]);
+    expect(shifts("-3")).toEqual([-18, -18]);
+    // The head itself stays put.
+    expect(avatarLayers(parts({ eyeGap: "3" })).layers[0]!.shift).toBeUndefined();
   });
 
   it("stacks the parts back to front, with the clothes over the head's shoulders", () => {

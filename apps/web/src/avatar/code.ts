@@ -15,7 +15,7 @@ export const DEFAULT_PARTS: AvatarParts = {
   hair: NONE,
   hairColour: "0",
   eyes: "e2",
-  brows: "b1",
+  brows: NONE,
   mouth: NONE,
   facialHair: NONE,
   glasses: NONE,
@@ -33,6 +33,8 @@ export const DEFAULT_PARTS: AvatarParts = {
   pose: "front",
   expression: "happy",
   eyeColour: "0",
+  lashes: "l1",
+  eyeGap: "0",
 };
 
 function choicesOf(field: AvatarField): readonly { id: string }[] {
@@ -64,6 +66,7 @@ export function decodeAvatar(code: string): AvatarParts {
 
 /** How often a random avatar gets each optional extra. */
 const EXTRA_CHANCE: Partial<Record<AvatarField, number>> = {
+  lashes: 0.75,
   facialHair: 0.2,
   glasses: 0.3,
   earrings: 0.3,

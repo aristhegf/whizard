@@ -82,17 +82,22 @@ const BROW_X = { left: 376, right: 642 };
 function drawLayer(ctx: CanvasRenderingContext2D, img: HTMLImageElement, layer: Layer) {
   const brows = BROWS[layer.brows ?? "relaxed"];
   const moved = layer.brows !== undefined && (brows.dy !== 0 || brows.tilt !== 0);
-  if (!layer.pair && !moved && !layer.half) {
-    ctx.drawImage(img, 0, 0, GRID, GRID);
-    return;
-  }
-  const sides = layer.half ? [layer.half] : (["left", "right"] as const);
+  const sided = layer.pair || moved || layer.half !== undefined;
+  const sides: ("left" | "right" | null)[] = layer.half
+    ? [layer.half]
+    : sided
+      ? ["left", "right"]
+      : [null];
   for (const side of sides) {
     ctx.save();
-    ctx.beginPath();
-    ctx.rect(side === "left" ? 0 : FACE_MIDDLE, 0, side === "left" ? FACE_MIDDLE : GRID, GRID);
-    ctx.clip();
-    if (moved) {
+    if (side) {
+      ctx.beginPath();
+      ctx.rect(side === "left" ? 0 : FACE_MIDDLE, 0, side === "left" ? FACE_MIDDLE : GRID, GRID);
+      ctx.clip();
+      // Eyes further apart (or closer) move out from (or in to) the middle.
+      if (layer.shift) ctx.translate(side === "left" ? -layer.shift : layer.shift, 0);
+    }
+    if (moved && side) {
       const x = BROW_X[side];
       const tilt = ((side === "left" ? brows.tilt : -brows.tilt) * Math.PI) / 180;
       ctx.translate(x, BROW_Y + brows.dy);
@@ -103,6 +108,12 @@ function drawLayer(ctx: CanvasRenderingContext2D, img: HTMLImageElement, layer: 
     if (layer.pair && side === "right") {
       ctx.translate(FACE_MIDDLE * 2, 0);
       ctx.scale(-1, 1);
+    }
+    if (layer.fit) {
+      const { x, y, dy, scale } = layer.fit;
+      ctx.translate(x, y + dy);
+      ctx.scale(scale, scale);
+      ctx.translate(-x, -y);
     }
     ctx.drawImage(img, 0, 0, GRID, GRID);
     ctx.restore();
