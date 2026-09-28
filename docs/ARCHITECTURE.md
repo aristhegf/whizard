@@ -113,10 +113,11 @@ Each game's screens live in the web app under `src/games/<id>/`. Canvas-heavy ga
 
 The host picks a **mode**, a **category**, a **level** (easy, medium or hard) and the **number of questions** (5, 10, 15 or 20). The room draws one question set. Quiz can be played solo.
 
-| Mode        | Questions                                                          | Points                                                            |
-| ----------- | ------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| **Classic** | No clock. Answer, then move on.                                    | The full points for the level for each right answer               |
-| **Speed**   | A countdown on every question: 10, 20 or 30 seconds, host's choice | 50% to 100% of the points for a right answer, the faster the more |
+| Mode            | Questions                                                                      | Points                                                            |
+| --------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
+| **Classic**     | No clock. Answer, then move on.                                                | The full points for the level for each right answer               |
+| **Speed**       | A countdown on every question: 10, 20 or 30 seconds, host's choice             | 50% to 100% of the points for a right answer, the faster the more |
+| **Elimination** | Everyone on the same question with a countdown; knock-out rounds, then a final | As in Speed                                                       |
 
 In both modes, ties are broken by who answered faster overall. A Classic question still closes after 5 minutes without an answer, so a player who walks away can't hold up everyone's final results.
 
@@ -141,7 +142,18 @@ This pacing is decided entirely on the player's own screen: the server only need
 
 **Late joiners.** By default, someone who arrives mid-game watches until the next one. If the host turns on **Allow late join**, they join the running game instead, starting from the first question with their own countdown. It works because every player already moves at their own pace.
 
-Streak and Elimination variants can be added later on top of this.
+### Elimination
+
+A mode for 3 or more players, with its own rules (`games/quiz/elimination.ts`). Unlike Classic and Speed, **everyone plays each question together**: it opens for all at the same moment, and closes when time runs out or everyone still in has answered. Then everyone sees the right answer for 3.5 seconds.
+
+- **Rounds.** The questions before a 3-question final are split between knock-out rounds (`planRounds`): as many rounds as there are players to knock out, at most 6, and never more than there are questions. With 5 players and 10 questions that's rounds of 3, 2 and 2 questions; with 12 players and 15 questions, six rounds of 2.
+- **Who goes.** At the end of each round the lowest total scores are knocked out (`keepCount`). Each round keeps the same share of the players still in, so the field shrinks geometrically to exactly two: with 20 players the rounds knock out 6, 5, 3, 2, 1 and 1; with 12, 3, 2, 2, 1, 1 and 1; with 5, one a round. Every round knocks out at least one, and leaves enough for later rounds to knock out one each. It's worked out from whoever is still in, so players leaving don't break it: if only two are left, the final starts early, and if only one is left, they win.
+- **Ties.** Totals are compared by points, then by answer time (faster stays). Two players level on both at the cut line both stay, so that round knocks out one fewer; if that leaves more than two after the last round, one extra one-question round follows, using one of 5 spare questions drawn for the game.
+- **Knocked out.** Players who go out stay in the room and watch: they see each question, the answers and the rest of the game, but can't answer. Late joiners watch too.
+- **The final.** The two finalists start again from zero for 3 questions. If they're level, sudden-death questions follow from the spares until one leads; if the spares run out, the faster player wins.
+- **Placings.** The winner, the runner-up, then everyone knocked out, later knock-outs placing higher; within a round, the higher score places higher. Match history and the stats record the game with mode `elimination`.
+
+Between phases there are short screens: each round's knock-outs (6 seconds, with "You're through" or "You're out, you finished 5th"), and the finalists' introduction (5 seconds). All the timing is on the server, in the game's state, so every player sees the same thing at the same time.
 
 ## Room lifecycle
 

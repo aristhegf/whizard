@@ -1,5 +1,6 @@
 import {
   QUIZ_CATEGORIES,
+  type AnyQuizView,
   type QuizReviewItem,
   type QuizStage,
   type QuizStanding,
@@ -16,6 +17,7 @@ import { GeneratingArt } from "../../ui/GeneratingArt";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { parseQuizSettings } from "./QuizSettingsPanel";
+import { EliminationScreen } from "./EliminationScreen";
 import { ReportQuestion } from "./ReportQuestion";
 import { play } from "../../sounds";
 import { MuteButton } from "../../ui/MuteButton";
@@ -47,7 +49,16 @@ interface GameContext extends Props {
   avatarOf: (playerId: string) => string | null;
 }
 
-export function QuizScreen(props: Props) {
+/** Classic and Speed here; Elimination has a screen of its own. */
+export function QuizScreen(props: Omit<Props, "view"> & { view: AnyQuizView }) {
+  const { view } = props;
+  if ("mode" in view && view.mode === "elimination") {
+    return <EliminationScreen {...props} view={view} />;
+  }
+  return <StandardQuiz {...props} view={view as QuizView} />;
+}
+
+function StandardQuiz(props: Props) {
   const { view, room } = props;
   const settings = parseQuizSettings(room.game.settings);
   const categoryName = QUIZ_CATEGORIES.find((c) => c.id === settings?.category)?.name ?? "Quiz";

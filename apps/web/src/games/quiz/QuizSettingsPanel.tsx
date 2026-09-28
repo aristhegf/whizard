@@ -28,7 +28,7 @@ export function QuizSettingsRows({
   editable: boolean;
   onChange: (settings: QuizSettings) => void;
 }) {
-  const speed = settings.variant === "speed";
+  const speed = settings.variant === "speed" || settings.variant === "elimination";
   const set = <K extends keyof QuizSettings>(key: K, value: QuizSettings[K]) =>
     onChange({ ...settings, [key]: value });
 

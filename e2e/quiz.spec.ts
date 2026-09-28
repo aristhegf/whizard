@@ -252,3 +252,56 @@ test("playing again doesn't repeat questions", async ({ browser }) => {
   const second = await play();
   expect(second.filter((prompt) => first.includes(prompt))).toEqual([]);
 });
+
+test("an Elimination game knocks players out until two meet in the final", async ({ browser }) => {
+  test.setTimeout(120_000);
+  const host = await newPlayer(browser);
+  await openRoom(host);
+  await host.getByLabel("Game Mode").selectOption("elimination");
+  await host.getByLabel("Questions").selectOption("5");
+  await host.getByLabel("Time per question").selectOption("10");
+  // Alone, the host is told how many more are needed.
+  await expect(host.getByText("Elimination needs at least 3 players. Invite 2 more")).toBeVisible();
+
+  const players = [host];
+  for (const name of ["Tolu", "Kemi"]) {
+    const page = await newPlayer(browser);
+    await page.goto(host.url());
+    await joinAs(page, name);
+    players.push(page);
+  }
+  await expect(
+    players[1]!.getByText(/Elimination quiz · Bible · Easy · 5 questions/),
+  ).toBeVisible();
+  await host.getByRole("button", { name: /start game/i }).press("Enter");
+
+  // Everyone answers every question they can until the game ends. With three players there's
+  // one knock-out round of two questions, then a three-question final.
+  const seen = new Set<string>();
+  const deadline = Date.now() + 100_000;
+  while (Date.now() < deadline && !seen.has("done")) {
+    for (const [i, page] of players.entries()) {
+      const choice = page.locator("button.choice:not([disabled])");
+      if ((await choice.count()) > 0)
+        await choice
+          .nth(i % 4)
+          .click()
+          .catch(() => undefined);
+    }
+    if (await host.locator(".elim-cut").count()) seen.add("cut");
+    if (await host.getByRole("heading", { name: "The Final" }).count()) seen.add("final");
+    if (await host.getByRole("heading", { name: "Final Rankings" }).count()) seen.add("done");
+    await host.waitForTimeout(200);
+  }
+  expect([...seen].sort()).toEqual(["cut", "done", "final"]);
+
+  for (const page of players) {
+    await expect(page.getByRole("heading", { name: "Final Rankings" })).toBeVisible();
+    const board = page.locator(".board li");
+    await expect(board).toHaveCount(3);
+    await expect(board.nth(0)).toContainText("Winner");
+    await expect(board.nth(1)).toContainText("Runner-up");
+    // Round 1, or a tie-break round after it if two tied exactly.
+    await expect(board.nth(2)).toContainText(/Out in round \d/);
+  }
+});

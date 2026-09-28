@@ -1,0 +1,148 @@
+/* Elimination: the knock-out screens between questions, and the final. */
+
+.elim-left {
+  flex: none;
+  white-space: nowrap;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+.elim-watching {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 6%);
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.elim-cut,
+.elim-final {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: min(720px, calc(100% - 2 * var(--gutter, 16px)));
+  margin: 32px auto;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.elim-cut h2,
+.elim-final h2 {
+  margin: 0;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+}
+
+.elim-kicker {
+  margin: 0;
+  color: var(--gold);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.elim-out {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px 18px;
+  margin: 6px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.elim-out li {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: 88px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+  animation: elim-drop 0.5s ease both;
+}
+
+.elim-out li img,
+.elim-out li > span:first-child {
+  filter: grayscale(0.8);
+}
+
+.elim-out li.me {
+  color: #ff9aaa;
+}
+
+@keyframes elim-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.9);
+  }
+}
+
+.elim-you {
+  margin: 4px 0 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.elim-you.good {
+  color: #5dffb0;
+}
+
+.elim-you.bad {
+  color: #ff9aaa;
+}
+
+.elim-versus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 5vw, 48px);
+  margin: 8px 0;
+}
+
+.elim-finalist {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+.elim-vs {
+  font-family: var(--display);
+  font-size: clamp(1.6rem, 6vw, 2.6rem);
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.countdown-number.small {
+  font-size: 2.4rem;
+  margin: 0;
+}
+
+.elim-winner {
+  justify-items: center;
+  text-align: center;
+}
+
+.elim-crowned {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  margin-top: 36px;
+}
+
+.elim-crowned .podium-crown {
+  position: absolute;
+  top: -40px;
+  color: var(--gold);
+}
+
+.need-more {
+  margin: 0;
+  font-weight: 700;
+}

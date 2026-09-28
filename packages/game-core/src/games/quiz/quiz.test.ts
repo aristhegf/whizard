@@ -30,13 +30,13 @@ function setup(players = ["ada", "tolu"], seed = 42, variant: QuizVariant = "spe
     content: QUESTIONS,
     seed,
     now: T0,
-  });
+  }) as QuizState;
 }
 
 function act(state: QuizState, player: string, action: QuizAction, now: number): QuizState {
   const result = quizGame.onAction(quizGame.tick(state, now), player, action, now);
   if (isRejection(result)) throw new Error(result.rejected);
-  return result;
+  return result as QuizState;
 }
 
 function reject(state: QuizState, player: string, action: QuizAction, now: number): string {
@@ -65,7 +65,9 @@ function playThrough(state: QuizState, player: string, correct: boolean[], from:
   return { state: s, now };
 }
 
-const view = (state: QuizState, player: string): QuizView => quizGame.viewFor(state, player);
+const view = (state: QuizState, player: string): QuizView =>
+  quizGame.viewFor(state, player) as QuizView;
+const tick = (state: QuizState, now: number): QuizState => quizGame.tick(state, now) as QuizState;
 
 describe("setup", () => {
   it("shuffles choices but keeps every option", () => {
@@ -127,14 +129,14 @@ describe("playing at your own pace", () => {
   });
 
   it("times out a question and moves on by itself", () => {
-    let state = quizGame.tick(setup(), START + LIMIT);
+    let state = tick(setup(), START + LIMIT);
     expect(view(state, "ada").stage).toMatchObject({ kind: "answer", myChoice: null });
-    state = quizGame.tick(state, START + LIMIT + AUTO_ADVANCE_MS);
+    state = tick(state, START + LIMIT + AUTO_ADVANCE_MS);
     expect(view(state, "ada").stage).toMatchObject({ kind: "question", index: 1 });
   });
 
   it("finishes even if a player stops responding", () => {
-    const state = quizGame.tick(setup(), START + 10 * 60_000);
+    const state = tick(setup(), START + 10 * 60_000);
     expect(quizGame.isFinished(state)).toBe(true);
     expect(quizGame.nextWakeAt(state)).toBeNull();
   });
@@ -166,7 +168,11 @@ describe("results", () => {
 
   it("lets a late joiner start from the first question", () => {
     const state = answer(setup(), "ada", 0, true, START + 1000);
-    const joined = quizGame.onPlayerJoined(state, { id: "kemi", nickname: "KEMI" }, START + 5000);
+    const joined = quizGame.onPlayerJoined(
+      state,
+      { id: "kemi", nickname: "KEMI" },
+      START + 5000,
+    ) as QuizState;
     const kemi = view(joined, "kemi");
     expect(kemi.stage).toMatchObject({
       kind: "question",
@@ -242,7 +248,7 @@ describe("Classic", () => {
   it("has no clock on the questions", () => {
     expect(view(classic(), "ada").timed).toBe(false);
     expect(view(setup(), "ada").timed).toBe(true);
-    const later = quizGame.tick(classic(), START + 60_000);
+    const later = tick(classic(), START + 60_000);
     expect(view(later, "ada").stage).toMatchObject({ kind: "question", index: 0 });
   });
 
@@ -269,7 +275,7 @@ describe("Classic", () => {
   });
 
   it("closes a question if a player walks away, so results still arrive", () => {
-    const state = quizGame.tick(classic(), START + CLASSIC_IDLE_LIMIT_MS);
+    const state = tick(classic(), START + CLASSIC_IDLE_LIMIT_MS);
     expect(view(state, "ada").stage).toMatchObject({ kind: "answer", myChoice: null });
     expect(quizGame.nextWakeAt(classic())).toBe(START + CLASSIC_IDLE_LIMIT_MS);
   });

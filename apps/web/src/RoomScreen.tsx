@@ -1,10 +1,12 @@
 import {
+  ELIMINATION_MIN_PLAYERS,
   JIGSAW_PICTURES,
   MAX_PLAYERS,
   NICKNAME_INPUT_MAX_LENGTH,
   QUIZ_CATEGORIES,
+  QUIZ_VARIANTS,
+  type AnyQuizView,
   type JigsawView,
-  type QuizView,
 } from "@whizard/game-core";
 import { AVATAR_IDS } from "@whizard/protocol";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -54,13 +56,26 @@ export function RoomScreen({ code }: { code: string }) {
   const joined = !!(state.playerId && room);
   const inGame = joined && room!.phase !== "lobby" && !!state.game;
 
-  const view = inGame ? (state.game as QuizView | JigsawView) : null;
-  // Leaving asks first while you're in the middle of playing.
-  const midGame =
-    room?.phase === "playing" &&
-    (view?.game === "jigsaw"
-      ? view.board !== null && !view.me?.finished && !view.final
-      : view?.stage.kind === "question" || view?.stage.kind === "answer");
+  const view = inGame ? (state.game as AnyQuizView | JigsawView) : null;
+  // Leaving mid-game can't be undone, so it asks first while you're still playing: in a
+  // jigsaw until you finish, in Elimination only while you're still in it.
+  let midGame = false;
+  if (room?.phase === "playing" && view) {
+    if (view.game === "jigsaw") {
+      midGame = view.board !== null && !view.me?.finished && !view.final;
+    } else {
+      const stage = view.stage.kind;
+      const stillIn =
+        "mode" in view ? view.me?.status === "in" || view.me?.status === "finalist" : true;
+      midGame =
+        stillIn &&
+        (stage === "question" ||
+          stage === "answer" ||
+          stage === "reveal" ||
+          stage === "cut" ||
+          stage === "final");
+    }
+  }
 
   const leave = (to: string) => {
     if (midGame && !window.confirm("Leave this game? You can’t rejoin it.")) return;
@@ -83,7 +98,7 @@ export function RoomScreen({ code }: { code: string }) {
         />
       ) : inGame ? (
         <QuizScreen
-          view={state.game as QuizView}
+          view={state.game as AnyQuizView}
           client={client}
           room={room!}
           playerId={state.playerId!}
@@ -308,6 +323,10 @@ function Lobby({
   const settings = room.game.id === "quiz" ? parseQuizSettings(room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
+  const needMore =
+    settings?.variant === "elimination"
+      ? Math.max(0, ELIMINATION_MIN_PLAYERS - connected.length)
+      : 0;
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
   const url = `${location.origin}${roomPath(room.code)}`;
 
@@ -383,10 +402,11 @@ function Lobby({
                   <span className="pill">{category?.name ?? "Quiz"}</span>
                   {!isHost && settings && (
                     <p className="summary muted small">
-                      {settings.variant === "speed" ? "Speed" : "Classic"} quiz · {category?.name} ·{" "}
+                      {QUIZ_VARIANTS.find((v) => v.id === settings.variant)?.name} quiz ·{" "}
+                      {category?.name} ·{" "}
                       {settings.difficulty[0]!.toUpperCase() + settings.difficulty.slice(1)} ·{" "}
                       {settings.count} questions
-                      {settings.variant === "speed" && ` · ${settings.timeLimitSeconds}s each`}
+                      {settings.variant !== "classic" && ` · ${settings.timeLimitSeconds}s each`}
                     </p>
                   )}
                 </div>
@@ -506,7 +526,12 @@ function Lobby({
           <PingFriends code={room.code} />
 
           <div className="lobby-dock">
-            {isHost ? (
+            {isHost && needMore > 0 ? (
+              <p className="muted center need-more" role="status">
+                Elimination needs at least {ELIMINATION_MIN_PLAYERS} players. Invite {needMore} more
+                to start.
+              </p>
+            ) : isHost ? (
               <StartButton alone={alone} onStart={() => client.startGame()} />
             ) : (
               <p className="muted center">Waiting for the host to start the game.</p>

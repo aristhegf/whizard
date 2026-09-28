@@ -57,6 +57,8 @@ export interface GameModule<Settings, Content, State, Action, View> {
   name: string;
   minPlayers: number;
   maxPlayers: number;
+  /** A higher minimum for some settings, such as a mode that needs a crowd, and why. */
+  playersNeeded?(settings: Settings): { min: number; message: string } | null;
   settingsSchema: z.ZodType<Settings>;
   defaultSettings: Settings;
   actionSchema: z.ZodType<Action>;

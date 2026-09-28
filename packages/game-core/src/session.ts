@@ -104,6 +104,8 @@ export function startGame(
   const playing = state.players.filter((p) => connected.has(p.id)).slice(0, module.maxPlayers);
   const players = playing.map((p) => ({ id: p.id, nickname: p.nickname }));
   if (players.length < module.minPlayers) return fail("not_enough_players");
+  const needed = module.playersNeeded?.(state.game.settings);
+  if (needed && players.length < needed.min) return fail("not_enough_players", needed.message);
 
   const recent = state.recentContent ?? [];
   const content = drawContent(module.contentNeeded(state.game.settings), seed, { recent });
