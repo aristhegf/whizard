@@ -331,3 +331,32 @@ test("Auto starts easy and gets harder", async ({ browser }) => {
   await expect(page.getByText("Your score")).toBeVisible();
   await expect(page.locator(".review li")).toHaveCount(5);
 });
+
+test("the results can be shared as a 16:9 picture", async ({ browser }) => {
+  const page = await newPlayer(browser);
+  await openRoom(page);
+  await page.getByLabel("Questions").selectOption("5");
+  await expect(page.getByLabel("Questions")).toHaveValue("5");
+  await page.getByRole("button", { name: /play solo/i }).press("Enter");
+  for (let i = 1; i <= 5; i++) {
+    await answerFirstChoice(page, i, 5);
+    await page.getByRole("button", { name: "Skip" }).click();
+  }
+  await expect(page.getByText("Your score")).toBeVisible();
+
+  await page.getByRole("button", { name: "Share" }).first().click();
+  const dialog = page.getByRole("dialog", { name: "Share your results" });
+  const picture = dialog.getByRole("img", { name: /Your game results/ });
+  await expect(picture).toBeVisible({ timeout: 10_000 });
+  const size = await picture.evaluate((img: HTMLImageElement) => [
+    img.naturalWidth,
+    img.naturalHeight,
+  ]);
+  expect(size).toEqual([1920, 1080]);
+  await expect(dialog.getByRole("link", { name: "Download" })).toHaveAttribute(
+    "download",
+    "whizard-results.png",
+  );
+  await dialog.getByRole("button", { name: "Close" }).click();
+  await expect(dialog).toBeHidden();
+});

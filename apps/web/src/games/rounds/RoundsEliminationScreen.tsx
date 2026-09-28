@@ -56,7 +56,6 @@ interface Props {
 
 interface Context extends EliminationContext {
   view: View;
-  art: string;
 }
 
 export function RoundsEliminationScreen(props: Props) {
@@ -69,6 +68,7 @@ export function RoundsEliminationScreen(props: Props) {
     title: game?.name ?? "Game",
     noun: view.game === "word-rush" ? "Word" : "Grid",
     art: game?.art ?? "/art/mascot/run.webp",
+    colors: game?.colors ?? ["#6b45ff", "#23145a"],
   };
   const stage = view.stage as AnyStage;
   switch (stage.kind) {

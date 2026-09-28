@@ -9,6 +9,9 @@ import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { MuteButton } from "../../ui/MuteButton";
 import { Podium } from "../../ui/Podium";
+import { CATALOG } from "../../catalog";
+import { competitiveLines } from "../../share/cardText";
+import { useShareResults } from "../../share/ShareResults";
 import { sizeName } from "./JigsawSettingsPanel";
 
 interface Props {
@@ -324,24 +327,37 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
   const me = view.me;
   useEffect(() => play("fanfare"), []);
 
-  const share = async () => {
-    const text = me?.finished
-      ? `I finished a ${me.total}-piece jigsaw in ${clock(me.timeMs ?? 0)} on Whizard!`
-      : "Race me at a jigsaw on Whizard!";
-    try {
-      if (navigator.share) await navigator.share({ title: "Whizard", text, url: location.origin });
-      else await navigator.clipboard.writeText(`${text} ${location.origin}`);
-    } catch {
-      // Dismissed or blocked.
-    }
-  };
+  const text = me?.finished
+    ? `I finished a ${me.total}-piece jigsaw in ${clock(me.timeMs ?? 0)} on Whizard!`
+    : "Race me at a jigsaw on Whizard!";
+  const rows = view.standings
+    .filter((s) => !s.left)
+    .map((s) => ({ ...s, label: progressLabel(s) }));
+  const { open: share, dialog: shareDialog } = useShareResults(
+    {
+      title: "Jigsaw",
+      details: [sizeName(view.side), view.picture.name],
+      art: view.picture.src,
+      colors: CATALOG.find((g) => g.id === "jigsaw")?.colors ?? ["#ff9f2e", "#3a1a5c"],
+      ...(podium.length > 0
+        ? competitiveLines(rows, playerId, avatarOf)
+        : {
+            headline: me?.finished ? "Can you beat my time?" : "Can you finish it?",
+            podium: [],
+            score: me?.finished
+              ? { value: clock(me.timeMs ?? 0), detail: `${me.total} pieces` }
+              : { value: `${me?.placed ?? 0}/${me?.total ?? 0}`, detail: "pieces in place" },
+          }),
+    },
+    text,
+  );
 
   return (
     <div className="results">
       <header className="results-bar">
         <Brand />
         <span className="bar-end">
-          <button className="btn bar-pill" onClick={() => void share()}>
+          <button className="btn bar-pill" onClick={share}>
             <Icon name="share" size={20} />
             <span>Share</span>
           </button>
@@ -393,7 +409,7 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
                 <Icon name="games" size={22} />
                 Change Picture
               </button>
-              <button className="btn" onClick={() => void share()}>
+              <button className="btn" onClick={share}>
                 <Icon name="share" size={20} />
                 Share Results
               </button>
@@ -433,6 +449,7 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
       </div>
 
       {!solo && <AddFromGame usernames={usernames} />}
+      {shareDialog}
     </div>
   );
 }
