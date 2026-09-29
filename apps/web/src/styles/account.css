@@ -1,7 +1,14 @@
 /* Account, friends, groups and privacy pages ------------------------------------------------ */
 
-.account-page .side-main > .screen,
-.account-page .side-main > .panel {
+/* Forms and lists read best at about the width they had beside the old sidebar. */
+.account-page .page-main {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+}
+
+.account-page .page-main > .screen,
+.account-page .page-main > .panel {
   width: 100%;
 }
 

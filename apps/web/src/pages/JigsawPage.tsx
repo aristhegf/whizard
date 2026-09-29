@@ -9,7 +9,7 @@ import {
 } from "@whizard/game-core";
 import { useRef, useState } from "react";
 import { setPendingPhoto } from "../games/jigsaw/PhotoCropper";
-import { createFailed, SideLayout, startRoom } from "../ui/Chrome";
+import { createFailed, TopLayout, startRoom } from "../ui/Chrome";
 import { Icon } from "../ui/Icon";
 
 type Choice = JigsawPictureId | "random" | "photo";
@@ -38,7 +38,7 @@ export function JigsawPage() {
   };
 
   return (
-    <SideLayout active="games" className="topics-page">
+    <TopLayout active="games" className="topics-page" column>
       <header className="side-head">
         <div>
           <h1 className="page-title">Jigsaw Pictures</h1>
@@ -141,6 +141,6 @@ export function JigsawPage() {
           </ul>
         </section>
       ))}
-    </SideLayout>
+    </TopLayout>
   );
 }

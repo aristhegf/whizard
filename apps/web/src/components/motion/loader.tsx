@@ -1,7 +1,7 @@
 "use client";
 // beui.dev/components/motion/loader
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotionConfig } from "motion/react";
 import { useEffect, useId, useState } from "react";
 import { EASE_IN_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
@@ -59,7 +59,7 @@ export function Loader({
   label = "Loading",
   className,
 }: LoaderProps) {
-  const reduce = useReducedMotion() ?? false;
+  const reduce = useReducedMotionConfig() ?? false;
 
   return (
     <span

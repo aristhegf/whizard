@@ -36,7 +36,7 @@ import {
 import { linkTo, navigate } from "./router";
 import { Avatar } from "./ui/Avatar";
 import { AvatarPicker } from "./ui/AvatarPicker";
-import { SideLayout } from "./ui/Chrome";
+import { TopLayout } from "./ui/Chrome";
 import { useAction, useLoaded } from "./ui/common";
 import { Loading } from "./ui/Loading";
 import { useShakeOnError } from "./ui/errorShake";
@@ -47,7 +47,7 @@ import { loadNickname } from "./storage";
 export function AccountScreen() {
   const account = useAccount();
   return (
-    <SideLayout active="profile" className="account-page">
+    <TopLayout active="profile" className="account-page" column>
       {account.status === "loading" ? (
         <Loading />
       ) : account.user ? (
@@ -55,7 +55,7 @@ export function AccountScreen() {
       ) : (
         <SignedOut />
       )}
-    </SideLayout>
+    </TopLayout>
   );
 }
 

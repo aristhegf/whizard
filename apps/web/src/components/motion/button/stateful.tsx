@@ -5,7 +5,7 @@ import { Check, Loader2, X } from "lucide-react";
 import {
   AnimatePresence,
   motion,
-  useReducedMotion,
+  useReducedMotionConfig,
   type Variants,
 } from "motion/react";
 import {
@@ -69,7 +69,7 @@ const ICON_VARIANTS: Variants = {
 };
 
 function IconSlot({ keyId, children }: { keyId: string; children: ReactNode }) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionConfig();
   return (
     <motion.span
       key={keyId}
@@ -92,7 +92,7 @@ function TextSlot({
   value: string;
   children: ReactNode;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionConfig();
   const measureRef = useRef<HTMLSpanElement>(null);
   const [width, setWidth] = useState<number>();
   const label = typeof children === "string" ? children : null;

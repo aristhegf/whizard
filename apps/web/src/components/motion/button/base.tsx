@@ -4,7 +4,7 @@ import {
   AnimatePresence,
   type HTMLMotionProps,
   motion,
-  useReducedMotion,
+  useReducedMotionConfig,
 } from "motion/react";
 import {
   forwardRef,
@@ -74,7 +74,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) {
-    const reduce = useReducedMotion();
+    const reduce = useReducedMotionConfig();
     const canHover = useHoverCapable();
     const [ripples, setRipples] = useState<Ripple[]>([]);
     const nextId = useRef(0);
@@ -164,7 +164,7 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
     },
     ref,
   ) {
-    const reduce = useReducedMotion();
+    const reduce = useReducedMotionConfig();
     const canHover = useHoverCapable();
 
     return (

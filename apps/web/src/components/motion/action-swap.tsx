@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion, type HTMLMotionProps, type Variants } from "motion/react";
+import { AnimatePresence, motion, useReducedMotionConfig, type HTMLMotionProps, type Variants } from "motion/react";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { EASE_OUT, SPRING_PRESS, SPRING_SWAP } from "@/lib/ease";
@@ -163,7 +163,7 @@ export function ActionSwapText({
   animation = "blur",
   className,
 }: ActionSwapTextProps) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionConfig();
 
   // Cascade needs a plain string to split into letters; non-string content
   // and reduced motion fall back to the closest single-element animation.
@@ -252,7 +252,7 @@ export function ActionSwapIcon({
   animation = "blur",
   className,
 }: ActionSwapIconProps) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionConfig();
   // Icons are single elements — cascade maps to its closest motion, roll.
   const coreAnimation: CoreAnimation =
     animation === "cascade" ? "roll" : animation;
@@ -291,7 +291,7 @@ export function ActionSwapButton({
   onClick,
   ...rest
 }: ActionSwapButtonProps) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionConfig();
   const [internalValue, setInternalValue] = useState(defaultValue ?? items[0]?.id);
   const currentValue = value ?? internalValue;
   const activeIndex = Math.max(0, items.findIndex((item) => item.id === currentValue));

@@ -1,9 +1,9 @@
 import { linkTo } from "./router";
-import { SideLayout } from "./ui/Chrome";
+import { TopLayout } from "./ui/Chrome";
 
 export function PrivacyScreen() {
   return (
-    <SideLayout active={null} className="account-page">
+    <TopLayout active={null} className="account-page" column>
       <div className="screen">
         <header>
           <h1 className="page-title">Privacy</h1>
@@ -146,6 +146,6 @@ export function PrivacyScreen() {
           </p>
         </article>
       </div>
-    </SideLayout>
+    </TopLayout>
   );
 }

@@ -51,7 +51,7 @@ export function AboutPage() {
     }));
 
   return (
-    <TopLayout variant="site" active="about">
+    <TopLayout active="about">
       <div className="about-page">
         <section className="about-hero panel" aria-labelledby="about-title">
           <div className="about-hero-copy">

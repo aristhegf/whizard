@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("the pricing page shows the three plans and answers questions", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Open menu" }).click();
-  await page.getByRole("link", { name: "Pricing" }).click();
+  await page.getByRole("dialog", { name: "Menu" }).getByRole("link", { name: "Pricing" }).click();
   await expect(page).toHaveURL(/\/pricing$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Play for free.Create without limits.",

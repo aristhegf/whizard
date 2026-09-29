@@ -13,7 +13,7 @@ import {
 import {
   AnimatePresence,
   motion,
-  useReducedMotion,
+  useReducedMotionConfig,
   type HTMLMotionProps,
   type Variants,
 } from "motion/react";
@@ -135,7 +135,7 @@ export function AnimatedBadge({
   className,
   ...rest
 }: AnimatedBadgeProps) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionConfig();
   const Icon = ICONS[status];
   const resolvedContentKey =
     contentKey ??

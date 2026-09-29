@@ -1845,3 +1845,21 @@ button.choice:disabled {
 .photo-row {
   grid-template-columns: 22px 1fr auto;
 }
+
+/* Settings: sound and display for everyone. */
+.settings-dialog {
+  width: min(480px, calc(100vw - 2 * var(--gutter)));
+}
+
+.settings-dialog .settings-list {
+  margin: 14px 0 18px;
+}
+
+.settings-group {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}

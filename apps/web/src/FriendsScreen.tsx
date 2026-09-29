@@ -25,7 +25,7 @@ import {
   updateGroup,
 } from "./social";
 import { Avatar } from "./ui/Avatar";
-import { SideLayout } from "./ui/Chrome";
+import { TopLayout } from "./ui/Chrome";
 import { errorText, useLoaded } from "./ui/common";
 import { useErrorShake, useShakeOnError } from "./ui/errorShake";
 import { Loading } from "./ui/Loading";
@@ -43,7 +43,7 @@ function SignedInOnly({
 }) {
   const account = useAccount();
   return (
-    <SideLayout active="friends" className="account-page">
+    <TopLayout active="friends" className="account-page" column>
       {account.status === "loading" ? (
         <Loading />
       ) : account.user ? (
@@ -59,7 +59,7 @@ function SignedInOnly({
           </a>
         </div>
       )}
-    </SideLayout>
+    </TopLayout>
   );
 }
 
@@ -610,7 +610,7 @@ export function AddFriendScreen({ username }: { username: string }) {
   const signedIn = account.status === "ready" && !!account.user;
 
   return (
-    <SideLayout active="friends" className="account-page">
+    <TopLayout active="friends" className="account-page" column>
       <div className="screen">
         <ErrorLine error={profile.error} />
         {profile.data && (
@@ -671,7 +671,7 @@ export function AddFriendScreen({ username }: { username: string }) {
           </>
         )}
       </div>
-    </SideLayout>
+    </TopLayout>
   );
 }
 

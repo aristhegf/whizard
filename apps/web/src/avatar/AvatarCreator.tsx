@@ -3,7 +3,7 @@ import { useState, type CSSProperties } from "react";
 import { updateAccount, useAccount } from "../account";
 import { navigate } from "../router";
 import { loadAvatar, loadMyAvatar, saveAvatar, saveMyAvatar } from "../storage";
-import { SideLayout } from "../ui/Chrome";
+import { TopLayout } from "../ui/Chrome";
 import { useAction } from "../ui/common";
 import { Icon } from "../ui/Icon";
 import { decodeAvatar, DEFAULT_PARTS, encodeAvatar, randomParts, type AvatarParts } from "./code";
@@ -267,11 +267,11 @@ export function AvatarCreator() {
   const account = useAccount();
   const user = account.status === "ready" ? account.user : null;
   return (
-    <SideLayout active="profile" className="account-page avatar-page">
+    <TopLayout active="profile" className="account-page avatar-page" column>
       {account.status === "loading" ? null : (
         <Builder start={startingParts(user?.avatar ?? loadAvatar())} signedIn={user !== null} />
       )}
-    </SideLayout>
+    </TopLayout>
   );
 }
 
