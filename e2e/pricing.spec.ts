@@ -2,8 +2,10 @@ import { expect, test } from "@playwright/test";
 
 test("the pricing page shows the three plans and answers questions", async ({ page }) => {
   await page.goto("/");
+  // On phones the site's pages are in the menu under "Me".
+  await page.getByRole("button", { name: "Me", exact: true }).click();
   await page
-    .getByRole("navigation", { name: "Sections" })
+    .getByRole("navigation", { name: "About Whizard" })
     .getByRole("link", { name: "Pricing" })
     .click();
   await expect(page).toHaveURL(/\/pricing$/);

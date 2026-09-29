@@ -1,165 +1,200 @@
-import { normalizeRoomCode, ROOM_CODE_LENGTH } from "@whizard/game-core";
-import { useState, type FormEvent } from "react";
-import { fetchRoomStatus } from "../api";
-import { linkTo, navigate, roomPath } from "../router";
-import { loadSession } from "../storage";
-import { useShakeOnError } from "../ui/errorShake";
-import { CreateRoomButton, TopLayout } from "../ui/Chrome";
-import { Icon, type IconName } from "../ui/Icon";
+import { useState, type CSSProperties } from "react";
+import {
+  CATALOG,
+  GAME_GROUPS,
+  cardWash,
+  isPlayable,
+  type CatalogGame,
+  type GameGroup,
+} from "../catalog";
+import { linkTo } from "../router";
+import { createFailed, startRoom, TopLayout } from "../ui/Chrome";
+import { useMediaQuery } from "../ui/common";
+import { Icon } from "../ui/Icon";
 import { LiveCount } from "../ui/LiveCount";
+import { useToast } from "../ui/toast";
 
-const FEATURES: { icon: IconName; title: string; text: string }[] = [
-  { icon: "device", title: "Play on any device", text: "Phones, tablets, or desktop" },
-  { icon: "link", title: "No downloads", text: "Just a link and you’re in" },
-  { icon: "heart", title: "Perfect for any group", text: "Friends, family, work or couples" },
-];
+/** The most played game gets the big card; the rest share the grid beside it. */
+const FEATURED = CATALOG.find((g) => g.id === "quiz")!;
+/** Games ready to play come first, the ones still being made after them. */
+const OTHERS = CATALOG.filter((g) => g !== FEATURED).sort(
+  (a, b) => Number(isPlayable(b)) - Number(isPlayable(a)),
+);
+/** Cards per page on laptops and computers, where the screen doesn't scroll. */
+const PAGE_SIZE = 6;
+const GROUP_NAMES: Partial<Record<GameGroup, string>> = Object.fromEntries(
+  GAME_GROUPS.map((g) => [g.id, g.name]),
+);
 
-const STEPS = [
-  { title: "Create a room", text: "Pick a game and a topic. You get a room code and a link." },
-  { title: "Invite your people", text: "Send the link or show the QR code. Nobody needs an app." },
-  { title: "Play together", text: "Everyone starts at once and plays at their own pace." },
-];
-
-/** Why a room code can't be used right now, or null if it can. Asks the server. */
-async function codeProblem(code: string): Promise<string | null> {
-  const status = await fetchRoomStatus(code);
-  if (!status) return "No room has that code. Check it, or ask the host for a new one.";
-  // Someone who's already in the room can always go back to it.
-  if (loadSession(code)) return null;
-  // A game already running is fine: without late join, they wait in the room for the next one.
-  if (status.full) return "That room is full.";
-  return null;
-}
-
+/** The home screen: what to play, all on one screen on laptops and computers. */
 export function HomePage() {
-  const [error, setError] = useState<string | null>(null);
-  const [attempt, setAttempt] = useState(0);
-  const [checking, setChecking] = useState(false);
-  const [code, setCode] = useState("");
-  const { ref, isError, message } = useShakeOnError<HTMLInputElement>(error, attempt);
+  const [group, setGroup] = useState<GameGroup | "all">("all");
+  const [page, setPage] = useState(0);
+  const paged = useMediaQuery("(min-width: 1100px)");
 
-  const fail = (message: string) => {
-    setError(message);
-    setAttempt((n) => n + 1);
-  };
-
-  const join = async (event: FormEvent) => {
-    event.preventDefault();
-    if (checking) return;
-    const normalized = normalizeRoomCode(code);
-    if (!normalized) return fail(`Room codes are ${ROOM_CODE_LENGTH} letters and numbers.`);
-    setChecking(true);
-    try {
-      const problem = await codeProblem(normalized);
-      if (problem) fail(problem);
-      else navigate(roomPath(normalized));
-    } catch {
-      fail("Couldn’t check that code. Check your connection and try again.");
-    } finally {
-      setChecking(false);
-    }
-  };
+  const games = OTHERS.filter((g) => group === "all" || g.groups.includes(group));
+  const pages = paged ? Math.max(1, Math.ceil(games.length / PAGE_SIZE)) : 1;
+  const current = Math.min(page, pages - 1);
+  const shown = paged ? games.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE) : games;
 
   return (
-    <TopLayout active="home">
-      <section className="hero">
-        <div className="hero-copy">
+    <TopLayout active="home" className="play-page" screen>
+      <section className="play" aria-labelledby="play-title">
+        <header className="play-head">
           <LiveCount />
-          <p className="pill hero-pill">
-            <Icon name="users" size={20} />
-            Play Together, Anywhere
-          </p>
-          <h1 className="display hero-title">
-            Games
-            <br />
-            Are Better
-            <br />
-            <span className="gradient-text">Together</span>
+          <h1 id="play-title" className="display play-title">
+            What do you want to <span className="gold-text">play?</span>
           </h1>
-          <p className="hero-lead">
-            Fun multiplayer games for friends, families, couples and teams. No downloads. Just play.
-          </p>
-          <div className="hero-actions">
-            <CreateRoomButton className="btn btn-gold btn-hero" />
-            <a className="btn btn-hero" {...linkTo("/games")}>
-              Explore Games
-            </a>
-          </div>
-          <div className={`t-input-wrap join-code-wrap${isError ? " is-error" : ""}`}>
-            <form className="join-code" onSubmit={(event) => void join(event)}>
-              <input
-                ref={ref}
-                className={`code-input t-input${isError ? " is-error" : ""}`}
-                name="code"
-                aria-label="Room code"
-                aria-invalid={isError}
-                aria-describedby="code-error"
-                placeholder="Have a code? e.g. K7QX2M"
-                value={code}
-                maxLength={ROOM_CODE_LENGTH + 4}
-                autoCapitalize="characters"
-                autoComplete="off"
-                spellCheck={false}
-                onChange={(event) => {
-                  setCode(event.target.value);
-                  setError(null);
+          <div className="play-chips" role="group" aria-label="Kinds of game">
+            {GAME_GROUPS.map((g) => (
+              <button
+                key={g.id}
+                className="play-chip"
+                aria-pressed={group === g.id}
+                onClick={() => {
+                  setGroup(g.id);
+                  setPage(0);
                 }}
-              />
-              <button className="btn btn-small" type="submit" disabled={checking}>
-                {checking ? "Checking…" : "Join"}
+              >
+                {g.icon && <Icon name={g.icon} size={20} />}
+                {g.name}
               </button>
-            </form>
-            <p id="code-error" className="t-error-msg error small" role="alert">
-              {message}
-            </p>
+            ))}
+          </div>
+        </header>
+
+        <div className="play-body">
+          <Featured game={FEATURED} />
+
+          <div className="play-shelf">
+            {shown.length === 0 ? (
+              <p className="muted play-empty">No other games of this kind yet.</p>
+            ) : (
+              <ul className="play-grid" aria-label="Games">
+                {shown.map((g) => (
+                  <GameCard key={g.id} game={g} />
+                ))}
+              </ul>
+            )}
+            {pages > 1 && (
+              <div className="play-pager">
+                <button
+                  className="play-arrow"
+                  aria-label="Previous games"
+                  disabled={current === 0}
+                  onClick={() => setPage(current - 1)}
+                >
+                  <Icon name="chevronLeft" size={24} stroke={2.6} />
+                </button>
+                <span className="play-dots" aria-label={`Page ${current + 1} of ${pages}`}>
+                  {Array.from({ length: pages }, (_, i) => (
+                    <span key={i} className={i === current ? "on" : undefined} />
+                  ))}
+                </span>
+                <button
+                  className="play-arrow"
+                  aria-label="More games"
+                  disabled={current === pages - 1}
+                  onClick={() => setPage(current + 1)}
+                >
+                  <Icon name="chevronRight" size={24} stroke={2.6} />
+                </button>
+              </div>
+            )}
           </div>
         </div>
-        <div className="hero-art" aria-hidden="true">
-          <div className="stage-glow" />
-          <img src="/art/mascot/hero.webp" alt="" width={866} height={857} fetchPriority="high" />
-        </div>
-      </section>
-
-      <ul className="features">
-        {FEATURES.map((f) => (
-          <li key={f.title} className="feature panel">
-            <span className="feature-icon">
-              <Icon name={f.icon} size={26} />
-            </span>
-            <span>
-              <strong>{f.title}</strong>
-              <span className="muted">{f.text}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
-
-      <section id="how" className="how" aria-labelledby="how-title">
-        <h2 id="how-title" className="display section-display">
-          How it works
-        </h2>
-        <ol className="steps">
-          {STEPS.map((s, i) => (
-            <li key={s.title} className="panel">
-              <span className="step-number">{i + 1}</span>
-              <strong>{s.title}</strong>
-              <span className="muted">{s.text}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section id="about" className="about panel" aria-labelledby="about-title">
-        <h2 id="about-title" className="section-title">
-          About Whizard
-        </h2>
-        <p className="muted">
-          Whizard is a free place to play quick games with the people you care about, in the same
-          room or on the other side of the world. Everyone gets the same challenge at the same
-          moment, with nothing to install. Accounts are optional; they keep your stats and let you
-          ping friends when you’re free.
-        </p>
       </section>
     </TopLayout>
+  );
+}
+
+/** The big card beside the mascot. */
+function Featured({ game }: { game: CatalogGame }) {
+  return (
+    <article className="play-featured" aria-labelledby="featured-title">
+      <img
+        className="play-mascot"
+        src="/art/mascot/hero.webp"
+        alt=""
+        width={866}
+        height={857}
+        fetchPriority="high"
+      />
+      <div className="featured-card" style={{ "--wash": cardWash(game.colors) } as CSSProperties}>
+        <span className="featured-badge">
+          <Icon name="crown" size={18} />
+          Most played
+        </span>
+        <img className="featured-art" src={game.art} alt="" />
+        <h2 id="featured-title" className="featured-title">
+          {game.name}
+        </h2>
+        <p className="featured-tagline">Test your knowledge on anything!</p>
+        <div className="featured-foot">
+          <span className="players">
+            <Icon name="users" size={20} />
+            {game.players}
+          </span>
+          {game.groups.map((g) => (
+            <span key={g} className="featured-tag">
+              {GROUP_NAMES[g]}
+            </span>
+          ))}
+          <a className="btn btn-gold featured-play" {...linkTo(game.href!)}>
+            Play now
+            <Icon name="arrowRight" size={22} stroke={2.6} />
+          </a>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function GameCard({ game }: { game: CatalogGame }) {
+  const toast = useToast();
+  const [opening, setOpening] = useState(false);
+  const style = { "--wash": cardWash(game.colors) } as CSSProperties;
+  const label = `Play ${game.name}`;
+
+  const action = game.href ? (
+    <a className="play-btn" aria-label={label} {...linkTo(game.href)}>
+      Play
+      <Icon name="arrowRight" size={18} stroke={2.6} />
+    </a>
+  ) : game.starts ? (
+    // Games without a page of their own open a room straight away.
+    <button
+      className="play-btn"
+      aria-label={label}
+      aria-busy={opening}
+      disabled={opening}
+      onClick={() => {
+        setOpening(true);
+        startRoom(undefined, game.starts).catch((error: unknown) => {
+          setOpening(false);
+          toast.show({ title: createFailed(error), status: "error" });
+        });
+      }}
+    >
+      {opening ? "Opening…" : "Play"}
+      {!opening && <Icon name="arrowRight" size={18} stroke={2.6} />}
+    </button>
+  ) : (
+    <span className="play-btn soon">Coming soon</span>
+  );
+
+  return (
+    <li className={`play-card${isPlayable(game) ? "" : " unavailable"}`} style={style}>
+      <img className="play-card-art" src={game.art} alt="" loading="lazy" />
+      <h3 className="play-card-name">{game.name}</h3>
+      <p className="play-card-desc">{game.description}</p>
+      <div className="play-card-foot">
+        <span className="players">
+          <Icon name="users" size={18} />
+          {game.players}
+        </span>
+        {action}
+      </div>
+    </li>
   );
 }

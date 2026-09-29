@@ -167,7 +167,7 @@ test("two players race through Spot It", async ({ browser }) => {
 test("the host can switch the room to another game", async ({ browser }) => {
   const host = await newPlayer(browser);
   await host.goto("/");
-  await host.getByRole("button", { name: "Create a Room" }).click();
+  await host.getByRole("button", { name: "Create", exact: true }).click();
   await joinAs(host, "Ada");
   await expect(host.getByLabel("Game Mode")).toBeVisible();
 

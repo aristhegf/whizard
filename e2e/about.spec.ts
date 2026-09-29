@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test";
 
 test("the about page tells the story and shows the community's numbers", async ({ page }) => {
   await page.goto("/");
+  // On phones the site's pages are in the menu under "Me".
+  await page.getByRole("button", { name: "Me", exact: true }).click();
   await page
     .getByRole("navigation", { name: "About Whizard" })
     .getByRole("link", { name: "About" })

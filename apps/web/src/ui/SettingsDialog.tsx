@@ -1,4 +1,3 @@
-import { Tooltip } from "@/components/motion/tooltip";
 import type { AccountUser } from "@whizard/protocol";
 import { useEffect, useRef, useState } from "react";
 import { updateAccount, useAccount } from "../account";
@@ -199,23 +198,15 @@ function Toggle({
   );
 }
 
-/** Opens the settings: a gear in the top bar, or a labelled button in the room's bar. */
-export function SettingsButton({ labelled = false }: { labelled?: boolean }) {
+/** Opens the settings from the room's bar. */
+export function SettingsButton() {
   const [open, setOpen] = useState(false);
   return (
     <>
-      {labelled ? (
-        <button className="bar-btn" onClick={() => setOpen(true)}>
-          <Icon name="settings" size={20} />
-          <span>Settings</span>
-        </button>
-      ) : (
-        <Tooltip content="Settings" side="bottom">
-          <button className="icon-btn" aria-label="Settings" onClick={() => setOpen(true)}>
-            <Icon name="settings" size={24} />
-          </button>
-        </Tooltip>
-      )}
+      <button className="bar-btn" onClick={() => setOpen(true)}>
+        <Icon name="settings" size={20} />
+        <span>Settings</span>
+      </button>
       {open && <SettingsDialog onClose={() => setOpen(false)} />}
     </>
   );

@@ -452,7 +452,7 @@ function Lobby({
         <Latency state={state} />
         <div className="room-actions">
           <InviteButton url={url} />
-          <SettingsButton labelled />
+          <SettingsButton />
           <MuteButton />
           <button className="bar-btn leave" onClick={() => onLeave("/")}>
             <Icon name="logout" size={20} />

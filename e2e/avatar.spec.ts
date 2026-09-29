@@ -38,7 +38,7 @@ async function makeAvatar(page: Page) {
 test("a guest's own avatar goes into the room, and friends see it", async ({ browser }) => {
   const host = await newPlayer(browser);
   await host.goto("/");
-  await host.getByRole("button", { name: "Create a Room" }).click();
+  await host.getByRole("button", { name: "Create", exact: true }).click();
   await expect(host).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   const roomUrl = host.url();
 
