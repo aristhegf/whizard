@@ -77,9 +77,8 @@ const LEADERBOARD: NavLink = {
 
 /** Every link about the site, in the footer. */
 const SITE_LINKS: { label: string; href: string; section?: Section }[] = [
-  { label: "Pricing", href: "/pricing", section: "pricing" },
   { label: "About", href: "/about", section: "about" },
-  { label: "Stats", href: "/stats", section: "stats" },
+  { label: "Pricing", href: "/pricing", section: "pricing" },
   { label: "Privacy", href: "/privacy" },
 ];
 
@@ -151,10 +150,13 @@ export function TopNav({ active = null }: { active?: Section }) {
   );
 }
 
-/** The links about the site, at the bottom of the pages that scroll. */
-function SiteFooter({ active }: { active: Section }) {
+/**
+ * The links about the site: at the bottom of the pages that scroll, and as one slim row under
+ * the screens that fit the window.
+ */
+function SiteFooter({ active, slim = false }: { active: Section; slim?: boolean }) {
   return (
-    <footer className="site-footer">
+    <footer className={slim ? "site-footer slim" : "site-footer"}>
       <nav aria-label="Site">
         {SITE_LINKS.map((l) => (
           <a
@@ -214,7 +216,7 @@ export function TopLayout({
   active: Section;
   className?: string;
   column?: boolean;
-  /** Fits the screen on laptops and computers, like an app, with no footer to scroll to. */
+  /** Fits the screen on laptops and computers, like an app, with a slim row of links under it. */
   screen?: boolean;
   children: ReactNode;
 }) {
@@ -222,7 +224,7 @@ export function TopLayout({
     <div className={`page${screen ? " app-screen" : ""} ${className ?? ""}`}>
       <TopNav active={active} />
       {column ? <div className="page-main">{children}</div> : children}
-      {!screen && <SiteFooter active={active} />}
+      <SiteFooter active={active} slim={screen} />
       <TabBar active={active} />
     </div>
   );

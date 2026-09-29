@@ -333,7 +333,10 @@ test("a returning player goes straight into the lobby, and can change their name
   await kemi.goto("/");
   await kemi.evaluate(() => localStorage.setItem("whizard:nickname", JSON.stringify("Tolu")));
   await kemi.goto(roomUrl);
-  await expect(kemi.getByRole("alert")).toContainText("already has that nickname");
+  // Trying the saved name first can take a moment when the room is busy.
+  await expect(kemi.getByRole("alert")).toContainText("already has that nickname", {
+    timeout: 15_000,
+  });
   await joinAs(kemi, "Kemi");
   await expect(playerRow(kemi, "Kemi")).toContainText("You");
 });

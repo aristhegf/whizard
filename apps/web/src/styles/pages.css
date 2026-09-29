@@ -311,14 +311,13 @@ button.topic-tile {
 
 .play {
   display: grid;
-  gap: 18px;
-  padding-top: 6px;
+  gap: 16px;
 }
 
 .play-head {
   display: grid;
   justify-items: center;
-  gap: 12px;
+  gap: 10px;
   text-align: center;
 }
 
@@ -605,6 +604,7 @@ button.topic-tile {
 }
 
 .play-btn.soon {
+  white-space: nowrap;
   background: rgb(12 8 40 / 60%);
   box-shadow: none;
   border: 1.5px solid rgb(255 224 122 / 45%);
@@ -686,11 +686,15 @@ button.topic-tile {
 @media (min-width: 1100px) {
   .page.app-screen {
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
     height: 100dvh;
     max-width: calc(1560px + 2 * var(--gutter));
-    padding-bottom: 20px;
+    padding-bottom: 6px;
     overflow: hidden;
+  }
+
+  .page.app-screen .site-footer.slim {
+    margin-top: 8px;
   }
 
   .play {

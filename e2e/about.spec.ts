@@ -2,12 +2,8 @@ import { expect, test } from "@playwright/test";
 
 test("the about page tells the story and shows the community's numbers", async ({ page }) => {
   await page.goto("/");
-  // On phones the site's pages are in the menu under "Me".
-  await page.getByRole("button", { name: "Me", exact: true }).click();
-  await page
-    .getByRole("navigation", { name: "About Whizard" })
-    .getByRole("link", { name: "About" })
-    .click();
+  // The pages about Whizard are linked at the bottom of the screen.
+  await page.getByRole("navigation", { name: "Site" }).getByRole("link", { name: "About" }).click();
   await expect(page).toHaveURL(/\/about$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("More ThanJust a Quiz.");
 

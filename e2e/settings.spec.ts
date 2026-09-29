@@ -70,10 +70,17 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   await expect(cards).toHaveCount(1);
   await expect(cards).toContainText("How Well Do You Know Me?");
 
-  // The menu under the avatar has Sign in, Settings and the site's pages.
+  // The menu under the avatar has Sign in and Settings.
   await page.getByRole("button", { name: "Menu", exact: true }).click();
-  await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible();
-  await page.getByRole("link", { name: "Privacy" }).click();
+  const menu = page.getByRole("group", { name: "Menu" });
+  await expect(menu.getByRole("link", { name: "Sign in" })).toBeVisible();
+  await expect(menu.getByRole("button", { name: "Settings" })).toBeVisible();
+  await page.keyboard.press("Escape");
+
+  // The pages about Whizard are in a row at the bottom, still on the one screen.
+  const site = page.getByRole("navigation", { name: "Site" });
+  await expect(site.getByRole("link", { name: "About" })).toBeInViewport();
+  await site.getByRole("link", { name: "Privacy" }).click();
   await expect(page).toHaveURL(/\/privacy$/);
   expect(await labels(page, "Main")).toEqual(["Play", "Create", "Stats", "Leaderboard"]);
 });

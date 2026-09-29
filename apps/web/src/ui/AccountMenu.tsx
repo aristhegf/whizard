@@ -7,7 +7,7 @@ import { SettingsDialog } from "./SettingsDialog";
 
 /**
  * The avatar in the top bar (and the "Me" tab on phones): a menu with the profile or Sign in,
- * friends, Settings and the pages about Whizard.
+ * friends and Settings.
  */
 export function AccountMenu({ variant }: { variant: "bar" | "tab" }) {
   const account = useAccount();
@@ -92,11 +92,6 @@ export function AccountMenu({ variant }: { variant: "bar" | "tab" }) {
             <Icon name="settings" size={20} />
             Settings
           </button>
-          <nav className="account-menu-site" aria-label="About Whizard">
-            {link("/pricing", "crown", "Pricing")}
-            {link("/about", "heart", "About")}
-            {link("/privacy", "shield", "Privacy")}
-          </nav>
         </div>
       )}
       {settingsOpen && <SettingsDialog onClose={() => setSettingsOpen(false)} />}
