@@ -681,6 +681,17 @@ button.topic-tile {
   }
 }
 
+/* Landing screens wait for their pictures and fonts, then appear together. The screen keeps its
+   size while hidden, so nothing shifts when it shows. */
+.page.reveal {
+  transition: opacity 0.35s ease;
+}
+
+.page.reveal:not(.is-ready) {
+  opacity: 0;
+  visibility: hidden;
+}
+
 /* Laptops and computers: the whole screen, no scrolling. The top bar, the title, then the
    featured game beside a page of six cards, all sized to fit what's left. */
 @media (min-width: 1100px) {
