@@ -31,6 +31,19 @@ export default tseslint.config(
     },
   },
   {
+    // Originkit components (originkit.dev), kept as published. Its inner component's name starts
+    // with an underscore, which the hooks rule mistakes for a plain function.
+    files: ["apps/web/src/components/originkit/**"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+      "react-hooks/rules-of-hooks": "off",
+      "react-hooks/refs": "off",
+      "react-hooks/immutability": "off",
+      "no-useless-assignment": "off",
+    },
+  },
+  {
     files: ["apps/web/public/sw.js"],
     languageOptions: { globals: globals.serviceworker },
   },

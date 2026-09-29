@@ -1,7 +1,7 @@
 import { StatefulButton, type ButtonState } from "@/components/motion/button/stateful";
 import { Tooltip } from "@/components/motion/tooltip";
 import type { GameId } from "@whizard/game-core";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useAccount } from "../account";
 import { createRoom, ServerRefusal } from "../api";
 import { linkTo, navigate, roomPath } from "../router";
@@ -39,10 +39,30 @@ const CREATE_FAILED = "Couldn’t create a room. Check your connection and try a
 export const createFailed = (error: unknown) =>
   error instanceof ServerRefusal ? error.message : CREATE_FAILED;
 
+/**
+ * Renders again when web fonts finish loading or the window changes size. The stateful button
+ * measures its label once per render, so a label measured in the fallback font, or before the
+ * screen width changed its font size, would stay too narrow and clip its last letter.
+ */
+function useRemeasure() {
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const bump = () => setTick((n) => n + 1);
+    document.fonts.addEventListener("loadingdone", bump);
+    void document.fonts.ready.then(bump);
+    window.addEventListener("resize", bump);
+    return () => {
+      document.fonts.removeEventListener("loadingdone", bump);
+      window.removeEventListener("resize", bump);
+    };
+  }, []);
+}
+
 /** "Create a Room": says it's working, and offers to try again if the room couldn't be made. */
 export function CreateRoomButton({ className }: { className: string }) {
   const [state, setState] = useState<ButtonState>("idle");
   const toast = useToast();
+  useRemeasure();
   return (
     <StatefulButton
       className={className}

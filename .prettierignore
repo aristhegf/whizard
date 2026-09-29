@@ -5,6 +5,8 @@ coverage/
 # BeUI components, added with `npx shadcn add @beui/…` and kept as published.
 apps/web/src/components/motion/
 apps/web/src/lib/
+# Originkit components (originkit.dev), kept as published.
+apps/web/src/components/originkit/
 # transitions.dev snippets, kept as published.
 apps/web/src/styles/transitions.css
 # The transitions.dev agent skills (npx skills add Jakubantalik/transitions.dev), kept as published.
