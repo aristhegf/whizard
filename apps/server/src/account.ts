@@ -69,6 +69,10 @@ export async function updateMe(context: RequestContext): Promise<Response> {
       update.showExplanations === undefined
         ? user.show_explanations
         : Number(update.showExplanations),
+    pause_after_answer:
+      update.pauseAfterAnswer === undefined
+        ? user.pause_after_answer
+        : Number(update.pauseAfterAnswer),
     pings: update.pings === undefined ? user.pings : Number(update.pings),
     quiet_start:
       update.quietHours === undefined ? user.quiet_start : (update.quietHours?.start ?? null),
@@ -81,14 +85,15 @@ export async function updateMe(context: RequestContext): Promise<Response> {
   };
 
   await context.env.DB.prepare(
-    `UPDATE users SET display_name = ?, avatar = ?, show_explanations = ?, pings = ?,
-                      quiet_start = ?, quiet_end = ?, time_zone = ?, public_leaderboard = ?
+    `UPDATE users SET display_name = ?, avatar = ?, show_explanations = ?, pause_after_answer = ?,
+                      pings = ?, quiet_start = ?, quiet_end = ?, time_zone = ?, public_leaderboard = ?
       WHERE id = ?`,
   )
     .bind(
       next.display_name,
       next.avatar,
       next.show_explanations,
+      next.pause_after_answer,
       next.pings,
       next.quiet_start,
       next.quiet_end,

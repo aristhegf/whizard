@@ -127,12 +127,17 @@ Categories at launch: Bible, Geography, History, Science, Animals, Football, Mov
 
 **Between questions:**
 
-| Playing          | After each answer                                                                                   |
-| ---------------- | --------------------------------------------------------------------------------------------------- |
-| **With friends** | The correct answer flashes for about a second, with no explanation, then the next question appears. |
-| **Solo**         | The correct answer and its explanation show for 3 seconds, with a Skip button.                      |
+| Playing          | After each answer                                                                                                 |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **With friends** | The result and points show for about a second, then the next question appears. The explanations wait for the end. |
+| **Solo**         | The result and its explanation show for 3 seconds, with a Skip button.                                            |
 
-This pacing is decided entirely on the player's own screen: the server only needs to hear "next". That's what makes the account setting simple: a signed-in player can choose to see explanations after each answer in group games too, without changing the game rules.
+Signed-in players change this in **Settings**, and it's saved to their account:
+
+- **Explanations:** after each question (solo games only) or at the end. With friends they always wait for the results.
+- **After you answer:** pause 3 seconds, with Skip, or go straight on after a one-second glance. An explanation always gets the 3 seconds.
+
+Guests get the table above. This pacing is decided entirely on the player's own screen: the server only needs to hear "next", so the settings don't change the game rules.
 
 **Live scores.** On tablets and computers, a panel beside the question shows everyone's points as they play. Phones leave it out to keep the question and answers large. Either way it shows **rank, name and points only**: what anyone else got right or wrong stays private.
 
@@ -360,7 +365,7 @@ Stats, head-to-head records and leaderboards are all queries over these records,
 A daily scheduled job deletes expired sessions and, after the week-long claim window, removes guest IDs. Games that no account holder played are deleted at that point.
 
 ```sql
-users           (id, username, display_name, show_explanations, pings,
+users           (id, username, display_name, show_explanations, pause_after_answer, pings,
                  quiet_start, quiet_end, time_zone, created_at)
 passkeys        (id, user_id, public_key, counter, transports, name, created_at, last_used_at)
 sessions        (id /* token hash */, user_id, created_at, expires_at)
@@ -436,7 +441,8 @@ A dark, cozy game-night look: deep navy and purple with warm lamp glows behind e
 
 - **Type:** Poppins for headings, Nunito for everything else, both bundled with the app.
 - **Colour:** purple for primary actions, gold for the big "Create a Room" call to action and for scores, green and red for right and wrong answers. Tokens live at the top of `apps/web/src/styles/base.css`.
-- **Layouts:** a top bar on the landing and games pages, a sidebar for app pages on wide screens, and a bottom tab bar (Home, Games, Create, Profile) on phones. Game screens drop the navigation to give the question room.
+- **Layouts:** every page outside a game has the same top bar (Games, Quiz Topics, Friends, Create, then friend requests, Settings and the profile), with Pricing, About, Stats, How It Works and Privacy in the footer. Phones get a menu and a bottom tab bar (Home, Games, Create, Profile) instead. Game screens drop the navigation to give the question room.
+- **Settings:** a dialog anyone can open from the top bar, the phone menu or the room's bar. Sound and Reduce animations are kept on the device; Reduce animations stills CSS animations and the motion components on top of the device's own setting. Signed-in players also get the quiz settings above.
 - **Artwork** is plain image files in `apps/web/public/art/`: `mascot/`, `games/` (one per game), `topics/` (one per quiz category), `avatars/` (`a01` to `a12`), `avatar-parts/` (the avatar creator's parts, see Avatars), and the logo (`logo-mark.webp` for the crown W, `logo-lockup.webp` for the full logo). To update a picture, replace the file with one of the same name; transparent WebP works best. The favicon and app icons in `apps/web/public/` are made from the crown W.
 
 ### Sound

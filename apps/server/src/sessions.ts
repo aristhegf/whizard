@@ -15,6 +15,7 @@ export interface UserRow {
   display_name: string;
   avatar: string | null;
   show_explanations: number;
+  pause_after_answer: number;
   pings: number;
   quiet_start: number | null;
   quiet_end: number | null;
@@ -43,6 +44,7 @@ export function toAccountUser(row: UserRow): AccountUser {
     usernameChangedAt: row.username_changed_at,
     avatar: asAvatar(row.avatar),
     showExplanations: row.show_explanations === 1,
+    pauseAfterAnswer: row.pause_after_answer === 1,
     pings: row.pings === 1,
     quietHours:
       row.quiet_start === null || row.quiet_end === null

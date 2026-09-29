@@ -142,8 +142,13 @@ export interface AccountUser {
   /** When the username last changed, if ever. */
   usernameChangedAt: number | null;
   avatar: Avatar | null;
-  /** Show the answer's explanation during group games too, not only when playing solo. */
+  /**
+   * In solo games, explain each answer straight after it. Otherwise, and always in games with
+   * friends, the explanations wait for the results.
+   */
   showExplanations: boolean;
+  /** After answering a quiz question, wait 3 seconds before the next one instead of 1. */
+  pauseAfterAnswer: boolean;
   /** Whether friends can ping this account at all. */
   pings: boolean;
   /** No pings between these times, in minutes after midnight in `timeZone`. */
@@ -185,6 +190,7 @@ export const accountUpdateSchema = z
     displayName: z.string().max(100),
     avatar: avatarSchema,
     showExplanations: z.boolean(),
+    pauseAfterAnswer: z.boolean(),
     pings: z.boolean(),
     quietHours: z.object({ start: minuteOfDay, end: minuteOfDay }).nullable(),
     /** IANA time zone for quiet hours, e.g. "Africa/Lagos". */

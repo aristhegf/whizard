@@ -129,17 +129,47 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("heading", { name: "Ada L", level: 1 })).toBeVisible();
 
-  const explanations = page.getByRole("group", { name: "Explanations" });
-  await explanations.getByRole("button", { name: "Each answer" }).click();
-  await expect(explanations.getByRole("button", { name: "Each answer" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  // Quiz settings live in the Settings dialog, saved to the account.
+  const openSettings = async () => {
+    await page.getByRole("button", { name: "Open menu" }).click();
+    await page
+      .getByRole("dialog", { name: "Menu" })
+      .getByRole("button", { name: "Settings" })
+      .click();
+    return page.getByRole("dialog", { name: "Settings" });
+  };
+  let settings = await openSettings();
+  const explanations = settings.getByRole("group", { name: "Explanations" });
+  const pause = settings.getByRole("group", { name: "After you answer" });
+  const pressed = (group: typeof pause, name: string) =>
+    expect(group.getByRole("button", { name })).toHaveAttribute("aria-pressed", "true");
+  await pressed(explanations, "After each question");
+  await pressed(pause, "Go straight on");
+  await explanations.getByRole("button", { name: "At the end" }).click();
+  await pressed(explanations, "At the end");
+  await pause.getByRole("button", { name: "Pause 3 seconds" }).click();
+  await pressed(pause, "Pause 3 seconds");
+
   await page.reload();
-  await expect(explanations.getByRole("button", { name: "Each answer" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  settings = await openSettings();
+  await pressed(explanations, "At the end");
+  await pressed(pause, "Pause 3 seconds");
+  await settings.getByRole("button", { name: "Done" }).click();
+
+  // Solo now pauses after each answer, and keeps the explanations for the end.
+  await page.goto("/");
+  await page.getByRole("button", { name: "Create a Room" }).click();
+  const nickname = page.getByLabel("Choose a nickname");
+  const questions = page.getByLabel("Questions");
+  await expect(nickname.or(questions)).toBeVisible();
+  if (await nickname.isVisible())
+    await page.getByRole("button", { name: "Join", exact: true }).click();
+  await questions.selectOption("5");
+  await page.getByRole("button", { name: /play solo/i }).press("Enter");
+  await expect(page.locator(".progress")).toContainText("1 / 5", { timeout: 10_000 });
+  await page.locator("button.choice").first().click();
+  await expect(page.getByRole("button", { name: "Skip" })).toBeVisible();
+  await expect(page.locator(".explanation")).toHaveCount(0);
 });
 
 test("deletes the account", async ({ page }) => {
