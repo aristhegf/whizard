@@ -109,12 +109,6 @@ function drawLayer(ctx: CanvasRenderingContext2D, img: HTMLImageElement, layer: 
       ctx.translate(FACE_MIDDLE * 2, 0);
       ctx.scale(-1, 1);
     }
-    if (layer.fit) {
-      const { x, y, dx, dy, scale } = layer.fit;
-      ctx.translate(x + dx, y + dy);
-      ctx.scale(scale, scale);
-      ctx.translate(-x, -y);
-    }
     ctx.drawImage(img, 0, 0, GRID, GRID);
     ctx.restore();
   }

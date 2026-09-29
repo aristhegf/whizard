@@ -30,8 +30,6 @@ export interface Layer {
   pair?: boolean;
   /** Move a pair this far out from the middle of the face on each side (in by less than 0). */
   shift?: number;
-  /** Move and scale it around (x, y) on the grid, to fit the part it sits on. */
-  fit?: { x: number; y: number; dx: number; dy: number; scale: number };
   brows?: BrowPose;
 }
 
@@ -45,15 +43,6 @@ const BASE = "/art/avatar-parts";
 
 /** Pixels on the grid each step of the eye gap moves each eye. */
 export const EYE_GAP_STEP = 6;
-
-// The lash art is drawn centred on this line, with its bottom on this line, for an eye this
-// wide. It's moved onto the eye, which is centred on EYE_CENTRE, and down into the top of the eye
-// by LASH_OVERLAP (for an eye that wide).
-const EYE_CENTRE = 382;
-const LASH_CENTRE = 376;
-const LASH_BASELINE = 420;
-const LASH_EYE_WIDTH = 173;
-const LASH_OVERLAP = 22;
 
 /**
  * The layers for an avatar. `face` is a face for the moment (a game's reaction) in place of the
@@ -131,24 +120,8 @@ export function avatarLayers(
     const state = look.eyes && eyes.files.includes(look.eyes) ? look.eyes : "open";
     add("eyes", eyes.id, state);
   }
-  // Lashes sit along the top of whichever eye shape is picked, sized to it.
-  const lid = eyes.lid;
-  add(
-    "lashes",
-    parts.lashes,
-    "lashes",
-    lid
-      ? {
-          fit: {
-            x: LASH_CENTRE,
-            y: LASH_BASELINE,
-            dx: EYE_CENTRE - LASH_CENTRE,
-            dy: lid.top + (LASH_OVERLAP * lid.width) / LASH_EYE_WIDTH - LASH_BASELINE,
-            scale: lid.width / LASH_EYE_WIDTH,
-          },
-        }
-      : {},
-  );
+  // Each lash style is bent to sit on the lid of each eye shape.
+  add("lashes", parts.lashes, "lashes");
   add("brows", parts.brows, "brows", { tint: hairColour, brows: look.brows ?? "relaxed" });
   add("glasses", parts.glasses, "glasses");
 

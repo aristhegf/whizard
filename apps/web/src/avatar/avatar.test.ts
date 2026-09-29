@@ -98,7 +98,7 @@ describe("the parts' art", () => {
       for (const o of options) {
         for (const pose of o.poses ?? ["front"]) {
           for (const file of o.files) {
-            const palette = { skin: PALETTES.skin, eyeColour: PALETTES.eyes };
+            const palette = { skin: PALETTES.skin, eyeColour: PALETTES.eyes, eyes: PARTS.eyes };
             const names = o.paintedFor
               ? palette[o.paintedFor].map((t) => `${file}-${t.id}`)
               : [file];
@@ -120,20 +120,17 @@ describe("avatar layers", () => {
     expect(head).toEqual({ src: "/art/avatar-parts/front/face-shape/classic/head-6.webp" });
   });
 
-  it("draws one eye in its colour, with lashes fitted to it, and flips both for the other side", () => {
+  it("draws one eye in its colour, with lashes made for it, and flips both for the other side", () => {
     const { layers } = avatarLayers(parts({ eyes: "e3", eyeColour: "3", lashes: "l13" }));
     expect(layers).toContainEqual({
       src: "/art/avatar-parts/front/eyes/e3/open-3.webp",
       pair: true,
     });
-    const lashes = layers.find((l) => l.src.includes("/eyelashes/"));
-    expect(lashes?.src).toBe("/art/avatar-parts/front/eyelashes/l13/lashes.webp");
-    expect(lashes?.pair).toBe(true);
-    // The lashes are drawn for a wider eye than any now, so they shrink to fit.
-    const lid = PARTS.eyes.find((e) => e.id === "e3")!.lid!;
-    expect(lashes?.fit?.scale).toBeCloseTo(lid.width / 173);
-    expect(lashes?.fit?.dy).toBeCloseTo(lid.top + (22 * lid.width) / 173 - 420);
-    expect(lashes?.fit?.dx).toBe(6);
+    // The lashes are made for each eye shape, to sit on its lid.
+    expect(layers).toContainEqual({
+      src: "/art/avatar-parts/front/eyelashes/l13/lashes-e3.webp",
+      pair: true,
+    });
   });
 
   it("moves the eyes and lashes apart, or closer, together", () => {

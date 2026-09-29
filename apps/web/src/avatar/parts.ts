@@ -42,16 +42,15 @@ export interface PartOption {
   poses?: readonly string[];
   /**
    * Painted once for each value of another part, instead of drawn in grey and coloured: a head
-   * for each skin tone (`head-3.webp` for tone 3), an eye for each eye colour.
+   * for each skin tone (`head-3.webp` for tone 3), an eye for each eye colour, lashes for each eye
+   * shape (`lashes-e3.webp`), bent to sit on its lid.
    */
-  paintedFor?: "skin" | "eyeColour";
+  paintedFor?: "skin" | "eyeColour" | "eyes";
   /**
    * Drawn for the left of the picture only; the right is the same art flipped, around the middle
    * of the face.
    */
   pair?: boolean;
-  /** Eyes: where the top of the eye is on the grid, and how wide it is, for fitting lashes. */
-  lid?: { top: number; width: number };
 }
 
 /** A face for the moment, from the player's expression or a game's reaction. */
@@ -112,17 +111,7 @@ const none = (name = "None"): PartOption => ({ id: NONE, name, files: [] });
 // are kept when styles are dropped, so saved avatars keep theirs (and ones whose style went get
 // the default).
 
-/** Each eye shape, with where the top of the eye is on the grid and how wide it is. */
-const EYE_SHAPES = [
-  { n: 1, top: 418, width: 124 },
-  { n: 2, top: 429, width: 136 },
-  { n: 3, top: 427, width: 144 },
-  { n: 4, top: 433, width: 143 },
-  { n: 5, top: 433, width: 140 },
-  { n: 6, top: 430, width: 138 },
-  { n: 7, top: 431, width: 133 },
-  { n: 8, top: 432, width: 127 },
-];
+const EYE_SHAPES = [1, 2, 3, 4, 5, 6, 7, 8];
 const LASHES = [1, 3, 5, 7, 9, 11, 13, 15, 18, 19, 21, 24];
 const BROWS = [1, 2, 4, 5, 7, 8, 9, 10, 11, 13, 15, 18];
 const MOUTHS = [1, 3, 15, 20, 24, 28, 13, 6, 19, 21, 22, 16];
@@ -140,14 +129,13 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
     },
   ],
   hair: [none("Bald")],
-  eyes: EYE_SHAPES.map(({ n, ...lid }, i) => ({
+  eyes: EYE_SHAPES.map((n, i) => ({
     id: `e${n}`,
     name: `Eyes ${i + 1}`,
     files: ["open"],
     ext: "webp" as const,
     paintedFor: "eyeColour" as const,
     pair: true,
-    lid,
     poses: ["front"],
   })),
   lashes: [
@@ -156,6 +144,7 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
       id: `l${n}`,
       name: `Lashes ${i + 1}`,
       files: ["lashes"],
+      paintedFor: "eyes" as const,
       ext: "webp" as const,
       pair: true,
       poses: ["front"],
