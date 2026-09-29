@@ -36,8 +36,12 @@ function loadPart(src: string): Promise<HTMLImageElement | null> {
       const img = new Image();
       img.decoding = "async";
       img.onload = () => resolve(img);
-      // A missing part is left out rather than breaking the avatar.
-      img.onerror = () => resolve(null);
+      // A part that won't load is left out rather than breaking the avatar, and is asked for
+      // again next time (it may only have been the connection).
+      img.onerror = () => {
+        images.delete(src);
+        resolve(null);
+      };
       img.src = src;
     });
     images.set(src, image);
@@ -150,9 +154,16 @@ function drawRim(ctx: CanvasRenderingContext2D, colour: string) {
   ctx.restore();
 }
 
-async function draw(parts: AvatarParts, px: number, face: Face, view: View) {
+/** The picture, and whether every part of it loaded. */
+async function draw(
+  parts: AvatarParts,
+  px: number,
+  face: Face,
+  view: View,
+): Promise<{ url: string; whole: boolean }> {
   const { layers, mirror } = avatarLayers(parts, face);
   const loaded = await Promise.all(layers.map((l) => loadPart(l.src)));
+  const whole = loaded.every((img) => img !== null);
   const full = view === FULL_VIEW;
   // A mirrored pose draws the other side of its art, then flips the picture.
   const area = mirror ? { ...view, x: GRID - view.x - view.size } : view;
@@ -199,9 +210,9 @@ async function draw(parts: AvatarParts, px: number, face: Face, view: View) {
     sctx.clearRect(0, 0, px, px);
     sctx.setTransform(-1, 0, 0, 1, px, 0);
     sctx.drawImage(canvas, 0, 0);
-    return scratch.toDataURL("image/png");
+    return { url: scratch.toDataURL("image/png"), whole };
   }
-  return canvas.toDataURL("image/png");
+  return { url: canvas.toDataURL("image/png"), whole };
 }
 
 const MAX_KEPT = 400;
@@ -217,7 +228,11 @@ export function avatarPicture(
   const key = [code, px, face.eyes, face.mouth, face.brows, view.x, view.y, view.size].join("|");
   let picture = pictures.get(key);
   if (!picture) {
-    picture = draw(decodeAvatar(code), px, face, view);
+    picture = draw(decodeAvatar(code), px, face, view).then(({ url, whole }) => {
+      // A picture with a part missing isn't kept, so the next one tries for the whole avatar.
+      if (!whole && pictures.get(key) === picture) pictures.delete(key);
+      return url;
+    });
     pictures.set(key, picture);
     if (pictures.size > MAX_KEPT) pictures.delete(pictures.keys().next().value!);
   }
