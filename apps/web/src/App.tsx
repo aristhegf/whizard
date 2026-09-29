@@ -1,5 +1,6 @@
 import { normalizeRoomCode } from "@whizard/game-core";
 import { useEffect } from "react";
+import { useAccount } from "./account";
 import { AdminApp } from "./admin/AdminApp";
 import { AccountScreen } from "./AccountScreen";
 import { AvatarCreator } from "./avatar/AvatarCreator";
@@ -11,6 +12,7 @@ import { AboutPage } from "./pages/AboutPage";
 import { PricingPage } from "./pages/PricingPage";
 import { StatsPage } from "./pages/StatsPage";
 import { TopicsPage } from "./pages/TopicsPage";
+import { WelcomePage } from "./pages/WelcomePage";
 import { pageOf, reportPage } from "./presence";
 import { PrivacyScreen } from "./PrivacyScreen";
 import { RoomScreen } from "./RoomScreen";
@@ -18,6 +20,14 @@ import { useRoute } from "./router";
 import { Announcement } from "./ui/Announcement";
 import { Backdrop } from "./ui/Chrome";
 import { ReturnToRoom } from "./ui/ReturnToRoom";
+
+/** Guests get the page that introduces Whizard; people signed in go straight to the games. Blank
+ * for the moment it takes to find out, so neither flashes up first. */
+function HomeRoute() {
+  const account = useAccount();
+  if (account.status === "loading") return null;
+  return account.user ? <HomePage /> : <WelcomePage />;
+}
 
 export function App() {
   const route = useRoute();
@@ -57,7 +67,7 @@ export function App() {
         ) : route.name === "about" ? (
           <AboutPage />
         ) : (
-          <HomePage />
+          <HomeRoute />
         )}
       </main>
       {route.name !== "room" && route.name !== "admin" && <ReturnToRoom page={page} />}

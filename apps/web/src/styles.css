@@ -1,5 +1,6 @@
 @import "./styles/base.css";
 @import "./styles/pages.css";
+@import "./styles/welcome.css";
 @import "./styles/game.css";
 @import "./styles/account.css";
 @import "./styles/stats.css";

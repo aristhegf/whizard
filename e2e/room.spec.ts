@@ -70,15 +70,15 @@ test("the room code box says why a code won’t work", async ({ browser }) => {
 
   await box.fill("AB1");
   await join.click();
-  await expect(visitor.getByRole("alert")).toHaveText("Room codes are 6 letters and numbers.");
+  await expect(visitor.getByRole("alert")).toHaveText("Codes are 6 letters and numbers");
   await expect(box).toHaveAttribute("aria-invalid", "true");
-  await expect(box).toHaveClass(/is-error/);
+  await expect(visitor.locator(".join-room-form")).toHaveClass(/is-error/);
 
   // A code in the right shape that no room has.
   await box.fill("QQQQQQ");
   await expect(box).toHaveAttribute("aria-invalid", "false");
   await join.click();
-  await expect(visitor.getByRole("alert")).toHaveText(/No room has that code/);
+  await expect(visitor.getByRole("alert")).toHaveText("No room with that code");
   await expect(visitor).toHaveURL(/\/$/);
 
   // A game already running without late join still lets them in, to wait for the next one.

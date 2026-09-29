@@ -4,6 +4,7 @@ import { useState, type CSSProperties } from "react";
 import { fetchQuizCategories, type QuizCategoryInfo } from "../api";
 import { TOPIC_STYLES, cardWash } from "../catalog";
 import { createFailed, TopLayout, startRoom } from "../ui/Chrome";
+import { HeadingHint } from "../ui/HeadingHint";
 import { Icon } from "../ui/Icon";
 import { useLoaded } from "../ui/common";
 
@@ -53,9 +54,11 @@ export function TopicsPage() {
   return (
     <TopLayout active="topics" className="topics-page" column>
       <header className="side-head">
-        <div>
+        <div className="hint-row">
           <h1 className="page-title">Browse Quiz Topics</h1>
-          <p className="page-sub">Pick a topic and start a game with your friends!</p>
+          <HeadingHint id="topics" label="About quiz topics">
+            Pick a topic and start a game with your friends!
+          </HeadingHint>
         </div>
         <div className="head-actions">
           <label className="search">

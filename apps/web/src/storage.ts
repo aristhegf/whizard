@@ -123,3 +123,15 @@ export function dismissedAnnouncement(): string | null {
 export function dismissAnnouncement(text: string): void {
   write(DISMISSED_KEY, text);
 }
+
+const SEEN_HINTS_KEY = "whizard:seen-hints";
+
+/** Heading hints this browser has already been shown once, on its own. */
+export function hintSeen(id: string): boolean {
+  return (read<string[]>(SEEN_HINTS_KEY) ?? []).includes(id);
+}
+
+export function markHintSeen(id: string): void {
+  const seen = read<string[]>(SEEN_HINTS_KEY) ?? [];
+  if (!seen.includes(id)) write(SEEN_HINTS_KEY, [...seen, id]);
+}

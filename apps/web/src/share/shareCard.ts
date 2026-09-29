@@ -1,5 +1,3 @@
-import caveatUrl from "@fontsource/caveat/files/caveat-latin-700-normal.woff2?url";
-import luckiestUrl from "@fontsource/luckiest-guy/files/luckiest-guy-latin-400-normal.woff2?url";
 import qrcode from "qrcode-generator";
 import { isCustomAvatar } from "@whizard/protocol";
 import { avatarPicture } from "../avatar/render";
@@ -48,32 +46,19 @@ export interface ShareCard {
   celebrate: boolean;
 }
 
-const DISPLAY = '"Luckiest Guy", "Poppins", system-ui, sans-serif';
-const FONT = '"Poppins", system-ui, sans-serif';
-const BODY = '"Nunito Variable", "Nunito", system-ui, sans-serif';
-const HAND = '"Caveat", cursive';
+const DISPLAY = '"Bricolage Grotesque Variable", system-ui, sans-serif';
+const BODY = '"Inter Variable", system-ui, sans-serif';
 const W = CARD_WIDTH;
 const H = CARD_HEIGHT;
 const PAD = 60;
 
 let fontsLoaded: Promise<unknown> | null = null;
 
-/** The display and handwriting fonts are only fetched for this picture. */
+// A canvas doesn't wait for fonts, so fetch the site's two faces before drawing with them.
 function loadFonts() {
-  fontsLoaded ??= Promise.all([
-    ...[
-      new FontFace("Luckiest Guy", `url(${luckiestUrl})`),
-      new FontFace("Caveat", `url(${caveatUrl})`, { weight: "700" }),
-    ].map((face) =>
-      face
-        .load()
-        .then((loaded) => document.fonts.add(loaded))
-        .catch(() => undefined),
-    ),
-    ...[`800 60px ${FONT}`, `700 40px ${FONT}`, `700 32px ${BODY}`].map((f) =>
-      document.fonts.load(f).catch(() => []),
-    ),
-  ]);
+  fontsLoaded ??= Promise.all(
+    [`800 60px ${DISPLAY}`, `700 32px ${BODY}`].map((f) => document.fonts.load(f).catch(() => [])),
+  );
   return fontsLoaded;
 }
 
@@ -147,7 +132,7 @@ function chunky(
   fill: [string, string],
 ) {
   ctx.save();
-  ctx.font = `${size}px ${DISPLAY}`;
+  ctx.font = `800 ${size}px ${DISPLAY}`;
   ctx.lineJoin = "round";
   ctx.textBaseline = "alphabetic";
   const outline = size * 0.13;
@@ -189,7 +174,7 @@ function drawHeadline(
   const outline = (size: number) => size * 0.13;
   let size = 230;
   const widest = () => {
-    ctx.font = `${size}px ${DISPLAY}`;
+    ctx.font = `800 ${size}px ${DISPLAY}`;
     return Math.max(...lines.map((l) => ctx.measureText(l).width)) + outline(size) * 2;
   };
   while (size > 70 && (widest() > maxWidth || lines.length * size * 0.92 > maxHeight)) size -= 4;
@@ -198,9 +183,9 @@ function drawHeadline(
   lines.forEach((line, i) => {
     chunky(ctx, line, PAD + outline(size), y, size, colours[i % colours.length]!);
     if (i === lines.length - 1 && card.emoji) {
-      ctx.font = `${size}px ${DISPLAY}`;
+      ctx.font = `800 ${size}px ${DISPLAY}`;
       const end = PAD + outline(size) * 2 + ctx.measureText(line).width;
-      ctx.font = `${Math.round(size * 0.55)}px ${FONT}`;
+      ctx.font = `${Math.round(size * 0.55)}px ${DISPLAY}`;
       ctx.fillText(card.emoji, end + 12, y - size * 0.08);
     }
     y += size * 0.92;
@@ -253,7 +238,7 @@ function drawTop(
 ) {
   if (logo) ctx.drawImage(logo, PAD, 52, 96, 96);
   ctx.fillStyle = "#fff";
-  ctx.font = `800 60px ${FONT}`;
+  ctx.font = `800 60px ${DISPLAY}`;
   ctx.textBaseline = "middle";
   ctx.fillText("Whizard", PAD + 110, 102);
 
@@ -263,7 +248,7 @@ function drawTop(
   ctx.rotate(-0.12);
   ctx.textAlign = "right";
   ctx.fillStyle = "#e4c9ff";
-  ctx.font = `700 50px ${HAND}`;
+  ctx.font = `700 50px ${DISPLAY}`;
   ctx.fillText("Games are", 0, -18);
   ctx.fillText("better together", 10, 34);
   ctx.strokeStyle = "#c79bff";
@@ -276,7 +261,7 @@ function drawTop(
   ctx.restore();
 
   // The game, as a pill with its picture.
-  ctx.font = `700 36px ${FONT}`;
+  ctx.font = `700 36px ${DISPLAY}`;
   const label = fit(ctx, card.game.title, 540);
   const labelWidth = ctx.measureText(label).width;
   ctx.font = `600 30px ${BODY}`;
@@ -305,7 +290,7 @@ function drawTop(
     ctx.restore();
   }
   ctx.fillStyle = "#fff";
-  ctx.font = `700 36px ${FONT}`;
+  ctx.font = `700 36px ${DISPLAY}`;
   ctx.fillText(label, PAD + 90, y + 44);
   if (sub) {
     ctx.fillStyle = "#b9b5e3";
@@ -327,14 +312,14 @@ function drawScore(
   ctx.textAlign = "center";
   const cx = x + w / 2;
   ctx.fillStyle = card.accent;
-  ctx.font = `800 38px ${FONT}`;
+  ctx.font = `800 38px ${DISPLAY}`;
   ctx.fillText(fit(ctx, `${card.crown ? "👑 " : ""}${card.kicker}`, w - 60), cx, y + 76);
   ctx.fillStyle = "#fff";
   let size = Math.min(160, h * 0.5);
-  ctx.font = `${size}px ${DISPLAY}`;
+  ctx.font = `800 ${size}px ${DISPLAY}`;
   while (size > 60 && ctx.measureText(card.value).width > w - 70) {
     size -= 6;
-    ctx.font = `${size}px ${DISPLAY}`;
+    ctx.font = `800 ${size}px ${DISPLAY}`;
   }
   ctx.save();
   ctx.shadowColor = `${card.accent}aa`;
@@ -384,7 +369,7 @@ function drawBoard(
     ctx.fillStyle = badge;
     ctx.fill();
     ctx.fillStyle = row.rank <= 3 ? "#241060" : "#fff";
-    ctx.font = `800 28px ${FONT}`;
+    ctx.font = `800 28px ${DISPLAY}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(String(row.rank), PAD + 58, cy + 2);
@@ -404,7 +389,7 @@ function drawBoard(
     ctx.restore();
     // Name, a bar for the score, the score.
     ctx.fillStyle = row.me ? card.accent : "#fff";
-    ctx.font = `${row.me ? 800 : 700} 34px ${FONT}`;
+    ctx.font = `${row.me ? 800 : 700} 34px ${DISPLAY}`;
     ctx.fillText(fit(ctx, row.me ? "You" : row.nickname, 210), ax + 52, cy + 2);
     const bx = 480;
     const bw = 250;
@@ -420,7 +405,7 @@ function drawBoard(
     ctx.fill();
     ctx.textAlign = "right";
     ctx.fillStyle = row.me ? card.accent : "#fff";
-    ctx.font = `800 32px ${FONT}`;
+    ctx.font = `800 32px ${DISPLAY}`;
     ctx.fillText(fit(ctx, row.label, 200), W - PAD - 34, cy + 2);
     ctx.textAlign = "start";
     ctx.textBaseline = "alphabetic";
@@ -455,10 +440,10 @@ function drawFacts(ctx: CanvasRenderingContext2D, card: ShareCard, y: number) {
     }
     ctx.textBaseline = "middle";
     ctx.fillStyle = "#fff";
-    ctx.font = `48px ${FONT}`;
+    ctx.font = `48px ${DISPLAY}`;
     ctx.fillText(f.icon, x + 30, y + h / 2);
     ctx.fillStyle = "#fff";
-    ctx.font = `800 40px ${FONT}`;
+    ctx.font = `800 40px ${DISPLAY}`;
     ctx.fillText(fit(ctx, f.value, w - 120), x + 100, y + h / 2 - 20);
     ctx.fillStyle = "#b9b5e3";
     ctx.font = `600 28px ${BODY}`;
@@ -527,10 +512,10 @@ function drawCta(ctx: CanvasRenderingContext2D, card: ShareCard, link: string) {
   ctx.fillStyle = "#1c0b4a";
   const text = `${card.cta} →`;
   let size = 54;
-  ctx.font = `${size}px ${DISPLAY}`;
+  ctx.font = `800 ${size}px ${DISPLAY}`;
   while (size > 26 && ctx.measureText(text).width > w - 60) {
     size -= 2;
-    ctx.font = `${size}px ${DISPLAY}`;
+    ctx.font = `800 ${size}px ${DISPLAY}`;
   }
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";

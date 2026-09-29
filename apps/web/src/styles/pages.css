@@ -4,11 +4,11 @@
   flex-wrap: wrap;
   align-items: center;
   margin: 0;
-  border: 1.5px solid var(--line-strong);
+  border: 1px solid var(--line-strong);
   border-radius: 999px;
-  background: rgb(18 14 56 / 80%);
-  font-size: 0.9rem;
-  font-weight: 700;
+  background: rgb(18 14 56 / 70%);
+  font-size: 0.75rem;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--muted);
   transition: opacity 0.4s ease;
@@ -19,20 +19,20 @@
 }
 
 .live-count > span {
-  padding: 7px 14px;
+  padding: 4px 11px;
 }
 
 .live-count-now {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  border-left: 1.5px solid var(--line);
+  gap: 6px;
+  border-left: 1px solid var(--line);
   color: var(--text);
 }
 
 .live-dot {
-  width: 9px;
-  height: 9px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--ok);
   box-shadow: 0 0 0 3px rgb(15 198 128 / 25%);
@@ -779,4 +779,155 @@ button.topic-tile {
     -webkit-line-clamp: 1;
     line-clamp: 1;
   }
+}
+
+/* Phones and small tablets: smaller chips that open their games in a sheet. */
+@media (max-width: 1099px) {
+  .play-chips {
+    gap: 6px;
+  }
+
+  .play-chip {
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 14px;
+    border-width: 1px;
+    font-size: 0.75rem;
+  }
+
+  .play-chip.is-open {
+    background: linear-gradient(180deg, #ffe066, var(--gold-deep));
+    border-color: transparent;
+    color: #3a1d00;
+  }
+
+  .play-chip.is-open svg {
+    color: inherit;
+  }
+}
+
+/* ...and one screen, no scrolling, like laptops: the title and chips, the featured game filling
+   what's left, then the links above the tab bar. Too short a screen (a phone on its side) keeps
+   scrolling instead of squeezing the card. */
+@media (max-width: 1099px) and (min-height: 560px) {
+  .page.app-screen {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100dvh;
+    /* Clear of the tab bar, which is about 82px tall. */
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+    overflow: hidden;
+  }
+
+  .page.app-screen .site-footer.slim {
+    margin-top: 4px;
+  }
+
+  .play {
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 12px;
+    min-height: 0;
+  }
+
+  .play-head {
+    gap: 8px;
+  }
+
+  .play-body {
+    grid-template-rows: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .play-featured {
+    min-height: 0;
+    padding-top: clamp(36px, 8dvh, 90px);
+  }
+
+  .play-mascot {
+    width: clamp(110px, 19dvh, 170px);
+  }
+
+  .featured-card {
+    min-height: 0;
+  }
+}
+
+/* The sheet of games: its name and count, then cards to swipe through. */
+.game-sheet-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.game-sheet-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.3rem;
+  line-height: 1.1;
+}
+
+.game-sheet-title svg {
+  color: #c9a8ff;
+}
+
+.game-sheet-count {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 10%);
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.game-sheet-close {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 6%);
+  color: #fff;
+  cursor: pointer;
+}
+
+.game-sheet-cards {
+  display: flex;
+  gap: 12px;
+  margin: 14px 0 0;
+  padding: 4px 20px 10px;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 20px;
+  scrollbar-width: none;
+}
+
+.game-sheet-cards > .play-card {
+  flex: 0 0 min(72vw, 290px);
+  grid-template-rows: 150px auto auto auto;
+  gap: 6px;
+  padding: 16px 14px 14px;
+  scroll-snap-align: start;
+}
+
+.game-sheet-cards .play-card-art {
+  max-height: 150px;
+}
+
+.game-sheet-dots {
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.game-sheet .play-empty {
+  padding: 24px 20px;
 }
