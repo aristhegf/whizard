@@ -58,6 +58,11 @@ export interface PartOption {
   browDrop?: number;
   /** Lashes: how far the eyebrows move up so these lashes don't touch them. */
   browLift?: number;
+  /**
+   * How far the art reaches above the grid, for tall hair: its files are the grid's width and
+   * this much taller, with the grid at the bottom.
+   */
+  above?: number;
 }
 
 /** A face for the moment, from the player's expression or a game's reaction. */
@@ -134,12 +139,13 @@ const LASHES = [1, 3, 5, 7, 9, 11, 13, 15, 18, 19, 21, 24];
 const BROW_LIFTS: Record<number, number> = { 21: 9 };
 const BROWS = [1, 2, 4, 5, 7, 8, 9, 10, 11, 13, 15, 18];
 const MOUTHS = [1, 3, 15, 20, 24, 28, 13, 6, 19, 21, 22, 16];
-/** Twelve short styles and twelve long ones or updos, numbered as on the hair sheet. */
-const HAIR = [
-  1, 2, 3, 4, 6, 7, 8, 10, 14, 15, 16, 18, 19, 21, 22, 26, 28, 29, 31, 34, 37, 38, 39, 41,
+/** Hairstyles, and the files each one has: the hair behind the neck, the hair, a hair cuff. */
+const HAIR: readonly { id: string; files: string[] }[] = [
+  { id: "hb1", files: ["back", "front"] },
+  { id: "hb2", files: ["back", "front"] },
+  { id: "hb3", files: ["front"] },
+  { id: "hb4", files: ["front", "details"] },
 ];
-/** Styles with something in them that keeps its own colour: a bandana, a headband. */
-const HAIR_DETAILS = new Set([38, 39]);
 
 /** The finished art arrives one part at a time; a category with only None isn't offered yet. */
 export const PARTS: Record<PartCategory, readonly PartOption[]> = {
@@ -156,11 +162,13 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
   // Drawn in grey and coloured with the hair colour.
   hair: [
     none("Bald"),
-    ...HAIR.map((n, i) => ({
-      id: `h${n}`,
+    ...HAIR.map(({ id, files }, i) => ({
+      id,
       name: `Hair ${i + 1}`,
-      files: HAIR_DETAILS.has(n) ? ["front", "details"] : ["front"],
+      files,
       ext: "webp" as const,
+      // Tall styles reach above the grid.
+      above: 200,
       poses: ["front"],
     })),
   ],

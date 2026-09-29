@@ -32,7 +32,7 @@ const MOUTH: View = { x: 309, y: 470, size: 400 };
 const EARS: View = { x: 162, y: 330, size: 700 };
 const BODY: View = { x: 162, y: 424, size: 600 };
 const FACE: View = { x: 162, y: 150, size: 700 };
-const HEAD: View = { x: 112, y: 40, size: 800 };
+const HEAD: View = { x: 62, y: -110, size: 900 };
 
 type Row =
   | { kind: "options"; field: AvatarField; category: PartCategory; label?: string; view?: View }

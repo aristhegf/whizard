@@ -27,6 +27,9 @@ export interface View {
 }
 export const FULL_VIEW: View = { x: 0, y: 0, size: GRID };
 
+/** How big the avatar is in its circle: a little smaller than the grid, as in the reference art. */
+export const FRAME = 0.85;
+
 const images = new Map<string, Promise<HTMLImageElement | null>>();
 
 function loadPart(src: string): Promise<HTMLImageElement | null> {
@@ -114,7 +117,8 @@ function drawLayer(ctx: CanvasRenderingContext2D, img: HTMLImageElement, layer: 
       ctx.translate(FACE_MIDDLE * 2, 0);
       ctx.scale(-1, 1);
     }
-    ctx.drawImage(img, 0, 0, GRID, GRID);
+    const above = layer.above ?? 0;
+    ctx.drawImage(img, 0, -above, GRID, GRID + above);
     ctx.restore();
   }
 }
@@ -131,7 +135,8 @@ function drawDisc(ctx: CanvasRenderingContext2D, colour: string, round: boolean)
     ctx.arc(512, 512, 512, 0, Math.PI * 2);
     ctx.fill();
   } else {
-    ctx.fillRect(0, 0, GRID, GRID);
+    // A close-up can reach past the grid, above tall hair.
+    ctx.fillRect(-GRID, -GRID, GRID * 3, GRID * 3);
   }
 }
 
@@ -178,6 +183,15 @@ async function draw(
   const scale = px / area.size;
   const toView = (c: CanvasRenderingContext2D) =>
     c.setTransform(scale, 0, 0, scale, -area.x * scale, -area.y * scale);
+  // The whole avatar sits a little smaller in its circle, from the bottom, leaving room above
+  // the head for tall hair. Close-ups show the parts as they are on the grid.
+  const toParts = (c: CanvasRenderingContext2D) => {
+    toView(c);
+    if (!full) return;
+    c.translate(GRID / 2, GRID);
+    c.scale(FRAME, FRAME);
+    c.translate(-GRID / 2, -GRID);
+  };
 
   const colour = swatchOf("background", parts.background).colour;
   toView(ctx);
@@ -188,7 +202,7 @@ async function draw(
     if (!img) return;
     sctx.setTransform(1, 0, 0, 1, 0, 0);
     sctx.clearRect(0, 0, px, px);
-    toView(sctx);
+    toParts(sctx);
     drawLayer(sctx, img, layer);
     if (layer.tint) tint(sctx, px, layer.tint);
     ctx.setTransform(1, 0, 0, 1, 0, 0);

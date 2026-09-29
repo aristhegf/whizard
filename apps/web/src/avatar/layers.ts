@@ -32,6 +32,8 @@ export interface Layer {
   shift?: number;
   /** Move it down this far on the grid (up if less than 0). */
   dy?: number;
+  /** The file reaches this far above the grid. */
+  above?: number;
   brows?: BrowPose;
 }
 
@@ -78,6 +80,7 @@ export function avatarLayers(
     const layer: Layer =
       option.paintedFor || tint === undefined ? { src, ...rest } : { src, tint, ...rest };
     if (option.pair) layer.pair = true;
+    if (option.above) layer.above = option.above;
     layers.push(layer);
   };
 
@@ -135,7 +138,7 @@ export function avatarLayers(
 
   if (covers === "none") {
     add("hair", parts.hair, "front", { tint: hairColour });
-    // A bandana or headband, in its own colours.
+    // A hair cuff or tie, in its own colours.
     add("hair", parts.hair, "details");
   }
   if (covers === "top") add("hair", parts.hair, "hat-front", { tint: hairColour });

@@ -133,13 +133,23 @@ describe("avatar layers", () => {
     });
   });
 
-  it("draws the hair in the hair colour, and a bandana in its own colours", () => {
-    const { layers } = avatarLayers(parts({ hair: "h38", hairColour: "8" }));
-    const hair = layers.filter((l) => l.src.includes("/hair/"));
-    expect(hair).toEqual([
-      { src: "/art/avatar-parts/front/hair/h38/front.webp", tint: PALETTES.hair[8]!.colour },
-      { src: "/art/avatar-parts/front/hair/h38/details.webp" },
+  it("draws tall hair in the hair colour, with its cuffs in their own colours", () => {
+    const { layers } = avatarLayers(parts({ hair: "hb4", hairColour: "8" }));
+    expect(layers.filter((l) => l.src.includes("/hair/"))).toEqual([
+      {
+        src: "/art/avatar-parts/front/hair/hb4/front.webp",
+        tint: PALETTES.hair[8]!.colour,
+        above: 200,
+      },
+      { src: "/art/avatar-parts/front/hair/hb4/details.webp", above: 200 },
     ]);
+  });
+
+  it("draws the hair behind the neck before the head", () => {
+    const list = avatarLayers(parts({ hair: "hb1" })).layers.map((l) => l.src);
+    const at = (part: string) => list.findIndex((s) => s.includes(part));
+    expect(at("hair/hb1/back")).toBeLessThan(at("face-shape/"));
+    expect(at("hair/hb1/front")).toBeGreaterThan(at("face-shape/"));
   });
 
   it("sits the brows as far above every eye shape, and lifts them over tall lashes", () => {
