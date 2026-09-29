@@ -635,6 +635,7 @@ select option {
   }
 }
 
+/* The top bar: logo, links, the room-code box, who's here and the account menu. */
 .topnav {
   display: flex;
   align-items: center;
@@ -645,21 +646,30 @@ select option {
 
 @media (min-width: 1100px) {
   .topnav {
-    min-height: 104px;
-    gap: 28px;
+    min-height: 76px;
+    gap: 16px;
   }
 }
 
 .brand {
   display: inline-flex;
+  flex: none;
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  color: #fff;
   font-family: var(--display);
-  font-weight: 700;
+  font-weight: 800;
   font-size: 1.35rem;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.brand span {
+  background: linear-gradient(180deg, #fff3a8 0%, var(--gold) 45%, var(--gold-deep) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 3px 0 rgb(80 30 10 / 55%));
 }
 
 .brand .logo-mark {
@@ -671,15 +681,16 @@ select option {
 
 @media (min-width: 1100px) {
   .brand {
-    font-size: 1.8rem;
+    font-size: 1.75rem;
   }
 
   .brand .logo-mark {
-    width: 56px;
-    height: 56px;
+    width: 50px;
+    height: 50px;
   }
 }
 
+/* Play, Create, Stats and Leaderboard, together on one dark bar. */
 .nav-links {
   display: none;
 }
@@ -688,71 +699,291 @@ select option {
   .nav-links {
     display: flex;
     align-items: center;
-    gap: 10px;
-  }
-
-  /* Logo on the left, links in the exact middle, sign-in on the right. The side columns only
-     grow past an equal share when their content needs it. */
-  .page > .topnav {
-    display: grid;
-    grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr);
-  }
-
-  .page > .topnav .nav-end {
-    justify-self: end;
+    gap: 4px;
+    padding: 5px;
+    border-radius: 18px;
+    background: rgb(12 10 40 / 72%);
+    border: 1.5px solid var(--line);
   }
 }
 
 .nav-link {
   display: inline-flex;
   align-items: center;
-  min-height: 48px;
-  padding: 0 22px;
-  border-radius: 14px;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 13px;
+  border: 1.5px solid transparent;
+  font-family: var(--display);
   font-weight: 700;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
   color: var(--muted);
   text-decoration: none;
-  border: 1.5px solid transparent;
+  white-space: nowrap;
 }
 
 .nav-link[aria-current="page"] {
+  color: var(--gold);
+  background: rgb(40 22 110 / 80%);
+  border-color: rgb(255 196 64 / 75%);
+  box-shadow: inset 0 0 18px rgb(255 190 60 / 18%);
+}
+
+.nav-create {
   color: #fff;
-  background: rgb(26 22 100 / 70%);
-  border-color: var(--line-strong);
+}
+
+.nav-create svg {
+  color: var(--gold);
 }
 
 .nav-end {
   margin-left: auto;
   display: flex;
+  flex: none;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
-.signin-btn {
-  min-height: 44px;
-  padding: 0 22px;
-  font-size: 1rem;
-  background: rgb(18 24 80 / 70%);
-}
-
-@media (min-width: 1100px) {
-  .signin-btn {
-    min-height: 56px;
-    padding: 0 44px;
+/* On phones the bar keeps the logo and the room-code box; the rest is in the tabs. */
+@media (max-width: 1099px) {
+  .topnav .nav-end {
+    display: none;
   }
 }
 
-.me-link {
-  display: inline-flex;
-  border-radius: 50%;
-  text-decoration: none;
+/* Visitors so far and who's here now, on two short lines. */
+.live-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 14px;
+  border: 1.5px solid var(--line);
+  background: rgb(12 10 40 / 72%);
+  font-size: 0.78rem;
+  line-height: 1.25;
+  color: var(--muted);
+  transition: opacity 0.4s ease;
 }
 
-/* On phones the profile picture is in the tabs at the bottom. */
-@media (max-width: 1099px) {
-  .topnav .me-link {
+.live-bar > span:last-child {
+  display: grid;
+  white-space: nowrap;
+}
+
+.live-bar.loading {
+  opacity: 0;
+}
+
+/* The top bar is tightest on small laptops: who's here goes first. */
+@media (max-width: 1439px) {
+  .live-bar {
     display: none;
+  }
+}
+
+.bell-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  border: 1.5px solid var(--line);
+  background: rgb(12 10 40 / 72%);
+}
+
+/* Join a room by its code. */
+.join-room {
+  position: relative;
+  min-width: 0;
+  margin-left: auto;
+}
+
+.join-room-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px;
+  border-radius: 16px;
+  border: 1.5px solid var(--line-strong);
+  background: rgb(12 10 40 / 72%);
+}
+
+.join-room.is-error .join-room-form {
+  border-color: var(--bad);
+}
+
+.join-room-label {
+  display: none;
+}
+
+.join-room-input {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.join-room-input::placeholder {
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--dim);
+}
+
+.join-room-go {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 11px;
+  background: linear-gradient(180deg, #ffe066, var(--gold-deep));
+  color: #3a1d00;
+  cursor: pointer;
+}
+
+.join-room-go:disabled {
+  opacity: 0.6;
+}
+
+/* The reason a code won't work, under the box. */
+.join-room-error {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 20;
+  width: max-content;
+  max-width: min(320px, 80vw);
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #3a0d1f;
+  border: 1.5px solid var(--bad);
+  color: #ffd0d8;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.join-room-error:empty {
+  display: none;
+}
+
+@media (max-width: 1099px) {
+  .join-room {
+    width: min(200px, 48vw);
+  }
+}
+
+@media (min-width: 1100px) {
+  .join-room {
+    margin-left: 0;
+  }
+
+  .join-room-label {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 8px;
+    padding: 0 6px 0 10px;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  .join-room-input {
+    width: 140px;
+    background: rgb(255 255 255 / 5%);
+  }
+}
+
+/* The avatar and its menu: the profile or Sign in, Friends, Settings and the site's pages. */
+.account-menu {
+  position: relative;
+}
+
+.account-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 3px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line-strong);
+  background: rgb(12 10 40 / 72%);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.account-menu-list {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 50;
+  display: grid;
+  gap: 2px;
+  width: 240px;
+  padding: 8px;
+  background: var(--panel-strong);
+}
+
+/* From the phone tab, it opens upward above the tabs. */
+.account-menu.tab {
+  display: grid;
+}
+
+.account-menu.tab .account-menu-list {
+  position: fixed;
+  top: auto;
+  right: 8px;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+}
+
+.account-menu-who {
+  display: grid;
+  margin: 0;
+  padding: 8px 12px 10px;
+  border-bottom: 1.5px solid var(--line);
+}
+
+.account-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.account-menu-item svg {
+  color: #b9a9ff;
+}
+
+@media (hover: hover) {
+  .account-menu-item:hover {
+    background: rgb(255 255 255 / 7%);
   }
 }
 
@@ -787,6 +1018,33 @@ select option {
   color: #fff;
 }
 
+/* Under the screens that fit the window: one quiet row of small links. */
+.site-footer.slim {
+  justify-content: center;
+  margin-top: 16px;
+  padding: 0;
+  border-top: 0;
+}
+
+.site-footer.slim nav {
+  justify-content: center;
+  gap: 2px 26px;
+}
+
+.site-footer.slim a {
+  min-height: 32px;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: var(--dim);
+}
+
+.site-footer.slim > span {
+  display: none;
+}
+
 /* Bottom tab bar on phones and small tablets. */
 .tabbar {
   position: fixed;
@@ -795,7 +1053,7 @@ select option {
   bottom: 0;
   z-index: 30;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
   background: rgb(10 9 36 / 94%);
   border-top: 1.5px solid var(--line);
@@ -808,10 +1066,14 @@ select option {
   justify-items: center;
   gap: 2px;
   padding: 6px 0;
-  font-size: 0.75rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.72rem;
   font-weight: 800;
   color: var(--dim);
   text-decoration: none;
+  cursor: pointer;
 }
 
 .tab[aria-current="page"] {

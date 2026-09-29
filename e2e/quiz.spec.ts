@@ -17,7 +17,7 @@ async function joinAs(page: Page, nickname: string) {
 
 async function openRoom(page: Page, nickname = "Ada") {
   await page.goto("/");
-  await page.getByRole("button", { name: "Create a Room" }).click();
+  await page.getByRole("button", { name: "Create", exact: true }).click();
   await joinAs(page, nickname);
 }
 

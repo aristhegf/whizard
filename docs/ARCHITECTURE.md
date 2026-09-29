@@ -442,16 +442,9 @@ A dark, cozy game-night look: deep navy and purple with warm lamp glows behind e
 
 - **Type:** Poppins for headings, Nunito for everything else, both bundled with the app.
 - **Colour:** purple for primary actions, gold for the big "Create a Room" call to action and for scores, green and red for right and wrong answers. Tokens live at the top of `apps/web/src/styles/base.css`.
-- **Layouts:** every page outside a game has the same top bar, with different links for guests and signed-in players:
-
-  |           | Top bar (wide screens)       | Tabs at the bottom (phones)                    |
-  | --------- | ---------------------------- | ---------------------------------------------- |
-  | Guests    | Games, Pricing, About, Stats | Games, Pricing, Stats, Profile                 |
-  | Signed in | Games, Friends, Create       | Games, Friends, Create, their avatar (Profile) |
-
-  The bar also holds friend requests (signed in), Settings and Sign In or the profile picture; on phones it's just the logo, Settings and Sign In, with no menu. How It Works, Pricing, About, Stats and Privacy are in the footer of every page. Game screens drop the navigation to give the question room.
-
-- **Settings:** a dialog anyone can open from the top bar or the room's bar. Sound and Reduce animations are kept on the device; Reduce animations stills CSS animations and the motion components on top of the device's own setting. Signed-in players also get the quiz settings above.
+- **Layouts:** every page outside a game has the same top bar: the logo; Play, Create, Stats and Leaderboard; a Join Room box for room codes; who's here; friend requests (signed in); and the avatar menu, which holds the profile or Sign in, Friends and Settings. About, Pricing and Privacy are linked at the bottom of every page: one slim row under the screens that fit the window. Phones keep the logo and the code box at the top, with Play, Create, Leaderboard, Stats and Me (the same menu) in tabs at the bottom. Game screens drop the navigation to give the question room.
+- **Play screen (home):** "What do you want to play?", the kinds of game as chips, the mascot on the most played game's big card, and the other games six at a time with arrows (all of them on phones, which scroll). On laptops and computers it fits the screen with no scrolling; the room and game screens will follow the same way. `/games` shows the same screen.
+- **Settings:** a dialog anyone can open from the avatar menu or the room's bar. Sound and Reduce animations are kept on the device; Reduce animations stills CSS animations and the motion components on top of the device's own setting. Signed-in players also get the quiz settings above.
 - **Artwork** is plain image files in `apps/web/public/art/`: `mascot/`, `games/` (one per game), `topics/` (one per quiz category), `avatars/` (`a01` to `a12`), `avatar-parts/` (the avatar creator's parts, see Avatars), and the logo (`logo-mark.webp` for the crown W, `logo-lockup.webp` for the full logo). To update a picture, replace the file with one of the same name; transparent WebP works best. The favicon and app icons in `apps/web/public/` are made from the crown W.
 
 ### Sound

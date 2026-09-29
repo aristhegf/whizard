@@ -5,13 +5,14 @@ import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
 async function labels(page: Page, name: string) {
   const bar = page.getByRole("navigation", { name });
   await expect(bar.locator("a, button").first()).toBeVisible();
-  return (await bar.locator("a, button").allInnerTexts()).map((t) => t.trim());
+  // The words as written: the bar shows them in capitals.
+  return (await bar.locator("a, button").allTextContents()).map((t) => t.trim());
 }
 
 test("a guest can change sound and animations, and they're remembered", async ({ page }) => {
   await page.goto("/games");
-  // There's no menu button on phones any more: Settings is in the top bar.
-  await expect(page.getByRole("button", { name: "Open menu" })).toHaveCount(0);
+  // On phones, Settings is in the menu under "Me".
+  await page.getByRole("button", { name: "Me", exact: true }).click();
   await page.getByRole("button", { name: "Settings" }).click();
 
   const settings = page.getByRole("dialog", { name: "Settings" });
@@ -31,8 +32,7 @@ test("a guest can change sound and animations, and they're remembered", async ({
   await expect(page.locator("html")).toHaveAttribute("data-reduce-motion", "");
 
   // The same settings open from the room's bar.
-  await page.goto("/");
-  await page.getByRole("button", { name: "Create a Room" }).click();
+  await page.getByRole("button", { name: "Create", exact: true }).click();
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   await page.getByLabel("Choose a nickname").fill("Ada");
   await page.getByRole("button", { name: "Join", exact: true }).click();
@@ -45,48 +45,69 @@ test("a guest can change sound and animations, and they're remembered", async ({
   await expect(page.locator("html")).not.toHaveAttribute("data-reduce-motion");
 });
 
-test("guests get Games, Pricing, About and Stats, on every page", async ({ page }) => {
-  // Phones: the tabs at the bottom.
+test("the Play screen fits a laptop screen, and pages through the games", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto("/");
-  expect(await labels(page, "Sections")).toEqual(["Games", "Pricing", "Stats", "Profile"]);
-  await page
-    .getByRole("navigation", { name: "Sections" })
-    .getByRole("link", { name: "Pricing" })
-    .click();
-  await expect(page).toHaveURL(/\/pricing$/);
+  await expect(page.getByRole("heading", { name: "What do you want to play?" })).toBeVisible();
+  const height = await page.evaluate(() => document.documentElement.scrollHeight);
+  expect(height).toBeLessThanOrEqual(720);
 
-  // Wide screens: the top bar, the same on every page, with the site links in the footer too.
-  await page.setViewportSize({ width: 1280, height: 800 });
-  for (const path of ["/", "/games", "/games/quiz", "/account", "/about"]) {
-    await page.goto(path);
-    expect(await labels(page, "Main")).toEqual(["Games", "Pricing", "About", "Stats"]);
-    await expect(page.getByRole("button", { name: "Settings" })).toBeVisible();
-    const footer = page.getByRole("navigation", { name: "About Whizard" });
-    for (const name of ["Pricing", "About", "Stats", "Privacy"]) {
-      await expect(footer.getByRole("link", { name })).toBeAttached();
-    }
-    // The sign-in page doesn't offer Sign In a second time.
-    await expect(page.getByRole("link", { name: "Sign In", exact: true })).toHaveCount(
-      path === "/account" ? 0 : 1,
-    );
-  }
+  // The top bar, the same on every page.
+  expect(await labels(page, "Main")).toEqual(["Play", "Create", "Stats", "Leaderboard"]);
+  await expect(page.getByLabel("Room code")).toBeVisible();
+
+  // Quiz is the big card; six others show at a time, with arrows for the rest.
+  await expect(page.getByRole("link", { name: "Play now" })).toBeVisible();
+  const cards = page.getByRole("list", { name: "Games" }).getByRole("listitem");
+  await expect(cards).toHaveCount(6);
+  await expect(page.getByRole("button", { name: "Previous games" })).toBeDisabled();
+  await page.getByRole("button", { name: "More games" }).click();
+  await expect(cards).toHaveCount(4);
+  await expect(cards.filter({ hasText: "Impostor" })).toContainText("Coming soon");
+
+  // The kinds of game narrow it down.
+  await page.getByRole("button", { name: "Couples" }).click();
+  await expect(cards).toHaveCount(1);
+  await expect(cards).toContainText("How Well Do You Know Me?");
+
+  // The menu under the avatar has Sign in and Settings.
+  await page.getByRole("button", { name: "Menu", exact: true }).click();
+  const menu = page.getByRole("group", { name: "Menu" });
+  await expect(menu.getByRole("link", { name: "Sign in" })).toBeVisible();
+  await expect(menu.getByRole("button", { name: "Settings" })).toBeVisible();
+  await page.keyboard.press("Escape");
+
+  // The pages about Whizard are in a row at the bottom, still on the one screen.
+  const site = page.getByRole("navigation", { name: "Site" });
+  await expect(site.getByRole("link", { name: "About" })).toBeInViewport();
+  await site.getByRole("link", { name: "Privacy" }).click();
+  await expect(page).toHaveURL(/\/privacy$/);
+  expect(await labels(page, "Main")).toEqual(["Play", "Create", "Stats", "Leaderboard"]);
 });
 
-test("signed-in players get Games, Friends and Create, and their avatar for the profile", async ({
-  page,
-}) => {
+test("phones get Play, Create, Leaderboard, Stats and Me at the bottom", async ({ page }) => {
+  await page.goto("/");
+  expect(await labels(page, "Sections")).toEqual(["Play", "Create", "Leaderboard", "Stats", "Me"]);
+  await page
+    .getByRole("navigation", { name: "Sections" })
+    .getByRole("link", { name: "Stats" })
+    .click();
+  await expect(page).toHaveURL(/\/stats$/);
+});
+
+test("signed-in players find their profile and friends in the menu", async ({ page }) => {
   await withPasskeys(page);
   await signUp(page, uniqueUsername(), "Ada");
 
-  const tabs = page.getByRole("navigation", { name: "Sections" });
-  expect(await labels(page, "Sections")).toEqual(["Games", "Friends", "Create", "Profile"]);
-  await expect(tabs.getByRole("link", { name: "Profile" }).locator("img.avatar")).toBeVisible();
-  await tabs.getByRole("link", { name: "Friends" }).click();
+  await page.getByRole("button", { name: "Me", exact: true }).click();
+  const menu = page.getByRole("group", { name: "Menu" });
+  await menu.getByRole("link", { name: "Friends" }).click();
   await expect(page).toHaveURL(/\/friends$/);
-  await tabs.getByRole("button", { name: "Create" }).click();
-  await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
 
   await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto("/games");
-  expect(await labels(page, "Main")).toEqual(["Games", "Friends", "Create"]);
+  await page.goto("/");
+  await page.getByRole("button", { name: "Menu for Ada" }).click();
+  await menu.getByRole("link", { name: "My profile" }).click();
+  await expect(page).toHaveURL(/\/account$/);
+  await expect(page.getByRole("link", { name: "Friend requests" })).toBeVisible();
 });

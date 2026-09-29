@@ -5,7 +5,6 @@ import { AccountScreen } from "./AccountScreen";
 import { AvatarCreator } from "./avatar/AvatarCreator";
 import { AddFriendScreen, FriendsScreen, GroupScreen } from "./FriendsScreen";
 import { Notice } from "./Notice";
-import { GamesPage } from "./pages/GamesPage";
 import { HomePage } from "./pages/HomePage";
 import { JigsawPage } from "./pages/JigsawPage";
 import { AboutPage } from "./pages/AboutPage";
@@ -32,7 +31,7 @@ export function App() {
         {route.name === "room" ? (
           <RoomRoute code={route.code} />
         ) : route.name === "games" ? (
-          <GamesPage />
+          <HomePage />
         ) : route.name === "topics" ? (
           <TopicsPage />
         ) : route.name === "jigsaw" ? (

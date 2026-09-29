@@ -1,29 +1,14 @@
-/* Landing ----------------------------------------------------------------------------------- */
-
-.hero {
-  display: grid;
-  gap: 8px;
-  padding: 8px 0 16px;
-}
-
-.hero-copy {
-  display: grid;
-  gap: 20px;
-  justify-items: start;
-  align-content: center;
-}
-
-/* Live visitor count, in a quiet monospace box above the hero. */
+/* Visitors so far and who's here now, in a pill above the Play screen's title. */
 .live-count {
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
   margin: 0;
-  border: 1.5px solid var(--line);
-  border-radius: 8px;
-  background: rgb(10 9 36 / 55%);
-  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
-  font-size: 0.85rem;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgb(18 14 56 / 80%);
+  font-size: 0.9rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--muted);
   transition: opacity 0.4s ease;
@@ -60,257 +45,6 @@
   }
 }
 
-.hero-pill {
-  padding: 8px 20px;
-  font-size: 0.95rem;
-  color: #d9d2ff;
-  background: rgb(40 26 120 / 45%);
-}
-
-.hero-pill svg {
-  color: #b392ff;
-}
-
-.hero-title {
-  font-size: clamp(3rem, 12vw, 6rem);
-  font-weight: 700;
-  line-height: 1.02;
-  letter-spacing: -0.02em;
-}
-
-.hero-lead {
-  max-width: 31rem;
-  font-size: clamp(1.1rem, 2.2vw, 1.5rem);
-  font-weight: 500;
-  color: var(--muted);
-  line-height: 1.4;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 6px;
-}
-
-.btn-hero {
-  min-height: 60px;
-  padding: 0 30px;
-  font-size: 1.15rem;
-}
-
-@media (min-width: 768px) {
-  .btn-hero {
-    min-height: 64px;
-    padding: 0 32px;
-    font-size: 1.2rem;
-  }
-}
-
-.join-code {
-  display: flex;
-  gap: 8px;
-  width: min(100%, 26rem);
-}
-
-.join-code-wrap {
-  display: grid;
-  gap: 6px;
-  width: min(100%, 26rem);
-}
-
-.join-code-wrap .t-error-msg {
-  margin: 0;
-  padding-inline: 20px;
-}
-
-.join-code input {
-  flex: 1;
-  min-height: 48px;
-  border-radius: 999px;
-  padding: 0 20px;
-}
-
-.code-input {
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-weight: 800;
-}
-
-.code-input::placeholder {
-  text-transform: none;
-  letter-spacing: normal;
-  font-weight: 600;
-}
-
-.hero-art {
-  position: relative;
-  width: min(100%, 460px);
-  justify-self: center;
-  margin-top: 8px;
-}
-
-.hero-art img {
-  position: relative;
-  width: 100%;
-  height: auto;
-  filter: drop-shadow(0 20px 40px rgb(120 40 255 / 35%));
-}
-
-/* A soft glow behind the mascot; the art brings its own stage. */
-.stage-glow {
-  display: none;
-  position: absolute;
-  left: 2%;
-  right: 2%;
-  bottom: -4%;
-  height: 26%;
-  border-radius: 50%;
-  background:
-    radial-gradient(closest-side, rgb(255 255 255 / 25%), transparent 70%),
-    radial-gradient(closest-side, rgb(150 70 255 / 70%), rgb(90 40 220 / 35%) 60%, transparent 100%);
-  box-shadow:
-    0 0 60px 10px rgb(150 70 255 / 45%),
-    0 0 0 3px rgb(255 160 60 / 45%),
-    0 12px 40px 6px rgb(255 140 40 / 35%);
-}
-
-.features {
-  list-style: none;
-  margin: 24px 0 0;
-  padding: 0;
-  display: grid;
-  gap: 14px;
-}
-
-.feature {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 22px 26px;
-  border-radius: 22px;
-}
-
-.feature strong {
-  display: block;
-  font-size: 1.1rem;
-  font-weight: 800;
-}
-
-.feature-icon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #9b4dff, #5a3cf0);
-  box-shadow: 0 8px 24px rgb(122 58 255 / 45%);
-}
-
-@media (min-width: 900px) {
-  .features {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 26px;
-  }
-}
-
-/* Side by side from tablets up: copy on the left edge of the column, mascot on the right edge. */
-@media (min-width: 900px) {
-  .hero {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: center;
-    gap: 32px;
-    padding: 40px 0 0;
-  }
-
-  .hero-title {
-    font-size: clamp(3.2rem, 5.6vw, 5.25rem);
-  }
-
-  .hero-art {
-    justify-self: end;
-    width: 100%;
-    max-width: 600px;
-    margin: 0;
-  }
-
-  .features {
-    margin-top: 32px;
-  }
-}
-
-@media (min-width: 1100px) {
-  .hero {
-    min-height: 600px;
-    padding-top: 56px;
-  }
-}
-
-.section-display {
-  font-size: clamp(2rem, 4vw, 2.8rem);
-}
-
-.how {
-  display: grid;
-  gap: 24px;
-  margin-top: var(--section-gap);
-}
-
-.steps {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 14px;
-}
-
-.steps li {
-  display: grid;
-  gap: 8px;
-  padding: 26px;
-}
-
-.steps strong {
-  font-family: var(--display);
-  font-size: 1.25rem;
-}
-
-.step-number {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  font-family: var(--display);
-  font-weight: 800;
-  background: linear-gradient(180deg, #ffe14a, #ffb52c);
-  color: #221400;
-}
-
-@media (min-width: 900px) {
-  .steps {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 26px;
-  }
-}
-
-.about {
-  display: grid;
-  gap: 12px;
-  margin-top: var(--section-gap);
-  padding: 28px;
-}
-
-.about > p {
-  max-width: 72ch;
-}
-
-.about .link-row {
-  justify-content: flex-start;
-  gap: 8px 24px;
-}
-
 /* Links in a row, or inside a sentence, line up with the text around them. */
 .link-row .btn-link,
 .setting-hint .btn-link,
@@ -318,155 +52,7 @@ p .btn-link {
   padding-inline: 0;
 }
 
-/* Choose a game ------------------------------------------------------------------------------ */
-
-.browse {
-  display: grid;
-  gap: 24px;
-  padding-top: 8px;
-}
-
-.browse-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-/* Search and the kind-of-game chips: stacked, then side by side once the chips fit on one line. */
-.browse-tools {
-  display: grid;
-  gap: 14px;
-}
-
-@media (min-width: 1200px) {
-  .browse-tools {
-    grid-template-columns: minmax(0, 1fr) 280px;
-    align-items: center;
-    gap: 24px;
-  }
-
-  .browse-tools .search {
-    grid-column: 2;
-    grid-row: 1;
-  }
-}
-
-.head-mascot {
-  display: none;
-}
-
-@media (min-width: 1100px) {
-  .browse {
-    gap: 30px;
-  }
-
-  /* Ends on the column's right edge, and stays inside the header. */
-  .head-mascot {
-    display: block;
-    width: 160px;
-    height: auto;
-    flex: none;
-    filter: drop-shadow(0 16px 30px rgb(120 40 255 / 40%));
-  }
-}
-
-.game-grid {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 14px;
-}
-
-.game-grid li {
-  display: grid;
-}
-
-.browse .page-title {
-  font-size: clamp(2.2rem, 6vw, 4.4rem);
-}
-
-.game-card {
-  position: relative;
-  display: grid;
-  grid-template-columns: 96px minmax(0, 1fr) auto;
-  grid-template-areas:
-    "art text chevron"
-    "art foot chevron";
-  align-items: center;
-  column-gap: 16px;
-  row-gap: 6px;
-  padding: 12px 14px 12px 12px;
-  border-radius: 20px;
-  background: var(--panel);
-  border: 1.5px solid var(--line);
-  text-decoration: none;
-  color: #fff;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-/* Cards that open a room straight away are buttons. */
-button.game-card {
-  width: 100%;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-button.game-card:disabled {
-  cursor: progress;
-}
-
-.game-art {
-  grid-area: art;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 96px;
-  height: 96px;
-  border-radius: 16px;
-  background: var(--wash);
-  overflow: hidden;
-}
-
-.game-art img {
-  width: 78%;
-  height: 78%;
-  object-fit: contain;
-  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 35%));
-}
-
-.game-text {
-  grid-area: text;
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
-.game-name {
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 1.15rem;
-  line-height: 1.15;
-}
-
-.game-desc {
-  color: rgb(255 255 255 / 78%);
-  font-size: 0.95rem;
-  line-height: 1.3;
-}
-
-.game-foot {
-  grid-area: foot;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 10px;
-  min-width: 0;
-}
-
+/* A game's player count, on the Play screen's cards. */
 .players {
   display: inline-flex;
   align-items: center;
@@ -480,148 +66,6 @@ button.game-card:disabled {
   white-space: nowrap;
 }
 
-/* Cards for games still being made have no arrow, so the text takes the full width. */
-.game-card.unavailable {
-  grid-template-areas:
-    "art text text"
-    "art foot foot";
-}
-
-/* On phones, beside the player count (or under it when there's no room). */
-.soon {
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: #ffe07a;
-  white-space: nowrap;
-}
-
-.go {
-  display: none;
-}
-
-.row-chevron {
-  grid-area: chevron;
-  color: var(--muted);
-}
-
-@media (min-width: 768px) {
-  .game-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px;
-  }
-
-  .game-card {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      "art art"
-      "text go"
-      "foot foot";
-    /* The last row takes the spare height, so every footer sits on its card's bottom edge. */
-    grid-template-rows: auto auto 1fr;
-    row-gap: 12px;
-    min-height: 300px;
-    padding: 22px 22px 24px;
-    border-radius: 24px;
-    background: var(--wash);
-    border-color: rgb(255 255 255 / 16%);
-    box-shadow: var(--shadow);
-  }
-
-  .game-card::after {
-    /* The glassy dark lower half of each card. */
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background:
-      radial-gradient(120% 70% at 50% 0%, rgb(255 255 255 / 18%), transparent 60%),
-      linear-gradient(180deg, transparent 38%, rgb(12 8 40 / 45%) 100%);
-  }
-
-  .game-art {
-    width: 100%;
-    height: 140px;
-    background: none;
-    overflow: visible;
-  }
-
-  .game-art img {
-    width: auto;
-    height: 140px;
-    max-width: 90%;
-    object-fit: contain;
-    filter: drop-shadow(0 12px 18px rgb(0 0 0 / 35%));
-  }
-
-  .game-name {
-    font-size: 1.6rem;
-  }
-
-  .game-desc {
-    font-size: 1.1rem;
-  }
-
-  /* One line, as tall as Quiz's round Go button, so every card's pill sits on the same line. */
-  .game-foot {
-    align-self: end;
-    flex-wrap: nowrap;
-    min-height: 46px;
-  }
-
-  .players {
-    padding: 7px 14px;
-    font-size: 0.95rem;
-  }
-
-  .go {
-    display: grid;
-    flex: none;
-    place-items: center;
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    border: 1.5px solid rgb(255 255 255 / 40%);
-    background: rgb(0 0 0 / 15%);
-  }
-
-  .row-chevron {
-    display: none;
-  }
-
-  .game-card:hover .go {
-    background: rgb(255 255 255 / 18%);
-  }
-
-  .game-card.unavailable {
-    grid-template-areas:
-      "art art"
-      "text go"
-      "foot foot";
-  }
-
-  /* A badge in the card's top corner. */
-  .soon {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: rgb(12 8 40 / 55%);
-    border: 1.5px solid rgb(255 224 122 / 45%);
-  }
-
-  .game-card.unavailable .game-art img {
-    opacity: 0.92;
-  }
-}
-
-@media (min-width: 1100px) {
-  .game-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-a.game-card,
 button.topic-tile {
   transition:
     transform 140ms ease,
@@ -629,7 +73,6 @@ button.topic-tile {
 }
 
 @media (hover: hover) {
-  a.game-card:hover,
   button.topic-tile:hover:not(:disabled) {
     transform: translateY(-3px);
     box-shadow: 0 22px 44px rgb(3 2 20 / 60%);
@@ -761,18 +204,8 @@ button.topic-tile {
   display: grid;
 }
 
-.tilt-game {
-  border-radius: 20px;
-}
-
 .tilt-topic {
   border-radius: 20px;
-}
-
-@media (min-width: 768px) {
-  .tilt-game {
-    border-radius: 24px;
-  }
 }
 
 /* Jigsaw pictures ---------------------------------------------------------------------------- */
@@ -867,5 +300,483 @@ button.topic-tile {
 @media (min-width: 1100px) {
   .picture-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Play: the home screen ---------------------------------------------------------------------- */
+
+.gold-text {
+  color: var(--gold);
+}
+
+.play {
+  display: grid;
+  gap: 16px;
+}
+
+.play-head {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.play-title {
+  margin: 0;
+  font-size: clamp(1.9rem, 3vw, 3rem);
+  line-height: 1.1;
+  text-shadow: 0 4px 0 rgb(40 10 90 / 70%);
+}
+
+/* The kinds of game: one scrolling row on phones. */
+.play-chips {
+  display: flex;
+  gap: 8px;
+  max-width: 100%;
+  padding: 4px 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.play-chip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line-strong);
+  background: rgb(18 14 56 / 80%);
+  color: #fff;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.play-chip svg {
+  color: #c9a8ff;
+}
+
+.play-chip[aria-pressed="true"] {
+  background: linear-gradient(180deg, #ffe066, var(--gold-deep));
+  border-color: transparent;
+  color: #3a1d00;
+  box-shadow: 0 6px 20px rgb(255 180 40 / 35%);
+}
+
+.play-chip[aria-pressed="true"] svg {
+  color: inherit;
+}
+
+.play-body {
+  display: grid;
+  gap: 18px;
+}
+
+/* The mascot, and the most played game's big card. */
+.play-featured {
+  position: relative;
+  display: grid;
+  padding-top: 90px;
+}
+
+.play-mascot {
+  position: absolute;
+  top: 0;
+  left: -6px;
+  z-index: 2;
+  width: 170px;
+  height: auto;
+  filter: drop-shadow(0 18px 28px rgb(20 0 60 / 55%));
+  pointer-events: none;
+}
+
+.featured-card {
+  position: relative;
+  display: grid;
+  align-content: end;
+  gap: 8px;
+  min-height: 380px;
+  padding: 22px;
+  border-radius: 24px;
+  border: 2px solid rgb(255 200 70 / 80%);
+  background: var(--wash);
+  box-shadow:
+    0 0 0 4px rgb(255 190 60 / 12%),
+    0 0 40px rgb(255 170 40 / 25%),
+    var(--shadow);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.featured-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, transparent 30%, rgb(14 8 44 / 88%) 100%);
+}
+
+.featured-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: rgb(12 8 40 / 75%);
+  border: 1.5px solid rgb(255 200 70 / 70%);
+  color: var(--gold);
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.featured-art {
+  position: absolute;
+  top: 56px;
+  right: 6%;
+  z-index: -1;
+  width: 44%;
+  max-height: 42%;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 24px rgb(0 0 0 / 40%));
+}
+
+.featured-title {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2.8rem, 5vw, 4.6rem);
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-shadow:
+    0 4px 0 #a0400c,
+    0 10px 24px rgb(0 0 0 / 45%);
+}
+
+.featured-tagline {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.featured-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.featured-tag {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 10%);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.featured-play {
+  margin-left: auto;
+  min-height: 56px;
+  padding: 0 26px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.15rem;
+  text-transform: uppercase;
+}
+
+/* The other games, with arrows for the next page on laptops and computers. */
+.play-shelf {
+  display: grid;
+  gap: 12px;
+  min-height: 0;
+}
+
+.play-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.play-card {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto auto;
+  justify-items: center;
+  gap: 4px;
+  min-height: 0;
+  padding: 12px 10px 10px;
+  border-radius: 20px;
+  border: 1.5px solid rgb(255 255 255 / 16%);
+  background: var(--wash);
+  box-shadow: var(--shadow);
+  text-align: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.play-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, transparent 35%, rgb(14 8 44 / 85%) 100%);
+}
+
+.play-card-art {
+  width: 100%;
+  height: 100%;
+  min-height: 80px;
+  max-height: 110px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 16px rgb(0 0 0 / 40%));
+}
+
+.play-card-name {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.15rem;
+  line-height: 1.15;
+  text-transform: uppercase;
+  text-shadow: 0 3px 0 rgb(30 10 70 / 70%);
+}
+
+.play-card-desc {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  font-size: 0.85rem;
+  line-height: 1.3;
+  color: #e6e0ff;
+}
+
+.play-card-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 8px;
+  margin-top: 4px;
+}
+
+.play-card .players {
+  padding: 3px 10px;
+  font-size: 0.78rem;
+}
+
+.play-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #9a4dff, #6f35ff);
+  box-shadow: 0 6px 16px rgb(122 58 255 / 45%);
+  color: #fff;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.play-btn.soon {
+  white-space: nowrap;
+  background: rgb(12 8 40 / 60%);
+  box-shadow: none;
+  border: 1.5px solid rgb(255 224 122 / 45%);
+  color: #ffe07a;
+  font-size: 0.72rem;
+  cursor: default;
+}
+
+.play-card.unavailable .play-card-art {
+  opacity: 0.85;
+}
+
+@media (hover: hover) {
+  .play-chip:hover:not([aria-pressed="true"]),
+  .play-arrow:hover:not(:disabled) {
+    border-color: rgb(200 170 255 / 80%);
+  }
+
+  a.play-btn:hover,
+  button.play-btn:hover:not(:disabled) {
+    filter: brightness(1.12);
+  }
+}
+
+.play-empty {
+  text-align: center;
+}
+
+.play-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.play-arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-strong);
+  background: rgb(18 14 56 / 85%);
+  color: #fff;
+  cursor: pointer;
+}
+
+.play-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.play-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.play-dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 25%);
+}
+
+.play-dots span.on {
+  width: 26px;
+  border-radius: 999px;
+  background: var(--gold);
+}
+
+@media (min-width: 768px) {
+  .play-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Laptops and computers: the whole screen, no scrolling. The top bar, the title, then the
+   featured game beside a page of six cards, all sized to fit what's left. */
+@media (min-width: 1100px) {
+  .page.app-screen {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100dvh;
+    max-width: calc(1560px + 2 * var(--gutter));
+    padding-bottom: 6px;
+    overflow: hidden;
+  }
+
+  .page.app-screen .site-footer.slim {
+    margin-top: 8px;
+  }
+
+  .play {
+    grid-template-rows: auto minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .play-body {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.55fr);
+    gap: 24px;
+    min-height: 0;
+  }
+
+  .play-featured {
+    min-height: 0;
+    padding-top: 0;
+  }
+
+  /* The mascot peeks over the card's top-left corner. */
+  .play-mascot {
+    top: -4%;
+    left: -3%;
+    width: 52%;
+    max-width: 330px;
+  }
+
+  .featured-card {
+    min-height: 0;
+    margin-top: clamp(80px, 16vh, 170px);
+    padding: 24px 26px;
+  }
+
+  .featured-art {
+    top: 10%;
+    width: 44%;
+    max-height: 48%;
+  }
+
+  .play-shelf {
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .play-grid {
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    min-height: 0;
+    gap: 14px;
+  }
+
+  .play-card {
+    padding: 14px 12px 12px;
+  }
+
+  .play-card-foot {
+    flex-wrap: nowrap;
+  }
+
+  .play-card-art {
+    min-height: 0;
+    max-height: none;
+  }
+
+  .play-card-name {
+    font-size: clamp(1rem, 1.35vw, 1.4rem);
+  }
+}
+
+/* Short laptop screens: a smaller title, so the cards keep their room. */
+@media (min-width: 1100px) and (max-height: 760px) {
+  .play {
+    gap: 12px;
+  }
+
+  .play-title {
+    font-size: 2rem;
+  }
+
+  .play-head {
+    gap: 8px;
+  }
+
+  .play-card-desc {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
   }
 }

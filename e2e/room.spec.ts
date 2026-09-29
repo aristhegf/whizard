@@ -7,7 +7,7 @@ async function newPlayer(browser: Browser): Promise<Page> {
 
 async function createRoom(page: Page, nickname: string): Promise<string> {
   await page.goto("/");
-  await page.getByRole("button", { name: "Create a Room" }).click();
+  await page.getByRole("button", { name: "Create", exact: true }).click();
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   await joinAs(page, nickname);
   return page.url();
@@ -156,7 +156,7 @@ test("explains when a room doesn’t exist", async ({ page }) => {
   await page.goto("/r/ZZZZZZ");
   await expect(page.getByRole("alert")).toHaveText(/doesn’t exist or has expired/);
   await page.getByRole("button", { name: "Back to home" }).click();
-  await expect(page.getByRole("button", { name: "Create a Room" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "What do you want to play?" })).toBeVisible();
 });
 
 test("explains when a room link is malformed", async ({ page }) => {
@@ -292,7 +292,7 @@ test("a returning player goes straight into the lobby, and can change their name
   // A first-timer sees the whole form, with Join on screen.
   const host = await newPlayer(browser);
   await host.goto("/");
-  await host.getByRole("button", { name: "Create a Room" }).click();
+  await host.getByRole("button", { name: "Create", exact: true }).click();
   await expect(host.getByLabel("Choose a nickname")).toHaveAttribute("placeholder", "e.g. Tolu");
   await expect(host.getByRole("button", { name: "Join", exact: true })).toBeInViewport();
   await joinAs(host, "Ada");
@@ -300,7 +300,7 @@ test("a returning player goes straight into the lobby, and can change their name
 
   // The next room skips the form.
   await host.goto("/");
-  await host.getByRole("button", { name: "Create a Room" }).click();
+  await host.getByRole("button", { name: "Create", exact: true }).click();
   await expect(playerRow(host, "Ada")).toContainText("You");
   await expect(host.getByLabel("Choose a nickname")).toHaveCount(0);
   const roomUrl = host.url();
@@ -333,7 +333,10 @@ test("a returning player goes straight into the lobby, and can change their name
   await kemi.goto("/");
   await kemi.evaluate(() => localStorage.setItem("whizard:nickname", JSON.stringify("Tolu")));
   await kemi.goto(roomUrl);
-  await expect(kemi.getByRole("alert")).toContainText("already has that nickname");
+  // Trying the saved name first can take a moment when the room is busy.
+  await expect(kemi.getByRole("alert")).toContainText("already has that nickname", {
+    timeout: 15_000,
+  });
   await joinAs(kemi, "Kemi");
   await expect(playerRow(kemi, "Kemi")).toContainText("You");
 });

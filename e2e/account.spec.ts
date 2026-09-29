@@ -5,7 +5,7 @@ test.describe.configure({ timeout: 90_000 });
 
 async function openRoom(page: Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: "Create a Room" }).click();
+  await page.getByRole("button", { name: "Create", exact: true }).click();
   // The home page has a Join button too (for codes), so wait until the room is open.
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   // Signed in, they go straight in under their account name.
@@ -14,7 +14,7 @@ async function openRoom(page: Page) {
 
 async function playSoloGame(page: Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: "Create a Room" }).click();
+  await page.getByRole("button", { name: "Create", exact: true }).click();
   const nickname = page.getByLabel("Choose a nickname");
   const questions = page.getByLabel("Questions");
   await expect(nickname.or(questions)).toBeVisible();
@@ -35,15 +35,20 @@ async function playSoloGame(page: Page) {
 test("signs up, signs out and signs back in with a passkey", async ({ page }) => {
   await withPasskeys(page);
   await page.goto("/");
-  await page.getByRole("link", { name: "Sign in" }).click();
+  // Guests find Sign in in the menu under "Me".
+  const signIn = async () => {
+    await page.getByRole("button", { name: "Me", exact: true }).click();
+    await page.getByRole("group", { name: "Menu" }).getByRole("link", { name: "Sign in" }).click();
+  };
+  await signIn();
 
   const username = uniqueUsername();
   await signUp(page, username);
 
   await page.getByRole("button", { name: "Sign out" }).click();
-  await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible();
-
-  await page.getByRole("link", { name: "Sign in" }).click();
+  // Signing out goes back to the Play screen.
+  await expect(page.getByRole("heading", { name: "What do you want to play?" })).toBeVisible();
+  await signIn();
   await page.getByRole("button", { name: "Sign in with a passkey" }).click();
   await expect(page.getByText(`@${username}`)).toBeVisible();
 
@@ -131,6 +136,7 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
 
   // Quiz settings live in the Settings dialog, saved to the account.
   const openSettings = async () => {
+    await page.getByRole("button", { name: "Me", exact: true }).click();
     await page.getByRole("button", { name: "Settings" }).click();
     return page.getByRole("dialog", { name: "Settings" });
   };
@@ -154,7 +160,7 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
 
   // Solo now pauses after each answer, and keeps the explanations for the end.
   await page.goto("/");
-  await page.getByRole("button", { name: "Create a Room" }).click();
+  await page.getByRole("button", { name: "Create", exact: true }).click();
   const nickname = page.getByLabel("Choose a nickname");
   const questions = page.getByLabel("Questions");
   await expect(nickname.or(questions)).toBeVisible();
@@ -173,7 +179,10 @@ test("deletes the account", async ({ page }) => {
   await signUp(page, uniqueUsername());
   page.once("dialog", (dialog) => void dialog.accept());
   await page.getByRole("button", { name: "Delete account" }).click();
-  await expect(page.getByRole("link", { name: "Sign in" })).toBeVisible();
+  await page.getByRole("button", { name: "Me", exact: true }).click();
+  await expect(
+    page.getByRole("group", { name: "Menu" }).getByRole("link", { name: "Sign in" }),
+  ).toBeVisible();
   await page.goto("/account");
   await expect(page.getByRole("button", { name: "Sign in with a passkey" })).toBeVisible();
 });

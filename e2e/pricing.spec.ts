@@ -2,8 +2,9 @@ import { expect, test } from "@playwright/test";
 
 test("the pricing page shows the three plans and answers questions", async ({ page }) => {
   await page.goto("/");
+  // The pages about Whizard are linked at the bottom of the screen.
   await page
-    .getByRole("navigation", { name: "Sections" })
+    .getByRole("navigation", { name: "Site" })
     .getByRole("link", { name: "Pricing" })
     .click();
   await expect(page).toHaveURL(/\/pricing$/);
