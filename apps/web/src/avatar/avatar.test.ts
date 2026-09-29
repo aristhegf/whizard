@@ -133,6 +133,15 @@ describe("avatar layers", () => {
     });
   });
 
+  it("sits the brows as far above every eye shape, and lifts them over tall lashes", () => {
+    const browDy = (p: Partial<AvatarParts>) =>
+      avatarLayers(parts(p)).layers.find((l) => l.src.includes("/eyebrows/"))?.dy;
+    expect(browDy({ eyes: "e2", lashes: "l1" })).toBeUndefined();
+    expect(browDy({ eyes: "e1", lashes: "l1" })).toBe(-6);
+    expect(browDy({ eyes: "e4", lashes: "none" })).toBe(4);
+    expect(browDy({ eyes: "e4", lashes: "l21" })).toBe(4 - 9);
+  });
+
   it("moves the eyes and lashes apart, or closer, together", () => {
     const shifts = (eyeGap: string) =>
       avatarLayers(parts({ eyeGap }))

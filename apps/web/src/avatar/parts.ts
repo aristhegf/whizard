@@ -51,6 +51,13 @@ export interface PartOption {
    * of the face.
    */
   pair?: boolean;
+  /**
+   * Eyes: how far the eyebrows move down for this eye shape (up if less than 0), so they sit the
+   * same distance above every eye.
+   */
+  browDrop?: number;
+  /** Lashes: how far the eyebrows move up so these lashes don't touch them. */
+  browLift?: number;
 }
 
 /** A face for the moment, from the player's expression or a game's reaction. */
@@ -111,8 +118,20 @@ const none = (name = "None"): PartOption => ({ id: NONE, name, files: [] });
 // are kept when styles are dropped, so saved avatars keep theirs (and ones whose style went get
 // the default).
 
-const EYE_SHAPES = [1, 2, 3, 4, 5, 6, 7, 8];
+/** Each eye shape, and how far the brows move to sit as far above it as above Eyes 2. */
+const EYE_SHAPES = [
+  { n: 1, browDrop: -6 },
+  { n: 2, browDrop: 0 },
+  { n: 3, browDrop: -2 },
+  { n: 4, browDrop: 4 },
+  { n: 5, browDrop: 4 },
+  { n: 6, browDrop: 1 },
+  { n: 7, browDrop: 2 },
+  { n: 8, browDrop: 2 },
+];
 const LASHES = [1, 3, 5, 7, 9, 11, 13, 15, 18, 19, 21, 24];
+/** Lashes tall enough to reach the brows, and how far the brows move up to leave a gap. */
+const BROW_LIFTS: Record<number, number> = { 21: 9 };
 const BROWS = [1, 2, 4, 5, 7, 8, 9, 10, 11, 13, 15, 18];
 const MOUTHS = [1, 3, 15, 20, 24, 28, 13, 6, 19, 21, 22, 16];
 
@@ -129,8 +148,9 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
     },
   ],
   hair: [none("Bald")],
-  eyes: EYE_SHAPES.map((n, i) => ({
+  eyes: EYE_SHAPES.map(({ n, browDrop }, i) => ({
     id: `e${n}`,
+    browDrop,
     name: `Eyes ${i + 1}`,
     files: ["open"],
     ext: "webp" as const,
@@ -147,6 +167,7 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
       paintedFor: "eyes" as const,
       ext: "webp" as const,
       pair: true,
+      browLift: BROW_LIFTS[n],
       poses: ["front"],
     })),
   ],

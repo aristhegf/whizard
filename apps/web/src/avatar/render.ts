@@ -101,6 +101,7 @@ function drawLayer(ctx: CanvasRenderingContext2D, img: HTMLImageElement, layer: 
       // Eyes further apart (or closer) move out from (or in to) the middle.
       if (layer.shift) ctx.translate(side === "left" ? -layer.shift : layer.shift, 0);
     }
+    if (layer.dy) ctx.translate(0, layer.dy);
     if (moved && side) {
       const x = BROW_X[side];
       const tilt = ((side === "left" ? brows.tilt : -brows.tilt) * Math.PI) / 180;

@@ -30,6 +30,8 @@ export interface Layer {
   pair?: boolean;
   /** Move a pair this far out from the middle of the face on each side (in by less than 0). */
   shift?: number;
+  /** Move it down this far on the grid (up if less than 0). */
+  dy?: number;
   brows?: BrowPose;
 }
 
@@ -122,7 +124,13 @@ export function avatarLayers(
   }
   // Each lash style is bent to sit on the lid of each eye shape.
   add("lashes", parts.lashes, "lashes");
-  add("brows", parts.brows, "brows", { tint: hairColour, brows: look.brows ?? "relaxed" });
+  // The brows sit the same distance above every eye shape, and clear tall lashes.
+  const browDy = (eyes.browDrop ?? 0) - (optionOf("lashes", parts.lashes).browLift ?? 0);
+  add("brows", parts.brows, "brows", {
+    tint: hairColour,
+    brows: look.brows ?? "relaxed",
+    ...(browDy !== 0 && { dy: browDy }),
+  });
   add("glasses", parts.glasses, "glasses");
 
   if (covers === "none") add("hair", parts.hair, "front", { tint: hairColour });
