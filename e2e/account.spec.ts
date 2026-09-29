@@ -131,11 +131,7 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
 
   // Quiz settings live in the Settings dialog, saved to the account.
   const openSettings = async () => {
-    await page.getByRole("button", { name: "Open menu" }).click();
-    await page
-      .getByRole("dialog", { name: "Menu" })
-      .getByRole("button", { name: "Settings" })
-      .click();
+    await page.getByRole("button", { name: "Settings" }).click();
     return page.getByRole("dialog", { name: "Settings" });
   };
   let settings = await openSettings();

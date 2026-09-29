@@ -442,8 +442,16 @@ A dark, cozy game-night look: deep navy and purple with warm lamp glows behind e
 
 - **Type:** Poppins for headings, Nunito for everything else, both bundled with the app.
 - **Colour:** purple for primary actions, gold for the big "Create a Room" call to action and for scores, green and red for right and wrong answers. Tokens live at the top of `apps/web/src/styles/base.css`.
-- **Layouts:** every page outside a game has the same top bar (Games, Quiz Topics, Friends, Create, then friend requests, Settings and the profile), with Pricing, About, Stats, How It Works and Privacy in the footer. Phones get a menu and a bottom tab bar (Home, Games, Create, Profile) instead. Game screens drop the navigation to give the question room.
-- **Settings:** a dialog anyone can open from the top bar, the phone menu or the room's bar. Sound and Reduce animations are kept on the device; Reduce animations stills CSS animations and the motion components on top of the device's own setting. Signed-in players also get the quiz settings above.
+- **Layouts:** every page outside a game has the same top bar, with different links for guests and signed-in players:
+
+  |           | Top bar (wide screens)       | Tabs at the bottom (phones)                    |
+  | --------- | ---------------------------- | ---------------------------------------------- |
+  | Guests    | Games, Pricing, About, Stats | Games, Pricing, Stats, Profile                 |
+  | Signed in | Games, Friends, Create       | Games, Friends, Create, their avatar (Profile) |
+
+  The bar also holds friend requests (signed in), Settings and Sign In or the profile picture; on phones it's just the logo, Settings and Sign In, with no menu. How It Works, Pricing, About, Stats and Privacy are in the footer of every page. Game screens drop the navigation to give the question room.
+
+- **Settings:** a dialog anyone can open from the top bar or the room's bar. Sound and Reduce animations are kept on the device; Reduce animations stills CSS animations and the motion components on top of the device's own setting. Signed-in players also get the quiz settings above.
 - **Artwork** is plain image files in `apps/web/public/art/`: `mascot/`, `games/` (one per game), `topics/` (one per quiz category), `avatars/` (`a01` to `a12`), `avatar-parts/` (the avatar creator's parts, see Avatars), and the logo (`logo-mark.webp` for the crown W, `logo-lockup.webp` for the full logo). To update a picture, replace the file with one of the same name; transparent WebP works best. The favicon and app icons in `apps/web/public/` are made from the crown W.
 
 ### Sound

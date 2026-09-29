@@ -749,88 +749,10 @@ select option {
   text-decoration: none;
 }
 
-.menu-btn {
-  margin-left: -10px;
-}
-
-@media (min-width: 1100px) {
-  .menu-btn {
+/* On phones the profile picture is in the tabs at the bottom. */
+@media (max-width: 1099px) {
+  .topnav .me-link {
     display: none;
-  }
-}
-
-.mobile-menu {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  padding: 6px var(--gutter);
-  background: rgb(8 7 31 / 97%);
-}
-
-.mobile-menu .topnav {
-  justify-content: space-between;
-}
-
-.mobile-menu nav {
-  display: grid;
-  align-content: start;
-  gap: 8px;
-  padding-top: 12px;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-height: 58px;
-  padding: 0 18px;
-  border-radius: 16px;
-  font-weight: 800;
-  font-size: 1.15rem;
-  text-decoration: none;
-  color: #fff;
-  background: rgb(255 255 255 / 4%);
-  border: 1.5px solid var(--line);
-}
-
-.menu-item svg {
-  color: #b9a9ff;
-}
-
-button.menu-item {
-  font: inherit;
-  font-weight: 800;
-  font-size: 1.15rem;
-  cursor: pointer;
-}
-
-/* The links about the site, smaller, under the main ones. */
-.menu-site {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 18px;
-  padding: 14px 18px 0;
-}
-
-.menu-site a {
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  font-weight: 700;
-  color: var(--muted);
-  text-decoration: none;
-}
-
-/* On phones the settings are in the menu, leaving room in the bar. */
-.nav-settings {
-  display: none;
-}
-
-@media (min-width: 1100px) {
-  .nav-settings {
-    display: inline-flex;
   }
 }
 
