@@ -17,8 +17,14 @@
 .scene-parallax {
   position: absolute;
   inset: 0;
+  opacity: 0;
+  transition: opacity 0.9s ease;
   transform: translate3d(calc(var(--px) * -10px), calc(var(--py) * -7px), 0);
   will-change: transform;
+}
+
+.home-scene.is-lit .scene-parallax {
+  opacity: 1;
 }
 
 .scene-frame {

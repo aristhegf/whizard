@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { prefersStill, usePrefersStill } from "../display";
 
 /**
@@ -61,7 +61,13 @@ function Sway({ className, clip, origin }: { className: string; clip: string; or
 
 export function HomeScene() {
   const root = useRef<HTMLDivElement>(null);
+  const picture = useRef<HTMLImageElement>(null);
   const still = usePrefersStill();
+  // The room fades in behind the screen once its picture is here, so the screen isn't held up for it.
+  const [lit, setLit] = useState(false);
+  useEffect(() => {
+    if (picture.current?.complete) setLit(true);
+  }, []);
 
   // Rest while the tab is hidden.
   useEffect(() => {
@@ -103,10 +109,17 @@ export function HomeScene() {
   }, [still]);
 
   return (
-    <div className="home-scene" ref={root} aria-hidden="true">
+    <div
+      className={`home-scene${lit ? " is-lit" : ""}`}
+      ref={root}
+      aria-hidden="true"
+      data-reveal-later
+    >
       <div className="scene-parallax">
         <div className="scene-frame">
           <img
+            ref={picture}
+            onLoad={() => setLit(true)}
             className="scene-base"
             src="/art/scenes/home.webp"
             srcSet="/art/scenes/home-960.webp 960w, /art/scenes/home.webp 1672w"

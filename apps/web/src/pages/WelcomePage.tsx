@@ -18,7 +18,7 @@ const STEPS = [
 /** The home page for guests: what Whizard is, how it works, and a way in. */
 export function WelcomePage() {
   return (
-    <TopLayout active="home">
+    <TopLayout active="home" reveal>
       <section className="hero">
         <LiveCount />
         <div className="hero-copy">
