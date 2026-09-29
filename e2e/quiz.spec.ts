@@ -81,10 +81,14 @@ test("every category can be picked and played", async ({ browser }) => {
   const page = await newPlayer(browser);
   await openRoom(page);
 
-  const category = page.getByLabel("Category");
-  await expect(category.locator("option:disabled")).toHaveCount(0);
-  await category.selectOption({ label: "Nigerian culture" });
-  await expect(page.getByLabel("Category")).toHaveValue("nigerian-culture");
+  // The pencil on the Quiz card opens the topic chooser.
+  await page.getByRole("button", { name: "Change topic" }).click();
+  const topics = page.getByRole("dialog", { name: "Choose a topic" });
+  await expect(topics.getByRole("radio")).toHaveCount(11);
+  await expect(topics.getByRole("radio", { disabled: true })).toHaveCount(0);
+  await topics.getByRole("radio", { name: "Nigerian culture" }).click();
+  await expect(topics).toBeHidden();
+  await expect(page.locator(".game-summary")).toContainText("Nigerian culture");
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
   await answerFirstChoice(page, 1, 10);
 });

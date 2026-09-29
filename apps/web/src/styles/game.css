@@ -1678,9 +1678,58 @@ button.choice:disabled {
   }
 }
 
+/* The lobby's topic chooser. */
+.topic-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.topic-option {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 10px 8px 12px;
+  border-radius: 16px;
+  border: 1.5px solid var(--line);
+  background: var(--field);
+  color: var(--text);
+  font-weight: 800;
+  text-align: center;
+}
+
+.topic-option img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.topic-option[aria-checked="true"] {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 2px var(--purple);
+}
+
+.topic-option:disabled {
+  opacity: 0.5;
+}
+
+@media (hover: hover) {
+  .topic-option:hover:not(:disabled) {
+    border-color: var(--line-strong);
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 /* The host's own jigsaw photo: framing the square to use. */
 
-.photo-cropper {
+.photo-cropper,
+.app-dialog {
   width: min(560px, calc(100vw - 2 * var(--gutter)));
   max-height: calc(100dvh - 2 * var(--gutter));
   padding: 22px;
@@ -1692,7 +1741,8 @@ button.choice:disabled {
   overflow: auto;
 }
 
-.photo-cropper::backdrop {
+.photo-cropper::backdrop,
+.app-dialog::backdrop {
   background: rgb(8 4 30 / 70%);
   backdrop-filter: blur(4px);
 }

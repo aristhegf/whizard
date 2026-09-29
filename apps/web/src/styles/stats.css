@@ -248,6 +248,10 @@
   padding: 8px 0;
 }
 
+.panel-note {
+  margin: 10px 0 0;
+}
+
 .bar-list {
   --fill: linear-gradient(90deg, #9a4dff, #6f35ff);
 

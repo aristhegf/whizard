@@ -198,12 +198,19 @@ test("the sound setting is remembered", async ({ browser }) => {
   );
 });
 
-test("on a phone the host slides to start, and a tap alone doesn't start the game", async ({
+test("on a phone the host slides to start with friends, and a tap alone doesn't start it", async ({
   browser,
 }) => {
   const host = await newPlayer(browser);
-  await createRoom(host, "Ada");
-  const thumb = host.getByRole("button", { name: "Slide to play solo" });
+  const roomUrl = await createRoom(host, "Ada");
+  // Alone, a stray tap costs nothing, so solo play is a plain button.
+  await expect(host.getByRole("button", { name: "Play solo" })).toBeVisible();
+  await expect(host.locator(".slide-start")).toHaveCount(0);
+
+  const guest = await newPlayer(browser);
+  await guest.goto(roomUrl);
+  await joinAs(guest, "Tolu");
+  const thumb = host.getByRole("button", { name: "Slide to start game" });
   await expect(thumb).toBeVisible();
 
   // A tap on the handle does nothing.

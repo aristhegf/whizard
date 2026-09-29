@@ -81,11 +81,9 @@ export function StatsPage() {
               <br />
               is playing
               <br />
-              <span className="purple-text">Whizard</span>
+              Whizard
             </h1>
-            <p className="community-tagline">
-              Real people. <span className="purple-text">Real games. Real fun.</span>
-            </p>
+            <p className="community-tagline">Real people. Real games. Real fun.</p>
             <p className="community-lead">
               From friends and families to classrooms and couples, Whizard brings people together
               through games.
@@ -319,7 +317,10 @@ function MostPlayedGames({ entries }: { entries: StatsEntry[] | undefined }) {
       {entries === undefined ? (
         <PanelLoading />
       ) : (
-        <BarList rows={expanded ? rows : rows.slice(0, SHORT_LIST)} rank tone="purple" />
+        <>
+          <BarList rows={expanded ? rows : rows.slice(0, SHORT_LIST)} rank tone="purple" />
+          <EarlyDays played={entries.length} what="games" />
+        </>
       )}
     </Panel>
   );
@@ -327,12 +328,13 @@ function MostPlayedGames({ entries }: { entries: StatsEntry[] | undefined }) {
 
 function PopularTopics({ entries }: { entries: StatsEntry[] | undefined }) {
   const [expanded, setExpanded] = useState(false);
-  const rows: BarRow[] = (entries ?? []).map((e) => ({
-    key: e.name,
-    name: topicName(e.name),
-    art: topicArt(e.name),
-    count: e.count,
-  }));
+  // Every topic, like the games panel: played ones by how often, then the rest.
+  const rows: BarRow[] = QUIZ_CATEGORIES.map((c) => ({
+    key: c.id,
+    name: c.name,
+    art: topicArt(c.id),
+    count: entries?.find((e) => e.name === c.id)?.count ?? 0,
+  })).sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
   return (
     <Panel
       id="topics-title"
@@ -344,12 +346,25 @@ function PopularTopics({ entries }: { entries: StatsEntry[] | undefined }) {
     >
       {entries === undefined ? (
         <PanelLoading />
-      ) : rows.length === 0 ? (
-        <p className="muted panel-empty">No quiz games yet. Be the first!</p>
       ) : (
-        <BarList rows={expanded ? rows : rows.slice(0, SHORT_LIST)} tone="gold" />
+        <>
+          <BarList rows={expanded ? rows : rows.slice(0, SHORT_LIST)} rank tone="gold" />
+          <EarlyDays played={entries.length} what="topics" />
+        </>
       )}
     </Panel>
+  );
+}
+
+/** A line under a panel while only a few of its rows have been played. */
+function EarlyDays({ played, what }: { played: number; what: string }) {
+  if (played >= 3) return null;
+  return (
+    <p className="dim small panel-note">
+      {played === 0
+        ? `No ${what} played yet. Be the first!`
+        : `Only a few ${what} have been played so far.`}
+    </p>
   );
 }
 

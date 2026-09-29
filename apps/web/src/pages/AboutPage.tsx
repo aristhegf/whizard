@@ -62,7 +62,7 @@ export function AboutPage() {
             <h1 id="about-title" className="display about-title">
               More Than
               <br />
-              Just a <span className="purple-text">Quiz.</span>
+              Just a Quiz.
             </h1>
             <p className="about-lead">
               Whizard is a multiplayer game platform that brings people together through fun,
@@ -89,12 +89,8 @@ export function AboutPage() {
 
         <section className="about-story panel" aria-labelledby="story-title">
           <div className="about-copy">
-            <p className="pill about-pill">
-              <Icon name="crown" size={16} fill />
-              Our story
-            </p>
             <h2 id="story-title" className="display about-heading">
-              Built for People, Not Just <span className="purple-text">Players.</span>
+              Built for People, Not Just Players.
             </h2>
             <p className="about-text">
               Whizard started with a simple idea: quizzes are more fun together. What began as a
@@ -114,12 +110,8 @@ export function AboutPage() {
         </section>
 
         <section className="about-beliefs panel" aria-labelledby="beliefs-title">
-          <p className="pill about-pill">
-            <Icon name="crown" size={16} fill />
-            What we believe
-          </p>
           <h2 id="beliefs-title" className="display about-heading">
-            Fun Brings <span className="purple-text">People Closer</span>
+            Fun Brings People Closer
           </h2>
           <ul className="beliefs">
             {BELIEFS.map((belief) => (
@@ -136,10 +128,6 @@ export function AboutPage() {
 
         <section className="about-impact panel" aria-labelledby="impact-title">
           <div className="about-copy">
-            <p className="pill about-pill">
-              <Icon name="crown" size={16} fill />
-              Our impact
-            </p>
             <h2 id="impact-title" className="display about-heading">
               A Growing Global Community
             </h2>
@@ -207,10 +195,6 @@ export function AboutPage() {
 
         <section className="about-cta panel" aria-labelledby="about-cta-title">
           <div className="about-copy">
-            <p className="pill about-pill">
-              <Icon name="star" size={16} fill />
-              Join the fun
-            </p>
             <h2 id="about-cta-title" className="about-cta-title">
               Ready to be part of the story?
             </h2>

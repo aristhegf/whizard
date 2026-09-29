@@ -60,9 +60,7 @@ export function TopicsPage() {
     <SideLayout active="topics" className="topics-page">
       <header className="side-head">
         <div>
-          <h1 className="page-title">
-            Browse Quiz <span className="gradient-text">Topics</span>
-          </h1>
+          <h1 className="page-title">Browse Quiz Topics</h1>
           <p className="page-sub">Pick a topic and start a game with your friends!</p>
         </div>
         <div className="head-actions">

@@ -1,5 +1,4 @@
 import {
-  QUIZ_CATEGORIES,
   LEVEL_CHOICES,
   LEVEL_NAMES,
   QUIZ_QUESTION_COUNTS,
@@ -8,8 +7,6 @@ import {
   quizSettingsSchema,
   type QuizSettings,
 } from "@whizard/game-core";
-import { useEffect, useState } from "react";
-import { fetchQuizCategories, type QuizCategoryInfo } from "../../api";
 import { SettingRow as Row, SettingSelect } from "../../ui/SettingSelect";
 import { AUTO_HINT, EliminationLength } from "../rounds/RoundsSettingsRows";
 
@@ -18,7 +15,10 @@ export function parseQuizSettings(settings: unknown): QuizSettings | null {
   return parsed.success ? parsed.data : null;
 }
 
-/** The quiz's rows in the lobby's Room Settings list. Only the host can change them. */
+/**
+ * The quiz's rows in the lobby's Room Settings list. Only the host can change them. The topic is
+ * chosen from the pencil on the Quiz card, so it isn't repeated here.
+ */
 export function QuizSettingsRows({
   settings,
   players,
@@ -53,13 +53,6 @@ export function QuizSettingsRows({
       <p className="setting-hint dim small">
         {QUIZ_VARIANTS.find((v) => v.id === settings.variant)?.description}
       </p>
-      <Row icon="star" id="category" label="Category">
-        <CategorySelect
-          value={settings.category}
-          disabled={!editable}
-          onChange={(value) => set("category", value)}
-        />
-      </Row>
       <Row icon="trophy" id="level" label="Level">
         <SettingSelect
           id="level"
@@ -102,48 +95,5 @@ export function QuizSettingsRows({
         </Row>
       )}
     </>
-  );
-}
-
-function CategorySelect({
-  value,
-  disabled,
-  onChange,
-}: {
-  value: QuizSettings["category"];
-  disabled: boolean;
-  onChange: (value: QuizSettings["category"]) => void;
-}) {
-  const [available, setAvailable] = useState<QuizCategoryInfo[] | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetchQuizCategories()
-      .then((result) => !cancelled && setAvailable(result))
-      .catch(() => !cancelled && setAvailable([]));
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return (
-    <SettingSelect
-      id="category"
-      label="Category"
-      value={value}
-      disabled={disabled}
-      options={QUIZ_CATEGORIES.map((c) => {
-        const info = available?.find((i) => i.id === c.id);
-        const empty =
-          !!available &&
-          (!info || info.questions.easy + info.questions.medium + info.questions.hard === 0);
-        return {
-          value: c.id,
-          label: empty ? `${c.name} (soon)` : c.name,
-          disabled: empty && c.id !== value,
-        };
-      })}
-      onChange={(next) => onChange(next as QuizSettings["category"])}
-    />
   );
 }
