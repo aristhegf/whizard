@@ -1,10 +1,52 @@
 import { normalizeRoomCode, ROOM_CODE_LENGTH } from "@whizard/game-core";
 import { useEffect, useState, type FormEvent } from "react";
 import { fetchRoomStatus } from "../api";
+import { usePrefersStill } from "../display";
 import { navigate, roomPath } from "../router";
 import { loadSession } from "../storage";
 import { useShakeOnError } from "./errorShake";
 import { Icon } from "./Icon";
+
+/** Made-up codes in the real alphabet, shown typing themselves into the empty box. */
+const EXAMPLE_CODES = ["K7QX2M", "B4TZ9W", "HN3PRQ", "W8DKJ5", "QZ2MVA"];
+const TYPE_MS = 140;
+const HOLD_MS = 1400;
+const ERASE_MS = 45;
+const REST_MS = 500;
+
+/** A code typed out letter by letter behind a blinking caret, held, erased, then the next. */
+function TypedCodes() {
+  const [text, setText] = useState("");
+
+  useEffect(() => {
+    let which = 0;
+    let length = 0;
+    let timer: ReturnType<typeof setTimeout>;
+    const type = () => {
+      const word = EXAMPLE_CODES[which % EXAMPLE_CODES.length]!;
+      setText(word.slice(0, ++length));
+      timer = length < word.length ? setTimeout(type, TYPE_MS) : setTimeout(erase, HOLD_MS);
+    };
+    const erase = () => {
+      const word = EXAMPLE_CODES[which % EXAMPLE_CODES.length]!;
+      setText(word.slice(0, --length));
+      if (length > 0) timer = setTimeout(erase, ERASE_MS);
+      else {
+        which += 1;
+        timer = setTimeout(type, REST_MS);
+      }
+    };
+    timer = setTimeout(type, REST_MS);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <span className="join-room-demo" aria-hidden="true">
+      {text}
+      <span className="join-room-caret" />
+    </span>
+  );
+}
 
 /** Why a room code can't be used right now, or null if it can. Asks the server. */
 async function codeProblem(code: string): Promise<string | null> {
@@ -23,6 +65,10 @@ export function JoinRoomBox() {
   const [attempt, setAttempt] = useState(0);
   const [checking, setChecking] = useState(false);
   const [code, setCode] = useState("");
+  const [focused, setFocused] = useState(false);
+  const still = usePrefersStill();
+  // Example codes type themselves into the empty box, until someone starts using it.
+  const demo = !code && !focused && !still;
   const { ref, isError, message } = useShakeOnError<HTMLFormElement>(error, attempt);
   // The last code the server said can be joined; the button goes green while it's the one typed.
   const [joinable, setJoinable] = useState<string | null>(null);
@@ -74,24 +120,29 @@ export function JoinRoomBox() {
         className={`join-room-form t-input${isError ? " is-error" : ""}`}
         onSubmit={(event) => void join(event)}
       >
-        <input
-          id="join-room-code"
-          className="join-room-input"
-          name="code"
-          aria-label="Room code"
-          aria-invalid={isError}
-          aria-describedby="join-room-error"
-          placeholder="Room code…"
-          value={code}
-          maxLength={ROOM_CODE_LENGTH + 4}
-          autoCapitalize="characters"
-          autoComplete="off"
-          spellCheck={false}
-          onChange={(event) => {
-            setCode(event.target.value);
-            setError(null);
-          }}
-        />
+        <span className="join-room-field">
+          <input
+            id="join-room-code"
+            className="join-room-input"
+            name="code"
+            aria-label="Room code"
+            aria-invalid={isError}
+            aria-describedby="join-room-error"
+            placeholder={demo ? "" : "Room code…"}
+            value={code}
+            maxLength={ROOM_CODE_LENGTH + 4}
+            autoCapitalize="characters"
+            autoComplete="off"
+            spellCheck={false}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            onChange={(event) => {
+              setCode(event.target.value);
+              setError(null);
+            }}
+          />
+          {demo && <TypedCodes />}
+        </span>
         <button
           className={`join-room-go${isReady ? " is-ready" : ""}`}
           type="submit"

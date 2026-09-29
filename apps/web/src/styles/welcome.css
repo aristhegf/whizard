@@ -53,36 +53,53 @@
   font-size: 1rem;
 }
 
+/* The mascot and friends on their stage. The picture's own dark background fades out at its
+   edges into the page, so it never shows as a box. */
 .hero-art {
   position: relative;
-  order: 3;
-  width: min(100%, 420px);
-  justify-self: center;
 }
 
 .hero-art img {
-  position: relative;
+  display: block;
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 20px 40px rgb(120 40 255 / 35%));
+  -webkit-mask-image: radial-gradient(ellipse 72% 70% at 50% 50%, #000 58%, transparent 100%);
+  mask-image: radial-gradient(ellipse 72% 70% at 50% 50%, #000 58%, transparent 100%);
 }
 
-/* A soft glow behind the mascot; the art brings its own stage. */
-.stage-glow {
-  display: none;
-  position: absolute;
-  left: 2%;
-  right: 2%;
-  bottom: -4%;
-  height: 26%;
-  border-radius: 50%;
-  background:
-    radial-gradient(closest-side, rgb(255 255 255 / 25%), transparent 70%),
-    radial-gradient(closest-side, rgb(150 70 255 / 70%), rgb(90 40 220 / 35%) 60%, transparent 100%);
-  box-shadow:
-    0 0 60px 10px rgb(150 70 255 / 45%),
-    0 0 0 3px rgb(255 160 60 / 45%),
-    0 12px 40px 6px rgb(255 140 40 / 35%);
+/* Phones: smaller, tucked behind the right of the headline, fading out toward the words. */
+@media (max-width: 899px) {
+  /* Just as tall as it needs, so How it works follows straight on. */
+  .hero {
+    position: relative;
+    min-height: 0;
+  }
+
+  .hero-art {
+    position: absolute;
+    top: clamp(34px, 5svh, 48px);
+    right: calc(-1 * var(--gutter));
+    z-index: 0;
+    width: min(64vw, 320px);
+    pointer-events: none;
+  }
+
+  .hero-art img {
+    -webkit-mask-image: radial-gradient(ellipse 62% 66% at 62% 50%, #000 40%, transparent 100%);
+    mask-image: radial-gradient(ellipse 62% 66% at 62% 50%, #000 40%, transparent 100%);
+  }
+
+  .hero > .live-count,
+  .hero-copy,
+  .features {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-title,
+  .hero-lead {
+    text-shadow: 0 2px 14px rgb(7 6 29 / 80%);
+  }
 }
 
 /* Phones: three small tiles in a row, straight under the buttons. */
@@ -162,22 +179,41 @@
     font-size: 1.15rem;
   }
 
-  /* The mascot takes whatever height the copy leaves it, without adding any of its own. */
+  /* The picture fills the right, reaching a little into the copy's side, and runs down so its
+     stage sits just behind the row of features. It adds no height of its own. */
   .hero-art {
-    grid-row: 2;
+    grid-row: 1 / 4;
     grid-column: 2;
-    justify-self: stretch;
-    width: auto;
     min-height: 0;
+    margin: 0 calc(-1 * var(--gutter)) 0 -14%;
   }
 
+  /* Anchored right, so growing reaches toward the copy and never past the window's edge. */
   .hero-art img {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: right center;
+    right: 0;
+    bottom: clamp(24px, 4svh, 44px);
+    width: auto;
+    height: auto;
+    max-width: calc(100% + 6vw);
+    max-height: calc(100% - clamp(24px, 4svh, 44px));
+  }
+
+  .hero > .live-count,
+  .hero-copy,
+  .features {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Each part in its own row, as the picture now spans all three. */
+  .hero > .live-count {
+    grid-row: 1;
+  }
+
+  .hero-copy {
+    grid-row: 2;
+    grid-column: 1;
   }
 
   .features {

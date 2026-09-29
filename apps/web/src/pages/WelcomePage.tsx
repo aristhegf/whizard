@@ -40,8 +40,15 @@ export function WelcomePage() {
           </div>
         </div>
         <div className="hero-art" aria-hidden="true">
-          <div className="stage-glow" />
-          <img src="/art/mascot/hero.webp" alt="" width={866} height={857} fetchPriority="high" />
+          <img
+            src="/art/mascot/crew.webp"
+            srcSet="/art/mascot/crew-768.webp 768w, /art/mascot/crew.webp 1536w"
+            sizes="(min-width: 900px) 60vw, 100vw"
+            alt=""
+            width={1536}
+            height={1024}
+            fetchPriority="high"
+          />
         </div>
         <ul className="features">
           {FEATURES.map((f) => (
