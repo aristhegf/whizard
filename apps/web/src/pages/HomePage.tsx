@@ -8,6 +8,7 @@ import {
   type GameGroup,
 } from "../catalog";
 import { linkTo } from "../router";
+import { BottomSheet } from "../ui/BottomSheet";
 import { createFailed, startRoom, TopLayout } from "../ui/Chrome";
 import { useMediaQuery } from "../ui/common";
 import { HomeScene } from "../ui/HomeScene";
@@ -31,12 +32,14 @@ const GROUP_NAMES: Partial<Record<GameGroup, string>> = Object.fromEntries(
 export function HomePage() {
   const [group, setGroup] = useState<GameGroup | "all">("all");
   const [page, setPage] = useState(0);
+  // Phones show only the featured game; a kind of game opens its games in a sheet instead.
+  const [sheet, setSheet] = useState<GameGroup | "all" | null>(null);
   const paged = useMediaQuery("(min-width: 1100px)");
 
   const games = OTHERS.filter((g) => group === "all" || g.groups.includes(group));
-  const pages = paged ? Math.max(1, Math.ceil(games.length / PAGE_SIZE)) : 1;
+  const pages = Math.max(1, Math.ceil(games.length / PAGE_SIZE));
   const current = Math.min(page, pages - 1);
-  const shown = paged ? games.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE) : games;
+  const shown = games.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
 
   return (
     <TopLayout active="home" className="play-page" screen>
@@ -51,62 +54,125 @@ export function HomePage() {
             {GAME_GROUPS.map((g) => (
               <button
                 key={g.id}
-                className="play-chip"
-                aria-pressed={group === g.id}
+                className={`play-chip${sheet === g.id ? " is-open" : ""}`}
+                aria-pressed={paged ? group === g.id : undefined}
+                aria-haspopup={paged ? undefined : "dialog"}
                 onClick={() => {
+                  if (!paged) return setSheet(g.id);
                   setGroup(g.id);
                   setPage(0);
                 }}
               >
-                {g.icon && <Icon name={g.icon} size={20} />}
+                {g.icon && <Icon name={g.icon} size={paged ? 20 : 16} />}
                 {g.name}
               </button>
             ))}
           </div>
         </header>
+        {!paged && sheet && <GameSheet group={sheet} onClose={() => setSheet(null)} />}
 
         <div className="play-body">
           <Featured game={FEATURED} />
 
-          <div className="play-shelf">
-            {shown.length === 0 ? (
-              <p className="muted play-empty">No other games of this kind yet.</p>
-            ) : (
-              <ul className="play-grid" aria-label="Games">
-                {shown.map((g) => (
-                  <GameCard key={g.id} game={g} />
-                ))}
-              </ul>
-            )}
-            {pages > 1 && (
-              <div className="play-pager">
-                <button
-                  className="play-arrow"
-                  aria-label="Previous games"
-                  disabled={current === 0}
-                  onClick={() => setPage(current - 1)}
-                >
-                  <Icon name="chevronLeft" size={24} stroke={2.6} />
-                </button>
-                <span className="play-dots" aria-label={`Page ${current + 1} of ${pages}`}>
-                  {Array.from({ length: pages }, (_, i) => (
-                    <span key={i} className={i === current ? "on" : undefined} />
+          {paged && (
+            <div className="play-shelf">
+              {shown.length === 0 ? (
+                <p className="muted play-empty">No other games of this kind yet.</p>
+              ) : (
+                <ul className="play-grid" aria-label="Games">
+                  {shown.map((g) => (
+                    <GameCard key={g.id} game={g} />
                   ))}
-                </span>
-                <button
-                  className="play-arrow"
-                  aria-label="More games"
-                  disabled={current === pages - 1}
-                  onClick={() => setPage(current + 1)}
-                >
-                  <Icon name="chevronRight" size={24} stroke={2.6} />
-                </button>
-              </div>
-            )}
-          </div>
+                </ul>
+              )}
+              {pages > 1 && (
+                <div className="play-pager">
+                  <button
+                    className="play-arrow"
+                    aria-label="Previous games"
+                    disabled={current === 0}
+                    onClick={() => setPage(current - 1)}
+                  >
+                    <Icon name="chevronLeft" size={24} stroke={2.6} />
+                  </button>
+                  <span className="play-dots" aria-label={`Page ${current + 1} of ${pages}`}>
+                    {Array.from({ length: pages }, (_, i) => (
+                      <span key={i} className={i === current ? "on" : undefined} />
+                    ))}
+                  </span>
+                  <button
+                    className="play-arrow"
+                    aria-label="More games"
+                    disabled={current === pages - 1}
+                    onClick={() => setPage(current + 1)}
+                  >
+                    <Icon name="chevronRight" size={24} stroke={2.6} />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
     </TopLayout>
+  );
+}
+
+/** A kind of game's games, in a sheet from the bottom, one card at a time to swipe through. */
+function GameSheet({ group, onClose }: { group: GameGroup | "all"; onClose: () => void }) {
+  const info = GAME_GROUPS.find((g) => g.id === group)!;
+  const games = CATALOG.filter((g) => group === "all" || g.groups.includes(group)).sort(
+    (a, b) => Number(isPlayable(b)) - Number(isPlayable(a)),
+  );
+  const [at, setAt] = useState(0);
+
+  return (
+    <BottomSheet
+      labelledBy="game-sheet-title"
+      className="game-sheet"
+      onClose={onClose}
+      header={(close) => (
+        <div className="game-sheet-head">
+          <h2 id="game-sheet-title" className="game-sheet-title">
+            {info.icon && <Icon name={info.icon} size={20} />}
+            {group === "all" ? "All games" : `${info.name} games`}
+          </h2>
+          <span className="game-sheet-count">{games.length}</span>
+          <button className="game-sheet-close" aria-label="Close" onClick={close}>
+            <Icon name="close" size={20} stroke={2.4} />
+          </button>
+        </div>
+      )}
+    >
+      {games.length === 0 ? (
+        <p className="muted play-empty">No games of this kind yet.</p>
+      ) : (
+        <>
+          <ul
+            className="game-sheet-cards"
+            aria-label="Games"
+            onScroll={(event) => {
+              const list = event.currentTarget;
+              const step = (list.firstElementChild as HTMLElement | null)?.offsetWidth ?? 1;
+              // The last card can't snap to the start, so the end of the row counts as it.
+              const end = list.scrollLeft + list.clientWidth >= list.scrollWidth - 2;
+              setAt(end ? games.length - 1 : Math.round(list.scrollLeft / (step + 12)));
+            }}
+          >
+            {games.map((g) => (
+              <GameCard key={g.id} game={g} />
+            ))}
+          </ul>
+          {games.length > 1 && (
+            <span className="play-dots game-sheet-dots" aria-hidden="true">
+              {games.map((g, i) => (
+                <span key={g.id} className={i === at ? "on" : undefined} />
+              ))}
+            </span>
+          )}
+        </>
+      )}
+    </BottomSheet>
   );
 }
 

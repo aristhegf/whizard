@@ -10,6 +10,7 @@ import {
 import { useRef, useState } from "react";
 import { setPendingPhoto } from "../games/jigsaw/PhotoCropper";
 import { createFailed, TopLayout, startRoom } from "../ui/Chrome";
+import { HeadingHint } from "../ui/HeadingHint";
 import { Icon } from "../ui/Icon";
 
 type Choice = JigsawPictureId | "random" | "photo";
@@ -40,11 +41,11 @@ export function JigsawPage() {
   return (
     <TopLayout active="games" className="topics-page" column>
       <header className="side-head">
-        <div>
+        <div className="hint-row">
           <h1 className="page-title">Jigsaw Pictures</h1>
-          <p className="page-sub">
+          <HeadingHint id="jigsaw" label="How jigsaw works">
             Everyone gets the same puzzle. Tap two pieces to swap them; the fastest to finish wins.
-          </p>
+          </HeadingHint>
         </div>
       </header>
 

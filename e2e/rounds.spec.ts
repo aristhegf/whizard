@@ -29,6 +29,11 @@ async function joinAs(page: Page, nickname: string) {
 /** Opens a room for a game from its card on the Games page. */
 async function openGame(page: Page, name: string, nickname = "Ada") {
   await page.goto("/games");
+  // On phones the games are in a sheet, opened from the kinds of game.
+  await page
+    .getByRole("group", { name: "Kinds of game" })
+    .getByRole("button", { name: "All" })
+    .click();
   await page.getByRole("button", { name: `Play ${name}` }).click();
   await joinAs(page, nickname);
   await expect(page.getByRole("heading", { name })).toBeVisible();

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useAccount } from "../account";
 import { linkTo } from "../router";
 import { Avatar } from "./Avatar";
@@ -50,8 +50,14 @@ export function AccountMenu({ variant }: { variant: "bar" | "tab" }) {
     );
   };
 
-  const face = (
-    <Avatar id={user?.avatar} name={user?.username ?? "guest"} size={variant === "bar" ? 44 : 26} />
+  const size = variant === "bar" ? 44 : 26;
+  // Guests get the mascot rather than a stranger's face.
+  const face = user ? (
+    <Avatar id={user.avatar} name={user.username} size={size} />
+  ) : (
+    <span className="guest-face" style={{ "--size": `${size}px` } as CSSProperties}>
+      <img src="/art/mascot/wave.webp" alt="" width={size} height={size} />
+    </span>
   );
 
   return (
@@ -66,7 +72,7 @@ export function AccountMenu({ variant }: { variant: "bar" | "tab" }) {
         onClick={() => setOpen((o) => !o)}
       >
         {face}
-        {variant === "bar" ? <Icon name="chevronDown" size={18} /> : "Me"}
+        {variant === "tab" && "Me"}
       </button>
       {open && (
         <div className="account-menu-list panel" role="group" aria-label="Menu">

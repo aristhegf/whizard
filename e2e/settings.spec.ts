@@ -47,13 +47,17 @@ test("a guest can change sound and animations, and they're remembered", async ({
 
 test("the Play screen fits a laptop screen, and pages through the games", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
+  // Guests land on the page that introduces Whizard; the games are one click away.
   await page.goto("/");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Games\s*Are Better\s*Together/);
+  await page.getByRole("link", { name: "Explore Games" }).click();
+  await expect(page).toHaveURL(/\/games$/);
   await expect(page.getByRole("heading", { name: "What do you want to play?" })).toBeVisible();
   const height = await page.evaluate(() => document.documentElement.scrollHeight);
   expect(height).toBeLessThanOrEqual(720);
 
   // The top bar, the same on every page.
-  expect(await labels(page, "Main")).toEqual(["Play", "Create", "Stats", "Leaderboard"]);
+  expect(await labels(page, "Main")).toEqual(["How it works", "Pricing", "Stats"]);
   await expect(page.getByLabel("Room code")).toBeVisible();
 
   // Quiz is the big card; six others show at a time, with arrows for the rest.
@@ -82,7 +86,7 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   await expect(site.getByRole("link", { name: "About" })).toBeInViewport();
   await site.getByRole("link", { name: "Privacy" }).click();
   await expect(page).toHaveURL(/\/privacy$/);
-  expect(await labels(page, "Main")).toEqual(["Play", "Create", "Stats", "Leaderboard"]);
+  expect(await labels(page, "Main")).toEqual(["How it works", "Pricing", "Stats"]);
 });
 
 test("phones get Play, Create, Leaderboard, Stats and Me at the bottom", async ({ page }) => {
@@ -106,6 +110,8 @@ test("signed-in players find their profile and friends in the menu", async ({ pa
 
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/");
+  // Signed in, the top bar is about playing rather than explaining Whizard.
+  expect(await labels(page, "Main")).toEqual(["Play", "Create", "Stats", "Leaderboard"]);
   await page.getByRole("button", { name: "Menu for Ada" }).click();
   await menu.getByRole("link", { name: "My profile" }).click();
   await expect(page).toHaveURL(/\/account$/);

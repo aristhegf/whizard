@@ -1,7 +1,6 @@
-@import "@fontsource/poppins/600.css";
-@import "@fontsource/poppins/700.css";
-@import "@fontsource/poppins/800.css";
-@import "@fontsource-variable/nunito";
+/* The opsz builds: big headings automatically get each family's tighter display cut. */
+@import "@fontsource-variable/bricolage-grotesque/opsz.css";
+@import "@fontsource-variable/inter/opsz.css";
 
 /* Tokens ------------------------------------------------------------------------------------ */
 
@@ -29,8 +28,8 @@
   --radius-lg: 24px;
   --shadow: 0 18px 40px rgb(3 2 20 / 55%);
   --glow-purple: 0 10px 30px rgb(122 58 255 / 45%);
-  --display: "Poppins", system-ui, sans-serif;
-  --body: "Nunito Variable", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display: "Bricolage Grotesque Variable", system-ui, sans-serif;
+  --body: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
   --gutter: 16px;
   /* Every top-bar page lines up to one column this wide, logo to sign-in button. */
   --content: 1280px;
@@ -177,6 +176,71 @@ body {
   font-size: clamp(2rem, 5vw, 3.2rem);
 }
 
+/* A heading with its explanation tucked into an (i) beside it (HeadingHint). */
+.hint-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hint-row > :is(h1, h2) {
+  min-width: 0;
+}
+
+.heading-hint {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 6%);
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    color 150ms ease-out,
+    background-color 150ms ease-out,
+    border-color 150ms ease-out;
+}
+
+/* A fingertip-sized target around the small circle. */
+.heading-hint::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
+@media (hover: hover) {
+  .heading-hint:hover {
+    color: #fff;
+    background: rgb(255 255 255 / 12%);
+  }
+}
+
+.heading-hint.is-open {
+  color: var(--gold);
+  border-color: rgb(255 212 63 / 55%);
+  background: rgb(255 212 63 / 12%);
+}
+
+.heading-hint-tip {
+  max-width: min(260px, calc(100vw - 16px)) !important;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border-color: var(--line-strong);
+  background: var(--panel-strong);
+  backdrop-filter: blur(10px);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  box-shadow: var(--shadow);
+}
+
 .page-sub {
   margin-top: 8px;
   font-size: clamp(1rem, 1.6vw, 1.35rem);
@@ -312,7 +376,6 @@ body {
   }
 
   .btn-link:hover,
-  .nav-link:hover,
   .icon-btn:hover {
     color: var(--text);
   }
@@ -644,10 +707,32 @@ select option {
   padding-top: 6px;
 }
 
+/* The room-code box and the account, together on the right. */
+.topnav-end {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Three parts on wide screens: the logo, the links centred on the page, then the box and the
+   account. The two sides share the leftover width equally, which keeps the middle centred. */
 @media (min-width: 1100px) {
   .topnav {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     min-height: 76px;
     gap: 16px;
+  }
+
+  .topnav .brand {
+    justify-self: start;
+  }
+
+  .topnav-end {
+    justify-self: end;
   }
 }
 
@@ -677,6 +762,27 @@ select option {
   height: 40px;
   object-fit: contain;
   filter: drop-shadow(0 4px 12px rgb(140 70 255 / 45%));
+  animation: logo-breathe 3.6s ease-in-out infinite;
+}
+
+/* A slow, quiet breath: a touch bigger and a little more glow, then back. */
+@keyframes logo-breathe {
+  50% {
+    transform: scale(1.035);
+    filter: drop-shadow(0 4px 16px rgb(160 90 255 / 70%));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand .logo-mark {
+    animation: none;
+  }
+}
+
+@media (max-width: 1099px) {
+  .brand span {
+    display: none;
+  }
 }
 
 @media (min-width: 1100px) {
@@ -690,7 +796,7 @@ select option {
   }
 }
 
-/* Play, Create, Stats and Leaderboard, together on one dark bar. */
+/* Play, Create, Stats and Leaderboard: plain words in a row, glowing gold under the pointer. */
 .nav-links {
   display: none;
 }
@@ -699,45 +805,41 @@ select option {
   .nav-links {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 5px;
-    border-radius: 18px;
-    background: rgb(12 10 40 / 72%);
-    border: 1.5px solid var(--line);
+    gap: 6px;
   }
 }
 
 .nav-link {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  min-height: 46px;
-  padding: 0 18px;
-  border-radius: 13px;
-  border: 1.5px solid transparent;
-  font-family: var(--display);
-  font-weight: 700;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  background: none;
+  font-family: var(--body);
+  font-weight: 500;
   font-size: 0.95rem;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
   color: var(--muted);
   text-decoration: none;
   white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 180ms ease-out,
+    text-shadow 180ms ease-out;
 }
 
 .nav-link[aria-current="page"] {
-  color: var(--gold);
-  background: rgb(40 22 110 / 80%);
-  border-color: rgb(255 196 64 / 75%);
-  box-shadow: inset 0 0 18px rgb(255 190 60 / 18%);
-}
-
-.nav-create {
   color: #fff;
+  font-weight: 600;
 }
 
-.nav-create svg {
-  color: var(--gold);
+@media (hover: hover) {
+  .nav-link:hover:not(:disabled) {
+    color: var(--gold);
+    text-shadow:
+      0 0 10px rgb(255 212 63 / 65%),
+      0 0 22px rgb(255 171 44 / 40%);
+  }
 }
 
 .nav-end {
@@ -805,37 +907,45 @@ select option {
 .join-room-form {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px;
-  border-radius: 16px;
-  border: 1.5px solid var(--line-strong);
+  gap: 4px;
+  padding: 3px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
   background: rgb(12 10 40 / 72%);
+}
+
+/* The whole pill shows focus, rather than a second ring inside it. */
+.join-room-form:has(.join-room-input:focus-visible) {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 2px rgb(255 212 63 / 25%);
+}
+
+.join-room-input:focus-visible {
+  outline: none;
 }
 
 .join-room.is-error .join-room-form {
   border-color: var(--bad);
-}
-
-.join-room-label {
-  display: none;
+  box-shadow: none;
 }
 
 .join-room-input {
   width: 100%;
   min-width: 0;
-  min-height: 38px;
-  padding: 0 10px;
+  min-height: 32px;
+  padding: 0 12px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 999px;
   background: transparent;
   color: var(--text);
   font: inherit;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .join-room-input::placeholder {
+  font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
   color: var(--dim);
@@ -845,70 +955,93 @@ select option {
   display: grid;
   flex: none;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border: 0;
-  border-radius: 11px;
+  border-radius: 999px;
+  position: relative;
+  isolation: isolate;
   background: linear-gradient(180deg, #ffe066, var(--gold-deep));
   color: #3a1d00;
   cursor: pointer;
+  transition: color 200ms ease-out;
+}
+
+/* Green once the code typed is a room that can be joined. A layer fades in, as gradients can't. */
+.join-room-go::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(180deg, #4df0a8, var(--ok));
+  box-shadow: 0 0 14px rgb(15 198 128 / 55%);
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.join-room-go.is-ready {
+  color: #fff;
+}
+
+.join-room-go.is-ready::before {
+  opacity: 1;
 }
 
 .join-room-go:disabled {
   opacity: 0.6;
 }
 
-/* The reason a code won't work, under the box. */
+/* The reason a code won't work: one line of text under the box, lifted off the scene by a glow. */
 .join-room-error {
   position: absolute;
   top: calc(100% + 6px);
-  right: 0;
+  right: 12px;
   z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   width: max-content;
-  max-width: min(320px, 80vw);
   margin: 0;
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: #3a0d1f;
-  border: 1.5px solid var(--bad);
-  color: #ffd0d8;
-  font-size: 0.85rem;
-  font-weight: 700;
+  color: #ff8fa0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-shadow: 0 1px 10px rgb(7 6 29 / 95%);
+  animation: join-room-error-in 180ms ease-out;
+}
+
+.join-room-error svg {
+  flex: none;
+  filter: drop-shadow(0 1px 6px rgb(7 6 29 / 95%));
 }
 
 .join-room-error:empty {
   display: none;
 }
 
-@media (max-width: 1099px) {
-  .join-room {
-    width: min(200px, 48vw);
+@keyframes join-room-error-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .join-room-error {
+    animation: none;
+  }
+}
+
+/* The same slim pill everywhere; only its width changes. */
+.join-room {
+  width: min(180px, 46vw);
 }
 
 @media (min-width: 1100px) {
   .join-room {
+    width: 200px;
     margin-left: 0;
-  }
-
-  .join-room-label {
-    display: inline-flex;
-    flex: none;
-    align-items: center;
-    gap: 8px;
-    padding: 0 6px 0 10px;
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    color: #fff;
-    white-space: nowrap;
-  }
-
-  .join-room-input {
-    width: 140px;
-    background: rgb(255 255 255 / 5%);
   }
 }
 
@@ -920,13 +1053,33 @@ select option {
 .account-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 10px 3px 3px;
+  padding: 2px;
   border-radius: 999px;
-  border: 1.5px solid var(--line-strong);
+  border: 1px solid var(--line-strong);
   background: rgb(12 10 40 / 72%);
   color: var(--muted);
   cursor: pointer;
+}
+
+/* A guest's face: the mascot's head and crown in a circle. */
+.guest-face {
+  display: block;
+  flex: none;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, #7a4bff, #2c1478);
+}
+
+.guest-face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 30% 0%;
+  transform: scale(1.3);
+  transform-origin: 38% 30%;
 }
 
 .account-menu-list {
@@ -1274,4 +1427,100 @@ html[data-reduce-motion] *::after {
   place-items: center;
   min-height: 72px;
   color: #b392ff;
+}
+
+/* Bottom sheet (BottomSheet): slides up from the bottom, and back down when closed or dragged
+   away. `--drag` is how far the grip has been pulled. */
+.sheet {
+  position: fixed;
+  inset: auto 0 0;
+  display: none;
+  flex-direction: column;
+  /* Edge to edge on every screen: pinned to both sides rather than 100vw, which counts the
+     scrollbar too. */
+  width: auto;
+  max-width: none;
+  max-height: min(86dvh, 720px);
+  margin: 0;
+  padding: 0 0 calc(18px + env(safe-area-inset-bottom));
+  border: 1px solid var(--line-strong);
+  border-bottom: 0;
+  border-radius: 28px 28px 0 0;
+  background: linear-gradient(180deg, rgb(30 26 84 / 97%), rgb(12 10 40 / 98%));
+  box-shadow: 0 -20px 60px rgb(3 2 20 / 60%);
+  color: var(--text);
+  overflow: hidden;
+  transform: translateY(var(--drag, 0px));
+  animation: sheet-in 420ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.sheet[open] {
+  display: flex;
+}
+
+.sheet::backdrop {
+  background: rgb(5 4 20 / 62%);
+  backdrop-filter: blur(3px);
+  animation: sheet-fade-in 300ms ease-out;
+}
+
+.sheet.settling {
+  transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.sheet.closing {
+  animation: sheet-out 260ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.sheet.closing::backdrop {
+  animation: sheet-fade-out 260ms ease-out forwards;
+}
+
+.sheet-grip {
+  padding: 8px 20px 4px;
+  touch-action: none;
+  cursor: grab;
+}
+
+.sheet-handle {
+  display: block;
+  width: 40px;
+  height: 5px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 25%);
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes sheet-out {
+  from {
+    transform: translateY(var(--drag, 0px));
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes sheet-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sheet-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet,
+  .sheet::backdrop {
+    animation: none;
+  }
 }

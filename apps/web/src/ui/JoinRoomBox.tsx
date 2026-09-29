@@ -1,5 +1,5 @@
 import { normalizeRoomCode, ROOM_CODE_LENGTH } from "@whizard/game-core";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { fetchRoomStatus } from "../api";
 import { navigate, roomPath } from "../router";
 import { loadSession } from "../storage";
@@ -9,11 +9,11 @@ import { Icon } from "./Icon";
 /** Why a room code can't be used right now, or null if it can. Asks the server. */
 async function codeProblem(code: string): Promise<string | null> {
   const status = await fetchRoomStatus(code);
-  if (!status) return "No room has that code. Check it, or ask the host for a new one.";
+  if (!status) return "No room with that code";
   // Someone who's already in the room can always go back to it.
   if (loadSession(code)) return null;
   // A game already running is fine: without late join, they wait in the room for the next one.
-  if (status.full) return "That room is full.";
+  if (status.full) return "That room is full";
   return null;
 }
 
@@ -23,7 +23,27 @@ export function JoinRoomBox() {
   const [attempt, setAttempt] = useState(0);
   const [checking, setChecking] = useState(false);
   const [code, setCode] = useState("");
-  const { ref, isError, message } = useShakeOnError<HTMLInputElement>(error, attempt);
+  const { ref, isError, message } = useShakeOnError<HTMLFormElement>(error, attempt);
+  // The last code the server said can be joined; the button goes green while it's the one typed.
+  const [joinable, setJoinable] = useState<string | null>(null);
+  const typed = normalizeRoomCode(code);
+  const isReady = !!typed && typed === joinable;
+
+  useEffect(() => {
+    if (!typed) return;
+    let stale = false;
+    const timer = setTimeout(() => {
+      codeProblem(typed)
+        .then((problem) => {
+          if (!stale && !problem) setJoinable(typed);
+        })
+        .catch(() => undefined);
+    }, 250);
+    return () => {
+      stale = true;
+      clearTimeout(timer);
+    };
+  }, [typed]);
 
   const fail = (message: string) => {
     setError(message);
@@ -34,14 +54,14 @@ export function JoinRoomBox() {
     event.preventDefault();
     if (checking) return;
     const normalized = normalizeRoomCode(code);
-    if (!normalized) return fail(`Room codes are ${ROOM_CODE_LENGTH} letters and numbers.`);
+    if (!normalized) return fail(`Codes are ${ROOM_CODE_LENGTH} letters and numbers`);
     setChecking(true);
     try {
       const problem = await codeProblem(normalized);
       if (problem) fail(problem);
       else navigate(roomPath(normalized));
     } catch {
-      fail("Couldn’t check that code. Check your connection and try again.");
+      fail("Couldn’t check. Try again");
     } finally {
       setChecking(false);
     }
@@ -49,20 +69,19 @@ export function JoinRoomBox() {
 
   return (
     <div className={`join-room${isError ? " is-error" : ""}`}>
-      <form className="join-room-form" onSubmit={(event) => void join(event)}>
-        <label className="join-room-label" htmlFor="join-room-code">
-          <Icon name="invite" size={20} />
-          <span>Join room</span>
-        </label>
+      <form
+        ref={ref}
+        className={`join-room-form t-input${isError ? " is-error" : ""}`}
+        onSubmit={(event) => void join(event)}
+      >
         <input
-          ref={ref}
           id="join-room-code"
-          className={`join-room-input${isError ? " is-error" : ""}`}
+          className="join-room-input"
           name="code"
           aria-label="Room code"
           aria-invalid={isError}
           aria-describedby="join-room-error"
-          placeholder="Enter code…"
+          placeholder="Room code…"
           value={code}
           maxLength={ROOM_CODE_LENGTH + 4}
           autoCapitalize="characters"
@@ -74,17 +93,22 @@ export function JoinRoomBox() {
           }}
         />
         <button
-          className="join-room-go"
+          className={`join-room-go${isReady ? " is-ready" : ""}`}
           type="submit"
           aria-label="Join"
           aria-busy={checking}
           disabled={checking}
         >
-          <Icon name="arrowRight" size={20} stroke={2.6} />
+          <Icon name="arrowRight" size={18} stroke={2.6} />
         </button>
       </form>
       <p id="join-room-error" className="join-room-error" role="alert">
-        {message}
+        {isError && (
+          <>
+            <Icon name="alert" size={14} stroke={2.4} />
+            {message}
+          </>
+        )}
       </p>
     </div>
   );

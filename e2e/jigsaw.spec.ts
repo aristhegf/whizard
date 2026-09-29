@@ -45,6 +45,11 @@ async function solve(page: Page) {
 test("plays a solo jigsaw from the picture page", async ({ browser }) => {
   const page = await newPlayer(browser);
   await page.goto("/games");
+  // On phones the games are in a sheet, opened from the kinds of game.
+  await page
+    .getByRole("group", { name: "Kinds of game" })
+    .getByRole("button", { name: "All" })
+    .click();
   await page.getByRole("link", { name: /Jigsaw/ }).click();
   await expect(page).toHaveURL(/\/games\/jigsaw$/);
 

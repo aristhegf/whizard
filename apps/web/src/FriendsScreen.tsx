@@ -28,6 +28,7 @@ import { Avatar } from "./ui/Avatar";
 import { TopLayout } from "./ui/Chrome";
 import { errorText, useLoaded } from "./ui/common";
 import { useErrorShake, useShakeOnError } from "./ui/errorShake";
+import { HeadingHint } from "./ui/HeadingHint";
 import { Loading } from "./ui/Loading";
 import { useToast, useToastAction } from "./ui/toast";
 
@@ -351,13 +352,15 @@ function Groups({
   const [creating, setCreating] = useState(false);
   return (
     <section className="stack" aria-labelledby="groups-title">
-      <h2 id="groups-title" className="section-title">
-        Groups
-      </h2>
-      <p className="muted small">
-        Save a group, like your game night crew, to see who tops each category when you play
-        together.
-      </p>
+      <div className="hint-row">
+        <h2 id="groups-title" className="section-title">
+          Groups
+        </h2>
+        <HeadingHint id="friends-groups" label="About groups">
+          Save a group, like your game night crew, to see who tops each category when you play
+          together.
+        </HeadingHint>
+      </div>
       {groups.length > 0 && (
         <ul className="people">
           {groups.map((g) => (

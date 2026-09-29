@@ -74,6 +74,9 @@ const LEADERBOARD: NavLink = {
   icon: "trophy",
   section: null,
 };
+/** For guests, whose home page is the one that explains Whizard. */
+const HOW: NavLink = { label: "How it works", href: "/#how", icon: "help", section: null };
+const PRICING: NavLink = { label: "Pricing", href: "/pricing", icon: "wallet", section: "pricing" };
 
 /** Every link about the site, in the footer. */
 const SITE_LINKS: { label: string; href: string; section?: Section }[] = [
@@ -102,9 +105,10 @@ function useCreateRoom() {
 }
 
 /**
- * The bar across the top of every page outside a game: Play, Create, Stats and Leaderboard, a
- * box for joining a room by its code, who's here, friend requests and the account menu. Phones
- * keep the logo and the code box, with the rest in the tabs at the bottom.
+ * The bar across the top of every page outside a game: the logo, links in the middle (Play,
+ * Create, Stats and Leaderboard once signed in; How it works, Pricing and Stats for guests), then
+ * the room-code box, who's here, friend requests and the account menu on the right. Phones keep
+ * the logo and the code box, with the rest in the tabs at the bottom.
  */
 export function TopNav({ active = null }: { active?: Section }) {
   const account = useAccount();
@@ -117,7 +121,6 @@ export function TopNav({ active = null }: { active?: Section }) {
       aria-current={isActive(active, l.section) ? "page" : undefined}
       {...linkTo(l.href)}
     >
-      <Icon name={l.icon} size={22} />
       {l.label}
     </a>
   );
@@ -126,25 +129,37 @@ export function TopNav({ active = null }: { active?: Section }) {
     <header className="topnav app-bar">
       <Brand />
       <nav className="nav-links" aria-label="Main">
-        {navLink(PLAY)}
-        <button className="nav-link nav-create" disabled={creating} onClick={create}>
-          <Icon name="plusCircle" size={22} />
-          Create
-        </button>
-        {navLink(STATS)}
-        {navLink(LEADERBOARD)}
-      </nav>
-      <JoinRoomBox />
-      <div className="nav-end">
-        <LiveCount variant="bar" />
-        {signedIn && (
-          <Tooltip content="Friend requests" side="bottom">
-            <a className="icon-btn bell-btn" {...linkTo("/friends")} aria-label="Friend requests">
-              <Icon name="bell" size={24} />
-            </a>
-          </Tooltip>
+        {/* Empty until the account is known, so neither set of links flashes up first. */}
+        {account.status === "loading" ? null : signedIn ? (
+          <>
+            {navLink(PLAY)}
+            <button className="nav-link" disabled={creating} onClick={create}>
+              Create
+            </button>
+            {navLink(STATS)}
+            {navLink(LEADERBOARD)}
+          </>
+        ) : (
+          <>
+            {navLink(HOW)}
+            {navLink(PRICING)}
+            {navLink(STATS)}
+          </>
         )}
-        <AccountMenu variant="bar" />
+      </nav>
+      <div className="topnav-end">
+        <JoinRoomBox />
+        <div className="nav-end">
+          <LiveCount variant="bar" />
+          {signedIn && (
+            <Tooltip content="Friend requests" side="bottom">
+              <a className="icon-btn bell-btn" {...linkTo("/friends")} aria-label="Friend requests">
+                <Icon name="bell" size={24} />
+              </a>
+            </Tooltip>
+          )}
+          <AccountMenu variant="bar" />
+        </div>
       </div>
     </header>
   );

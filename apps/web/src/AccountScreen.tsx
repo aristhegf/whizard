@@ -38,6 +38,7 @@ import { Avatar } from "./ui/Avatar";
 import { AvatarPicker } from "./ui/AvatarPicker";
 import { TopLayout } from "./ui/Chrome";
 import { useAction, useLoaded } from "./ui/common";
+import { HeadingHint } from "./ui/HeadingHint";
 import { Loading } from "./ui/Loading";
 import { useShakeOnError } from "./ui/errorShake";
 import { useToast, useToastAction } from "./ui/toast";
@@ -678,13 +679,15 @@ function Pings({ user }: { user: AccountUser }) {
 
   return (
     <section className="stack" aria-labelledby="pings-title">
-      <h2 id="pings-title" className="section-title">
-        Pings
-      </h2>
-      <p className="muted small">
-        Friends can ping you when they’re in a room and want you to join. You get a notification
-        with a link straight in.
-      </p>
+      <div className="hint-row">
+        <h2 id="pings-title" className="section-title">
+          Pings
+        </h2>
+        <HeadingHint id="account-pings" label="About pings">
+          Friends can ping you when they’re in a room and want you to join. You get a notification
+          with a link straight in.
+        </HeadingHint>
+      </div>
 
       <div className="settings wide">
         <div className="setting">
@@ -840,12 +843,14 @@ function Passkeys() {
 
   return (
     <section className="stack" aria-labelledby="passkeys-title">
-      <h2 id="passkeys-title" className="section-title">
-        Passkeys
-      </h2>
-      <p className="muted small">
-        Add one on each device that doesn’t sync with this one, so you can always sign in.
-      </p>
+      <div className="hint-row">
+        <h2 id="passkeys-title" className="section-title">
+          Passkeys
+        </h2>
+        <HeadingHint id="account-passkeys" label="About passkeys">
+          Add one on each device that doesn’t sync with this one, so you can always sign in.
+        </HeadingHint>
+      </div>
       {passkeys && passkeys.length > 0 && (
         <ul className="passkeys">
           {passkeys.map((p, i) => (
