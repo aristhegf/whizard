@@ -1,0 +1,403 @@
+/* The Play screen's living room ------------------------------------------------------------- */
+
+/* Behind everything, filling the window whatever its shape, like the picture's object-fit:
+   cover. The frame keeps the picture's 1672 x 941 shape, so every effect placed in its pixels
+   stays on the right lamp, window or rug. */
+.home-scene {
+  --px: 0;
+  --py: 0;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: #1a0b3a;
+}
+
+.scene-parallax {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(calc(var(--px) * -10px), calc(var(--py) * -7px), 0);
+  will-change: transform;
+}
+
+.scene-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100vw, calc(100vh * 1672 / 941));
+  height: max(100vh, calc(100vw * 941 / 1672));
+  /* A touch larger than the window, so leaning and breathing never show an edge. */
+  transform: translate(-50%, -50%) scale(1.05);
+  animation: scene-breathe 38s ease-in-out infinite alternate;
+}
+
+@keyframes scene-breathe {
+  to {
+    transform: translate(-50.6%, -49.6%) scale(1.065);
+  }
+}
+
+.scene-base {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+/* The night sky through the three arched windows: stars, nebula, clouds and the odd shooting
+   star move behind the glass, further away than the room, so they lean the least. */
+.scene-sky {
+  position: absolute;
+  left: 53.5%;
+  top: 8.3%;
+  width: 24.4%;
+  height: 49%;
+  overflow: hidden;
+  mix-blend-mode: screen;
+  clip-path: polygon(
+    0.7% 16%,
+    4% 8%,
+    12.4% 3.7%,
+    21% 8%,
+    25.3% 16%,
+    25.3% 100%,
+    28.7% 100%,
+    28.7% 13%,
+    36% 5%,
+    51.4% 0%,
+    66% 5%,
+    74% 13%,
+    74% 100%,
+    76.4% 100%,
+    76.4% 16%,
+    80% 8%,
+    87% 3.7%,
+    94% 8%,
+    97.8% 16%,
+    97.8% 100%,
+    0.7% 100%
+  );
+}
+
+.sky-stars,
+.sky-nebula {
+  position: absolute;
+  inset: -20%;
+  transform: translate3d(calc(var(--px) * 6px), calc(var(--py) * 4px), 0);
+}
+
+.sky-stars {
+  background:
+    radial-gradient(1.5px 1.5px at 12% 18%, #fff, transparent),
+    radial-gradient(1px 1px at 28% 42%, #e8dcff, transparent),
+    radial-gradient(1.5px 1.5px at 46% 12%, #fff, transparent),
+    radial-gradient(1px 1px at 63% 30%, #fff3d0, transparent),
+    radial-gradient(1.5px 1.5px at 78% 16%, #fff, transparent),
+    radial-gradient(1px 1px at 88% 44%, #e8dcff, transparent),
+    radial-gradient(1px 1px at 20% 60%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 55% 52%, #fff, transparent),
+    radial-gradient(1px 1px at 36% 26%, #fff, transparent),
+    radial-gradient(1px 1px at 70% 8%, #e8dcff, transparent);
+  animation:
+    sky-twinkle 5.5s ease-in-out infinite alternate,
+    sky-drift 120s linear infinite alternate;
+}
+
+@keyframes sky-twinkle {
+  from {
+    opacity: 0.35;
+  }
+
+  to {
+    opacity: 0.85;
+  }
+}
+
+@keyframes sky-drift {
+  to {
+    translate: -8% 3%;
+  }
+}
+
+.sky-nebula {
+  background:
+    radial-gradient(40% 22% at 60% 26%, rgb(214 90 255 / 45%), transparent 70%),
+    radial-gradient(34% 26% at 30% 44%, rgb(120 80 255 / 40%), transparent 70%),
+    radial-gradient(30% 20% at 76% 58%, rgb(255 110 210 / 30%), transparent 70%);
+  opacity: 0.45;
+  animation: sky-nebula 70s ease-in-out infinite alternate;
+}
+
+@keyframes sky-nebula {
+  to {
+    translate: 9% -4%;
+    opacity: 0.7;
+  }
+}
+
+.sky-cloud {
+  position: absolute;
+  width: 70%;
+  height: 22%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(210 180 255 / 55%), transparent);
+  filter: blur(6px);
+  opacity: 0.35;
+}
+
+.sky-cloud.one {
+  left: -30%;
+  top: 56%;
+  animation: sky-cloud 95s linear infinite;
+}
+
+.sky-cloud.two {
+  left: -60%;
+  top: 72%;
+  height: 16%;
+  animation: sky-cloud 130s linear -60s infinite;
+}
+
+@keyframes sky-cloud {
+  to {
+    translate: 250% 0;
+  }
+}
+
+.sky-shooting {
+  position: absolute;
+  top: 12%;
+  left: 70%;
+  width: 26%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #fff);
+  opacity: 0;
+  rotate: 152deg;
+  animation: sky-shooting 17s ease-in 6s infinite;
+}
+
+@keyframes sky-shooting {
+  0%,
+  92% {
+    opacity: 0;
+    translate: 0 0;
+  }
+
+  94% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+    translate: -60% 160%;
+  }
+}
+
+/* Banners and plants: their own pixels, swaying a fraction of a degree from where they hang. */
+.scene-sway {
+  position: absolute;
+  inset: 0;
+  background: url("/art/scenes/home.webp") center / 100% 100% no-repeat;
+  animation: scene-sway 7s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.scene-sway.small-banner {
+  animation-duration: 5.5s;
+  animation-delay: -2s;
+}
+
+.scene-sway.ivy {
+  animation-duration: 9s;
+  animation-delay: -4s;
+}
+
+.scene-sway.fern {
+  animation: scene-rustle 8s ease-in-out -3s infinite alternate;
+}
+
+@keyframes scene-sway {
+  from {
+    rotate: -0.35deg;
+  }
+
+  to {
+    rotate: 0.35deg;
+  }
+}
+
+@keyframes scene-rustle {
+  from {
+    rotate: -0.5deg;
+  }
+
+  to {
+    rotate: 0.4deg;
+  }
+}
+
+/* Light: flames, lanterns, the glowing orbs, the rug, the neon controllers and the room's own
+   slow warm and violet breathing. Added on top of the picture as light, not paint. */
+.scene-lights {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+}
+
+.scene-light {
+  position: absolute;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 196 96 / 60%),
+    rgb(255 140 40 / 22%) 45%,
+    transparent
+  );
+  animation: scene-flicker var(--flicker, 3s) ease-in-out var(--delay, 0s) infinite;
+  will-change: opacity, transform;
+}
+
+.scene-light.orb {
+  background: radial-gradient(
+    closest-side,
+    rgb(255 220 140 / 55%),
+    rgb(255 170 60 / 18%) 50%,
+    transparent
+  );
+  animation: scene-orb 6s ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+/* A flame's uneven breathing: never still, never jumpy. */
+@keyframes scene-flicker {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+
+  18% {
+    opacity: 0.95;
+    transform: scale(1.04);
+  }
+
+  32% {
+    opacity: 0.7;
+    transform: scale(0.97);
+  }
+
+  51% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  67% {
+    opacity: 0.78;
+    transform: scale(0.99);
+  }
+
+  84% {
+    opacity: 0.92;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes scene-orb {
+  from {
+    opacity: 0.55;
+  }
+
+  to {
+    opacity: 0.95;
+  }
+}
+
+.scene-rug,
+.scene-crown,
+.scene-neon {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.scene-rug {
+  aspect-ratio: 1000 / 240;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 190 80 / 30%),
+    rgb(200 90 255 / 22%) 55%,
+    transparent
+  );
+  animation: scene-pulse 9s ease-in-out infinite alternate;
+}
+
+.scene-crown {
+  aspect-ratio: 330 / 130;
+  background: radial-gradient(closest-side, rgb(255 210 100 / 45%), transparent);
+  animation: scene-pulse 6s ease-in-out -2s infinite alternate;
+}
+
+.scene-neon {
+  aspect-ratio: 1;
+  background: radial-gradient(closest-side, rgb(214 100 255 / 50%), transparent);
+  animation: scene-pulse 4.5s ease-in-out infinite alternate;
+}
+
+.scene-neon.later {
+  animation-delay: -2.2s;
+}
+
+@keyframes scene-pulse {
+  from {
+    opacity: 0.35;
+  }
+
+  to {
+    opacity: 0.9;
+  }
+}
+
+.scene-ambient {
+  position: absolute;
+  inset: 0;
+  animation: scene-pulse 14s ease-in-out infinite alternate;
+}
+
+.scene-ambient.purple {
+  background: radial-gradient(55% 45% at 64% 30%, rgb(150 70 255 / 22%), transparent 70%);
+}
+
+.scene-ambient.gold {
+  background:
+    radial-gradient(35% 40% at 12% 70%, rgb(255 150 50 / 16%), transparent 70%),
+    radial-gradient(30% 35% at 90% 60%, rgb(255 160 60 / 14%), transparent 70%);
+  animation-delay: -7s;
+}
+
+/* The drifting motes are nearest, so they lean the most. */
+.scene-sparkles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: translate3d(calc(var(--px) * -18px), calc(var(--py) * -12px), 0);
+}
+
+/* Keeps the screen's words easy to read over the room: darker along the top bar and the edges,
+   lighter over the middle where the room shows through. */
+.scene-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgb(12 6 36 / 70%) 0%, rgb(12 6 36 / 25%) 16%, transparent 34%),
+    radial-gradient(120% 90% at 50% 45%, transparent 45%, rgb(8 4 26 / 55%) 100%),
+    rgb(14 6 40 / 28%);
+}
+
+/* The tab is hidden: everything rests where it is. */
+.home-scene.scene-paused,
+.home-scene.scene-paused * {
+  animation-play-state: paused !important;
+}
