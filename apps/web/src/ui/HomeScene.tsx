@@ -2,11 +2,12 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import { prefersStill, usePrefersStill } from "../display";
 
 /**
- * The Play screen's living background: the Whizard games room, with the night sky moving past
- * its windows, flickering candles and lanterns, a slow glow on the crown rug, swaying banners
- * and a few drifting sparkles. Everything is CSS on top of one picture, except the sparkles (a
- * small canvas). It stays still for anyone who asks for less motion, and rests while the tab is
- * hidden.
+ * The Play screen's living background: the Whizard games room in layers. Far away, the night sky
+ * through the windows; then the room, with flickering candles and lanterns, a slow glow on the
+ * crown rug and swaying banners; then drifting sparkles; and nearest, a sofa, a plant and a chair
+ * in the corners. Each layer leans a different amount with the mouse, so the room has depth.
+ * It's all pictures and CSS, except the sparkles (a small canvas). It stays still for anyone who
+ * asks for less motion, and rests while the tab is hidden.
  */
 
 /** The picture's size: every effect is placed in its pixels, as a percentage. */
@@ -105,14 +106,6 @@ export function HomeScene() {
     <div className="home-scene" ref={root} aria-hidden="true">
       <div className="scene-parallax">
         <div className="scene-frame">
-          {/* The night sky through the windows, drifting behind the glass. */}
-          <div className="scene-sky">
-            <div className="sky-stars" />
-            <div className="sky-nebula" />
-            <div className="sky-cloud one" />
-            <div className="sky-cloud two" />
-            <div className="sky-shooting" />
-          </div>
           <img
             className="scene-base"
             src="/art/scenes/home.webp"
@@ -123,6 +116,20 @@ export function HomeScene() {
             height={H}
             fetchPriority="high"
           />
+          {/* The night sky through the windows: its own picture, further away than the room, so
+              it moves less, showing only through the glass. */}
+          <div className="scene-sky">
+            <div className="sky-far">
+              <img className="sky-art" src="/art/scenes/home-sky.webp" alt="" />
+              <div className="sky-glow">
+                <div className="sky-stars" />
+                <div className="sky-nebula" />
+                <div className="sky-cloud one" />
+                <div className="sky-cloud two" />
+                <div className="sky-shooting" />
+              </div>
+            </div>
+          </div>
           <Sway
             className="banner"
             clip="23.2% 0%, 30.2% 0%, 30.2% 35%, 26.8% 38.8%, 23.2% 35%"
@@ -159,6 +166,15 @@ export function HomeScene() {
             <span className="scene-neon later" style={at(1520, 150, 140)} />
             <span className="scene-ambient purple" />
             <span className="scene-ambient gold" />
+          </div>
+          {/* Nearest of all: the sofa, its plant and the chair, drawn again on their own over the
+              room's, so they can lean more than the room behind them. */}
+          <div className="scene-near">
+            <div className="near-sofa">
+              <div className="near-leaves" />
+              <span className="near-candle" />
+            </div>
+            <div className="near-chair" />
           </div>
         </div>
       </div>
