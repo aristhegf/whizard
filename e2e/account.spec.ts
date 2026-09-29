@@ -46,8 +46,8 @@ test("signs up, signs out and signs back in with a passkey", async ({ page }) =>
   await signUp(page, username);
 
   await page.getByRole("button", { name: "Sign out" }).click();
-  // Signing out goes back to the Play screen.
-  await expect(page.getByRole("heading", { name: "What do you want to play?" })).toBeVisible();
+  // Signing out goes back home, which for a guest is the welcome page.
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Games\s*Are Better\s*Together/);
   await signIn();
   await page.getByRole("button", { name: "Sign in with a passkey" }).click();
   await expect(page.getByText(`@${username}`)).toBeVisible();

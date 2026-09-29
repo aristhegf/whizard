@@ -64,6 +64,11 @@ test("one player finds the four groups, with a miss and a near miss on the way",
   page,
 }) => {
   await page.goto("/games");
+  // On phones the games are in a sheet, opened from the kinds of game.
+  await page
+    .getByRole("group", { name: "Kinds of game" })
+    .getByRole("button", { name: "All" })
+    .click();
   await page.getByRole("button", { name: "Play Connections" }).click();
   await joinAs(page, "Ada");
   await expect(page.getByRole("heading", { name: "Connections" })).toBeVisible();
@@ -111,6 +116,11 @@ test("two players race: the solver wins, and running out of mistakes shows the a
 }) => {
   const host = await newPlayer(browser);
   await host.goto("/games");
+  // On phones the games are in a sheet, opened from the kinds of game.
+  await host
+    .getByRole("group", { name: "Kinds of game" })
+    .getByRole("button", { name: "All" })
+    .click();
   await host.getByRole("button", { name: "Play Connections" }).click();
   await joinAs(host, "Ada");
 
