@@ -1,6 +1,7 @@
 /* The opsz builds: big headings automatically get each family's tighter display cut. */
 @import "@fontsource-variable/bricolage-grotesque/opsz.css";
 @import "@fontsource-variable/inter/opsz.css";
+@import "@fontsource-variable/inter/opsz-italic.css";
 
 /* Tokens ------------------------------------------------------------------------------------ */
 
@@ -72,6 +73,16 @@ body {
   background: transparent;
   color: var(--text);
   overflow-x: hidden;
+}
+
+/* The Originkit ring field (RingFieldBackdrop) behind every screen, over the glow below, which is
+   what shows for anyone who turns animations off. It follows the pointer from the window, so it
+   never takes a tap. */
+.ring-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* The cozy-room glow behind every screen: warm lamps at the sides, purple haze above. */
@@ -944,8 +955,48 @@ select option {
   text-transform: uppercase;
 }
 
+.join-room-field {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Example codes typing themselves in while the box is empty, laid out like a typed code. Taps go
+   straight through to the box. */
+.join-room-demo {
+  position: absolute;
+  inset: 0 12px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--dim);
+}
+
+.join-room-caret {
+  flex: none;
+  width: 2px;
+  height: 1.1em;
+  margin-left: 2px;
+  border-radius: 1px;
+  background: var(--gold);
+  animation: join-room-caret 1s steps(1) infinite;
+}
+
+@keyframes join-room-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
 .join-room-input::placeholder {
   font-weight: 500;
+  font-style: italic;
   letter-spacing: 0;
   text-transform: none;
   color: var(--dim);
@@ -992,7 +1043,7 @@ select option {
   opacity: 0.6;
 }
 
-/* The reason a code won't work: one line of text under the box, lifted off the scene by a glow. */
+/* The reason a code won't work: one line of text under the box, lifted off the background by a glow. */
 .join-room-error {
   position: absolute;
   top: calc(100% + 6px);

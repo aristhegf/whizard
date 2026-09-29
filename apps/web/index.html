@@ -29,9 +29,9 @@
     />
     <title>Whizard</title>
     <script>
-      // The home screens open with a mascot, game art and a room, which the page only asks for once
-      // its code has run. Ask for them now instead, so they arrive with the code, not after it.
-      // Only on the screens that show them, so a room link doesn't pay for pictures it won't use.
+      // The home screens open with a mascot and game art, which the page only asks for once its code
+      // has run. Ask for them now instead, so they arrive with the code, not after it. Only on the
+      // screens that show them, so a room link doesn't pay for pictures it won't use.
       (function () {
         var path = location.pathname.replace(/\/$/, "") || "/";
         if (path !== "/" && path !== "/games") return;
@@ -43,15 +43,17 @@
           for (var key in extra) link.setAttribute(key, extra[key]);
           document.head.appendChild(link);
         };
-        add("/art/mascot/hero.webp", { fetchpriority: "high" });
         add("/art/logo-mark.webp");
-        if (path !== "/games") return;
-        // The room behind the games: the same picture the page will choose for this screen.
-        add(null, {
-          imagesrcset: "/art/scenes/home-960.webp 960w, /art/scenes/home.webp 1672w",
-          imagesizes: "(max-aspect-ratio: 16/9) 180vh, 100vw",
-          fetchpriority: "low",
-        });
+        if (path === "/") {
+          // The welcome page's hero: the same picture it will choose for this screen.
+          add(null, {
+            imagesrcset: "/art/mascot/crew-768.webp 768w, /art/mascot/crew.webp 1536w",
+            imagesizes: "(min-width: 900px) 60vw, 100vw",
+            fetchpriority: "high",
+          });
+          return;
+        }
+        add("/art/mascot/hero.webp", { fetchpriority: "high" });
         add("/art/games/quiz.webp");
         // The first page of game cards, which only wider screens show.
         if (matchMedia("(min-width: 1100px)").matches) {

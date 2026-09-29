@@ -19,6 +19,7 @@ import { RoomScreen } from "./RoomScreen";
 import { useRoute } from "./router";
 import { Announcement } from "./ui/Announcement";
 import { Backdrop } from "./ui/Chrome";
+import { RingFieldBackdrop } from "./ui/RingFieldBackdrop";
 import { ReturnToRoom } from "./ui/ReturnToRoom";
 
 /** Guests get the page that introduces Whizard; people signed in go straight to the games. Blank
@@ -36,6 +37,7 @@ export function App() {
   return (
     <>
       <Backdrop />
+      <RingFieldBackdrop />
       {route.name !== "room" && <Announcement />}
       <main>
         {route.name === "room" ? (

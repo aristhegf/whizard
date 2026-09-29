@@ -27,15 +27,9 @@ export function usePageReveal(enabled: boolean) {
     if (!enabled || !root) return;
     let live = true;
     const show = () => live && setReady(true);
-    // Only the pictures being shown: not ones inside something hidden, left to load lazily, or
-    // marked to fade in on their own (a background).
+    // Only the pictures being shown: not ones inside something hidden, or left to load lazily.
     const waits: Promise<unknown>[] = [...root.querySelectorAll("img")]
-      .filter(
-        (img) =>
-          img.loading !== "lazy" &&
-          img.getClientRects().length > 0 &&
-          !img.closest("[data-reveal-later]"),
-      )
+      .filter((img) => img.loading !== "lazy" && img.getClientRects().length > 0)
       .map((img) => img.decode().catch(() => {}));
     waits.push(fontsReady());
     const timer = setTimeout(show, MAX_WAIT_MS);
