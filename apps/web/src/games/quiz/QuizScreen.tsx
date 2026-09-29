@@ -30,10 +30,10 @@ import { useShareResults } from "../../share/ShareResults";
 type QuestionStage = Extract<QuizStage, { kind: "question" }>;
 type AnswerStage = Extract<QuizStage, { kind: "answer" }>;
 
-/** Playing with friends: a glance at the right answer, then straight on. */
+/** Straight on: a glance at the result and points, then the next question. */
 const QUICK_RESULT_MS = 1000;
-/** Playing solo, or signed in and asked for them: time to read the explanation, with Skip. */
-const EXPLAINED_RESULT_MS = 3000;
+/** A pause, or an explanation to read: time to take it in, with Skip. */
+const PAUSED_RESULT_MS = 3000;
 
 interface Props {
   view: QuizView;
@@ -260,15 +260,18 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
 function Answer({ context, stage }: { context: GameContext; stage: AnswerStage }) {
   const { view, client } = context;
   const account = useAccount();
-  const wantsExplanations = account.status === "ready" && !!account.user?.showExplanations;
-  const explained = view.playerCount === 1 || wantsExplanations;
+  const user = account.status === "ready" ? account.user : null;
+  // Signed-in players choose both in Settings. Guests see explanations as they go when playing
+  // solo, and go straight on otherwise. With friends, explanations always wait for the results.
+  const explained = view.playerCount === 1 && (user?.showExplanations ?? true);
+  const paused = explained || (user?.pauseAfterAnswer ?? false);
   const sent = useRef(false);
   const next = () => {
     if (sent.current) return;
     sent.current = true;
     client.act({ type: "next" });
   };
-  const left = useCountdown(explained ? EXPLAINED_RESULT_MS : QUICK_RESULT_MS, next);
+  const left = useCountdown(paused ? PAUSED_RESULT_MS : QUICK_RESULT_MS, next);
   useEffect(() => play(stage.correct ? "correct" : "wrong"), [stage.correct]);
 
   const verdict = stage.myChoice === null ? "Time’s up" : stage.correct ? "Correct" : "Wrong";
@@ -295,18 +298,16 @@ function Answer({ context, stage }: { context: GameContext; stage: AnswerStage }
             {verdict}
             {stage.points > 0 && <span className="points">+{stage.points}</span>}
           </p>
-          {explained && (
-            <>
-              {stage.explanation && <Explanation item={stage} />}
-              <div className="next-row">
-                <span className="muted">
-                  {stage.isLast ? "Results" : "Next"} in {Math.ceil(left / 1000)}
-                </span>
-                <button className="btn" onClick={next}>
-                  Skip
-                </button>
-              </div>
-            </>
+          {explained && stage.explanation && <Explanation item={stage} />}
+          {paused && (
+            <div className="next-row">
+              <span className="muted">
+                {stage.isLast ? "Results" : "Next"} in {Math.ceil(left / 1000)}
+              </span>
+              <button className="btn" onClick={next}>
+                Skip
+              </button>
+            </div>
           )}
         </div>
         <LiveBoard context={context} />

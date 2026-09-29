@@ -226,7 +226,8 @@ export async function signUpVerify(context: RequestContext): Promise<Response> {
     username_changed_at: null,
     display_name: data.displayName,
     avatar: null,
-    show_explanations: 0,
+    show_explanations: 1,
+    pause_after_answer: 0,
     is_admin: 0,
     suspended_at: null,
     pings: 1,
@@ -239,8 +240,9 @@ export async function signUpVerify(context: RequestContext): Promise<Response> {
   try {
     await context.env.DB.batch([
       context.env.DB.prepare(
-        "INSERT INTO users (id, username, display_name, created_at) VALUES (?, ?, ?, ?)",
-      ).bind(user.id, user.username, user.display_name, now),
+        `INSERT INTO users (id, username, display_name, show_explanations, created_at)
+           VALUES (?, ?, ?, ?, ?)`,
+      ).bind(user.id, user.username, user.display_name, user.show_explanations, now),
       insertPasskey(context, user.id, info.credential, now),
     ]);
   } catch {

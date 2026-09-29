@@ -631,27 +631,6 @@ function Settings({ user }: { user: AccountUser }) {
           />
         </div>
         <div className="setting">
-          <span className="setting-name" id="explain-label">
-            Explanations
-          </span>
-          <div className="segmented" role="group" aria-labelledby="explain-label">
-            {[false, true].map((value) => (
-              <button
-                key={String(value)}
-                type="button"
-                aria-pressed={user.showExplanations === value}
-                disabled={saving.busy}
-                onClick={() => void saving.run(() => updateAccount({ showExplanations: value }))}
-              >
-                {value ? "Each answer" : "At the end"}
-              </button>
-            ))}
-          </div>
-          <p className="setting-hint muted small">
-            In games with friends. Solo games always explain each answer.
-          </p>
-        </div>
-        <div className="setting">
           <span className="setting-name" id="leaderboard-label">
             Public leaderboard
           </span>
