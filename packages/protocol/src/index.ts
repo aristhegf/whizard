@@ -71,6 +71,12 @@ export const clientMessageSchema = z.discriminatedUnion("type", [
     avatar: z.string().max(CUSTOM_AVATAR_MAX_LENGTH).optional(),
   }),
   z.object({ type: z.literal("leave") }),
+  /** Change your own nickname or avatar between games. */
+  z.object({
+    type: z.literal("profile"),
+    nickname: z.string().max(100),
+    avatar: z.string().max(CUSTOM_AVATAR_MAX_LENGTH).optional(),
+  }),
   z.object({ type: z.literal("ping"), t: z.number() }),
   z.object({ type: z.literal("chooseGame"), game: z.string().max(32) }),
   z.object({ type: z.literal("configure"), settings: z.unknown() }),

@@ -213,6 +213,45 @@ export function leaveRoom(
   return settle(next, without(connected, playerId), now);
 }
 
+export type ProfileError = "nickname_invalid" | "nickname_taken" | "game_in_progress";
+
+export type ProfileResult =
+  | { ok: true; state: RoomState; player: Player; renamed: boolean }
+  | { ok: false; error: ProfileError };
+
+/**
+ * A player changes their nickname or avatar between games. Games keep the names they started
+ * with, so it waits while one is running.
+ */
+export function updatePlayer(
+  state: RoomState,
+  playerId: string,
+  change: { nickname: string; avatar?: string | null | undefined },
+  now: number,
+): ProfileResult {
+  const player = state.players.find((p) => p.id === playerId);
+  if (!player) return { ok: false, error: "nickname_invalid" };
+  if (phaseOf(state) === "playing") return { ok: false, error: "game_in_progress" };
+  const nickname = normalizeNickname(change.nickname);
+  if (!nickname) return { ok: false, error: "nickname_invalid" };
+  if (state.players.some((p) => p.id !== playerId && sameNickname(p.nickname, nickname))) {
+    return { ok: false, error: "nickname_taken" };
+  }
+  const updated: Player = {
+    ...player,
+    nickname,
+    avatar: change.avatar === undefined ? player.avatar : change.avatar,
+    lastSeenAt: now,
+  };
+  const players = state.players.map((p) => (p.id === playerId ? updated : p));
+  return {
+    ok: true,
+    state: { ...state, players, lastActivityAt: now },
+    player: updated,
+    renamed: updated.nickname !== player.nickname,
+  };
+}
+
 export function markDisconnected(
   state: RoomState,
   playerId: string,

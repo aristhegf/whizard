@@ -8,7 +8,7 @@ async function openRoom(page: Page) {
   await page.getByRole("button", { name: "Create a Room" }).click();
   // The home page has a Join button too (for codes), so wait until the room is open.
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
-  await page.getByRole("button", { name: "Join", exact: true }).click();
+  // Signed in, they go straight in under their account name.
   await page.getByLabel("Questions").selectOption("5");
 }
 
@@ -215,7 +215,6 @@ test("friends add each other, play together and see their record", async ({ brow
   // One game together.
   await openRoom(ada);
   await tolu.goto(ada.url());
-  await tolu.getByRole("button", { name: "Join", exact: true }).click();
   await expect(
     ada.getByRole("list", { name: "Players" }).getByRole("listitem").filter({ hasText: "Tolu" }),
   ).toBeVisible();
@@ -256,7 +255,6 @@ test("offers to add signed-in players after a game", async ({ browser }) => {
 
   await openRoom(ada);
   await tolu.goto(ada.url());
-  await tolu.getByRole("button", { name: "Join", exact: true }).click();
   await ada.getByRole("button", { name: /start game/i }).press("Enter");
   for (const page of [ada, tolu]) {
     for (let i = 1; i <= 5; i++) {
@@ -288,7 +286,6 @@ test("pings a friend from the friends page and the lobby", async ({ browser }) =
   await ada.goto("/friends");
   await ada.getByRole("button", { name: "Ping", exact: true }).click();
   await expect(ada).toHaveURL(/\/r\/[A-Z0-9]{6}/);
-  await ada.getByRole("button", { name: "Join", exact: true }).click();
   const pings = ada.getByRole("region", { name: "Ping a friend" });
   await expect(pings.getByRole("status")).toHaveText("Can’t get pings now");
 

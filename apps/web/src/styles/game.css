@@ -446,6 +446,15 @@
   background: linear-gradient(to bottom, transparent, rgb(8 7 31 / 96%) 35%);
 }
 
+/* A blur on the card would make it the dock's frame instead of the screen, leaving the dock
+   over the player list. Below 900px, where the dock is pinned, the card goes without. */
+@media (max-width: 899px) {
+  .room-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 .btn-start {
   min-height: 60px;
   font-size: 1.2rem;
@@ -1392,13 +1401,6 @@ button.choice:disabled {
   color: #ff7b8c;
 }
 
-.join-logo {
-  width: min(62vw, 260px);
-  height: auto;
-  margin: 4px 0 -8px;
-  filter: drop-shadow(0 12px 30px rgb(130 60 255 / 45%));
-}
-
 .notice img {
   width: 160px;
   height: auto;
@@ -1885,4 +1887,30 @@ button.choice:disabled {
 
 .settings-note {
   margin: 8px 0 0;
+}
+
+/* Your own row in the lobby: tap it to change your name or avatar. */
+.player-me {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.player-me svg {
+  flex: none;
+  color: var(--muted);
+}
+
+@media (hover: hover) {
+  .player-me:hover svg {
+    color: var(--text);
+  }
 }

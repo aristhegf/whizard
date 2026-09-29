@@ -14,6 +14,7 @@ import {
   nextDeadline,
   settle,
   toSnapshot,
+  updatePlayer,
   type ConnectedIds,
   type RoomState,
 } from "./room";
@@ -303,5 +304,38 @@ describe("room settings", () => {
     const result = joinRoom(state, { nickname: "Ada", avatar: "a03" }, new Set(), T0, ids());
     if (!result.ok) throw new Error(result.error);
     expect(toSnapshot(result.state, new Set()).players[0]?.avatar).toBe("a03");
+  });
+
+  it("lets a player change their nickname and avatar between games", () => {
+    const { state } = roomWith("Ada", "Tolu");
+    const result = updatePlayer(state, "p1", { nickname: "  Ada   L ", avatar: "a05" }, T0 + 5);
+    if (!result.ok) throw new Error(result.error);
+    expect(result.renamed).toBe(true);
+    expect(toSnapshot(result.state, new Set()).players[0]).toMatchObject({
+      nickname: "Ada L",
+      avatar: "a05",
+    });
+
+    const same = updatePlayer(result.state, "p1", { nickname: "ada l" }, T0 + 6);
+    if (!same.ok) throw new Error(same.error);
+    expect(same.renamed).toBe(true);
+    expect(same.player.avatar).toBe("a05");
+  });
+
+  it("won't take another player's nickname, an empty one, or a new one mid-game", () => {
+    const { state } = roomWith("Ada", "Tolu");
+    expect(updatePlayer(state, "p1", { nickname: "TOLU" }, T0)).toEqual({
+      ok: false,
+      error: "nickname_taken",
+    });
+    expect(updatePlayer(state, "p1", { nickname: "  " }, T0)).toEqual({
+      ok: false,
+      error: "nickname_invalid",
+    });
+    const playing = { ...state, session: { finished: false } } as RoomState;
+    expect(updatePlayer(playing, "p1", { nickname: "Ada L" }, T0)).toEqual({
+      ok: false,
+      error: "game_in_progress",
+    });
   });
 });
