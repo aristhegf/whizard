@@ -41,9 +41,7 @@ export function JigsawPage() {
     <SideLayout active="games" className="topics-page">
       <header className="side-head">
         <div>
-          <h1 className="page-title">
-            Jigsaw <span className="gradient-text">Pictures</span>
-          </h1>
+          <h1 className="page-title">Jigsaw Pictures</h1>
           <p className="page-sub">
             Everyone gets the same puzzle. Tap two pieces to swap them; the fastest to finish wins.
           </p>

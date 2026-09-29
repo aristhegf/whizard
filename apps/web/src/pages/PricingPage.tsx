@@ -116,7 +116,7 @@ export function PricingPage() {
             <h1 id="pricing-title" className="display pricing-title">
               Play for free.
               <br />
-              <span className="purple-text">Create without limits.</span>
+              Create without limits.
             </h1>
             <p className="pricing-lead">
               Whizard is free for everyone. Play games, create rooms and invite your friends.
@@ -190,8 +190,7 @@ export function PricingPage() {
 
         <section className="compare panel" aria-labelledby="compare-title">
           <h2 id="compare-title" className="display compare-title">
-            Everything you need to play.{" "}
-            <span className="purple-text">More when you’re ready to create.</span>
+            Everything you need to play. More when you’re ready to create.
           </h2>
           <table className="compare-table">
             <thead>

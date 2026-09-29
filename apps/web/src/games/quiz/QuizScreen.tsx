@@ -429,9 +429,7 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
             height={620}
           />
           <div className="results-head">
-            <h2 className="display results-title">
-              Game <span className="gradient-text">Results</span>
-            </h2>
+            <h2 className="display results-title">Game Results</h2>
             <span className="pill">
               <Icon name="trophy" size={18} />
               {categoryName} • {view.total} Questions

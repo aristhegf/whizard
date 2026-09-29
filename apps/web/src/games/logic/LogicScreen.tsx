@@ -402,9 +402,7 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
       <div className={`results-layout${solo ? " solo" : ""}`}>
         <section className="results-main">
           <div className="results-head">
-            <h2 className="display results-title">
-              Logic <span className="gradient-text">Results</span>
-            </h2>
+            <h2 className="display results-title">Logic Results</h2>
             <span className="pill">
               <Icon name="trophy" size={18} />
               {gridName(view.size)}

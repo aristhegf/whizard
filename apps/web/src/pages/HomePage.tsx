@@ -136,7 +136,7 @@ export function HomePage() {
 
       <section id="how" className="how" aria-labelledby="how-title">
         <h2 id="how-title" className="display section-display">
-          How it <span className="gradient-text">works</span>
+          How it works
         </h2>
         <ol className="steps">
           {STEPS.map((s, i) => (

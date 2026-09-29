@@ -44,6 +44,7 @@ import { LogicScreen } from "./games/logic/LogicScreen";
 import { gridName, LogicSettingsRows, parseLogicSettings } from "./games/logic/LogicSettingsRows";
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
+import { TopicPicker } from "./games/quiz/TopicPicker";
 import { RoundsEliminationScreen } from "./games/rounds/RoundsEliminationScreen";
 import { RoundsScreen } from "./games/rounds/RoundsScreen";
 import {
@@ -407,6 +408,7 @@ function Lobby({
       : 0;
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
   const url = `${location.origin}${roomPath(room.code)}`;
+  const [choosingTopic, setChoosingTopic] = useState(false);
 
   // The quiz countdown's generating effect needs three.js; fetch it while everyone gathers.
   const isQuiz = room.game.id === "quiz";
@@ -510,13 +512,21 @@ function Lobby({
                 <button
                   className="icon-btn edit-btn"
                   aria-label={jigsaw ? "Change picture" : "Change topic"}
-                  onClick={() => focusSetting(jigsaw ? "picture" : "category")}
+                  onClick={() => (jigsaw ? focusSetting("picture") : setChoosingTopic(true))}
                 >
                   <Icon name="pencil" size={20} />
                 </button>
               </Tooltip>
             )}
           </div>
+
+          {choosingTopic && settings && (
+            <TopicPicker
+              value={settings.category}
+              onPick={(next) => canEdit && client.configure({ ...settings, category: next })}
+              onClose={() => setChoosingTopic(false)}
+            />
+          )}
 
           <div className="panel settings-panel" id="room-settings">
             <h2 className="section-title">Room Settings</h2>
@@ -677,7 +687,10 @@ function Lobby({
   );
 }
 
-/** Phones with touch get "slide to start", so a stray tap can't start the game. */
+/**
+ * Phones with touch get "slide to start" when others are waiting, so a stray tap can't start the
+ * game for everyone. Alone, a stray tap costs nothing, so it's a plain button.
+ */
 const SLIDE_QUERY = "(max-width: 767px) and (pointer: coarse)";
 
 function StartButton({ alone, onStart }: { alone: boolean; onStart: () => void }) {
@@ -691,7 +704,7 @@ function StartButton({ alone, onStart }: { alone: boolean; onStart: () => void }
     setTimeout(() => (started.current = false), 1500);
   };
 
-  if (!slide) {
+  if (!slide || alone) {
     return (
       <button className="btn btn-primary btn-block btn-start" onClick={start}>
         <Icon name="play" size={20} fill />
@@ -711,7 +724,7 @@ function StartButton({ alone, onStart }: { alone: boolean; onStart: () => void }
         if (event.detail === 0) start();
       }}
     >
-      {alone ? "Slide to play solo" : "Slide to start game"}
+      Slide to start game
     </SlideActionButton>
   );
 }
