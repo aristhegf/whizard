@@ -8,7 +8,6 @@ import { useAction } from "../ui/common";
 import { Icon } from "../ui/Icon";
 import { decodeAvatar, DEFAULT_PARTS, encodeAvatar, randomParts, type AvatarParts } from "./code";
 import {
-  EXPRESSIONS,
   EYE_GAPS,
   hasPose,
   NONE,
@@ -23,8 +22,9 @@ import {
 } from "./parts";
 import { useAvatarPicture, type View } from "./render";
 
-// "Build your Whizard": the avatar is the hero on its stage, with the player's usual expression
-// under it, and a wardrobe of parts beside it. Every choice is shown on the player's own avatar.
+// "Build your Whizard": the avatar is the hero on its stage, with a wardrobe of parts beside it.
+// Every choice is shown on the player's own avatar. Expressions are the game's to pull (for its
+// reactions), so the player only picks their parts.
 
 // Close-ups, so small parts like eyes are easy to compare.
 const EYES: View = { x: 292, y: 250, size: 440 };
@@ -107,7 +107,6 @@ const ALL_TABS: Tab[] = [
     id: "mouth",
     label: "Mouth",
     view: MOUTH,
-    note: "Your mouth when your expression is Happy. The other expressions pick their own.",
     rows: [{ kind: "options", field: "mouth", category: "mouth", view: MOUTH }],
   },
   {
@@ -220,15 +219,6 @@ function tabsFor(parts: AvatarParts): Tab[] {
   );
 }
 
-/** Expressions only change anything once there are mouths to change. */
-const EXPRESSIONS_SHOW = PARTS.mouth.length > 1;
-
-/** A wink needs eyes drawn closed; until then it isn't offered. */
-function expressionsFor(parts: AvatarParts) {
-  const winks = optionOf("eyes", parts.eyes).files.includes("closed");
-  return EXPRESSIONS.filter((e) => e.eyes !== "wink" || winks);
-}
-
 /** Where Save and Cancel go: the page that opened the creator, if it's one of ours. */
 function backPath(): string {
   const back = new URLSearchParams(location.search).get("back");
@@ -313,27 +303,6 @@ function Builder({ start, signedIn }: { start: AvatarParts; signedIn: boolean })
         <div className="builder-hero">
           <Picture code={code} size={300} className="builder-picture" label="Your avatar" />
         </div>
-        {EXPRESSIONS_SHOW && (
-          <div className="builder-faces" role="radiogroup" aria-label="Expression">
-            {expressionsFor(parts).map((e) => (
-              <button
-                key={e.id}
-                type="button"
-                role="radio"
-                aria-checked={parts.expression === e.id}
-                title={e.name}
-                onClick={() => set("expression", e.id)}
-              >
-                <Picture
-                  code={encodeAvatar({ ...parts, expression: e.id })}
-                  size={52}
-                  view={FACE}
-                />
-                <span>{e.name}</span>
-              </button>
-            ))}
-          </div>
-        )}
         <div className="builder-actions">
           <button
             type="button"

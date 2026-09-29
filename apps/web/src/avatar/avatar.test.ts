@@ -31,7 +31,7 @@ const TEST_PARTS: Catalogue = {
   face: [option("classic", ["head"], { paintedFor: "skin" })],
   hair: [none, option("afro", ["back", "front", "hat-front", "hat-back"])],
   eyes: [option("round", ["open", "closed", "wide"])],
-  mouth: [option("grin", ["mouth"]), option("m4", ["mouth"]), option("m6", ["mouth"])],
+  mouth: [option("grin", ["mouth"]), option("m28", ["mouth"]), option("m6", ["mouth"])],
   earrings: [none, option("hoops", ["earrings"])],
   glasses: [none, option("round", ["glasses"])],
   headwear: [
@@ -121,13 +121,13 @@ describe("avatar layers", () => {
   });
 
   it("draws one eye in its colour, with lashes fitted to it, and flips both for the other side", () => {
-    const { layers } = avatarLayers(parts({ eyes: "e3", eyeColour: "3", lashes: "l12" }));
+    const { layers } = avatarLayers(parts({ eyes: "e3", eyeColour: "3", lashes: "l13" }));
     expect(layers).toContainEqual({
       src: "/art/avatar-parts/front/eyes/e3/open-3.webp",
       pair: true,
     });
     const lashes = layers.find((l) => l.src.includes("/eyelashes/"));
-    expect(lashes?.src).toBe("/art/avatar-parts/front/eyelashes/l12/lashes.webp");
+    expect(lashes?.src).toBe("/art/avatar-parts/front/eyelashes/l13/lashes.webp");
     expect(lashes?.pair).toBe(true);
     // The lashes are drawn for a wider eye than any now, so they shrink to fit.
     const lid = PARTS.eyes.find((e) => e.id === "e3")!.lid!;
@@ -200,7 +200,7 @@ describe("avatar layers", () => {
     ]);
     // A laugh from the game wins over the player's wink.
     expect(eyes({ eyes: "closed" }, "wink")).toEqual([["closed.png", undefined]]);
-    expect(srcs({ expression: "wink" })).toContain("/art/avatar-parts/front/mouth/m4/mouth.png");
+    expect(srcs({ expression: "wink" })).toContain("/art/avatar-parts/front/mouth/m28/mouth.png");
   });
 
   it("draws a mirrored pose from the pose it mirrors, flipped", () => {

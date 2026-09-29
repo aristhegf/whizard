@@ -83,7 +83,8 @@ export function randomParts(random: () => number = Math.random): AvatarParts {
   const pose = poseOf(parts.pose);
   for (const field of AVATAR_FIELDS) {
     const source = FIELD_SOURCES[field];
-    if (field === "pose") continue;
+    // The player doesn't pick an expression; the game pulls faces for its reactions.
+    if (field === "pose" || field === "expression") continue;
     if (!("category" in source)) {
       parts[field] = pick(choicesOf(field)).id;
       continue;

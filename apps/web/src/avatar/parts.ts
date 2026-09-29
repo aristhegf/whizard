@@ -93,7 +93,7 @@ export const EYE_GAPS: readonly { id: string; name: string }[] = [-3, -2, -1, 0,
 export const EXPRESSIONS: readonly Expression[] = [
   { id: "happy", name: "Happy" },
   { id: "laugh", name: "Laughing", eyes: "closed", mouth: "m6", brows: "raised" },
-  { id: "wink", name: "Wink", eyes: "wink", mouth: "m4" },
+  { id: "wink", name: "Wink", eyes: "wink", mouth: "m28" },
   { id: "cheeky", name: "Cheeky", eyes: "wink", mouth: "m22" },
   { id: "surprised", name: "Surprised", eyes: "wide", mouth: "m21", brows: "raised" },
   { id: "thinking", name: "Thinking", mouth: "m3", brows: "worried" },
@@ -108,17 +108,24 @@ export const CREATOR_OPEN = false;
 export const NONE = "none";
 const none = (name = "None"): PartOption => ({ id: NONE, name, files: [] });
 
-/** The top and width of each eye shape on the grid, measured from the art. */
-const EYE_LIDS = [
-  { top: 418, width: 124 },
-  { top: 429, width: 136 },
-  { top: 427, width: 144 },
-  { top: 433, width: 143 },
-  { top: 433, width: 140 },
-  { top: 430, width: 138 },
-  { top: 431, width: 133 },
-  { top: 432, width: 127 },
+// Twelve of each (all eight eye shapes), picked to look clearly different from each other. Ids
+// are kept when styles are dropped, so saved avatars keep theirs (and ones whose style went get
+// the default).
+
+/** Each eye shape, with where the top of the eye is on the grid and how wide it is. */
+const EYE_SHAPES = [
+  { n: 1, top: 418, width: 124 },
+  { n: 2, top: 429, width: 136 },
+  { n: 3, top: 427, width: 144 },
+  { n: 4, top: 433, width: 143 },
+  { n: 5, top: 433, width: 140 },
+  { n: 6, top: 430, width: 138 },
+  { n: 7, top: 431, width: 133 },
+  { n: 8, top: 432, width: 127 },
 ];
+const LASHES = [1, 3, 5, 7, 9, 11, 13, 15, 18, 19, 21, 24];
+const BROWS = [1, 2, 4, 5, 7, 8, 9, 10, 11, 13, 15, 18];
+const MOUTHS = [1, 3, 15, 20, 24, 28, 13, 6, 19, 21, 22, 16];
 
 /** The finished art arrives one part at a time; a category with only None isn't offered yet. */
 export const PARTS: Record<PartCategory, readonly PartOption[]> = {
@@ -133,8 +140,8 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
     },
   ],
   hair: [none("Bald")],
-  eyes: EYE_LIDS.map((lid, i) => ({
-    id: `e${i + 1}`,
+  eyes: EYE_SHAPES.map(({ n, ...lid }, i) => ({
+    id: `e${n}`,
     name: `Eyes ${i + 1}`,
     files: ["open"],
     ext: "webp" as const,
@@ -145,8 +152,8 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
   })),
   lashes: [
     none(),
-    ...Array.from({ length: 24 }, (_, i) => ({
-      id: `l${i + 1}`,
+    ...LASHES.map((n, i) => ({
+      id: `l${n}`,
       name: `Lashes ${i + 1}`,
       files: ["lashes"],
       ext: "webp" as const,
@@ -155,21 +162,17 @@ export const PARTS: Record<PartCategory, readonly PartOption[]> = {
     })),
   ],
   // Drawn in grey and coloured with the hair colour.
-  brows: [
-    none(),
-    // Ids are kept when styles are dropped, so saved avatars keep theirs.
-    ...[1, 2, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 18, 19].map((n, i) => ({
-      id: `b${n}`,
-      name: `Brows ${i + 1}`,
-      files: ["brows"],
-      ext: "webp" as const,
-      pair: true,
-      poses: ["front"],
-    })),
-  ],
+  brows: BROWS.map((n, i) => ({
+    id: `b${n}`,
+    name: `Brows ${i + 1}`,
+    files: ["brows"],
+    ext: "webp" as const,
+    pair: true,
+    poses: ["front"],
+  })),
   // Painted once, and tinted to each skin tone so the lips match the face.
-  mouth: Array.from({ length: 30 }, (_, i) => ({
-    id: `m${i + 1}`,
+  mouth: MOUTHS.map((n, i) => ({
+    id: `m${n}`,
     name: `Mouth ${i + 1}`,
     files: ["mouth"],
     ext: "webp" as const,

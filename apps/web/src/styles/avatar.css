@@ -109,50 +109,6 @@
   filter: drop-shadow(0 0 28px color-mix(in srgb, var(--stage) 65%, transparent));
 }
 
-.builder-faces {
-  display: flex;
-  gap: 10px;
-  max-width: 100%;
-  overflow-x: auto;
-  padding: 4px 4px 8px;
-  scrollbar-width: none;
-}
-
-.builder-faces::-webkit-scrollbar {
-  display: none;
-}
-
-.builder-faces button {
-  flex: none;
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-  width: 64px;
-  color: var(--muted);
-  font-weight: 700;
-  font-size: 0.72rem;
-}
-
-.builder-faces img {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 2px rgb(255 255 255 / 12%);
-  transition:
-    box-shadow 140ms ease,
-    transform 140ms ease;
-}
-
-.builder-faces button[aria-checked="true"] {
-  color: var(--gold);
-}
-
-.builder-faces button[aria-checked="true"] img {
-  box-shadow:
-    0 0 0 3px var(--gold),
-    0 0 18px rgb(255 212 63 / 45%);
-}
-
 .builder-actions {
   display: flex;
   flex-wrap: wrap;
@@ -406,8 +362,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .wardrobe-options button:active img,
-  .wardrobe-swatches button:active,
-  .builder-faces button:active img {
+  .wardrobe-swatches button:active {
     transform: scale(0.95);
   }
 }
