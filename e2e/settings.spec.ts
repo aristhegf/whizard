@@ -1,14 +1,18 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
 
-test("a guest can change sound and animations from the menu, and they're remembered", async ({
-  page,
-}) => {
+/** The words on each link or button in a navigation bar, in order. */
+async function labels(page: Page, name: string) {
+  const bar = page.getByRole("navigation", { name });
+  await expect(bar.locator("a, button").first()).toBeVisible();
+  return (await bar.locator("a, button").allInnerTexts()).map((t) => t.trim());
+}
+
+test("a guest can change sound and animations, and they're remembered", async ({ page }) => {
   await page.goto("/games");
-  await page.getByRole("button", { name: "Open menu" }).click();
-  await page
-    .getByRole("dialog", { name: "Menu" })
-    .getByRole("button", { name: "Settings" })
-    .click();
+  // There's no menu button on phones any more: Settings is in the top bar.
+  await expect(page.getByRole("button", { name: "Open menu" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Settings" }).click();
 
   const settings = page.getByRole("dialog", { name: "Settings" });
   const sound = settings.getByRole("switch", { name: "Sound" });
@@ -27,10 +31,10 @@ test("a guest can change sound and animations from the menu, and they're remembe
   await expect(page.locator("html")).toHaveAttribute("data-reduce-motion", "");
 
   // The same settings open from the room's bar.
-  await page.getByRole("button", { name: "Create", exact: true }).click();
+  await page.goto("/");
+  await page.getByRole("button", { name: "Create a Room" }).click();
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
-  const nickname = page.getByLabel("Choose a nickname");
-  await nickname.fill("Ada");
+  await page.getByLabel("Choose a nickname").fill("Ada");
   await page.getByRole("button", { name: "Join", exact: true }).click();
   await page.getByRole("button", { name: "Settings" }).click();
   await expect(settings.getByRole("switch", { name: "Sound" })).toHaveAttribute(
@@ -41,17 +45,21 @@ test("a guest can change sound and animations from the menu, and they're remembe
   await expect(page.locator("html")).not.toHaveAttribute("data-reduce-motion");
 });
 
-test("wide screens get the same top bar on every page, with the site links in the footer", async ({
-  page,
-}) => {
+test("guests get Games, Pricing, About and Stats, on every page", async ({ page }) => {
+  // Phones: the tabs at the bottom.
+  await page.goto("/");
+  expect(await labels(page, "Sections")).toEqual(["Games", "Pricing", "Stats", "Profile"]);
+  await page
+    .getByRole("navigation", { name: "Sections" })
+    .getByRole("link", { name: "Pricing" })
+    .click();
+  await expect(page).toHaveURL(/\/pricing$/);
+
+  // Wide screens: the top bar, the same on every page, with the site links in the footer too.
   await page.setViewportSize({ width: 1280, height: 800 });
   for (const path of ["/", "/games", "/games/quiz", "/account", "/about"]) {
     await page.goto(path);
-    const bar = page.getByRole("navigation", { name: "Main" });
-    for (const name of ["Games", "Quiz Topics", "Friends"]) {
-      await expect(bar.getByRole("link", { name, exact: true })).toBeVisible();
-    }
-    await expect(bar.getByRole("button", { name: "Create" })).toBeVisible();
+    expect(await labels(page, "Main")).toEqual(["Games", "Pricing", "About", "Stats"]);
     await expect(page.getByRole("button", { name: "Settings" })).toBeVisible();
     const footer = page.getByRole("navigation", { name: "About Whizard" });
     for (const name of ["Pricing", "About", "Stats", "Privacy"]) {
@@ -62,4 +70,23 @@ test("wide screens get the same top bar on every page, with the site links in th
       path === "/account" ? 0 : 1,
     );
   }
+});
+
+test("signed-in players get Games, Friends and Create, and their avatar for the profile", async ({
+  page,
+}) => {
+  await withPasskeys(page);
+  await signUp(page, uniqueUsername(), "Ada");
+
+  const tabs = page.getByRole("navigation", { name: "Sections" });
+  expect(await labels(page, "Sections")).toEqual(["Games", "Friends", "Create", "Profile"]);
+  await expect(tabs.getByRole("link", { name: "Profile" }).locator("img.avatar")).toBeVisible();
+  await tabs.getByRole("link", { name: "Friends" }).click();
+  await expect(page).toHaveURL(/\/friends$/);
+  await tabs.getByRole("button", { name: "Create" }).click();
+  await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
+
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/games");
+  expect(await labels(page, "Main")).toEqual(["Games", "Friends", "Create"]);
 });

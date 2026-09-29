@@ -1,7 +1,7 @@
 import { StatefulButton, type ButtonState } from "@/components/motion/button/stateful";
 import { Tooltip } from "@/components/motion/tooltip";
 import type { GameId } from "@whizard/game-core";
-import { useState, type MouseEvent, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useAccount } from "../account";
 import { createRoom, ServerRefusal } from "../api";
 import { linkTo, navigate, roomPath } from "../router";
@@ -9,7 +9,7 @@ import { Avatar } from "./Avatar";
 import { Icon, type IconName } from "./Icon";
 import { useToast } from "./toast";
 import { LogoMark } from "./Logo";
-import { SettingsButton, SettingsDialog } from "./SettingsDialog";
+import { SettingsButton } from "./SettingsDialog";
 
 export type Section =
   "home" | "games" | "topics" | "friends" | "profile" | "pricing" | "about" | "stats" | null;
@@ -62,7 +62,10 @@ export function CreateRoomButton({ className }: { className: string }) {
   );
 }
 
-/** The profile picture, or Sign In for guests (except on the sign-in page itself). */
+/**
+ * The profile picture, or Sign In for guests (except on the sign-in page itself). On phones the
+ * picture is in the tabs at the bottom instead.
+ */
 function MeLink({ active, size = 44 }: { active: Section; size?: number }) {
   const account = useAccount();
   if (account.status === "loading") return <span style={{ width: size, height: size }} />;
@@ -85,13 +88,22 @@ function MeLink({ active, size = 44 }: { active: Section; size?: number }) {
   );
 }
 
-const NAV_LINKS: { label: string; href: string; section: Section }[] = [
+type NavLink = { label: string; href: string; section: Section };
+
+/** The top bar's links: about the site for guests, the games and friends once signed in. */
+const GUEST_LINKS: NavLink[] = [
   { label: "Games", href: "/games", section: "games" },
-  { label: "Quiz Topics", href: "/games/quiz", section: "topics" },
+  { label: "Pricing", href: "/pricing", section: "pricing" },
+  { label: "About", href: "/about", section: "about" },
+  { label: "Stats", href: "/stats", section: "stats" },
+];
+
+const MEMBER_LINKS: NavLink[] = [
+  { label: "Games", href: "/games", section: "games" },
   { label: "Friends", href: "/friends", section: "friends" },
 ];
 
-/** About the site rather than playing: in the footer and the phone menu. */
+/** Every link about the site, in the footer. */
 const SITE_LINKS: { label: string; href: string; section?: Section }[] = [
   { label: "How It Works", href: "/#how" },
   { label: "Pricing", href: "/pricing", section: "pricing" },
@@ -100,7 +112,29 @@ const SITE_LINKS: { label: string; href: string; section?: Section }[] = [
   { label: "Privacy", href: "/privacy" },
 ];
 
-/** The bar across the top of every page outside a game: full links on wide screens, a menu on phones. */
+/** The Quiz Topics page belongs to Games. */
+const isActive = (active: Section, section: Section) =>
+  active !== null && (active === section || (section === "games" && active === "topics"));
+
+/** Starts a room, and says so if it couldn't. */
+function useCreateRoom() {
+  const [creating, setCreating] = useState(false);
+  const toast = useToast();
+  const create = () => {
+    setCreating(true);
+    startRoom().catch((error: unknown) => {
+      setCreating(false);
+      toast.show({ title: createFailed(error), status: "error" });
+    });
+  };
+  return { creating, create };
+}
+
+/**
+ * The bar across the top of every page outside a game. Guests get Games, Pricing, About and
+ * Stats; signed-in players get Games, Friends and Create. Phones show only the logo, Settings
+ * and Sign In here, with the links in the tabs at the bottom.
+ */
 export function TopNav({
   active = null,
   children,
@@ -109,43 +143,31 @@ export function TopNav({
   /** Extra items before the profile link, such as a search box. */
   children?: ReactNode;
 }) {
-  const [menuOpen, setMenuOpen] = useState(false);
   const account = useAccount();
-  const toast = useToast();
+  const { creating, create } = useCreateRoom();
   const signedIn = account.status === "ready" && !!account.user;
+  // Until the account has loaded, it isn't known which links to show.
+  const links = account.status === "loading" ? [] : signedIn ? MEMBER_LINKS : GUEST_LINKS;
 
   return (
     <header className="topnav">
-      <button
-        className="icon-btn menu-btn"
-        aria-label="Open menu"
-        aria-expanded={menuOpen}
-        onClick={() => setMenuOpen(true)}
-      >
-        <Icon name="menu" size={26} />
-      </button>
       <Brand />
       <nav className="nav-links" aria-label="Main">
-        {NAV_LINKS.map((l) => (
+        {links.map((l) => (
           <a
             key={l.label}
             className="nav-link"
-            aria-current={active === l.section ? "page" : undefined}
+            aria-current={isActive(active, l.section) ? "page" : undefined}
             {...linkTo(l.href)}
           >
             {l.label}
           </a>
         ))}
-        <button
-          className="nav-link"
-          onClick={() =>
-            startRoom().catch((error: unknown) =>
-              toast.show({ title: createFailed(error), status: "error" }),
-            )
-          }
-        >
-          Create
-        </button>
+        {signedIn && (
+          <button className="nav-link" disabled={creating} onClick={create}>
+            Create
+          </button>
+        )}
       </nav>
       <div className="nav-end">
         {children}
@@ -156,66 +178,10 @@ export function TopNav({
             </a>
           </Tooltip>
         )}
-        <span className="nav-settings">
-          <SettingsButton />
-        </span>
+        <SettingsButton />
         <MeLink active={active} />
       </div>
-      {menuOpen && <MobileMenu onClose={() => setMenuOpen(false)} />}
     </header>
-  );
-}
-
-function MobileMenu({ onClose }: { onClose: () => void }) {
-  const account = useAccount();
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const signedIn = account.status === "ready" && !!account.user;
-  const items: { label: string; href: string; icon: IconName }[] = [
-    { label: "Home", href: "/", icon: "home" },
-    { label: "Games", href: "/games", icon: "games" },
-    { label: "Quiz topics", href: "/games/quiz", icon: "star" },
-    { label: "Friends", href: "/friends", icon: "users" },
-    { label: signedIn ? "My profile" : "Sign in", href: "/account", icon: "user" },
-  ];
-  const go = (href: string) => {
-    const link = linkTo(href);
-    return {
-      href: link.href,
-      onClick: (event: MouseEvent<HTMLAnchorElement>) => {
-        link.onClick(event);
-        onClose();
-      },
-    };
-  };
-  return (
-    <div className="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">
-      <div className="topnav">
-        <Brand />
-        <button className="icon-btn" aria-label="Close menu" onClick={onClose}>
-          <Icon name="close" size={26} />
-        </button>
-      </div>
-      <nav aria-label="Main">
-        {items.map((item) => (
-          <a key={item.href} className="menu-item" {...go(item.href)}>
-            <Icon name={item.icon} />
-            {item.label}
-          </a>
-        ))}
-        <button className="menu-item" onClick={() => setSettingsOpen(true)}>
-          <Icon name="settings" />
-          Settings
-        </button>
-        <div className="menu-site">
-          {SITE_LINKS.map((l) => (
-            <a key={l.href} {...go(l.href)}>
-              {l.label}
-            </a>
-          ))}
-        </div>
-      </nav>
-      {settingsOpen && <SettingsDialog onClose={() => setSettingsOpen(false)} />}
-    </div>
   );
 }
 
@@ -239,53 +205,53 @@ function SiteFooter({ active }: { active: Section }) {
   );
 }
 
-/** The bottom tabs on phones: Home, Games, Create and Profile. */
+/**
+ * The tabs at the bottom on phones. Guests: Games, Pricing, Stats and Profile. Signed in: Games,
+ * Friends, Create and their own avatar for the profile.
+ */
 export function TabBar({ active = null }: { active?: Section }) {
-  const [creating, setCreating] = useState(false);
-  const toast = useToast();
-  const tabs: { label: string; href: string; icon: IconName; section: Section }[] = [
-    { label: "Home", href: "/", icon: "home", section: "home" },
-    { label: "Games", href: "/games", icon: "games", section: "games" },
-  ];
+  const account = useAccount();
+  const { creating, create } = useCreateRoom();
+  const user = account.status === "ready" ? account.user : null;
+  const tab = (label: string, href: string, icon: IconName, section: Section) => (
+    <a
+      key={label}
+      className="tab"
+      aria-current={isActive(active, section) ? "page" : undefined}
+      {...linkTo(href)}
+    >
+      <Icon name={icon} size={24} />
+      {label}
+    </a>
+  );
+
   return (
     <nav className="tabbar" aria-label="Sections">
-      {tabs.map((t) => (
-        <a
-          key={t.label}
-          className="tab"
-          aria-current={
-            active === t.section || (t.section === "games" && active === "topics")
-              ? "page"
-              : undefined
-          }
-          {...linkTo(t.href)}
-        >
-          <Icon name={t.icon} size={24} />
-          {t.label}
-        </a>
-      ))}
-      <button
-        className="tab"
-        disabled={creating}
-        onClick={() => {
-          setCreating(true);
-          startRoom().catch((error: unknown) => {
-            setCreating(false);
-            toast.show({ title: createFailed(error), status: "error" });
-          });
-        }}
-      >
-        <Icon name="plusCircle" size={24} />
-        Create
-      </button>
-      <a
-        className="tab"
-        aria-current={active === "profile" || active === "friends" ? "page" : undefined}
-        {...linkTo("/account")}
-      >
-        <Icon name="user" size={24} />
-        Profile
-      </a>
+      {account.status === "loading" ? null : user ? (
+        <>
+          {tab("Games", "/games", "games", "games")}
+          {tab("Friends", "/friends", "users", "friends")}
+          <button className="tab" disabled={creating} onClick={create}>
+            <Icon name="plusCircle" size={24} />
+            Create
+          </button>
+          <a
+            className="tab"
+            aria-current={active === "profile" ? "page" : undefined}
+            {...linkTo("/account")}
+          >
+            <Avatar id={user.avatar} name={user.username} size={26} />
+            Profile
+          </a>
+        </>
+      ) : (
+        <>
+          {tab("Games", "/games", "games", "games")}
+          {tab("Pricing", "/pricing", "crown", "pricing")}
+          {tab("Stats", "/stats", "chart", "stats")}
+          {tab("Profile", "/account", "user", "profile")}
+        </>
+      )}
     </nav>
   );
 }
