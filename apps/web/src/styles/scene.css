@@ -46,46 +46,53 @@
   user-select: none;
 }
 
-/* The night sky through the three arched windows: stars, nebula, clouds and the odd shooting
-   star move behind the glass, further away than the room, so they lean the least. */
+/* The night sky through the three arched windows: a picture of its own, shown only through the
+   glass (the mask is the openings, with the plants, candles and lantern left in front). It's
+   further away than the room, so it leans the least, and it pans very slowly on its own. */
 .scene-sky {
   position: absolute;
-  left: 53.5%;
-  top: 8.3%;
-  width: 24.4%;
-  height: 49%;
+  left: calc(869% / 16.72);
+  top: calc(31% / 9.41);
+  width: calc(468% / 16.72);
+  height: calc(529% / 9.41);
   overflow: hidden;
+  mask: url("/art/scenes/home-sky-mask.webp") 0 0 / 100% 100% no-repeat;
+}
+
+.sky-far {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(calc(var(--px) * 7px), calc(var(--py) * 5px), 0);
+}
+
+.sky-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: sky-pan 90s ease-in-out infinite alternate;
+}
+
+@keyframes sky-pan {
+  from {
+    translate: 5px 1px;
+  }
+
+  to {
+    translate: -5px -1px;
+  }
+}
+
+.sky-glow {
+  position: absolute;
+  inset: 0;
   mix-blend-mode: screen;
-  clip-path: polygon(
-    0.7% 16%,
-    4% 8%,
-    12.4% 3.7%,
-    21% 8%,
-    25.3% 16%,
-    25.3% 100%,
-    28.7% 100%,
-    28.7% 13%,
-    36% 5%,
-    51.4% 0%,
-    66% 5%,
-    74% 13%,
-    74% 100%,
-    76.4% 100%,
-    76.4% 16%,
-    80% 8%,
-    87% 3.7%,
-    94% 8%,
-    97.8% 16%,
-    97.8% 100%,
-    0.7% 100%
-  );
 }
 
 .sky-stars,
 .sky-nebula {
   position: absolute;
   inset: -20%;
-  transform: translate3d(calc(var(--px) * 6px), calc(var(--py) * 4px), 0);
 }
 
 .sky-stars {
@@ -126,14 +133,14 @@
     radial-gradient(40% 22% at 60% 26%, rgb(214 90 255 / 45%), transparent 70%),
     radial-gradient(34% 26% at 30% 44%, rgb(120 80 255 / 40%), transparent 70%),
     radial-gradient(30% 20% at 76% 58%, rgb(255 110 210 / 30%), transparent 70%);
-  opacity: 0.45;
+  opacity: 0.3;
   animation: sky-nebula 70s ease-in-out infinite alternate;
 }
 
 @keyframes sky-nebula {
   to {
     translate: 9% -4%;
-    opacity: 0.7;
+    opacity: 0.5;
   }
 }
 
@@ -376,13 +383,82 @@
   animation-delay: -7s;
 }
 
-/* The drifting motes are nearest, so they lean the most. */
+/* The drifting motes float through the room, in front of it, so they lean more than it does. */
 .scene-sparkles {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  transform: translate3d(calc(var(--px) * -18px), calc(var(--py) * -12px), 0);
+  transform: translate3d(calc(var(--px) * -16px), calc(var(--py) * -10px), 0);
+}
+
+/* Nearest of all: the sofa with its pouf and plant, and the gaming chair, over the room's own
+   (a little bigger, as they're nearer), leaning more than the room. Only on screens wide
+   enough to show them past the cards. */
+.scene-near {
+  position: absolute;
+  inset: 0;
+  display: none;
+  transform: translate3d(calc(var(--px) * -8px), calc(var(--py) * -5px), 0);
+}
+
+@media (min-width: 900px) {
+  .scene-near {
+    display: block;
+  }
+}
+
+.near-sofa,
+.near-chair,
+.near-leaves {
+  position: absolute;
+  background: 0 0 / 100% 100% no-repeat;
+}
+
+.near-sofa {
+  left: calc(-10% / 16.72);
+  top: calc(274% / 9.41);
+  width: calc(1032% / 16.72);
+  aspect-ratio: 1290 / 930;
+  background-image: url("/art/scenes/home-sofa.webp");
+}
+
+/* The plant's leaves, swaying from the top of the pot. */
+.near-leaves {
+  left: calc(755% / 12.9);
+  top: 0;
+  width: calc(535% / 12.9);
+  height: calc(442% / 9.3);
+  background-image: url("/art/scenes/home-leaves.webp");
+  transform-origin: 48.6% 100%;
+  animation: scene-rustle 9s ease-in-out -2s infinite alternate;
+}
+
+/* The little crown lamp on the pouf. */
+.near-candle {
+  position: absolute;
+  left: calc(190% / 12.9);
+  top: calc(515% / 9.3);
+  width: 22%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgb(255 200 100 / 55%),
+    rgb(255 150 50 / 18%) 50%,
+    transparent
+  );
+  mix-blend-mode: screen;
+  animation: scene-flicker 3.1s ease-in-out -1s infinite;
+}
+
+.near-chair {
+  left: calc(1458% / 16.72);
+  top: calc(425% / 9.41);
+  width: calc(206% / 16.72);
+  aspect-ratio: 456 / 700;
+  background-image: url("/art/scenes/home-chair.webp");
 }
 
 /* Keeps the screen's words easy to read over the room: darker along the top bar and the edges,
