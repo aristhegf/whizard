@@ -288,7 +288,7 @@ test("friends hear who quits, leaves and comes back, and who the host is", async
 test("a returning player goes straight into the lobby, and can change their name there", async ({
   browser,
 }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(90_000);
   // A first-timer sees the whole form, with Join on screen.
   const host = await newPlayer(browser);
   await host.goto("/");

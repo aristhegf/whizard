@@ -33,10 +33,13 @@ import { useToast, useToastAction } from "./ui/toast";
 
 /** Wraps a screen that needs an account, offering sign-in first. */
 function SignedInOnly({
+  title,
   next,
   message,
   children,
 }: {
+  /** The page's heading, shown to guests too. */
+  title: string;
   next: string;
   message: string;
   children: (me: { username: string }) => ReactNode;
@@ -50,7 +53,10 @@ function SignedInOnly({
         children(account.user)
       ) : (
         <div className="screen">
-          <p>{message}</p>
+          <header>
+            <h1 className="page-title">{title}</h1>
+            <p className="page-sub">{message}</p>
+          </header>
           <a
             className="btn btn-primary btn-block"
             {...linkTo(`/account?next=${encodeURIComponent(next)}`)}
@@ -102,7 +108,11 @@ const record = (friend: Friend) =>
 
 export function FriendsScreen() {
   return (
-    <SignedInOnly next="/friends" message="Sign in to add friends and see how you do against them.">
+    <SignedInOnly
+      title="Friends"
+      next="/friends"
+      message="Sign in to add friends and see how you do against them."
+    >
       {(me) => <Friends username={me.username} />}
     </SignedInOnly>
   );
@@ -467,7 +477,11 @@ function GroupForm({
 
 export function GroupScreen({ id }: { id: string }) {
   return (
-    <SignedInOnly next={`/groups/${encodeURIComponent(id)}`} message="Sign in to see this group.">
+    <SignedInOnly
+      title="Group"
+      next={`/groups/${encodeURIComponent(id)}`}
+      message="Sign in to see this group."
+    >
       {(me) => <Group id={id} me={me.username} />}
     </SignedInOnly>
   );

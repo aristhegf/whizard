@@ -429,10 +429,6 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
                 <Icon name="games" size={22} />
                 Change Settings
               </button>
-              <button className="btn" onClick={share}>
-                <Icon name="share" size={20} />
-                Share Results
-              </button>
             </div>
           ) : (
             <p className="muted center">Waiting for the host to start the next game.</p>

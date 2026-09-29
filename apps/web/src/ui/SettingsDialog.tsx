@@ -3,6 +3,7 @@ import type { AccountUser } from "@whizard/protocol";
 import { useEffect, useRef, useState } from "react";
 import { updateAccount, useAccount } from "../account";
 import { setReduceMotion, useReduceMotionSetting } from "../display";
+import { linkTo } from "../router";
 import { setMuted, useMuted } from "../sounds";
 import { Icon, type IconName } from "./Icon";
 import { useToastAction } from "./toast";
@@ -17,6 +18,7 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
   const reduceMotion = useReduceMotionSetting();
   const account = useAccount();
   const user = account.status === "ready" ? account.user : null;
+  const signIn = linkTo("/account");
 
   useEffect(() => {
     dialog.current?.showModal();
@@ -68,8 +70,17 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
           <GameSettings user={user} />
         ) : (
           <p className="muted small settings-note">
-            Sign in to choose when you see the explanations, and how quickly the next question comes
-            after you answer.
+            <a
+              {...signIn}
+              onClick={(event) => {
+                onClose();
+                signIn.onClick(event);
+              }}
+            >
+              Sign in
+            </a>{" "}
+            to choose when you see the explanations, and how quickly the next question comes after
+            you answer.
           </p>
         )}
       </section>

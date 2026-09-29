@@ -853,9 +853,10 @@ select option {
   max-width: 540px;
 }
 
+/* Phones and tablets: the search takes the full width under the title. */
 @media (max-width: 1099px) {
   .side-head .head-actions {
-    display: none;
+    flex-basis: 100%;
   }
 }
 

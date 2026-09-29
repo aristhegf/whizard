@@ -311,6 +311,11 @@
   font-weight: 800;
 }
 
+/* The hint under a switch's name reads like the other hints, not bold. */
+.toggle-text .small {
+  font-weight: 400;
+}
+
 .room-card {
   display: grid;
   gap: 14px;
@@ -936,7 +941,7 @@ button.choice:disabled {
 
 /* Laptops with short screens: tighter spacing and choices, so the explanation and the Next row
    fit on the screen with the question. */
-@media (min-width: 768px) and (max-height: 860px) {
+@media (min-width: 768px) and (max-height: 960px) {
   .game-main {
     padding-top: 12px;
     gap: 18px;
@@ -1231,7 +1236,6 @@ button.choice:disabled {
   }
 
   .results-actions {
-    grid-template-columns: 1fr 1fr;
     width: min(100%, 560px);
   }
 
@@ -1242,7 +1246,6 @@ button.choice:disabled {
   }
 
   .results-actions .btn-primary {
-    grid-column: 1 / -1;
     min-height: 80px;
     font-size: 1.25rem;
   }
@@ -1357,14 +1360,14 @@ button.choice:disabled {
   }
 }
 
+/* As wide as its text reads well, and centred, rather than a half-empty panel on wide screens. */
 .review-panel {
   display: grid;
   gap: 14px;
+  width: 100%;
+  max-width: calc(72ch + 48px);
+  justify-self: center;
   padding: 24px;
-}
-
-.review-panel > * {
-  max-width: 72ch;
 }
 
 .review {
@@ -1732,6 +1735,39 @@ button.choice:disabled {
 @media (hover: hover) {
   .topic-option:hover:not(:disabled) {
     border-color: var(--line-strong);
+  }
+}
+
+/* The title and Close stay put while the topics scroll between them. */
+.topic-picker[open] {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topic-picker .topic-options {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Phones: three smaller tiles a row, so the whole list and Close fit on screen. */
+@media (max-width: 520px) {
+  .topic-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .topic-option {
+    gap: 4px;
+    padding: 8px 4px 10px;
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+
+  .topic-option img {
+    width: 44px;
+    height: 44px;
   }
 }
 

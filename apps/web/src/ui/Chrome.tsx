@@ -63,14 +63,15 @@ export function CreateRoomButton({ className }: { className: string }) {
 }
 
 /**
- * The profile picture, or Sign In for guests (except on the sign-in page itself). On phones the
- * picture is in the tabs at the bottom instead.
+ * The profile picture, or Sign In for guests (except where the page itself asks them to sign in).
+ * On phones the picture is in the tabs at the bottom instead.
  */
 function MeLink({ active, size = 44 }: { active: Section; size?: number }) {
   const account = useAccount();
   if (account.status === "loading") return <span style={{ width: size, height: size }} />;
   if (!account.user) {
-    if (active === "profile") return null;
+    // The sign-in page, and the friends pages that ask guests to sign in, have their own button.
+    if (active === "profile" || active === "friends") return null;
     return (
       <a className="btn signin-btn" {...linkTo("/account")}>
         Sign In
