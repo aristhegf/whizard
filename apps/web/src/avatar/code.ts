@@ -12,7 +12,7 @@ export type AvatarParts = Record<AvatarField, string>;
 export const DEFAULT_PARTS: AvatarParts = {
   face: "classic",
   skin: "4",
-  hair: NONE,
+  hair: "h1",
   hairColour: "0",
   eyes: "e2",
   brows: "b5",

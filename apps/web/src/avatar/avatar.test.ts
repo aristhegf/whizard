@@ -133,6 +133,15 @@ describe("avatar layers", () => {
     });
   });
 
+  it("draws the hair in the hair colour, and a bandana in its own colours", () => {
+    const { layers } = avatarLayers(parts({ hair: "h38", hairColour: "8" }));
+    const hair = layers.filter((l) => l.src.includes("/hair/"));
+    expect(hair).toEqual([
+      { src: "/art/avatar-parts/front/hair/h38/front.webp", tint: PALETTES.hair[8]!.colour },
+      { src: "/art/avatar-parts/front/hair/h38/details.webp" },
+    ]);
+  });
+
   it("sits the brows as far above every eye shape, and lifts them over tall lashes", () => {
     const browDy = (p: Partial<AvatarParts>) =>
       avatarLayers(parts(p)).layers.find((l) => l.src.includes("/eyebrows/"))?.dy;

@@ -133,7 +133,11 @@ export function avatarLayers(
   });
   add("glasses", parts.glasses, "glasses");
 
-  if (covers === "none") add("hair", parts.hair, "front", { tint: hairColour });
+  if (covers === "none") {
+    add("hair", parts.hair, "front", { tint: hairColour });
+    // A bandana or headband, in its own colours.
+    add("hair", parts.hair, "details");
+  }
   if (covers === "top") add("hair", parts.hair, "hat-front", { tint: hairColour });
   add("headwear", parts.headwear, "front", headwearTint);
   add("headwear", parts.headwear, "details");
