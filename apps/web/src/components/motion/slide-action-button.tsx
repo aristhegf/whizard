@@ -5,7 +5,7 @@ import {
   animate,
   motion,
   useMotionValue,
-  useReducedMotion,
+  useReducedMotionConfig,
   useTransform,
 } from "motion/react";
 import {
@@ -45,7 +45,7 @@ export function SlideActionButton({
   className,
   ...rest
 }: SlideActionButtonProps) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionConfig();
   const trackRef = useRef<HTMLDivElement>(null);
   const thumbRef = useRef<HTMLButtonElement>(null);
   const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

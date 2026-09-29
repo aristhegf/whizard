@@ -1,7 +1,7 @@
 import { StatefulButton, type ButtonState } from "@/components/motion/button/stateful";
 import { Tooltip } from "@/components/motion/tooltip";
 import type { GameId } from "@whizard/game-core";
-import { useState, type ReactNode } from "react";
+import { useState, type MouseEvent, type ReactNode } from "react";
 import { useAccount } from "../account";
 import { createRoom, ServerRefusal } from "../api";
 import { linkTo, navigate, roomPath } from "../router";
@@ -9,6 +9,7 @@ import { Avatar } from "./Avatar";
 import { Icon, type IconName } from "./Icon";
 import { useToast } from "./toast";
 import { LogoMark } from "./Logo";
+import { SettingsButton, SettingsDialog } from "./SettingsDialog";
 
 export type Section =
   "home" | "games" | "topics" | "friends" | "profile" | "pricing" | "about" | "stats" | null;
@@ -61,10 +62,12 @@ export function CreateRoomButton({ className }: { className: string }) {
   );
 }
 
-function MeLink({ size = 44 }: { size?: number }) {
+/** The profile picture, or Sign In for guests (except on the sign-in page itself). */
+function MeLink({ active, size = 44 }: { active: Section; size?: number }) {
   const account = useAccount();
   if (account.status === "loading") return <span style={{ width: size, height: size }} />;
   if (!account.user) {
+    if (active === "profile") return null;
     return (
       <a className="btn signin-btn" {...linkTo("/account")}>
         Sign In
@@ -82,27 +85,26 @@ function MeLink({ size = 44 }: { size?: number }) {
   );
 }
 
-const SITE_LINKS: { label: string; href: string; section?: Section }[] = [
-  { label: "Games", href: "/games" },
-  { label: "How It Works", href: "/#how" },
-  { label: "Pricing", href: "/pricing", section: "pricing" },
-  { label: "About", href: "/about", section: "about" },
-  { label: "Stats", href: "/stats", section: "stats" },
-];
-
-const APP_LINKS: { label: string; href: string; section: Section }[] = [
+const NAV_LINKS: { label: string; href: string; section: Section }[] = [
   { label: "Games", href: "/games", section: "games" },
   { label: "Quiz Topics", href: "/games/quiz", section: "topics" },
   { label: "Friends", href: "/friends", section: "friends" },
 ];
 
-/** The bar across the top: full links on wide screens, a menu button on phones. */
+/** About the site rather than playing: in the footer and the phone menu. */
+const SITE_LINKS: { label: string; href: string; section?: Section }[] = [
+  { label: "How It Works", href: "/#how" },
+  { label: "Pricing", href: "/pricing", section: "pricing" },
+  { label: "About", href: "/about", section: "about" },
+  { label: "Stats", href: "/stats", section: "stats" },
+  { label: "Privacy", href: "/privacy" },
+];
+
+/** The bar across the top of every page outside a game: full links on wide screens, a menu on phones. */
 export function TopNav({
-  variant,
   active = null,
   children,
 }: {
-  variant: "site" | "app";
   active?: Section;
   /** Extra items before the profile link, such as a search box. */
   children?: ReactNode;
@@ -124,50 +126,40 @@ export function TopNav({
       </button>
       <Brand />
       <nav className="nav-links" aria-label="Main">
-        {variant === "site"
-          ? SITE_LINKS.map((l) => (
-              <a
-                key={l.label}
-                className="nav-link"
-                aria-current={l.section && active === l.section ? "page" : undefined}
-                {...linkTo(l.href)}
-              >
-                {l.label}
-              </a>
-            ))
-          : APP_LINKS.map((l) => (
-              <a
-                key={l.label}
-                className="nav-link"
-                aria-current={active === l.section ? "page" : undefined}
-                {...linkTo(l.href)}
-              >
-                {l.label}
-              </a>
-            ))}
-        {variant === "app" && (
-          <button
+        {NAV_LINKS.map((l) => (
+          <a
+            key={l.label}
             className="nav-link"
-            onClick={() =>
-              startRoom().catch((error: unknown) =>
-                toast.show({ title: createFailed(error), status: "error" }),
-              )
-            }
+            aria-current={active === l.section ? "page" : undefined}
+            {...linkTo(l.href)}
           >
-            Create
-          </button>
-        )}
+            {l.label}
+          </a>
+        ))}
+        <button
+          className="nav-link"
+          onClick={() =>
+            startRoom().catch((error: unknown) =>
+              toast.show({ title: createFailed(error), status: "error" }),
+            )
+          }
+        >
+          Create
+        </button>
       </nav>
       <div className="nav-end">
         {children}
-        {variant === "app" && signedIn && (
+        {signedIn && (
           <Tooltip content="Friend requests" side="bottom">
             <a className="icon-btn" {...linkTo("/friends")} aria-label="Friend requests">
               <Icon name="bell" size={24} />
             </a>
           </Tooltip>
         )}
-        <MeLink />
+        <span className="nav-settings">
+          <SettingsButton />
+        </span>
+        <MeLink active={active} />
       </div>
       {menuOpen && <MobileMenu onClose={() => setMenuOpen(false)} />}
     </header>
@@ -176,6 +168,7 @@ export function TopNav({
 
 function MobileMenu({ onClose }: { onClose: () => void }) {
   const account = useAccount();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const signedIn = account.status === "ready" && !!account.user;
   const items: { label: string; href: string; icon: IconName }[] = [
     { label: "Home", href: "/", icon: "home" },
@@ -183,11 +176,17 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
     { label: "Quiz topics", href: "/games/quiz", icon: "star" },
     { label: "Friends", href: "/friends", icon: "users" },
     { label: signedIn ? "My profile" : "Sign in", href: "/account", icon: "user" },
-    { label: "Pricing", href: "/pricing", icon: "crown" },
-    { label: "About", href: "/about", icon: "heart" },
-    { label: "Stats", href: "/stats", icon: "chart" },
-    { label: "Privacy", href: "/privacy", icon: "settings" },
   ];
+  const go = (href: string) => {
+    const link = linkTo(href);
+    return {
+      href: link.href,
+      onClick: (event: MouseEvent<HTMLAnchorElement>) => {
+        link.onClick(event);
+        onClose();
+      },
+    };
+  };
   return (
     <div className="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu">
       <div className="topnav">
@@ -197,25 +196,46 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
         </button>
       </div>
       <nav aria-label="Main">
-        {items.map((item) => {
-          const link = linkTo(item.href);
-          return (
-            <a
-              key={item.href}
-              className="menu-item"
-              href={link.href}
-              onClick={(event) => {
-                link.onClick(event);
-                onClose();
-              }}
-            >
-              <Icon name={item.icon} />
-              {item.label}
+        {items.map((item) => (
+          <a key={item.href} className="menu-item" {...go(item.href)}>
+            <Icon name={item.icon} />
+            {item.label}
+          </a>
+        ))}
+        <button className="menu-item" onClick={() => setSettingsOpen(true)}>
+          <Icon name="settings" />
+          Settings
+        </button>
+        <div className="menu-site">
+          {SITE_LINKS.map((l) => (
+            <a key={l.href} {...go(l.href)}>
+              {l.label}
             </a>
-          );
-        })}
+          ))}
+        </div>
       </nav>
+      {settingsOpen && <SettingsDialog onClose={() => setSettingsOpen(false)} />}
     </div>
+  );
+}
+
+/** The links about the site, at the bottom of every page with the top bar. */
+function SiteFooter({ active }: { active: Section }) {
+  return (
+    <footer className="site-footer">
+      <nav aria-label="About Whizard">
+        {SITE_LINKS.map((l) => (
+          <a
+            key={l.href}
+            aria-current={l.section && active === l.section ? "page" : undefined}
+            {...linkTo(l.href)}
+          >
+            {l.label}
+          </a>
+        ))}
+      </nav>
+      <span className="dim small">© {new Date().getFullYear()} Whizard</span>
+    </footer>
   );
 }
 
@@ -270,91 +290,26 @@ export function TabBar({ active = null }: { active?: Section }) {
   );
 }
 
-const SIDE_LINKS: { label: string; href: string; icon: IconName; section: Section }[] = [
-  { label: "Home", href: "/", icon: "home", section: "home" },
-  { label: "Games", href: "/games", icon: "games", section: "games" },
-  { label: "Friends", href: "/friends", icon: "users", section: "friends" },
-  { label: "My Profile", href: "/account", icon: "user", section: "profile" },
-  { label: "Settings", href: "/account#settings", icon: "settings", section: null },
-];
-
-function SideUser() {
-  const account = useAccount();
-  if (account.status !== "ready") return null;
-  const user = account.user;
-  return (
-    <a className="side-user" {...linkTo("/account")}>
-      <Avatar id={user?.avatar} name={user?.username ?? "guest"} size={64} />
-      <span className="who">
-        <strong>{user ? user.displayName : "Playing as a guest"}</strong>
-        <span className="muted small">
-          {user ? "View your profile" : "Sign in to keep your stats"}
-        </span>
-      </span>
-    </a>
-  );
-}
-
-/** App pages on wide screens: a sidebar on the left. On phones: the top bar and bottom tabs. */
-export function SideLayout({
+/**
+ * Every page outside a game: the top bar, the page, the site links, and the tabs on phones.
+ * `column` sets the page out as one column of panels, as the account and topic pages do.
+ */
+export function TopLayout({
   active,
   className,
+  column = false,
   children,
 }: {
   active: Section;
   className?: string;
+  column?: boolean;
   children: ReactNode;
 }) {
   return (
-    <div className={`page wide ${className ?? ""}`}>
-      <div className="side-layout">
-        <aside className="sidebar panel" aria-label="Sections">
-          <Brand />
-          {SIDE_LINKS.map((l) => (
-            <a
-              key={l.label}
-              className="side-link"
-              aria-current={
-                // Pages without a sidebar entry (like Privacy) mark none of them.
-                (active !== null && active === l.section) ||
-                (l.section === "games" && active === "topics")
-                  ? "page"
-                  : undefined
-              }
-              {...linkTo(l.href)}
-            >
-              <Icon name={l.icon} size={26} />
-              {l.label}
-            </a>
-          ))}
-          <SideUser />
-        </aside>
-        <div className="side-main">
-          <div className="phone-bar">
-            <TopNav variant="app" active={active} />
-          </div>
-          {children}
-        </div>
-      </div>
-      <TabBar active={active} />
-    </div>
-  );
-}
-
-/** Pages with the top bar: home, games, pricing, about and stats. */
-export function TopLayout({
-  variant,
-  active,
-  children,
-}: {
-  variant: "site" | "app";
-  active: Section;
-  children: ReactNode;
-}) {
-  return (
-    <div className="page">
-      <TopNav variant={variant} active={active} />
-      {children}
+    <div className={`page ${className ?? ""}`}>
+      <TopNav active={active} />
+      {column ? <div className="page-main">{children}</div> : children}
+      <SiteFooter active={active} />
       <TabBar active={active} />
     </div>
   );

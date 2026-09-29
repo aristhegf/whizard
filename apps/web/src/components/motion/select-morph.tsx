@@ -6,7 +6,7 @@ import {
   AnimatePresence,
   motion,
   type Transition,
-  useReducedMotion,
+  useReducedMotionConfig,
   type Variants,
 } from "motion/react";
 import {
@@ -84,7 +84,7 @@ export function MorphSelect({
   className,
   children,
 }: MorphSelectProps) {
-  const reduce = useReducedMotion() ?? false;
+  const reduce = useReducedMotionConfig() ?? false;
   const baseId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);

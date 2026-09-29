@@ -9,7 +9,7 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import { useMediaQuery } from "./common";
+import { usePrefersStill } from "../display";
 
 let fastWebGL: boolean | undefined;
 
@@ -79,7 +79,7 @@ export function GeneratingArt({
 }) {
   const handle = useRef<ImageGenerationHandle | null>(null);
   const revealed = useRef(reveal);
-  const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
+  const reducedMotion = usePrefersStill();
   // img-fx redraws whenever these change, so they keep the same identity across renders (the
   // countdown re-renders many times a second).
   const colorKey = colors.join(" ");

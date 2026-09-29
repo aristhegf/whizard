@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotionConfig } from "motion/react";
 import type { ComponentProps, ReactNode, Ref } from "react";
 import { EASE_OUT } from "@/lib/ease";
 import { cn } from "@/lib/utils";
@@ -21,7 +21,7 @@ export function TooltipSurface({
   side?: "top" | "right" | "bottom" | "left";
   ref?: Ref<HTMLSpanElement>;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionConfig();
   const closed = { opacity: 0, scale: reduce ? 1 : 0.94 };
   return (
     <motion.span

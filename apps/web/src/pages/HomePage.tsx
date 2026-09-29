@@ -61,7 +61,7 @@ export function HomePage() {
   };
 
   return (
-    <TopLayout variant="site" active="home">
+    <TopLayout active="home">
       <section className="hero">
         <div className="hero-copy">
           <LiveCount />

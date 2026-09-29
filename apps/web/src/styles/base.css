@@ -313,7 +313,6 @@ body {
 
   .btn-link:hover,
   .nav-link:hover,
-  .side-link:hover,
   .icon-btn:hover {
     color: var(--text);
   }
@@ -800,6 +799,72 @@ select option {
   color: #b9a9ff;
 }
 
+button.menu-item {
+  font: inherit;
+  font-weight: 800;
+  font-size: 1.15rem;
+  cursor: pointer;
+}
+
+/* The links about the site, smaller, under the main ones. */
+.menu-site {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  padding: 14px 18px 0;
+}
+
+.menu-site a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+/* On phones the settings are in the menu, leaving room in the bar. */
+.nav-settings {
+  display: none;
+}
+
+@media (min-width: 1100px) {
+  .nav-settings {
+    display: inline-flex;
+  }
+}
+
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-top: 48px;
+  padding: 22px 0 8px;
+  border-top: 1.5px solid var(--line);
+}
+
+.site-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+}
+
+.site-footer a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.site-footer a:hover,
+.site-footer a[aria-current="page"] {
+  color: #fff;
+}
+
 /* Bottom tab bar on phones and small tablets. */
 .tabbar {
   position: fixed;
@@ -837,100 +902,12 @@ select option {
   }
 }
 
-/* Sidebar layout for app pages on wide screens. */
-.side-layout {
-  display: grid;
-  gap: 24px;
-}
-
-.sidebar {
-  display: none;
-}
-
-@media (min-width: 1100px) {
-  .side-layout {
-    grid-template-columns: 300px minmax(0, 1fr);
-    align-items: start;
-    gap: 36px;
-    padding-top: 28px;
-  }
-
-  .sidebar {
-    position: sticky;
-    top: 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-height: calc(100dvh - 56px);
-    padding: 30px 18px 18px;
-  }
-
-  .side-layout .phone-bar {
-    display: none;
-  }
-}
-
-.sidebar .brand {
-  padding: 0 16px 30px;
-}
-
-.side-link {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  min-height: 60px;
-  padding: 0 22px;
-  border-radius: 16px;
-  font-weight: 700;
-  font-size: 1.15rem;
-  color: var(--muted);
-  text-decoration: none;
-  border: 1.5px solid transparent;
-}
-
-.side-link svg {
-  color: #b9a9ff;
-}
-
-.side-link[aria-current="page"] {
-  color: #fff;
-  background: linear-gradient(90deg, rgb(92 50 230 / 70%), rgb(60 30 170 / 55%));
-  border-color: rgb(140 100 255 / 70%);
-  box-shadow: 0 6px 24px rgb(92 50 230 / 35%);
-}
-
-.side-link[aria-current="page"] svg {
-  color: #fff;
-}
-
-.side-user {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px;
-  border-radius: 18px;
-  background: rgb(18 17 56 / 80%);
-  border: 1.5px solid var(--line);
-  text-decoration: none;
-}
-
-.side-user .who {
-  display: grid;
-  min-width: 0;
-}
-
-.side-user .who strong {
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 1.1rem;
-  overflow-wrap: anywhere;
-}
-
-.side-main {
+/* Pages set out as one column of panels, below the top bar. */
+.page-main {
   display: grid;
   gap: 26px;
   min-width: 0;
+  padding-top: 12px;
 }
 
 .side-head {
@@ -1019,6 +996,15 @@ select option {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* The "Reduce animations" setting does the same, whatever the device says. */
+html[data-reduce-motion] *,
+html[data-reduce-motion] *::before,
+html[data-reduce-motion] *::after {
+  transition: none !important;
+  animation: none !important;
+  scroll-behavior: auto !important;
 }
 
 /* "Return to your room", above the tab bar on phones and floating on wide screens. */

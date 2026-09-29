@@ -1,12 +1,9 @@
 import { TiltCard } from "@/components/motion/tilt-card";
 import type { QuizCategory } from "@whizard/game-core";
 import { useState, type CSSProperties } from "react";
-import { useAccount } from "../account";
 import { fetchQuizCategories, type QuizCategoryInfo } from "../api";
 import { TOPIC_STYLES, cardWash } from "../catalog";
-import { linkTo } from "../router";
-import { Avatar } from "../ui/Avatar";
-import { createFailed, SideLayout, startRoom } from "../ui/Chrome";
+import { createFailed, TopLayout, startRoom } from "../ui/Chrome";
 import { Icon } from "../ui/Icon";
 import { useLoaded } from "../ui/common";
 
@@ -30,7 +27,6 @@ const questionTotal = (c: QuizCategoryInfo) =>
 
 export function TopicsPage() {
   const categories = useLoaded(fetchQuizCategories);
-  const account = useAccount();
   const [filter, setFilter] = useState<QuizCategory | "popular">("popular");
   const [query, setQuery] = useState("");
   const [starting, setStarting] = useState<QuizCategory | null>(null);
@@ -54,10 +50,8 @@ export function TopicsPage() {
     }
   };
 
-  const user = account.status === "ready" ? account.user : null;
-
   return (
-    <SideLayout active="topics" className="topics-page">
+    <TopLayout active="topics" className="topics-page" column>
       <header className="side-head">
         <div>
           <h1 className="page-title">Browse Quiz Topics</h1>
@@ -75,20 +69,6 @@ export function TopicsPage() {
               onChange={(event) => setQuery(event.target.value)}
             />
           </label>
-          {user && (
-            <a className="icon-btn" {...linkTo("/friends")} aria-label="Friend requests">
-              <Icon name="bell" size={26} />
-            </a>
-          )}
-          {user ? (
-            <a className="me-link" {...linkTo("/account")} aria-label="Your profile">
-              <Avatar id={user.avatar} name={user.username} size={56} />
-            </a>
-          ) : (
-            <a className="btn signin-btn" {...linkTo("/account")}>
-              Sign In
-            </a>
-          )}
         </div>
       </header>
 
@@ -146,6 +126,6 @@ export function TopicsPage() {
           })}
         </ul>
       </div>
-    </SideLayout>
+    </TopLayout>
   );
 }

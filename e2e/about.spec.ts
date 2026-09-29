@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("the about page tells the story and shows the community's numbers", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Open menu" }).click();
-  await page.getByRole("link", { name: "About" }).click();
+  await page.getByRole("dialog", { name: "Menu" }).getByRole("link", { name: "About" }).click();
   await expect(page).toHaveURL(/\/about$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("More ThanJust a Quiz.");
 

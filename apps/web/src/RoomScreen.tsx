@@ -69,6 +69,7 @@ import { QrCode } from "./ui/QrCode";
 import { reportInvite } from "./presence";
 import { play } from "./sounds";
 import { MuteButton } from "./ui/MuteButton";
+import { SettingsButton } from "./ui/SettingsDialog";
 import { useRoom } from "./useRoom";
 
 export function RoomScreen({ code }: { code: string }) {
@@ -434,17 +435,7 @@ function Lobby({
         <Latency state={state} />
         <div className="room-actions">
           <InviteButton url={url} />
-          {isHost && (
-            <button
-              className="bar-btn"
-              onClick={() =>
-                document.getElementById("room-settings")?.scrollIntoView({ behavior: "smooth" })
-              }
-            >
-              <Icon name="settings" size={20} />
-              <span>Settings</span>
-            </button>
-          )}
+          <SettingsButton labelled />
           <MuteButton />
           <button className="bar-btn leave" onClick={() => onLeave("/")}>
             <Icon name="logout" size={20} />

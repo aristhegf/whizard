@@ -39,7 +39,7 @@ export function GamesPage() {
   );
 
   return (
-    <TopLayout variant="app" active="games">
+    <TopLayout active="games">
       <section className="browse">
         <header className="browse-head">
           <div>

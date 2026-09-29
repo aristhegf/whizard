@@ -68,7 +68,7 @@ export function StatsPage() {
   const { data: stats, error, reload } = useLoaded(loadStats);
 
   return (
-    <TopLayout variant="site" active="stats">
+    <TopLayout active="stats">
       <div className="community">
         <section className="community-hero" aria-labelledby="stats-title">
           <div className="community-hero-copy">

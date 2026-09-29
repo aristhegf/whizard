@@ -1,6 +1,7 @@
 import { MAX_PLAYERS } from "@whizard/game-core";
 import { ActionSwapCascadeText } from "@/components/motion/action-swap-cascade";
 import { useRef, useState, type ReactNode } from "react";
+import { prefersStill } from "../display";
 import { linkTo } from "../router";
 import { TopLayout } from "../ui/Chrome";
 import { Icon, type IconName } from "../ui/Icon";
@@ -105,7 +106,7 @@ const FAQ: { q: string; a: string }[] = [
 
 export function PricingPage() {
   return (
-    <TopLayout variant="site" active="pricing">
+    <TopLayout active="pricing">
       <div className="pricing">
         <section className="pricing-hero" aria-labelledby="pricing-title">
           <div className="pricing-hero-copy">
@@ -365,7 +366,7 @@ function PlanSlider({ names, children }: { names: string[]; children: ReactNode 
     const el = list.current;
     const card = cards()[index];
     if (!el || !card) return;
-    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const still = prefersStill();
     el.scrollTo({
       left: card.offsetLeft + card.offsetWidth / 2 - el.clientWidth / 2,
       behavior: still ? "auto" : "smooth",

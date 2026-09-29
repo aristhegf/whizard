@@ -13,7 +13,7 @@ import {
 import {
   AnimatePresence,
   motion,
-  useReducedMotion,
+  useReducedMotionConfig,
   type Transition,
 } from "motion/react";
 import {
@@ -335,7 +335,7 @@ const ToastItem = memo(function ToastItem({
   icons?: Partial<Record<ToastStatus, ReactNode>>;
   renderToast?: (toast: AnimatedToast) => ReactNode;
 }) {
-  const reduce = useReducedMotion();
+  const reduce = useReducedMotionConfig();
   const status = toast.status ?? "neutral";
   const Icon = STATUS_ICON[status];
   const iconNode = icons?.[status] ?? toast.icon ?? <Icon className="h-3.5 w-3.5" />;
