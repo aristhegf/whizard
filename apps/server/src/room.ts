@@ -16,6 +16,7 @@ import {
   markDisconnected,
   markRecorded,
   MAX_PLAYERS,
+  normalizeNickname,
   phaseOf,
   quitGame,
   nextDeadline,
@@ -30,6 +31,7 @@ import {
   tickGame,
   toSnapshot,
   unrecordedResult,
+  updatePlayer,
   type AccountIdentity,
   type ConnectedIds,
   type ContentRequest,
@@ -38,6 +40,7 @@ import {
   type GameResult,
   type JoinError,
   type Player,
+  type ProfileError,
   type RoomState,
 } from "@whizard/game-core";
 import {
@@ -88,6 +91,12 @@ const JOIN_ERROR_MESSAGES: Record<JoinError, string> = {
   nickname_invalid: "Pick a nickname between 1 and 20 characters.",
   nickname_taken: "Someone in this room already has that nickname.",
   room_full: "This room is full.",
+};
+
+const PROFILE_ERROR_MESSAGES: Record<ProfileError, string> = {
+  nickname_invalid: JOIN_ERROR_MESSAGES.nickname_invalid,
+  nickname_taken: JOIN_ERROR_MESSAGES.nickname_taken,
+  game_in_progress: "You can change your name once this game is over.",
 };
 
 const GAME_ERROR_MESSAGES: Record<GameError, string> = {
@@ -217,6 +226,9 @@ export class Room extends DurableObject<Env> {
       case "leave":
         await this.handleLeave(ws);
         return;
+      case "profile":
+        await this.handleProfile(ws, message);
+        return;
       case "roomSettings":
         await this.handleGame(ws, (state, playerId) => {
           const result = configureRoom(state, playerId, withoutUndefined(message.settings));
@@ -345,6 +357,41 @@ export class Room extends DurableObject<Env> {
       const shared = result.state.players.length === 2;
       await count(this.env, { room_joins: 1, ...(shared ? { rooms_shared: 1 } : {}) });
       await logActivity(this.env, "player_joined", { room: result.state.code });
+      await recordName(this.env, {
+        name: result.player.nickname,
+        kind: "nickname",
+        target: result.state.code,
+        detail: result.state.code,
+      });
+    }
+  }
+
+  private async handleProfile(ws: WebSocket, message: Extract<ClientMessage, { type: "profile" }>) {
+    const playerId = attachmentOf(ws)?.playerId;
+    const now = Date.now();
+    const state = await this.current(now);
+    if (!playerId || !state) {
+      sendError(ws, ErrorCode.NotJoined, "You haven’t joined this room.");
+      return;
+    }
+    const before = state.players.find((p) => p.id === playerId);
+    // A new name is checked against the blocked words, as it is when joining.
+    if (
+      before &&
+      normalizeNickname(message.nickname) !== before.nickname &&
+      (await refusedName(this.env, message.nickname))
+    ) {
+      sendError(ws, ErrorCode.NicknameInvalid, NAME_BLOCKED_MESSAGE);
+      return;
+    }
+    const avatar = isAvatarValue(message.avatar) ? message.avatar : undefined;
+    const result = updatePlayer(state, playerId, { nickname: message.nickname, avatar }, now);
+    if (!result.ok) {
+      sendError(ws, result.error, PROFILE_ERROR_MESSAGES[result.error]);
+      return;
+    }
+    await this.commit(result.state);
+    if (result.renamed) {
       await recordName(this.env, {
         name: result.player.nickname,
         kind: "nickname",

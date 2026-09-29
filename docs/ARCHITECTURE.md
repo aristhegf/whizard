@@ -8,7 +8,7 @@ This document covers the system design, the key decisions behind it, and the ord
 
 ## Goals
 
-- **Instant to play.** No sign-up needed. Open the link, pick a nickname, play. Accounts are optional and add stats, friends and pings.
+- **Instant to play.** No sign-up needed. Open the link, pick a nickname, play. Next time, the same name and avatar take you straight into the lobby, where tapping your own name changes them. Accounts are optional and add stats, friends and pings.
 - **Fair.** Everyone gets the same content in the same order. The server owns rules, scoring and timing, so a slow connection doesn't cost points and nobody can cheat from the browser.
 - **Fast.** Moving between questions should feel instant. The first page load should be quick on a phone over 4G.
 - **Cheap to run with unpredictable traffic.** Usage will come in bursts (evenings, weekends, game nights). Idle time should cost close to nothing, and a sudden spike shouldn't need manual scaling.
@@ -238,6 +238,7 @@ JSON messages over one WebSocket per player. Every message has a `type` and is v
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | `join { protocolVersion, nickname, avatar?, guestId?, sessionToken? }` | Join, or rejoin with the token from an earlier `welcome`            |
 | `leave {}`                                                             | Leave the room for good                                             |
+| `profile { nickname, avatar? }`                                        | Change your own nickname or avatar between games                    |
 | `ping { t }`                                                           | Measure round-trip time and clock offset                            |
 | `chooseGame { game }`                                                  | Host switches the room to another game in the lobby                 |
 | `configure { settings }`                                               | Host changes the game settings in the lobby                         |

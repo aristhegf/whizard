@@ -26,6 +26,7 @@ import { SlideActionButton } from "@/components/motion/slide-action-button";
 import { Tooltip } from "@/components/motion/tooltip";
 import { useAccount } from "./account";
 import { PingFriends } from "./FriendsScreen";
+import { ProfileDialog } from "./ProfileDialog";
 import { CATALOG, isPlayable } from "./catalog";
 import { ConnectionsScreen } from "./games/connections/ConnectionsScreen";
 import {
@@ -288,14 +289,28 @@ function JoinScreen({
 }) {
   const account = useAccount();
   const user = account.status === "ready" ? account.user : null;
+  // The name they played under last time, or their account's.
+  const known = loadNickname() || user?.displayName || "";
   // null until they type, so the account name can fill in once it has loaded.
   const [typed, setTyped] = useState<string | null>(null);
-  const nickname = typed ?? (loadNickname() || user?.displayName || "");
+  const nickname = typed ?? known;
   const [picked, setPicked] = useState<string | null>(null);
   const avatar = picked ?? user?.avatar ?? loadAvatar() ?? AVATAR_IDS[0];
   const disabled = state.connection !== "open";
   const [attempt, setAttempt] = useState(0);
   const { ref, isError } = useShakeOnError<HTMLInputElement>(state.joinError, attempt);
+
+  // Someone who has played before goes straight in with the same name and avatar. They can
+  // change either in the lobby. If the name is taken here, the form below asks for another.
+  const autoJoined = useRef(false);
+  // While the account loads, there may be a name coming: wait rather than flash the form.
+  const goingStraightIn = (!!known || account.status === "loading") && !state.joinError;
+  useEffect(() => {
+    // A player coming back to this room is already rejoining with their session.
+    if (!known || autoJoined.current || state.joining || state.connection !== "open") return;
+    autoJoined.current = true;
+    client.join(known, avatar);
+  }, [known, avatar, state.joining, state.connection, client]);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
@@ -309,13 +324,12 @@ function JoinScreen({
       <header className="topnav">
         <Brand />
       </header>
-      <img className="join-logo" src="/art/logo-lockup.webp" alt="" width={760} height={660} />
       <form className="panel join-card" onSubmit={handleSubmit}>
         <div className="code-box small-code">
           <span className="code-label">Room Code</span>
           <strong translate="no">{code}</strong>
         </div>
-        {state.joining && !state.joinError ? (
+        {(state.joining || goingStraightIn) && !state.joinError ? (
           <p className="muted center" aria-live="polite">
             Joining…
           </p>
@@ -333,6 +347,7 @@ function JoinScreen({
               value={nickname}
               maxLength={NICKNAME_INPUT_MAX_LENGTH}
               autoComplete="nickname"
+              placeholder="e.g. Tolu"
               autoFocus
               onChange={(event) => setTyped(event.target.value)}
             />
@@ -410,6 +425,8 @@ function Lobby({
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
   const url = `${location.origin}${roomPath(room.code)}`;
   const [choosingTopic, setChoosingTopic] = useState(false);
+  const [editingMe, setEditingMe] = useState(false);
+  const me = room.players.find((p) => p.id === playerId);
 
   // The quiz countdown's generating effect needs three.js; fetch it while everyone gathers.
   const isQuiz = room.game.id === "quiz";
@@ -510,6 +527,15 @@ function Lobby({
               </Tooltip>
             )}
           </div>
+
+          {editingMe && me && (
+            <ProfileDialog
+              nickname={me.nickname}
+              avatar={me.avatar ?? AVATAR_IDS[0]}
+              onSave={(nickname, avatar) => client.updateProfile(nickname, avatar)}
+              onClose={() => setEditingMe(false)}
+            />
+          )}
 
           {choosingTopic && settings && (
             <TopicPicker
@@ -636,8 +662,22 @@ function Lobby({
                 key={player.id}
                 className={`${player.id === playerId ? "me" : ""}${player.connected ? "" : " offline"}`}
               >
-                <Avatar id={player.avatar} name={player.nickname} size={36} />
-                <span className="player-name">{player.nickname}</span>
+                {player.id === playerId ? (
+                  <button
+                    className="player-me"
+                    aria-label={`${player.nickname}: change your name or avatar`}
+                    onClick={() => setEditingMe(true)}
+                  >
+                    <Avatar id={player.avatar} name={player.nickname} size={36} />
+                    <span className="player-name">{player.nickname}</span>
+                    <Icon name="pencil" size={16} />
+                  </button>
+                ) : (
+                  <>
+                    <Avatar id={player.avatar} name={player.nickname} size={36} />
+                    <span className="player-name">{player.nickname}</span>
+                  </>
+                )}
                 {player.id === room.hostId && (
                   <span className="host-badge">
                     <Icon name="crown" size={16} />

@@ -114,6 +114,13 @@ export class RoomClient {
     this.sendJoin();
   }
 
+  /** Changes this player's nickname or avatar, between games. */
+  updateProfile(nickname: string, avatar: string): void {
+    saveAvatar(avatar);
+    this.update({ notice: null });
+    this.send({ type: "profile", nickname, avatar });
+  }
+
   /** The server’s clock, estimated from ping round trips. Game deadlines use server time. */
   readonly serverNow = (): number => Date.now() + this.clockOffset;
 
@@ -213,12 +220,22 @@ export class RoomClient {
         this.update({ playerId: message.playerId, room: message.room, joining: false });
         return;
       }
-      case "room":
+      case "room": {
+        // A new name is remembered for this room and the next one.
+        const id = this.state.playerId;
+        const before = this.state.room?.players.find((p) => p.id === id);
+        const me = message.room.players.find((p) => p.id === id);
+        const session = loadSession(this.code);
+        if (me && before && me.nickname !== before.nickname) {
+          saveNickname(me.nickname);
+          if (session) saveSession(this.code, { ...session, nickname: me.nickname });
+        }
         this.update({
           room: message.room,
           ...(message.room.phase === "lobby" ? { game: null } : {}),
         });
         return;
+      }
       case "game":
         this.update({ game: message.view });
         return;
@@ -230,7 +247,8 @@ export class RoomClient {
       }
       case "error":
         if (QUIET_ERRORS.has(message.code)) return;
-        if (JOIN_ERRORS.has(message.code)) {
+        // Once in, a refused name change is a notice like any other.
+        if (JOIN_ERRORS.has(message.code) && this.state.playerId === null) {
           this.update({ joining: false, joinError: message.message });
         } else if (
           message.code === ErrorCode.RoomNotFound ||

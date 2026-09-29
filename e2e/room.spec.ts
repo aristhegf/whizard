@@ -270,12 +270,11 @@ test("friends hear who quits, leaves and comes back, and who the host is", async
   await expect(host.getByText("Tolu left the game")).toBeVisible();
   await expect(host.locator(".progress")).toContainText("1 / 10");
 
-  // Then leaves the room, and comes back.
+  // Then leaves the room, and comes back, straight in under the same name.
   await guest.getByRole("button", { name: "Leave" }).click();
   await expect(guest).toHaveURL(/\/$/);
   await expect(host.getByText("Tolu left the room")).toBeVisible();
   await guest.goto(roomUrl);
-  await joinAs(guest, "Tolu");
   await expect(host.getByText("Tolu joined")).toBeVisible();
 
   // Ada quits too and leaves: Tolu is the host now.
@@ -284,4 +283,57 @@ test("friends hear who quits, leaves and comes back, and who the host is", async
   await expect(host.locator(".room-code")).toBeVisible();
   await host.getByRole("button", { name: "Leave" }).click();
   await expect(guest.getByText("You’re the host now")).toBeVisible();
+});
+
+test("a returning player goes straight into the lobby, and can change their name there", async ({
+  browser,
+}) => {
+  test.setTimeout(60_000);
+  // A first-timer sees the whole form, with Join on screen.
+  const host = await newPlayer(browser);
+  await host.goto("/");
+  await host.getByRole("button", { name: "Create a Room" }).click();
+  await expect(host.getByLabel("Choose a nickname")).toHaveAttribute("placeholder", "e.g. Tolu");
+  await expect(host.getByRole("button", { name: "Join", exact: true })).toBeInViewport();
+  await joinAs(host, "Ada");
+  await expect(playerRow(host, "Ada")).toContainText("You");
+
+  // The next room skips the form.
+  await host.goto("/");
+  await host.getByRole("button", { name: "Create a Room" }).click();
+  await expect(playerRow(host, "Ada")).toContainText("You");
+  await expect(host.getByLabel("Choose a nickname")).toHaveCount(0);
+  const roomUrl = host.url();
+
+  // Tapping your own name changes it, and the avatar.
+  await host.getByRole("button", { name: "Ada: change your name or avatar" }).click();
+  const dialog = host.getByRole("dialog", { name: "Your name and avatar" });
+  await dialog.getByLabel("Nickname").fill("Ada L");
+  await dialog.getByRole("radio", { name: "Avatar 3" }).click();
+  await dialog.getByRole("button", { name: "Save" }).click();
+  await expect(playerRow(host, "Ada L").locator("img.avatar")).toHaveAttribute("src", /a03\.webp$/);
+
+  // Friends see it, and it stays after a reload.
+  const guest = await newPlayer(browser);
+  await guest.goto(roomUrl);
+  await joinAs(guest, "Tolu");
+  await expect(playerRow(guest, "Ada L")).toBeVisible();
+  await host.reload();
+  await expect(playerRow(host, "Ada L")).toContainText("You");
+
+  // A name someone here already has can't be taken.
+  await host.getByRole("button", { name: "Ada L: change your name or avatar" }).click();
+  await dialog.getByLabel("Nickname").fill("tolu");
+  await dialog.getByRole("button", { name: "Save" }).click();
+  await expect(host.getByText("Someone in this room already has that nickname.")).toBeVisible();
+  await expect(playerRow(host, "Ada L")).toContainText("You");
+
+  // Someone whose saved name is taken here gets the form, to pick another.
+  const kemi = await newPlayer(browser);
+  await kemi.goto("/");
+  await kemi.evaluate(() => localStorage.setItem("whizard:nickname", JSON.stringify("Tolu")));
+  await kemi.goto(roomUrl);
+  await expect(kemi.getByRole("alert")).toContainText("already has that nickname");
+  await joinAs(kemi, "Kemi");
+  await expect(playerRow(kemi, "Kemi")).toContainText("You");
 });
