@@ -145,6 +145,7 @@ const MOUTHS = [1, 3, 15, 20, 24, 28, 13, 6, 19, 21, 22, 16];
  */
 const HAIR: readonly { id: string; files: string[] }[] = [
   { id: "hc1", files: ["front", "shadow"] },
+  { id: "hc2", files: ["front", "shadow"] },
   { id: "hb2", files: ["back", "front"] },
   { id: "hb3", files: ["front"] },
   { id: "hb4", files: ["front", "details"] },
