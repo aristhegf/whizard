@@ -159,14 +159,6 @@ export function HomePage() {
           moment, with nothing to install. Accounts are optional; they keep your stats and let you
           ping friends when you’re free.
         </p>
-        <div className="link-row">
-          <a className="btn-link" {...linkTo("/stats")}>
-            Stats
-          </a>
-          <a className="btn-link" {...linkTo("/privacy")}>
-            Privacy
-          </a>
-        </div>
       </section>
     </TopLayout>
   );
