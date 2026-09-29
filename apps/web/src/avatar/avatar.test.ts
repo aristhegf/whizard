@@ -146,10 +146,10 @@ describe("avatar layers", () => {
   });
 
   it("draws the hair behind the neck before the head", () => {
-    const list = avatarLayers(parts({ hair: "hb1" })).layers.map((l) => l.src);
+    const list = avatarLayers(parts({ hair: "hb2" })).layers.map((l) => l.src);
     const at = (part: string) => list.findIndex((s) => s.includes(part));
-    expect(at("hair/hb1/back")).toBeLessThan(at("face-shape/"));
-    expect(at("hair/hb1/front")).toBeGreaterThan(at("face-shape/"));
+    expect(at("hair/hb2/back")).toBeLessThan(at("face-shape/"));
+    expect(at("hair/hb2/front")).toBeGreaterThan(at("face-shape/"));
   });
 
   it("sits the brows as far above every eye shape, and lifts them over tall lashes", () => {

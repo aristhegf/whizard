@@ -139,9 +139,12 @@ const LASHES = [1, 3, 5, 7, 9, 11, 13, 15, 18, 19, 21, 24];
 const BROW_LIFTS: Record<number, number> = { 21: 9 };
 const BROWS = [1, 2, 4, 5, 7, 8, 9, 10, 11, 13, 15, 18];
 const MOUTHS = [1, 3, 15, 20, 24, 28, 13, 6, 19, 21, 22, 16];
-/** Hairstyles, and the files each one has: the hair behind the neck, the hair, a hair cuff. */
+/**
+ * Hairstyles, and the files each one has: the hair behind the neck, the hair, its shadow on the
+ * skin, a hair cuff. Styles drawn on the head template (`hc`) fit it as they are.
+ */
 const HAIR: readonly { id: string; files: string[] }[] = [
-  { id: "hb1", files: ["back", "front"] },
+  { id: "hc1", files: ["front", "shadow"] },
   { id: "hb2", files: ["back", "front"] },
   { id: "hb3", files: ["front"] },
   { id: "hb4", files: ["front", "details"] },

@@ -105,6 +105,8 @@ export function avatarLayers(
   // The head comes with its neck and shoulders, so the clothes go over it.
   add("face", parts.face, "head", { tint: skin });
   add("face", parts.face, "cheeks");
+  // The hair's soft shadow on the skin, under the face's own details.
+  if (covers === "none") add("hair", parts.hair, "shadow");
   add("top", parts.top, "front", { tint: topColour });
   add("top", parts.top, "details");
   add("jacket", parts.jacket, "front", { tint: jacketColour });
