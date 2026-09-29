@@ -10,6 +10,7 @@ import {
 import { linkTo } from "../router";
 import { createFailed, startRoom, TopLayout } from "../ui/Chrome";
 import { useMediaQuery } from "../ui/common";
+import { HomeScene } from "../ui/HomeScene";
 import { Icon } from "../ui/Icon";
 import { LiveCount } from "../ui/LiveCount";
 import { useToast } from "../ui/toast";
@@ -39,6 +40,7 @@ export function HomePage() {
 
   return (
     <TopLayout active="home" className="play-page" screen>
+      <HomeScene />
       <section className="play" aria-labelledby="play-title">
         <header className="play-head">
           <LiveCount />
