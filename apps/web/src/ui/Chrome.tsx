@@ -11,6 +11,7 @@ import { JoinRoomBox } from "./JoinRoomBox";
 import { LiveCount } from "./LiveCount";
 import { LogoMark } from "./Logo";
 import { useToast } from "./toast";
+import { usePageReveal } from "./usePageReveal";
 
 export type Section =
   "home" | "games" | "topics" | "friends" | "profile" | "pricing" | "about" | "stats" | null;
@@ -250,6 +251,7 @@ export function TopLayout({
   className,
   column = false,
   screen = false,
+  reveal = false,
   children,
 }: {
   active: Section;
@@ -257,10 +259,16 @@ export function TopLayout({
   column?: boolean;
   /** Fits the screen on laptops and computers, like an app, with a slim row of links under it. */
   screen?: boolean;
+  /** Shows the screen all at once when its pictures and fonts are ready, not piece by piece. */
+  reveal?: boolean;
   children: ReactNode;
 }) {
+  const { ref, ready } = usePageReveal(reveal);
   return (
-    <div className={`page${screen ? " app-screen" : ""} ${className ?? ""}`}>
+    <div
+      ref={ref}
+      className={`page${screen ? " app-screen" : ""}${reveal ? ` reveal${ready ? " is-ready" : ""}` : ""} ${className ?? ""}`}
+    >
       <TopNav active={active} />
       {column ? <div className="page-main">{children}</div> : children}
       <SiteFooter active={active} slim={screen} />

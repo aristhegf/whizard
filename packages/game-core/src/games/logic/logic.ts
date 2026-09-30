@@ -235,7 +235,14 @@ export const logicGame: GameModule<LogicSettings, unknown, LogicState, LogicActi
   },
 
   onPlayerJoined(state, player, now) {
-    if (state.finishedAt !== null || state.players.some((p) => p.id === player.id)) return state;
+    if (state.finishedAt !== null) return state;
+    // Back after leaving: the puzzle is as they left it, on the same clock.
+    if (state.players.some((p) => p.id === player.id)) {
+      return {
+        ...state,
+        players: state.players.map((p) => (p.id === player.id ? { ...p, left: false } : p)),
+      };
+    }
     // A late joiner gets the same grid, with their own countdown and clock.
     return {
       ...state,

@@ -11,7 +11,60 @@
     <link rel="icon" href="/favicon.png" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- The two fonts, fetched with the page instead of once the words need them, so text is drawn
+         in its real font the first time and doesn't jump when they arrive. -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/node_modules/@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-opsz-normal.woff2"
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/node_modules/@fontsource-variable/inter/files/inter-latin-opsz-normal.woff2"
+    />
     <title>Whizard</title>
+    <script>
+      // The home screens open with a mascot and game art, which the page only asks for once its code
+      // has run. Ask for them now instead, so they arrive with the code, not after it. Only on the
+      // screens that show them, so a room link doesn't pay for pictures it won't use.
+      (function () {
+        var path = location.pathname.replace(/\/$/, "") || "/";
+        if (path !== "/" && path !== "/games") return;
+        var add = function (href, extra) {
+          var link = document.createElement("link");
+          link.rel = "preload";
+          link.as = "image";
+          if (href) link.href = href;
+          for (var key in extra) link.setAttribute(key, extra[key]);
+          document.head.appendChild(link);
+        };
+        add("/art/logo-mark.webp");
+        if (path === "/") {
+          // The welcome page's hero: the same picture it will choose for this screen.
+          add(null, {
+            imagesrcset: "/art/mascot/crew-768.webp 768w, /art/mascot/crew.webp 1536w",
+            imagesizes: "(min-width: 900px) 60vw, 100vw",
+            fetchpriority: "high",
+          });
+          return;
+        }
+        add("/art/mascot/hero.webp", { fetchpriority: "high" });
+        add("/art/games/quiz.webp");
+        // The first page of game cards, which only wider screens show.
+        if (matchMedia("(min-width: 1100px)").matches) {
+          ["jigsaw", "word-rush", "logic", "connections", "spot-it", "memory"].forEach(
+            function (id) {
+              add("/art/games/" + id + ".webp");
+            },
+          );
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

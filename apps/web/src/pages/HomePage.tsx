@@ -41,7 +41,7 @@ export function HomePage() {
   const shown = games.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
 
   return (
-    <TopLayout active="home" className="play-page" screen>
+    <TopLayout active="home" className="play-page" screen reveal>
       <section className="play" aria-labelledby="play-title">
         <header className="play-head">
           <LiveCount />
@@ -251,7 +251,7 @@ function GameCard({ game }: { game: CatalogGame }) {
 
   return (
     <li className={`play-card${isPlayable(game) ? "" : " unavailable"}`} style={style}>
-      <img className="play-card-art" src={game.art} alt="" loading="lazy" />
+      <img className="play-card-art" src={game.art} alt="" />
       <h3 className="play-card-name">{game.name}</h3>
       <p className="play-card-desc">{game.description}</p>
       <div className="play-card-foot">

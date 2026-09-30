@@ -416,7 +416,19 @@ function speedGame<
     },
 
     onPlayerJoined(state, player, now) {
-      if (state.finishedAt !== null || state.players.some((p) => p.id === player.id)) return state;
+      if (state.finishedAt !== null) return state;
+      const existing = state.players.find((p) => p.id === player.id);
+      if (existing) {
+        // Back after leaving: results kept, and the round they were on starts again.
+        if (!existing.left) return state;
+        const back: Player = {
+          ...existing,
+          left: false,
+          startsAt: existing.startsAt === null ? null : now + ROUNDS_COUNTDOWN_MS,
+          advanceAt: existing.advanceAt === null ? null : Math.max(existing.advanceAt, now),
+        };
+        return { ...state, players: state.players.map((p) => (p.id === player.id ? back : p)) };
+      }
       // A late joiner starts from round one with their own countdown, like everyone did.
       return {
         ...state,

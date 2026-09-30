@@ -65,8 +65,11 @@ export async function uploadRoomPhoto(
   code: string,
   sessionToken: string,
   photo: Blob,
+  /** Width over height: 1 for a square, or a photo's own shape for Insane. */
+  aspect = 1,
 ): Promise<string> {
-  const response = await fetch(`/api/rooms/${encodeURIComponent(code)}/photo`, {
+  const shape = aspect === 1 ? "" : `?aspect=${aspect.toFixed(4)}`;
+  const response = await fetch(`/api/rooms/${encodeURIComponent(code)}/photo${shape}`, {
     method: "POST",
     headers: { "Content-Type": photo.type, Authorization: `Bearer ${sessionToken}` },
     body: photo,

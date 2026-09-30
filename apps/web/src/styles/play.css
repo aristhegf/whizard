@@ -1,0 +1,224 @@
+/* The in-game look every game moves to: night tiles, Whizard purple for what you pick, plain
+   text at the top, a big timer, faces on phones and one slim notice line at the bottom. */
+
+.play {
+  --night: #16143f;
+  --night-tile: #252063;
+  --night-lift: #3b347f;
+  --accent: #8b3dff;
+  --accent-soft: #b58cff;
+
+  gap: 12px;
+  /* The screen's full height, so the notice line sits at the very bottom. */
+  grid-template-rows: auto 1fr auto;
+  min-height: calc(100dvh - 24px - env(safe-area-inset-bottom));
+}
+
+.play-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding-top: 6px;
+}
+
+.play-count {
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.play-count b {
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.play-icons {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.play-icons .net {
+  display: none;
+  margin-right: 8px;
+}
+
+.play-quit {
+  color: #ff5a78;
+}
+
+.play-quit:hover {
+  color: #ff8fa3;
+}
+
+.play-main {
+  gap: 14px;
+  padding: 0 0 8px;
+}
+
+.play-timer {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(3.2rem, 15vw, 4.4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.play-timer.low {
+  color: #ff5a78;
+}
+
+.play-task {
+  margin: 0;
+  max-width: 40ch;
+  color: var(--muted);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.play-task.good {
+  color: var(--text);
+  font-weight: 700;
+}
+
+/* Scores on a phone: faces, places and scores, no names. */
+.play-faces {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.play-faces li {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+}
+
+.play-faces li.gone {
+  opacity: 0.45;
+}
+
+.play-face {
+  position: relative;
+  display: block;
+  width: 46px;
+  height: 46px;
+}
+
+.play-face .avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+}
+
+.play-faces li.me .avatar {
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+.play-place {
+  position: absolute;
+  right: -4px;
+  bottom: -3px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--night-lift);
+  box-shadow: 0 0 0 2px var(--bg);
+  color: var(--text);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+/* Gold only for first place. */
+.play-place.first {
+  background: var(--gold);
+  color: #2a1a00;
+}
+
+.play-faces li.me .play-place:not(.first) {
+  background: var(--accent);
+}
+
+.play-score {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.play-faces li.me .play-score {
+  color: var(--accent-soft);
+}
+
+/* Who joined or left: one slim line of text at the bottom, no box. */
+.play-toast {
+  align-self: end;
+  min-height: 18px;
+  margin: 0;
+  padding-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 18px;
+  text-align: center;
+}
+
+.play-toast b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.play-toast span {
+  display: inline-block;
+  animation: play-toast-in 240ms ease-out;
+}
+
+@keyframes play-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (min-width: 768px) {
+  .play-icons .net {
+    display: inline-flex;
+  }
+
+  .play-faces {
+    display: none;
+  }
+
+  .play-toast {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .play-timer {
+    font-size: 4.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .play-toast span {
+    animation: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .play .live-board li.me {
+    background: var(--accent);
+  }
+}

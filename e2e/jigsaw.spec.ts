@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { expect, test, type Browser, type Page } from "@playwright/test";
-import { closeSheet, openSettings, expectSetting } from "./lobby";
+import { chooseSetting, closeSheet, expectSetting, openSettings } from "./lobby";
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -55,17 +55,18 @@ test("plays a solo jigsaw from the picture page", async ({ browser }) => {
   await page.getByRole("link", { name: /Jigsaw/ }).click();
   await expect(page).toHaveURL(/\/games\/jigsaw$/);
 
-  await page.getByRole("button", { name: /Easy · 9 pieces/ }).click();
+  await page.getByRole("button", { name: /Easy · 16 pieces/ }).click();
   await page.getByRole("button", { name: "The crew" }).click();
   await joinAs(page, "Ada");
   await openSettings(page);
   await expectSetting(page, "Picture", "crew");
-  await expectSetting(page, "Pieces", "3");
+  await expectSetting(page, "Level", "easy");
+  await expectSetting(page, "Game Mode", "classic");
   await closeSheet(page);
 
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
   await expect(page.getByText(/Get ready/)).toBeVisible();
-  await expect(page.locator(".jigsaw-piece")).toHaveCount(9);
+  await expect(page.locator(".jigsaw-piece")).toHaveCount(16);
 
   // A piece in its place locks.
   const pieces = page.locator(".jigsaw-piece");
@@ -91,7 +92,7 @@ test("plays a solo jigsaw from the picture page", async ({ browser }) => {
 test("two players race the same puzzle, and the faster one wins", async ({ browser }) => {
   const host = await newPlayer(browser);
   await host.goto("/games/jigsaw");
-  await host.getByRole("button", { name: /Easy · 9 pieces/ }).click();
+  await host.getByRole("button", { name: /Easy · 16 pieces/ }).click();
   await host.getByRole("button", { name: "Game night" }).click();
   await joinAs(host, "Ada");
 
@@ -101,7 +102,7 @@ test("two players race the same puzzle, and the faster one wins", async ({ brows
   await expect(guest.locator(".game-summary")).toContainText("Game night");
 
   await host.getByRole("button", { name: /start game/i }).press("Enter");
-  for (const page of [host, guest]) await expect(page.locator(".jigsaw-piece")).toHaveCount(9);
+  for (const page of [host, guest]) await expect(page.locator(".jigsaw-piece")).toHaveCount(16);
 
   // Both start from the same shuffle.
   const boardOf = (page: Page) =>
@@ -121,10 +122,34 @@ test("two players race the same puzzle, and the faster one wins", async ({ brows
   }
 });
 
+test("who leaves and comes back shows in one line at the bottom, with faces for scores", async ({
+  browser,
+}) => {
+  const host = await newPlayer(browser);
+  await host.goto("/games/jigsaw");
+  await host.getByRole("button", { name: /Easy · 16 pieces/ }).click();
+  await host.getByRole("button", { name: "Game night" }).click();
+  await joinAs(host, "Ada");
+  const guest = await newPlayer(browser);
+  await guest.goto(host.url());
+  await joinAs(guest, "Tolu");
+  await host.getByRole("button", { name: /start game/i }).press("Enter");
+  await expect(host.locator(".jigsaw-piece:enabled").first()).toBeVisible({ timeout: 10_000 });
+
+  // On a phone the scores are faces, no names.
+  await expect(host.getByRole("list", { name: "Scores" }).getByRole("listitem")).toHaveCount(2);
+
+  await guest.getByRole("button", { name: "Quit" }).click();
+  await guest.getByRole("alertdialog").getByRole("button", { name: "Quit" }).click();
+  await expect(host.locator(".play-toast")).toHaveText("Tolu left the game");
+  await guest.getByRole("button", { name: "Rejoin the game" }).click();
+  await expect(host.locator(".play-toast")).toHaveText("Tolu is back in the game");
+});
+
 test("the host frames their own photo, and everyone plays it", async ({ browser }) => {
   const host = await newPlayer(browser);
   await host.goto("/games/jigsaw");
-  await host.getByRole("button", { name: /Easy · 9 pieces/ }).click();
+  await host.getByRole("button", { name: /Easy · 16 pieces/ }).click();
   // Choosing the photo on the picture page opens a room, then the framing step.
   await host
     .getByLabel("Choose your photo")
@@ -178,7 +203,7 @@ test("the host frames their own photo, and everyone plays it", async ({ browser 
 
   await host.getByRole("button", { name: /start game/i }).press("Enter");
   for (const page of [host, guest]) {
-    await expect(page.locator(".jigsaw-piece")).toHaveCount(9);
+    await expect(page.locator(".jigsaw-piece")).toHaveCount(16);
     await expect(page.locator(".jigsaw-piece").first().locator("image")).toHaveAttribute(
       "href",
       src,
@@ -186,4 +211,142 @@ test("the host frames their own photo, and everyone plays it", async ({ browser 
   }
   await solve(host);
   await expect(host.getByText("Solved in")).toBeVisible({ timeout: 10_000 });
+});
+
+test("Insane: pieces come out of the tray, snap onto their spot, and stay where they're left", async ({
+  browser,
+}) => {
+  const page = await newPlayer(browser);
+  await page.goto("/games/jigsaw");
+  await page.getByRole("button", { name: /Insane · about 100 pieces/ }).click();
+  await page.getByRole("button", { name: "The crew" }).click();
+  await joinAs(page, "Ada");
+  await page.getByRole("button", { name: /play solo/i }).press("Enter");
+  const tray = page.getByRole("list", { name: /Pieces to place/ });
+  await expect(tray.getByRole("listitem")).toHaveCount(100);
+  // Classic has no clock: the canvas shows once the countdown is over.
+  await expect(page.locator(".insane-view")).toBeVisible({ timeout: 10_000 });
+
+  const canvas = (await page.locator(".insane-canvas").boundingBox())!;
+  const unit = canvas.width / 10;
+  const dragFromTray = async (piece: number, x: number, y: number) => {
+    const box = (await tray.locator(`[data-piece="${piece}"]`).boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2, box.y - 30, { steps: 4 });
+    await page.mouse.move(x, y, { steps: 8 });
+    await page.mouse.up();
+  };
+  const [first, second] = await tray
+    .locator("[data-piece]")
+    .evaluateAll((els) => els.slice(0, 2).map((el) => Number((el as HTMLElement).dataset.piece)));
+
+  // Near its spot, it snaps in.
+  await dragFromTray(
+    first!,
+    canvas.x + ((first! % 10) + 0.5) * unit + 4,
+    canvas.y + (Math.floor(first! / 10) + 0.5) * unit - 3,
+  );
+  await expect(page.locator(".play-count")).toHaveText("1 / 100 placed");
+  await expect(page.locator(`[data-placed="${first}"]`)).toHaveCount(1);
+
+  // Anywhere else, it stays on the canvas where it was dropped, even after a reload.
+  const far = (second! + 55) % 100;
+  await dragFromTray(
+    second!,
+    canvas.x + ((far % 10) + 0.5) * unit,
+    canvas.y + (Math.floor(far / 10) + 0.5) * unit,
+  );
+  await expect(page.locator(`[data-loose="${second}"]`)).toHaveCount(1);
+  await expect(tray.getByRole("listitem")).toHaveCount(98);
+  await page.reload();
+  await expect(page.locator(`[data-loose="${second}"]`)).toHaveCount(1);
+  await expect(page.locator(".play-count")).toHaveText("1 / 100 placed");
+});
+
+test("Classic has no clock, and Next Jigsaw moves straight on to the next picture", async ({
+  browser,
+}) => {
+  const page = await newPlayer(browser);
+  await page.goto("/games/jigsaw");
+  await page.getByRole("button", { name: /Easy · 16 pieces/ }).click();
+  await page.getByRole("button", { name: "The crew" }).click();
+  await joinAs(page, "Ada");
+  await page.getByRole("button", { name: /play solo/i }).press("Enter");
+  await expect(page.locator(".jigsaw-piece:enabled").first()).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator(".play-timer")).toHaveCount(0);
+
+  await solve(page);
+  await page.getByRole("button", { name: "Next Jigsaw" }).click();
+  await expect(page.getByText(/Get ready/)).toBeVisible();
+  await expect(page.locator(".jigsaw-preview")).toHaveAttribute("alt", "Quiz cards");
+});
+
+test("Elimination: finishers are safe, the fewest pieces go out, and the final picks the winner", async ({
+  browser,
+}) => {
+  test.setTimeout(120_000);
+  const host = await newPlayer(browser);
+  await host.goto("/games/jigsaw");
+  await host.getByRole("button", { name: /Easy · 16 pieces/ }).click();
+  await host.getByRole("button", { name: "Game night" }).click();
+  await joinAs(host, "Ada");
+  await openSettings(host);
+  await chooseSetting(host, "Game Mode", "elimination");
+  await expectSetting(host, "Level", "easy");
+  await closeSheet(host);
+
+  const tolu = await newPlayer(browser);
+  await tolu.goto(host.url());
+  await joinAs(tolu, "Tolu");
+  const kemi = await newPlayer(browser);
+  await kemi.goto(host.url());
+  await joinAs(kemi, "Kemi");
+
+  await host.getByRole("button", { name: /start game/i }).press("Enter");
+  for (const page of [host, tolu, kemi]) {
+    await expect(page.locator(".play-count")).toContainText("Round 1");
+  }
+  await expect(host.locator(".play-timer")).toBeVisible({ timeout: 10_000 });
+
+  // Two of three stay in: once two have finished, the third is out.
+  await solve(tolu);
+  await solve(host);
+  await expect(kemi.getByRole("heading", { name: "You’re out" })).toBeVisible();
+  await expect(host.getByRole("heading", { name: "Round 1 is over" })).toBeVisible();
+
+  // The final starts on its own, with a new picture.
+  await expect(host.locator(".play-count")).toHaveText("The final", { timeout: 20_000 });
+  await solve(host);
+  const rankings = host.getByRole("complementary", { name: "Final Rankings" });
+  await expect(rankings.getByRole("listitem").first()).toContainText("Ada");
+  await expect(rankings.getByRole("listitem").nth(2)).toContainText("Kemi");
+});
+
+test("Insane keeps a photo's own shape: the canvas is as wide as the photo", async ({
+  browser,
+}) => {
+  const page = await newPlayer(browser);
+  await page.goto("/games/jigsaw");
+  await page.getByRole("button", { name: /Insane/ }).click();
+  await page
+    .getByLabel("Choose your photo")
+    .setInputFiles(fileURLToPath(new URL("./fixtures/photo.jpg", import.meta.url)));
+  await joinAs(page, "Ada");
+  const cropper = page.getByRole("dialog", { name: "Frame your jigsaw" });
+  await expect(cropper.getByRole("slider", { name: /The part to use/ })).toBeVisible();
+  await cropper.getByRole("button", { name: "Use this photo" }).click();
+  await expect(cropper).toBeHidden();
+
+  await page.getByRole("button", { name: /play solo/i }).press("Enter");
+  await expect(page.locator(".insane-view")).toBeVisible({ timeout: 10_000 });
+  // The photo is wider than tall, so the canvas is too, in about a hundred pieces.
+  const box = (await page.locator(".insane-canvas").boundingBox())!;
+  expect(box.width / box.height).toBeGreaterThan(1.3);
+  const pieces = await page
+    .getByRole("list", { name: /Pieces to place/ })
+    .getByRole("listitem")
+    .count();
+  expect(pieces).toBeGreaterThanOrEqual(90);
+  expect(pieces).toBeLessThanOrEqual(110);
 });

@@ -3,7 +3,9 @@ import {
   defaultGameConfig,
   gamePlayerJoined,
   gamePlayerLeft,
+  gamePlayerReturned,
   gameWakeAt,
+  returningEntry,
   phaseOf,
   sittingOut,
   type GameConfig,
@@ -174,17 +176,27 @@ export function joinRoom(
     };
   }
 
-  const nickname = normalizeNickname(request.nickname);
+  // Someone who was in the running game and left the room (or was dropped after a long time
+  // offline) comes back as the same player, and picks the game up where they left it.
+  const returning = returningEntry(state, {
+    account: request.account ?? null,
+    guestId: request.guestId ?? null,
+  });
+  const taken = (name: string) => state.players.some((p) => sameNickname(p.nickname, name));
+  const nickname =
+    returning && !taken(returning.nickname)
+      ? returning.nickname
+      : normalizeNickname(request.nickname);
   if (!nickname) return { ok: false, error: "nickname_invalid" };
   if (state.players.length >= Math.min(roomSettings(state).maxPlayers, MAX_PLAYERS)) {
     return { ok: false, error: "room_full" };
   }
-  if (state.players.some((p) => sameNickname(p.nickname, nickname))) {
-    return { ok: false, error: "nickname_taken" };
-  }
+  if (taken(nickname)) return { ok: false, error: "nickname_taken" };
 
+  const fresh = newIds();
   const player: Player = {
-    ...newIds(),
+    ...fresh,
+    id: returning?.playerId ?? fresh.id,
     nickname,
     joinedAt: now,
     lastSeenAt: now,
@@ -193,10 +205,11 @@ export function joinRoom(
     avatar: request.avatar ?? null,
   };
   let next: RoomState = { ...state, players: [...state.players, player], lastActivityAt: now };
-  if (roomSettings(state).lateJoin) next = gamePlayerJoined(next, player, now);
+  if (returning) next = gamePlayerReturned(next, player.id, now);
+  else if (roomSettings(state).lateJoin) next = gamePlayerJoined(next, player, now);
   return {
     ok: true,
-    rejoined: false,
+    rejoined: returning !== null,
     player,
     state: settle(next, with_(connected, player.id), now),
   };
@@ -264,10 +277,15 @@ export function markDisconnected(
 
 /** Applies anything that is due: removing long-gone players and handing over the host role. */
 export function settle(state: RoomState, connected: ConnectedIds, now: number): RoomState {
-  const players = state.players.filter(
-    (p) => connected.has(p.id) || now - p.lastSeenAt < DISCONNECTED_PLAYER_TTL_MS,
+  const gone = state.players.filter(
+    (p) => !connected.has(p.id) && now - p.lastSeenAt >= DISCONNECTED_PLAYER_TTL_MS,
   );
-  const pruned = players.length === state.players.length ? state : { ...state, players };
+  let pruned = state;
+  if (gone.length > 0) {
+    pruned = { ...state, players: state.players.filter((p) => !gone.includes(p)) };
+    // The game stops waiting for them. If they come back, they pick it up where they were.
+    for (const p of gone) pruned = gamePlayerLeft(pruned, p.id, now);
+  }
   return resolveHost(pruned, connected, now);
 }
 

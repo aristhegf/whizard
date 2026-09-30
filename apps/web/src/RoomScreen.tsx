@@ -52,8 +52,8 @@ import { JigsawScreen } from "./games/jigsaw/JigsawScreen";
 import {
   JigsawSettingsRows,
   parseJigsawSettings,
+  levelSummary,
   pictureName,
-  sizeName,
 } from "./games/jigsaw/JigsawSettingsPanel";
 import { LogicScreen } from "./games/logic/LogicScreen";
 import { gridName, LogicSettingsRows, parseLogicSettings } from "./games/logic/LogicSettingsRows";
@@ -83,6 +83,7 @@ import { useShakeOnError } from "./ui/errorShake";
 import { focusSetting, SettingSelect } from "./ui/SettingSelect";
 import { canGenerateArt, preloadGeneratingArt } from "./ui/GeneratingArt";
 import { useToast } from "./ui/toast";
+import { GameNoticeContext, GameNotices } from "./ui/gameNotice";
 import { Icon } from "./ui/Icon";
 import { QrCode } from "./ui/QrCode";
 import { usePrefersStill } from "./display";
@@ -94,7 +95,8 @@ import { useRoom } from "./useRoom";
 
 export function RoomScreen({ code }: { code: string }) {
   const { client, state } = useRoom(code);
-  useRoomToasts(state);
+  const [notices] = useState(() => new GameNotices());
+  useRoomToasts(state, notices);
   // For what needs a yes first: quitting a game in progress, leaving a room with others.
   const ask = useConfirm();
 
@@ -174,43 +176,49 @@ export function RoomScreen({ code }: { code: string }) {
   };
 
   return (
-    <div className="page room-page">
-      <h1 className="sr-only">Whizard room {code}</h1>
-      {view?.game === "jigsaw" ? (
-        <JigsawScreen {...gameProps} view={view} />
-      ) : view?.game === "connections" ? (
-        <ConnectionsScreen {...gameProps} view={view} />
-      ) : view?.game === "logic" ? (
-        <LogicScreen {...gameProps} view={view} />
-      ) : view && view.game !== "quiz" && "mode" in view ? (
-        <RoundsEliminationScreen {...gameProps} view={view} />
-      ) : view && view.game !== "quiz" ? (
-        <RoundsScreen {...gameProps} view={view} />
-      ) : view ? (
-        <QuizScreen {...gameProps} view={view} />
-      ) : joined ? (
-        <Lobby
-          client={client}
-          state={state}
-          room={room!}
-          playerId={state.playerId!}
-          sittingOut={sittingOut}
-          onLeave={leave}
-        />
-      ) : (
-        <JoinScreen code={code} state={state} client={client} />
-      )}
-    </div>
+    <GameNoticeContext.Provider value={notices}>
+      <div className="page room-page">
+        <h1 className="sr-only">Whizard room {code}</h1>
+        {view?.game === "jigsaw" ? (
+          <JigsawScreen {...gameProps} view={view} />
+        ) : view?.game === "connections" ? (
+          <ConnectionsScreen {...gameProps} view={view} />
+        ) : view?.game === "logic" ? (
+          <LogicScreen {...gameProps} view={view} />
+        ) : view && view.game !== "quiz" && "mode" in view ? (
+          <RoundsEliminationScreen {...gameProps} view={view} />
+        ) : view && view.game !== "quiz" ? (
+          <RoundsScreen {...gameProps} view={view} />
+        ) : view ? (
+          <QuizScreen {...gameProps} view={view} />
+        ) : joined ? (
+          <Lobby
+            client={client}
+            state={state}
+            room={room!}
+            playerId={state.playerId!}
+            sittingOut={sittingOut}
+            onLeave={leave}
+          />
+        ) : (
+          <JoinScreen code={code} state={state} client={client} />
+        )}
+      </div>
+    </GameNoticeContext.Provider>
   );
 }
 
-/** Toasts for who comes and goes, a new host, the connection dropping and coming back, and errors. */
-function useRoomToasts(state: RoomClientState) {
+/**
+ * Toasts for who comes and goes, a new host, the connection dropping and coming back, and errors.
+ * During a game, who comes and goes shows in the game's slim line at the bottom instead.
+ */
+function useRoomToasts(state: RoomClientState, notices: GameNotices) {
   const toast = useToast();
   const seen = useRef<{
     players: Map<string, string>;
     hostId: string | null;
     sittingOut: Set<string>;
+    phase: string;
   } | null>(null);
   const offline = useRef<string | null>(null);
 
@@ -226,26 +234,41 @@ function useRoomToasts(state: RoomClientState) {
     const players = new Map(room.players.map((p) => [p.id, p.nickname]));
     const sittingOut = new Set(room.sittingOut);
     const before = seen.current;
-    seen.current = { players, hostId: room.hostId, sittingOut };
+    seen.current = { players, hostId: room.hostId, sittingOut, phase: room.phase };
     // The first snapshot after joining is just who's already here.
     if (!before) return;
+    const say = (nickname: string, what: string, status: "info" | "neutral") => {
+      const said = notices.say(
+        <>
+          <b>{nickname}</b> {what}
+        </>,
+      );
+      if (!said) toast.show({ title: `${nickname} ${what}`, status });
+    };
     for (const [id, nickname] of players) {
-      if (!before.players.has(id)) toast.show({ title: `${nickname} joined`, status: "info" });
+      if (!before.players.has(id)) say(nickname, "joined", "info");
     }
     for (const [id, nickname] of before.players) {
-      if (!players.has(id)) toast.show({ title: `${nickname} left the room`, status: "neutral" });
+      if (!players.has(id)) say(nickname, "left the room", "neutral");
     }
-    // Quitting a game keeps you in the room: the others hear you've left the game.
+    // Quitting a game keeps you in the room: the others hear you've left the game, and when
+    // you go back in.
     for (const id of sittingOut) {
       const nickname = players.get(id);
       if (id !== playerId && nickname && !before.sittingOut.has(id)) {
-        toast.show({ title: `${nickname} left the game`, status: "neutral" });
+        say(nickname, "left the game", "neutral");
+      }
+    }
+    // Only mid-game: a new game clears the list for everyone.
+    const stillPlaying = before.phase === "playing" && room.phase === "playing";
+    for (const id of stillPlaying ? before.sittingOut : []) {
+      const nickname = players.get(id);
+      if (id !== playerId && nickname && !sittingOut.has(id)) {
+        say(nickname, "is back in the game", "info");
       }
     }
     const newHost = room.hostId && room.hostId !== playerId ? players.get(room.hostId) : null;
-    if (newHost && before.hostId !== room.hostId) {
-      toast.show({ title: `${newHost} is the host now`, status: "info" });
-    }
+    if (newHost && before.hostId !== room.hostId) say(newHost, "is the host now", "info");
     if (room.hostId === playerId && before.hostId !== playerId) {
       toast.show({
         title: "You’re the host now",
@@ -253,7 +276,7 @@ function useRoomToasts(state: RoomClientState) {
         status: "success",
       });
     }
-  }, [room, playerId, toast]);
+  }, [room, playerId, toast, notices]);
 
   useEffect(() => {
     if (connection === "reconnecting" && !offline.current) {
@@ -469,7 +492,8 @@ function settingsSummary({
   connections: ReturnType<typeof parseConnectionsSettings> | null;
   logic: ReturnType<typeof parseLogicSettings> | null;
 }): string | null {
-  if (jigsaw) return sizeName(jigsaw.side);
+  // The jigsaw's own line is written with dots, for the pages that list it; here it's a list.
+  if (jigsaw) return levelSummary(jigsaw).replaceAll(" · ", ", ");
   if (connections) return `${LEVEL_NAMES[connections.level]}, ${connections.minutes} minutes`;
   if (logic) return `${gridName(logic.size)}, ${logic.minutes} minutes`;
   if (rounds) {
@@ -516,14 +540,21 @@ function Lobby({
   const settings = gameId === "quiz" ? parseQuizSettings(room.game.settings) : null;
   const rounds = isRoundsGame(gameId) ? parseRoundsSettings(gameId, room.game.settings) : null;
   const jigsaw = gameId === "jigsaw" ? parseJigsawSettings(room.game.settings) : null;
-  const photo = useJigsawPhoto(room.code, isHost && gameId === "jigsaw");
+  // Insane keeps a photo's own shape; the other levels use a square.
+  const photo = useJigsawPhoto(
+    room.code,
+    isHost && gameId === "jigsaw",
+    jigsaw?.level === "insane" ? "own" : "square",
+  );
   const connections =
     gameId === "connections" ? parseConnectionsSettings(room.game.settings) : null;
   const logic = gameId === "logic" ? parseLogicSettings(room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
   const needMore =
-    settings?.variant === "elimination" || rounds?.mode === "elimination"
+    settings?.variant === "elimination" ||
+    rounds?.mode === "elimination" ||
+    jigsaw?.mode === "elimination"
       ? Math.max(0, ELIMINATION_MIN_PLAYERS - connected.length)
       : 0;
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
@@ -706,6 +737,7 @@ function Lobby({
       {jigsaw && (
         <JigsawSettingsRows
           settings={jigsaw}
+          players={connected.length}
           editable={canEdit}
           onChange={(next) => client.configure(next)}
           onPickPhoto={photo.pick}
@@ -789,9 +821,15 @@ function Lobby({
   const dock = (
     <div className="lobby-dock">
       {sittingOut && room.phase === "playing" ? (
-        <p className="muted center sitting-out" role="status">
-          You quit this game. The others are still playing; you’ll be in the next one.
-        </p>
+        <div className="sitting-out">
+          <p className="muted center" role="status">
+            You left this game. The others are still playing, and your score is kept.
+          </p>
+          <button className="btn btn-gold btn-block" onClick={() => client.rejoinGame()}>
+            <Icon name="play" size={20} fill />
+            Rejoin the Game
+          </button>
+        </div>
       ) : isHost && needMore > 0 ? (
         <p className="muted center need-more" role="status">
           Elimination needs at least {ELIMINATION_MIN_PLAYERS} players. Invite {needMore} more to

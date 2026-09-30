@@ -40,6 +40,8 @@ export interface KnockoutPlayer<R extends KnockoutRecord, Guess> {
   id: string;
   nickname: string;
   left: boolean;
+  /** The round they left in, to tell whether they come back before the next cut. */
+  leftRound?: number;
   /** Joined after the start: watches, doesn't play. */
   spectator: boolean;
   score: number;
@@ -389,14 +391,26 @@ export function knockoutEngine<Settings, Item, R extends KnockoutRecord, Guess>(
     },
 
     join(state: State, player: GamePlayer): State {
-      if (state.finishedAt !== null || state.players.some((p) => p.id === player.id)) return state;
+      if (state.finishedAt !== null) return state;
+      const existing = state.players.find((p) => p.id === player.id);
+      if (existing) {
+        // Back in the round they left: still in it. A cut made while they were away was made
+        // without them, so they missed it, and watch the rest.
+        if (!existing.left || existing.leftRound !== state.round) return state;
+        return {
+          ...state,
+          players: state.players.map((p) => (p.id === player.id ? { ...p, left: false } : p)),
+        };
+      }
       return { ...state, players: [...state.players, newPlayer<R, Guess>(player, true)] };
     },
 
     leave(state: State, playerId: string, now: number): State {
       const next = {
         ...state,
-        players: state.players.map((p) => (p.id === playerId ? { ...p, left: true } : p)),
+        players: state.players.map((p) =>
+          p.id === playerId ? { ...p, left: true, leftRound: state.round } : p,
+        ),
       };
       if (next.finishedAt !== null) return next;
       if (contenders(next).length <= 1) return finish(next, now);

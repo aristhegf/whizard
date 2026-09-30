@@ -67,46 +67,128 @@ export interface JigsawPicture {
   id: string;
   name: string;
   src: string;
+  /** Width over height, for a photo that keeps its own shape. Square when missing. */
+  aspect?: number;
 }
 
 /** A photo's ID in its room: random letters and numbers, so it can't be guessed. */
 export const JIGSAW_PHOTO_ID = /^[a-z0-9]{16,40}$/;
 
 /** The host's own photo, served by the room it was uploaded to. */
-export const photoPicture = (code: string, photo: string): JigsawPicture => ({
+export const photoPicture = (code: string, photo: string, aspect?: number): JigsawPicture => ({
   id: "photo",
   name: "Your photo",
   src: `/api/rooms/${encodeURIComponent(code)}/photo/${photo}`,
+  ...(aspect !== undefined && aspect !== 1 ? { aspect } : {}),
 });
 
-/** Pieces per side: 3×3 up to 6×6. */
-export const JIGSAW_SIZES = [
-  { side: 3, name: "Easy" },
-  { side: 4, name: "Medium" },
-  { side: 5, name: "Hard" },
-  { side: 6, name: "Expert" },
+/** How far from square a photo can be, either way: 2 is twice as wide as it is tall. */
+export const PHOTO_MAX_ASPECT = 2;
+
+/**
+ * The levels, easiest first. Up to Hard the pieces sit on a square board and swap places;
+ * Insane has about a hundred, dragged out of a tray onto the picture's canvas.
+ */
+export const JIGSAW_LEVELS = [
+  { id: "easy", name: "Easy", side: 4 },
+  { id: "medium", name: "Medium", side: 5 },
+  { id: "hard", name: "Hard", side: 6 },
+  { id: "insane", name: "Insane", side: 10 },
 ] as const;
-export type JigsawSide = (typeof JIGSAW_SIZES)[number]["side"];
+export type JigsawLevel = (typeof JIGSAW_LEVELS)[number]["id"];
+/** Auto is for Elimination: each round a level harder, up to Insane for the final. */
+export type JigsawLevelChoice = JigsawLevel | "auto";
+
+export const JIGSAW_MODES = [
+  {
+    id: "classic",
+    name: "Classic",
+    description: "No clock. Everyone races to finish, and the first one done wins.",
+  },
+  {
+    id: "speed",
+    name: "Speed",
+    description:
+      "Against the countdown. The fastest finish wins; if time runs out, the most pieces placed.",
+  },
+  {
+    id: "elimination",
+    name: "Elimination",
+    description:
+      "A new jigsaw each round, against the countdown. Finish to stay safe; the fewest pieces go out, until two meet in the final.",
+  },
+] as const;
+export type JigsawMode = (typeof JIGSAW_MODES)[number]["id"];
+
+export const isInsane = (level: JigsawLevel) => level === "insane";
+
+/** About this many pieces in Insane, whatever the picture's shape. */
+export const INSANE_PIECES = 100;
+
+/**
+ * The grid a level cuts a picture into: a square board up to Hard, and for Insane about a
+ * hundred near-square pieces in the picture's own shape (`aspect` is width over height).
+ */
+export function jigsawGrid(level: JigsawLevel, aspect = 1): { cols: number; rows: number } {
+  const found = JIGSAW_LEVELS.find((l) => l.id === level)!;
+  if (!isInsane(level)) return { cols: found.side, rows: found.side };
+  const cols = Math.max(1, Math.round(Math.sqrt(INSANE_PIECES * aspect)));
+  return { cols, rows: Math.max(1, Math.round(INSANE_PIECES / cols)) };
+}
 
 const pictureIds = JIGSAW_PICTURES.map((p) => p.id) as [JigsawPictureId, ...JigsawPictureId[]];
 
-export const jigsawSettingsSchema = z.object({
+/** Rooms from before levels had pieces per side: 3 and 4 are Easy now, 10 is Insane. */
+const LEVEL_FROM_SIDE: Record<number, JigsawLevel> = {
+  3: "easy",
+  4: "easy",
+  5: "medium",
+  6: "hard",
+  10: "insane",
+};
+
+const jigsawSettingsObject = z.object({
   /** A picture, "random" for a different one each game, or "photo" for the host's own. */
   picture: z.enum([...pictureIds, "random", "photo"]),
-  side: z.literal(JIGSAW_SIZES.map((s) => s.side) as [JigsawSide, ...JigsawSide[]]),
+  mode: z.enum(JIGSAW_MODES.map((m) => m.id) as [JigsawMode, ...JigsawMode[]]),
+  level: z.enum(["easy", "medium", "hard", "insane", "auto"]),
   /** The host's photo, once they've chosen one. Set by the room when it's uploaded. */
   photo: z.string().regex(JIGSAW_PHOTO_ID).optional(),
+  /** The photo's width over height, when it keeps its own shape (for Insane). */
+  photoAspect: z
+    .number()
+    .min(1 / PHOTO_MAX_ASPECT)
+    .max(PHOTO_MAX_ASPECT)
+    .optional(),
 });
 
-export type JigsawSettings = z.infer<typeof jigsawSettingsSchema>;
+export type JigsawSettings = z.infer<typeof jigsawSettingsObject>;
 
-export const DEFAULT_JIGSAW_SETTINGS: JigsawSettings = { picture: "random", side: 4 };
+export const jigsawSettingsSchema: z.ZodType<JigsawSettings> = z.preprocess((value) => {
+  if (!value || typeof value !== "object") return value;
+  const raw = { ...(value as Record<string, unknown>) };
+  if (raw.level === undefined && typeof raw.side === "number") {
+    raw.level = LEVEL_FROM_SIDE[raw.side] ?? "easy";
+  }
+  delete raw.side;
+  raw.mode ??= "classic";
+  // Auto only means something in Elimination.
+  if (raw.level === "auto" && raw.mode !== "elimination") raw.level = "easy";
+  return raw;
+}, jigsawSettingsObject) as z.ZodType<JigsawSettings>;
+
+export const DEFAULT_JIGSAW_SETTINGS: JigsawSettings = {
+  picture: "random",
+  mode: "classic",
+  level: "easy",
+};
 
 export interface JigsawContentRequest {
   kind: "jigsaw-picture";
   picture: JigsawSettings["picture"];
   /** The host's photo, for "photo". The room serves it, so it fills this picture in itself. */
   photo?: string;
+  photoAspect?: number;
 }
 
 /** Content IDs for pictures, so a room's history can steer "random" away from repeats. */

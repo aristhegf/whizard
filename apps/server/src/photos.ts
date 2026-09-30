@@ -1,7 +1,7 @@
-import { JIGSAW_PHOTO_ID, normalizeRoomCode } from "@whizard/game-core";
+import { JIGSAW_PHOTO_ID, PHOTO_MAX_ASPECT, normalizeRoomCode } from "@whizard/game-core";
 import { isSameOrigin, jsonError, withinLimit, type RequestContext } from "./http";
 
-/** A cropped 800×800 photo is well under this; anything bigger isn't one of ours. */
+/** A cropped photo (800 square, or up to 1200 on its long side) is well under this. */
 export const PHOTO_MAX_BYTES = 600 * 1024;
 
 /** The picture types a browser's canvas makes, told apart by their first bytes. */
@@ -13,8 +13,9 @@ function photoType(bytes: Uint8Array): string | null {
 }
 
 /**
- * `POST /api/rooms/:code/photo`: the host's own photo for a jigsaw, already cropped square in
- * their browser. The body is the picture; the host's room session token is the bearer token.
+ * `POST /api/rooms/:code/photo`: the host's own photo for a jigsaw, already cropped in their
+ * browser: square, or in its own shape for Insane, with `?aspect=` (width over height). The body
+ * is the picture; the host's room session token is the bearer token.
  */
 export async function uploadPhoto({ request, env, url, params }: RequestContext) {
   const code = normalizeRoomCode(decodeURIComponent(params[0] ?? ""));
@@ -34,7 +35,11 @@ export async function uploadPhoto({ request, env, url, params }: RequestContext)
   const type = photoType(new Uint8Array(data, 0, Math.min(12, data.byteLength)));
   if (!type) return jsonError(415, "bad_photo", "That isn't a photo we can use.");
 
-  const result = await env.ROOMS.getByName(code).setPhoto(token, type, data);
+  const aspect = Number(url.searchParams.get("aspect") ?? 1);
+  if (!Number.isFinite(aspect) || aspect < 1 / PHOTO_MAX_ASPECT || aspect > PHOTO_MAX_ASPECT) {
+    return jsonError(400, "bad_photo", "That photo's shape is too long and thin.");
+  }
+  const result = await env.ROOMS.getByName(code).setPhoto(token, type, data, aspect);
   if (!result.ok) return jsonError(result.status, result.error, result.message);
   return Response.json({ id: result.id });
 }
