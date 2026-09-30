@@ -22,7 +22,7 @@ import { useShareResults } from "../../share/ShareResults";
 import { levelName, modeName, parseJigsawSettings } from "./JigsawSettingsPanel";
 import { KNOB_REACH, PIECE_SIZE, pieceShapes } from "./pieceShape";
 import { InsaneBoard } from "./InsaneBoard";
-import { PlayFaces, PlayTimer, PlayTop, type Face } from "../play";
+import { PlayBoard, PlayFaces, PlayTimer, PlayTop, rowsFrom, type Face } from "../play";
 import { PlayToast } from "../../ui/gameNotice";
 
 interface Props {
@@ -392,45 +392,18 @@ function Board({
 }
 
 const progressLabel = (s: JigsawStanding) =>
-  s.left ? "Left" : s.finished ? clock(s.timeMs ?? 0) : `${s.placed}/${s.total}`;
+  s.left ? "Left" : s.out ? "Out" : s.finished ? clock(s.timeMs ?? 0) : `${s.placed}/${s.total}`;
 
-/** Everyone's progress, as faces for a phone. */
-const faces = ({ view, room }: Props): Face[] => {
-  const avatars = new Map(room.players.map((p) => [p.id, p.avatar]));
-  return view.standings.map((s) => ({
-    playerId: s.playerId,
-    nickname: s.nickname,
-    avatar: avatars.get(s.playerId) ?? null,
-    rank: s.rank,
-    value: progressLabel(s),
-    gone: s.left,
+/** Everyone's progress: faces on a phone, the board on a computer. */
+const faces = ({ view, room }: Props): Face[] =>
+  rowsFrom(view.standings, room, progressLabel).map((row, i) => ({
+    ...row,
+    // Knocked out of Elimination: dimmed, like someone who left.
+    gone: row.gone || view.standings[i]!.out,
   }));
-};
 
-/** Everyone's progress as they play. Only on tablets and computers; phones leave it out. */
-function LiveBoard({ view, playerId, room }: Props) {
-  const avatars = new Map(room.players.map((p) => [p.id, p.avatar]));
-  if (view.standings.length === 0) return null;
-  return (
-    <aside className="panel live-board" aria-label="Live progress">
-      <h2 className="live-title">
-        {view.standings.length} {view.standings.length === 1 ? "player" : "players"}
-      </h2>
-      <ol>
-        {view.standings.map((s) => (
-          <li
-            key={s.playerId}
-            className={`${s.playerId === playerId ? "me" : ""}${s.left ? " gone" : ""}`}
-          >
-            <span className="rank">{s.rank}</span>
-            <Avatar id={avatars.get(s.playerId) ?? null} name={s.nickname} size={40} />
-            <span className="name">{s.playerId === playerId ? "You" : s.nickname}</span>
-            <span className="pts">{progressLabel(s)}</span>
-          </li>
-        ))}
-      </ol>
-    </aside>
-  );
+function LiveBoard(props: Props) {
+  return <PlayBoard rows={faces(props)} playerId={props.playerId} label="Live progress" />;
 }
 
 function Results({ view, client, isHost, room, playerId, onQuit }: Props) {

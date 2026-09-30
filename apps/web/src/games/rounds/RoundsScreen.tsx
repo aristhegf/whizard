@@ -29,7 +29,7 @@ import { useErrorShake } from "../../ui/errorShake";
 import { PlayToast } from "../../ui/gameNotice";
 import { Icon } from "../../ui/Icon";
 import { useServerNow } from "../../useServerNow";
-import { PlayFaces, PlayTimer, PlayTop, type Face } from "../play";
+import { PlayFaces, PlayTimer, PlayTop, Staged, timerMs, type Face } from "../play";
 import { Podium } from "../../ui/Podium";
 import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
@@ -163,9 +163,6 @@ export function facesOf(context: {
     gone: !!s.left || s.status === "out" || s.status === "left",
   }));
 }
-
-/** Seconds left, rounded up, as the big timer's milliseconds. */
-export const timerMs = (remaining: number) => Math.ceil(remaining / 1000) * 1000;
 
 // Playing a round ------------------------------------------------------------------------------
 
@@ -399,7 +396,7 @@ export function WordPuzzle({
                   <button
                     key={i}
                     type="button"
-                    className="word-tile"
+                    className="play-tile word-tile"
                     disabled={used}
                     aria-label={`Letter ${letter}`}
                     onClick={() => {
@@ -511,28 +508,6 @@ export function SpotPuzzle({
   );
 }
 
-/**
- * The play area with the scores beside it on a computer, their tops and bottoms level. On a
- * phone the scores are left out (the faces show instead); on a tablet they go underneath.
- */
-export function Staged({
-  aside,
-  wide = false,
-  children,
-}: {
-  aside?: ReactNode;
-  /** A jigsaw's board, wider than a grid. */
-  wide?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <div className={`play-stage ${wide ? "fit-board" : "fit"}`}>
-      <div className="play-area">{children}</div>
-      {aside}
-    </div>
-  );
-}
-
 export const SPOT_PROMPTS: Record<SpotItPuzzleView["kind"], string> = {
   emoji: "Find the odd one out",
   letter: "Find the odd letter",
@@ -565,7 +540,7 @@ export function SpotGrid({
     >
       {cells.map((cell, i) => {
         const missed = tried.includes(i);
-        const className = `spot-cell${missed ? " missed" : ""}${odd === i ? " odd" : ""}`;
+        const className = `play-tile spot-cell${missed ? " missed" : ""}${odd === i ? " odd" : ""}`;
         const label = `Row ${Math.floor(i / grid.size) + 1}, column ${(i % grid.size) + 1}`;
         const content =
           grid.kind === "shade" ? null : grid.kind === "rotation" ? (

@@ -15,7 +15,16 @@ import { Avatar } from "../../ui/Avatar";
 import { Brand } from "../../ui/Chrome";
 import { useErrorShake } from "../../ui/errorShake";
 import { Icon } from "../../ui/Icon";
-import { MuteButton } from "../../ui/MuteButton";
+import {
+  PlayBoard,
+  PlayFaces,
+  PlayFrame,
+  PlayScreen,
+  PlayTimer,
+  rowsFrom,
+  Staged,
+  timerMs,
+} from "../play";
 import { Podium } from "../../ui/Podium";
 import { CATALOG } from "../../catalog";
 import { buildCard } from "../../share/outcomes";
@@ -41,15 +50,15 @@ export function ConnectionsScreen(props: Props) {
   if (view.final) return <Results {...props} />;
   if (view.words === null || view.startsAt === null) {
     return (
-      <div className="game">
-        <Bar {...props} />
-        <div className="game-layout">
-          <div className="game-main">
-            <p className="watching">A game is in progress. You’ll be in the next one.</p>
-          </div>
-          <LiveBoard {...props} />
-        </div>
-      </div>
+      <PlayScreen
+        label="Connections"
+        latency={props.latency}
+        onQuit={props.onQuit}
+        side={<LiveBoard {...props} />}
+      >
+        <p className="watching">A game is in progress. You’ll be in the next one.</p>
+        <PlayFaces faces={rowsOf(props)} playerId={props.playerId} />
+      </PlayScreen>
     );
   }
   return <Playing {...props} words={view.words} startsAt={view.startsAt} />;
@@ -131,14 +140,13 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
 
   if (!started) {
     return (
-      <div className="game">
-        <Bar {...props} />
+      <PlayFrame label="Connections" latency={props.latency} onQuit={props.onQuit}>
         <div className="countdown" aria-live="polite">
           <img src="/art/games/connections.webp" alt="" />
           <p className="countdown-label">Get ready · {LEVEL_NAMES[view.level]}</p>
           <p className="countdown-number">{countdown}</p>
         </div>
-      </div>
+      </PlayFrame>
     );
   }
 
@@ -146,103 +154,90 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
   const me = view.me;
   const missing = (view.answer ?? []).filter((g) => !view.found.some((f) => f.colour === g.colour));
   return (
-    <div className="game">
-      <Bar
-        {...props}
-        progress={view.found.length / GROUPS}
-        middle={
-          <span className="progress">
-            {view.found.length} / {GROUPS}
-            <span className="progress-word"> groups</span>
-          </span>
-        }
-        timer={
-          <span
-            className={`timer-pill${left < 30_000 && !over ? " low" : ""}`}
-            role="timer"
-            aria-label="Time left"
-          >
-            <Icon name="clock" size={22} stroke={2.4} />
-            {clock(over ? (me?.timeMs ?? 0) : left)}
-          </span>
-        }
-      />
-      <div className="game-layout">
-        <div className="game-main conn-main">
-          <p className="muted small conn-help">
-            {over
-              ? me?.solved
-                ? `Solved in ${clock(me.timeMs ?? 0)}`
-                : me && me.mistakes >= CONNECTIONS_MAX_MISTAKES
-                  ? "Out of mistakes. Here’s how they fit."
-                  : "Time’s up. Here’s how they fit."
-              : "Find four groups of four. Pick four words that share something, then Submit."}
-          </p>
-          <div className="conn-board">
-            {view.found.map((group) => (
-              <GroupRow key={group.colour} group={group} />
-            ))}
-            {over ? (
-              missing.map((group) => <GroupRow key={group.colour} group={group} missed />)
-            ) : (
-              <div ref={gridRef} className="conn-grid" role="group" aria-label="Words">
-                {shown.map((word) => (
-                  <button
-                    key={word}
-                    type="button"
-                    className={`conn-tile${selected.includes(word) ? " selected" : ""}`}
-                    aria-pressed={selected.includes(word)}
-                    onClick={() => toggle(word)}
-                  >
-                    <span>{word}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
+    <PlayScreen
+      label={
+        <>
+          <b>{view.found.length}</b> / {GROUPS} groups
+        </>
+      }
+      latency={props.latency}
+      onQuit={props.onQuit}
+    >
+      <PlayTimer ms={over ? (me?.timeMs ?? 0) : timerMs(left)} low={left < 30_000 && !over} />
+      <p className="play-task">
+        {over
+          ? me?.solved
+            ? `Solved in ${clock(me.timeMs ?? 0)}`
+            : me && me.mistakes >= CONNECTIONS_MAX_MISTAKES
+              ? "Out of mistakes. Here’s how they fit."
+              : "Time’s up. Here’s how they fit."
+          : "Find four groups of four. Pick four words that share something, then Submit."}
+      </p>
+      <Staged aside={<LiveBoard {...props} />}>
+        <div className="conn-board">
+          {view.found.map((group) => (
+            <GroupRow key={group.colour} group={group} />
+          ))}
           {over ? (
-            <p className="verdict good conn-wait" role="status">
-              {me?.solved ? "You found every group!" : `${view.found.length} of 4 groups found`}
-              <span className="dim small">Waiting for everyone to finish…</span>
-            </p>
+            missing.map((group) => <GroupRow key={group.colour} group={group} missed />)
           ) : (
-            <>
-              <div className="conn-mistakes" aria-label={`${view.mistakesLeft} mistakes left`}>
-                <span className="muted small">Mistakes left</span>
-                {Array.from({ length: CONNECTIONS_MAX_MISTAKES }, (_, i) => (
-                  <span key={i} className={`conn-dot${i < view.mistakesLeft ? "" : " used"}`} />
-                ))}
-              </div>
-              <p className="conn-message" role="status">
-                {message}
-              </p>
-              <div className="conn-actions">
-                <button className="btn" onClick={shuffle}>
-                  <Icon name="repeat" size={20} />
-                  Shuffle
-                </button>
+            <div ref={gridRef} className="conn-grid" role="group" aria-label="Words">
+              {shown.map((word) => (
                 <button
-                  className="btn"
-                  disabled={selected.length === 0}
-                  onClick={() => setSelected([])}
+                  key={word}
+                  type="button"
+                  className={`play-tile conn-tile${selected.includes(word) ? " picked" : ""}`}
+                  aria-pressed={selected.includes(word)}
+                  onClick={() => toggle(word)}
                 >
-                  Deselect All
+                  <span>{word}</span>
                 </button>
-                <button
-                  className="btn btn-primary"
-                  disabled={selected.length !== CONNECTIONS_GROUP_SIZE}
-                  onClick={submit}
-                >
-                  Submit
-                </button>
-              </div>
-            </>
+              ))}
+            </div>
           )}
         </div>
-        <LiveBoard {...props} />
-      </div>
-    </div>
+        {over ? (
+          <p className="verdict good conn-wait" role="status">
+            {me?.solved ? "You found every group!" : `${view.found.length} of 4 groups found`}
+            <span className="dim small">Waiting for everyone to finish…</span>
+          </p>
+        ) : (
+          <>
+            <div className="conn-mistakes" aria-label={`${view.mistakesLeft} mistakes left`}>
+              <span className="muted small">Mistakes left</span>
+              {Array.from({ length: CONNECTIONS_MAX_MISTAKES }, (_, i) => (
+                <span key={i} className={`conn-dot${i < view.mistakesLeft ? "" : " used"}`} />
+              ))}
+            </div>
+            <p className="conn-message" role="status">
+              {message}
+            </p>
+          </>
+        )}
+      </Staged>
+      <PlayFaces faces={rowsOf(props)} playerId={props.playerId} />
+      {!over && (
+        <div className="play-actions">
+          <button className="play-pill square" aria-label="Shuffle" onClick={shuffle}>
+            <Icon name="repeat" size={22} />
+          </button>
+          <button
+            className="play-pill"
+            disabled={selected.length === 0}
+            onClick={() => setSelected([])}
+          >
+            Deselect All
+          </button>
+          <button
+            className="play-pill go"
+            disabled={selected.length !== CONNECTIONS_GROUP_SIZE}
+            onClick={submit}
+          >
+            Submit
+          </button>
+        </div>
+      )}
+    </PlayScreen>
   );
 }
 
@@ -255,70 +250,14 @@ function GroupRow({ group, missed = false }: { group: ConnectionsFoundGroup; mis
   );
 }
 
-function Bar({
-  view,
-  room,
-  latency,
-  onQuit,
-  middle,
-  timer,
-  progress,
-}: Props & { middle?: ReactNode; timer?: ReactNode; progress?: number }) {
-  return (
-    <header className="game-bar">
-      <div className="game-bar-row">
-        <span className="bar-brand">
-          <Brand />
-        </span>
-        <span className="room-label" translate="no">
-          Room: {room.code}
-        </span>
-        {middle ?? <span className="progress">Connections · {LEVEL_NAMES[view.level]}</span>}
-        <span className="bar-end">
-          {latency}
-          {timer}
-          <MuteButton />
-          <button className="btn quit-btn" onClick={onQuit}>
-            Quit
-          </button>
-        </span>
-      </div>
-      {progress !== undefined && (
-        <div className="question-progress" aria-hidden="true">
-          <div style={{ width: `${progress * 100}%` }} />
-        </div>
-      )}
-    </header>
-  );
-}
-
 const progressLabel = (s: ConnectionsStanding) =>
   s.left ? "Left" : s.solved ? clock(s.timeMs ?? 0) : `${s.found}/${GROUPS}`;
 
-/** Everyone's progress as they play. Only on tablets and computers; phones leave it out. */
-function LiveBoard({ view, playerId, room }: Props) {
-  const avatars = new Map(room.players.map((p) => [p.id, p.avatar]));
-  if (view.standings.length === 0) return null;
-  return (
-    <aside className="panel live-board" aria-label="Live progress">
-      <h2 className="live-title">
-        {view.standings.length} {view.standings.length === 1 ? "player" : "players"}
-      </h2>
-      <ol>
-        {view.standings.map((s) => (
-          <li
-            key={s.playerId}
-            className={`${s.playerId === playerId ? "me" : ""}${s.left ? " gone" : ""}`}
-          >
-            <span className="rank">{s.rank}</span>
-            <Avatar id={avatars.get(s.playerId) ?? null} name={s.nickname} size={40} />
-            <span className="name">{s.playerId === playerId ? "You" : s.nickname}</span>
-            <span className="pts">{progressLabel(s)}</span>
-          </li>
-        ))}
-      </ol>
-    </aside>
-  );
+/** Everyone's progress: faces on a phone, the board on a computer. */
+const rowsOf = ({ view, room }: Props) => rowsFrom(view.standings, room, progressLabel);
+
+function LiveBoard(props: Props) {
+  return <PlayBoard rows={rowsOf(props)} playerId={props.playerId} label="Live progress" />;
 }
 
 function Results({ view, client, isHost, room, playerId, onQuit }: Props) {

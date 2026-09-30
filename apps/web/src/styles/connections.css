@@ -1,24 +1,18 @@
 /* Connections ------------------------------------------------------------------------------ */
 
-.conn-main {
-  padding-top: 8px;
-  gap: 14px;
-}
-
-.conn-help {
-  max-width: 34rem;
-}
-
 .conn-board {
   display: grid;
-  gap: 8px;
-  width: min(100%, 620px);
+  gap: 3px;
+  width: min(100%, 560px);
+  /* So a found group can be exactly one tile tall. */
+  container-type: inline-size;
 }
 
+/* The sixteen words: the shared play tiles (play.css), four across. */
 .conn-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+  gap: 3px;
 }
 
 /* Shaken by a wrong guess, like a field that turned a value down. */
@@ -26,49 +20,27 @@
   animation: t-input-shake calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2) linear;
 }
 
+/* A little wider than tall, so the board, the dots and the buttons fit on a phone. */
 .conn-tile {
-  display: grid;
-  place-items: center;
-  min-height: 72px;
-  padding: 6px 4px;
-  border: 1.5px solid var(--line);
-  border-radius: 14px;
+  aspect-ratio: 5 / 4;
+  padding: 4px;
   font-family: var(--display);
   font-weight: 800;
-  font-size: clamp(0.72rem, 2.6vw, 1rem);
+  font-size: clamp(0.6rem, 2.9vw, 1rem);
   line-height: 1.15;
-  letter-spacing: 0.02em;
-  color: var(--text);
-  background: rgb(40 26 110 / 70%);
+  text-transform: uppercase;
   overflow-wrap: anywhere;
-  cursor: pointer;
-  transition:
-    transform 120ms ease,
-    background-color 120ms ease;
 }
 
-.conn-tile:hover {
-  background: rgb(60 38 150 / 80%);
-}
-
-.conn-tile:active {
-  transform: scale(0.96);
-}
-
-.conn-tile.selected {
-  border-color: transparent;
-  color: #fff;
-  background: linear-gradient(135deg, #8b4dff, #5a2fe0);
-  box-shadow: 0 8px 22px rgb(120 60 255 / 40%);
-}
-
+/* A found group: one flat bar the width of the grid, a tile tall. */
 .conn-group {
   display: grid;
   place-items: center;
+  align-content: center;
   gap: 2px;
-  min-height: 72px;
-  padding: 10px 12px;
-  border-radius: 14px;
+  min-height: calc((100cqi - 9px) / 5);
+  padding: 8px 12px;
+  border-radius: 12px;
   color: #1b1036;
   text-align: center;
   animation: conn-found 320ms ease-out;
@@ -76,14 +48,15 @@
 
 .conn-group strong {
   font-family: var(--display);
-  font-size: 1rem;
+  font-size: clamp(0.85rem, 3.6vw, 1.05rem);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .conn-group span {
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: clamp(0.78rem, 3.2vw, 0.95rem);
+  text-transform: uppercase;
 }
 
 .conn-0 {
@@ -126,25 +99,19 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #b392ff;
+  background: var(--accent, #8b3dff);
   transition: opacity 200ms ease;
 }
 
 .conn-dot.used {
-  opacity: 0.2;
+  background: var(--night-tile, #252063);
 }
 
 .conn-message {
   min-height: 1.4em;
+  margin: 0;
   font-weight: 800;
-  color: var(--gold);
-}
-
-.conn-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
+  color: var(--accent-soft, #b58cff);
 }
 
 .conn-wait {
@@ -155,6 +122,13 @@
 .conn-answer {
   justify-self: center;
   margin: 8px 0 4px;
+}
+
+/* Small phones (see play.css): flatter tiles, so the buttons stay on the screen. */
+@media (max-width: 360px), (max-height: 640px) {
+  .conn-tile {
+    aspect-ratio: 4 / 3;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

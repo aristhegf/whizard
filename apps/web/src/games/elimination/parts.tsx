@@ -6,6 +6,7 @@ import { play } from "../../sounds";
 import { Avatar } from "../../ui/Avatar";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
+import { PlayBoard } from "../play";
 import { MuteButton } from "../../ui/MuteButton";
 import { useServerNow } from "../../useServerNow";
 import { buildCard } from "../../share/outcomes";
@@ -217,32 +218,29 @@ export function FinalIntro({
 }
 
 /** Everyone's standing: who's still in, then who went out when. */
+/** Who's still in, and the knocked out. Drawn by `PlayBoard`, like every game's scores. */
 export function Board({ context }: { context: EliminationContext }) {
   const { view, playerId, avatarOf } = context;
   const finalScores = new Map((view.finalScores ?? []).map((f) => [f.playerId, f.score]));
   return (
-    <aside className="panel live-board" aria-label="Players">
-      <h2 className="live-title">{view.inFinal ? "Final" : `${view.aliveCount} still in`}</h2>
-      <ol>
-        {view.standings.map((s) => (
-          <li
-            key={s.playerId}
-            className={`${s.playerId === playerId ? "me" : ""}${s.status === "out" || s.status === "left" ? " gone" : ""}`}
-          >
-            <span className="rank">{s.rank}</span>
-            <Avatar id={avatarOf(s.playerId)} name={s.nickname} size={40} />
-            <span className="name">{s.playerId === playerId ? "You" : s.nickname}</span>
-            <span className="pts">
-              {s.status === "out"
-                ? `Out · R${s.outRound}`
-                : s.status === "left"
-                  ? "Left"
-                  : (finalScores.get(s.playerId) ?? s.score).toLocaleString()}
-            </span>
-          </li>
-        ))}
-      </ol>
-    </aside>
+    <PlayBoard
+      label="Players"
+      title={view.inFinal ? "Final" : `${view.aliveCount} still in`}
+      playerId={playerId}
+      rows={view.standings.map((s) => ({
+        playerId: s.playerId,
+        nickname: s.nickname,
+        avatar: avatarOf(s.playerId),
+        rank: s.rank,
+        gone: s.status === "out" || s.status === "left",
+        value:
+          s.status === "out"
+            ? `Out · R${s.outRound}`
+            : s.status === "left"
+              ? "Left"
+              : (finalScores.get(s.playerId) ?? s.score).toLocaleString(),
+      }))}
+    />
   );
 }
 

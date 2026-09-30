@@ -23,7 +23,7 @@ import {
 } from "../elimination/parts";
 import { PlayToast } from "../../ui/gameNotice";
 import { Icon } from "../../ui/Icon";
-import { PlayFaces, PlayTimer, PlayTop } from "../play";
+import { PlayFaces, PlayTimer, PlayTop, Staged, timerMs } from "../play";
 import { elapsedSince } from "../quiz/QuizScreen";
 import {
   facesOf,
@@ -32,8 +32,6 @@ import {
   SPOT_PROMPTS,
   SpotGrid,
   SpotPuzzle,
-  Staged,
-  timerMs,
   VERDICTS,
   WordPuzzle,
 } from "./RoundsScreen";
