@@ -490,7 +490,7 @@
     0 0 26px rgb(255 190 40 / 30%);
 }
 
-.board-avatar {
+.quiz-game .board-avatar {
   display: grid;
   place-items: center;
   width: 48px;
@@ -501,22 +501,22 @@
   box-shadow: 0 0 12px rgb(150 90 255 / 35%);
 }
 
-.board-avatar.r1 {
+.quiz-game .board-avatar.r1 {
   background: linear-gradient(180deg, #ffe07a, #ffab1f);
   box-shadow: 0 0 14px rgb(255 190 40 / 55%);
 }
 
-.board-avatar.r2 {
+.quiz-game .board-avatar.r2 {
   background: linear-gradient(180deg, #f4f5ff, #aeb6e0);
   box-shadow: 0 0 12px rgb(200 210 255 / 40%);
 }
 
-.board-avatar.r3 {
+.quiz-game .board-avatar.r3 {
   background: linear-gradient(180deg, #f6b078, #c46b2e);
   box-shadow: 0 0 12px rgb(240 150 80 / 40%);
 }
 
-.board-avatar > * {
+.quiz-game .board-avatar > * {
   border-radius: 50%;
 }
 

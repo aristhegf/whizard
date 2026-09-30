@@ -15,6 +15,7 @@ import { AddFromGame } from "../../FriendsScreen";
 import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { useServerNow } from "../../useServerNow";
 import { Avatar } from "../../ui/Avatar";
+import { PlayBoard } from "../play";
 import { GeneratingArt } from "../../ui/GeneratingArt";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
@@ -431,6 +432,7 @@ function LiveBoard({ context }: { context: GameContext }) {
 }
 
 /** Everyone's points as they play. Only on tablets and computers; phones leave it out. */
+/** A quiz-style board: points, with bars and medals when `bars` is on. Drawn by `PlayBoard`. */
 export function ScoreBoard({
   standings,
   playerId,
@@ -443,40 +445,21 @@ export function ScoreBoard({
   /** A bar under each name showing how close they are to the leader, and medals for the top three. */
   bars?: boolean;
 }) {
-  if (standings.length === 0) return null;
   const top = Math.max(1, ...standings.map((s) => s.score));
   return (
-    <aside className="panel live-board" aria-label="Live scores">
-      <h2 className="live-title">
-        {standings.length} {standings.length === 1 ? "player" : "players"}
-      </h2>
-      <ol>
-        {standings.map((s) => (
-          <li
-            key={s.playerId}
-            className={`${s.playerId === playerId ? "me" : ""}${s.left ? " gone" : ""}`}
-          >
-            <span className={`rank${bars && s.rank <= 3 ? ` medal m${s.rank}` : ""}`}>
-              {bars && s.rank === 1 ? <Icon name="crown" size={15} stroke={2.6} /> : s.rank}
-            </span>
-            <span className={`board-avatar${bars && s.rank <= 3 ? ` r${s.rank}` : ""}`}>
-              <Avatar id={avatarOf(s.playerId)} name={s.nickname} size={40} />
-            </span>
-            {bars ? (
-              <span className="who">
-                <span className="name">{s.playerId === playerId ? "You" : s.nickname}</span>
-                <span className="bar" aria-hidden="true">
-                  <i style={{ width: `${(s.score / top) * 100}%` }} />
-                </span>
-              </span>
-            ) : (
-              <span className="name">{s.playerId === playerId ? "You" : s.nickname}</span>
-            )}
-            <span className="pts">{s.left ? "Left" : s.score.toLocaleString()}</span>
-          </li>
-        ))}
-      </ol>
-    </aside>
+    <PlayBoard
+      rows={standings.map((s) => ({
+        playerId: s.playerId,
+        nickname: s.nickname,
+        avatar: avatarOf(s.playerId),
+        rank: s.rank,
+        value: s.left ? "Left" : s.score.toLocaleString(),
+        gone: s.left,
+        ...(bars ? { bar: s.score / top } : {}),
+      }))}
+      playerId={playerId}
+      medals={bars}
+    />
   );
 }
 

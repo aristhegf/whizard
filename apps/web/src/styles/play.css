@@ -182,6 +182,7 @@
   padding: 0 18px;
   border: 0;
   border-radius: 999px;
+  white-space: nowrap;
   background: var(--night);
   color: var(--text);
   font-family: var(--body);
@@ -192,6 +193,12 @@
 
 .play-pill:hover:not(:disabled) {
   background: var(--night-lift);
+}
+
+/* An icon on its own: Shuffle, Backspace. */
+.play-pill.square {
+  flex: 0 0 56px;
+  padding: 0;
 }
 
 .play-pill.go {
@@ -237,6 +244,51 @@
   min-width: 0;
 }
 
+/* Every game's tiles (Spot It's grid, Word Rush's letters, Connections' words): flat night
+   squares, 3px apart, corners about 11% of a tile, Whizard purple when tapped or picked.
+   Change them here and every game changes. */
+.play-tile {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 11%;
+  background: var(--night-tile);
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    transform 100ms ease-out;
+}
+
+@media (hover: hover) {
+  button.play-tile:hover:not(:disabled, .picked) {
+    background: var(--night-lift);
+  }
+}
+
+button.play-tile:active:not(:disabled) {
+  background: var(--accent);
+  transform: scale(0.96);
+}
+
+.play-tile.picked {
+  background: var(--accent);
+}
+
+/* The leaderboard's avatars (PlayBoard); the quiz dresses them in rings of its own. */
+.board-avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+}
+
+.board-avatar > * {
+  border-radius: 50%;
+}
+
 /* Who joined or left: one slim line of text at the bottom, no box. */
 .play-toast {
   align-self: end;
@@ -263,6 +315,52 @@
   from {
     opacity: 0;
     transform: translateY(6px);
+  }
+}
+
+/* Small phones (an iPhone SE): a smaller clock and closer spacing, so a game fits one screen. */
+@media (max-width: 360px), (max-height: 640px) {
+  .play {
+    gap: 6px;
+  }
+
+  .play-top {
+    min-height: 44px;
+  }
+
+  .play-main {
+    gap: 10px;
+  }
+
+  .play-timer {
+    font-size: 2.6rem;
+  }
+
+  .play-task {
+    font-size: 0.85rem;
+  }
+
+  .play-stage,
+  .play-area {
+    gap: 10px;
+  }
+
+  .play-faces {
+    margin: 0;
+  }
+
+  .play-actions {
+    gap: 8px;
+    padding-top: 4px;
+  }
+
+  .play-pill {
+    min-height: 50px;
+    padding: 0 12px;
+  }
+
+  .play-pill.square {
+    flex-basis: 50px;
   }
 }
 

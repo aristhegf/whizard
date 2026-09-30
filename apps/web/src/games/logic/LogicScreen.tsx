@@ -5,6 +5,7 @@ import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { play } from "../../sounds";
 import { useServerNow } from "../../useServerNow";
 import { Avatar } from "../../ui/Avatar";
+import { PlayBoard, rowsFrom } from "../play";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { MuteButton } from "../../ui/MuteButton";
@@ -312,27 +313,12 @@ const progressLabel = (s: LogicStanding) =>
 
 /** Everyone's progress as they play. Only on tablets and computers; phones leave it out. */
 function LiveBoard({ view, playerId, room }: Props) {
-  const avatars = new Map(room.players.map((p) => [p.id, p.avatar]));
-  if (view.standings.length === 0) return null;
   return (
-    <aside className="panel live-board" aria-label="Live progress">
-      <h2 className="live-title">
-        {view.standings.length} {view.standings.length === 1 ? "player" : "players"}
-      </h2>
-      <ol>
-        {view.standings.map((s) => (
-          <li
-            key={s.playerId}
-            className={`${s.playerId === playerId ? "me" : ""}${s.left ? " gone" : ""}`}
-          >
-            <span className="rank">{s.rank}</span>
-            <Avatar id={avatars.get(s.playerId) ?? null} name={s.nickname} size={40} />
-            <span className="name">{s.playerId === playerId ? "You" : s.nickname}</span>
-            <span className="pts">{progressLabel(s)}</span>
-          </li>
-        ))}
-      </ol>
-    </aside>
+    <PlayBoard
+      rows={rowsFrom(view.standings, room, progressLabel)}
+      playerId={playerId}
+      label="Live progress"
+    />
   );
 }
 

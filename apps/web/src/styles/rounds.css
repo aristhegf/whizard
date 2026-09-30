@@ -85,30 +85,9 @@
 
 .word-tile {
   aspect-ratio: 1;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 11%;
-  background: var(--night-tile, #252063);
   font-family: var(--display);
   font-weight: 800;
   font-size: clamp(1.4rem, 7vw, 2.2rem);
-  color: #fff;
-  cursor: pointer;
-  transition:
-    background 120ms ease,
-    transform 100ms ease-out;
-}
-
-@media (hover: hover) {
-  .word-tile:hover:not(:disabled) {
-    background: var(--night-lift, #3b347f);
-  }
-}
-
-.word-tile:active:not(:disabled) {
-  background: var(--accent, #8b3dff);
-  transform: scale(0.96);
 }
 
 /* Used: an empty tile where the letter was. */
@@ -116,11 +95,6 @@
   background: var(--night, #16143f);
   color: transparent;
   cursor: default;
-}
-
-.play-pill.square {
-  flex: 0 0 56px;
-  padding: 0;
 }
 
 .word-tries {
@@ -137,7 +111,7 @@
   color: var(--dim);
 }
 
-/* The approved grid: flat night tiles, 3px apart, corners about 11% of a tile. */
+/* The approved grid: the shared play tiles (play.css). */
 .spot-grid {
   display: grid;
   gap: 3px;
@@ -145,31 +119,7 @@
 }
 
 .spot-cell {
-  display: grid;
-  place-items: center;
   aspect-ratio: 1;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 11%;
-  background: var(--night-tile, #252063);
-  color: #fff;
-  cursor: pointer;
-  transition:
-    background 120ms ease,
-    transform 100ms ease-out;
-}
-
-@media (hover: hover) {
-  button.spot-cell:hover:not(:disabled) {
-    background: var(--night-lift, #3b347f);
-  }
-}
-
-/* The tile you tap flashes Whizard purple. */
-button.spot-cell:active:not(:disabled) {
-  background: var(--accent, #8b3dff);
-  transform: scale(0.96);
 }
 
 .spot-cell.missed {
