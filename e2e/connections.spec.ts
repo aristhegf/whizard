@@ -44,7 +44,7 @@ async function puzzleOn(page: Page): Promise<Puzzle> {
 const progress = (page: Page) =>
   page.evaluate(
     () =>
-      `${document.querySelectorAll(".conn-group").length}/${document.querySelectorAll(".conn-dot.used").length}`,
+      `${document.querySelectorAll(".conn-group").length}/${document.querySelectorAll(".play-dot.used").length}`,
   );
 
 /** Picks four words, submits them and waits for the verdict. A miss stays picked, so clear it. */

@@ -19,6 +19,7 @@ import {
   PlayBoard,
   PlayFaces,
   PlayFrame,
+  PlayMistakes,
   PlayScreen,
   PlayTimer,
   rowsFrom,
@@ -203,12 +204,7 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
           </p>
         ) : (
           <>
-            <div className="conn-mistakes" aria-label={`${view.mistakesLeft} mistakes left`}>
-              <span className="muted small">Mistakes left</span>
-              {Array.from({ length: CONNECTIONS_MAX_MISTAKES }, (_, i) => (
-                <span key={i} className={`conn-dot${i < view.mistakesLeft ? "" : " used"}`} />
-              ))}
-            </div>
+            <PlayMistakes left={view.mistakesLeft} max={CONNECTIONS_MAX_MISTAKES} />
             <p className="conn-message" role="status">
               {message}
             </p>
