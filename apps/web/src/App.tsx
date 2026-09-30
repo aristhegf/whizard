@@ -19,6 +19,12 @@ const AdminApp = lazy(() => import("./admin/AdminApp").then((m) => ({ default: m
 const AccountScreen = lazy(() =>
   import("./AccountScreen").then((m) => ({ default: m.AccountScreen })),
 );
+const SettingsScreen = lazy(() =>
+  import("./SettingsScreen").then((m) => ({ default: m.SettingsScreen })),
+);
+const PlayerScreen = lazy(() =>
+  import("./PlayerScreen").then((m) => ({ default: m.PlayerScreen })),
+);
 const AvatarCreator = lazy(() =>
   import("./avatar/AvatarCreator").then((m) => ({ default: m.AvatarCreator })),
 );
@@ -80,6 +86,10 @@ export function App() {
             <JigsawPage />
           ) : route.name === "account" ? (
             <AccountScreen />
+          ) : route.name === "settings" ? (
+            <SettingsScreen />
+          ) : route.name === "player" ? (
+            <PlayerScreen key={route.username} username={route.username} />
           ) : route.name === "avatar" ? (
             <AvatarCreator />
           ) : route.name === "friends" ? (

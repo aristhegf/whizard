@@ -1,11 +1,17 @@
 import type { AccountUser } from "@whizard/protocol";
 import { useEffect, useRef, useState } from "react";
-import { updateAccount, useAccount } from "../account";
+import { useAccount } from "../account";
 import { setReduceMotion, useReduceMotionSetting } from "../display";
 import { linkTo } from "../router";
 import { setMuted, useMuted } from "../sounds";
 import { Icon, type IconName } from "./Icon";
-import { useToastAction } from "./toast";
+import {
+  AFTER_ANSWER_CHOICES,
+  EXPLANATION_CHOICES,
+  Segmented,
+  Switch,
+  useAccountSetting,
+} from "./SettingControls";
 
 /**
  * Sound and display for everyone, remembered on this device. Signed-in players also choose how
@@ -94,32 +100,26 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
 
 /** Saved to the account, so they follow the player to every device. */
 function GameSettings({ user }: { user: AccountUser }) {
-  const saving = useToastAction();
+  const { busy, save } = useAccountSetting();
   return (
     <>
       <Choice
         id="setting-explanations"
         label="Explanations"
         hint="After each question is for solo games. With friends, they wait for the results."
-        options={[
-          ["After each question", true],
-          ["At the end", false],
-        ]}
+        options={EXPLANATION_CHOICES}
         value={user.showExplanations}
-        disabled={saving.busy}
-        onPick={(value) => void saving.run(() => updateAccount({ showExplanations: value }))}
+        disabled={busy}
+        onPick={(value) => save({ showExplanations: value })}
       />
       <Choice
         id="setting-pause"
         label="After you answer"
         hint="Go straight on shows your result for a second. With an explanation, you always get 3 seconds, and can skip."
-        options={[
-          ["Pause 3 seconds", true],
-          ["Go straight on", false],
-        ]}
+        options={AFTER_ANSWER_CHOICES}
         value={user.pauseAfterAnswer}
-        disabled={saving.busy}
-        onPick={(value) => void saving.run(() => updateAccount({ pauseAfterAnswer: value }))}
+        disabled={busy}
+        onPick={(value) => save({ pauseAfterAnswer: value })}
       />
     </>
   );
@@ -137,7 +137,7 @@ function Choice({
   id: string;
   label: string;
   hint: string;
-  options: [string, boolean][];
+  options: readonly (readonly [string, boolean])[];
   value: boolean;
   disabled: boolean;
   onPick: (value: boolean) => void;
@@ -147,19 +147,13 @@ function Choice({
       <span className="toggle-text" id={`${id}-label`}>
         {label}
       </span>
-      <div className="segmented" role="group" aria-labelledby={`${id}-label`}>
-        {options.map(([name, option]) => (
-          <button
-            key={name}
-            type="button"
-            aria-pressed={value === option}
-            disabled={disabled}
-            onClick={() => value !== option && onPick(option)}
-          >
-            {name}
-          </button>
-        ))}
-      </div>
+      <Segmented
+        labelledBy={`${id}-label`}
+        options={options}
+        value={value}
+        disabled={disabled}
+        onPick={onPick}
+      />
       <span className="dim small">{hint}</span>
     </div>
   );
@@ -187,13 +181,7 @@ function Toggle({
         <span id={`${id}-label`}>{label}</span>
         <span className="dim small">{hint}</span>
       </span>
-      <button
-        className="switch"
-        role="switch"
-        aria-checked={checked}
-        aria-labelledby={`${id}-label`}
-        onClick={() => onChange(!checked)}
-      />
+      <Switch checked={checked} onChange={onChange} labelledBy={`${id}-label`} />
     </div>
   );
 }

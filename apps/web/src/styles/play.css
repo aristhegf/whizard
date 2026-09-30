@@ -2,12 +2,6 @@
    text at the top, a big timer, faces on phones and one slim notice line at the bottom. */
 
 .play {
-  --night: #16143f;
-  --night-tile: #252063;
-  --night-lift: #3b347f;
-  --accent: #8b3dff;
-  --accent-soft: #b58cff;
-
   gap: 12px;
   /* The screen's full height, so the notice line sits at the very bottom. */
   grid-template-rows: auto 1fr auto;

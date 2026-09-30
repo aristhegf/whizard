@@ -80,15 +80,18 @@ test("an account keeps its avatar", async ({ page }) => {
   await withPasskeys(page);
   await signUp(page, uniqueUsername(), "Ada");
 
-  await page.goto("/avatar?back=/account");
+  await page.goto("/avatar?back=/account/settings");
   await makeAvatar(page);
-  await expect(page).toHaveURL(/\/account$/);
+  await expect(page).toHaveURL(/\/account\/settings$/);
+  const change = page.getByRole("button", { name: "Change avatar" });
+  await change.click();
   const mine = page.getByRole("radio", { name: "Your avatar" });
   await expect(mine).toHaveAttribute("aria-checked", "true");
 
   // It's saved on the account, not just in this browser.
   await page.evaluate(() => localStorage.removeItem("whizard:my-avatar"));
   await page.reload();
+  await change.click();
   await expect(mine).toHaveAttribute("aria-checked", "true");
 
   // Picking a built-in avatar keeps the made-up one to go back to.

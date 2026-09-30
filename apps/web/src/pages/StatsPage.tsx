@@ -503,7 +503,7 @@ function TopPlayers({ leaders }: { leaders: LeaderboardEntry[] | undefined }) {
       ) : leaders.length === 0 ? (
         <p className="muted panel-empty">
           No one on the leaderboard yet. Signed-in players can choose to appear here from their{" "}
-          <a className="btn-link" {...linkTo("/account#settings")}>
+          <a className="btn-link" {...linkTo("/account/settings#privacy")}>
             settings
           </a>
           .

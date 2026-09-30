@@ -95,6 +95,7 @@ test("changes the username, then not again for a week", async ({ browser }) => {
   await withPasskeys(page);
   await signUp(page, uniqueUsername(), "Ada 🧙‍♀️");
 
+  await page.goto("/account/settings");
   const field = page.getByLabel("Username");
   const change = page.getByRole("button", { name: "Change", exact: true });
   await field.fill(taken);
@@ -107,13 +108,15 @@ test("changes the username, then not again for a week", async ({ browser }) => {
   await change.click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Change" }).click();
   await expect(page.getByText(`Friends can find you as @${fresh} now.`)).toBeVisible();
-  await expect(page.locator(".profile-id").getByText(`@${fresh}`)).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Ada 🧙‍♀️", level: 1 })).toBeVisible();
 
   // Locked for 7 days, and it sticks after a reload.
   await page.reload();
   await expect(field).toBeDisabled();
   await expect(page.getByText(/You can change it again on/)).toBeVisible();
+
+  await page.getByRole("link", { name: "Back" }).click();
+  await expect(page.locator(".profile-handle")).toContainText(`@${fresh}`);
+  await expect(page.getByRole("heading", { name: "Ada 🧙‍♀️", level: 1 })).toBeVisible();
 
   // Friends find the account by its new name.
   await other.goto("/friends");
@@ -129,9 +132,10 @@ test("keeps a guest's game when they sign up, and records new ones", async ({ pa
   await signUp(page, uniqueUsername());
   const games = page.locator(".matches li");
   await expect(games).toHaveCount(1);
-  await expect(games.first()).toContainText("Bible · Easy");
-  await expect(games.first()).toContainText("Solo");
-  await expect(page.locator(".tiles")).toContainText("Games1");
+  await expect(games.first()).toContainText("Bible Quiz · Easy");
+  await expect(games.first()).toContainText("Solo · Today");
+  await expect(page.locator(".stat-tiles")).toContainText("Games1");
+  await expect(page.locator(".game-stats li")).toContainText("Quiz1 game · 0 wins");
 
   await playSoloGame(page);
   await page.goto("/account");
@@ -142,8 +146,11 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
   await withPasskeys(page);
   await signUp(page, uniqueUsername(), "Ada");
 
+  await page.goto("/account/settings");
   await page.getByLabel("Display name").fill("Ada L");
   await page.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByRole("button", { name: "Save" })).toBeDisabled();
+  await page.goto("/account");
   await expect(page.getByRole("heading", { name: "Ada L", level: 1 })).toBeVisible();
 
   // Quiz settings live in the Settings dialog, saved to the account.
@@ -192,6 +199,7 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
 test("deletes the account", async ({ page }) => {
   await withPasskeys(page);
   await signUp(page, uniqueUsername());
+  await page.goto("/account/settings");
   await page.getByRole("button", { name: "Delete account" }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
   await page.getByRole("button", { name: "Me", exact: true }).click();
@@ -249,6 +257,18 @@ test("friends add each other, play together and see their record", async ({ brow
 
   await ada.goto("/friends");
   await expect(friendRow).toContainText("1 game");
+
+  // Tapping Tolu opens his profile: the record between them, and the game they played.
+  await friendRow.getByRole("link", { name: /Tolu/ }).click();
+  await expect(ada).toHaveURL(new RegExp(`/u/${toluName}$`));
+  await expect(ada.getByRole("heading", { name: "Tolu", level: 1 })).toBeVisible();
+  await expect(ada.getByText(/Friends since/)).toBeVisible();
+  await expect(ada.getByRole("region", { name: "You and Tolu" })).toContainText("1 game together");
+  await expect(ada.getByRole("button", { name: "Ping to play" })).toBeVisible();
+  const together = ada.getByRole("region", { name: "Played together" });
+  await expect(together.getByRole("listitem")).toHaveCount(1);
+  await expect(together).toContainText("Bible Quiz");
+  await ada.goto("/friends");
 
   // A group shows who tops it.
   await ada.getByRole("button", { name: "New group" }).click();
@@ -329,33 +349,49 @@ test("pings a friend from the friends page and the lobby", async ({ browser }) =
   await expect(tolu.locator(".people li").filter({ hasText: `@${adaName}` })).toContainText(
     "Muted",
   );
-  await tolu.goto("/account");
-  const quiet = tolu.getByRole("group", { name: "Quiet hours" });
-  await quiet.getByRole("button", { name: "On" }).click();
+  await tolu.goto("/account/settings");
+  const quiet = tolu.getByRole("switch", { name: "Quiet hours" });
+  await quiet.click();
   await expect(tolu.getByLabel("Quiet from")).toBeVisible();
   await tolu.reload();
-  await expect(quiet.getByRole("button", { name: "On" })).toHaveAttribute("aria-pressed", "true");
+  await expect(quiet).toHaveAttribute("aria-checked", "true");
 });
 
 test("players choose whether they appear on the public leaderboard", async ({ page }) => {
   await withPasskeys(page);
   await signUp(page, uniqueUsername());
 
-  const setting = page.getByRole("group", { name: "Public leaderboard" });
-  await expect(setting.getByRole("button", { name: "Hide me" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await setting.getByRole("button", { name: "Show me" }).click();
-  await expect(setting.getByRole("button", { name: "Show me" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  await page.goto("/account/settings");
+  const setting = page.getByRole("switch", { name: "Show me on the leaderboard" });
+  await expect(setting).toHaveAttribute("aria-checked", "false");
+  await setting.click();
+  await expect(setting).toHaveAttribute("aria-checked", "true");
 
   await page.reload();
-  await expect(
-    page
-      .getByRole("group", { name: "Public leaderboard" })
-      .getByRole("button", { name: "Show me" }),
-  ).toHaveAttribute("aria-pressed", "true");
+  await expect(setting).toHaveAttribute("aria-checked", "true");
+});
+
+test("the profile signs out and opens settings from the top, and settings can't sign out", async ({
+  page,
+}) => {
+  await withPasskeys(page);
+  await signUp(page, uniqueUsername(), "Ada");
+
+  // Sign out first, then the gear, at the top right.
+  const signOut = page.getByRole("button", { name: "Sign out" });
+  const gear = page.getByRole("link", { name: "Settings", exact: true });
+  const [out, settings] = [await signOut.boundingBox(), await gear.boundingBox()];
+  expect(out && settings && out.x < settings.x && Math.abs(out.y - settings.y) < 4).toBe(true);
+
+  await gear.click();
+  await expect(page).toHaveURL(/\/account\/settings$/);
+  await expect(page.getByRole("heading", { name: "Settings", level: 1 })).toBeVisible();
+  await expect(page.getByRole("switch", { name: "Sound" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Delete account" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Sign out" })).toHaveCount(0);
+
+  await page.getByRole("link", { name: "Back" }).click();
+  await expect(page).toHaveURL(/\/account$/);
+  await page.getByRole("link", { name: "Edit profile" }).click();
+  await expect(page.getByLabel("Display name")).toHaveValue("Ada");
 });

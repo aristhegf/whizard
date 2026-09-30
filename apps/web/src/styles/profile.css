@@ -1,0 +1,972 @@
+/* The profile, someone else's profile and the settings page, in the night and purple look of
+   the games: flat tiles on night blue 3px apart, Whizard purple for what's chosen, and gold only
+   for a first place. */
+
+.profile-page .page-main {
+  max-width: 1200px;
+}
+
+.settings-page .page-main,
+.player-page .page-main {
+  max-width: 640px;
+}
+
+.profile-heading {
+  margin: 0 0 8px;
+  font-family: var(--display);
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+/* Your profile ------------------------------------------------------------------------------ */
+
+/* A phone reads down one column: you, your numbers, your games, recent games, then friends. */
+.profile {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-side {
+  display: contents;
+}
+
+.profile-card {
+  order: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 52px 4px 0;
+  text-align: center;
+}
+
+/* Sign out, then Settings, at the top right. */
+.profile-tools {
+  position: absolute;
+  top: 0;
+  right: -8px;
+  display: flex;
+  gap: 2px;
+}
+
+.profile-tools .icon-btn {
+  color: var(--text);
+}
+
+.profile-avatar .avatar,
+.player-avatar .avatar {
+  width: 104px;
+  height: 104px;
+  box-shadow: 0 0 0 4px var(--accent);
+}
+
+.profile-name {
+  margin: 10px 0 0;
+  font-family: var(--display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.profile-handle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.soft-pill,
+.round-btn {
+  display: inline-grid;
+  place-items: center;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--night-tile);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.soft-pill {
+  padding: 0 20px;
+}
+
+.round-btn {
+  width: 44px;
+}
+
+@media (hover: hover) {
+  .soft-pill:hover,
+  .round-btn:hover {
+    background: var(--night-lift);
+  }
+}
+
+/* The numbers: two by two. */
+.stat-tiles {
+  order: 2;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  margin: 22px 0 0;
+}
+
+.stat-tiles[aria-busy="true"] {
+  min-height: 176px;
+}
+
+.stat-tiles > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--night-tile);
+}
+
+.stat-tiles dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.stat-tiles dd {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.stat-tiles small {
+  font-family: var(--body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--dim);
+}
+
+.stat-tiles .streak {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stat-tiles .flame {
+  color: #ff9d1a;
+}
+
+/* Your games, one row each. A phone shows the first four until "All N games". */
+.profile-games {
+  order: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 26px;
+}
+
+.game-stats,
+.matches {
+  list-style: none;
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+}
+
+.game-stats li,
+.matches li {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--night);
+}
+
+.game-stats img,
+.matches img {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.game-stat-text,
+.match-text {
+  display: grid;
+  min-width: 0;
+}
+
+.game-stat-name,
+.match-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.game-stat-count,
+.match-detail {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.game-best {
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.game-best b {
+  display: block;
+  font-family: var(--display);
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.game-best-on {
+  display: none;
+}
+
+.more-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 48px;
+  border-radius: 14px;
+  color: var(--accent-soft);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+@media (hover: hover) {
+  .more-link:hover:not(:disabled) {
+    color: var(--text);
+  }
+}
+
+@media (max-width: 1023.98px) {
+  .profile-games:not(.all) .game-stats .extra {
+    display: none;
+  }
+}
+
+/* Recent games. */
+.profile-history {
+  order: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 14px;
+}
+
+.match-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.match-place:empty {
+  display: none;
+}
+
+.match-score {
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.place {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--night-lift);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+/* Gold is for first place only. */
+.place.first {
+  background: var(--gold);
+  color: #221400;
+}
+
+/* Friends. */
+.profile-friends {
+  order: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 14px;
+}
+
+.friends-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 0 0 0 12px;
+  border-radius: 14px;
+  background: var(--night);
+}
+
+.face-stack {
+  display: flex;
+  flex: none;
+}
+
+.face-stack a {
+  display: flex;
+  border-radius: 50%;
+}
+
+.face-stack a + a {
+  margin-left: -10px;
+}
+
+.face-stack .avatar {
+  box-shadow: 0 0 0 3px var(--night);
+}
+
+.friends-strip-link {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  align-self: stretch;
+  padding: 0 14px 0 0;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.friends-strip-link svg {
+  color: var(--muted);
+}
+
+/* A computer: you, your numbers and friends on the left, from the top of the first game to the
+   bottom of the last recent one; your games and recent games on the right. The two sections on
+   the right share the page's rows (subgrid), so the column can span exactly those rows. */
+@media (min-width: 1024px) {
+  .profile {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    grid-template-rows: repeat(5, auto);
+    column-gap: 32px;
+    padding-top: 24px;
+  }
+
+  .profile-side {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    grid-column: 1;
+    grid-row: 2 / 5;
+  }
+
+  .profile-card {
+    flex: 1;
+    justify-content: center;
+    padding: 28px 20px 22px;
+    border-radius: 18px;
+    background: var(--night);
+  }
+
+  .profile-tools {
+    top: 8px;
+    right: 8px;
+  }
+
+  .profile-avatar .avatar {
+    width: 120px;
+    height: 120px;
+  }
+
+  .profile-name {
+    margin-top: 12px;
+    font-size: 1.875rem;
+  }
+
+  .profile-actions {
+    margin-top: 12px;
+  }
+
+  .stat-tiles {
+    margin: 0;
+  }
+
+  .stat-tiles dd {
+    font-size: 1.875rem;
+  }
+
+  .profile-friends {
+    margin: 0;
+  }
+
+  .profile-friends .profile-heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .profile-games,
+  .profile-history {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-column: 2;
+    gap: 0;
+    margin: 0;
+  }
+
+  .profile-games {
+    grid-row: 1 / 3;
+  }
+
+  .profile-history {
+    grid-row: 3 / 6;
+    align-items: start;
+  }
+
+  .profile-games .profile-heading {
+    margin-bottom: 12px;
+    font-size: 1.375rem;
+  }
+
+  .profile-history .profile-heading {
+    margin: 28px 0 12px;
+    font-size: 1.375rem;
+  }
+
+  .game-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .game-stats li {
+    grid-template-columns: 56px minmax(0, 1fr);
+    grid-template-areas:
+      "art text"
+      "art best";
+    align-content: center;
+    column-gap: 14px;
+    row-gap: 0;
+    padding: 14px;
+  }
+
+  .game-stats img {
+    grid-area: art;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+  }
+
+  .game-stat-text {
+    grid-area: text;
+  }
+
+  .game-stat-name {
+    font-size: 1rem;
+  }
+
+  .game-stat-count {
+    margin-top: 3px;
+  }
+
+  /* "Best topic: Bible 81%", in purple under the counts. */
+  .game-best {
+    grid-area: best;
+    margin-top: 6px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--accent-soft);
+  }
+
+  .game-best-label::after {
+    content: ":";
+  }
+
+  .game-best b,
+  .game-best-on {
+    display: inline;
+    font-family: var(--body);
+    font-size: inherit;
+    color: inherit;
+  }
+
+  .profile-games .more-link {
+    display: none;
+  }
+
+  .profile .matches li {
+    grid-template-columns: 44px minmax(0, 2fr) minmax(0, 2fr) 90px 110px;
+    gap: 14px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+  }
+
+  .profile .match-text,
+  .profile .match-result {
+    display: contents;
+  }
+
+  .profile .match-detail {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .profile .match-place {
+    display: block;
+    font-size: 0.875rem;
+  }
+
+  .profile .place {
+    min-width: 40px;
+    height: 26px;
+    padding: 0 8px;
+  }
+
+  .profile .match-score {
+    text-align: right;
+    font-size: 1.05rem;
+  }
+
+  .profile-history .more-link {
+    justify-self: start;
+    height: 44px;
+    margin-top: 12px;
+    padding: 0 18px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .profile {
+    grid-template-columns: 360px minmax(0, 1fr);
+  }
+
+  .game-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* The bar at the top of a page you go back from: Back, a title, and a menu. */
+.sub-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 56px;
+  margin-left: -10px;
+}
+
+.sub-head .icon-btn {
+  color: var(--text);
+}
+
+.sub-head h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.625rem;
+  font-weight: 800;
+}
+
+.sub-head-title {
+  flex: 1;
+  font-family: var(--display);
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.sub-head .more summary {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--text);
+}
+
+/* Someone else's profile -------------------------------------------------------------------- */
+
+.player {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 4px 0;
+  text-align: center;
+}
+
+.player-avatar .avatar {
+  width: 96px;
+  height: 96px;
+  box-shadow: 0 0 0 4px var(--night-lift);
+}
+
+.player .profile-name {
+  margin-top: 8px;
+  font-size: 1.625rem;
+}
+
+.primary-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  margin-top: 10px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.primary-pill:disabled {
+  opacity: 0.7;
+}
+
+.primary-pill.quiet {
+  background: var(--night-tile);
+  color: var(--muted);
+  opacity: 1;
+}
+
+.head-to-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--night-tile);
+}
+
+.h2h-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.h2h-side .avatar {
+  box-shadow: none;
+}
+
+.h2h-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.h2h-numbers {
+  font-family: var(--display);
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.h2h-dash {
+  color: var(--dim);
+}
+
+.h2h-games {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.stat-tiles.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 3px;
+}
+
+.stat-tiles.three > div {
+  padding: 12px;
+}
+
+.stat-tiles.three dd {
+  font-size: 1.5rem;
+}
+
+.stat-tiles.three dd.tile-word {
+  font-size: 1.125rem;
+  line-height: 24px;
+}
+
+.player .profile-history {
+  margin-top: 22px;
+}
+
+.matches.together li {
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+}
+
+.matches.together img {
+  width: 40px;
+  height: 40px;
+}
+
+.match-outcome {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+.match-outcome.won {
+  color: #6ff0b8;
+}
+
+.match-outcome.lost {
+  color: #ff8fa3;
+}
+
+/* Settings ---------------------------------------------------------------------------------- */
+
+.prefs-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.prefs {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 22px;
+  scroll-margin-top: 16px;
+}
+
+.prefs h2 {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.pref {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 12px;
+  min-height: 56px;
+  padding: 6px 14px;
+  border-radius: 14px;
+  background: var(--night);
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* A choice of two under its name, the width of the row. */
+.pref.stacked {
+  grid-template-columns: minmax(0, 1fr);
+  padding: 12px 14px;
+}
+
+.pref-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.pref-name small {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.pref-below {
+  grid-column: 1 / -1;
+  margin: 0 0 6px;
+}
+
+.pref-below:empty {
+  display: none;
+}
+
+.pref-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pref-field input,
+.pref-field .handle-input {
+  width: 130px;
+}
+
+.pref-field input {
+  min-height: 40px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1.5px solid rgb(140 128 255 / 22%);
+  border-radius: 10px;
+  background: #0f0d2e;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.pref-field .handle-input input {
+  width: 100%;
+  padding-left: 30px;
+}
+
+.pref-field .handle-input > span {
+  left: 12px;
+}
+
+@media (min-width: 520px) {
+  .pref-field input,
+  .pref-field .handle-input {
+    width: 200px;
+  }
+}
+
+.pref-btn {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--night-tile);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.pref-btn:disabled {
+  opacity: 0.5;
+}
+
+@media (hover: hover) {
+  .pref-btn:hover:not(:disabled),
+  .pref-link:hover {
+    background: var(--night-lift);
+  }
+}
+
+.pref-field .avatar {
+  width: 40px;
+  height: 40px;
+  box-shadow: none;
+}
+
+.pref .avatar-picker {
+  grid-template-columns: repeat(auto-fill, minmax(44px, 52px));
+  gap: 8px;
+  padding: 4px 0 6px;
+}
+
+.pref-link svg {
+  color: var(--muted);
+}
+
+.pref-danger {
+  height: 48px;
+  border-radius: 14px;
+  color: #ff8fa3;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.quiet-range {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quiet-range select {
+  flex: 1;
+  min-height: 40px;
+  padding: 0 34px 0 12px;
+  border-radius: 10px;
+  background-color: #0f0d2e;
+}
+
+/* The settings page's switches and choices: flat, and purple when on. */
+.prefs .switch {
+  width: 52px;
+  height: 30px;
+  border: 0;
+  background: var(--night-lift);
+}
+
+.prefs .switch::after {
+  width: 24px;
+  height: 24px;
+}
+
+.prefs .switch[aria-checked="true"] {
+  background: var(--accent);
+}
+
+.prefs .switch:disabled {
+  opacity: 0.7;
+}
+
+.prefs .segmented {
+  gap: 0;
+  padding: 3px;
+  border: 0;
+  border-radius: 999px;
+  background: #0f0d2e;
+}
+
+.prefs .segmented button {
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.prefs .segmented button[aria-pressed="true"] {
+  background: var(--accent);
+  box-shadow: none;
+}

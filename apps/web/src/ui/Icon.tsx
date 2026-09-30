@@ -42,6 +42,7 @@ import {
   Search,
   Send,
   Settings,
+  Share,
   Share2,
   Shield,
   SkipForward,
@@ -81,6 +82,8 @@ const ICONS = {
   chevronLeft: ChevronLeft,
   chevronDown: ChevronDown,
   share: Share2,
+  // The box with an arrow out of it, as phones draw their share button.
+  shareOut: Share,
   copy: Copy,
   play: Play,
   logout: LogOut,
