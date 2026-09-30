@@ -1708,6 +1708,44 @@ button.choice:disabled {
   }
 }
 
+/* Jigsaw Elimination: between rounds, who went out. */
+.jigsaw-cut {
+  align-content: center;
+  min-height: 50dvh;
+}
+
+.cut-title {
+  margin: 0;
+  font-size: clamp(2rem, 8vw, 3rem);
+}
+
+.cut-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cut-list li {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.cut-list .avatar {
+  opacity: 0.6;
+  filter: grayscale(0.6);
+}
+
+.jigsaw-count {
+  color: var(--text);
+  font-weight: 700;
+}
+
 /* Jigsaw Insane: the picture's canvas, which zooms and pans, and the tray under it. */
 .insane-main {
   display: flex;
@@ -1832,6 +1870,51 @@ button.choice:disabled {
   height: 76px;
   pointer-events: auto;
   cursor: grab;
+}
+
+.insane-tray-wrap {
+  position: relative;
+}
+
+/* Arrows for a mouse: rest on one and the tray slides. Touch screens swipe instead. */
+.tray-arrow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  display: none;
+  place-items: center;
+  width: 44px;
+  padding: 0;
+  border: 0;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.tray-arrow.left {
+  left: 0;
+  border-radius: 16px 0 0 16px;
+  background: linear-gradient(90deg, var(--night, #16143f) 55%, transparent);
+}
+
+.tray-arrow.right {
+  right: 0;
+  border-radius: 0 16px 16px 0;
+  background: linear-gradient(270deg, var(--night, #16143f) 55%, transparent);
+}
+
+.tray-arrow:hover {
+  color: var(--accent-soft, #b58cff);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tray-arrow {
+    display: grid;
+  }
+
+  .tray-arrow[hidden] {
+    display: none;
+  }
 }
 
 .insane-peek {

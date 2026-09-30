@@ -160,7 +160,12 @@ export class Room extends DurableObject<Env> {
    * The host's own photo for a jigsaw: kept with the room, and chosen as the picture. Only the
    * host can set it, between games, and only while the room is playing Jigsaw.
    */
-  async setPhoto(sessionToken: string, type: string, data: ArrayBuffer): Promise<PhotoResult> {
+  async setPhoto(
+    sessionToken: string,
+    type: string,
+    data: ArrayBuffer,
+    aspect = 1,
+  ): Promise<PhotoResult> {
     const state = await this.current(Date.now());
     if (!state) {
       return { ok: false, status: 404, error: "room_not_found", message: "This room has closed." };
@@ -184,7 +189,14 @@ export class Room extends DurableObject<Env> {
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
     await this.ctx.storage.put(PHOTO_KEY, { id, type, data } satisfies StoredPhoto);
-    const settings = { ...(state.game.settings as object), picture: "photo", photo: id };
+    const settings: Record<string, unknown> = {
+      ...(state.game.settings as object),
+      picture: "photo",
+      photo: id,
+    };
+    // A square photo needs no shape; one in its own shape (for Insane) keeps it.
+    if (aspect === 1) delete settings.photoAspect;
+    else settings.photoAspect = aspect;
     const result = configureGame(state, state.hostId!, settings);
     if (!result.ok) {
       return { ok: false, status: 400, error: "bad_settings", message: "That photo didn’t work." };
@@ -473,7 +485,7 @@ export class Room extends DurableObject<Env> {
       startGame(state, playerId, this.connectedIds(), now, randomSeed(), (req, seed, room) => {
         // The host's own photo is served by this room, so the room fills it in.
         if (req.kind === "jigsaw-picture" && req.picture === "photo" && req.photo) {
-          const picture = photoPicture(state.code, req.photo);
+          const picture = photoPicture(state.code, req.photo, req.photoAspect);
           drawn = [];
           return [{ id: `jigsaw:photo:${req.photo}`, picture }];
         }
