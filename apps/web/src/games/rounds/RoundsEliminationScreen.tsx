@@ -200,6 +200,7 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
               tried={stage.tried as string[]}
               triesLeft={stage.triesLeft}
               onGuess={guess}
+              onSkip={skip}
             />
           ) : (
             <SpotPuzzle
@@ -211,11 +212,12 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
           )}
           {!busy && <p className="muted center">{waiting}</p>}
           <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
-          {busy && (
+          {/* Word Rush's give-up sits in its own row of buttons, with Check. */}
+          {busy && view.game === "spot-it" && (
             <div className="play-actions">
               <button className="play-pill" onClick={skip}>
                 <Icon name="skip" size={20} />
-                {view.game === "word-rush" ? "Give up on this word" : "Skip this grid"}
+                Skip this grid
               </button>
             </div>
           )}

@@ -11,7 +11,15 @@ import {
   type WordReveal,
   type WordRushSpeedView,
 } from "@whizard/game-core";
-import { useEffect, useRef, useState, type FormEvent, type ReactNode, type Ref } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type FormEvent,
+  type ReactNode,
+  type Ref,
+} from "react";
 import { CATALOG } from "../../catalog";
 import { AddFromGame } from "../../FriendsScreen";
 import type { RoomClient, RoomSnapshot } from "../../roomClient";
@@ -233,6 +241,7 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
               tried={stage.tried as string[]}
               triesLeft={stage.triesLeft}
               onGuess={guess}
+              onSkip={skip}
             />
           ) : (
             <SpotPuzzle
@@ -243,12 +252,15 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
             />
           )}
           <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
-          <div className="play-actions">
-            <button className="play-pill" onClick={skip}>
-              <Icon name="skip" size={20} />
-              {view.game === "word-rush" ? "Give up on this word" : "Skip this grid"}
-            </button>
-          </div>
+          {/* Word Rush's give-up sits in its own row of buttons, with Check. */}
+          {view.game === "spot-it" && (
+            <div className="play-actions">
+              <button className="play-pill" onClick={skip}>
+                <Icon name="skip" size={20} />
+                Skip this grid
+              </button>
+            </div>
+          )}
         </div>
         <ScoreBoard
           standings={view.standings}
@@ -275,11 +287,14 @@ export function WordPuzzle({
   tried,
   triesLeft,
   onGuess,
+  onSkip,
 }: {
   puzzle: WordPuzzleView;
   tried: string[];
   triesLeft: number;
   onGuess: (word: string) => void;
+  /** Gives up on the word, from the row of buttons at the bottom. */
+  onSkip?: () => void;
 }) {
   const [typed, setTyped] = useState("");
   const input = useRef<HTMLInputElement>(null);
@@ -294,6 +309,8 @@ export function WordPuzzle({
     ? Array.from({ length }, (_, i) => typed[i] ?? null)
     : fill(puzzle.pattern, typed);
   const full = unscramble ? typed.length === length : typed.length === blanks;
+  // Where the next letter goes, marked while typing.
+  const nextAt = shown.findIndex((letter) => letter === null);
 
   const change = (value: string) => {
     let next = value.toUpperCase().replace(/[^A-Z]/g, "");
@@ -322,12 +339,10 @@ export function WordPuzzle({
 
   return (
     <form className="word-puzzle" onSubmit={submit}>
-      <p className="word-kind">
-        <span className="pill pill-glow">{puzzle.hint}</span>
-        <span className="dim small">
-          {unscramble ? "Unscramble the word" : "Fill in the missing letters"} ·{" "}
-          {LEVEL_NAMES[puzzle.level]}
-        </span>
+      <p className="play-task word-kind">
+        <b className="word-hint">{puzzle.hint}</b> ·{" "}
+        {unscramble ? "Unscramble the word" : "Fill in the missing letters"} ·{" "}
+        {LEVEL_NAMES[puzzle.level]}
       </p>
       {/* The letters show in the slots; the field on top of them takes the typing. */}
       <div className="word-entry">
@@ -337,7 +352,7 @@ export function WordPuzzle({
               key={i}
               className={`word-slot${letter ? " filled" : ""}${
                 !unscramble && puzzle.pattern[i] !== null ? " given" : ""
-              }`}
+              }${i === nextAt ? " next" : ""}`}
             >
               {letter ?? ""}
             </span>
@@ -361,7 +376,12 @@ export function WordPuzzle({
         />
       </div>
       {unscramble && (
-        <div className="word-tiles" role="group" aria-label="Letters">
+        <div
+          className="word-tiles"
+          role="group"
+          aria-label="Letters"
+          style={{ "--cols": tileColumns(puzzle.letters.length) } as CSSProperties}
+        >
           {puzzle.letters.map((letter, i) => {
             const used = !left.includes(i);
             return (
@@ -382,20 +402,31 @@ export function WordPuzzle({
           })}
         </div>
       )}
-      <div className="word-actions">
+      <div className="play-actions word-actions">
         <button
           type="button"
-          className="btn"
+          className="play-pill square"
           disabled={typed.length === 0}
           onClick={() => {
             setTyped(typed.slice(0, -1));
             input.current?.focus();
           }}
         >
-          <Icon name="arrowLeft" size={20} />
+          <Icon name="backspace" size={22} />
           <span className="sr-only">Delete a letter</span>
         </button>
-        <button className="btn btn-primary" type="submit" disabled={!full}>
+        {onSkip && (
+          <button
+            type="button"
+            className="play-pill"
+            aria-label="Give up on this word"
+            onClick={onSkip}
+          >
+            <Icon name="skip" size={20} />
+            Give up
+          </button>
+        )}
+        <button className="play-pill go" type="submit" disabled={!full}>
           Check
         </button>
       </div>
@@ -413,6 +444,9 @@ export function WordPuzzle({
     </form>
   );
 }
+
+/** Letter tiles in one row up to four, else in two rows. */
+const tileColumns = (count: number) => (count <= 4 ? count : Math.ceil(count / 2));
 
 /** Indexes of the tiles not yet used by `typed`. */
 function remove(letters: readonly string[], typed: string): number[] {
@@ -579,8 +613,8 @@ export function Reveal({ game, reveal }: { game: RoundsGame; reveal: WordReveal 
     const { word, hint } = reveal as WordReveal;
     return (
       <div className="word-puzzle">
-        <p className="word-kind">
-          <span className="pill pill-glow">{hint}</span>
+        <p className="play-task word-kind">
+          <b className="word-hint">{hint}</b>
         </p>
         <div className="word-slots revealed" aria-label={`The word was ${word}`}>
           {[...word].map((letter, i) => (
