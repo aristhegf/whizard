@@ -28,8 +28,14 @@ jobs:
       - run: pnpm test
       - run: pnpm build
 
+  # The browser tests, split across three machines that run side by side (about a third of the
+  # time each). The deploy waits for all three.
   e2e:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -39,11 +45,11 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm e2e
+      - run: pnpm exec playwright test --shard=${{ matrix.shard }}/3
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
-          name: playwright-traces
+          name: playwright-traces-${{ matrix.shard }}
           path: test-results/
           retention-days: 7
 

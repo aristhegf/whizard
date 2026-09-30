@@ -511,7 +511,8 @@ Jigsaw, Reaction and Draw & Guess use **Phaser**, loaded only when one of those 
 - **Unit tests** (Vitest) for `game-core`: every game module, scoring, timing clamps, content drawing. Game modules are pure, so tests replay a seed and a list of actions and check the result.
 - **Integration tests** for the Room Durable Object, using Cloudflare's Vitest pool to run it in the real Workers runtime.
 - **End-to-end tests** (Playwright, phone-sized screens): several browsers join the same room, reload, drop off and hand over the host role. Full games are added with each game.
-- **GitHub Actions** on every push and pull request: format, lint, typecheck, tests and a production build.
+- **GitHub Actions** on every push and pull request (the `CI` workflow): `check` (format, lint, typecheck, unit tests and a production build, about a minute) and `e2e`, the browser tests, split across three machines that run side by side (`--shard=1/3` to `3/3`, about a third of the time each). On main, `deploy` waits for all of them, then puts the site live and smoke-tests it.
+- **Before pushing a change**, run format, lint, typecheck and the unit tests, and the browser tests for what the change touches (`pnpm exec playwright test e2e/jigsaw.spec.ts`, say); CI runs the whole browser suite before anything merges.
 
 ## Key decisions
 
