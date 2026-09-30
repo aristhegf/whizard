@@ -48,7 +48,7 @@ async function waitForRound(page: Page, round: number, total: number) {
 
 /** Works out the word from the bank, as a player who knows it would. */
 async function wordPuzzle(page: Page) {
-  const hint = (await page.locator(".word-kind .pill").textContent())!.trim();
+  const hint = (await page.locator(".word-hint").first().textContent())!.trim();
   const tiles = await page.locator(".word-tile").allTextContents();
   if (tiles.length > 0) {
     const letters = [...tiles].sort().join("");

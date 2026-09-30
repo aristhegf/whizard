@@ -13,11 +13,12 @@
 }
 
 .word-kind {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  text-align: center;
+}
+
+.word-hint {
+  color: var(--text);
+  font-weight: 700;
 }
 
 .word-entry {
@@ -29,44 +30,39 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 6px;
-  padding: 10px;
-  border-radius: var(--radius);
-  border: 1.5px solid transparent;
+  gap: 3px;
+  padding: 8px;
 }
 
-.word-entry:focus-within .word-slots {
-  border-color: var(--line-strong);
+/* While typing, the slot the next letter goes in is outlined. */
+.word-entry:focus-within .word-slot.next {
+  box-shadow: inset 0 0 0 2px var(--accent-soft, #b58cff);
 }
 
+/* Flat tiles like the grid: empty ones faint, typed letters purple, given letters night-blue. */
 .word-slot {
   display: grid;
   place-items: center;
-  width: clamp(30px, 8.5vw, 52px);
-  aspect-ratio: 5 / 6;
-  border-radius: 12px;
-  border: 1.5px dashed rgb(150 140 255 / 45%);
-  background: rgb(24 28 70 / 60%);
+  width: clamp(34px, 11vw, 56px);
+  aspect-ratio: 1;
+  border-radius: 11%;
+  background: var(--night, #16143f);
   font-family: var(--display);
   font-weight: 800;
-  font-size: clamp(1.1rem, 5vw, 1.8rem);
+  font-size: clamp(1.2rem, 5.5vw, 1.9rem);
 }
 
 .word-slot.filled {
-  border-style: solid;
-  border-color: rgb(150 140 255 / 55%);
-  background: rgb(60 44 170 / 80%);
+  background: var(--accent, #8b3dff);
 }
 
 .word-slot.given {
-  border-color: transparent;
-  background: rgb(255 255 255 / 12%);
-  color: var(--muted);
+  background: var(--night-tile, #252063);
+  color: var(--text);
 }
 
 .word-slots.revealed .word-slot {
-  border-color: rgb(15 198 128 / 70%);
-  background: rgb(15 198 128 / 22%);
+  background: rgb(15 198 128 / 28%);
 }
 
 /* Covers the slots so a tap on them brings up the keyboard; its own text stays hidden. */
@@ -79,47 +75,52 @@
   cursor: text;
 }
 
+/* The letters to use: the approved grid, a row of up to four or two rows. */
 .word-tiles {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+  gap: 3px;
+  width: min(100%, calc(var(--cols, 4) * 84px));
 }
 
 .word-tile {
-  width: clamp(40px, 11vw, 56px);
   aspect-ratio: 1;
-  border-radius: 14px;
-  border: 1.5px solid rgb(255 212 63 / 55%);
-  background: linear-gradient(180deg, #3a2a9e, #22186a);
-  box-shadow: 0 6px 0 #140e45;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 11%;
+  background: var(--night-tile, #252063);
   font-family: var(--display);
   font-weight: 800;
-  font-size: clamp(1.2rem, 5vw, 1.6rem);
+  font-size: clamp(1.4rem, 7vw, 2.2rem);
   color: #fff;
   cursor: pointer;
   transition:
-    transform 120ms ease-out,
-    opacity 120ms ease-out;
+    background 120ms ease,
+    transform 100ms ease-out;
+}
+
+@media (hover: hover) {
+  .word-tile:hover:not(:disabled) {
+    background: var(--night-lift, #3b347f);
+  }
 }
 
 .word-tile:active:not(:disabled) {
-  transform: translateY(3px);
-  box-shadow: 0 3px 0 #140e45;
+  background: var(--accent, #8b3dff);
+  transform: scale(0.96);
 }
 
+/* Used: an empty tile where the letter was. */
 .word-tile:disabled {
-  opacity: 0.25;
+  background: var(--night, #16143f);
+  color: transparent;
   cursor: default;
 }
 
-.word-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.word-actions .btn-primary {
-  min-width: 140px;
+.play-pill.square {
+  flex: 0 0 56px;
+  padding: 0;
 }
 
 .word-tries {
