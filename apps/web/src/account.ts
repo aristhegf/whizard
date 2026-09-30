@@ -218,7 +218,9 @@ export async function deleteAccount(): Promise<void> {
   setUser(null);
 }
 
-export const fetchStats = () => api<{ stats: PlayerStats }>("/api/me/stats");
+/** With the minutes this device's clock is ahead of UTC, so the streak counts its days. */
+export const fetchStats = () =>
+  api<{ stats: PlayerStats }>(`/api/me/stats?tz=${-new Date().getTimezoneOffset()}`);
 
 export const fetchMatches = (before?: number) =>
   api<{ matches: MatchRecord[]; more: boolean }>(

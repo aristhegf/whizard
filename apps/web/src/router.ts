@@ -7,10 +7,14 @@ export type Route =
   | { name: "jigsaw" }
   | { name: "room"; code: string }
   | { name: "account" }
+  /** The account's settings, opened from the profile. */
+  | { name: "settings" }
   /** The avatar creator. Its `?back=` is where Save and Cancel go. */
   | { name: "avatar" }
   | { name: "friends" }
   | { name: "add"; username: string }
+  /** Another player's profile. */
+  | { name: "player"; username: string }
   | { name: "group"; id: string }
   | { name: "privacy" }
   | { name: "stats" }
@@ -34,10 +38,13 @@ export function useRoute(): Route {
   if (/^\/games\/quiz\/?$/.test(path)) return { name: "topics" };
   if (/^\/games\/jigsaw\/?$/.test(path)) return { name: "jigsaw" };
   if (/^\/account\/?$/.test(path)) return { name: "account" };
+  if (/^\/account\/settings\/?$/.test(path)) return { name: "settings" };
   if (/^\/avatar\/?$/.test(path)) return { name: "avatar" };
   if (/^\/friends\/?$/.test(path)) return { name: "friends" };
   const add = /^\/add\/([^/]+)\/?$/.exec(path);
   if (add) return { name: "add", username: decodeURIComponent(add[1] ?? "") };
+  const player = /^\/u\/([^/]+)\/?$/.exec(path);
+  if (player) return { name: "player", username: decodeURIComponent(player[1] ?? "") };
   const group = /^\/groups\/([^/]+)\/?$/.exec(path);
   if (group) return { name: "group", id: decodeURIComponent(group[1] ?? "") };
   if (/^\/privacy\/?$/.test(path)) return { name: "privacy" };
@@ -51,6 +58,11 @@ export function useRoute(): Route {
 
 export function roomPath(code: string): string {
   return `/r/${encodeURIComponent(code)}`;
+}
+
+/** Someone's profile page. */
+export function playerPath(username: string): string {
+  return `/u/${encodeURIComponent(username)}`;
 }
 
 export function navigate(path: string): void {

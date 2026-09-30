@@ -8,9 +8,8 @@ import {
 } from "@whizard/protocol";
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useAccount } from "./account";
-import { createRoom } from "./api";
 import { pingFriend } from "./pings";
-import { linkTo, navigate, roomPath } from "./router";
+import { linkTo, navigate, playerPath, roomPath } from "./router";
 import {
   addFriend,
   createGroup,
@@ -21,7 +20,9 @@ import {
   inviteLink,
   leaveGroup,
   muteFriend,
+  pingToPlay,
   removeFriend,
+  shareLink,
   updateGroup,
 } from "./social";
 import { Avatar } from "./ui/Avatar";
@@ -82,16 +83,9 @@ function ErrorLine({ error }: { error: string | null }) {
 function ShareButton({ url, label }: { url: string; label: string }) {
   const [copied, setCopied] = useState(false);
   const share = async () => {
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: "Add me on Whizard", url });
-      } else {
-        await navigator.clipboard.writeText(url);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      }
-    } catch {
-      // Dismissed, or the clipboard is blocked.
+    if ((await shareLink(url)) === "copied") {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
   return (
@@ -258,12 +252,7 @@ function Friends({ username }: { username: string }) {
                     <button
                       className="btn btn-small"
                       disabled={action.busy}
-                      onClick={() =>
-                        act(async () => {
-                          const code = await createRoom();
-                          navigate(`${roomPath(code)}?ping=${encodeURIComponent(f.username)}`);
-                        })
-                      }
+                      onClick={() => act(() => pingToPlay(f.username))}
                     >
                       Ping
                     </button>
@@ -327,9 +316,10 @@ function Friends({ username }: { username: string }) {
   );
 }
 
+/** Someone in a list, opening their profile when tapped. */
 function Person({ user, detail }: { user: PublicUser; detail?: string }) {
   return (
-    <div className="person-row">
+    <a className="person-row" {...linkTo(playerPath(user.username))}>
       <Avatar id={user.avatar} name={user.username} size={44} />
       <div className="person">
         <span className="person-name">{user.displayName}</span>
@@ -338,7 +328,7 @@ function Person({ user, detail }: { user: PublicUser; detail?: string }) {
           {detail && ` · ${detail}`}
         </span>
       </div>
-    </div>
+    </a>
   );
 }
 
@@ -661,7 +651,10 @@ export function AddFriendScreen({ username }: { username: string }) {
             ) : profile.data.relation === "friend" ? (
               <div className="stack">
                 <p>You’re friends.</p>
-                <a className="btn" {...linkTo("/friends")}>
+                <a className="btn" {...linkTo(playerPath(profile.data.user.username))}>
+                  See their profile
+                </a>
+                <a className="btn-link" {...linkTo("/friends")}>
                   See your friends
                 </a>
               </div>

@@ -33,29 +33,7 @@
   gap: 6px;
 }
 
-.profile-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.profile-head .btn {
-  flex: none;
-}
-
-.profile-id {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  min-width: 0;
-}
-
-/* Settings rows inside account panels. */
-.settings {
-  display: grid;
-}
-
+/* Settings rows inside account panels, such as a group's category. */
 .setting {
   display: grid;
   grid-template-columns: 7.5rem minmax(0, 1fr);
@@ -122,67 +100,7 @@
   }
 }
 
-.device-row,
-.quiet-range {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.quiet-range select {
-  flex: 1;
-  min-height: 44px;
-  padding: 0 34px 0 12px;
-}
-
-/* Stats tiles. */
-.tiles {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin: 0;
-  min-height: 96px;
-}
-
-.tiles > div {
-  padding: 16px;
-  border-radius: 18px;
-  background: linear-gradient(160deg, rgb(92 50 230 / 45%), rgb(20 18 70 / 85%));
-  border: 1.5px solid var(--line-strong);
-  min-width: 0;
-}
-
-.tiles dt {
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.tiles dd {
-  margin: 6px 0 0;
-  font-family: var(--display);
-  font-size: 1.9rem;
-  font-weight: 800;
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
-}
-
-.tiles dd.best {
-  font-size: 1.1rem;
-}
-
-.tiles .of {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--muted);
-}
-
-/* Lists: games played, passkeys, people. */
-.matches,
-.passkeys,
+/* Lists of people. */
 .people {
   list-style: none;
   margin: 0;
@@ -190,8 +108,6 @@
   display: grid;
 }
 
-.matches li,
-.passkeys li,
 .people li {
   display: flex;
   justify-content: space-between;
@@ -202,8 +118,6 @@
   border-bottom: 1.5px solid var(--line);
 }
 
-.matches li:last-child,
-.passkeys li:last-child,
 .people li:last-child {
   border-bottom: none;
 }
@@ -213,39 +127,25 @@
   padding: 4px 0;
 }
 
-.match-main,
 .person {
   display: grid;
   min-width: 0;
 }
 
+/* A person's face and name, which opens their profile. */
 .person-row {
   display: flex;
+  flex: 1;
   align-items: center;
   gap: 14px;
   min-width: 0;
+  color: inherit;
+  text-decoration: none;
 }
 
-.match-title,
 .person-name {
   font-weight: 800;
   overflow-wrap: anywhere;
-}
-
-.match-result {
-  display: grid;
-  justify-items: end;
-  flex: none;
-  font-variant-numeric: tabular-nums;
-}
-
-.placing {
-  font-family: var(--display);
-  font-weight: 800;
-}
-
-.placing.first {
-  color: var(--gold);
 }
 
 .row-actions {
@@ -350,13 +250,4 @@ fieldset {
 .prose p,
 .prose li {
   color: #dcd8f5;
-}
-
-.account-page .screen > header.profile-head {
-  display: flex;
-}
-
-.setting .avatar-picker {
-  grid-template-columns: repeat(auto-fill, minmax(44px, 52px));
-  gap: 8px;
 }
