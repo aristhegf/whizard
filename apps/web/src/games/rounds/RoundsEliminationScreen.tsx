@@ -16,14 +16,13 @@ import {
   Board,
   Cut,
   Done,
-  eliminationWhere,
+  EliminationFrame,
   FinalIntro,
   Watching,
   type EliminationContext,
 } from "../elimination/parts";
-import { PlayToast } from "../../ui/gameNotice";
 import { Icon } from "../../ui/Icon";
-import { PlayFaces, PlayTimer, PlayTop, Staged, timerMs } from "../play";
+import { PlayFaces, PlayTimer, Staged, timerMs } from "../play";
 import { elapsedSince } from "../quiz/QuizScreen";
 import {
   facesOf,
@@ -92,22 +91,6 @@ export function RoundsEliminationScreen(props: Props) {
   }
 }
 
-/** Where the game is, as plain text, and how many are still in; bare Settings and Quit. */
-function Top({ context }: { context: Context }) {
-  return (
-    <PlayTop
-      latency={context.latency}
-      onQuit={context.onQuit}
-      label={
-        <>
-          <span className="elim-progress">{eliminationWhere(context) || context.title}</span>
-          <span className="play-alive"> · {context.view.aliveCount} in</span>
-        </>
-      }
-    />
-  );
-}
-
 function Question({ context, stage }: { context: Context; stage: Stage<"question"> }) {
   const { view, client } = context;
   const now = useServerNow(client.serverNow);
@@ -141,16 +124,14 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
 
   if (!visible) {
     return (
-      <div className="game play">
-        <Top context={context} />
+      <EliminationFrame context={context}>
         <div className="countdown" aria-live="polite">
           <img className="countdown-game-art" src={context.art} alt="" />
           <p className="countdown-label">Get ready</p>
           <p className="countdown-number">{countdown}</p>
           <span className="pill pill-glow">Elimination · {context.title}</span>
         </div>
-        <PlayToast />
-      </div>
+      </EliminationFrame>
     );
   }
 
@@ -167,8 +148,7 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
   const waitingOnOthers = stage.playing && !!stage.myResult;
 
   return (
-    <div className="game play">
-      <Top context={context} />
+    <EliminationFrame context={context}>
       {/* Beside the puzzle on a computer; while waiting for the others, at the side. */}
       <div className={`game-layout${waitingOnOthers ? "" : " staged"}`}>
         <div className="game-main play-main play-column rounds-main">
@@ -228,8 +208,7 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
         </div>
         {waitingOnOthers && board}
       </div>
-      <PlayToast />
-    </div>
+    </EliminationFrame>
   );
 }
 
@@ -282,8 +261,7 @@ function Answer({ context, stage }: { context: Context; stage: Stage<"reveal"> }
     if (stage.playing) play(solved ? "correct" : "wrong");
   }, [stage.playing, solved]);
   return (
-    <div className="game play">
-      <Top context={context} />
+    <EliminationFrame context={context}>
       <div className="game-layout staged">
         <div className="game-main play-main rounds-main">
           <Watching view={view} />
@@ -297,7 +275,6 @@ function Answer({ context, stage }: { context: Context; stage: Stage<"reveal"> }
           <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
         </div>
       </div>
-      <PlayToast />
-    </div>
+    </EliminationFrame>
   );
 }

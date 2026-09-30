@@ -6,13 +6,12 @@ import { play } from "../../sounds";
 import { Avatar } from "../../ui/Avatar";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
-import { PlayBoard } from "../play";
-import { MuteButton } from "../../ui/MuteButton";
+import { PlayBoard, PlayFrame, type Face } from "../play";
 import { useServerNow } from "../../useServerNow";
 import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
 
-// What every game's Elimination screens share: the bar, the knock-outs, the final's intro, the
+// What every game's Elimination screens share: the frame, the knock-outs, the final's intro, the
 // board and the winner. Each game brings its own question and answer screens.
 
 type AnyStage = KnockoutStage<object, object, object>;
@@ -60,32 +59,27 @@ export function eliminationWhere(context: EliminationContext): string {
     : `${where} · ${context.noun} ${view.questionNumber}`;
 }
 
-export function Bar({ context, timer }: { context: EliminationContext; timer?: ReactNode }) {
-  const { view, room, onQuit, latency } = context;
+/** Every Elimination screen's frame: where the game is and how many are still in, as plain text. */
+export function EliminationFrame({
+  context,
+  children,
+}: {
+  context: EliminationContext;
+  children: ReactNode;
+}) {
   return (
-    <header className="game-bar">
-      <div className="game-bar-row">
-        <span className="bar-brand">
-          <Brand />
-        </span>
-        <span className="room-label" translate="no">
-          Room: {room.code}
-        </span>
-        <span className="progress elim-progress">{eliminationWhere(context)}</span>
-        <span className="bar-end">
-          <span className="pill elim-left" title="Players still in">
-            <Icon name="users" size={18} />
-            {view.aliveCount} in
-          </span>
-          {latency}
-          {timer}
-          <MuteButton />
-          <button className="btn quit-btn" onClick={onQuit}>
-            Quit
-          </button>
-        </span>
-      </div>
-    </header>
+    <PlayFrame
+      latency={context.latency}
+      onQuit={context.onQuit}
+      label={
+        <>
+          <span className="elim-progress">{eliminationWhere(context) || context.title}</span>
+          <span className="play-alive"> · {context.view.aliveCount} in</span>
+        </>
+      }
+    >
+      {children}
+    </PlayFrame>
   );
 }
 
@@ -102,23 +96,6 @@ export function Watching({ view }: { view: AnyEliminationView }) {
   );
 }
 
-/** The time left on an item, for the bar. */
-export function TimerPill({ remaining, limitMs }: { remaining: number; limitMs: number }) {
-  return (
-    <span
-      className={`timer-pill${remaining / limitMs < 0.25 ? " low" : ""}`}
-      role="progressbar"
-      aria-label="Time left"
-      aria-valuemin={0}
-      aria-valuemax={limitMs}
-      aria-valuenow={remaining}
-    >
-      <Icon name="clock" size={22} stroke={2.4} />
-      {Math.ceil(remaining / 1000)}s
-    </span>
-  );
-}
-
 export function Cut({ context, stage }: { context: EliminationContext; stage: StageOf<"cut"> }) {
   const { view, client, playerId, avatarOf } = context;
   const now = useServerNow(client.serverNow);
@@ -130,8 +107,7 @@ export function Cut({ context, stage }: { context: EliminationContext; stage: St
   }, [meOut, through]);
   const seconds = Math.max(0, Math.ceil((stage.until - now) / 1000));
   return (
-    <div className="game">
-      <Bar context={context} />
+    <EliminationFrame context={context}>
       <section className="elim-cut panel" aria-labelledby="cut-title">
         <p className="elim-kicker">Round {stage.round} results</p>
         <h2 className="display" id="cut-title">
@@ -168,7 +144,7 @@ export function Cut({ context, stage }: { context: EliminationContext; stage: St
           {seconds}s
         </p>
       </section>
-    </div>
+    </EliminationFrame>
   );
 }
 
@@ -192,8 +168,7 @@ export function FinalIntro({
       </div>
     );
   return (
-    <div className="game">
-      <Bar context={context} />
+    <EliminationFrame context={context}>
       <section className="elim-final panel" aria-labelledby="final-title">
         <p className="elim-kicker">Two left</p>
         <h2 className="display" id="final-title">
@@ -213,33 +188,36 @@ export function FinalIntro({
         </p>
         <p className="countdown-number small">{seconds}</p>
       </section>
-    </div>
+    </EliminationFrame>
   );
 }
 
-/** Everyone's standing: who's still in, then who went out when. */
+/** Who's still in, and the knocked out, as score lines: the board and the phone's faces. */
+export function eliminationRows({ view, avatarOf }: EliminationContext): Face[] {
+  const finalScores = new Map((view.finalScores ?? []).map((f) => [f.playerId, f.score]));
+  return view.standings.map((s) => ({
+    playerId: s.playerId,
+    nickname: s.nickname,
+    avatar: avatarOf(s.playerId),
+    rank: s.rank,
+    gone: s.status === "out" || s.status === "left",
+    value:
+      s.status === "out"
+        ? `Out · R${s.outRound}`
+        : s.status === "left"
+          ? "Left"
+          : (finalScores.get(s.playerId) ?? s.score).toLocaleString(),
+  }));
+}
+
 /** Who's still in, and the knocked out. Drawn by `PlayBoard`, like every game's scores. */
 export function Board({ context }: { context: EliminationContext }) {
-  const { view, playerId, avatarOf } = context;
-  const finalScores = new Map((view.finalScores ?? []).map((f) => [f.playerId, f.score]));
   return (
     <PlayBoard
       label="Players"
-      title={view.inFinal ? "Final" : `${view.aliveCount} still in`}
-      playerId={playerId}
-      rows={view.standings.map((s) => ({
-        playerId: s.playerId,
-        nickname: s.nickname,
-        avatar: avatarOf(s.playerId),
-        rank: s.rank,
-        gone: s.status === "out" || s.status === "left",
-        value:
-          s.status === "out"
-            ? `Out · R${s.outRound}`
-            : s.status === "left"
-              ? "Left"
-              : (finalScores.get(s.playerId) ?? s.score).toLocaleString(),
-      }))}
+      title={context.view.inFinal ? "Final" : `${context.view.aliveCount} still in`}
+      playerId={context.playerId}
+      rows={eliminationRows(context)}
     />
   );
 }

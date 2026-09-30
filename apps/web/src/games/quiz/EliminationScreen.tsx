@@ -11,15 +11,17 @@ import { play } from "../../sounds";
 import { GeneratingArt } from "../../ui/GeneratingArt";
 import { useServerNow } from "../../useServerNow";
 import {
-  Bar,
   Board,
   Cut,
   Done as SharedDone,
+  EliminationFrame,
+  eliminationRows,
   FinalIntro,
-  TimerPill,
   Watching,
   type EliminationContext,
 } from "../elimination/parts";
+import { PlayFaces, PlayTimer, Staged, timerMs } from "../play";
+import { Choices, RevealedChoices } from "./QuizScreen";
 import { parseQuizSettings } from "./QuizSettingsPanel";
 import { ReportQuestion } from "./ReportQuestion";
 
@@ -108,8 +110,7 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
   if (!visible) {
     const topic = TOPIC_STYLES[context.categoryId as keyof typeof TOPIC_STYLES];
     return (
-      <div className="game">
-        <Bar context={context} />
+      <EliminationFrame context={context}>
         <div className="countdown" aria-live="polite">
           {topic ? (
             // As in Classic and Speed: the topic "generates" through the countdown.
@@ -127,7 +128,7 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
           <p className="countdown-number">{countdown}</p>
           <span className="pill pill-glow">Elimination · {context.categoryName}</span>
         </div>
-      </div>
+      </EliminationFrame>
     );
   }
 
@@ -141,43 +142,55 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
       clientElapsedMs: elapsedSince(shownAt.current),
     });
   };
-  const timer = <TimerPill remaining={remaining} limitMs={view.timeLimitMs} />;
-
   return (
-    <div className="game">
-      <Bar context={context} timer={timer} />
-      <div className="game-layout">
-        <div className="game-main">
-          <Watching view={view} />
-          <span className="pill pill-glow">{context.categoryName}</span>
-          <h2 className="prompt">{stage.prompt}</h2>
-          <div className="choices">
-            {stage.choices.map((text, i) => (
-              <button
-                key={i}
-                className={`choice${picked === i ? " picked" : ""}`}
-                disabled={picked !== null || !stage.playing}
-                onClick={() => pick(i)}
-              >
-                {text}
-              </button>
-            ))}
-          </div>
-          {stage.playing && picked !== null && (
-            <p className="muted center" role="status">
-              Locked in. Waiting for the others… {stage.answeredCount} of {stage.aliveCount}{" "}
-              answered
-            </p>
-          )}
+    <QuizKnockout
+      context={context}
+      timer={<PlayTimer ms={timerMs(remaining)} low={remaining / view.timeLimitMs < 0.25} />}
+    >
+      <h2 className="prompt">{stage.prompt}</h2>
+      <Choices
+        choices={stage.choices}
+        picked={picked}
+        disabled={picked !== null || !stage.playing}
+        onPick={pick}
+      />
+      {stage.playing && picked !== null && (
+        <p className="quiz-note" role="status">
+          Locked in. Waiting for the others… {stage.answeredCount} of {stage.aliveCount} answered
+        </p>
+      )}
+    </QuizKnockout>
+  );
+}
+
+/** The quiz's Elimination screens: the frame, the clock, the topic, and the board beside. */
+function QuizKnockout({
+  context,
+  timer,
+  children,
+}: {
+  context: Context;
+  timer?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <EliminationFrame context={context}>
+      <div className="game-layout staged">
+        <div className="game-main play-main play-column quiz-main">
+          {timer}
+          <Watching view={context.view} />
+          <p className="play-task quiz-topic">{context.categoryName}</p>
+          <Staged wide aside={<Board context={context} />}>
+            {children}
+          </Staged>
+          <PlayFaces faces={eliminationRows(context)} playerId={context.playerId} />
         </div>
-        <Board context={context} />
       </div>
-    </div>
+    </EliminationFrame>
   );
 }
 
 function Reveal({ context, stage }: { context: Context; stage: Stage<"reveal"> }) {
-  const { view } = context;
   useEffect(() => {
     if (stage.playing) play(stage.correct ? "correct" : "wrong");
   }, [stage.playing, stage.correct]);
@@ -189,35 +202,18 @@ function Reveal({ context, stage }: { context: Context; stage: Stage<"reveal"> }
         ? "Correct"
         : "Wrong";
   return (
-    <div className="game">
-      <Bar context={context} />
-      <div className="game-layout">
-        <div className="game-main">
-          <Watching view={view} />
-          <span className="pill pill-glow">{context.categoryName}</span>
-          <h2 className="prompt">{stage.prompt}</h2>
-          <div className="choices">
-            {stage.choices.map((text, i) => {
-              const tone =
-                i === stage.correctChoice ? " correct" : i === stage.myChoice ? " wrong" : " faded";
-              return (
-                <div key={i} className={`choice${tone}`}>
-                  {text}
-                </div>
-              );
-            })}
-          </div>
-          <p
-            className={`verdict ${stage.correct || !stage.playing ? "good" : "bad"}`}
-            role="status"
-          >
-            {verdict}
-            {stage.points > 0 && <span className="points">+{stage.points}</span>}
-          </p>
-        </div>
-        <Board context={context} />
-      </div>
-    </div>
+    <QuizKnockout context={context}>
+      <h2 className="prompt">{stage.prompt}</h2>
+      <RevealedChoices
+        choices={stage.choices}
+        correct={stage.correctChoice}
+        mine={stage.myChoice}
+      />
+      <p className={`verdict ${stage.correct || !stage.playing ? "good" : "bad"}`} role="status">
+        {verdict}
+        {stage.points > 0 && <span className="points">+{stage.points}</span>}
+      </p>
+    </QuizKnockout>
   );
 }
 

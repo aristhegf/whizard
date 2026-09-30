@@ -15,7 +15,16 @@ import { AddFromGame } from "../../FriendsScreen";
 import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { useServerNow } from "../../useServerNow";
 import { Avatar } from "../../ui/Avatar";
-import { PlayBoard } from "../play";
+import {
+  PlayBoard,
+  PlayFaces,
+  PlayFrame,
+  PlayScreen,
+  PlayTimer,
+  rowsFrom,
+  Staged,
+  timerMs,
+} from "../play";
 import { GeneratingArt } from "../../ui/GeneratingArt";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
@@ -23,7 +32,6 @@ import { parseQuizSettings } from "./QuizSettingsPanel";
 import { EliminationScreen } from "./EliminationScreen";
 import { ReportQuestion } from "./ReportQuestion";
 import { play } from "../../sounds";
-import { SettingsButton } from "../../ui/SettingsDialog";
 import { Podium } from "../../ui/Podium";
 import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
@@ -94,148 +102,117 @@ function StandardQuiz(props: Props) {
       return <Results context={context} review={stage.review} />;
     case "watching":
       return (
-        <QuizFrame
-          context={context}
-          index={null}
-          card={<p className="watching">A game is in progress. You’ll be in the next one.</p>}
-        />
+        <PlayScreen
+          label={categoryName}
+          latency={props.latency}
+          onQuit={props.onQuit}
+          side={<LiveBoard context={context} />}
+        >
+          <p className="watching">A game is in progress. You’ll be in the next one.</p>
+          <PlayFaces faces={facesOf(context)} playerId={props.playerId} />
+        </PlayScreen>
       );
   }
-}
-
-function GameBar({ context }: { context: GameContext }) {
-  const { room, onQuit, latency } = context;
-  return (
-    <header className="game-bar">
-      <div className="game-bar-row">
-        <span className="bar-brand">
-          <Brand />
-        </span>
-        <span className="room-label" translate="no">
-          Room: {room.code}
-        </span>
-        <span className="bar-end">
-          {latency}
-          <span className="bar-controls">
-            <SettingsButton iconOnly />
-            <button className="icon-btn quiz-quit" aria-label="Quit" onClick={onQuit}>
-              <Icon name="logout" size={22} />
-            </button>
-          </span>
-        </span>
-      </div>
-    </header>
-  );
 }
 
 /** A, B, C, D on the answers. */
 const letter = (i: number) => String.fromCharCode(65 + i);
 
 /**
- * The screen every standard-quiz stage shares: the topic and the mascot at the left, the question
- * card in the middle with everyone's scores beside it, matched to its height, and a line under the
- * card. On a laptop it all fits the one screen.
+ * The screen every standard-quiz stage shares, in the game look (`games/play.tsx`): the
+ * question count at the top left, the big timer in Speed, the topic, then the question and its
+ * answers with the scores beside them on a computer, faces on a phone, and the buttons last.
  */
-function QuizFrame({
+function QuizPlay({
   context,
   index,
-  timed = false,
-  card,
-  below,
+  timer,
+  actions,
+  children,
 }: {
   context: GameContext;
-  /** The question being played, or null before the first (and while watching). */
-  index: number | null;
-  /** Leaves room beside the stepper for the timer ring. */
-  timed?: boolean;
-  card: ReactNode;
-  below?: ReactNode;
+  index: number;
+  timer?: ReactNode;
+  actions?: ReactNode;
+  children: ReactNode;
 }) {
-  const { categoryName, subtitle } = context;
+  const { view, categoryName, subtitle, latency, onQuit, playerId } = context;
   return (
-    <div className="game quiz-game">
-      <GameBar context={context} />
-      <div className="quiz-stage">
-        <aside className="quiz-rail">
-          <div className="quiz-topic">
-            <span className="quiz-topic-icon">
-              <Icon name="trophy" size={30} />
-            </span>
-            <span className="quiz-topic-text">
-              <strong>{categoryName}</strong>
-              {subtitle && <small>{subtitle}</small>}
-            </span>
-          </div>
-          <img
-            className="quiz-mascot"
-            src="/art/mascot/hero.webp"
-            alt=""
-            width={866}
-            height={857}
-            loading="lazy"
-          />
-        </aside>
-        <div className={`quiz-top${timed ? " timed" : ""}`}>
-          {index !== null && <QuizStepper context={context} index={index} />}
-        </div>
-        <div className="quiz-card-slot">{card}</div>
-        <LiveBoard context={context} />
-        <div className="quiz-below">{below}</div>
-      </div>
+    <PlayScreen
+      label={
+        <span className="progress">
+          Question <b>{index + 1}</b> of {view.total}
+        </span>
+      }
+      latency={latency}
+      onQuit={onQuit}
+      className="quiz-main"
+    >
+      {timer}
+      <p className="play-task quiz-topic">{[categoryName, subtitle].filter(Boolean).join(" · ")}</p>
+      <Staged wide aside={<LiveBoard context={context} />}>
+        {children}
+      </Staged>
+      <PlayFaces faces={facesOf(context)} playerId={playerId} />
+      {actions}
+    </PlayScreen>
+  );
+}
+
+/** The answers to pick from: flat night tiles, lettered, the one you pick turning purple. */
+export function Choices({
+  choices,
+  picked,
+  disabled,
+  onPick,
+}: {
+  choices: string[];
+  picked: number | null;
+  disabled: boolean;
+  onPick: (choice: number) => void;
+}) {
+  return (
+    <div className="choices">
+      {choices.map((text, i) => (
+        <button
+          key={i}
+          className={`choice${picked === i ? " picked" : ""}`}
+          disabled={disabled}
+          onClick={() => onPick(i)}
+        >
+          <span className="choice-letter" aria-hidden="true">
+            {letter(i)}
+          </span>
+          {text}
+        </button>
+      ))}
     </div>
   );
 }
 
-/** A segment for each question: gold for the ones done, half-lit for the one being played. */
-function QuizStepper({ context, index }: { context: GameContext; index: number }) {
-  const { view } = context;
-  const answered = index + (view.stage.kind === "answer" ? 1 : 0);
+/** The answers once the question closes: the right one green, yours red if it wasn't. */
+export function RevealedChoices({
+  choices,
+  correct,
+  mine,
+}: {
+  choices: string[];
+  correct: number;
+  mine: number | null;
+}) {
   return (
-    <span className="quiz-segments" aria-hidden="true">
-      {Array.from({ length: view.total }, (_, i) => (
-        <span key={i} className={i < answered ? "done" : i === index ? "now" : undefined} />
-      ))}
-    </span>
-  );
-}
-
-/** "Question 4 of 10", in the card. */
-function QuestionChip({ context, index }: { context: GameContext; index: number }) {
-  return (
-    <span className="quiz-chip progress">
-      <Icon name="help" size={20} />
-      Question {index + 1} of {context.view.total}
-    </span>
-  );
-}
-
-/** The time left as a ring that empties, with the seconds in the middle. Speed rounds only. */
-function TimerRing({ remaining, limit }: { remaining: number; limit: number }) {
-  const fraction = Math.min(1, Math.max(0, remaining / limit));
-  const circumference = 2 * Math.PI * 44;
-  return (
-    <div
-      className={`timer-ring${fraction < 0.25 ? " low" : ""}`}
-      role="progressbar"
-      aria-label="Time left"
-      aria-valuemin={0}
-      aria-valuemax={limit}
-      aria-valuenow={remaining}
-    >
-      <svg viewBox="0 0 100 100" aria-hidden="true">
-        <circle className="ring-track" cx="50" cy="50" r="44" />
-        <circle
-          className="ring-arc"
-          cx="50"
-          cy="50"
-          r="44"
-          strokeDasharray={circumference}
-          strokeDashoffset={circumference * (1 - fraction)}
-          transform="rotate(-90 50 50)"
-        />
-      </svg>
-      <span className="ring-number">{Math.ceil(remaining / 1000)}</span>
-      <span className="ring-unit">seconds</span>
+    <div className="choices">
+      {choices.map((text, i) => {
+        const tone = i === correct ? " correct" : i === mine ? " wrong" : " faded";
+        return (
+          <div key={i} className={`choice${tone}`}>
+            <span className="choice-letter" aria-hidden="true">
+              {letter(i)}
+            </span>
+            {text}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -280,8 +257,7 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
   if (!visible) {
     const topic = TOPIC_STYLES[context.categoryId as keyof typeof TOPIC_STYLES];
     return (
-      <div className="game quiz-game">
-        <GameBar context={context} />
+      <PlayFrame label={context.categoryName} latency={context.latency} onQuit={context.onQuit}>
         <div className="countdown" aria-live="polite">
           {topic ? (
             // The topic "generates" through the countdown, and appears for the last second.
@@ -299,7 +275,7 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
           <p className="countdown-number">{countdown}</p>
           <span className="pill pill-glow">{context.categoryName}</span>
         </div>
-      </div>
+      </PlayFrame>
     );
   }
 
@@ -324,39 +300,24 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
         : "Choose your answer";
 
   return (
-    <QuizFrame
+    <QuizPlay
       context={context}
       index={stage.index}
-      timed={view.timed}
-      card={
-        <div className={`quiz-card${view.timed ? " timed" : ""}`}>
-          <QuestionChip context={context} index={stage.index} />
-          <h2 className="prompt">{stage.prompt}</h2>
-          {view.timed && <TimerRing remaining={remaining} limit={view.timeLimitMs} />}
-          <div className="choices">
-            {stage.choices.map((text, i) => (
-              <button
-                key={i}
-                className={`choice${picked === i ? " picked" : ""}`}
-                disabled={picked !== null}
-                onClick={() => handlePick(i)}
-              >
-                <span className="choice-letter" aria-hidden="true">
-                  {letter(i)}
-                </span>
-                {text}
-              </button>
-            ))}
-          </div>
-        </div>
+      timer={
+        view.timed && (
+          <PlayTimer ms={timerMs(remaining)} low={remaining / view.timeLimitMs < 0.25} />
+        )
       }
-      below={
-        <p className="quiz-note">
-          <Icon name="users" size={22} />
-          {note}
-        </p>
-      }
-    />
+    >
+      <h2 className="prompt">{stage.prompt}</h2>
+      <Choices
+        choices={stage.choices}
+        picked={picked}
+        disabled={picked !== null}
+        onPick={handlePick}
+      />
+      <p className="quiz-note">{note}</p>
+    </QuizPlay>
   );
 }
 
@@ -380,51 +341,44 @@ function Answer({ context, stage }: { context: GameContext; stage: AnswerStage }
   const verdict = stage.myChoice === null ? "Time’s up" : stage.correct ? "Correct" : "Wrong";
 
   return (
-    <QuizFrame
+    <QuizPlay
       context={context}
       index={stage.index}
-      card={
-        <div className="quiz-card">
-          <QuestionChip context={context} index={stage.index} />
-          <h2 className="prompt">{stage.prompt}</h2>
-          <div className="choices">
-            {stage.choices.map((text, i) => {
-              const tone =
-                i === stage.correctChoice ? " correct" : i === stage.myChoice ? " wrong" : " faded";
-              return (
-                <div key={i} className={`choice${tone}`}>
-                  <span className="choice-letter" aria-hidden="true">
-                    {letter(i)}
-                  </span>
-                  {text}
-                </div>
-              );
-            })}
+      actions={
+        paused && (
+          <div className="play-actions">
+            <button className="play-pill go" onClick={next}>
+              Skip
+            </button>
           </div>
-        </div>
+        )
       }
-      below={
-        <div className="quiz-result">
-          <p className={`verdict ${stage.correct ? "good" : "bad"}`} role="status">
-            {verdict}
-            {stage.points > 0 && <span className="points">+{stage.points}</span>}
+    >
+      <h2 className="prompt">{stage.prompt}</h2>
+      <RevealedChoices
+        choices={stage.choices}
+        correct={stage.correctChoice}
+        mine={stage.myChoice}
+      />
+      <div className="quiz-result">
+        <p className={`verdict ${stage.correct ? "good" : "bad"}`} role="status">
+          {verdict}
+          {stage.points > 0 && <span className="points">+{stage.points}</span>}
+        </p>
+        {explained && stage.explanation && <Explanation item={stage} />}
+        {paused && (
+          <p className="quiz-note">
+            {stage.isLast ? "Results" : "Next"} in {Math.ceil(left / 1000)}
           </p>
-          {explained && stage.explanation && <Explanation item={stage} />}
-          {paused && (
-            <div className="next-row">
-              <span className="muted">
-                {stage.isLast ? "Results" : "Next"} in {Math.ceil(left / 1000)}
-              </span>
-              <button className="btn" onClick={next}>
-                Skip
-              </button>
-            </div>
-          )}
-        </div>
-      }
-    />
+        )}
+      </div>
+    </QuizPlay>
   );
 }
+
+/** Everyone's scores as faces, for phones. */
+const facesOf = ({ view, room }: GameContext) =>
+  rowsFrom(view.standings, room, (s) => s.score.toLocaleString());
 
 function LiveBoard({ context }: { context: GameContext }) {
   const { view, playerId, avatarOf } = context;

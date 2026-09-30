@@ -183,7 +183,7 @@ export function PlayBoard({
               <span className={`rank${medal ? ` medal m${r.rank}` : ""}`}>
                 {medal && r.rank === 1 ? <Icon name="crown" size={15} stroke={2.6} /> : r.rank}
               </span>
-              <span className={`board-avatar${medal ? ` r${r.rank}` : ""}`}>
+              <span className="board-avatar">
                 <Avatar id={r.avatar} name={r.nickname} size={40} />
               </span>
               {r.bar !== undefined ? (
