@@ -10,6 +10,7 @@ import { Announcement } from "./ui/Announcement";
 import { Backdrop } from "./ui/Chrome";
 import { RingFieldBackdrop } from "./ui/RingFieldBackdrop";
 import { whenIdle } from "./ui/idle";
+import { PingInbox } from "./ui/PingInbox";
 import { ReturnToRoom } from "./ui/ReturnToRoom";
 
 // Only the home screens ship with the first load. Every other page is fetched when it is opened,
@@ -103,6 +104,8 @@ export function App() {
         </Suspense>
       </main>
       {route.name !== "room" && route.name !== "admin" && <ReturnToRoom page={page} />}
+      {/* Not in a room, where there's a game to get on with. */}
+      {route.name !== "room" && route.name !== "admin" && <PingInbox />}
     </>
   );
 }

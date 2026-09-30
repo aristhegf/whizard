@@ -50,6 +50,14 @@ export function useLoaded<T>(load: () => Promise<T>): {
   return { ...result, reload: () => setVersion((v) => v + 1) };
 }
 
+/**
+ * How much CSS `zoom` applies to an element, its own and its ancestors' together. A pointer moves
+ * in screen pixels; dividing by this gives the distance in the element's own pixels.
+ */
+export function cssZoom(element: Element | null): number {
+  return (element as (Element & { currentCSSZoom?: number }) | null)?.currentCSSZoom || 1;
+}
+
 /** Whether a media query matches, kept up to date as the window changes. */
 export function useMediaQuery(query: string): boolean {
   return useSyncExternalStore(

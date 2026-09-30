@@ -86,7 +86,18 @@ export function JigsawSettingsRows({
   const hint = timeHint(settings);
   return (
     <>
-      <SettingRow icon="games" id="jigsaw-mode" label="Game Mode">
+      <SettingRow
+        icon="games"
+        id="jigsaw-mode"
+        label="Game Mode"
+        hint={
+          <>
+            {JIGSAW_MODES.find((m) => m.id === settings.mode)?.description}
+            {elimination &&
+              ` With ${group} players that’s ${rounds} knock-out ${rounds === 1 ? "round" : "rounds"} and the final.`}
+          </>
+        }
+      >
         <SettingSelect
           id="jigsaw-mode"
           label="Game Mode"
@@ -102,12 +113,7 @@ export function JigsawSettingsRows({
           }}
         />
       </SettingRow>
-      <p className="setting-hint dim small">
-        {JIGSAW_MODES.find((m) => m.id === settings.mode)?.description}
-        {elimination &&
-          ` With ${group} players that’s ${rounds} knock-out ${rounds === 1 ? "round" : "rounds"} and the final.`}
-      </p>
-      <SettingRow icon="trophy" id="level" label="Level">
+      <SettingRow icon="trophy" id="level" label="Level" hint={hint ?? undefined}>
         <SettingSelect
           id="level"
           label="Level"
@@ -120,8 +126,16 @@ export function JigsawSettingsRows({
           onChange={(value) => onChange({ ...settings, level: value as JigsawLevelChoice })}
         />
       </SettingRow>
-      {hint && <p className="setting-hint dim small">{hint}</p>}
-      <SettingRow icon="star" id="picture" label="Picture">
+      <SettingRow
+        icon="star"
+        id="picture"
+        label="Picture"
+        hint={
+          elimination
+            ? "The first round uses this picture; every round after gets a new one."
+            : undefined
+        }
+      >
         <SettingSelect
           id="picture"
           label="Picture"
@@ -145,11 +159,6 @@ export function JigsawSettingsRows({
           }}
         />
       </SettingRow>
-      {elimination && (
-        <p className="setting-hint dim small">
-          The first round uses this picture; every round after gets a new one.
-        </p>
-      )}
       {editable && settings.picture === "photo" && (
         <div className="setting-row photo-row">
           <span />

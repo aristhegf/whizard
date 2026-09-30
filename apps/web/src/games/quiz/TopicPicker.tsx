@@ -6,23 +6,22 @@ import { TOPIC_STYLES } from "../../catalog";
 type Category = QuizSettings["category"];
 
 /**
- * The lobby's topic chooser, opened from the pencil on the Quiz card. Topics with no questions
- * yet show as coming soon and can't be picked.
+ * The quiz's topics as a grid of choices, for the lobby's topic chooser and for choosing a game.
+ * Topics with no questions yet show as coming soon and can't be picked. `onPick` gets the topic
+ * tapped, even when it's the one already chosen.
  */
-export function TopicPicker({
+export function TopicOptions({
   value,
+  labelledBy,
   onPick,
-  onClose,
 }: {
   value: Category;
+  labelledBy: string;
   onPick: (category: Category) => void;
-  onClose: () => void;
 }) {
-  const dialog = useRef<HTMLDialogElement>(null);
   const [available, setAvailable] = useState<QuizCategoryInfo[] | null>(null);
 
   useEffect(() => {
-    dialog.current?.showModal();
     let cancelled = false;
     fetchQuizCategories()
       .then((result) => !cancelled && setAvailable(result))
@@ -37,6 +36,46 @@ export function TopicPicker({
     const info = available.find((i) => i.id === id);
     return !info || info.questions.easy + info.questions.medium + info.questions.hard === 0;
   };
+
+  return (
+    <div className="topic-options" role="radiogroup" aria-labelledby={labelledBy}>
+      {QUIZ_CATEGORIES.map((c) => {
+        const soon = empty(c.id) && c.id !== value;
+        return (
+          <button
+            key={c.id}
+            type="button"
+            role="radio"
+            aria-checked={c.id === value}
+            className="topic-option"
+            disabled={soon}
+            onClick={() => onPick(c.id)}
+          >
+            <img src={TOPIC_STYLES[c.id].art} alt="" loading="lazy" />
+            <span>{c.name}</span>
+            {soon && <span className="dim small">Soon</span>}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** The lobby's topic chooser, opened from the pencil on the Quiz card. */
+export function TopicPicker({
+  value,
+  onPick,
+  onClose,
+}: {
+  value: Category;
+  onPick: (category: Category) => void;
+  onClose: () => void;
+}) {
+  const dialog = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    dialog.current?.showModal();
+  }, []);
 
   return (
     <dialog
@@ -55,29 +94,14 @@ export function TopicPicker({
       <h2 id="topic-picker-title" className="section-title">
         Choose a topic
       </h2>
-      <div className="topic-options" role="radiogroup" aria-labelledby="topic-picker-title">
-        {QUIZ_CATEGORIES.map((c) => {
-          const soon = empty(c.id) && c.id !== value;
-          return (
-            <button
-              key={c.id}
-              type="button"
-              role="radio"
-              aria-checked={c.id === value}
-              className="topic-option"
-              disabled={soon}
-              onClick={() => {
-                if (c.id !== value) onPick(c.id);
-                onClose();
-              }}
-            >
-              <img src={TOPIC_STYLES[c.id].art} alt="" loading="lazy" />
-              <span>{c.name}</span>
-              {soon && <span className="dim small">Soon</span>}
-            </button>
-          );
-        })}
-      </div>
+      <TopicOptions
+        value={value}
+        labelledBy="topic-picker-title"
+        onPick={(category) => {
+          if (category !== value) onPick(category);
+          onClose();
+        }}
+      />
       <div className="dialog-actions">
         <button className="btn" onClick={onClose}>
           Close

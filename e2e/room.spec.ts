@@ -23,6 +23,11 @@ function players(page: Page) {
   return page.getByRole("list", { name: "Players" }).getByRole("listitem");
 }
 
+/** Says yes to "Are you sure?", which Quit and Leave ask when there's something to lose. */
+async function agree(page: Page, yes: string) {
+  await page.getByRole("alertdialog").getByRole("button", { name: yes }).click();
+}
+
 function playerRow(page: Page, nickname: string) {
   return players(page).filter({ hasText: nickname });
 }
@@ -145,6 +150,7 @@ test("the host role passes on when the host leaves", async ({ browser }) => {
   await expect(players(guest)).toHaveCount(2);
 
   await host.getByRole("button", { name: "Leave" }).click();
+  await agree(host, "Leave");
   await expect(host).toHaveURL(/\/$/);
 
   await expect(players(guest)).toHaveCount(1);
@@ -187,45 +193,56 @@ test("a host who goes back can return to the same room", async ({ browser }) => 
 test("the sound setting is remembered", async ({ browser }) => {
   const host = await newPlayer(browser);
   await createRoom(host, "Ada");
-  const sound = host.getByRole("button", { name: "Sound" });
-  await expect(sound).toHaveAttribute("aria-pressed", "true");
+  // Sound is in Settings, which the room's bar opens.
+  const settings = host.getByRole("dialog", { name: "Settings", exact: true });
+  const sound = settings.getByRole("switch", { name: "Sound" });
+  await host.getByRole("button", { name: "Settings", exact: true }).click();
+  await expect(sound).toHaveAttribute("aria-checked", "true");
   await sound.click();
-  await expect(sound).toHaveAttribute("aria-pressed", "false");
+  await expect(sound).toHaveAttribute("aria-checked", "false");
   await host.reload();
-  await expect(host.getByRole("button", { name: "Sound" })).toHaveAttribute(
-    "aria-pressed",
-    "false",
-  );
+  await host.getByRole("button", { name: "Settings", exact: true }).click();
+  await expect(sound).toHaveAttribute("aria-checked", "false");
 });
 
-test("on a phone the host slides to start with friends, and a tap alone doesn't start it", async ({
+test("the host slides to play, alone or with friends, and a tap doesn't start it", async ({
   browser,
 }) => {
+  test.setTimeout(60_000);
   const host = await newPlayer(browser);
   const roomUrl = await createRoom(host, "Ada");
-  // Alone, a stray tap costs nothing, so solo play is a plain button.
-  await expect(host.getByRole("button", { name: "Play solo" })).toBeVisible();
-  await expect(host.locator(".slide-start")).toHaveCount(0);
+  const bar = host.locator(".slide-play");
+  const progress = host.locator(".progress");
+
+  /** Presses on the handle and drags it this far along the bar, from 0 to 1. */
+  const slide = async (along: number) => {
+    const handle = (await bar.getByRole("button").boundingBox())!;
+    const track = (await bar.boundingBox())!;
+    const y = handle.y + handle.height / 2;
+    const from = handle.x + handle.width / 2;
+    await host.mouse.move(from, y);
+    await host.mouse.down();
+    await host.mouse.move(from + (track.width - handle.width) * along, y, { steps: 10 });
+    await host.mouse.up();
+  };
+
+  // Alone, it's still a slide: a tap does nothing, and nor does letting go early.
+  await expect(bar).toContainText("Slide to Play");
+  await host.getByRole("button", { name: "Slide to play solo" }).click();
+  await slide(0.2);
+  await expect(bar).not.toHaveClass(/done/);
+  await expect(progress).toHaveCount(0);
 
   const guest = await newPlayer(browser);
   await guest.goto(roomUrl);
   await joinAs(guest, "Tolu");
-  const thumb = host.getByRole("button", { name: "Slide to start game" });
-  await expect(thumb).toBeVisible();
+  // With friends it says the same, and tells a screen reader it starts the game for everyone.
+  await expect(host.getByRole("button", { name: /^Slide to Play: start game/ })).toBeVisible();
+  await expect(bar).toContainText("Slide to Play");
 
-  // A tap on the handle does nothing.
-  await thumb.click();
-  await expect(host.locator(".progress")).toHaveCount(0);
-
-  // Dragging it to the end starts the game.
-  const track = host.locator(".slide-start");
-  const handle = (await thumb.boundingBox())!;
-  const end = (await track.boundingBox())!;
-  await host.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
-  await host.mouse.down();
-  await host.mouse.move(end.x + end.width - 10, handle.y + handle.height / 2, { steps: 12 });
-  await host.mouse.up();
-  await expect(host.locator(".progress")).toBeVisible();
+  // Sliding it all the way starts the game.
+  await slide(1);
+  await expect(progress).toBeVisible();
 });
 
 test("quitting a solo game goes back to the room, and leaving closes it", async ({ browser }) => {
@@ -235,8 +252,8 @@ test("quitting a solo game goes back to the room, and leaving closes it", async 
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
   await expect(page.locator(".progress")).toContainText("1 of 10", { timeout: 10_000 });
 
-  page.once("dialog", (dialog) => void dialog.accept());
   await page.getByRole("button", { name: "Quit" }).click();
+  await agree(page, "Quit");
   // Back in the room, not on the home page, ready for another game.
   await expect(page).toHaveURL(roomUrl);
   await expect(page.locator(".room-code")).toBeVisible();
@@ -264,24 +281,26 @@ test("friends hear who quits, leaves and comes back, and who the host is", async
   }
 
   // Tolu quits: back to the room, while Ada plays on.
-  guest.once("dialog", (dialog) => void dialog.accept());
   await guest.getByRole("button", { name: "Quit" }).click();
+  await agree(guest, "Quit");
   await expect(guest.getByText(/You left this game/)).toBeVisible();
   await expect(host.getByText("Tolu left the game")).toBeVisible();
   await expect(host.locator(".progress")).toContainText("1 of 10");
 
   // Then leaves the room, and comes back: straight back into the game they were in.
   await guest.getByRole("button", { name: "Leave" }).click();
+  await agree(guest, "Leave");
   await expect(guest).toHaveURL(/\/$/);
   await expect(host.getByText("Tolu left the room")).toBeVisible();
   await guest.goto(roomUrl);
   await expect(guest.locator(".progress")).toContainText("of 10", { timeout: 10_000 });
 
   // Ada quits too and leaves: Tolu is the host now.
-  host.once("dialog", (dialog) => void dialog.accept());
   await host.getByRole("button", { name: "Quit" }).click();
+  await agree(host, "Quit");
   await expect(host.locator(".room-code")).toBeVisible();
   await host.getByRole("button", { name: "Leave" }).click();
+  await agree(host, "Leave");
   await expect(guest.getByText("You’re the host now")).toBeVisible();
 });
 
@@ -299,8 +318,8 @@ test("someone who quits a game can go back into it, with their score", async ({ 
   // Tolu answers, quits, and goes back in: on with the game, not waiting for the next one.
   await guest.locator("button.choice").first().click();
   await expect(guest.getByRole("status")).toHaveText(/Correct|Wrong/);
-  guest.once("dialog", (dialog) => void dialog.accept());
   await guest.getByRole("button", { name: "Quit" }).click();
+  await agree(guest, "Quit");
   await expect(guest.getByText(/You left this game/)).toBeVisible();
   await guest.getByRole("button", { name: "Rejoin the game" }).click();
   await expect(guest.locator(".progress")).toBeVisible({ timeout: 10_000 });
