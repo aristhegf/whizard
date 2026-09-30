@@ -183,6 +183,29 @@ test("shows live scores on tablets and computers, but not on phones", async ({ b
   await expect(phone.getByRole("complementary", { name: "Live scores" })).toBeHidden();
 });
 
+test("the quiz fits a laptop screen, with the topic, lettered answers and the explanation", async ({
+  browser,
+}) => {
+  const page = await (
+    await browser.newContext({ viewport: { width: 1366, height: 768 } })
+  ).newPage();
+  await openRoom(page);
+  await page.getByRole("button", { name: /play solo/i }).press("Enter");
+
+  await expect(page.locator(".progress")).toContainText("1 / 10", { timeout: 10_000 });
+  await expect(page.locator(".quiz-topic")).toBeVisible();
+  await expect(page.locator(".choice-letter")).toHaveText(["A", "B", "C", "D"]);
+  const fits = () => page.evaluate(() => document.documentElement.scrollHeight <= innerHeight);
+  expect(await fits()).toBe(true);
+
+  // The answer, with the explanation and Next row that solo play adds, is on the same screen.
+  await page.locator("button.choice").first().click();
+  await expect(page.getByRole("status")).toHaveText(/Correct|Wrong/);
+  await expect(page.locator(".explanation")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Skip" })).toBeInViewport();
+  expect(await fits()).toBe(true);
+});
+
 test("a late joiner plays the running game when the host allows it", async ({ browser }) => {
   const host = await newPlayer(browser);
   await openRoom(host);

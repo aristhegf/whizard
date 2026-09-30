@@ -139,7 +139,8 @@ Signed-in players change this in **Settings**, and it's saved to their account:
 
 Guests get the table above. This pacing is decided entirely on the player's own screen: the server only needs to hear "next", so the settings don't change the game rules.
 
-**Live scores.** On tablets and computers, a panel beside the question shows everyone's points as they play. Phones leave it out to keep the question and answers large. Either way it shows **rank, name and points only**: what anyone else got right or wrong stays private.
+**Live scores.** On tablets and computers, a panel shows everyone's points as they play, with a bar under each name for how close they are to the leader and a medal for the top three. Phones leave it out to keep the question and answers large. Either way it shows **rank, name and points only**: what anyone else got right or wrong stays private.
+**The quiz screen.** Classic and Speed share one frame (`QuizFrame` in `games/quiz/QuizScreen.tsx`, styles in `styles/quiz.css`, scoped to `.quiz-game` so the other games keep their own look). The question is a card with lettered answers (A to D), a "Question 4 / 10" bar of segments above it and a note under it. Speed adds a ring in the card's corner that empties as the time runs out. On computers the topic and the mascot sit at the left and the scores at the right, and the whole screen fits with no scrolling, down to 1280×720 with the explanation and Next row of solo play. Tablets get one column with the scores under the answers, and phones leave the scores out. Elimination and the other games have their own screens.
 
 **Results.** Whoever finishes first sees the rankings straight away. They fill in as the others finish, and players still going show as "Playing…". Once everyone is done, the top three go on a podium.
 

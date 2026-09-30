@@ -1,0 +1,506 @@
+/* The quiz screen ---------------------------------------------------------------------------- */
+
+/* The topic and the mascot at the left, the question in the middle, everyone's scores at the
+   right. Everything is scoped to .quiz-game, so the other games keep their own look. */
+
+.quiz-game {
+  align-content: start;
+  gap: 12px;
+}
+
+.quiz-stage {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* The topic and the mascot only fit at the left of a computer screen. */
+.quiz-rail {
+  display: none;
+}
+
+.quiz-center {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  min-width: 0;
+}
+
+/* Progress: "Question 4 / 10" and a segment for each question. */
+.quiz-progress {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgb(14 12 46 / 72%);
+}
+
+.quiz-game .progress {
+  margin: 0;
+  color: #fff;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.quiz-segments {
+  display: flex;
+  flex: 1;
+  gap: 5px;
+  min-width: 0;
+}
+
+.quiz-segments span {
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 12%);
+}
+
+.quiz-segments .done {
+  background: linear-gradient(90deg, #ffd43f, #ffae1a);
+  box-shadow: 0 0 10px rgb(255 190 40 / 45%);
+}
+
+.quiz-segments .now {
+  background: rgb(255 212 63 / 45%);
+}
+
+/* The question. */
+.quiz-card {
+  position: relative;
+  display: grid;
+  gap: 18px;
+  padding: 20px 18px 22px;
+  border: 2px solid rgb(255 200 90 / 42%);
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgb(30 22 82 / 84%), rgb(12 10 40 / 90%));
+  box-shadow:
+    inset 0 0 0 1px rgb(255 200 90 / 12%),
+    0 24px 60px rgb(0 0 0 / 40%),
+    0 0 44px rgb(140 70 255 / 26%);
+}
+
+.quiz-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  justify-self: start;
+  padding: 5px 16px 5px 6px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 8%);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.quiz-chip svg {
+  box-sizing: content-box;
+  padding: 5px;
+  border-radius: 50%;
+  background: #8b24fd;
+}
+
+.quiz-game .prompt {
+  font-size: clamp(1.4rem, 2.4vw + 0.4vh, 2.3rem);
+  text-align: left;
+}
+
+/* The bar: the room at the left, the controls at the right. */
+.quiz-game .game-bar .bar-end {
+  margin-left: auto;
+}
+
+.quiz-game .quit-btn {
+  min-height: 44px;
+  padding: 0 24px;
+  font-size: 1rem;
+}
+
+.quiz-card.timed .prompt {
+  padding-right: 92px;
+}
+
+/* The countdown ring, in the corner of the card. */
+.timer-ring {
+  position: absolute;
+  top: -22px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: rgb(12 10 40 / 94%);
+  box-shadow:
+    0 8px 24px rgb(0 0 0 / 40%),
+    0 0 26px rgb(255 190 40 / 22%);
+  font-family: var(--display);
+  line-height: 1;
+}
+
+.timer-ring svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ring-track {
+  fill: none;
+  stroke: rgb(255 255 255 / 12%);
+  stroke-width: 8;
+}
+
+.ring-arc {
+  fill: none;
+  stroke: #ffc531;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.ring-number {
+  font-size: 1.9rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.ring-unit {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+
+.timer-ring.low .ring-arc {
+  stroke: #ff5a78;
+}
+
+.timer-ring.low .ring-number {
+  color: #ff8fa3;
+}
+
+/* The answers, each with its letter. */
+.quiz-game .choices {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.quiz-game .choice {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  min-height: 76px;
+  padding: 10px 18px 10px 12px;
+  border-radius: 20px;
+  font-size: 1.15rem;
+  text-align: left;
+}
+
+.choice-letter {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 2px solid rgb(190 170 255 / 45%);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 6%);
+  font-family: var(--display);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.quiz-game .choice.picked {
+  border-color: #ffd86b;
+  background: linear-gradient(180deg, #ffd43f, #ffae1a);
+  box-shadow: 0 0 34px rgb(255 190 40 / 45%);
+  color: #2b1500;
+}
+
+.quiz-game .choice.picked .choice-letter {
+  border-color: rgb(60 30 0 / 35%);
+  background: rgb(255 255 255 / 45%);
+  color: #2b1500;
+}
+
+.quiz-game .choice.correct .choice-letter,
+.quiz-game .choice.wrong .choice-letter {
+  border-color: rgb(255 255 255 / 60%);
+  background: rgb(255 255 255 / 20%);
+}
+
+/* Under the card: what's happening, or how that answer went. */
+.quiz-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  justify-self: center;
+  padding: 12px 26px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgb(14 12 46 / 76%);
+  color: #e4dfff;
+  font-weight: 700;
+  text-align: center;
+}
+
+.quiz-note svg {
+  flex: none;
+  color: #b05bff;
+}
+
+.quiz-result {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.quiz-game .verdict {
+  font-size: 1.5rem;
+}
+
+/* The scores: a bar under each name for how close they are to the leader, and a medal for the
+   top three. */
+.quiz-game .live-board {
+  border: 1.5px solid var(--line-strong);
+  border-radius: 24px;
+  background: rgb(14 12 46 / 78%);
+  padding: 14px;
+}
+
+.quiz-game .live-title {
+  padding: 4px 8px 10px;
+  border-bottom: 0;
+}
+
+.quiz-game .live-board li {
+  grid-template-columns: 34px 44px minmax(0, 1fr) auto;
+  gap: 10px;
+  min-height: 66px;
+  padding: 6px 10px;
+  border-radius: 16px;
+  border-bottom: 0;
+}
+
+.quiz-game .live-board li.me {
+  border: 1.5px solid rgb(255 200 90 / 60%);
+  background: linear-gradient(90deg, rgb(120 60 255 / 55%), rgb(255 190 60 / 22%));
+}
+
+.live-board .who {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.live-board .bar {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 12%);
+}
+
+.live-board .bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #8b24fd, #b05bff);
+  transition: width 400ms ease;
+}
+
+.live-board li.me .bar i {
+  background: linear-gradient(90deg, #ffae1a, #ffd43f);
+}
+
+.live-board .rank.medal {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #2b1500;
+  font-size: 0.95rem;
+}
+
+.live-board .rank.m1 {
+  background: linear-gradient(180deg, #ffe07a, #ffae1a);
+}
+
+.live-board .rank.m2 {
+  background: linear-gradient(180deg, #eef0ff, #b8bfe6);
+}
+
+.live-board .rank.m3 {
+  background: linear-gradient(180deg, #f2a86a, #c9713a);
+}
+
+@media (min-width: 768px) {
+  .quiz-card {
+    padding: 22px 26px 26px;
+  }
+
+  .quiz-card.timed .prompt {
+    padding-right: 120px;
+  }
+
+  .timer-ring {
+    top: -12px;
+    right: 22px;
+    width: 116px;
+    height: 116px;
+  }
+
+  .ring-number {
+    font-size: 2.4rem;
+  }
+
+  .ring-unit {
+    font-size: 0.7rem;
+  }
+
+  .quiz-game .choices {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .quiz-game .choice {
+    min-height: clamp(78px, 11vh, 120px);
+    font-size: 1.4rem;
+  }
+
+  .choice-letter {
+    width: 52px;
+    height: 52px;
+    font-size: 1.35rem;
+  }
+}
+
+/* Computers: the topic and the mascot at the left, the scores at the right, on the one screen. */
+@media (min-width: 1100px) {
+  .quiz-game {
+    min-height: calc(100dvh - 24px);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .quiz-stage {
+    grid-template-columns: 280px minmax(0, 1fr) 340px;
+    align-items: stretch;
+    gap: 24px;
+  }
+
+  .quiz-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 0;
+  }
+
+  .quiz-topic {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 22px;
+    background: rgb(24 18 70 / 78%);
+  }
+
+  .quiz-topic-icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #ffd43f, #ff9d1a);
+    color: #3a1d00;
+  }
+
+  .quiz-topic-text {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .quiz-topic-text strong {
+    font-family: var(--display);
+    font-size: 1.15rem;
+    overflow-wrap: anywhere;
+  }
+
+  .quiz-topic-text small {
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .quiz-mascot {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    margin-top: auto;
+    filter: drop-shadow(0 16px 30px rgb(120 40 255 / 45%));
+  }
+
+  .quiz-center {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    align-content: stretch;
+    padding-top: 24px;
+  }
+
+  .quiz-card {
+    align-content: center;
+    gap: clamp(14px, 3vh, 32px);
+  }
+
+  .quiz-game .live-board {
+    align-self: start;
+    margin-top: 24px;
+  }
+}
+
+/* Short laptop screens: tighter, so the explanation and the Next row still fit with the question. */
+@media (min-width: 1100px) and (max-height: 820px) {
+  .quiz-center {
+    gap: 8px;
+    padding-top: 10px;
+  }
+
+  .quiz-card {
+    gap: 12px;
+    padding: 16px 22px 18px;
+  }
+
+  .quiz-game .prompt {
+    font-size: 1.9rem;
+  }
+
+  .quiz-game .choice {
+    min-height: 68px;
+  }
+
+  .quiz-result {
+    gap: 6px;
+  }
+
+  .quiz-game .verdict {
+    font-size: 1.25rem;
+  }
+
+  .quiz-game .explanation {
+    font-size: 0.95rem;
+  }
+
+  .quiz-game .live-board li {
+    min-height: 58px;
+  }
+}
