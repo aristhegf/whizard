@@ -159,6 +159,11 @@ export class RoomClient {
     this.send({ type: "quitGame" });
   }
 
+  /** Goes back into the running game after quitting it, with the score kept. */
+  rejoinGame(): void {
+    this.send({ type: "rejoinGame" });
+  }
+
   leave(): void {
     this.send({ type: "leave" });
     clearSession(this.code);

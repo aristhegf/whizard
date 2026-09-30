@@ -6,8 +6,10 @@ import {
   configureRoom,
   createRoomState,
   joinRoom,
+  DISCONNECTED_PLAYER_TTL_MS,
   leaveRoom,
   nextDeadline,
+  settle,
   toSnapshot,
   type RoomState,
 } from "./room";
@@ -18,6 +20,7 @@ import {
   gameViewFor,
   markRecorded,
   quitGame,
+  rejoinGame,
   returnToLobby,
   startGame,
   tickGame,
@@ -345,5 +348,106 @@ describe("quitting a game", () => {
     const { state, connected } = room("Ada", "Tolu", "Kemi");
     const left = leaveRoom(state, "p1", connected, T0 + 1000);
     expect(left.hostId).toBe("p2");
+  });
+});
+
+describe("coming back to a running game", () => {
+  /** The quiz view one player sees. */
+  const viewOf = (state: RoomState, id: string) => gameViewFor(state, id) as QuizView;
+  const joinAs = (state: RoomState, nickname: string, guestId: string, id: string) => {
+    const result = joinRoom(state, { nickname, guestId }, new Set(), T0 + 20_000, () => ({
+      id,
+      sessionToken: `t-${id}`,
+    }));
+    if (!result.ok) throw new Error(result.error);
+    return result;
+  };
+  /** Ada and Tolu, each on their own browser, in a room that doesn't allow late joins. */
+  function started(settings = DEFAULT_QUIZ_SETTINGS) {
+    let state = createRoomState("ABCDEF", T0);
+    const connected = new Set<string>();
+    for (const [n, name] of ["Ada", "Tolu"].entries()) {
+      const r = joinRoom(state, { nickname: name, guestId: `g${n + 1}` }, connected, T0, () => ({
+        id: `p${n + 1}`,
+        sessionToken: `t${n + 1}`,
+      }));
+      if (!r.ok) throw new Error(r.error);
+      state = r.state;
+      connected.add(`p${n + 1}`);
+    }
+    state = ok(configureGame(state, "p1", settings));
+    return { state: ok(startGame(state, "p1", connected, T0, 1, bank)), connected };
+  }
+  /** Tolu answers the first question. */
+  const answered = (state: RoomState) =>
+    ok(
+      applyGameAction(
+        state,
+        "p2",
+        { type: "answer", index: 0, choice: 0, clientElapsedMs: 1000 },
+        T0 + COUNTDOWN_MS + 1000,
+      ),
+    );
+
+  it("lets someone who quit go back in, with their score", () => {
+    const { state, connected } = started();
+    const before = answered(state);
+    const quit = ok(quitGame(before, "p2", T0 + 10_000));
+    expect(toSnapshot(quit, connected).sittingOut).toEqual(["p2"]);
+
+    const back = ok(rejoinGame(quit, "p2", T0 + 12_000));
+    expect(toSnapshot(back, connected).sittingOut).toEqual([]);
+    const tolu = viewOf(back, "p2").standings.find((s) => s.playerId === "p2")!;
+    expect(tolu.left).toBe(false);
+    expect(tolu.score).toBe(viewOf(before, "p2").standings.find((s) => s.playerId === "p2")!.score);
+    // Only a game they were in, and only while it runs.
+    expect(rejoinGame(quit, "p9", T0)).toMatchObject({ ok: false, error: "no_game" });
+  });
+
+  it("brings someone who left the room back as the same player, late joins or not", () => {
+    const { state, connected } = started();
+    const left = leaveRoom(answered(state), "p2", connected, T0 + 10_000);
+    expect(left.players.map((p) => p.id)).toEqual(["p1"]);
+
+    // The same browser, whatever name they type: back in as Tolu, where they were.
+    const back = joinAs(left, "Someone", "g2", "fresh");
+    expect(back.player).toMatchObject({ id: "p2", nickname: "Tolu" });
+    const tolu = viewOf(back.state, "p2").standings.find((s) => s.playerId === "p2")!;
+    expect(tolu).toMatchObject({ left: false, nickname: "Tolu" });
+    expect(tolu.score).toBeGreaterThanOrEqual(0);
+  });
+
+  it("keeps a newcomer out of a game that doesn't take late joins", () => {
+    const { state } = started();
+    const newcomer = joinAs(state, "Kemi", "g3", "p3");
+    expect(newcomer.player.id).toBe("p3");
+    expect(viewOf(newcomer.state, "p3").stage.kind).toBe("watching");
+  });
+
+  it("restarts the question they were on, so time away doesn't count against them", () => {
+    const { state } = started({ ...DEFAULT_QUIZ_SETTINGS, variant: "speed" });
+    const quit = ok(quitGame(state, "p2", T0 + 1000));
+    // A minute later: several questions' worth of time has gone by for the others.
+    const later = T0 + 60_000;
+    const back = tickGame(ok(rejoinGame(quit, "p2", later)), later + 100);
+    const view = viewOf(back, "p2");
+    expect(view.stage).toMatchObject({
+      kind: "question",
+      index: 0,
+      startsAt: later + COUNTDOWN_MS,
+    });
+  });
+
+  it("stops the game waiting for someone gone too long, and takes them back if they return", () => {
+    const { state } = started();
+    // Tolu's connection drops and doesn't come back in time: they're dropped from the room.
+    const connected = new Set(["p1"]);
+    const gone = settle(state, connected, T0 + DISCONNECTED_PLAYER_TTL_MS + 1);
+    expect(gone.players.map((p) => p.id)).toEqual(["p1"]);
+    expect(viewOf(gone, "p1").standings.find((s) => s.playerId === "p2")?.left).toBe(true);
+
+    const back = joinAs(gone, "Tolu", "g2", "fresh");
+    expect(back.player.id).toBe("p2");
+    expect(viewOf(back.state, "p1").standings.find((s) => s.playerId === "p2")?.left).toBe(false);
   });
 });

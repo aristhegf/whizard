@@ -139,13 +139,16 @@ Signed-in players change this in **Settings**, and it's saved to their account:
 
 Guests get the table above. This pacing is decided entirely on the player's own screen: the server only needs to hear "next", so the settings don't change the game rules.
 
-**Live scores.** On tablets and computers, a panel beside the question shows everyone's points as they play. Phones leave it out to keep the question and answers large. Either way it shows **rank, name and points only**: what anyone else got right or wrong stays private.
+**Live scores.** On tablets and computers, a panel shows everyone's points as they play, with a bar under each name for how close they are to the leader and a medal for the top three. Phones leave it out to keep the question and answers large. Either way it shows **rank, name and points only**: what anyone else got right or wrong stays private.
+**The quiz screen.** Classic and Speed share one frame (`QuizFrame` in `games/quiz/QuizScreen.tsx`, styles in `styles/quiz.css`, scoped to `.quiz-game` so the other games keep their own look). A bar of segments above the card steps through the questions (Elimination's own screen labels its bar with the round instead), and the card holds a "Question 4 of 10" chip, the question and lettered answers (A to D), with a line under it. Speed adds a ring over the card's top-right corner that empties as the time runs out. On computers the topic and the mascot sit at the left, and the scores at the right match the card's height; the card is wider than tall, and the whole screen fits with no scrolling down to 1280×720, even with the explanation and Next row of solo play. Tablets get one column with the topic above and the scores after the verdict, and phones leave the scores out.
 
 **Results.** Whoever finishes first sees the rankings straight away. They fill in as the others finish, and players still going show as "Playing…". Once everyone is done, the top three go on a podium.
 
 **Review.** Every player gets a private review of their own game at the end: each question, their answer, the correct answer and the explanation where the category has one.
 
 **Late joiners.** By default, someone who arrives mid-game watches until the next one. If the host turns on **Allow late join**, they join the running game instead, starting from the first question with their own countdown. It works because every player already moves at their own pace.
+
+**Coming back to a game.** Anyone who was in the running game can always go back into it, with their score and progress, whatever the late-join setting; late join only decides whether a _newcomer_ can enter. Someone who quit it and stayed in the room gets **Rejoin the game** (`rejoinGame`). Someone who left the room, or was dropped after 10 minutes offline, is recognised when they come back (by their account, or the browser's guest ID, against the game's roster) and returns as the same player, under the name they played with. A dropped player is marked as having left the game, so nobody is kept waiting for them. The game decides how they come back (`onPlayerJoined` with a player it already has): in the quiz, Word Rush and Spot It the question they were on starts again with a countdown, so time away doesn't count against them; Jigsaw, Connections and Logic carry on with the puzzle on the same clock; in an Elimination game they're back in if no cut was made while they were away, and watch if one was.
 
 ### Elimination
 
@@ -234,19 +237,20 @@ stateDiagram-v2
 
 JSON messages over one WebSocket per player. Every message has a `type` and is validated with zod on both ends. Messages that fail validation are dropped.
 
-| Client → Server                                                        | Purpose                                                             |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `join { protocolVersion, nickname, avatar?, guestId?, sessionToken? }` | Join, or rejoin with the token from an earlier `welcome`            |
-| `leave {}`                                                             | Leave the room for good                                             |
-| `profile { nickname, avatar? }`                                        | Change your own nickname or avatar between games                    |
-| `ping { t }`                                                           | Measure round-trip time and clock offset                            |
-| `chooseGame { game }`                                                  | Host switches the room to another game in the lobby                 |
-| `configure { settings }`                                               | Host changes the game settings in the lobby                         |
-| `roomSettings { maxPlayers?, lateJoin? }`                              | Host changes who can join                                           |
-| `start {}`                                                             | Host starts a game, or plays again from the results                 |
-| `action { action }`                                                    | A game move (an answer, "next"), validated by the game's own schema |
-| `backToLobby {}`                                                       | Host returns everyone to the lobby to change settings               |
-| `quitGame {}`                                                          | Quit the running game but stay in the room for the next one         |
+| Client → Server                                                        | Purpose                                                              |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `join { protocolVersion, nickname, avatar?, guestId?, sessionToken? }` | Join, or rejoin with the token from an earlier `welcome`             |
+| `leave {}`                                                             | Leave the room for good                                              |
+| `profile { nickname, avatar? }`                                        | Change your own nickname or avatar between games                     |
+| `ping { t }`                                                           | Measure round-trip time and clock offset                             |
+| `chooseGame { game }`                                                  | Host switches the room to another game in the lobby                  |
+| `configure { settings }`                                               | Host changes the game settings in the lobby                          |
+| `roomSettings { maxPlayers?, lateJoin? }`                              | Host changes who can join                                            |
+| `start {}`                                                             | Host starts a game, or plays again from the results                  |
+| `action { action }`                                                    | A game move (an answer, "next"), validated by the game's own schema  |
+| `backToLobby {}`                                                       | Host returns everyone to the lobby to change settings                |
+| `quitGame {}`                                                          | Quit the running game but stay in the room for the next one          |
+| `rejoinGame {}`                                                        | Go back into the running game after quitting it, with the score kept |
 
 | Server → Client                                        | Purpose                                                                 |
 | ------------------------------------------------------ | ----------------------------------------------------------------------- |

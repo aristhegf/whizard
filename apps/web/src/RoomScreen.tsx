@@ -698,9 +698,15 @@ function Lobby({
 
           <div className="lobby-dock">
             {sittingOut && room.phase === "playing" ? (
-              <p className="muted center sitting-out" role="status">
-                You quit this game. The others are still playing; you’ll be in the next one.
-              </p>
+              <div className="sitting-out">
+                <p className="muted center" role="status">
+                  You left this game. The others are still playing, and your score is kept.
+                </p>
+                <button className="btn btn-primary btn-block" onClick={() => client.rejoinGame()}>
+                  <Icon name="play" size={20} fill />
+                  Rejoin the game
+                </button>
+              </div>
             ) : isHost && needMore > 0 ? (
               <p className="muted center need-more" role="status">
                 Elimination needs at least {ELIMINATION_MIN_PLAYERS} players. Invite {needMore} more

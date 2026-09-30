@@ -91,6 +91,8 @@ export const clientMessageSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("backToLobby") }),
   /** Quit the running game but stay in the room, for the next one. */
   z.object({ type: z.literal("quitGame") }),
+  /** Go back into the running game after quitting it, with your score. */
+  z.object({ type: z.literal("rejoinGame") }),
 ]);
 
 export const serverMessageSchema = z.discriminatedUnion("type", [
