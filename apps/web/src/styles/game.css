@@ -1950,3 +1950,9 @@ button.choice:disabled {
     color: var(--text);
   }
 }
+
+/* Someone who left the running game: a note, and the way back in. */
+.sitting-out {
+  display: grid;
+  gap: 12px;
+}

@@ -148,6 +148,8 @@ Guests get the table above. This pacing is decided entirely on the player's own 
 
 **Late joiners.** By default, someone who arrives mid-game watches until the next one. If the host turns on **Allow late join**, they join the running game instead, starting from the first question with their own countdown. It works because every player already moves at their own pace.
 
+**Coming back to a game.** Anyone who was in the running game can always go back into it, with their score and progress, whatever the late-join setting; late join only decides whether a _newcomer_ can enter. Someone who quit it and stayed in the room gets **Rejoin the game** (`rejoinGame`). Someone who left the room, or was dropped after 10 minutes offline, is recognised when they come back (by their account, or the browser's guest ID, against the game's roster) and returns as the same player, under the name they played with. A dropped player is marked as having left the game, so nobody is kept waiting for them. The game decides how they come back (`onPlayerJoined` with a player it already has): in the quiz, Word Rush and Spot It the question they were on starts again with a countdown, so time away doesn't count against them; Jigsaw, Connections and Logic carry on with the puzzle on the same clock; in an Elimination game they're back in if no cut was made while they were away, and watch if one was.
+
 ### Elimination
 
 A mode for 3 or more players, in the quiz, Word Rush and Spot It. All three use the same knock-out rules (`games/knockout/knockout.ts`); each game only brings its items (questions, words or grids) and what a move on one is worth. Unlike Classic and Speed, **everyone plays each question together**: it opens for all at the same moment, and closes when time runs out or everyone still in is done with it (answered, solved, out of tries or given up). Then everyone sees the right answer for 3.5 seconds.
@@ -235,19 +237,20 @@ stateDiagram-v2
 
 JSON messages over one WebSocket per player. Every message has a `type` and is validated with zod on both ends. Messages that fail validation are dropped.
 
-| Client → Server                                                        | Purpose                                                             |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `join { protocolVersion, nickname, avatar?, guestId?, sessionToken? }` | Join, or rejoin with the token from an earlier `welcome`            |
-| `leave {}`                                                             | Leave the room for good                                             |
-| `profile { nickname, avatar? }`                                        | Change your own nickname or avatar between games                    |
-| `ping { t }`                                                           | Measure round-trip time and clock offset                            |
-| `chooseGame { game }`                                                  | Host switches the room to another game in the lobby                 |
-| `configure { settings }`                                               | Host changes the game settings in the lobby                         |
-| `roomSettings { maxPlayers?, lateJoin? }`                              | Host changes who can join                                           |
-| `start {}`                                                             | Host starts a game, or plays again from the results                 |
-| `action { action }`                                                    | A game move (an answer, "next"), validated by the game's own schema |
-| `backToLobby {}`                                                       | Host returns everyone to the lobby to change settings               |
-| `quitGame {}`                                                          | Quit the running game but stay in the room for the next one         |
+| Client → Server                                                        | Purpose                                                              |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `join { protocolVersion, nickname, avatar?, guestId?, sessionToken? }` | Join, or rejoin with the token from an earlier `welcome`             |
+| `leave {}`                                                             | Leave the room for good                                              |
+| `profile { nickname, avatar? }`                                        | Change your own nickname or avatar between games                     |
+| `ping { t }`                                                           | Measure round-trip time and clock offset                             |
+| `chooseGame { game }`                                                  | Host switches the room to another game in the lobby                  |
+| `configure { settings }`                                               | Host changes the game settings in the lobby                          |
+| `roomSettings { maxPlayers?, lateJoin? }`                              | Host changes who can join                                            |
+| `start {}`                                                             | Host starts a game, or plays again from the results                  |
+| `action { action }`                                                    | A game move (an answer, "next"), validated by the game's own schema  |
+| `backToLobby {}`                                                       | Host returns everyone to the lobby to change settings                |
+| `quitGame {}`                                                          | Quit the running game but stay in the room for the next one          |
+| `rejoinGame {}`                                                        | Go back into the running game after quitting it, with the score kept |
 
 | Server → Client                                        | Purpose                                                                 |
 | ------------------------------------------------------ | ----------------------------------------------------------------------- |

@@ -126,6 +126,17 @@ export function quitGame(state: RoomState, playerId: string, now: number): GameR
   return { ok: true, state: gamePlayerLeft(marked, playerId, now) };
 }
 
+/**
+ * A player who quit the running game but stayed in the room goes back into it, with their score
+ * and progress. Only for someone who was in it: a newcomer waits, unless the room allows late joins.
+ */
+export function rejoinGame(state: RoomState, playerId: string, now: number): GameResult {
+  if (phaseOf(state) !== "playing") return fail("no_game");
+  if (!state.players.some((p) => p.id === playerId)) return fail("no_game");
+  if (!(state.session!.roster ?? []).some((r) => r.playerId === playerId)) return fail("no_game");
+  return { ok: true, state: gamePlayerReturned(state, playerId, now) };
+}
+
 /** Who quit the current game and is waiting for the next one. */
 export function sittingOut(state: RoomState): string[] {
   return state.session?.quit ?? [];
@@ -228,6 +239,41 @@ export function gamePlayerJoined(state: RoomState, player: Player, now: number):
     { ...state, session: { ...session, roster: [...roster, rosterEntry(player)] } },
     gameState,
     now,
+  );
+}
+
+/**
+ * Someone who was in the running game comes back to it: after quitting it, leaving the room or
+ * losing their connection. The game picks them up where they were, whatever the late-join setting.
+ */
+export function gamePlayerReturned(state: RoomState, playerId: string, now: number): RoomState {
+  if (phaseOf(state) !== "playing") return state;
+  const session = state.session!;
+  const entry = (session.roster ?? []).find((r) => r.playerId === playerId);
+  if (!entry) return state;
+  const gameState = gameModule(session.gameId).onPlayerJoined(
+    session.state,
+    { id: playerId, nickname: entry.nickname },
+    now,
+  );
+  const quit = (session.quit ?? []).filter((id) => id !== playerId);
+  return withGameState({ ...state, session: { ...session, quit } }, gameState, now);
+}
+
+/** The roster entry of someone who was in the running game and is no longer in the room, or null. */
+export function returningEntry(
+  state: RoomState,
+  who: { account: AccountIdentity | null; guestId: string | null },
+): RosterEntry | null {
+  if (phaseOf(state) !== "playing") return null;
+  const here = new Set(state.players.map((p) => p.id));
+  return (
+    (state.session!.roster ?? []).find(
+      (r) =>
+        !here.has(r.playerId) &&
+        ((who.account !== null && r.account?.userId === who.account.userId) ||
+          (who.guestId !== null && r.guestId === who.guestId)),
+    ) ?? null
   );
 }
 

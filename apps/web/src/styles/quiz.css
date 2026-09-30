@@ -89,6 +89,18 @@
   }
 }
 
+/* Leaving is red, so it's never mistaken for anything else. */
+.quiz-game .bar-controls .quiz-quit {
+  color: #ff5a78;
+}
+
+@media (hover: hover) {
+  .quiz-game .bar-controls .quiz-quit:hover {
+    color: #ff8fa3;
+    background: rgb(255 90 120 / 12%);
+  }
+}
+
 /* The stepper: a segment for each question, lit gold as they're done. */
 .quiz-top {
   display: grid;

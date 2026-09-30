@@ -394,9 +394,22 @@ export const quizGame: GameModule<
   },
 
   onPlayerJoined(state, player, now) {
-    // Someone joining an Elimination game watches it.
+    // Someone joining an Elimination game watches it; someone coming back to it is still in.
     if (isElimination(state)) return joinElimination(state, player);
-    if (state.finishedAt !== null || state.players.some((p) => p.id === player.id)) return state;
+    if (state.finishedAt !== null) return state;
+    const existing = state.players.find((p) => p.id === player.id);
+    if (existing) {
+      // Back after leaving: their answers and score are kept, and the question they were on
+      // starts again with a countdown, so the time they were away doesn't count against them.
+      if (!existing.left) return state;
+      const back: QuizPlayer = {
+        ...existing,
+        left: false,
+        startsAt: existing.startsAt === null ? null : now + COUNTDOWN_MS,
+        advanceAt: existing.advanceAt === null ? null : Math.max(existing.advanceAt, now),
+      };
+      return { ...state, players: state.players.map((p) => (p.id === player.id ? back : p)) };
+    }
     // A late joiner starts from question one with their own countdown, like everyone did.
     return { ...state, players: [...state.players, newPlayer(player, now + COUNTDOWN_MS)] };
   },

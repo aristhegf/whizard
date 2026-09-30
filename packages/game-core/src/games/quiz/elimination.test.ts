@@ -253,6 +253,33 @@ describe("a game", () => {
     expect(view(s, "kemi").stage).toMatchObject({ kind: "done", winner: { playerId: "ada" } });
   });
 
+  it("takes back someone who returns before the next cut, but not after it", () => {
+    let s = setup(["ada", "bola", "chidi", "dayo"]);
+    s = quizGame.onPlayerLeft(s, "dayo", T0 + 5000) as EliminationState;
+    expect(view(s, "dayo").me?.status).toBe("left");
+    // Back in the same round: still in it.
+    s = quizGame.onPlayerJoined(s, { id: "dayo", nickname: "DAYO" }, T0 + 6000) as EliminationState;
+    expect(view(s, "dayo").me?.status).toBe("in");
+
+    // Gone again, and the round ends with a cut while they're away: they missed it, and watch.
+    s = quizGame.onPlayerLeft(s, "dayo", T0 + 7000) as EliminationState;
+    let now = T0 + 7000;
+    const round = s.round;
+    while (s.round === round && s.finishedAt === null) {
+      ({ state: s, now } = play(s, now, { ada: 1000, bola: 2000, chidi: 3000 }));
+      s = tick(s, now);
+    }
+    s = quizGame.onPlayerJoined(s, { id: "dayo", nickname: "DAYO" }, now) as EliminationState;
+    expect(view(s, "dayo").me?.status).toBe("left");
+    const answer = quizGame.onAction(
+      tick(s, s.startsAt),
+      "dayo",
+      { type: "answer", index: s.index, choice: 0, clientElapsedMs: 500 },
+      s.startsAt + 500,
+    );
+    expect(isRejection(answer)).toBe(true);
+  });
+
   it("needs at least three players", () => {
     expect(
       quizGame.playersNeeded?.({ ...DEFAULT_QUIZ_SETTINGS, variant: "elimination" }),

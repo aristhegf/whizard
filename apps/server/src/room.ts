@@ -19,6 +19,7 @@ import {
   normalizeNickname,
   phaseOf,
   quitGame,
+  rejoinGame,
   nextDeadline,
   photoPicture,
   randomSeed,
@@ -274,6 +275,9 @@ export class Room extends DurableObject<Env> {
         return;
       case "quitGame":
         await this.handleGame(ws, (state, playerId, now) => quitGame(state, playerId, now));
+        return;
+      case "rejoinGame":
+        await this.handleGame(ws, (state, playerId, now) => rejoinGame(state, playerId, now));
         return;
     }
   }

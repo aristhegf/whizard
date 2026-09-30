@@ -53,6 +53,7 @@ export {
   markRecorded,
   phaseOf,
   quitGame,
+  rejoinGame,
   returnToLobby,
   sittingOut,
   startGame,

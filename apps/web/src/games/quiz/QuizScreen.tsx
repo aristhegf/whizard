@@ -117,7 +117,7 @@ function GameBar({ context }: { context: GameContext }) {
           {latency}
           <span className="bar-controls">
             <SettingsButton iconOnly />
-            <button className="icon-btn" aria-label="Quit" onClick={onQuit}>
+            <button className="icon-btn quiz-quit" aria-label="Quit" onClick={onQuit}>
               <Icon name="logout" size={22} />
             </button>
           </span>
