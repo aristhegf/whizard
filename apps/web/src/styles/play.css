@@ -308,6 +308,55 @@ button.play-tile:active:not(:disabled) {
   border-radius: 50%;
 }
 
+/* The quiz's board: a bar for how close each player is to the leader, and medals for the top
+   three (PlayBoard's `bar` and `medals`). */
+.live-board .who {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+}
+
+.live-board .bar {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 30%);
+}
+
+.live-board .bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent, #8b3dff);
+  transition: width 400ms ease;
+}
+
+.live-board li.me .bar i {
+  background: #fff;
+}
+
+.live-board .rank.medal {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: #2b1500;
+  font-size: 0.9rem;
+}
+
+.live-board .rank.m1 {
+  background: linear-gradient(180deg, #ffe07a, #ffab1f);
+}
+
+.live-board .rank.m2 {
+  background: linear-gradient(180deg, #f4f5ff, #aeb6e0);
+}
+
+.live-board .rank.m3 {
+  background: linear-gradient(180deg, #f6b078, #c46b2e);
+}
+
 /* Who joined or left: one slim line of text at the bottom, no box. */
 .play-toast {
   align-self: end;

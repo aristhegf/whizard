@@ -55,7 +55,7 @@ test("plays a solo quiz with explanations and a review", async ({ browser }) => 
 
   for (let i = 1; i <= 5; i++) {
     await expect(page.locator(".progress")).toContainText(`${i} of 5`, { timeout: 10_000 });
-    await expect(page.getByRole("progressbar", { name: "Time left" })).toHaveCount(0);
+    await expect(page.getByRole("timer", { name: "Time" })).toHaveCount(0);
     await answerFirstChoice(page, i, 5);
     await expect(page.locator(".explanation")).toBeVisible();
     await page.getByRole("button", { name: "Skip" }).click();
@@ -122,7 +122,7 @@ test("Speed mode puts a timer on every question", async ({ browser }) => {
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
 
   await expect(page.locator(".progress")).toContainText("1 of 10", { timeout: 10_000 });
-  await expect(page.getByRole("progressbar", { name: "Time left" })).toBeVisible();
+  await expect(page.getByRole("timer", { name: "Time" })).toBeVisible();
 });
 
 test("friends play at their own pace and only see points", async ({ browser }) => {
