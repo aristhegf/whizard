@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { closeSheet, openSettings, chooseSetting, expectSetting } from "./lobby";
 
 test.describe.configure({ timeout: 120_000 });
 
@@ -72,8 +73,10 @@ test("one player finds the four groups, with a miss and a near miss on the way",
   await page.getByRole("button", { name: "Play Connections" }).click();
   await joinAs(page, "Ada");
   await expect(page.getByRole("heading", { name: "Connections" })).toBeVisible();
-  await page.getByLabel("Level", { exact: true }).selectOption("easy");
-  await expect(page.getByLabel("Level", { exact: true })).toHaveValue("easy");
+  await openSettings(page);
+  await chooseSetting(page, "Level", "easy");
+  await expectSetting(page, "Level", "easy");
+  await closeSheet(page);
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
 
   const puzzle = await puzzleOn(page);

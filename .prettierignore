@@ -14,3 +14,7 @@ apps/web/src/styles/transitions.css
 skills-lock.json
 # The banana-claude skill (MIT, vendored standalone), kept as published.
 .claude/skills/banana/
+# Cult UI components (cult-ui.com), added with `npx shadcn add` and kept as published.
+apps/web/src/components/cult/
+# The taste skill (npx skills add leonxlnx/taste-skill), kept as published.
+.claude/skills/design-taste-frontend/

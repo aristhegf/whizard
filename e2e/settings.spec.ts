@@ -13,9 +13,9 @@ test("a guest can change sound and animations, and they're remembered", async ({
   await page.goto("/games");
   // On phones, Settings is in the menu under "Me".
   await page.getByRole("button", { name: "Me", exact: true }).click();
-  await page.getByRole("button", { name: "Settings" }).click();
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
 
-  const settings = page.getByRole("dialog", { name: "Settings" });
+  const settings = page.getByRole("dialog", { name: "Settings", exact: true });
   const sound = settings.getByRole("switch", { name: "Sound" });
   const still = settings.getByRole("switch", { name: "Reduce animations" });
   await expect(sound).toHaveAttribute("aria-checked", "true");
@@ -36,7 +36,7 @@ test("a guest can change sound and animations, and they're remembered", async ({
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   await page.getByLabel("Choose a nickname").fill("Ada");
   await page.getByRole("button", { name: "Join", exact: true }).click();
-  await page.getByRole("button", { name: "Settings" }).click();
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
   await expect(settings.getByRole("switch", { name: "Sound" })).toHaveAttribute(
     "aria-checked",
     "false",
@@ -78,7 +78,7 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   await page.getByRole("button", { name: "Menu", exact: true }).click();
   const menu = page.getByRole("group", { name: "Menu" });
   await expect(menu.getByRole("link", { name: "Sign in" })).toBeVisible();
-  await expect(menu.getByRole("button", { name: "Settings" })).toBeVisible();
+  await expect(menu.getByRole("button", { name: "Settings", exact: true })).toBeVisible();
   await page.keyboard.press("Escape");
 
   // The pages about Whizard are in a row at the bottom, still on the one screen.
@@ -92,10 +92,12 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
 test("phones get Play, Create, Leaderboard, Stats and Me at the bottom", async ({ page }) => {
   await page.goto("/");
   expect(await labels(page, "Sections")).toEqual(["Play", "Create", "Leaderboard", "Stats", "Me"]);
-  await page
-    .getByRole("navigation", { name: "Sections" })
-    .getByRole("link", { name: "Stats" })
-    .click();
+  const tabs = page.getByRole("navigation", { name: "Sections" });
+  // A guest's home page introduces Whizard, so their Play goes on to the games themselves.
+  await tabs.getByRole("link", { name: "Play" }).click();
+  await expect(page).toHaveURL(/\/games$/);
+  await expect(page.getByRole("heading", { name: "What do you want to play?" })).toBeVisible();
+  await tabs.getByRole("link", { name: "Stats" }).click();
   await expect(page).toHaveURL(/\/stats$/);
 });
 

@@ -2,6 +2,7 @@
 @import "./styles/pages.css";
 @import "./styles/welcome.css";
 @import "./styles/game.css";
+@import "./styles/lobby.css";
 @import "./styles/quiz.css";
 @import "./styles/play.css";
 @import "./styles/account.css";

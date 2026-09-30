@@ -1,0 +1,1372 @@
+/* The room lobby: everyone gathering before a game, on one screen. Wide
+   screens lay it out in three columns: the game on the left with the chat under it; the title,
+   code, players and Start in the middle; the settings sign hanging on the right. Narrower
+   screens keep the code, players and Start, and open the rest in sheets. */
+
+.room-page:has(.lobby) {
+  max-width: none;
+  padding: 0;
+}
+
+/* The lobby is drawn at one size and scaled to the screen (`zoom`, set by RoomScreen with `--z`),
+   so it never wraps or spills on a small screen and fills a big one. Inside it, lengths are in
+   the drawing's own pixels: `--lvw` and `--lvh` are a hundredth of the screen's width and height
+   in those, where `vw` and `svh` would be scaled a second time. */
+.lobby-scale {
+  /* The tilted sign swings a little wider as it gets longer; that never scrolls the page. */
+  overflow-x: clip;
+  --lvw: calc(1vw / var(--z));
+  --lvh: calc(1svh / var(--z));
+
+  /* Colour. Gold is the one accent: what you press to go on, who the host is, what's chosen.
+     It's `--gold` and `--gold-deep` from base.css, with a lighter top for gold surfaces and the
+     dark brown that's written on them. Purple is the surface, not an accent. */
+  --gold-top: #ffe14a;
+  --gold-face: linear-gradient(180deg, var(--gold-top), var(--gold-deep));
+  --on-gold: #221400;
+  --gold-shade: #8a3a0c;
+  /* Small marks and quieter text on the dark panels. */
+  --lilac: #c9a8ff;
+  --soft: #e6e0ff;
+  /* The fill behind the slider's handle, the site's own purple. */
+  --violet: linear-gradient(90deg, #6630f5, #9a4dff);
+  /* The sign's board and the cords it hangs on. */
+  --wood: #7a5426;
+  --brass: #c79a48;
+  /* How far the sign and the game's card lean, and how far below the bar the sign hangs. */
+  --tilt: -2.5deg;
+  --sign-drop: clamp(10px, calc(2.5 * var(--lvh)), 44px);
+  /* A game's picture before its own colours are known. */
+  --art: linear-gradient(160deg, #ff8c1a, #7b2bd9);
+
+  /* Corners, from base.css: panels `--radius-lg` (24), the cards and covers on them `--radius`
+     (18), controls `--radius-sm` (12). Tags, the slider and its handle are fully round. */
+
+  /* The smallest text. The page is scaled down to about 0.8 on laptops and small phones, and
+     this still comes out at 11px there. Nothing in the lobby is set smaller. */
+  --t-small: 0.875rem;
+}
+
+.lobby-scale .sheet {
+  max-height: min(calc(86dvh / var(--z)), 720px);
+}
+
+/* One screen wherever it fits; where it can't (a phone on its side, big text), it scrolls rather
+   than hiding or piling things on top of each other. */
+.lobby {
+  max-width: 1664px;
+  min-height: calc(100dvh / var(--z));
+  margin-inline: auto;
+  padding-inline: 32px;
+}
+
+/* The bar: Leave, then the connection, Invite, settings and sound, all as plain icons. */
+.room-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding-top: 10px;
+}
+
+.room-bar .bar-btn {
+  justify-content: center;
+  min-width: 44px;
+  padding: 0 10px;
+}
+
+.room-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+}
+
+.room-actions .bar-btn span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* The title and the code, with the mascot pointing at them. */
+.lobby-hero {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: clamp(6px, calc(1.3 * var(--lvh)), 16px);
+  min-height: 0;
+}
+
+.lobby-hero > :not(.lobby-mascot) {
+  position: relative;
+  z-index: 1;
+}
+
+.lobby-mascot {
+  position: absolute;
+  width: auto;
+  z-index: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 18px 30px rgb(20 0 60 / 55%));
+}
+
+.lobby-title {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2rem, min(calc(4.3 * var(--lvw)), calc(8.5 * var(--lvh))), 5.2rem);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+  transform: rotate(-3deg) skewX(-7deg);
+}
+
+.lobby-title > span:first-child {
+  text-shadow:
+    0 4px 0 rgb(40 10 90 / 85%),
+    0 12px 30px rgb(0 0 0 / 45%);
+}
+
+.lobby-title .gold {
+  color: var(--gold);
+  text-shadow:
+    0 4px 0 var(--gold-shade),
+    0 12px 30px rgb(0 0 0 / 45%);
+}
+
+.lobby-sub {
+  margin: 0;
+  font-weight: 700;
+  font-size: clamp(0.95rem, min(calc(1.3 * var(--lvw)), calc(2.3 * var(--lvh))), 1.3rem);
+  text-shadow: 0 2px 10px rgb(7 6 29 / 90%);
+}
+
+/* The code in the plain box the join card uses. */
+.lobby-code {
+  width: min(100%, 420px);
+}
+
+/* The players: a face and a name each, then empty seats waiting, straight on the page with no
+   box round any of them. `--face` is the size of a face, and of an empty seat's ring. */
+.lobby-players {
+  --face: 84px;
+  display: grid;
+  min-width: 0;
+}
+
+.lobby-count {
+  justify-self: end;
+  padding-right: 4px;
+  font-size: var(--t-small);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.lobby-players .player-list {
+  display: flex;
+  gap: clamp(10px, calc(1.1 * var(--lvw)), 18px);
+  margin: 0;
+  padding: 8px 2px 2px;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+/* With a mouse there's no swipe, so show the bar for reaching the players further along. */
+@media (hover: hover) and (pointer: fine) {
+  .lobby-players .player-list {
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(160 120 255 / 45%) transparent;
+  }
+}
+
+.player {
+  position: relative;
+  display: grid;
+  flex: 0 0 auto;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  width: calc(var(--face) + 28px);
+}
+
+.player.offline {
+  opacity: 0.6;
+}
+
+.player-me {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* The host wears a crown, on the corner of their face. */
+.host-mark {
+  position: absolute;
+  top: -4px;
+  left: calc(50% + var(--face) / 2 - 20px);
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--gold-face);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 40%);
+  color: var(--on-gold);
+}
+
+.player-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: clamp(0.9rem, calc(1.1 * var(--lvw)), 1.05rem);
+}
+
+.player.waiting {
+  color: var(--dim);
+}
+
+.slot-ring {
+  display: grid;
+  place-items: center;
+  width: var(--face);
+  height: var(--face);
+  border-radius: 50%;
+  border: 2.5px dashed rgb(160 120 255 / 70%);
+  color: var(--lilac);
+}
+
+.player.waiting .player-name {
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* Slide to play; or what's keeping it back. */
+.lobby-dock {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+}
+
+/* Slide to play: a round gold handle on a dark pill that fills with purple behind it, in a gold
+   glow. The whole bar takes the slide, so it can start anywhere on it; `touch-action: none`
+   keeps the browser from taking the gesture for a scroll or a swipe back. `--x` and `--p` (how
+   far, in px and from 0 to 1) are written by SlideToPlay as the finger moves, so only transforms
+   and opacity change on the way. */
+.slide-play {
+  --x: 0px;
+  --p: 0;
+  --pad: 4px;
+  --h: clamp(64px, calc(8 * var(--lvh)), 76px);
+  position: relative;
+  display: flex;
+  width: min(100%, 460px);
+  height: var(--h);
+  padding: var(--pad);
+  overflow: hidden;
+  border-radius: 999px;
+  border: 2px solid var(--gold);
+  background: rgb(18 17 56 / 85%);
+  box-shadow:
+    0 0 0 4px rgb(255 190 60 / 12%),
+    0 0 28px rgb(255 170 40 / 38%);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.slide-play.sliding {
+  cursor: grabbing;
+}
+
+/* The purple behind the handle, its leading edge riding with it. */
+.slide-play-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--violet);
+  opacity: calc(var(--p) * 6);
+  transform: translate3d(calc(var(--x) + var(--h) - 4px - 100%), 0, 0);
+  will-change: transform;
+}
+
+.slide-play-thumb {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  flex: none;
+  place-items: center;
+  height: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--gold-face);
+  box-shadow:
+    0 6px 18px rgb(255 180 40 / 40%),
+    inset 0 1px 0 rgb(255 255 255 / 50%);
+  color: var(--on-gold);
+  cursor: inherit;
+  touch-action: none;
+  transform: translate3d(var(--x), 0, 0);
+  will-change: transform;
+}
+
+.slide-play-thumb:focus-visible {
+  outline: 3px solid var(--text);
+  outline-offset: -3px;
+}
+
+/* Let go early, it springs back; while sliding, it stays exactly with the finger. */
+.slide-play:not(.sliding) :is(.slide-play-thumb, .slide-play-fill) {
+  transition:
+    transform 320ms var(--acc-ease),
+    opacity 200ms ease-out;
+}
+
+.slide-play-label,
+.slide-play-done {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-family: var(--body);
+  font-weight: 800;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
+.slide-play-label {
+  gap: 8px;
+  padding-left: calc(var(--h) - 12px);
+  opacity: calc(1 - var(--p) * 2.4);
+  transition: opacity 200ms ease-out;
+}
+
+.slide-play.sliding .slide-play-label {
+  transition: none;
+}
+
+/* Three arrows lighting up in turn, pointing the way. */
+.slide-play-hint {
+  display: inline-flex;
+  color: var(--gold);
+}
+
+.slide-play-hint svg {
+  margin-left: -9px;
+  opacity: 0.25;
+  animation: slide-play-hint 1.5s ease-in-out infinite;
+}
+
+.slide-play-hint svg:first-child {
+  margin-left: 0;
+}
+
+.slide-play-hint svg:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.slide-play-hint svg:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+@keyframes slide-play-hint {
+  0%,
+  55%,
+  100% {
+    opacity: 0.25;
+  }
+
+  25% {
+    opacity: 1;
+  }
+}
+
+[data-reduce-motion] .slide-play :is(.slide-play-thumb, .slide-play-fill, .slide-play-label) {
+  transition: none;
+}
+
+[data-reduce-motion] .slide-play-hint svg {
+  opacity: 0.7;
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-play :is(.slide-play-thumb, .slide-play-fill, .slide-play-label) {
+    transition: none;
+  }
+
+  .slide-play-hint svg {
+    opacity: 0.7;
+    animation: none;
+  }
+}
+
+.lobby-dock p {
+  margin: 0;
+}
+
+/* The game: a cover in its own colours, what it is, who it's for, how it's set, and Change Game. */
+.lobby-game {
+  display: grid;
+  gap: clamp(8px, calc(1.3 * var(--lvh)), 12px);
+  padding: 8px 8px clamp(10px, calc(1.6 * var(--lvh)), 14px);
+  border-radius: var(--radius-lg);
+  background: rgb(20 14 44 / 82%);
+  border: 1.5px solid var(--line-strong);
+}
+
+.game-cover {
+  position: relative;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  place-items: center;
+  height: clamp(78px, calc(12 * var(--lvh)), 116px);
+  overflow: hidden;
+  border-radius: var(--radius);
+  background:
+    radial-gradient(120% 90% at 50% 115%, rgb(0 0 0 / 38%), transparent 60%),
+    linear-gradient(160deg, var(--wash-a), var(--wash-b));
+  box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 12%);
+}
+
+.game-cover img {
+  width: auto;
+  height: 88%;
+  filter: drop-shadow(0 8px 14px rgb(0 0 0 / 40%));
+}
+
+.game-cover.picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: none;
+}
+
+/* Change topic or picture, in the cover's corner. */
+.game-cover > :not(img) {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+.game-cover .edit-btn {
+  background: rgb(10 8 30 / 55%);
+  color: var(--text);
+  backdrop-filter: blur(6px);
+}
+
+@media (hover: hover) {
+  .game-cover .edit-btn:hover {
+    background: rgb(10 8 30 / 75%);
+  }
+}
+
+.game-info {
+  display: grid;
+  gap: 4px;
+  padding-inline: 6px;
+}
+
+/* The game's picture on the phone's game line. */
+.summary-art {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: var(--radius-sm);
+  background: var(--art);
+  box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 18%);
+}
+
+.summary-art img {
+  width: 80%;
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgb(0 0 0 / 35%));
+}
+
+.summary-title {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(1.2rem, calc(1.6 * var(--lvw)), 1.6rem);
+  line-height: 1.1;
+}
+
+.game-desc {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.game-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0 6px;
+  list-style: none;
+}
+
+.game-tags li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 10%);
+  background: rgb(255 255 255 / 6%);
+  color: var(--soft);
+  font-size: var(--t-small);
+  font-weight: 700;
+}
+
+.game-tags svg,
+.game-setup svg {
+  flex: none;
+  color: var(--lilac);
+}
+
+/* How it's set, at a glance; the settings themselves are on the sign. */
+.game-setup {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.game-setup svg {
+  margin-top: 1px;
+}
+
+/* Change Game, with Change Topic beside it in the phone's sheet. */
+.game-actions {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+.change-game {
+  gap: 8px;
+  min-width: 0;
+  min-height: 44px;
+  padding-inline: 10px;
+  border-radius: var(--radius-sm);
+  font-family: var(--body);
+  font-weight: 700;
+}
+
+/* The settings, a sign hanging a little crooked on two cords. Everything on it tilts with it,
+   as one piece. */
+.lobby-settings {
+  position: relative;
+  align-self: start;
+  display: grid;
+  gap: 4px;
+  margin-top: var(--sign-drop);
+  padding: clamp(12px, calc(2 * var(--lvh)), 22px) clamp(14px, calc(1.3 * var(--lvw)), 22px);
+  border-radius: var(--radius-lg);
+  border: 3px solid var(--wood);
+  background: linear-gradient(180deg, rgb(30 22 46 / 95%), rgb(14 10 26 / 95%));
+  box-shadow:
+    inset 0 0 0 1.5px rgb(255 200 110 / 22%),
+    0 22px 44px rgb(0 0 0 / 50%);
+  transform: rotate(var(--tilt));
+  transform-origin: top center;
+}
+
+.lobby-settings::before,
+.lobby-settings::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  width: 3px;
+  height: 240px;
+  background: var(--brass);
+}
+
+.lobby-settings::before {
+  left: 16%;
+}
+
+.lobby-settings::after {
+  right: 16%;
+}
+
+.lobby-settings .section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 4px;
+  font-size: clamp(1.1rem, calc(1.4 * var(--lvw)), 1.35rem);
+}
+
+.lobby-settings .setting-row {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  padding: clamp(3px, calc(0.7 * var(--lvh)), 7px) 0;
+}
+
+.lobby-settings .setting-row > svg {
+  display: none;
+}
+
+.lobby-settings .setting-row label {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.lobby-settings .setting-row select,
+.lobby-settings .t-acc-head {
+  min-height: clamp(36px, calc(5.2 * var(--lvh)), 46px);
+}
+
+.lobby-settings .toggle-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+/* Make Public and the chat: here in place, arriving soon. */
+.lobby-public {
+  align-self: end;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 0 8px;
+}
+
+.lobby-public > svg {
+  color: var(--lilac);
+}
+
+.lobby-public .setting-label {
+  font-weight: 700;
+}
+
+.lobby-chat {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  min-height: 0;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: rgb(14 10 36 / 82%);
+  border: 1.5px solid var(--line-strong);
+}
+
+.chat-title {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.15rem;
+  white-space: nowrap;
+}
+
+.chat-empty {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  justify-items: center;
+  gap: 6px;
+  min-height: 0;
+  overflow: hidden;
+  padding-inline: 8px;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--muted);
+}
+
+.chat-empty p {
+  margin: 0;
+}
+
+.chat-empty svg {
+  color: var(--lilac);
+  opacity: 0.8;
+}
+
+.chat-input {
+  display: flex;
+  gap: 8px;
+}
+
+.chat-input input {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line);
+  background: var(--field);
+  color: var(--text);
+  font: inherit;
+}
+
+.chat-input button {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line);
+  background: var(--field);
+  color: var(--muted);
+}
+
+.chat-input :disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* On what's here to see but not working yet. */
+.soon-tag {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgb(255 200 61 / 14%);
+  color: var(--gold);
+  font-family: var(--body);
+  font-size: var(--t-small);
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+/* Change Game: the games side by side in a sheet, to swipe through. */
+.picker-body {
+  display: grid;
+  gap: 6px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+}
+
+.picker-track {
+  display: flex;
+  gap: 16px;
+  padding: 12px 20px 18px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.picker-card {
+  position: relative;
+  display: grid;
+  flex: 0 0 230px;
+  align-content: start;
+  justify-items: start;
+  gap: 6px;
+  padding: 10px 10px 16px;
+  border-radius: var(--radius-lg);
+  border: 2px solid rgb(255 255 255 / 10%);
+  background: linear-gradient(180deg, rgb(30 22 68 / 96%), rgb(16 12 40 / 96%));
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  scroll-snap-align: center;
+  cursor: pointer;
+  transition:
+    transform 200ms var(--acc-ease),
+    border-color 200ms ease-out;
+}
+
+/* Centred when they all fit; otherwise the row starts at the first and scrolls. */
+.picker-card:first-child {
+  margin-left: auto;
+}
+
+.picker-card:last-child {
+  margin-right: auto;
+}
+
+.picker-card[aria-checked="true"] {
+  border-color: var(--gold);
+}
+
+@media (hover: hover) {
+  .picker-card:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-3px);
+  }
+
+  .picker-card[aria-checked="true"]:hover {
+    border-color: var(--gold);
+  }
+}
+
+.picker-card:active {
+  transform: scale(0.98);
+}
+
+.picker-art {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  place-items: center;
+  width: 100%;
+  height: 130px;
+  margin-bottom: 6px;
+  border-radius: var(--radius);
+  background:
+    radial-gradient(120% 90% at 50% 115%, rgb(0 0 0 / 38%), transparent 60%),
+    linear-gradient(160deg, var(--wash-a), var(--wash-b));
+}
+
+.picker-art img {
+  width: auto;
+  height: 86%;
+  filter: drop-shadow(0 10px 16px rgb(0 0 0 / 45%));
+}
+
+.picker-name {
+  padding-inline: 4px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+
+.picker-desc {
+  min-height: 2.7em;
+  padding-inline: 4px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.picker-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-inline: 4px;
+  color: var(--soft);
+  font-size: var(--t-small);
+  font-weight: 700;
+}
+
+.picker-meta svg {
+  color: var(--lilac);
+}
+
+.picker-current {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--gold-face);
+  color: var(--on-gold);
+  font-size: var(--t-small);
+  font-weight: 800;
+}
+
+.picker-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.picker-nav[hidden] {
+  display: none;
+}
+
+.picker-nav .icon-btn:disabled {
+  opacity: 0.35;
+}
+
+.picker-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.picker-dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 25%);
+  transition:
+    transform 200ms var(--acc-ease),
+    background-color 200ms ease-out;
+}
+
+.picker-dots .on {
+  background: var(--gold);
+  transform: scale(1.45);
+}
+
+[data-reduce-motion] :is(.picker-card, .picker-dots span) {
+  transition: none;
+}
+
+/* The invite dialog: the QR code in the middle, the link, and pinging friends. */
+.invite-dialog {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: min(calc(92 * var(--lvw)), 420px);
+}
+
+.invite-dialog .stack,
+.invite-dialog .dialog-actions {
+  width: 100%;
+}
+
+/* Ping a friend: the friends, each with Ping, in a dialog that eases in over the invites. */
+.ping-dialog {
+  display: grid;
+  gap: 12px;
+  width: min(calc(92 * var(--lvw)), 440px);
+}
+
+.ping-dialog:not([open]) {
+  display: none;
+}
+
+.ping-dialog[open] {
+  animation: ping-dialog-in 280ms var(--acc-ease);
+}
+
+.ping-dialog[open]::backdrop {
+  animation: ping-backdrop-in 200ms ease-out;
+}
+
+@keyframes ping-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+}
+
+@keyframes ping-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+[data-reduce-motion] .ping-dialog[open],
+[data-reduce-motion] .ping-dialog[open]::backdrop {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ping-dialog[open],
+  .ping-dialog[open]::backdrop {
+    animation: none;
+  }
+}
+
+.ping-dialog p {
+  margin: 0;
+}
+
+.ping-list {
+  max-height: calc(46 * var(--lvh));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.ping-list li {
+  justify-content: flex-start;
+}
+
+.ping-list .person-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Wide screens: three columns, as in the design. -------------------------------------------- */
+
+.lobby.wide {
+  --left: clamp(230px, calc(18.5 * var(--lvw)), 310px);
+  --right: clamp(270px, calc(21 * var(--lvw)), 340px);
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--left) minmax(0, 1fr) var(--right);
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    "bar bar bar"
+    "left hero settings"
+    "left players settings"
+    "left dock public";
+  column-gap: clamp(20px, calc(2.4 * var(--lvw)), 40px);
+  row-gap: clamp(10px, calc(1.8 * var(--lvh)), 22px);
+  padding-bottom: clamp(14px, calc(2.4 * var(--lvh)), 28px);
+}
+
+.lobby.wide .room-bar {
+  grid-area: bar;
+}
+
+.lobby.wide .lobby-hero {
+  grid-area: hero;
+}
+
+.lobby.wide .lobby-players {
+  grid-area: players;
+}
+
+.lobby.wide .lobby-dock {
+  grid-area: dock;
+}
+
+/* The sign hangs over the page rather than sitting in it. Opening one of its settings makes the
+   sign longer, down over Make Public if it needs the room, and leaves everything else where it
+   is. It stops at the foot of the page; past that its settings scroll inside it. */
+.lobby.wide .lobby-settings {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  grid-row: 2 / -1;
+  grid-column: 3 / 4;
+  grid-template-rows: auto minmax(0, 1fr);
+  max-height: calc(100% - var(--sign-drop));
+}
+
+.lobby.wide .lobby-settings .settings-list {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(160 120 255 / 45%) transparent;
+}
+
+.lobby.wide .lobby-public {
+  grid-area: public;
+}
+
+/* The game, and the chat down by the players; the chat gives up height when the screen is short. */
+.lobby-left {
+  grid-area: left;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  row-gap: clamp(10px, calc(1.8 * var(--lvh)), 22px);
+  min-height: 0;
+}
+
+/* The game's card leans the same way as the sign, everything on it with it. */
+.lobby-left .lobby-game {
+  margin-right: 8%;
+  transform: rotate(var(--tilt));
+}
+
+/* The chat card sits down by the players and opens upwards into the space above it. */
+.chat-expandable {
+  align-self: end;
+  min-width: 0;
+}
+
+.lobby-chat.chat-card {
+  display: block;
+  padding: 0;
+}
+
+.chat-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+}
+
+.chat-head:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: -3px;
+}
+
+.chat-chevron {
+  margin-left: auto;
+  color: var(--muted);
+}
+
+.chat-chevron[data-open="true"] {
+  transform: scaleY(-1);
+}
+
+.chat-open {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  min-width: 0;
+  padding: 0 16px 16px;
+}
+
+.chat-open .chat-empty {
+  padding-block: 4px 8px;
+}
+
+/* The title and the code sit a little right of centre, as in the design, which leaves the
+   mascot room on their left. */
+.lobby.wide {
+  --hero-shift: clamp(100px, calc(17.5 * var(--lvw)), 290px);
+}
+
+.lobby.wide .lobby-hero {
+  padding-left: var(--hero-shift);
+}
+
+/* Slide to Play sits in the middle of the screen. Its column is a little left of the middle,
+   the left column being narrower than the right, and this makes up the difference. */
+.lobby.wide .lobby-dock {
+  padding-left: calc(var(--right) - var(--left));
+}
+
+.lobby.wide .lobby-mascot {
+  left: calc(-1 * clamp(20px, calc(2.4 * var(--lvw)), 40px));
+  bottom: -4%;
+  height: min(96%, calc(21 * var(--lvw)), 340px);
+}
+
+/* Narrower screens: one column, the rest in sheets. ------------------------------------------ */
+
+.lobby.compact {
+  display: grid;
+  /* On a tablet the phone layout stays phone-sized, in the middle, rather than stretched wide. */
+  width: min(100%, 672px);
+  margin-inline: auto;
+  padding-inline: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
+  gap: clamp(8px, calc(1.5 * var(--lvh)), 14px);
+  /* Room under Slide to play: along the very bottom, a sideways swipe belongs to the phone. */
+  padding-bottom: calc(22px + env(safe-area-inset-bottom));
+}
+
+.lobby.compact .room-bar {
+  min-height: 48px;
+  padding-top: 6px;
+}
+
+/* The mascot beside the title and the line under it, then the code full width. */
+.lobby.compact .lobby-hero {
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "mascot title"
+    "mascot sub"
+    "code code";
+  justify-items: start;
+  column-gap: 10px;
+}
+
+.lobby.compact .lobby-mascot {
+  position: static;
+  grid-area: mascot;
+  align-self: center;
+  height: clamp(62px, calc(10 * var(--lvh)), 96px);
+}
+
+.lobby.compact .lobby-title {
+  grid-area: title;
+  font-size: clamp(1.8rem, min(calc(8.4 * var(--lvw)), calc(5.2 * var(--lvh))), 3rem);
+  transform-origin: left center;
+}
+
+.lobby.compact .lobby-sub {
+  grid-area: sub;
+  font-size: clamp(0.85rem, calc(3.6 * var(--lvw)), 1rem);
+}
+
+.lobby.compact .lobby-code {
+  grid-area: code;
+  justify-self: stretch;
+  width: auto;
+}
+
+/* The spare height goes above the sheet buttons, which sit down by Start and the thumb. */
+.lobby.compact .lobby-sheets {
+  align-self: end;
+}
+
+.lobby-game-chip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  border: 1.5px solid var(--line-strong);
+  background: rgb(20 14 44 / 82%);
+}
+
+.chip-open {
+  display: grid;
+  place-items: center;
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.chip-open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.chip-open:focus-visible {
+  outline: none;
+}
+
+.lobby-game-chip:has(.chip-open:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.lobby-game-chip .summary-art {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-sm);
+}
+
+.chip-text {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.chip-text .summary-title {
+  font-size: 1.15rem;
+}
+
+.chip-text .summary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lobby.compact .lobby-players {
+  --face: 60px;
+}
+
+.lobby-sheets {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
+/* Text set small by the site's shared styles, brought up to the lobby's floor. */
+.lobby-scale :is(.net, .t-acc-group) {
+  font-size: var(--t-small);
+}
+
+.lobby-sheets .btn {
+  gap: 6px;
+  min-width: 0;
+  padding-inline: 12px;
+  min-height: 46px;
+  font-family: var(--body);
+  font-weight: 700;
+}
+
+/* Clear of the screen's left edge, where a swipe to the right means "back" to the phone. */
+.lobby.compact .slide-play {
+  --h: 64px;
+  justify-self: stretch;
+  width: auto;
+  margin-inline: 12px;
+}
+
+.lobby.compact .room-bar .bar-btn {
+  padding: 0;
+}
+
+/* A sheet holds the settings, the game or the chat, scrolling if it needs to. */
+.lobby-sheet-body {
+  max-height: calc(68dvh / var(--z));
+  padding: 12px 20px 4px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Choosing a game goes step by step in the one sheet; each step slides in. */
+.lobby-sheet-body {
+  animation: sheet-step 240ms var(--acc-ease);
+}
+
+@keyframes sheet-step {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+
+[data-reduce-motion] .lobby-sheet-body {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lobby-sheet-body {
+    animation: none;
+  }
+}
+
+/* The games run edge to edge; topics and settings keep to a readable width on wide screens. */
+.lobby-sheet-body.step-games {
+  padding: 4px 0 0;
+}
+
+.lobby-sheet-body:is(.step-topics, .step-settings) {
+  width: min(100%, 600px);
+  margin-inline: auto;
+}
+
+/* Done stays in reach at the bottom of the sheet, however long the settings run. */
+.sheet-done {
+  position: sticky;
+  bottom: 4px;
+  margin-top: 14px;
+  box-shadow: 0 -10px 18px 6px rgb(14 11 44 / 92%);
+}
+
+/* Back, at the start of the sheet's head. */
+.lobby-sheet .game-sheet-close:first-child {
+  margin-left: 0;
+}
+
+.lobby-sheet-body .lobby-game,
+.lobby-sheet-body .lobby-chat {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.lobby-sheet-body .lobby-chat {
+  min-height: 240px;
+}

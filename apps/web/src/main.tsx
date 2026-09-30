@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import { loadAccount } from "./account";
 import { App } from "./App";
 import { useReduceMotionSetting } from "./display";
+import { ConfirmProvider } from "./ui/ConfirmDialog";
 import { ToastProvider } from "./ui/toast";
 import "./styles.css";
 import "./styles/tailwind.css";
@@ -20,7 +21,9 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Motion>
       <ToastProvider>
-        <App />
+        <ConfirmProvider>
+          <App />
+        </ConfirmProvider>
       </ToastProvider>
     </Motion>
   </StrictMode>,
