@@ -1708,6 +1708,164 @@ button.choice:disabled {
   }
 }
 
+/* Jigsaw Insane: the picture's canvas, which zooms and pans, and the tray under it. */
+.insane-main {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.insane-main .play-timer {
+  font-size: clamp(2.4rem, 11vw, 3.4rem);
+}
+
+.insane-main .play-task {
+  align-self: center;
+}
+
+.insane {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.insane-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.insane-view {
+  position: relative;
+  height: max(240px, calc(100dvh - 400px));
+  overflow: hidden;
+  border-radius: 16px;
+  background: rgb(7 6 29 / 55%);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+
+.insane-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.insane-canvas {
+  position: absolute;
+  inset: 0;
+  background: var(--night, #16143f);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 10%);
+}
+
+/* A piece's box has room for its knobs all round (KNOB_REACH, 32 of 100, each side). */
+.insane-piece {
+  position: absolute;
+  width: 164px;
+  height: 164px;
+  pointer-events: none;
+}
+
+.insane-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.insane-piece.placed {
+  z-index: 1;
+}
+
+.insane-piece.placed .jigsaw-edge {
+  stroke: rgb(255 255 255 / 14%);
+}
+
+/* Only the piece's own shape picks it up, not the empty corners of its box. */
+.insane-piece.loose {
+  z-index: 2;
+  filter: drop-shadow(0 2px 3px rgb(3 2 20 / 60%));
+}
+
+.insane-piece.loose .jigsaw-edge {
+  pointer-events: fill;
+  cursor: grab;
+}
+
+.insane-piece.lifted {
+  visibility: hidden;
+}
+
+.insane.done .jigsaw-edge {
+  stroke: transparent;
+}
+
+/* Swipe along to find a piece; drag one up and out to take it. */
+.insane-tray {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 92px;
+  padding: 0 8px;
+  overflow: auto hidden;
+  overscroll-behavior-x: contain;
+  border-radius: 16px;
+  background: var(--night, #16143f);
+  touch-action: pan-x;
+  scrollbar-width: thin;
+  /* Its row of pieces scrolls; it never widens the page. */
+  contain: inline-size;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.insane-tray .insane-piece {
+  position: relative;
+  flex: 0 0 76px;
+  width: 76px;
+  height: 76px;
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.insane-peek {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  margin-right: 8px;
+  border-radius: 10px;
+  box-shadow: 10px 0 12px var(--night, #16143f);
+}
+
+.insane-ghost {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 80;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 14px rgb(3 2 20 / 70%));
+}
+
+.insane-ghost .jigsaw-edge {
+  stroke: var(--accent-soft, #b58cff);
+  stroke-width: 2px;
+}
+
+@media (min-width: 768px) {
+  .insane-view {
+    height: max(360px, calc(100dvh - 330px));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .jigsaw-piece,
   .jigsaw-shape,

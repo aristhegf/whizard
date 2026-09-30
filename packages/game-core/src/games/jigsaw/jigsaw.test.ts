@@ -3,6 +3,7 @@ import { seededRng } from "../../random";
 import { isRejection } from "../types";
 import {
   JIGSAW_COUNTDOWN_MS,
+  JIGSAW_INSANE_TIME_LIMIT_MS,
   JIGSAW_TIME_LIMIT_MS,
   jigsawGame,
   placedCount,
@@ -15,7 +16,7 @@ const T0 = 1_000_000;
 const START = T0 + JIGSAW_COUNTDOWN_MS;
 const picture = JIGSAW_PICTURES[0];
 
-function game(nicknames = ["Ada", "Tolu"], side: 3 | 4 = 3): JigsawState {
+function game(nicknames = ["Ada", "Tolu"], side: 3 | 4 | 10 = 3): JigsawState {
   return jigsawGame.setup({
     settings: { picture: picture.id, side },
     players: nicknames.map((nickname, i) => ({ id: `p${i + 1}`, nickname })),
@@ -40,6 +41,12 @@ function solve(state: JigsawState, playerId: string, now = START + 1000): Jigsaw
     if (spot === -1) return s;
     s = act(s, playerId, spot, board.indexOf(spot), now);
   }
+}
+
+function place(state: JigsawState, playerId: string, piece: number, now = START + 1000) {
+  const next = jigsawGame.onAction(state, playerId, { type: "place", piece }, now);
+  if (isRejection(next)) throw new Error(next.rejected);
+  return next;
 }
 
 describe("scrambled", () => {
@@ -189,5 +196,46 @@ describe("the picture library", () => {
       expect(recent).not.toContain(jigsawContentId(picked.id));
       recent.unshift(jigsawContentId(picked.id));
     }
+  });
+});
+
+describe("insane", () => {
+  it("starts every piece in the same shuffled tray for everyone, with 30 minutes", () => {
+    const state = game(["Ada", "Tolu"], 10);
+    expect(state.players[0]!.board).toEqual(Array.from({ length: 100 }, () => -1));
+    expect([...state.tray!].sort((a, b) => a - b)).toEqual(
+      Array.from({ length: 100 }, (_, i) => i),
+    );
+    expect(state.tray).not.toEqual(Array.from({ length: 100 }, (_, i) => i));
+    const view = jigsawGame.viewFor(state, "p2");
+    expect(view.tray).toEqual(state.tray);
+    expect(view.me?.placed).toBe(0);
+    expect(view.deadline).toBe(START + JIGSAW_INSANE_TIME_LIMIT_MS);
+    expect(jigsawGame.nextWakeAt(state)).toBe(START + JIGSAW_INSANE_TIME_LIMIT_MS);
+  });
+
+  it("places a piece on its spot once, and takes no swaps", () => {
+    let state = game(["Ada"], 10);
+    state = place(state, "p1", 42);
+    expect(state.players[0]!.board[42]).toBe(42);
+    expect(jigsawGame.viewFor(state, "p1").me?.placed).toBe(1);
+    expect(() => place(state, "p1", 42)).toThrow(/already in its place/);
+    expect(() => place(state, "p1", 100)).toThrow(/no such piece/);
+    expect(() => act(state, "p1", 0, 1)).toThrow(/Drag the pieces/);
+    expect(() => place(game(["Ada"], 10), "p1", 0, START - 2000)).toThrow(/hasn't started/);
+  });
+
+  it("finishes when the last piece goes in", () => {
+    let state = game(["Ada"], 10);
+    for (let piece = 0; piece < 100; piece++) state = place(state, "p1", piece, START + 5000);
+    expect(jigsawGame.isFinished(state)).toBe(true);
+    expect(jigsawGame.viewFor(state, "p1").me?.timeMs).toBe(5000);
+  });
+
+  it("the swapping sizes take no placing and have no tray", () => {
+    const state = game(["Ada"], 4);
+    expect(state.tray).toBeNull();
+    expect(jigsawGame.viewFor(state, "p1").tray).toBeNull();
+    expect(() => place(state, "p1", 0)).toThrow(/Pieces swap/);
   });
 });

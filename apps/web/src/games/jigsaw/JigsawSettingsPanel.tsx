@@ -80,7 +80,7 @@ export function JigsawSettingsRows({
           disabled={!editable}
           options={JIGSAW_SIZES.map((s) => ({
             value: String(s.side),
-            label: `${s.side * s.side} pieces`,
+            label: sizeName(s.side),
           }))}
           onChange={(value) =>
             onChange({ ...settings, side: Number(value) as JigsawSettings["side"] })

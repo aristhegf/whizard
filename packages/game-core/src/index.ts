@@ -125,8 +125,10 @@ export {
 } from "./games/quiz/settings";
 export {
   JIGSAW_COUNTDOWN_MS,
+  JIGSAW_INSANE_TIME_LIMIT_MS,
   JIGSAW_TIME_LIMIT_MS,
   POINTS_PER_PIECE,
+  jigsawTimeLimit,
   jigsawGame,
   placedCount,
   scrambled,
@@ -138,10 +140,12 @@ export {
 } from "./games/jigsaw/jigsaw";
 export {
   DEFAULT_JIGSAW_SETTINGS,
+  JIGSAW_INSANE_SIDE,
   JIGSAW_PHOTO_ID,
   JIGSAW_PICTURES,
   JIGSAW_SIZES,
   JIGSAW_THEMES,
+  isInsane,
   jigsawContentId,
   jigsawSettingsSchema,
   photoPicture,

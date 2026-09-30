@@ -79,14 +79,22 @@ export const photoPicture = (code: string, photo: string): JigsawPicture => ({
   src: `/api/rooms/${encodeURIComponent(code)}/photo/${photo}`,
 });
 
-/** Pieces per side: 3×3 up to 6×6. */
+/**
+ * Pieces per side: 3×3 up to 6×6 on a board where pieces swap places, and Insane: 10×10, where
+ * the pieces start in a tray and are dragged onto the picture's canvas.
+ */
 export const JIGSAW_SIZES = [
   { side: 3, name: "Easy" },
   { side: 4, name: "Medium" },
   { side: 5, name: "Hard" },
   { side: 6, name: "Expert" },
+  { side: 10, name: "Insane" },
 ] as const;
 export type JigsawSide = (typeof JIGSAW_SIZES)[number]["side"];
+
+/** Insane's side: pieces start in a tray instead of on a shuffled board. */
+export const JIGSAW_INSANE_SIDE = 10;
+export const isInsane = (side: number) => side === JIGSAW_INSANE_SIDE;
 
 const pictureIds = JIGSAW_PICTURES.map((p) => p.id) as [JigsawPictureId, ...JigsawPictureId[]];
 
