@@ -32,6 +32,7 @@ import {
   SPOT_PROMPTS,
   SpotGrid,
   SpotPuzzle,
+  Staged,
   timerMs,
   VERDICTS,
   WordPuzzle,
@@ -164,16 +165,19 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
     });
   const skip = () => client.act({ type: "skip", index: stage.index });
   const waiting = `Waiting for the others… ${stage.answeredCount} of ${stage.aliveCount} done`;
+  const board = <Board context={context} />;
+  const waitingOnOthers = stage.playing && !!stage.myResult;
 
   return (
     <div className="game play">
       <Top context={context} />
-      <div className="game-layout">
+      {/* Beside the puzzle on a computer; while waiting for the others, at the side. */}
+      <div className={`game-layout${waitingOnOthers ? "" : " staged"}`}>
         <div className="game-main play-main play-column rounds-main">
           <PlayTimer ms={timerMs(remaining)} low={remaining / view.timeLimitMs < 0.25} />
           <Watching view={view} />
           {!stage.playing ? (
-            <Spectate game={view.game} puzzle={stage.puzzle} />
+            <Spectate game={view.game} puzzle={stage.puzzle} aside={board} />
           ) : stage.myResult ? (
             <div className="elim-waiting">
               <img
@@ -201,6 +205,7 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
               triesLeft={stage.triesLeft}
               onGuess={guess}
               onSkip={skip}
+              aside={board}
             />
           ) : (
             <SpotPuzzle
@@ -208,6 +213,7 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
               tried={stage.tried as number[]}
               triesLeft={stage.triesLeft}
               onTap={guess}
+              aside={board}
             />
           )}
           {!busy && <p className="muted center">{waiting}</p>}
@@ -222,7 +228,7 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
             </div>
           )}
         </div>
-        <Board context={context} />
+        {waitingOnOthers && board}
       </div>
       <PlayToast />
     </div>
@@ -233,16 +239,20 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
 function Spectate({
   game,
   puzzle,
+  aside,
 }: {
   game: View["game"];
   puzzle: WordPuzzleView | SpotItPuzzleView;
+  aside?: ReactNode;
 }) {
   if (game === "spot-it") {
     const grid = puzzle as SpotItPuzzleView;
     return (
       <div className="spot-puzzle">
         <p className="play-task">{SPOT_PROMPTS[grid.kind]}</p>
-        <SpotGrid grid={grid} />
+        <Staged aside={aside}>
+          <SpotGrid grid={grid} />
+        </Staged>
       </div>
     );
   }
@@ -253,13 +263,15 @@ function Spectate({
       <p className="word-kind">
         <span className="pill pill-glow">{word.hint}</span>
       </p>
-      <div className="word-slots" aria-label="The puzzle">
-        {letters.map((letter, i) => (
-          <span key={i} className={`word-slot${letter ? " filled" : ""}`}>
-            {letter ?? ""}
-          </span>
-        ))}
-      </div>
+      <Staged aside={aside}>
+        <div className="word-slots" aria-label="The puzzle">
+          {letters.map((letter, i) => (
+            <span key={i} className={`word-slot${letter ? " filled" : ""}`}>
+              {letter ?? ""}
+            </span>
+          ))}
+        </div>
+      </Staged>
     </div>
   );
 }
@@ -274,10 +286,10 @@ function Answer({ context, stage }: { context: Context; stage: Stage<"reveal"> }
   return (
     <div className="game play">
       <Top context={context} />
-      <div className="game-layout">
+      <div className="game-layout staged">
         <div className="game-main play-main rounds-main">
           <Watching view={view} />
-          <Reveal game={view.game} reveal={stage.reveal} />
+          <Reveal game={view.game} reveal={stage.reveal} aside={<Board context={context} />} />
           {stage.playing && result && (
             <p className={`verdict ${solved ? "good" : "bad"}`} role="status">
               {VERDICTS[result.outcome]}
@@ -286,7 +298,6 @@ function Answer({ context, stage }: { context: Context; stage: Stage<"reveal"> }
           )}
           <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
         </div>
-        <Board context={context} />
       </div>
       <PlayToast />
     </div>

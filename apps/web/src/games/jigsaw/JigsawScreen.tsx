@@ -220,7 +220,7 @@ function Playing(props: Props & { board: number[]; startsAt: number }) {
   return (
     <div className="game play">
       <PlayTop latency={props.latency} onQuit={props.onQuit} label={round ?? count} />
-      <div className="game-layout">
+      <div className="game-layout staged">
         <div className={`game-main play-main jigsaw-main${view.tray ? " insane-main" : ""}`}>
           {/* Classic has no clock; Speed and Elimination count down. */}
           {left !== null && (
@@ -245,45 +245,50 @@ function Playing(props: Props & { board: number[]; startsAt: number }) {
               {help}
             </p>
           )}
-          {view.tray ? (
-            <InsaneBoard
-              key={`${props.room.code}:${startsAt}`}
-              cols={view.cols}
-              rows={view.rows}
-              src={view.picture.src}
-              board={props.board}
-              tray={view.tray}
-              done={finished || outOfTime}
-              storageKey={`${props.room.code}:${startsAt}:${props.playerId}`}
-              onPlace={(piece) => client.act({ type: "place", piece })}
-            />
-          ) : (
-            <>
-              <Board
-                side={view.cols}
-                src={view.picture.src}
-                board={board}
-                selected={selected}
-                done={finished || outOfTime}
-                onTap={tap}
-                onSwap={swap}
-              />
-              {/* Phones have no side panel, so the picture to copy sits under the board. */}
-              <figure className="jigsaw-peek">
+          {/* On a computer the scores and the picture sit beside the board, level with it. */}
+          <div className={`play-stage jigsaw-stage${view.tray ? "" : " fit-board"}`}>
+            <div className="play-area">
+              {view.tray ? (
+                <InsaneBoard
+                  key={`${props.room.code}:${startsAt}`}
+                  cols={view.cols}
+                  rows={view.rows}
+                  src={view.picture.src}
+                  board={props.board}
+                  tray={view.tray}
+                  done={finished || outOfTime}
+                  storageKey={`${props.room.code}:${startsAt}:${props.playerId}`}
+                  onPlace={(piece) => client.act({ type: "place", piece })}
+                />
+              ) : (
+                <>
+                  <Board
+                    side={view.cols}
+                    src={view.picture.src}
+                    board={board}
+                    selected={selected}
+                    done={finished || outOfTime}
+                    onTap={tap}
+                    onSwap={swap}
+                  />
+                  {/* Phones have no side panel, so the picture to copy sits under the board. */}
+                  <figure className="jigsaw-peek">
+                    <img src={view.picture.src} alt="" />
+                    <figcaption>{view.picture.name}</figcaption>
+                  </figure>
+                </>
+              )}
+            </div>
+            <aside className="jigsaw-side">
+              <LiveBoard {...props} />
+              <figure className="panel jigsaw-reference">
                 <img src={view.picture.src} alt="" />
-                <figcaption>{view.picture.name}</figcaption>
+                <figcaption className="dim small">{view.picture.name}</figcaption>
               </figure>
-            </>
-          )}
+            </aside>
+          </div>
           <PlayFaces faces={faces(props)} playerId={props.playerId} />
         </div>
-        <aside className="jigsaw-side">
-          <figure className="panel jigsaw-reference">
-            <img src={view.picture.src} alt="" />
-            <figcaption className="dim small">{view.picture.name}</figcaption>
-          </figure>
-          <LiveBoard {...props} />
-        </aside>
       </div>
       <PlayToast />
     </div>

@@ -228,11 +228,18 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
       clientElapsedMs: elapsedSince(shownAt.current),
     });
   const skip = () => client.act({ type: "skip", index: stage.index });
+  const scores = (
+    <ScoreBoard
+      standings={view.standings}
+      playerId={context.playerId}
+      avatarOf={context.avatarOf}
+    />
+  );
 
   return (
     <div className="game play">
       <Top context={context} index={stage.index} />
-      <div className="game-layout">
+      <div className="game-layout staged">
         <div className="game-main play-main play-column rounds-main">
           <PlayTimer ms={timerMs(remaining)} low={remaining / view.timeLimitMs < 0.25} />
           {view.game === "word-rush" ? (
@@ -242,6 +249,7 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
               triesLeft={stage.triesLeft}
               onGuess={guess}
               onSkip={skip}
+              aside={scores}
             />
           ) : (
             <SpotPuzzle
@@ -249,6 +257,7 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
               tried={stage.tried as number[]}
               triesLeft={stage.triesLeft}
               onTap={guess}
+              aside={scores}
             />
           )}
           <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
@@ -262,11 +271,6 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
             </div>
           )}
         </div>
-        <ScoreBoard
-          standings={view.standings}
-          playerId={context.playerId}
-          avatarOf={context.avatarOf}
-        />
       </div>
       <PlayToast />
     </div>
@@ -288,6 +292,7 @@ export function WordPuzzle({
   triesLeft,
   onGuess,
   onSkip,
+  aside,
 }: {
   puzzle: WordPuzzleView;
   tried: string[];
@@ -295,6 +300,8 @@ export function WordPuzzle({
   onGuess: (word: string) => void;
   /** Gives up on the word, from the row of buttons at the bottom. */
   onSkip?: () => void;
+  /** The scores, beside the letters on a computer. */
+  aside?: ReactNode;
 }) {
   const [typed, setTyped] = useState("");
   const input = useRef<HTMLInputElement>(null);
@@ -344,64 +351,82 @@ export function WordPuzzle({
         {unscramble ? "Unscramble the word" : "Fill in the missing letters"} ·{" "}
         {LEVEL_NAMES[puzzle.level]}
       </p>
-      {/* The letters show in the slots; the field on top of them takes the typing. */}
-      <div className="word-entry">
-        <div ref={slots} className="t-input word-slots" aria-hidden="true">
-          {shown.map((letter, i) => (
-            <span
-              key={i}
-              className={`word-slot${letter ? " filled" : ""}${
-                !unscramble && puzzle.pattern[i] !== null ? " given" : ""
-              }${i === nextAt ? " next" : ""}`}
+      <div className="play-stage fit">
+        <div className="play-area">
+          {/* The letters show in the slots; the field on top of them takes the typing. */}
+          <div className="word-entry">
+            <div ref={slots} className="t-input word-slots" aria-hidden="true">
+              {shown.map((letter, i) => (
+                <span
+                  key={i}
+                  className={`word-slot${letter ? " filled" : ""}${
+                    !unscramble && puzzle.pattern[i] !== null ? " given" : ""
+                  }${i === nextAt ? " next" : ""}`}
+                >
+                  {letter ?? ""}
+                </span>
+              ))}
+            </div>
+            <label className="sr-only" htmlFor="word-guess">
+              {unscramble
+                ? `Your word, ${length} letters`
+                : `The ${blanks} missing letters, in order`}
+            </label>
+            <input
+              ref={input}
+              id="word-guess"
+              className="word-input"
+              value={typed}
+              autoFocus
+              autoComplete="off"
+              autoCapitalize="characters"
+              autoCorrect="off"
+              spellCheck={false}
+              enterKeyHint="go"
+              onChange={(event) => change(event.target.value)}
+            />
+          </div>
+          {unscramble && (
+            <div
+              className="word-tiles"
+              role="group"
+              aria-label="Letters"
+              style={{ "--cols": tileColumns(puzzle.letters.length) } as CSSProperties}
             >
-              {letter ?? ""}
-            </span>
-          ))}
+              {puzzle.letters.map((letter, i) => {
+                const used = !left.includes(i);
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    className="word-tile"
+                    disabled={used}
+                    aria-label={`Letter ${letter}`}
+                    onClick={() => {
+                      change(typed + letter);
+                      input.current?.focus();
+                    }}
+                  >
+                    {letter}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          <p className="word-tries dim small" aria-live="polite">
+            {tried.length > 0 && (
+              <>
+                Not it:{" "}
+                {tried.map((word) => (
+                  <s key={word}>{word}</s>
+                ))}{" "}
+                · {triesLeft} {triesLeft === 1 ? "try" : "tries"} left
+              </>
+            )}
+          </p>
         </div>
-        <label className="sr-only" htmlFor="word-guess">
-          {unscramble ? `Your word, ${length} letters` : `The ${blanks} missing letters, in order`}
-        </label>
-        <input
-          ref={input}
-          id="word-guess"
-          className="word-input"
-          value={typed}
-          autoFocus
-          autoComplete="off"
-          autoCapitalize="characters"
-          autoCorrect="off"
-          spellCheck={false}
-          enterKeyHint="go"
-          onChange={(event) => change(event.target.value)}
-        />
+        {aside}
       </div>
-      {unscramble && (
-        <div
-          className="word-tiles"
-          role="group"
-          aria-label="Letters"
-          style={{ "--cols": tileColumns(puzzle.letters.length) } as CSSProperties}
-        >
-          {puzzle.letters.map((letter, i) => {
-            const used = !left.includes(i);
-            return (
-              <button
-                key={i}
-                type="button"
-                className="word-tile"
-                disabled={used}
-                aria-label={`Letter ${letter}`}
-                onClick={() => {
-                  change(typed + letter);
-                  input.current?.focus();
-                }}
-              >
-                {letter}
-              </button>
-            );
-          })}
-        </div>
-      )}
       <div className="play-actions word-actions">
         <button
           type="button"
@@ -430,17 +455,6 @@ export function WordPuzzle({
           Check
         </button>
       </div>
-      <p className="word-tries dim small" aria-live="polite">
-        {tried.length > 0 && (
-          <>
-            Not it:{" "}
-            {tried.map((word) => (
-              <s key={word}>{word}</s>
-            ))}{" "}
-            · {triesLeft} {triesLeft === 1 ? "try" : "tries"} left
-          </>
-        )}
-      </p>
     </form>
   );
 }
@@ -469,11 +483,14 @@ export function SpotPuzzle({
   tried,
   triesLeft,
   onTap,
+  aside,
 }: {
   grid: SpotItPuzzleView;
   tried: number[];
   triesLeft: number;
   onTap: (cell: number) => void;
+  /** The scores, beside the grid on a computer. */
+  aside?: ReactNode;
 }) {
   const board = useShakeOnMiss<HTMLDivElement>(tried.length);
   return (
@@ -487,7 +504,31 @@ export function SpotPuzzle({
           </span>
         )}
       </p>
-      <SpotGrid ref={board} grid={grid} tried={tried} onTap={onTap} />
+      <Staged aside={aside}>
+        <SpotGrid ref={board} grid={grid} tried={tried} onTap={onTap} />
+      </Staged>
+    </div>
+  );
+}
+
+/**
+ * The play area with the scores beside it on a computer, their tops and bottoms level. On a
+ * phone the scores are left out (the faces show instead); on a tablet they go underneath.
+ */
+export function Staged({
+  aside,
+  wide = false,
+  children,
+}: {
+  aside?: ReactNode;
+  /** A jigsaw's board, wider than a grid. */
+  wide?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`play-stage ${wide ? "fit-board" : "fit"}`}>
+      <div className="play-area">{children}</div>
+      {aside}
     </div>
   );
 }
@@ -580,9 +621,19 @@ function Result({ context, stage }: { context: Context; stage: Stage<"result"> }
   return (
     <div className="game play">
       <Top context={context} index={stage.index} />
-      <div className="game-layout">
+      <div className="game-layout staged">
         <div className="game-main play-main rounds-main">
-          <Reveal game={view.game} reveal={stage.reveal} />
+          <Reveal
+            game={view.game}
+            reveal={stage.reveal}
+            aside={
+              <ScoreBoard
+                standings={view.standings}
+                playerId={context.playerId}
+                avatarOf={context.avatarOf}
+              />
+            }
+          />
           <p className={`verdict ${solved ? "good" : "bad"}`} role="status">
             {VERDICTS[stage.outcome]}
             {stage.points > 0 && <span className="points">+{stage.points}</span>}
@@ -597,18 +648,22 @@ function Result({ context, stage }: { context: Context; stage: Stage<"result"> }
           </div>
           <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
         </div>
-        <ScoreBoard
-          standings={view.standings}
-          playerId={context.playerId}
-          avatarOf={context.avatarOf}
-        />
       </div>
       <PlayToast />
     </div>
   );
 }
 
-export function Reveal({ game, reveal }: { game: RoundsGame; reveal: WordReveal | SpotItReveal }) {
+export function Reveal({
+  game,
+  reveal,
+  aside,
+}: {
+  game: RoundsGame;
+  reveal: WordReveal | SpotItReveal;
+  /** The scores, beside the answer on a computer. */
+  aside?: ReactNode;
+}) {
   if (game === "word-rush") {
     const { word, hint } = reveal as WordReveal;
     return (
@@ -616,13 +671,15 @@ export function Reveal({ game, reveal }: { game: RoundsGame; reveal: WordReveal 
         <p className="play-task word-kind">
           <b className="word-hint">{hint}</b>
         </p>
-        <div className="word-slots revealed" aria-label={`The word was ${word}`}>
-          {[...word].map((letter, i) => (
-            <span key={i} className="word-slot filled">
-              {letter}
-            </span>
-          ))}
-        </div>
+        <Staged aside={aside}>
+          <div className="word-slots revealed" aria-label={`The word was ${word}`}>
+            {[...word].map((letter, i) => (
+              <span key={i} className="word-slot filled">
+                {letter}
+              </span>
+            ))}
+          </div>
+        </Staged>
       </div>
     );
   }
@@ -630,7 +687,9 @@ export function Reveal({ game, reveal }: { game: RoundsGame; reveal: WordReveal 
   return (
     <div className="spot-puzzle">
       <p className="play-task">The odd one out</p>
-      <SpotGrid grid={grid} odd={odd} />
+      <Staged aside={aside}>
+        <SpotGrid grid={grid} odd={odd} />
+      </Staged>
     </div>
   );
 }
