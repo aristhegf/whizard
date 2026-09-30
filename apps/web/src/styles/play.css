@@ -219,6 +219,24 @@
   order: 1;
 }
 
+/* The play area (grid, letters, board, canvas) and, on a computer, the scores beside it. */
+.play-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.play-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+}
+
 /* Who joined or left: one slim line of text at the bottom, no box. */
 .play-toast {
   align-self: end;
@@ -266,6 +284,57 @@
   .play-timer {
     font-size: 4.6rem;
   }
+
+  /* The scores moved in beside the play area, so the page is one column. */
+  .play .game-layout.staged {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The scores' top and bottom are level with the play area's; a long list scrolls. */
+  .play-stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: stretch;
+    column-gap: 28px;
+  }
+
+  .play-stage.fit {
+    grid-template-columns: minmax(0, 480px) 320px;
+    justify-content: center;
+  }
+
+  .play-stage.fit-board {
+    grid-template-columns: minmax(0, 640px) 320px;
+    justify-content: center;
+  }
+
+  .play-stage > .live-board,
+  .play-stage > .jigsaw-side {
+    contain: size;
+    margin: 0;
+    overflow: auto;
+    /* The play column centres its text; the board reads from the left. */
+    text-align: left;
+  }
+
+  /* Jigsaw: the scores at the top, the picture at the bottom, level with the tray or board. */
+  .play-stage > .jigsaw-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow: hidden;
+  }
+
+  .jigsaw-side .live-board {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .jigsaw-side .jigsaw-reference {
+    flex: none;
+    margin-top: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -277,5 +346,12 @@
 @media (min-width: 768px) {
   .play .live-board li.me {
     background: var(--accent);
+  }
+}
+
+@media (min-width: 1100px) {
+  /* A board narrower than its column sits against the scores, not adrift. */
+  .play-stage.fit-board .play-area {
+    align-items: flex-end;
   }
 }
