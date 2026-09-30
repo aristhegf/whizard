@@ -41,7 +41,7 @@ async function openGame(page: Page, name: string, nickname = "Ada") {
 }
 
 async function waitForRound(page: Page, round: number, total: number) {
-  await expect(page.locator(".progress")).toContainText(`Round ${round} / ${total}`, {
+  await expect(page.locator(".play-count")).toContainText(`Round ${round} / ${total}`, {
     timeout: 10_000,
   });
 }

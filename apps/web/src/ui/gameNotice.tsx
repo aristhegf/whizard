@@ -46,7 +46,8 @@ export function PlayToast() {
 
   // Always there, so the line doesn't push the screen about and screen readers hear each one.
   return (
-    <p className="play-toast" role="status">
+    // A polite live region, not a status: the game's own status (Solved, Skipped) comes first.
+    <p className="play-toast" aria-live="polite">
       {notice && <span key={notice.id}>{notice.text}</span>}
     </p>
   );
