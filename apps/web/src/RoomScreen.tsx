@@ -80,7 +80,8 @@ import { useConfirm } from "./ui/ConfirmDialog";
 import { InfoTip } from "./ui/InfoTip";
 import { Loading } from "./ui/Loading";
 import { useShakeOnError } from "./ui/errorShake";
-import { focusSetting, SettingSelect } from "./ui/SettingSelect";
+import { focusSetting, SettingRow, SettingSelect } from "./ui/SettingSelect";
+import { SettingGroup } from "./games/settingRows";
 import { canGenerateArt, preloadGeneratingArt } from "./ui/GeneratingArt";
 import { useToast } from "./ui/toast";
 import { GameNoticeContext, GameNotices } from "./ui/gameNotice";
@@ -685,24 +686,10 @@ function Lobby({
     </div>
   );
 
+  // Game, then room: the same rows in the same order in every game (games/settingRows.tsx).
   const settingsRows = (
     <div className="settings-list">
-      <div className="setting-row">
-        <Icon name="users" size={20} />
-        <label htmlFor="max-players">Max Players</label>
-        <SettingSelect
-          id="max-players"
-          label="Max Players"
-          value={String(room.settings.maxPlayers)}
-          disabled={!isHost}
-          options={CAPACITY_OPTIONS.map((n) => ({
-            value: String(n),
-            label: String(n),
-            disabled: n < room.players.length,
-          }))}
-          onChange={(value) => client.configureRoom({ maxPlayers: Number(value) })}
-        />
-      </div>
+      <SettingGroup>Game</SettingGroup>
       {rounds && isRoundsGame(gameId) && (
         <RoundsSettingsRows
           game={gameId}
@@ -723,14 +710,14 @@ function Lobby({
       {connections && (
         <ConnectionsSettingsRows
           settings={connections}
-          editable={isHost}
+          editable={canEdit}
           onChange={(next) => client.configure(next)}
         />
       )}
       {logic && (
         <LogicSettingsRows
           settings={logic}
-          editable={isHost}
+          editable={canEdit}
           onChange={(next) => client.configure(next)}
         />
       )}
@@ -743,11 +730,25 @@ function Lobby({
           onPickPhoto={photo.pick}
         />
       )}
+      <SettingGroup>Room</SettingGroup>
+      <SettingRow icon="users" id="max-players" label="Max Players">
+        <SettingSelect
+          id="max-players"
+          label="Max Players"
+          value={String(room.settings.maxPlayers)}
+          disabled={!isHost}
+          options={CAPACITY_OPTIONS.map((n) => ({
+            value: String(n),
+            label: String(n),
+            disabled: n < room.players.length,
+          }))}
+          onChange={(value) => client.configureRoom({ maxPlayers: Number(value) })}
+        />
+      </SettingRow>
       <div className="setting-row toggle-row">
         <Icon name="clock" size={20} />
         <span className="setting-label">
           <span id="late-join-label">Allow Late Join</span>
-          <InfoTip label="About Allow Late Join">Players can join after the game starts.</InfoTip>
         </span>
         <button
           className="switch"

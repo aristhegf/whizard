@@ -1370,3 +1370,30 @@
 .lobby-sheet-body .lobby-chat {
   min-height: 240px;
 }
+
+/* Gold marks what's chosen, here as everywhere in the lobby: the setting that's open, its choice
+   and a switch that's on. */
+.lobby-scale .setting-acc[data-open="true"] .t-acc-head {
+  border-color: var(--gold);
+}
+
+.lobby-scale .t-acc-list [aria-selected="true"] {
+  background: rgb(255 212 63 / 12%);
+}
+
+.lobby-scale .t-acc-list [aria-selected="true"] svg {
+  color: var(--gold);
+}
+
+.lobby-scale .switch[aria-checked="true"] {
+  border-color: transparent;
+  background: var(--gold-face);
+}
+
+.lobby-scale .switch[aria-checked="true"]::after {
+  background: var(--on-gold);
+}
+
+.lobby-settings .setting-fixed {
+  min-height: clamp(36px, calc(5.2 * var(--lvh)), 46px);
+}
