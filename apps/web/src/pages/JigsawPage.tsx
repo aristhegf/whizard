@@ -1,13 +1,14 @@
 import { TiltCard } from "@/components/motion/tilt-card";
 import {
   DEFAULT_JIGSAW_SETTINGS,
+  JIGSAW_LEVELS,
   JIGSAW_PICTURES,
-  JIGSAW_SIZES,
   JIGSAW_THEMES,
+  type JigsawLevel,
   type JigsawPictureId,
-  type JigsawSide,
 } from "@whizard/game-core";
 import { useRef, useState } from "react";
+import { levelName } from "../games/jigsaw/JigsawSettingsPanel";
 import { setPendingPhoto } from "../games/jigsaw/PhotoCropper";
 import { createFailed, TopLayout, startRoom } from "../ui/Chrome";
 import { HeadingHint } from "../ui/HeadingHint";
@@ -20,7 +21,9 @@ type Choice = JigsawPictureId | "random" | "photo";
  * theme), and a room opens with it.
  */
 export function JigsawPage() {
-  const [side, setSide] = useState<JigsawSide>(DEFAULT_JIGSAW_SETTINGS.side);
+  const [level, setLevel] = useState<JigsawLevel>(
+    DEFAULT_JIGSAW_SETTINGS.level === "auto" ? "easy" : DEFAULT_JIGSAW_SETTINGS.level,
+  );
   const [starting, setStarting] = useState<Choice | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +34,10 @@ export function JigsawPage() {
     setError(null);
     try {
       // Your own photo is framed and sent from the lobby, once the room exists.
-      await startRoom({ picture: picture === "photo" ? "random" : picture, side }, "jigsaw");
+      await startRoom(
+        { picture: picture === "photo" ? "random" : picture, mode: "classic", level },
+        "jigsaw",
+      );
     } catch (e) {
       setError(createFailed(e));
       setStarting(null);
@@ -44,20 +50,22 @@ export function JigsawPage() {
         <div className="hint-row">
           <h1 className="page-title">Jigsaw Pictures</h1>
           <HeadingHint id="jigsaw" label="How jigsaw works">
-            Everyone gets the same puzzle. Tap two pieces to swap them; the fastest to finish wins.
+            Everyone gets the same puzzle, and the fastest to finish wins. Up to Hard, tap two
+            pieces to swap them; in Insane, drag them from the tray onto the picture. Pick Speed or
+            Elimination in the room.
           </HeadingHint>
         </div>
       </header>
 
-      <div className="chips" role="group" aria-label="Pieces">
-        {JIGSAW_SIZES.map((s) => (
+      <div className="chips" role="group" aria-label="Level">
+        {JIGSAW_LEVELS.map((l) => (
           <button
-            key={s.side}
+            key={l.id}
             className="chip"
-            aria-pressed={side === s.side}
-            onClick={() => setSide(s.side)}
+            aria-pressed={level === l.id}
+            onClick={() => setLevel(l.id)}
           >
-            {s.name} · {s.side * s.side} pieces
+            {levelName(l.id)}
           </button>
         ))}
       </div>

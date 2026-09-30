@@ -85,29 +85,30 @@ function edgePoints(from: Point, to: Point, normal: Point, edge: Edge | null): P
 }
 
 /**
- * The outline of every piece for a `side` × `side` puzzle, as SVG path data on its own
- * 100-unit square, indexed by piece. `key` (the picture) picks the cut.
+ * The outline of every piece for a puzzle `cols` wide and `rows` high, as SVG path data on its
+ * own 100-unit square, indexed by piece (left to right, top to bottom). `key` (the picture)
+ * picks the cut.
  */
-export function pieceShapes(side: number, key: string): string[] {
-  const random = rngFrom(hash(`${key}:${side}`));
+export function pieceShapes(cols: number, rows: number, key: string): string[] {
+  const random = rngFrom(hash(cols === rows ? `${key}:${cols}` : `${key}:${cols}x${rows}`));
   const newEdge = (): Edge => ({
     dir: random() < 0.5 ? 1 : -1,
     shift: (random() - 0.5) * 0.1,
     scale: 0.88 + random() * 0.16,
   });
   // across[r][c]: the edge under piece (r, c); down[r][c]: the edge to its right.
-  const across = Array.from({ length: side - 1 }, () => Array.from({ length: side }, newEdge));
-  const down = Array.from({ length: side }, () => Array.from({ length: side - 1 }, newEdge));
+  const across = Array.from({ length: rows - 1 }, () => Array.from({ length: cols }, newEdge));
+  const down = Array.from({ length: rows }, () => Array.from({ length: cols - 1 }, newEdge));
 
   const S = PIECE_SIZE;
-  return Array.from({ length: side * side }, (_, piece) => {
-    const row = Math.floor(piece / side);
-    const col = piece % side;
+  return Array.from({ length: cols * rows }, (_, piece) => {
+    const row = Math.floor(piece / cols);
+    const col = piece % cols;
     // Clockwise from the top left. The bottom and left edges are the ones shared with the
     // pieces below and to the left, walked backwards, so both pieces trace the same curve.
     const top = edgePoints([0, 0], [S, 0], [0, 1], row > 0 ? across[row - 1]![col]! : null);
-    const right = edgePoints([S, 0], [S, S], [1, 0], col < side - 1 ? down[row]![col]! : null);
-    const bottom = edgePoints([0, S], [S, S], [0, 1], row < side - 1 ? across[row]![col]! : null);
+    const right = edgePoints([S, 0], [S, S], [1, 0], col < cols - 1 ? down[row]![col]! : null);
+    const bottom = edgePoints([0, S], [S, S], [0, 1], row < rows - 1 ? across[row]![col]! : null);
     const left = edgePoints([0, 0], [0, S], [1, 0], col > 0 ? down[row]![col - 1]! : null);
     const outline = [
       ...top,

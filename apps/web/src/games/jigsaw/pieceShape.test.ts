@@ -21,33 +21,39 @@ const onSide = (d: string, side: "top" | "right" | "bottom" | "left") =>
 
 describe("pieceShapes", () => {
   it("gives every piece a closed outline", () => {
-    const shapes = pieceShapes(4, "crew");
+    const shapes = pieceShapes(4, 4, "crew");
     expect(shapes).toHaveLength(16);
     for (const d of shapes) expect(d).toMatch(/^M0 0C.*Z$/);
   });
 
-  it("keeps the puzzle's outside edges straight and knobs within reach", () => {
-    const side = 5;
-    const shapes = pieceShapes(side, "crew");
-    shapes.forEach((d, piece) => {
-      const row = Math.floor(piece / side);
-      const col = piece % side;
-      if (row === 0) expect(onSide(d, "top")).toEqual([]);
-      if (row === side - 1) expect(onSide(d, "bottom")).toEqual([]);
-      if (col === 0) expect(onSide(d, "left")).toEqual([]);
-      if (col === side - 1) expect(onSide(d, "right")).toEqual([]);
-      for (const [x, y] of points(d)) {
-        expect(x).toBeGreaterThanOrEqual(-KNOB_REACH);
-        expect(x).toBeLessThanOrEqual(PIECE_SIZE + KNOB_REACH);
-        expect(y).toBeGreaterThanOrEqual(-KNOB_REACH);
-        expect(y).toBeLessThanOrEqual(PIECE_SIZE + KNOB_REACH);
-      }
-    });
+  it("keeps the puzzle's outside edges straight and knobs within reach, any shape of grid", () => {
+    for (const [cols, rows] of [
+      [5, 5],
+      [12, 8],
+      [7, 14],
+    ] as const) {
+      const shapes = pieceShapes(cols, rows, "crew");
+      expect(shapes).toHaveLength(cols * rows);
+      shapes.forEach((d, piece) => {
+        const row = Math.floor(piece / cols);
+        const col = piece % cols;
+        if (row === 0) expect(onSide(d, "top")).toEqual([]);
+        if (row === rows - 1) expect(onSide(d, "bottom")).toEqual([]);
+        if (col === 0) expect(onSide(d, "left")).toEqual([]);
+        if (col === cols - 1) expect(onSide(d, "right")).toEqual([]);
+        for (const [x, y] of points(d)) {
+          expect(x).toBeGreaterThanOrEqual(-KNOB_REACH);
+          expect(x).toBeLessThanOrEqual(PIECE_SIZE + KNOB_REACH);
+          expect(y).toBeGreaterThanOrEqual(-KNOB_REACH);
+          expect(y).toBeLessThanOrEqual(PIECE_SIZE + KNOB_REACH);
+        }
+      });
+    }
   });
 
   it("gives each inside edge a knob on one piece and the matching hole on the other", () => {
     const side = 4;
-    const shapes = pieceShapes(side, "lion-cub");
+    const shapes = pieceShapes(side, side, "lion-cub");
     for (let piece = 0; piece < side * side; piece++) {
       const col = piece % side;
       if (col < side - 1) {
@@ -65,7 +71,7 @@ describe("pieceShapes", () => {
   });
 
   it("cuts the same way for everyone, and differently for each picture", () => {
-    expect(pieceShapes(4, "crew")).toEqual(pieceShapes(4, "crew"));
-    expect(pieceShapes(4, "crew")).not.toEqual(pieceShapes(4, "lion-cub"));
+    expect(pieceShapes(4, 4, "crew")).toEqual(pieceShapes(4, 4, "crew"));
+    expect(pieceShapes(4, 4, "crew")).not.toEqual(pieceShapes(4, 4, "lion-cub"));
   });
 });
