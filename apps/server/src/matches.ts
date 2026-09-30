@@ -1,5 +1,12 @@
 import { randomToken, type FinishedGame } from "@whizard/game-core";
-import type { CategoryStat, MatchPlayer, MatchRecord, PlayerStats } from "@whizard/protocol";
+import type {
+  CategoryStat,
+  GameBest,
+  GameStat,
+  MatchPlayer,
+  MatchRecord,
+  PlayerStats,
+} from "@whizard/protocol";
 import { requireUser } from "./account";
 import type { Env } from "./env";
 import type { RequestContext } from "./http";
@@ -132,6 +139,7 @@ async function matchesFor(
     difficulty: m.difficulty,
     mode: m.mode,
     rounds: m.rounds,
+    startedAt: m.started_at,
     finishedAt: m.finished_at,
     myCorrect: m.my_correct,
     players: players
@@ -154,10 +162,47 @@ export async function getMatches(context: RequestContext): Promise<Response> {
   return Response.json({ matches, more: matches.length === PAGE_SIZE });
 }
 
-export async function getStats(context: RequestContext): Promise<Response> {
-  const { user } = await requireUser(context);
-  const db = context.env.DB;
-  const [totals, categories] = await db.batch<Record<string, number | string | null>>([
+const DAY_MS = 24 * 60 * 60 * 1000;
+/** Puzzles with a finish line, where a solo game solved to the end has a time worth showing. */
+const TIMED_GAMES = ["jigsaw", "connections", "logic"];
+/** Time zones run from 12 hours behind UTC to 14 ahead. */
+const MAX_OFFSET_MINUTES = 14 * 60;
+
+/** A day number (days since 1 January 1970) in a time zone this many minutes ahead of UTC. */
+export const localDay = (at: number, offsetMinutes: number) =>
+  Math.floor((at + offsetMinutes * 60_000) / DAY_MS);
+
+/**
+ * The longest run of consecutive days, and the run that ends on the last day, which only counts
+ * while it reaches today or yesterday. `days` are distinct and in order.
+ */
+export function streakOf(days: number[], today: number): PlayerStats["streak"] {
+  let best = 0;
+  let run = 0;
+  let previous: number | null = null;
+  for (const day of days) {
+    run = previous !== null && day === previous + 1 ? run + 1 : 1;
+    best = Math.max(best, run);
+    previous = day;
+  }
+  const current = previous !== null && previous >= today - 1 ? run : 0;
+  return { current, best };
+}
+
+/**
+ * Everything the profile shows about a player's own games. Streak days are counted in the time
+ * zone `offsetMinutes` ahead of UTC, which the page sends so a game at 11pm counts for that day.
+ */
+export async function playerStats(
+  env: Env,
+  userId: string,
+  offsetMinutes: number,
+  now: number,
+): Promise<PlayerStats> {
+  const db = env.DB;
+  const [totals, categories, games, fastest, days] = await db.batch<
+    Record<string, number | string | null>
+  >([
     db
       .prepare(
         `SELECT COUNT(*) AS played,
@@ -166,7 +211,7 @@ export async function getStats(context: RequestContext): Promise<Response> {
            FROM match_players mp JOIN matches m ON m.id = mp.match_id
           WHERE mp.user_id = ?`,
       )
-      .bind(user.id),
+      .bind(userId),
     db
       .prepare(
         `SELECT m.category, COUNT(*) AS games,
@@ -177,19 +222,98 @@ export async function getStats(context: RequestContext): Promise<Response> {
           GROUP BY m.category
           ORDER BY accuracy DESC, games DESC`,
       )
-      .bind(user.id),
+      .bind(userId),
+    db
+      .prepare(
+        `SELECT m.game, COUNT(*) AS played,
+                COALESCE(SUM(m.player_count > 1 AND mp.placing = 1), 0) AS wins,
+                MAX(mp.score) AS top_score
+           FROM match_players mp JOIN matches m ON m.id = mp.match_id
+          WHERE mp.user_id = ?
+          GROUP BY m.game
+          ORDER BY played DESC, m.game`,
+      )
+      .bind(userId),
+    // Only solo games time one player: a game with others lasts until the last one finishes.
+    db
+      .prepare(
+        `SELECT game, difficulty, time FROM (
+           SELECT m.game, m.difficulty, m.finished_at - m.started_at AS time,
+                  ROW_NUMBER() OVER (
+                    PARTITION BY m.game ORDER BY m.finished_at - m.started_at
+                  ) AS n
+             FROM match_players mp JOIN matches m ON m.id = mp.match_id
+            WHERE mp.user_id = ? AND m.player_count = 1 AND m.rounds > 0
+              AND mp.correct = m.rounds
+              AND m.game IN (${TIMED_GAMES.map(() => "?").join(", ")})
+         ) WHERE n = 1`,
+      )
+      .bind(userId, ...TIMED_GAMES),
+    db
+      .prepare(
+        // Cast, since a bound number can arrive as a real and make the division exact.
+        `SELECT DISTINCT CAST((m.finished_at + ?2) / ${DAY_MS} AS INTEGER) AS day
+           FROM match_players mp JOIN matches m ON m.id = mp.match_id
+          WHERE mp.user_id = ?1
+          ORDER BY day`,
+      )
+      .bind(userId, offsetMinutes * 60_000),
   ]);
   const row = totals?.results[0] ?? {};
-  const stats: PlayerStats = {
+  const topics = (categories?.results ?? []).map((c): CategoryStat => ({
+    category: String(c["category"]),
+    games: Number(c["games"]),
+    accuracy: Number(c["accuracy"] ?? 0),
+  }));
+  const times = new Map((fastest?.results ?? []).map((f) => [String(f["game"]), f]));
+
+  const bestAt = (game: string, topScore: number): GameBest | null => {
+    const topic = topics[0];
+    if (game === "quiz" && topic) {
+      return { kind: "accuracy", value: topic.accuracy, category: topic.category };
+    }
+    const time = times.get(game);
+    if (time) {
+      return {
+        kind: "time",
+        value: Number(time["time"]),
+        ...(time["difficulty"] === null ? {} : { difficulty: String(time["difficulty"]) }),
+      };
+    }
+    return topScore > 0 ? { kind: "score", value: topScore } : null;
+  };
+
+  return {
     played: Number(row["played"] ?? 0),
     groupGames: Number(row["group_games"] ?? 0),
     wins: Number(row["wins"] ?? 0),
-    categories: (categories?.results ?? []).map((c): CategoryStat => ({
-      category: String(c["category"]),
-      games: Number(c["games"]),
-      accuracy: Number(c["accuracy"] ?? 0),
-    })),
+    categories: topics,
+    games: (games?.results ?? []).map((g): GameStat => {
+      const game = String(g["game"]);
+      return {
+        game,
+        played: Number(g["played"]),
+        wins: Number(g["wins"]),
+        best: bestAt(game, Number(g["top_score"] ?? 0)),
+      };
+    }),
+    streak: streakOf(
+      (days?.results ?? []).map((d) => Number(d["day"])),
+      localDay(now, offsetMinutes),
+    ),
   };
+}
+
+export async function getStats(context: RequestContext): Promise<Response> {
+  const { user } = await requireUser(context);
+  // Minutes ahead of UTC, as the page's clock has it; UTC when it doesn't say.
+  const offset = Math.round(Number(context.url.searchParams.get("tz")) || 0);
+  const stats = await playerStats(
+    context.env,
+    user.id,
+    Math.max(-MAX_OFFSET_MINUTES, Math.min(MAX_OFFSET_MINUTES, offset)),
+    Date.now(),
+  );
   return Response.json({ stats }, { headers: { "Cache-Control": "no-store" } });
 }
 

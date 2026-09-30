@@ -44,6 +44,7 @@ import {
   type RequestContext,
 } from "./http";
 import { cleanUp, getMatches, getStats } from "./matches";
+import { getProfile } from "./profiles";
 import {
   addPasskeyOptions,
   addPasskeyVerify,
@@ -289,6 +290,7 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["DELETE", /^\/api\/me\/passkeys\/([^/]+)$/, deletePasskey],
 
   ["GET", /^\/api\/users\/([^/]+)$/, getUser],
+  ["GET", /^\/api\/users\/([^/]+)\/profile$/, getProfile],
   ["GET", /^\/api\/friends$/, getFriends],
   ["POST", /^\/api\/friends$/, addFriend],
   ["PATCH", /^\/api\/friends\/([^/]+)$/, updateFriend],

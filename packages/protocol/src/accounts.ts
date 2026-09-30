@@ -243,6 +243,7 @@ export interface MatchRecord {
   difficulty: string | null;
   mode: string | null;
   rounds: number;
+  startedAt: number;
   finishedAt: number;
   /** Your own correct answers. Nobody else's are shown. */
   myCorrect: number | null;
@@ -256,12 +257,36 @@ export interface CategoryStat {
   accuracy: number;
 }
 
+/**
+ * A player's best at one game. `accuracy` is a share of questions right (0 to 1) in the quiz
+ * topic `category`; `time` is the fastest solo solve in ms, at `difficulty`; `score` is the most
+ * points in one game.
+ */
+export interface GameBest {
+  kind: "accuracy" | "time" | "score";
+  value: number;
+  category?: string;
+  difficulty?: string;
+}
+
+export interface GameStat {
+  game: string;
+  played: number;
+  /** First place in games with at least one other player. */
+  wins: number;
+  best: GameBest | null;
+}
+
 export interface PlayerStats {
   played: number;
   /** Games with at least one other player. */
   groupGames: number;
   wins: number;
   categories: CategoryStat[];
+  /** Each game played, the most played first. */
+  games: GameStat[];
+  /** Days in a row with a finished game, up to today or yesterday, and the longest run. */
+  streak: { current: number; best: number };
 }
 
 export interface PublicUser {
@@ -277,6 +302,36 @@ export interface Friend extends PublicUser {
   /** Games you both finished, and how often each of you placed higher. */
   record: { games: number; wins: number; losses: number };
   muted: boolean;
+}
+
+/** A game two friends both finished, from the viewer's side. */
+export interface SharedMatch {
+  id: string;
+  game: string;
+  category: string | null;
+  difficulty: string | null;
+  mode: string | null;
+  finishedAt: number;
+  playerCount: number;
+  myPlacing: number;
+  theirPlacing: number;
+}
+
+/**
+ * Someone's profile page. Anyone signed in sees who they are and how you're connected; the rest
+ * is only for their friends.
+ */
+export interface PlayerProfile {
+  user: PublicUser;
+  relation: Relation;
+  friend: {
+    since: number;
+    muted: boolean;
+    record: { games: number; wins: number; losses: number };
+    stats: { played: number; wins: number; topGame: string | null };
+    /** The latest games you both finished, newest first. */
+    together: SharedMatch[];
+  } | null;
 }
 
 export interface FriendsList {

@@ -19,20 +19,20 @@ import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./h
 import { asAvatar, currentSession } from "./sessions";
 import { recordName, requireAllowedName } from "./moderation";
 
-interface PublicRow {
+export interface PublicRow {
   id: string;
   username: string;
   display_name: string;
   avatar: string | null;
 }
 
-const toPublic = (row: Omit<PublicRow, "id">): PublicUser => ({
+export const toPublic = (row: Omit<PublicRow, "id">): PublicUser => ({
   username: row.username,
   displayName: row.display_name,
   avatar: asAvatar(row.avatar),
 });
 
-async function findUser(env: Env, username: string): Promise<PublicRow> {
+export async function findUser(env: Env, username: string): Promise<PublicRow> {
   const row = await env.DB.prepare(
     "SELECT id, username, display_name, avatar FROM users WHERE username = ? AND suspended_at IS NULL",
   )
@@ -42,7 +42,11 @@ async function findUser(env: Env, username: string): Promise<PublicRow> {
   return row;
 }
 
-async function relationBetween(env: Env, userId: string, otherId: string): Promise<Relation> {
+export async function relationBetween(
+  env: Env,
+  userId: string,
+  otherId: string,
+): Promise<Relation> {
   if (userId === otherId) return "self";
   const row = await env.DB.prepare(
     `SELECT
