@@ -4,7 +4,7 @@ import {
   logicSettingsSchema,
   type LogicSettings,
 } from "@whizard/game-core";
-import { SettingRow, SettingSelect } from "../../ui/SettingSelect";
+import { LevelRow, TimeRow } from "../settingRows";
 
 export function parseLogicSettings(settings: unknown): LogicSettings | null {
   const parsed = logicSettingsSchema.safeParse(settings);
@@ -28,30 +28,22 @@ export function LogicSettingsRows({
 }) {
   return (
     <>
-      <SettingRow icon="layers" id="grid" label="Grid">
-        <SettingSelect
-          id="grid"
-          label="Grid"
-          value={String(settings.size)}
-          disabled={!editable}
-          options={LOGIC_SIZES.map((s) => ({ value: String(s.size), label: gridName(s.size) }))}
-          onChange={(value) =>
-            onChange({ ...settings, size: Number(value) as LogicSettings["size"] })
-          }
-        />
-      </SettingRow>
-      <SettingRow icon="clock" id="minutes" label="Time">
-        <SettingSelect
-          id="minutes"
-          label="Time"
-          value={String(settings.minutes)}
-          disabled={!editable}
-          options={LOGIC_MINUTES.map((m) => ({ value: String(m), label: `${m} minutes` }))}
-          onChange={(value) =>
-            onChange({ ...settings, minutes: Number(value) as LogicSettings["minutes"] })
-          }
-        />
-      </SettingRow>
+      <LevelRow
+        choices={LOGIC_SIZES.map((s) => ({ value: String(s.size), label: gridName(s.size) }))}
+        value={String(settings.size)}
+        editable={editable}
+        onChange={(size) => onChange({ ...settings, size: Number(size) as LogicSettings["size"] })}
+      />
+      <TimeRow
+        label="Time limit"
+        value={settings.minutes}
+        choices={LOGIC_MINUTES}
+        unit="minutes"
+        editable={editable}
+        onChange={(minutes) =>
+          onChange({ ...settings, minutes: minutes as LogicSettings["minutes"] })
+        }
+      />
     </>
   );
 }

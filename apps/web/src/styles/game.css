@@ -141,7 +141,8 @@
 
 /* The dropdown on tablets and computers: the choice, which opens its options under the row (the
    transitions.dev accordion in transitions.css), sized and coloured like the built-in one phones
-   get. The row's head and panel sit in the row's own grid, so the options span the whole row. */
+   get. The row's head and panel sit in the row's own grid, the options under the choice and as
+   wide as it. */
 .setting-row:has(> .setting-acc) {
   row-gap: 0;
 }
@@ -204,7 +205,7 @@
 }
 
 .setting-acc .t-acc-panel {
-  grid-column: 1 / -1;
+  grid-column: -2 / -1;
 }
 
 /* A long list scrolls rather than running off the page. */
@@ -285,6 +286,34 @@
   margin-top: 0;
   background: #13113a;
   box-shadow: var(--shadow);
+}
+
+/* A heading over a group of rows: "Game", "Room". */
+.setting-group {
+  margin: 10px 0 2px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.setting-group:first-child {
+  margin-top: 0;
+}
+
+/* A time that follows from the other choices, where the choice would be: not a control. */
+.setting-fixed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1.5px dashed var(--line);
+  color: var(--muted);
+  font-weight: 700;
 }
 
 /* A group's name, above its options. */
