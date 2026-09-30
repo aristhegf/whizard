@@ -3,6 +3,7 @@ import { seededRng, shuffled, type Rng } from "../../random";
 import type { GameModule, GamePlayer, Rejection } from "../types";
 import {
   DEFAULT_JIGSAW_SETTINGS,
+  isInsane,
   jigsawSettingsSchema,
   type JigsawPicture,
   type JigsawSettings,
@@ -12,17 +13,26 @@ import {
 export const JIGSAW_COUNTDOWN_MS = 3000;
 /** A puzzle closes after this long, so a player who walks away can't hold up the results. */
 export const JIGSAW_TIME_LIMIT_MS = 10 * 60_000;
+/** Insane's hundred pieces get longer. */
+export const JIGSAW_INSANE_TIME_LIMIT_MS = 30 * 60_000;
+
+export const jigsawTimeLimit = (side: number) =>
+  isInsane(side) ? JIGSAW_INSANE_TIME_LIMIT_MS : JIGSAW_TIME_LIMIT_MS;
 /** Moves this early are accepted, to allow for small clock differences. */
 const EARLY_TOLERANCE_MS = 1000;
 /** Points per piece in its place, for match history. */
 export const POINTS_PER_PIECE = 100;
 
-export const jigsawActionSchema = z.object({
-  type: z.literal("swap"),
-  /** Two spots on the board, numbered left to right, top to bottom. */
-  a: z.number().int().min(0),
-  b: z.number().int().min(0),
-});
+export const jigsawActionSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("swap"),
+    /** Two spots on the board, numbered left to right, top to bottom. */
+    a: z.number().int().min(0),
+    b: z.number().int().min(0),
+  }),
+  /** Insane: a piece dropped on its own spot on the canvas. */
+  z.object({ type: z.literal("place"), piece: z.number().int().min(0) }),
+]);
 
 export type JigsawAction = z.infer<typeof jigsawActionSchema>;
 
@@ -36,7 +46,10 @@ interface JigsawPlayer {
   id: string;
   nickname: string;
   left: boolean;
-  /** `board[spot]` is the piece in that spot. Piece `n` belongs in spot `n`. */
+  /**
+   * `board[spot]` is the piece in that spot. Piece `n` belongs in spot `n`. In Insane a spot
+   * holds its own piece once placed, and -1 until then.
+   */
   board: number[];
   moves: number;
   /** When this player's pieces can move. */
@@ -52,6 +65,8 @@ export interface JigsawState {
   side: number;
   /** The shuffle everyone starts from, so the race is fair. Late joiners get it too. */
   start: number[];
+  /** Insane: the order the pieces lie in the tray, the same for everyone. Null otherwise. */
+  tray: number[] | null;
   players: JigsawPlayer[];
   finishedAt: number | null;
 }
@@ -77,6 +92,8 @@ export interface JigsawView {
   side: number;
   /** Null while watching a game you joined too late for. */
   board: number[] | null;
+  /** Insane: every piece in the tray's order, placed ones included. Null otherwise. */
+  tray: number[] | null;
   /** Server time your pieces can move. Before then, show a countdown. */
   startsAt: number | null;
   deadline: number | null;
@@ -106,6 +123,9 @@ export function scrambled(side: number, rng: Rng): number[] {
 export const placedCount = (board: readonly number[]) =>
   board.reduce((n, piece, spot) => n + (piece === spot ? 1 : 0), 0);
 
+/** Insane's empty canvas: no spot holds its piece yet. */
+export const emptyBoard = (side: number) => Array.from({ length: side * side }, () => -1);
+
 const active = (state: JigsawState) => state.players.filter((p) => !p.left);
 const done = (p: JigsawPlayer) => p.finishedAt !== null || p.outOfTime;
 
@@ -129,22 +149,31 @@ function finishIfEveryoneDone(state: JigsawState, now: number): JigsawState {
   return { ...state, finishedAt: now };
 }
 
-function swap(
+function move(
   state: JigsawState,
   player: JigsawPlayer,
   action: JigsawAction,
   now: number,
 ): JigsawState | Rejection {
   const count = state.side * state.side;
-  const { a, b } = action;
-  if (a >= count || b >= count || a === b) return { rejected: "Those pieces can’t swap." };
   if (now < player.startsAt - EARLY_TOLERANCE_MS) return { rejected: "The puzzle hasn't started." };
-  // Pieces in their place are locked.
-  if (player.board[a] === a || player.board[b] === b) {
-    return { rejected: "That piece is already in its place." };
-  }
   const board = [...player.board];
-  [board[a], board[b]] = [board[b]!, board[a]!];
+  if (action.type === "place") {
+    if (!isInsane(state.side)) return { rejected: "Pieces swap in this puzzle." };
+    const { piece } = action;
+    if (piece >= count) return { rejected: "There's no such piece." };
+    if (board[piece] === piece) return { rejected: "That piece is already in its place." };
+    board[piece] = piece;
+  } else {
+    if (isInsane(state.side)) return { rejected: "Drag the pieces onto the picture." };
+    const { a, b } = action;
+    if (a >= count || b >= count || a === b) return { rejected: "Those pieces can’t swap." };
+    // Pieces in their place are locked.
+    if (board[a] === a || board[b] === b) {
+      return { rejected: "That piece is already in its place." };
+    }
+    [board[a], board[b]] = [board[b]!, board[a]!];
+  }
   const solved = placedCount(board) === count;
   const updated: JigsawPlayer = {
     ...player,
@@ -197,8 +226,9 @@ function viewFor(state: JigsawState, playerId: string): JigsawView {
     picture: state.picture,
     side: state.side,
     board: playing ? playing.board : null,
+    tray: playing ? (state.tray ?? null) : null,
     startsAt: playing ? playing.startsAt : null,
-    deadline: playing ? playing.startsAt + JIGSAW_TIME_LIMIT_MS : null,
+    deadline: playing ? playing.startsAt + jigsawTimeLimit(state.side) : null,
     moves: playing?.moves ?? 0,
     me: standings.find((s) => s.playerId === playerId) ?? null,
     standings,
@@ -232,13 +262,22 @@ export const jigsawGame: GameModule<
 
   setup({ settings, players, content, seed, now }) {
     const picture = content[0]!.picture;
-    const start = scrambled(settings.side, seededRng(seed));
+    const rng = seededRng(seed);
+    const insane = isInsane(settings.side);
+    const start = insane ? emptyBoard(settings.side) : scrambled(settings.side, rng);
+    const tray = insane
+      ? shuffled(
+          Array.from({ length: settings.side * settings.side }, (_, i) => i),
+          rng,
+        )
+      : null;
     const startsAt = now + JIGSAW_COUNTDOWN_MS;
     return {
       settings,
       picture,
       side: settings.side,
       start,
+      tray,
       players: players.map((p) => newPlayer({ start }, p, startsAt)),
       finishedAt: null,
     };
@@ -250,7 +289,7 @@ export const jigsawGame: GameModule<
     if (!player || player.left) return { rejected: "You're watching this game." };
     if (player.finishedAt !== null) return { rejected: "You've finished." };
     if (player.outOfTime) return { rejected: "Your time is up." };
-    return swap(state, player, action, now);
+    return move(state, player, action, now);
   },
 
   onPlayerJoined(state, player, now) {
@@ -277,7 +316,7 @@ export const jigsawGame: GameModule<
   tick(state, now) {
     if (state.finishedAt !== null) return state;
     const players = state.players.map((p) =>
-      !p.left && !done(p) && now >= p.startsAt + JIGSAW_TIME_LIMIT_MS
+      !p.left && !done(p) && now >= p.startsAt + jigsawTimeLimit(state.side)
         ? { ...p, outOfTime: true }
         : p,
     );
@@ -288,7 +327,7 @@ export const jigsawGame: GameModule<
     if (state.finishedAt !== null) return null;
     const times = active(state)
       .filter((p) => !done(p))
-      .map((p) => p.startsAt + JIGSAW_TIME_LIMIT_MS);
+      .map((p) => p.startsAt + jigsawTimeLimit(state.side));
     return times.length > 0 ? Math.min(...times) : null;
   },
 

@@ -204,3 +204,53 @@ test("the host frames their own photo, and everyone plays it", async ({ browser 
   await solve(host);
   await expect(host.getByText("Solved in")).toBeVisible({ timeout: 10_000 });
 });
+
+test("Insane: pieces come out of the tray, snap onto their spot, and stay where they're left", async ({
+  browser,
+}) => {
+  const page = await newPlayer(browser);
+  await page.goto("/games/jigsaw");
+  await page.getByRole("button", { name: /Insane · 100 pieces/ }).click();
+  await page.getByRole("button", { name: "The crew" }).click();
+  await joinAs(page, "Ada");
+  await page.getByRole("button", { name: /play solo/i }).press("Enter");
+  const tray = page.getByRole("list", { name: /Pieces to place/ });
+  await expect(tray.getByRole("listitem")).toHaveCount(100);
+  await expect(page.locator(".play-timer")).toBeVisible({ timeout: 10_000 });
+
+  const canvas = (await page.locator(".insane-canvas").boundingBox())!;
+  const unit = canvas.width / 10;
+  const dragFromTray = async (piece: number, x: number, y: number) => {
+    const box = (await tray.locator(`[data-piece="${piece}"]`).boundingBox())!;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2, box.y - 30, { steps: 4 });
+    await page.mouse.move(x, y, { steps: 8 });
+    await page.mouse.up();
+  };
+  const [first, second] = await tray
+    .locator("[data-piece]")
+    .evaluateAll((els) => els.slice(0, 2).map((el) => Number((el as HTMLElement).dataset.piece)));
+
+  // Near its spot, it snaps in.
+  await dragFromTray(
+    first!,
+    canvas.x + ((first! % 10) + 0.5) * unit + 4,
+    canvas.y + (Math.floor(first! / 10) + 0.5) * unit - 3,
+  );
+  await expect(page.locator(".play-count")).toHaveText("1 / 100 placed");
+  await expect(page.locator(`[data-placed="${first}"]`)).toHaveCount(1);
+
+  // Anywhere else, it stays on the canvas where it was dropped, even after a reload.
+  const far = (second! + 55) % 100;
+  await dragFromTray(
+    second!,
+    canvas.x + ((far % 10) + 0.5) * unit,
+    canvas.y + (Math.floor(far / 10) + 0.5) * unit,
+  );
+  await expect(page.locator(`[data-loose="${second}"]`)).toHaveCount(1);
+  await expect(tray.getByRole("listitem")).toHaveCount(98);
+  await page.reload();
+  await expect(page.locator(`[data-loose="${second}"]`)).toHaveCount(1);
+  await expect(page.locator(".play-count")).toHaveText("1 / 100 placed");
+});
