@@ -5,10 +5,19 @@ import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { play } from "../../sounds";
 import { useServerNow } from "../../useServerNow";
 import { Avatar } from "../../ui/Avatar";
-import { PlayBoard, rowsFrom } from "../play";
+import {
+  PlayBoard,
+  PlayFaces,
+  PlayFrame,
+  PlayMistakes,
+  PlayScreen,
+  PlayTimer,
+  rowsFrom,
+  Staged,
+  timerMs,
+} from "../play";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
-import { MuteButton } from "../../ui/MuteButton";
 import { Podium } from "../../ui/Podium";
 import { CATALOG } from "../../catalog";
 import { buildCard } from "../../share/outcomes";
@@ -36,15 +45,15 @@ export function LogicScreen(props: Props) {
   if (view.final) return <Results {...props} />;
   if (view.grid === null || view.startsAt === null) {
     return (
-      <div className="game">
-        <Bar {...props} />
-        <div className="game-layout">
-          <div className="game-main">
-            <p className="watching">A game is in progress. You’ll be in the next one.</p>
-          </div>
-          <LiveBoard {...props} />
-        </div>
-      </div>
+      <PlayScreen
+        label="Logic"
+        latency={props.latency}
+        onQuit={props.onQuit}
+        side={<LiveBoard {...props} />}
+      >
+        <p className="watching">A game is in progress. You’ll be in the next one.</p>
+        <PlayFaces faces={rowsOf(props)} playerId={props.playerId} />
+      </PlayScreen>
     );
   }
   return <Playing {...props} grid={view.grid} startsAt={view.startsAt} />;
@@ -120,14 +129,13 @@ function Playing(props: Props & { grid: number[]; startsAt: number }) {
 
   if (!started) {
     return (
-      <div className="game">
-        <Bar {...props} />
+      <PlayFrame label="Logic" latency={props.latency} onQuit={props.onQuit}>
         <div className="countdown" aria-live="polite">
           <img src="/art/games/logic.webp" alt="" />
           <p className="countdown-label">Get ready · {gridName(size)}</p>
           <p className="countdown-number">{countdown}</p>
         </div>
-      </div>
+      </PlayFrame>
     );
   }
 
@@ -150,176 +158,124 @@ function Playing(props: Props & { grid: number[]; startsAt: number }) {
       boxOf(cell) === boxOf(selected));
 
   return (
-    <div className="game">
-      <Bar
-        {...props}
-        progress={filled / total}
-        middle={
-          <span className="progress">
-            {filled} / {total}
-            <span className="progress-word"> filled</span>
-          </span>
-        }
-        timer={
-          <span
-            className={`timer-pill${left < 60_000 && !over ? " low" : ""}`}
-            role="timer"
-            aria-label="Time left"
-          >
-            <Icon name="clock" size={22} stroke={2.4} />
-            {clock(over ? (me?.timeMs ?? 0) : left)}
-          </span>
-        }
-      />
-      <div className="game-layout">
-        <div className="game-main logic-main">
-          <p className="muted small logic-help">
-            {over
-              ? me?.solved
-                ? `Solved in ${clock(me.timeMs ?? 0)}`
-                : me && me.mistakes >= LOGIC_MAX_MISTAKES
-                  ? "Out of mistakes. Here’s the full grid."
-                  : "Time’s up. Here’s the full grid."
-              : `Fill the grid so every row, column and box has 1 to ${size} once. Pick a cell, then a number.`}
-          </p>
-          <div
-            className={`logic-grid size-${size}`}
-            style={
-              {
-                "--size": size,
-                "--box-rows": view.boxRows,
-                "--box-cols": view.boxCols,
-              } as CSSProperties
-            }
-            role="grid"
-            aria-label={`Grid, ${size} by ${size}`}
-          >
-            {shown.map((value, cell) => {
-              const given = view.givens[cell] !== 0;
-              const mine = !given && grid[cell] !== 0;
-              const missed = over && grid[cell] === 0;
-              const flash = wrong?.cell === cell;
-              const classes = [
-                "logic-cell",
-                given ? "given" : mine ? "mine" : "",
-                missed ? "missed" : "",
-                selected === cell ? "selected" : related(cell) ? "related" : "",
-                selectedValue && value === selectedValue && !missed ? "same" : "",
-                flash ? "wrong" : "",
-                colOf(cell) % view.boxCols === view.boxCols - 1 && colOf(cell) < size - 1
-                  ? "box-right"
-                  : "",
-                rowOf(cell) % view.boxRows === view.boxRows - 1 && rowOf(cell) < size - 1
-                  ? "box-bottom"
-                  : "",
-              ].filter(Boolean);
-              return (
-                <button
-                  key={cell}
-                  type="button"
-                  role="gridcell"
-                  data-cell={cell}
-                  className={classes.join(" ")}
-                  aria-label={`Row ${rowOf(cell) + 1}, column ${colOf(cell) + 1}${value ? `, ${value}` : ", empty"}`}
-                  aria-selected={selected === cell}
-                  disabled={over}
-                  onClick={() => setSelected(cell)}
-                >
-                  {flash ? wrong.value : value || ""}
-                </button>
-              );
-            })}
-          </div>
-
-          {over ? (
-            <p className="verdict good logic-wait" role="status">
-              {me?.solved ? "You cracked it!" : `${filled} of ${total} filled`}
-              <span className="dim small">Waiting for everyone to finish…</span>
-            </p>
-          ) : (
-            <>
-              <div
-                className="logic-pad"
-                style={{ "--size": size } as CSSProperties}
-                role="group"
-                aria-label="Numbers"
+    <PlayScreen
+      label={
+        <>
+          <b>{filled}</b> / {total} filled
+        </>
+      }
+      latency={props.latency}
+      onQuit={props.onQuit}
+    >
+      <PlayTimer ms={over ? (me?.timeMs ?? 0) : timerMs(left)} low={left < 60_000 && !over} />
+      <p className={`play-task${over ? "" : " logic-rules"}`}>
+        {over
+          ? me?.solved
+            ? `Solved in ${clock(me.timeMs ?? 0)}`
+            : me && me.mistakes >= LOGIC_MAX_MISTAKES
+              ? "Out of mistakes. Here’s the full grid."
+              : "Time’s up. Here’s the full grid."
+          : `Fill the grid so every row, column and box has 1 to ${size} once. Pick a cell, then a number.`}
+      </p>
+      <Staged aside={<LiveBoard {...props} />}>
+        <div
+          className={`logic-grid size-${size}`}
+          style={
+            {
+              "--size": size,
+              gridTemplateColumns: tracks(size, view.boxCols),
+              gridTemplateRows: tracks(size, view.boxRows),
+            } as CSSProperties
+          }
+          role="grid"
+          aria-label={`Grid, ${size} by ${size}`}
+        >
+          {shown.map((value, cell) => {
+            const given = view.givens[cell] !== 0;
+            const mine = !given && grid[cell] !== 0;
+            const missed = over && grid[cell] === 0;
+            const flash = wrong?.cell === cell;
+            const classes = [
+              "logic-cell",
+              given ? "given" : mine ? "mine" : "",
+              missed ? "missed" : "",
+              selected === cell ? "selected" : related(cell) ? "related" : "",
+              selectedValue && value === selectedValue && !missed ? "same" : "",
+              flash ? "wrong" : "",
+            ].filter(Boolean);
+            return (
+              <button
+                key={cell}
+                type="button"
+                role="gridcell"
+                data-cell={cell}
+                className={classes.join(" ")}
+                style={{
+                  gridColumn: track(colOf(cell), view.boxCols),
+                  gridRow: track(rowOf(cell), view.boxRows),
+                }}
+                aria-label={`Row ${rowOf(cell) + 1}, column ${colOf(cell) + 1}${value ? `, ${value}` : ", empty"}`}
+                aria-selected={selected === cell}
+                disabled={over}
+                onClick={() => setSelected(cell)}
               >
-                {Array.from({ length: size }, (_, i) => i + 1).map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    className="logic-key"
-                    disabled={count(n) >= size || selected === null || grid[selected] !== 0}
-                    onClick={() => place(n)}
-                  >
-                    {n}
-                  </button>
-                ))}
-              </div>
-              <div className="conn-mistakes" aria-label={`${view.mistakesLeft} mistakes left`}>
-                <span className="muted small">Mistakes left</span>
-                {Array.from({ length: LOGIC_MAX_MISTAKES }, (_, i) => (
-                  <span key={i} className={`conn-dot${i < view.mistakesLeft ? "" : " used"}`} />
-                ))}
-              </div>
-            </>
-          )}
+                {flash ? wrong.value : value || ""}
+              </button>
+            );
+          })}
         </div>
-        <LiveBoard {...props} />
-      </div>
-    </div>
-  );
-}
-
-function Bar({
-  view,
-  room,
-  latency,
-  onQuit,
-  middle,
-  timer,
-  progress,
-}: Props & { middle?: ReactNode; timer?: ReactNode; progress?: number }) {
-  return (
-    <header className="game-bar">
-      <div className="game-bar-row">
-        <span className="bar-brand">
-          <Brand />
-        </span>
-        <span className="room-label" translate="no">
-          Room: {room.code}
-        </span>
-        {middle ?? <span className="progress">Logic · {gridName(view.size)}</span>}
-        <span className="bar-end">
-          {latency}
-          {timer}
-          <MuteButton />
-          <button className="btn quit-btn" onClick={onQuit}>
-            Quit
-          </button>
-        </span>
-      </div>
-      {progress !== undefined && (
-        <div className="question-progress" aria-hidden="true">
-          <div style={{ width: `${progress * 100}%` }} />
+        {over ? (
+          <p className="verdict good logic-wait" role="status">
+            {me?.solved ? "You cracked it!" : `${filled} of ${total} filled`}
+            <span className="dim small">Waiting for everyone to finish…</span>
+          </p>
+        ) : (
+          <PlayMistakes left={view.mistakesLeft} max={LOGIC_MAX_MISTAKES} />
+        )}
+      </Staged>
+      <PlayFaces faces={rowsOf(props)} playerId={props.playerId} />
+      {!over && (
+        <div
+          className="logic-pad"
+          style={{ "--size": size } as CSSProperties}
+          role="group"
+          aria-label="Numbers"
+        >
+          {Array.from({ length: size }, (_, i) => i + 1).map((n) => (
+            <button
+              key={n}
+              type="button"
+              className="play-tile logic-key"
+              disabled={count(n) >= size || selected === null || grid[selected] !== 0}
+              onClick={() => place(n)}
+            >
+              {n}
+            </button>
+          ))}
         </div>
       )}
-    </header>
+    </PlayScreen>
   );
 }
+
+/**
+ * The grid's rows or columns, with an empty track between boxes. With the grid's 3px gap on
+ * each side of it, boxes stand 9px apart and cells 3px.
+ */
+const tracks = (size: number, box: number) =>
+  Array.from({ length: size / box }, () => `repeat(${box}, minmax(0, 1fr))`).join(" 3px ");
+
+/** Where a row or column sits among those tracks, counting the box gaps. */
+const track = (index: number, box: number) => index + Math.floor(index / box) + 1;
 
 const progressLabel = (s: LogicStanding) =>
   s.left ? "Left" : s.solved ? clock(s.timeMs ?? 0) : `${s.filled}/${s.total}`;
 
-/** Everyone's progress as they play. Only on tablets and computers; phones leave it out. */
-function LiveBoard({ view, playerId, room }: Props) {
-  return (
-    <PlayBoard
-      rows={rowsFrom(view.standings, room, progressLabel)}
-      playerId={playerId}
-      label="Live progress"
-    />
-  );
+/** Everyone's progress: faces on a phone, the board on a computer. */
+const rowsOf = ({ view, room }: Props) => rowsFrom(view.standings, room, progressLabel);
+
+function LiveBoard(props: Props) {
+  return <PlayBoard rows={rowsOf(props)} playerId={props.playerId} label="Live progress" />;
 }
 
 function Results({ view, client, isHost, room, playerId, onQuit }: Props) {

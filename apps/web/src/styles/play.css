@@ -277,6 +277,25 @@ button.play-tile:active:not(:disabled) {
   background: var(--accent);
 }
 
+/* Mistakes left (PlayMistakes): Connections, Logic. */
+.play-mistakes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.play-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  transition: background-color 200ms ease;
+}
+
+.play-dot.used {
+  background: var(--night-tile);
+}
+
 /* The leaderboard's avatars (PlayBoard); the quiz dresses them in rings of its own. */
 .board-avatar {
   display: inline-grid;

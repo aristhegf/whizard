@@ -52,6 +52,18 @@ export function PlayTimer({ ms, low = false }: { ms: number; low?: boolean }) {
   );
 }
 
+/** Mistakes left, as dots: purple while you have them, night-blue once used. */
+export function PlayMistakes({ left, max }: { left: number; max: number }) {
+  return (
+    <div className="play-mistakes" aria-label={`${left} mistakes left`}>
+      <span className="muted small">Mistakes left</span>
+      {Array.from({ length: max }, (_, i) => (
+        <span key={i} className={`play-dot${i < left ? "" : " used"}`} />
+      ))}
+    </div>
+  );
+}
+
 /**
  * One player's line in a game's scores: the phone's faces and the computer's board both draw
  * from these, so every game hands over the same rows.

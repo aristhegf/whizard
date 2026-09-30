@@ -89,24 +89,6 @@
   }
 }
 
-.conn-mistakes {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.conn-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--accent, #8b3dff);
-  transition: opacity 200ms ease;
-}
-
-.conn-dot.used {
-  background: var(--night-tile, #252063);
-}
-
 .conn-message {
   min-height: 1.4em;
   margin: 0;
