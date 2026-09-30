@@ -159,3 +159,84 @@ test("two players race: the solver wins, and running out of mistakes shows the a
     await expect(rankings.getByRole("listitem").nth(1)).toContainText("0/4");
   }
 });
+
+/** Opens Connections from the games page and joins its new room. */
+async function openConnections(page: Page, nickname: string) {
+  await page.goto("/games");
+  // On phones the games are in a sheet, opened from the kinds of game.
+  await page
+    .getByRole("group", { name: "Kinds of game" })
+    .getByRole("button", { name: "All" })
+    .click();
+  await page.getByRole("button", { name: "Play Connections" }).click();
+  await joinAs(page, nickname);
+}
+
+test("Classic has no clock on screen", async ({ page }) => {
+  await openConnections(page, "Ada");
+  await openSettings(page);
+  await chooseSetting(page, "Game Mode", "classic");
+  await expect(page.getByText("No clock", { exact: true })).toBeVisible();
+  await closeSheet(page);
+  await page.getByRole("button", { name: /play solo/i }).press("Enter");
+
+  const puzzle = await puzzleOn(page);
+  await expect(page.locator(".play-timer")).toHaveCount(0);
+  for (const group of puzzle.groups) await pick(page, group.words);
+  await expect(page.getByRole("heading", { name: "Connections Results" })).toBeVisible({
+    timeout: 10_000,
+  });
+});
+
+test("Elimination: solvers are safe, the fewest groups go out, and the final picks the winner", async ({
+  browser,
+}) => {
+  test.setTimeout(150_000);
+  const host = await newPlayer(browser);
+  await openConnections(host, "Ada");
+  await openSettings(host);
+  await chooseSetting(host, "Game Mode", "elimination");
+  await expectSetting(host, "Time per Round", "5");
+  await closeSheet(host);
+
+  const tolu = await newPlayer(browser);
+  await tolu.goto(host.url());
+  await joinAs(tolu, "Tolu");
+  const kemi = await newPlayer(browser);
+  await kemi.goto(host.url());
+  await joinAs(kemi, "Kemi");
+
+  await host.getByRole("button", { name: /start game/i }).press("Enter");
+  for (const page of [host, tolu, kemi]) {
+    await expect(page.locator(".play-count")).toContainText("Round 1 of 1");
+  }
+  const first = await puzzleOn(host);
+  await expect(host.locator(".play-timer")).toBeVisible();
+
+  // Two of three stay in: once two have solved it, the third is out.
+  await pick(kemi, first.groups[0]!.words);
+  for (const group of first.groups) await pick(tolu, group.words);
+  await expect(tolu.getByText("You’re through to the next round.")).toBeVisible();
+  for (const group of first.groups) await pick(host, group.words);
+  await expect(kemi.getByRole("heading", { name: "1 knocked out" })).toBeVisible();
+  await expect(kemi.getByText(/You’re out!/)).toBeVisible();
+  await expect(host.getByText("You’re in the final!")).toBeVisible();
+
+  // The final starts on its own, with a new puzzle, and Kemi watches.
+  await expect(host.locator(".play-count")).toContainText("The Final", { timeout: 20_000 });
+  await expect(kemi.getByText(/You’re out, in round 1/)).toBeVisible();
+  const final = await puzzleOn(host);
+  expect(final.id).not.toBe(first.id);
+  for (const group of final.groups) await pick(host, group.words);
+
+  for (const page of [host, kemi]) {
+    await expect(page.getByRole("heading", { name: "Connections Results" })).toBeVisible({
+      timeout: 10_000,
+    });
+    const rankings = page.getByRole("complementary", { name: "Final Rankings" });
+    await expect(rankings.getByRole("listitem").first()).toContainText("Ada");
+    await expect(rankings.getByRole("listitem").nth(1)).toContainText("Tolu");
+    await expect(rankings.getByRole("listitem").nth(2)).toContainText("Kemi");
+    await expect(rankings.getByRole("listitem").nth(2)).toContainText("Out");
+  }
+});

@@ -45,6 +45,7 @@ import { CATALOG, GAME_GROUPS, isPlayable, type CatalogGame } from "./catalog";
 import { ConnectionsScreen } from "./games/connections/ConnectionsScreen";
 import {
   ConnectionsSettingsRows,
+  connectionsModeName,
   parseConnectionsSettings,
 } from "./games/connections/ConnectionsSettingsRows";
 import { useJigsawPhoto } from "./games/jigsaw/JigsawPhoto";
@@ -56,7 +57,12 @@ import {
   pictureName,
 } from "./games/jigsaw/JigsawSettingsPanel";
 import { LogicScreen } from "./games/logic/LogicScreen";
-import { gridName, LogicSettingsRows, parseLogicSettings } from "./games/logic/LogicSettingsRows";
+import {
+  gridName,
+  LogicSettingsRows,
+  logicModeName,
+  parseLogicSettings,
+} from "./games/logic/LogicSettingsRows";
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { TopicOptions } from "./games/quiz/TopicPicker";
@@ -121,9 +127,10 @@ export function RoomScreen({ code }: { code: string }) {
     if (view.game === "jigsaw") {
       midGame = view.board !== null && !view.me?.finished && !view.final;
     } else if (view.game === "connections") {
-      midGame = view.words !== null && view.answer === null;
+      // In Elimination, solving a round only keeps you in: leaving still loses the game.
+      midGame = view.words !== null && (view.round ? !view.final : view.answer === null);
     } else if (view.game === "logic") {
-      midGame = view.grid !== null && view.solution === null;
+      midGame = view.grid !== null && (view.round ? !view.final : view.solution === null);
     } else {
       const stage = view.stage.kind;
       const stillIn =
@@ -495,8 +502,18 @@ function settingsSummary({
 }): string | null {
   // The jigsaw's own line is written with dots, for the pages that list it; here it's a list.
   if (jigsaw) return levelSummary(jigsaw).replaceAll(" · ", ", ");
-  if (connections) return `${LEVEL_NAMES[connections.level]}, ${connections.minutes} minutes`;
-  if (logic) return `${gridName(logic.size)}, ${logic.minutes} minutes`;
+  // "Speed, Medium, 5 minutes"; Classic has no clock, and Elimination's is for each round.
+  const puzzleTime = (mode: string, minutes: number) =>
+    mode === "classic" ? "" : `, ${minutes} minutes${mode === "elimination" ? " a round" : ""}`;
+  if (connections) {
+    const { mode, level, minutes } = connections;
+    return `${connectionsModeName(mode)}, ${LEVEL_NAMES[level]}${puzzleTime(mode, minutes)}`;
+  }
+  if (logic) {
+    const { mode, size, minutes } = logic;
+    const grid = gridName(size).replaceAll(" · ", ", ");
+    return `${logicModeName(mode)}, ${grid}${puzzleTime(mode, minutes)}`;
+  }
   if (rounds) {
     const each =
       rounds.mode === "elimination"
@@ -555,7 +572,9 @@ function Lobby({
   const needMore =
     settings?.variant === "elimination" ||
     rounds?.mode === "elimination" ||
-    jigsaw?.mode === "elimination"
+    jigsaw?.mode === "elimination" ||
+    connections?.mode === "elimination" ||
+    logic?.mode === "elimination"
       ? Math.max(0, ELIMINATION_MIN_PLAYERS - connected.length)
       : 0;
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
@@ -710,6 +729,7 @@ function Lobby({
       {connections && (
         <ConnectionsSettingsRows
           settings={connections}
+          players={connected.length}
           editable={canEdit}
           onChange={(next) => client.configure(next)}
         />
@@ -717,6 +737,7 @@ function Lobby({
       {logic && (
         <LogicSettingsRows
           settings={logic}
+          players={connected.length}
           editable={canEdit}
           onChange={(next) => client.configure(next)}
         />

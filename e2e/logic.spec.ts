@@ -157,3 +157,89 @@ test("two players race on the same grid, and the faster one wins", async ({ brow
     await expect(rankings.getByRole("listitem").nth(1)).toContainText(`1/${empty.length}`);
   }
 });
+
+/** Opens Logic from the games page and joins its new room. */
+async function openLogic(page: Page, nickname: string) {
+  await page.goto("/games");
+  // On phones the games are in a sheet, opened from the kinds of game.
+  await page
+    .getByRole("group", { name: "Kinds of game" })
+    .getByRole("button", { name: "All" })
+    .click();
+  await page.getByRole("button", { name: "Play Logic" }).click();
+  await joinAs(page, nickname);
+}
+
+/** Fills the grid on the page, once its numbers can be picked. */
+async function solveOn(page: Page) {
+  await expect(page.getByRole("group", { name: "Numbers" })).toBeVisible({ timeout: 15_000 });
+  const clues = await readGrid(page);
+  const answer = solve(clues, 4);
+  const empty = clues.flatMap((n, cell) => (n === 0 ? [cell] : []));
+  for (const cell of empty) await place(page, cell, answer[cell]!);
+  return clues;
+}
+
+test("Classic has no clock on screen", async ({ page }) => {
+  await openLogic(page, "Ada");
+  await openSettings(page);
+  await chooseSetting(page, "Game Mode", "classic");
+  await expect(page.getByText("No clock", { exact: true })).toBeVisible();
+  await closeSheet(page);
+  await start(page, "4", /play solo/i);
+  await expect(page.locator(".play-timer")).toHaveCount(0);
+  await solveOn(page);
+  await expect(page.getByRole("heading", { name: "Logic Results" })).toBeVisible({
+    timeout: 10_000,
+  });
+});
+
+test("Elimination: solvers are safe, the fewest cells go out, and the final picks the winner", async ({
+  browser,
+}) => {
+  test.setTimeout(150_000);
+  const host = await newPlayer(browser);
+  await openLogic(host, "Ada");
+  await openSettings(host);
+  await chooseSetting(host, "Game Mode", "elimination");
+  await expectSetting(host, "Time per Round", "10");
+  await closeSheet(host);
+
+  const tolu = await newPlayer(browser);
+  await tolu.goto(host.url());
+  await joinAs(tolu, "Tolu");
+  const kemi = await newPlayer(browser);
+  await kemi.goto(host.url());
+  await joinAs(kemi, "Kemi");
+
+  await start(host, "4", /start game/i);
+  for (const page of [host, tolu, kemi]) {
+    await expect(page.locator(".play-count")).toContainText("Round 1 of 1");
+  }
+  await expect(host.locator(".play-timer")).toBeVisible();
+
+  // Two of three stay in: once two have solved it, the third is out.
+  const first = await solveOn(tolu);
+  await expect(tolu.getByText("You’re through to the next round.")).toBeVisible();
+  await solveOn(host);
+  await expect(kemi.getByRole("heading", { name: "1 knocked out" })).toBeVisible();
+  await expect(kemi.getByText(/You’re out!/)).toBeVisible();
+  await expect(host.getByText("You’re in the final!")).toBeVisible();
+
+  // The final starts on its own, with a new grid, and Kemi watches.
+  await expect(host.locator(".play-count")).toContainText("The Final", { timeout: 20_000 });
+  await expect(kemi.getByText(/You’re out, in round 1/)).toBeVisible();
+  const final = await solveOn(host);
+  expect(final).not.toEqual(first);
+
+  for (const page of [host, kemi]) {
+    await expect(page.getByRole("heading", { name: "Logic Results" })).toBeVisible({
+      timeout: 10_000,
+    });
+    const rankings = page.getByRole("complementary", { name: "Final Rankings" });
+    await expect(rankings.getByRole("listitem").first()).toContainText("Ada");
+    await expect(rankings.getByRole("listitem").nth(1)).toContainText("Tolu");
+    await expect(rankings.getByRole("listitem").nth(2)).toContainText("Kemi");
+    await expect(rankings.getByRole("listitem").nth(2)).toContainText("Out");
+  }
+});
