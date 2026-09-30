@@ -453,23 +453,33 @@ function MatchRow({ match }: { match: MatchRecord }) {
   );
 }
 
+/** Games shown at first, so the profile beside them stays a sensible height. */
+const FIRST_GAMES = 5;
+
 function History() {
   const { data, error } = useLoaded(fetchMatches);
   const [older, setOlder] = useState<MatchRecord[]>([]);
   const [more, setMore] = useState<boolean | null>(null);
+  const [all, setAll] = useState(false);
   const loading = useToastAction();
 
   if (!data && !error) return null;
-  const matches = [...(data?.matches ?? []), ...older];
-  const hasMore = more ?? data?.more ?? false;
+  const loaded = [...(data?.matches ?? []), ...older];
+  const matches = all ? loaded : loaded.slice(0, FIRST_GAMES);
+  const hasMore = !all
+    ? loaded.length > FIRST_GAMES || (data?.more ?? false)
+    : (more ?? data?.more ?? false);
 
+  // The rest of the first page shows straight away; after that, older pages load.
   const loadMore = () =>
-    loading.run(async () => {
-      const last = matches[matches.length - 1];
-      const page = await fetchMatches(last?.finishedAt);
-      setOlder((current) => [...current, ...page.matches]);
-      setMore(page.more);
-    });
+    !all
+      ? setAll(true)
+      : loading.run(async () => {
+          const last = loaded[loaded.length - 1];
+          const page = await fetchMatches(last?.finishedAt);
+          setOlder((current) => [...current, ...page.matches]);
+          setMore(page.more);
+        });
 
   return (
     <section className="profile-history" aria-labelledby="history-title">
