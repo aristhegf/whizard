@@ -116,6 +116,30 @@ test("two players race the same puzzle, and the faster one wins", async ({ brows
   }
 });
 
+test("who leaves and comes back shows in one line at the bottom, with faces for scores", async ({
+  browser,
+}) => {
+  const host = await newPlayer(browser);
+  await host.goto("/games/jigsaw");
+  await host.getByRole("button", { name: /Easy · 9 pieces/ }).click();
+  await host.getByRole("button", { name: "Game night" }).click();
+  await joinAs(host, "Ada");
+  const guest = await newPlayer(browser);
+  await guest.goto(host.url());
+  await joinAs(guest, "Tolu");
+  await host.getByRole("button", { name: /start game/i }).press("Enter");
+  await expect(host.locator(".jigsaw-piece:enabled").first()).toBeVisible({ timeout: 10_000 });
+
+  // On a phone the scores are faces, no names.
+  await expect(host.getByRole("list", { name: "Scores" }).getByRole("listitem")).toHaveCount(2);
+
+  guest.once("dialog", (dialog) => void dialog.accept());
+  await guest.getByRole("button", { name: "Quit" }).click();
+  await expect(host.locator(".play-toast")).toHaveText("Tolu left the game");
+  await guest.getByRole("button", { name: "Rejoin the game" }).click();
+  await expect(host.locator(".play-toast")).toHaveText("Tolu is back in the game");
+});
+
 test("the host frames their own photo, and everyone plays it", async ({ browser }) => {
   const host = await newPlayer(browser);
   await host.goto("/games/jigsaw");

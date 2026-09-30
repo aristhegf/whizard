@@ -1491,22 +1491,21 @@ button.choice:disabled {
   box-shadow: 0 16px 40px rgb(80 30 200 / 45%);
 }
 
-.jigsaw-main {
-  padding-top: 8px;
-}
-
-/* Pieces sit edge to edge; their knobs reach into the next square, drawn from each piece's SVG. */
+/* Each piece is drawn small enough that its knobs stay inside its own square, so loose pieces
+   never overlap each other or the board's edge. Once solved they close up into the picture. */
 .jigsaw-board {
   display: grid;
   grid-template-columns: repeat(var(--side), minmax(0, 1fr));
-  width: min(100%, 560px);
+  gap: 3px;
+  width: min(100%, 640px);
   aspect-ratio: 1;
-  padding: 10px;
-  border-radius: 18px;
-  background: rgb(10 8 36 / 85%);
-  border: 1.5px solid var(--line-strong);
-  box-shadow: 0 18px 50px rgb(3 2 20 / 55%);
+  padding: 8px;
+  border-radius: 16px;
+  background: var(--night);
   touch-action: none;
+  transition:
+    gap 450ms ease,
+    padding 450ms ease;
 }
 
 /* The square you tap. The piece's shape spills over it, so the SVG ignores the pointer. */
@@ -1522,16 +1521,21 @@ button.choice:disabled {
   transition: transform 120ms ease;
 }
 
+/* The SVG's box already has room for the knobs (KNOB_REACH, 32 of a 100-unit piece, on every
+   side), so filling the square keeps the whole shape inside it. */
 .jigsaw-shape {
   position: absolute;
-  /* KNOB_REACH (32) of a 100-unit piece on every side. */
-  inset: -32%;
-  width: 164%;
-  height: 164%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   overflow: visible;
   pointer-events: none;
-  filter: drop-shadow(0 3px 4px rgb(3 2 20 / 55%));
-  transition: filter 200ms ease;
+  filter: drop-shadow(0 2px 3px rgb(3 2 20 / 55%));
+  transition:
+    filter 200ms ease,
+    inset 450ms ease,
+    width 450ms ease,
+    height 450ms ease;
 }
 
 .jigsaw-edge {
@@ -1558,11 +1562,11 @@ button.choice:disabled {
 }
 
 .jigsaw-piece.selected .jigsaw-shape {
-  filter: drop-shadow(0 0 6px rgb(255 212 63 / 85%));
+  filter: drop-shadow(0 0 7px rgb(139 61 255 / 95%));
 }
 
 .jigsaw-piece.selected .jigsaw-edge {
-  stroke: var(--gold);
+  stroke: var(--accent-soft, #b58cff);
   stroke-width: 3px;
 }
 
@@ -1589,8 +1593,20 @@ button.choice:disabled {
   }
 }
 
+/* Solved: the gaps close and each piece grows to full size, knobs into its neighbours'
+   holes, so the picture comes together. */
 .jigsaw-board.done {
-  box-shadow: 0 0 60px rgb(63 240 168 / 35%);
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgb(139 61 255 / 35%);
+}
+
+.jigsaw-board.done .jigsaw-shape {
+  inset: -32%;
+  width: 164%;
+  height: 164%;
+  filter: none;
 }
 
 .jigsaw-board.done .jigsaw-edge {
@@ -1605,10 +1621,14 @@ button.choice:disabled {
 }
 
 .jigsaw-peek img {
-  width: 72px;
+  width: 56px;
   aspect-ratio: 1;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgb(3 2 20 / 50%);
+  border-radius: 10px;
+}
+
+.jigsaw-peek figcaption {
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 @media (max-width: 520px) {
@@ -1621,14 +1641,11 @@ button.choice:disabled {
   }
 }
 
-.jigsaw-help {
-  max-width: 40ch;
-  text-align: center;
-}
-
 .jigsaw-wait {
   display: block;
   margin-top: 4px;
+  color: var(--muted);
+  font-weight: 500;
 }
 
 .jigsaw-side {
@@ -1667,6 +1684,11 @@ button.choice:disabled {
 @media (min-width: 768px) {
   .jigsaw-peek {
     display: none;
+  }
+
+  /* As big as the screen allows, below the timer. */
+  .jigsaw-board {
+    width: min(100%, 640px, calc(100dvh - 260px));
   }
 
   .jigsaw-side {

@@ -15,13 +15,14 @@ import { useServerNow } from "../../useServerNow";
 import { Avatar } from "../../ui/Avatar";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
-import { MuteButton } from "../../ui/MuteButton";
 import { Podium } from "../../ui/Podium";
 import { CATALOG } from "../../catalog";
 import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
 import { sizeName } from "./JigsawSettingsPanel";
 import { KNOB_REACH, PIECE_SIZE, pieceShapes } from "./pieceShape";
+import { PlayFaces, PlayTimer, PlayTop, type Face } from "../play";
+import { PlayToast } from "../../ui/gameNotice";
 
 interface Props {
   view: JigsawView;
@@ -49,14 +50,15 @@ export function JigsawScreen(props: Props) {
   if (view.final) return <Results {...props} />;
   if (view.board === null || view.startsAt === null) {
     return (
-      <div className="game">
-        <Bar {...props} />
+      <div className="game play">
+        <PlayTop latency={props.latency} onQuit={props.onQuit} label="Jigsaw" />
         <div className="game-layout">
           <div className="game-main">
             <p className="watching">A game is in progress. You’ll be in the next one.</p>
           </div>
           <LiveBoard {...props} />
         </div>
+        <PlayToast />
       </div>
     );
   }
@@ -111,13 +113,14 @@ function Playing(props: Props & { board: number[]; startsAt: number }) {
 
   if (!started) {
     return (
-      <div className="game">
-        <Bar {...props} />
+      <div className="game play">
+        <PlayTop latency={props.latency} onQuit={props.onQuit} label="Jigsaw" />
         <div className="countdown jigsaw-countdown" aria-live="polite">
           <img className="jigsaw-preview" src={view.picture.src} alt={view.picture.name} />
           <p className="countdown-label">Get ready · {sizeName(view.side)}</p>
           <p className="countdown-number">{countdown}</p>
         </div>
+        <PlayToast />
       </div>
     );
   }
@@ -125,29 +128,27 @@ function Playing(props: Props & { board: number[]; startsAt: number }) {
   const elapsed = (finished && view.me?.timeMs) || now - startsAt;
   const left = view.deadline === null ? null : view.deadline - now;
   return (
-    <div className="game">
-      <Bar
-        {...props}
-        progress={placed / total}
-        middle={
-          <span className="progress">
-            {placed} / {total}
-            <span className="progress-word"> placed</span>
-          </span>
-        }
-        timer={
-          <span
-            className={`timer-pill${left !== null && left < 60_000 && !finished ? " low" : ""}`}
-            role="timer"
-            aria-label="Time"
-          >
-            <Icon name="clock" size={22} stroke={2.4} />
-            {clock(elapsed)}
-          </span>
+    <div className="game play">
+      <PlayTop
+        latency={props.latency}
+        onQuit={props.onQuit}
+        label={
+          <>
+            <b>{placed}</b> / {total} placed
+          </>
         }
       />
       <div className="game-layout">
-        <div className="game-main jigsaw-main">
+        <div className="game-main play-main jigsaw-main">
+          <PlayTimer ms={elapsed} low={left !== null && left < 60_000 && !finished} />
+          {finished ? (
+            <p className="play-task good" role="status">
+              Solved in {clock(view.me?.timeMs ?? 0)} · {view.moves} moves
+              <span className="jigsaw-wait">Waiting for everyone to finish…</span>
+            </p>
+          ) : (
+            <p className="play-task">Tap two pieces to swap them, or drag one onto another</p>
+          )}
           <Board
             side={view.side}
             src={view.picture.src}
@@ -160,18 +161,9 @@ function Playing(props: Props & { board: number[]; startsAt: number }) {
           {/* Phones have no side panel, so the picture to copy sits under the board. */}
           <figure className="jigsaw-peek">
             <img src={view.picture.src} alt="" />
-            <figcaption className="dim small">{view.picture.name}</figcaption>
+            <figcaption>{view.picture.name}</figcaption>
           </figure>
-          {finished ? (
-            <p className="verdict good" role="status">
-              Solved in {clock(view.me?.timeMs ?? 0)} · {view.moves} moves
-              <span className="dim small jigsaw-wait">Waiting for everyone to finish…</span>
-            </p>
-          ) : (
-            <p className="muted small jigsaw-help">
-              Tap two pieces to swap them, or drag one onto another. Pieces in their place lock.
-            </p>
-          )}
+          <PlayFaces faces={faces(props)} playerId={props.playerId} />
         </div>
         <aside className="jigsaw-side">
           <figure className="panel jigsaw-reference">
@@ -181,6 +173,7 @@ function Playing(props: Props & { board: number[]; startsAt: number }) {
           <LiveBoard {...props} />
         </aside>
       </div>
+      <PlayToast />
     </div>
   );
 }
@@ -281,45 +274,21 @@ function Board({
   );
 }
 
-function Bar({
-  view,
-  room,
-  latency,
-  onQuit,
-  middle,
-  timer,
-  progress,
-}: Props & { middle?: ReactNode; timer?: ReactNode; progress?: number }) {
-  return (
-    <header className="game-bar">
-      <div className="game-bar-row">
-        <span className="bar-brand">
-          <Brand />
-        </span>
-        <span className="room-label" translate="no">
-          Room: {room.code}
-        </span>
-        {middle ?? <span className="progress">Jigsaw · {view.picture.name}</span>}
-        <span className="bar-end">
-          {latency}
-          {timer}
-          <MuteButton />
-          <button className="btn quit-btn" onClick={onQuit}>
-            Quit
-          </button>
-        </span>
-      </div>
-      {progress !== undefined && (
-        <div className="question-progress" aria-hidden="true">
-          <div style={{ width: `${progress * 100}%` }} />
-        </div>
-      )}
-    </header>
-  );
-}
-
 const progressLabel = (s: JigsawStanding) =>
   s.left ? "Left" : s.finished ? clock(s.timeMs ?? 0) : `${s.placed}/${s.total}`;
+
+/** Everyone's progress, as faces for a phone. */
+const faces = ({ view, room }: Props): Face[] => {
+  const avatars = new Map(room.players.map((p) => [p.id, p.avatar]));
+  return view.standings.map((s) => ({
+    playerId: s.playerId,
+    nickname: s.nickname,
+    avatar: avatars.get(s.playerId) ?? null,
+    rank: s.rank,
+    value: progressLabel(s),
+    gone: s.left,
+  }));
+};
 
 /** Everyone's progress as they play. Only on tablets and computers; phones leave it out. */
 function LiveBoard({ view, playerId, room }: Props) {
