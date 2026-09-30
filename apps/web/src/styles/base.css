@@ -24,6 +24,13 @@
   --ok: #0fc680;
   --bad: #e5354c;
   --focus: #ffd43f;
+  /* The night and purple look of the games, the profile and settings: flat tiles on night blue,
+     with Whizard purple for what you pick. */
+  --night: #16143f;
+  --night-tile: #252063;
+  --night-lift: #3b347f;
+  --accent: #8b3dff;
+  --accent-soft: #b58cff;
   --radius-sm: 12px;
   --radius: 18px;
   --radius-lg: 24px;
