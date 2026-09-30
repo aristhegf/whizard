@@ -1,4 +1,12 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import {
+  closeSheet,
+  openGameCard,
+  openSettings,
+  chooseSetting,
+  expectSetting,
+  setting,
+} from "./lobby";
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -36,10 +44,12 @@ test("plays a solo quiz with explanations and a review", async ({ browser }) => 
   const page = await newPlayer(browser);
   await openRoom(page);
 
-  await expect(page.getByLabel("Game Mode")).toHaveValue("classic");
-  await expect(page.getByLabel("Time per question")).toHaveCount(0);
-  await page.getByLabel("Questions").selectOption("5");
-  await expect(page.getByLabel("Questions")).toHaveValue("5");
+  await openSettings(page);
+  await expectSetting(page, "Game Mode", "classic");
+  await expect(setting(page, "Time per question")).toHaveCount(0);
+  await chooseSetting(page, "Questions", "5");
+  await expectSetting(page, "Questions", "5");
+  await closeSheet(page);
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
   await expect(page.getByText("Get ready")).toBeVisible();
 
@@ -66,7 +76,8 @@ test("plays a solo quiz with explanations and a review", async ({ browser }) => 
   await expect(first.getByRole("status")).toHaveText(/Thanks for the report/);
 
   await page.getByRole("button", { name: "Change Game" }).click();
-  await expect(page.getByLabel("Questions")).toHaveValue("5");
+  await openSettings(page);
+  await expectSetting(page, "Questions", "5");
 });
 
 test("solo moves on by itself after the explanation", async ({ browser }) => {
@@ -83,12 +94,16 @@ test("every category can be picked and played", async ({ browser }) => {
   await openRoom(page);
 
   // The pencil on the Quiz card opens the topic chooser.
+  await openGameCard(page);
   await page.getByRole("button", { name: "Change topic" }).click();
   const topics = page.getByRole("dialog", { name: "Choose a topic" });
   await expect(topics.getByRole("radio")).toHaveCount(11);
   await expect(topics.getByRole("radio", { disabled: true })).toHaveCount(0);
   await topics.getByRole("radio", { name: "Nigerian culture" }).click();
-  await expect(topics).toBeHidden();
+  // Picking a topic goes on to the game's settings.
+  await expect(page.getByRole("dialog", { name: "Game Settings" })).toBeVisible();
+  await page.getByRole("button", { name: "Done" }).click();
+  await expect(page.locator("dialog.sheet")).toHaveCount(0);
   await expect(page.locator(".game-summary")).toContainText("Nigerian culture");
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
   await answerFirstChoice(page, 1, 10);
@@ -98,10 +113,12 @@ test("Speed mode puts a timer on every question", async ({ browser }) => {
   const page = await newPlayer(browser);
   await openRoom(page);
 
-  await page.getByLabel("Game Mode").selectOption("speed");
-  await expect(page.getByLabel("Time per question")).toBeVisible();
-  await page.getByLabel("Time per question").selectOption("10");
-  await expect(page.getByLabel("Time per question")).toHaveValue("10");
+  await openSettings(page);
+  await chooseSetting(page, "Game Mode", "speed");
+  await expect(setting(page, "Time per question")).toBeVisible();
+  await chooseSetting(page, "Time per question", "10");
+  await expectSetting(page, "Time per question", "10");
+  await closeSheet(page);
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
 
   await expect(page.locator(".progress")).toContainText("1 / 10", { timeout: 10_000 });
@@ -111,12 +128,15 @@ test("Speed mode puts a timer on every question", async ({ browser }) => {
 test("friends play at their own pace and only see points", async ({ browser }) => {
   const host = await newPlayer(browser);
   await openRoom(host);
-  await host.getByLabel("Questions").selectOption("5");
+  await openSettings(host);
+  await chooseSetting(host, "Questions", "5");
+  await expectSetting(host, "Questions", "5");
+  await closeSheet(host);
 
   const guest = await newPlayer(browser);
   await guest.goto(host.url());
   await joinAs(guest, "Tolu");
-  await expect(guest.getByText(/Classic quiz · Bible · Easy · 5 questions/)).toBeVisible();
+  await expect(guest.getByText(/Classic quiz, Bible, Easy, 5 questions/)).toBeVisible();
   await expect(guest.getByRole("button", { name: /start game/i })).toHaveCount(0);
 
   await host.getByRole("button", { name: /start game/i }).press("Enter");
@@ -166,7 +186,7 @@ test("shows live scores on tablets and computers, but not on phones", async ({ b
     await browser.newContext({ viewport: { width: 1280, height: 800 } })
   ).newPage();
   await openRoom(desktop);
-  // Wider screens get the morphing dropdown instead of the built-in one.
+  // Wider screens get the choices opening under the row instead of the built-in picker.
   await desktop.getByRole("button", { name: /^Questions/ }).click();
   await desktop.getByRole("option", { name: "5", exact: true }).click();
   await expect(desktop.getByRole("button", { name: /^Questions/ })).toContainText("5");
@@ -186,11 +206,13 @@ test("shows live scores on tablets and computers, but not on phones", async ({ b
 test("a late joiner plays the running game when the host allows it", async ({ browser }) => {
   const host = await newPlayer(browser);
   await openRoom(host);
+  await openSettings(host);
   await host.getByRole("switch", { name: "Allow Late Join" }).click();
   await expect(host.getByRole("switch", { name: "Allow Late Join" })).toHaveAttribute(
     "aria-checked",
     "true",
   );
+  await closeSheet(host);
   await host.getByRole("button", { name: /play solo/i }).press("Enter");
   await answerFirstChoice(host, 1, 10);
 
@@ -204,8 +226,14 @@ test("a late joiner plays the running game when the host allows it", async ({ br
 test("the lobby has a QR code and room limits", async ({ browser }) => {
   const host = await newPlayer(browser);
   await openRoom(host);
-  await expect(host.getByRole("img", { name: "QR code that opens this room" })).toBeVisible();
-  await host.getByLabel("Max Players").selectOption("2");
+  // The QR code is with the other ways in, under the invite button in the bar.
+  await host.getByRole("button", { name: "Invite friends" }).click();
+  const invite = host.getByRole("dialog", { name: /Invite Friends/ });
+  await expect(invite.getByRole("img", { name: "QR code that opens this room" })).toBeVisible();
+  await invite.getByRole("button", { name: "Close" }).click();
+  await openSettings(host);
+  await chooseSetting(host, "Max Players", "2");
+  await closeSheet(host);
   await expect(host.getByText("1/2 players")).toBeVisible();
 });
 
@@ -214,7 +242,10 @@ test("a long game with friends ends on the final rankings", async ({ browser }) 
   // got dropped by the size check meant for players, leaving everyone stuck on the last answer.
   const host = await newPlayer(browser);
   await openRoom(host);
-  await host.getByLabel("Questions").selectOption("15");
+  await openSettings(host);
+  await chooseSetting(host, "Questions", "15");
+  await expectSetting(host, "Questions", "15");
+  await closeSheet(host);
   const guest = await newPlayer(browser);
   await guest.goto(host.url());
   await joinAs(guest, "Tolu");
@@ -237,7 +268,10 @@ test("a long game with friends ends on the final rankings", async ({ browser }) 
 test("playing again doesn't repeat questions", async ({ browser }) => {
   const page = await newPlayer(browser);
   await openRoom(page);
-  await page.getByLabel("Questions").selectOption("5");
+  await openSettings(page);
+  await chooseSetting(page, "Questions", "5");
+  await expectSetting(page, "Questions", "5");
+  await closeSheet(page);
 
   const play = async () => {
     const prompts: string[] = [];
@@ -263,16 +297,21 @@ test("an Elimination game knocks players out until two meet in the final", async
   const host = await newPlayer(browser);
   await openRoom(host);
   // Each change is sent with the settings the room last confirmed, so wait for each one.
-  await host.getByLabel("Game Mode").selectOption("elimination");
-  await expect(host.getByLabel("Game Mode")).toHaveValue("elimination");
+  await openSettings(host);
+  await chooseSetting(host, "Game Mode", "elimination");
+  await expectSetting(host, "Game Mode", "elimination");
   // In Elimination the number is each round's.
-  await host.getByLabel("Questions per round").selectOption("5");
-  await expect(host.getByLabel("Questions per round")).toHaveValue("5");
-  await host.getByLabel("Time per question").selectOption("10");
-  await expect(host.getByLabel("Time per question")).toHaveValue("10");
+  await chooseSetting(host, "Questions per round", "5");
+  await expectSetting(host, "Questions per round", "5");
+  await chooseSetting(host, "Time per question", "10");
+  await expectSetting(host, "Time per question", "10");
+  // How long the game will be waits behind the (i) beside the number.
+  await host.getByRole("button", { name: "About Questions per round" }).click();
   await expect(
     host.getByText(/With 3 players that’s 1 knock-out round and the final: 10/),
   ).toBeVisible();
+  await host.keyboard.press("Escape");
+  await closeSheet(host);
   // Alone, the host is told how many more are needed.
   await expect(host.getByText("Elimination needs at least 3 players. Invite 2 more")).toBeVisible();
 
@@ -284,7 +323,7 @@ test("an Elimination game knocks players out until two meet in the final", async
     players.push(page);
   }
   await expect(
-    players[1]!.getByText(/Elimination quiz · Bible · Easy · 5 questions a round/),
+    players[1]!.getByText(/Elimination quiz, Bible, Easy, 5 questions a round/),
   ).toBeVisible();
   await host.getByRole("button", { name: /start game/i }).press("Enter");
 
@@ -322,11 +361,16 @@ test("an Elimination game knocks players out until two meet in the final", async
 test("Auto starts easy and gets harder", async ({ browser }) => {
   const page = await newPlayer(browser);
   await openRoom(page);
-  await page.getByLabel(/^Level/).selectOption("auto");
-  await expect(page.getByLabel(/^Level/)).toHaveValue("auto");
+  await openSettings(page);
+  await chooseSetting(page, /^Level/, "auto");
+  await expectSetting(page, /^Level/, "auto");
+  // What a setting means waits behind the (i) beside it.
+  await page.getByRole("button", { name: "About Level" }).click();
   await expect(page.getByText(/Starts easy and gets harder each round/)).toBeVisible();
-  await page.getByLabel("Questions").selectOption("5");
-  await expect(page.getByLabel("Questions")).toHaveValue("5");
+  await page.keyboard.press("Escape");
+  await chooseSetting(page, "Questions", "5");
+  await expectSetting(page, "Questions", "5");
+  await closeSheet(page);
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
 
   for (let i = 1; i <= 5; i++) {
@@ -340,8 +384,10 @@ test("Auto starts easy and gets harder", async ({ browser }) => {
 test("the results can be shared as a 9:16 picture", async ({ browser }) => {
   const page = await newPlayer(browser);
   await openRoom(page);
-  await page.getByLabel("Questions").selectOption("5");
-  await expect(page.getByLabel("Questions")).toHaveValue("5");
+  await openSettings(page);
+  await chooseSetting(page, "Questions", "5");
+  await expectSetting(page, "Questions", "5");
+  await closeSheet(page);
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
   for (let i = 1; i <= 5; i++) {
     await answerFirstChoice(page, i, 5);

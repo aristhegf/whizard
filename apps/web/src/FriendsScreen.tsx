@@ -27,6 +27,7 @@ import {
 import { Avatar } from "./ui/Avatar";
 import { TopLayout } from "./ui/Chrome";
 import { errorText, useLoaded } from "./ui/common";
+import { useConfirm } from "./ui/ConfirmDialog";
 import { useErrorShake, useShakeOnError } from "./ui/errorShake";
 import { HeadingHint } from "./ui/HeadingHint";
 import { Loading } from "./ui/Loading";
@@ -120,6 +121,7 @@ export function FriendsScreen() {
 }
 
 function Friends({ username }: { username: string }) {
+  const ask = useConfirm();
   const friends = useLoaded(fetchFriends);
   const groups = useLoaded(fetchGroups);
   const action = useToastAction();
@@ -278,11 +280,13 @@ function Friends({ username }: { username: string }) {
                         <button
                           className="btn-link danger"
                           disabled={action.busy}
-                          onClick={() => {
-                            if (window.confirm(`Remove ${f.displayName} from your friends?`)) {
-                              act(() => removeFriend(f.username));
-                            }
-                          }}
+                          onClick={() =>
+                            ask({
+                              title: `Remove ${f.displayName} from your friends?`,
+                              yes: "Remove",
+                              run: () => act(() => removeFriend(f.username)),
+                            })
+                          }
                         >
                           Remove
                         </button>
@@ -491,6 +495,7 @@ export function GroupScreen({ id }: { id: string }) {
 }
 
 function Group({ id, me }: { id: string; me: string }) {
+  const ask = useConfirm();
   const groups = useLoaded(fetchGroups);
   const friends = useLoaded(fetchFriends);
   const [category, setCategory] = useState<string | null>(null);
@@ -597,16 +602,18 @@ function Group({ id, me }: { id: string; me: string }) {
           <button
             className="btn-link danger"
             disabled={leaving.busy}
-            onClick={() => {
-              const question = owner
-                ? `Delete ${group.name}? This can’t be undone.`
-                : `Leave ${group.name}?`;
-              if (!window.confirm(question)) return;
-              void leaving.run(async () => {
-                await leaveGroup(group.id);
-                navigate("/friends");
-              });
-            }}
+            onClick={() =>
+              ask({
+                title: owner ? `Delete ${group.name}?` : `Leave ${group.name}?`,
+                text: owner ? "This can’t be undone." : undefined,
+                yes: owner ? "Delete" : "Leave",
+                run: () =>
+                  void leaving.run(async () => {
+                    await leaveGroup(group.id);
+                    navigate("/friends");
+                  }),
+              })
+            }
           >
             {owner ? "Delete group" : "Leave group"}
           </button>
@@ -760,16 +767,55 @@ function AddFromGameList({ usernames }: { usernames: string[] }) {
 
 type PingStatus = "sending" | "sent" | "held" | string;
 
-/** In a room's lobby: ping friends to join. `?ping=username` in the URL pings them straight away. */
-export function PingFriends({ code }: { code: string }) {
+/**
+ * In a room's lobby: the friends to ping, in a dialog that opens over the invites.
+ * `?ping=username` in the URL pings them straight away.
+ */
+export function PingFriendsDialog({ code, onClose }: { code: string; onClose: () => void }) {
   const account = useAccount();
-  if (account.status !== "ready" || !account.user) return null;
-  return <PingFriendsList code={code} />;
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    dialog.current?.showModal();
+  }, []);
+
+  return (
+    <dialog
+      ref={dialog}
+      className="app-dialog ping-dialog"
+      aria-labelledby="ping-title"
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+      onClick={(event) => {
+        // A tap on the dimmed backdrop closes it.
+        if (event.target === dialog.current) onClose();
+      }}
+    >
+      <h2 className="section-title" id="ping-title">
+        Ping Friend
+      </h2>
+      {account.status !== "ready" ? (
+        <Loading />
+      ) : account.user ? (
+        <PingFriendsList code={code} />
+      ) : (
+        <p className="muted">
+          Sign in to add friends and ping them to join.{" "}
+          <a {...linkTo(`/account?next=${encodeURIComponent(roomPath(code))}`)}>Sign in</a>
+        </p>
+      )}
+      <div className="dialog-actions">
+        <button className="btn" onClick={onClose}>
+          Done
+        </button>
+      </div>
+    </dialog>
+  );
 }
 
 function PingFriendsList({ code }: { code: string }) {
   const [autoPing] = useState(() => new URLSearchParams(location.search).get("ping"));
-  const [open, setOpen] = useState(autoPing !== null);
   const [status, setStatus] = useState<Map<string, PingStatus>>(new Map());
   const friends = useLoaded(fetchFriends);
   const toast = useToast();
@@ -779,13 +825,15 @@ function PingFriendsList({ code }: { code: string }) {
       const set = (value: PingStatus) => setStatus((s) => new Map(s).set(username, value));
       set("sending");
       try {
-        const { sent } = await pingFriend(username, code);
+        const { sent, notified } = await pingFriend(username, code);
         set(sent ? "sent" : "held");
         toast.show(
           sent
             ? {
                 title: `Pinged @${username}`,
-                description: "They’ll get a notification with a link to this room.",
+                description: notified
+                  ? "They’ve got a notification, and it’s waiting for them on Whizard."
+                  : "They’ll see it as soon as they’re on Whizard.",
                 status: "success",
               }
             : {
@@ -812,33 +860,39 @@ function PingFriendsList({ code }: { code: string }) {
     void ping(autoPing);
   }, [autoPing, ping]);
 
-  if (!open) {
-    return (
-      <button className="btn-link ping-toggle" onClick={() => setOpen(true)}>
-        Ping a friend to join
-      </button>
-    );
-  }
-
   const list = friends.data?.friends ?? [];
   return (
-    <section className="stack" aria-labelledby="ping-title">
-      <h2 className="label" id="ping-title">
-        Ping a friend
-      </h2>
+    <>
+      <p className="muted small">
+        They’ll see it on Whizard, and get a notification if they’ve turned pings on.
+      </p>
+      {friends.error && (
+        <p className="muted small" role="alert">
+          {friends.error}
+        </p>
+      )}
+      {!friends.data && !friends.error && <Loading />}
       {friends.data && list.length === 0 && (
         <p className="muted small">
           Add friends first on your <a {...linkTo("/friends")}>friends page</a>.
         </p>
       )}
-      <ul className="people compact">
+      <ul className="people compact ping-list">
         {list.map((f) => {
           const state = status.get(f.username);
           return (
             <li key={f.username}>
-              <span className="person-name">{f.displayName}</span>
+              <Avatar id={f.avatar} name={f.displayName} size={36} />
+              <span className="person-name">
+                {f.displayName}
+                <span className="muted small"> @{f.username}</span>
+              </span>
               {state === undefined ? (
-                <button className="btn btn-small" onClick={() => void ping(f.username)}>
+                <button
+                  className="btn btn-small"
+                  aria-label={`Ping ${f.displayName}`}
+                  onClick={() => void ping(f.username)}
+                >
                   Ping
                 </button>
               ) : (
@@ -856,6 +910,6 @@ function PingFriendsList({ code }: { code: string }) {
           );
         })}
       </ul>
-    </section>
+    </>
   );
 }

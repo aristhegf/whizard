@@ -1,6 +1,11 @@
 import { buildPushHTTPRequest } from "@pushforge/builder";
 import { normalizeRoomCode } from "@whizard/game-core";
-import { pingRequestSchema, pushSubscriptionSchema, normalizeUsername } from "@whizard/protocol";
+import {
+  pingRequestSchema,
+  pushSubscriptionSchema,
+  normalizeUsername,
+  type WaitingPing,
+} from "@whizard/protocol";
 import { requireUser } from "./account";
 import { count } from "./analytics";
 import type { Env } from "./env";
@@ -135,7 +140,9 @@ interface Recipient {
 
 /**
  * Tells a friend you're in a room and want them to join. Whether they get it depends on their
- * settings; the sender only learns whether it went out, not why not.
+ * settings; the sender only learns whether it went out, not why not. It reaches them two ways:
+ * on Whizard itself, where any page they have open shows it (see `getPings`), and as a
+ * notification on the devices they turned pings on in. `notified` says whether the second went.
  */
 export async function pingFriend(context: RequestContext): Promise<Response> {
   requireSameOrigin(context);
@@ -163,27 +170,67 @@ export async function pingFriend(context: RequestContext): Promise<Response> {
   if (friend.last_pinged_at !== null && now - friend.last_pinged_at < PING_COOLDOWN_MS) {
     throw new HttpError(429, "too_soon", "You just pinged them. Give them a minute.");
   }
+  const held =
+    !friend.pings || !!friend.muted || inQuietHours(now, quietHours(friend), friend.time_zone);
+  // The room is kept with the ping so their open pages can show it; not when it's held back.
   await db
-    .prepare("UPDATE friends SET last_pinged_at = ? WHERE user_id = ? AND friend_id = ?")
-    .bind(now, user.id, friend.id)
+    .prepare(
+      "UPDATE friends SET last_pinged_at = ?, last_ping_room = ? WHERE user_id = ? AND friend_id = ?",
+    )
+    .bind(now, held ? null : room, user.id, friend.id)
     .run();
+  if (held) return Response.json({ sent: false, notified: false });
 
-  const quiet =
-    friend.quiet_start === null || friend.quiet_end === null
-      ? null
-      : { start: friend.quiet_start, end: friend.quiet_end };
-  if (!friend.pings || friend.muted || inQuietHours(now, quiet, friend.time_zone)) {
-    return Response.json({ sent: false });
-  }
-
-  const sent = await sendPush(context, friend.id, {
+  const notified = await sendPush(context, friend.id, {
     title: `${user.display_name} wants to play`,
     body: `Tap to join room ${room} on Whizard.`,
     url: `/r/${room}`,
     tag: `ping-${user.username}`,
   });
-  if (sent) context.ctx.waitUntil(count(context.env, { pings_sent: 1 }));
-  return Response.json({ sent });
+  context.ctx.waitUntil(count(context.env, { pings_sent: 1 }));
+  return Response.json({ sent: true, notified });
+}
+
+function quietHours(user: { quiet_start: number | null; quiet_end: number | null }) {
+  return user.quiet_start === null || user.quiet_end === null
+    ? null
+    : { start: user.quiet_start, end: user.quiet_end };
+}
+
+/**
+ * The pings waiting for the signed-in user: friends who asked them to join a room in the last
+ * while. Their open pages ask for these, so a ping arrives without notifications turned on. It
+ * follows the same settings as notifications: none with pings off or in quiet hours, and none
+ * from friends they've muted.
+ */
+export async function getPings(context: RequestContext): Promise<Response> {
+  const { user } = await requireUser(context);
+  const headers = { "Cache-Control": "no-store" };
+  const now = Date.now();
+  if (!user.pings || inQuietHours(now, quietHours(user), user.time_zone)) {
+    return Response.json({ pings: [] }, { headers });
+  }
+  const { results } = await context.env.DB.prepare(
+    `SELECT u.username, u.display_name, theirs.last_ping_room AS room, theirs.last_pinged_at AS at
+       FROM friends theirs
+       JOIN users u ON u.id = theirs.user_id
+       JOIN friends mine ON mine.user_id = theirs.friend_id AND mine.friend_id = theirs.user_id
+      WHERE theirs.friend_id = ?1
+        AND theirs.last_ping_room IS NOT NULL
+        AND theirs.last_pinged_at > ?2
+        AND mine.muted = 0
+      ORDER BY theirs.last_pinged_at DESC
+      LIMIT 5`,
+  )
+    .bind(user.id, now - PING_TTL_SECONDS * 1000)
+    .all<{ username: string; display_name: string; room: string; at: number }>();
+  const pings: WaitingPing[] = results.map((row) => ({
+    from: row.username,
+    displayName: row.display_name,
+    room: row.room,
+    at: row.at,
+  }));
+  return Response.json({ pings }, { headers });
 }
 
 interface PingPayload {

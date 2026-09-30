@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { closeSheet, openGameCard, openSettings, chooseSetting, expectSetting } from "./lobby";
 
 test.describe.configure({ timeout: 120_000 });
 
@@ -89,9 +90,10 @@ async function oddCell(page: Page): Promise<number> {
 test("plays solo Word Rush: wrong words shake, right ones score", async ({ browser }) => {
   const page = await newPlayer(browser);
   await openGame(page, "Word Rush");
-  await expect(page.getByLabel("Game", { exact: true })).toHaveValue("word-rush");
-  await page.getByLabel("Rounds").selectOption("5");
-  await expect(page.getByLabel("Rounds")).toHaveValue("5");
+  await openSettings(page);
+  await chooseSetting(page, "Rounds", "5");
+  await expectSetting(page, "Rounds", "5");
+  await closeSheet(page);
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
   await expect(page.getByText("Get ready")).toBeVisible();
 
@@ -117,16 +119,19 @@ test("plays solo Word Rush: wrong words shake, right ones score", async ({ brows
 test("two players race through Spot It", async ({ browser }) => {
   const host = await newPlayer(browser);
   await openGame(host, "Spot It");
-  await host.getByLabel("Rounds").selectOption("5");
+  await openSettings(host);
+  await chooseSetting(host, "Rounds", "5");
   // Each change is sent with the settings the room last confirmed, so wait for this one.
-  await expect(host.getByLabel("Rounds")).toHaveValue("5");
-  await host.getByLabel("Time per round").selectOption("30");
+  await expectSetting(host, "Rounds", "5");
+  await chooseSetting(host, "Time per round", "30");
+  await expectSetting(host, "Time per round", "30");
+  await closeSheet(host);
 
   const guest = await newPlayer(browser);
   await guest.goto(host.url());
   await joinAs(guest, "Tolu");
   await expect(guest.getByRole("heading", { name: "Spot It" })).toBeVisible();
-  await expect(guest.getByText("5 rounds · 30s each")).toBeVisible();
+  await expect(guest.getByText("5 rounds, 30s each")).toBeVisible();
 
   await host.getByRole("button", { name: /start game/i }).press("Enter");
   for (const page of [host, guest]) await waitForRound(page, 1, 5);
@@ -174,33 +179,62 @@ test("the host can switch the room to another game", async ({ browser }) => {
   await host.goto("/");
   await host.getByRole("button", { name: "Create", exact: true }).click();
   await joinAs(host, "Ada");
-  await expect(host.getByLabel("Game Mode")).toBeVisible();
 
+  // Only the host can change the game.
   const guest = await newPlayer(browser);
   await guest.goto(host.url());
   await joinAs(guest, "Tolu");
-  await expect(guest.getByLabel("Game", { exact: true })).toBeDisabled();
+  await openGameCard(guest);
+  await expect(guest.getByRole("button", { name: "Change Game" })).toHaveCount(0);
+  await closeSheet(guest);
 
-  await host.getByLabel("Game", { exact: true }).selectOption("word-rush");
+  await openGameCard(host);
+  await host.getByRole("button", { name: "Change Game" }).click();
+  await host
+    .getByRole("dialog", { name: "Choose a game" })
+    .getByRole("radio", { name: "Word Rush" })
+    .click();
+  // Choosing a game goes on to its settings, to set it up there and then.
+  const setup = host.getByRole("dialog", { name: "Game Settings" });
+  await expectSetting(setup, "Time per round", "30");
+  await setup.getByRole("button", { name: "Back" }).click();
+  // The quiz asks for its topic on the way.
+  await host
+    .getByRole("dialog", { name: "Choose a game" })
+    .getByRole("radio", { name: "Quiz" })
+    .click();
+  const topics = host.getByRole("dialog", { name: "Choose a topic" });
+  await expect(topics.getByRole("radio", { name: "Bible" })).toBeVisible();
+  await topics.getByRole("button", { name: "Back" }).click();
+  await host
+    .getByRole("dialog", { name: "Choose a game" })
+    .getByRole("radio", { name: "Word Rush" })
+    .click();
+  await setup.getByRole("button", { name: "Done" }).click();
+  await expect(setup).toBeHidden();
   for (const page of [host, guest]) {
     await expect(page.getByRole("heading", { name: "Word Rush" })).toBeVisible();
-    await expect(page.getByLabel("Time per round")).toHaveValue("30");
-    await expect(page.getByLabel("Game Mode")).toHaveValue("speed");
-    await expect(page.getByLabel(/^Level/)).toHaveValue("auto");
+    await openSettings(page);
+    await expectSetting(page, "Time per round", "30");
+    await expectSetting(page, "Game Mode", "speed");
+    await expectSetting(page, /^Level/, "auto");
+    await closeSheet(page);
   }
-  await expect(guest.getByText("Speed · Auto · 10 rounds · 30s each")).toBeVisible();
+  await expect(guest.getByText("Speed, Auto, 10 rounds, 30s each")).toBeVisible();
 });
 
 test("three players play Word Rush Elimination down to a winner", async ({ browser }) => {
   test.setTimeout(180_000);
   const host = await newPlayer(browser);
   await openGame(host, "Word Rush");
-  await host.getByLabel("Game Mode").selectOption("elimination");
+  await openSettings(host);
+  await chooseSetting(host, "Game Mode", "elimination");
   await expect(host.getByText(/Elimination needs at least 3 players/)).toBeVisible();
-  await host.getByLabel(/^Level/).selectOption("easy");
-  await expect(host.getByLabel(/^Level/)).toHaveValue("easy");
-  await host.getByLabel("Words per round").selectOption("5");
-  await expect(host.getByLabel("Words per round")).toHaveValue("5");
+  await chooseSetting(host, /^Level/, "easy");
+  await expectSetting(host, /^Level/, "easy");
+  await chooseSetting(host, "Words per round", "5");
+  await expectSetting(host, "Words per round", "5");
+  await closeSheet(host);
 
   const tolu = await newPlayer(browser);
   const kemi = await newPlayer(browser);
@@ -211,7 +245,7 @@ test("three players play Word Rush Elimination down to a winner", async ({ brows
     await page.goto(host.url());
     await joinAs(page, name);
   }
-  await expect(kemi.getByText("Elimination · Easy · 5 words a round · 30s each")).toBeVisible();
+  await expect(kemi.getByText("Elimination, Easy, 5 words a round, 30s each")).toBeVisible();
   await host.getByRole("button", { name: /start game/i }).press("Enter");
 
   // Three players at five words a round: one knock-out round of five, then a final of five.

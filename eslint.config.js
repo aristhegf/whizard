@@ -37,10 +37,21 @@ export default tseslint.config(
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-unused-vars": "off",
       "react-hooks/rules-of-hooks": "off",
       "react-hooks/refs": "off",
       "react-hooks/immutability": "off",
       "no-useless-assignment": "off",
+    },
+  },
+  {
+    // Cult UI components (cult-ui.com), added with `npx shadcn add` and kept as published.
+    files: ["apps/web/src/components/cult/**"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "react-hooks/exhaustive-deps": "off",
     },
   },
   {

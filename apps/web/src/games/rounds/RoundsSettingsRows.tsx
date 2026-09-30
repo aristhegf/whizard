@@ -14,8 +14,7 @@ import {
   type LevelChoice,
   type RoundsMode,
 } from "@whizard/game-core";
-import { SettingSelect } from "../../ui/SettingSelect";
-import { Icon } from "../../ui/Icon";
+import { SettingRow, SettingSelect } from "../../ui/SettingSelect";
 
 export type RoundsGameId = "word-rush" | "spot-it";
 
@@ -48,11 +47,11 @@ export function EliminationLength({
   const group = Math.max(players, ELIMINATION_MIN_PLAYERS);
   const rounds = roundCount(group);
   return (
-    <p className="setting-hint dim small">
+    <>
       {perRound} {noun} in every round and in the final. With {group} players that’s {rounds}{" "}
       knock-out {rounds === 1 ? "round" : "rounds"} and the final: {plannedItems(group, perRound)}{" "}
       {noun} in all.
-    </p>
+    </>
   );
 }
 
@@ -89,9 +88,12 @@ export function RoundsSettingsRows({
   const countLabel = elimination ? `${noun[0]!.toUpperCase()}${noun.slice(1)} per round` : "Rounds";
   return (
     <>
-      <div className="setting-row">
-        <Icon name="games" size={20} />
-        <label htmlFor="game-mode">Game Mode</label>
+      <SettingRow
+        icon="games"
+        id="game-mode"
+        label="Game Mode"
+        hint={ROUNDS_MODES.find((m) => m.id === settings.mode)?.description}
+      >
         <SettingSelect
           id="game-mode"
           label="Game Mode"
@@ -100,13 +102,13 @@ export function RoundsSettingsRows({
           options={ROUNDS_MODES.map((m) => ({ value: m.id, label: m.name }))}
           onChange={(value) => onChange({ ...settings, mode: value as RoundsMode })}
         />
-      </div>
-      <p className="setting-hint dim small">
-        {ROUNDS_MODES.find((m) => m.id === settings.mode)?.description}
-      </p>
-      <div className="setting-row">
-        <Icon name="trophy" size={20} />
-        <label htmlFor="level">Level</label>
+      </SettingRow>
+      <SettingRow
+        icon="trophy"
+        id="level"
+        label="Level"
+        hint={settings.level === "auto" ? AUTO_HINT : undefined}
+      >
         <SettingSelect
           id="level"
           label="Level"
@@ -115,11 +117,17 @@ export function RoundsSettingsRows({
           options={LEVEL_CHOICES.map((l) => ({ value: l, label: LEVEL_NAMES[l] }))}
           onChange={(value) => onChange({ ...settings, level: value as LevelChoice })}
         />
-      </div>
-      {settings.level === "auto" && <p className="setting-hint dim small">{AUTO_HINT}</p>}
-      <div className="setting-row">
-        <Icon name="copy" size={20} />
-        <label htmlFor="rounds">{countLabel}</label>
+      </SettingRow>
+      <SettingRow
+        icon="copy"
+        id="rounds"
+        label={countLabel}
+        hint={
+          elimination ? (
+            <EliminationLength players={players} perRound={settings.rounds} noun={noun} />
+          ) : undefined
+        }
+      >
         <SettingSelect
           id="rounds"
           label={countLabel}
@@ -128,22 +136,17 @@ export function RoundsSettingsRows({
           options={options.rounds.map((n) => ({ value: String(n), label: String(n) }))}
           onChange={(value) => onChange({ ...settings, rounds: Number(value) })}
         />
-      </div>
-      {elimination && (
-        <EliminationLength players={players} perRound={settings.rounds} noun={noun} />
-      )}
-      <div className="setting-row">
-        <Icon name="clock" size={20} />
-        <label htmlFor="time-limit">Time per round</label>
+      </SettingRow>
+      <SettingRow icon="clock" id="time-limit" label="Time per Round">
         <SettingSelect
           id="time-limit"
-          label="Time per round"
+          label="Time per Round"
           value={String(settings.timeLimitSeconds)}
           disabled={!editable}
           options={options.seconds.map((s) => ({ value: String(s), label: `${s} seconds` }))}
           onChange={(value) => onChange({ ...settings, timeLimitSeconds: Number(value) })}
         />
-      </div>
+      </SettingRow>
     </>
   );
 }

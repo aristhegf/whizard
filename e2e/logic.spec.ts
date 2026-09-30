@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { closeSheet, openSettings, chooseSetting, expectSetting } from "./lobby";
 
 test.describe.configure({ timeout: 120_000 });
 
@@ -68,8 +69,10 @@ async function place(page: Page, cell: number, value: number) {
 }
 
 async function start(page: Page, size: "4" | "6" | "9", button: RegExp) {
-  await page.getByLabel("Grid", { exact: true }).selectOption(size);
-  await expect(page.getByLabel("Grid", { exact: true })).toHaveValue(size);
+  await openSettings(page);
+  await chooseSetting(page, "Grid", size);
+  await expectSetting(page, "Grid", size);
+  await closeSheet(page);
   await page.getByRole("button", { name: button }).press("Enter");
   await expect(grid(page)).toBeVisible({ timeout: 10_000 });
   await expect(page.getByRole("group", { name: "Numbers" })).toBeVisible({ timeout: 10_000 });

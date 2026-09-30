@@ -68,30 +68,7 @@
   box-shadow: 0 0 16px rgb(255 212 63 / 45%);
 }
 
-/* Lobby ------------------------------------------------------------------------------------- */
-
-.room-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 14px;
-  min-height: 64px;
-  padding-top: 6px;
-}
-
-.back-link {
-  text-decoration: none;
-  font-size: 1rem;
-  color: var(--muted);
-  margin-left: -6px;
-}
-
-.room-actions {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
+/* Lobby: the shared bits. The lobby's own layout is in lobby.css. ---------------------------- */
 
 .bar-btn {
   display: inline-flex;
@@ -102,14 +79,6 @@
   border-radius: 12px;
   font-weight: 800;
   color: var(--text);
-}
-
-.bar-btn.invite svg {
-  color: #c4b5ff;
-}
-
-.bar-btn.leave svg {
-  color: #ff5a78;
 }
 
 @media (hover: hover) {
@@ -126,73 +95,6 @@
     overflow: hidden;
     clip-path: inset(50%);
   }
-}
-
-.lobby {
-  display: grid;
-  gap: 18px;
-  padding-bottom: 96px;
-}
-
-/* On phones the code and invite come first: sharing is the first thing a host does. */
-@media (max-width: 899px) {
-  .lobby .room-card {
-    order: -1;
-  }
-}
-
-.lobby-main {
-  display: grid;
-  gap: 18px;
-  align-content: start;
-}
-
-.game-summary {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 16px;
-}
-
-.summary-art {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 96px;
-  height: 96px;
-  border-radius: 18px;
-  background: linear-gradient(160deg, #ff8c1a, #7b2bd9);
-}
-
-.summary-art img {
-  width: 76%;
-  height: auto;
-  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 35%));
-}
-
-.summary-text {
-  display: grid;
-  justify-items: start;
-  gap: 8px;
-  min-width: 0;
-}
-
-.summary-title {
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 1.6rem;
-  line-height: 1;
-}
-
-.edit-btn {
-  margin-left: auto;
-  background: rgb(255 255 255 / 6%);
-}
-
-.settings-panel {
-  display: grid;
-  gap: 8px;
-  padding: 20px;
 }
 
 .settings-list {
@@ -237,73 +139,183 @@
   cursor: default;
 }
 
-/* The morphing dropdown (BeUI select-morph) on tablets and computers, sized and coloured like
-   the built-in one phones get. Its invisible sizer keeps the row's height. */
-.setting-morph {
-  min-width: 0;
+/* The dropdown on tablets and computers: the choice, which opens its options under the row (the
+   transitions.dev accordion in transitions.css), sized and coloured like the built-in one phones
+   get. The row's head and panel sit in the row's own grid, so the options span the whole row. */
+.setting-row:has(> .setting-acc) {
+  row-gap: 0;
 }
 
-.setting-morph [inert],
-.setting-morph-trigger {
+.setting-acc {
+  display: contents;
+}
+
+.t-acc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
   min-height: 46px;
+  padding: 0 12px 0 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--line);
+  background: var(--field);
+  color: var(--text);
+  font: inherit;
   font-size: 1rem;
   font-weight: 700;
+  text-align: left;
+  cursor: pointer;
 }
 
-.setting-morph-trigger {
-  padding-inline: 16px;
-  color: var(--text);
-  background: var(--field);
-  border: 1.5px solid var(--line);
+.t-acc-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.setting-morph-trigger:disabled {
-  opacity: 1;
+.setting-acc[data-open="true"] .t-acc-head {
+  border-color: rgb(160 120 255 / 70%);
+}
+
+@media (hover: hover) {
+  .t-acc-head:not(:disabled):hover {
+    border-color: var(--line-strong);
+  }
+}
+
+.t-acc-head:disabled {
   color: var(--muted);
   cursor: default;
 }
 
-.setting-morph-trigger:disabled svg {
-  display: none;
+.t-acc-chevron {
+  flex: none;
+  color: var(--muted);
 }
 
-.setting-morph-list {
-  font-size: 1rem;
-  font-weight: 700;
-  background: #13113a;
-  border: 1.5px solid var(--line-strong);
-  box-shadow: var(--shadow);
+.t-acc-chevron svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.setting-acc .t-acc-panel {
+  grid-column: 1 / -1;
 }
 
 /* A long list scrolls rather than running off the page. */
-.setting-morph-list ul {
-  max-height: min(60vh, 440px);
+.t-acc-list {
+  display: grid;
+  gap: 2px;
+  max-height: min(50vh, 320px);
+  margin-top: 8px;
+  padding: 4px;
   overflow-y: auto;
   overscroll-behavior: contain;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line);
+  background: rgb(19 17 58 / 90%);
+}
+
+.t-acc-list button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .t-acc-list button:not(:disabled):hover {
+    background: rgb(255 255 255 / 6%);
+  }
+}
+
+.t-acc-list [aria-selected="true"] {
+  background: rgb(124 77 255 / 22%);
+  color: #fff;
+}
+
+.t-acc-list [aria-selected="true"] svg {
+  color: #ffd966;
+}
+
+.t-acc-list button:disabled {
+  color: var(--dim);
+  cursor: not-allowed;
+}
+
+/* In a sheet the choices float over the rows below, or above, or over their own row where
+   neither has room, so the sheet keeps its height. SettingSelect decides which (`--acc-room` is
+   how tall the list may be, `--acc-shift` how far it's slid up). */
+.setting-row:has(> .setting-acc.floating) {
+  position: relative;
+}
+
+.setting-acc.floating .t-acc-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: 5;
+  /* Slid up over its own row when there isn't room for it below or above. */
+  transform: translateY(calc(-1 * var(--acc-shift, 0px)));
+}
+
+.setting-acc.floating.up .t-acc-panel {
+  top: auto;
+  bottom: 100%;
+}
+
+.setting-acc.floating .t-acc-list {
+  max-height: min(320px, var(--acc-room));
+  margin-top: 0;
+  background: #13113a;
+  box-shadow: var(--shadow);
 }
 
 /* A group's name, above its options. */
-.setting-morph-group {
-  padding: 10px 10px 4px;
-  font-size: 0.75rem;
+.t-acc-group {
+  padding: 8px 12px 2px;
+  font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--dim);
 }
 
-/* Same text size as the closed dropdown, for the open one's header and its options. */
-.setting-morph-list :where(div, span, button) {
-  font-size: 1rem;
-}
-
 .setting-hint {
   margin: -4px 0 4px 34px;
+}
+
+/* A setting's name, with the (i) that says what it means. */
+.setting-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
 .toggle-row {
   grid-template-columns: 22px minmax(0, 1fr) auto;
   padding-top: 12px;
+}
+
+.toggle-row .setting-label {
+  font-weight: 800;
 }
 
 .toggle-text {
@@ -314,14 +326,6 @@
 /* The hint under a switch's name reads like the other hints, not bold. */
 .toggle-text .small {
   font-weight: 400;
-}
-
-.room-card {
-  display: grid;
-  gap: 14px;
-  justify-items: center;
-  padding: 22px 20px;
-  align-content: start;
 }
 
 .code-box {
@@ -375,160 +379,6 @@
   height: 160px;
   border-radius: 14px;
   box-shadow: 0 10px 30px rgb(0 0 0 / 40%);
-}
-
-.lobby-count {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  font-weight: 700;
-}
-
-.avatar-stack {
-  display: flex;
-}
-
-.avatar-stack .avatar + .avatar {
-  margin-left: -10px;
-}
-
-.player-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 6px;
-  width: 100%;
-}
-
-.player-list li {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 52px;
-  padding: 6px 12px;
-  border-radius: 14px;
-  background: rgb(255 255 255 / 4%);
-  border: 1.5px solid transparent;
-}
-
-.player-list li.me {
-  border-color: rgb(150 120 255 / 55%);
-}
-
-.player-list li.offline {
-  opacity: 0.55;
-}
-
-.player-name {
-  font-weight: 800;
-  overflow-wrap: anywhere;
-}
-
-.host-badge {
-  display: inline-flex;
-  color: var(--gold);
-}
-
-.room-card .stack {
-  width: 100%;
-}
-
-.ping-toggle {
-  justify-self: center;
-}
-
-.lobby-dock {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 20;
-  display: grid;
-  gap: 8px;
-  padding: 14px var(--gutter) calc(14px + env(safe-area-inset-bottom));
-  background: linear-gradient(to bottom, transparent, rgb(8 7 31 / 96%) 35%);
-}
-
-/* A blur on the card would make it the dock's frame instead of the screen, leaving the dock
-   over the player list. Below 900px, where the dock is pinned, the card goes without. */
-@media (max-width: 899px) {
-  .room-card {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-}
-
-.btn-start {
-  min-height: 60px;
-  font-size: 1.2rem;
-}
-
-/* Slide to start, on phones (a BeUI slide-action button in Whizard's colours). */
-.slide-start {
-  width: 100%;
-  height: 64px;
-  padding: 4px;
-  border-radius: 999px;
-  background: rgb(18 17 56 / 85%);
-  box-shadow:
-    inset 0 0 0 1.5px var(--line-strong),
-    var(--glow-purple);
-}
-
-.slide-start > span {
-  font-family: var(--body);
-  font-weight: 800;
-  font-size: 1.05rem;
-}
-
-.slide-start-fill {
-  border-radius: inherit;
-  background: linear-gradient(90deg, #6630f5, #9a4dff);
-}
-
-.slide-start-thumb {
-  width: 56px;
-  height: 56px;
-  border-radius: 999px;
-  color: #221400;
-  background: linear-gradient(180deg, #ffe14a 0%, #ffb52c 100%);
-  box-shadow:
-    0 6px 18px rgb(255 180 40 / 40%),
-    inset 0 1px 0 rgb(255 255 255 / 50%);
-}
-
-.slide-start-thumb svg {
-  width: 24px;
-  height: 24px;
-}
-
-@media (min-width: 900px) {
-  .lobby {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-    align-items: start;
-    padding-bottom: 32px;
-  }
-
-  .room-bar {
-    padding: 16px 0 10px;
-  }
-
-  .lobby-dock {
-    position: static;
-    width: 100%;
-    padding: 6px 0 0;
-    background: none;
-  }
-
-  .settings-panel {
-    padding: 24px 26px;
-  }
-
-  .room-card {
-    padding: 26px 30px 30px;
-  }
 }
 
 /* Game -------------------------------------------------------------------------------------- */

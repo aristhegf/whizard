@@ -94,6 +94,8 @@ const LEADERBOARD: NavLink = {
   icon: "trophy",
   section: null,
 };
+/** For guests, whose home page explains Whizard: their Play goes to the games themselves. */
+const PLAY_AS_GUEST: NavLink = { ...PLAY, href: "/games" };
 /** For guests, whose home page is the one that explains Whizard. */
 const HOW: NavLink = { label: "How it works", href: "/#how", icon: "help", section: null };
 const PRICING: NavLink = { label: "Pricing", href: "/pricing", icon: "wallet", section: "pricing" };
@@ -211,6 +213,8 @@ function SiteFooter({ active, slim = false }: { active: Section; slim?: boolean 
 /** The tabs at the bottom on phones: Play, Create, Leaderboard, Stats and the account menu. */
 export function TabBar({ active = null }: { active?: Section }) {
   const { creating, create } = useCreateRoom();
+  const account = useAccount();
+  const signedIn = account.status === "ready" && !!account.user;
   const tab = (l: NavLink) => (
     <a
       key={l.label}
@@ -225,7 +229,7 @@ export function TabBar({ active = null }: { active?: Section }) {
 
   return (
     <nav className="tabbar" aria-label="Sections">
-      {tab(PLAY)}
+      {tab(signedIn ? PLAY : PLAY_AS_GUEST)}
       <button className="tab" disabled={creating} onClick={create}>
         <Icon name="plusCircle" size={24} />
         Create

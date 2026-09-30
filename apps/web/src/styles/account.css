@@ -320,11 +320,6 @@ fieldset {
   box-shadow: var(--shadow);
 }
 
-.ping-toggle {
-  align-self: flex-start;
-  padding-left: 0;
-}
-
 /* Privacy text. */
 .prose {
   display: grid;
