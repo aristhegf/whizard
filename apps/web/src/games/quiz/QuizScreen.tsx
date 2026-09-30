@@ -23,6 +23,7 @@ import { EliminationScreen } from "./EliminationScreen";
 import { ReportQuestion } from "./ReportQuestion";
 import { play } from "../../sounds";
 import { MuteButton } from "../../ui/MuteButton";
+import { SettingsButton } from "../../ui/SettingsDialog";
 import { Podium } from "../../ui/Podium";
 import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
@@ -115,13 +116,32 @@ function GameBar({ context }: { context: GameContext }) {
         </span>
         <span className="bar-end">
           {latency}
-          <MuteButton />
-          <button className="btn quit-btn" onClick={onQuit}>
-            Quit
-          </button>
+          <span className="bar-controls">
+            <MuteButton />
+            <button className="btn quit-btn" onClick={onQuit}>
+              Quit
+            </button>
+          </span>
         </span>
       </div>
     </header>
+  );
+}
+
+/** Computers: sound at the left, settings and Quit at the right, along the bottom of the screen. */
+function QuizFoot({ context }: { context: GameContext }) {
+  return (
+    <footer className="quiz-foot">
+      <span className="quiz-foot-group">
+        <MuteButton />
+      </span>
+      <span className="quiz-foot-group end">
+        <SettingsButton />
+        <button className="btn quit-btn" onClick={context.onQuit}>
+          Quit
+        </button>
+      </span>
+    </footer>
   );
 }
 
@@ -179,6 +199,7 @@ function QuizFrame({
         <LiveBoard context={context} />
         <div className="quiz-below">{below}</div>
       </div>
+      <QuizFoot context={context} />
     </div>
   );
 }
@@ -455,9 +476,11 @@ export function ScoreBoard({
             className={`${s.playerId === playerId ? "me" : ""}${s.left ? " gone" : ""}`}
           >
             <span className={`rank${bars && s.rank <= 3 ? ` medal m${s.rank}` : ""}`}>
-              {s.rank}
+              {bars && s.rank === 1 ? <Icon name="crown" size={15} stroke={2.6} /> : s.rank}
             </span>
-            <Avatar id={avatarOf(s.playerId)} name={s.nickname} size={40} />
+            <span className={`board-avatar${bars && s.rank <= 3 ? ` r${s.rank}` : ""}`}>
+              <Avatar id={avatarOf(s.playerId)} name={s.nickname} size={40} />
+            </span>
             {bars ? (
               <span className="who">
                 <span className="name">{s.playerId === playerId ? "You" : s.nickname}</span>
