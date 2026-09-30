@@ -211,15 +211,19 @@ export function drawWords(
   return drawByLevel(words, (w) => w.level, levels, seed, options);
 }
 
-/** A Connections puzzle at the level asked for, the least used one, as with questions. */
+/**
+ * Connections puzzles at the level asked for, the least used ones, as with questions: one for a
+ * race, or one per round for Elimination, all different.
+ */
 export function drawConnections(
   level: Level,
   seed: number,
   options: DrawOptions = {},
   puzzles: readonly StoredConnections[] = CONNECTIONS,
+  count = 1,
 ): ConnectionsPuzzle[] {
   const pool = puzzles.filter((p) => p.level === level);
-  return leastUsed(pool.length > 0 ? pool : puzzles, seededRng(seed), options).slice(0, 1);
+  return leastUsed(pool.length > 0 ? pool : puzzles, seededRng(seed), options).slice(0, count);
 }
 
 /** `questions` is the bank to draw from: the one that ships, or it with admin edits applied. */
@@ -239,6 +243,6 @@ export function drawContent(
     case "words":
       return drawWords(request.levels, seed, options);
     case "connections-puzzle":
-      return drawConnections(request.level, seed, options);
+      return drawConnections(request.level, seed, options, CONNECTIONS, request.count ?? 1);
   }
 }

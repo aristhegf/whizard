@@ -31,6 +31,8 @@ import { CATALOG } from "../../catalog";
 import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
 import { clock } from "../jigsaw/JigsawScreen";
+import { CutPanel, puzzleRoundName } from "../elimination/parts";
+import { connectionsModeName } from "./ConnectionsSettingsRows";
 
 interface Props {
   view: ConnectionsView;
@@ -46,23 +48,68 @@ interface Props {
 
 const GROUPS = 4;
 
+/** "Round 2 of 3" or "The Final", for Elimination; null in the race. */
+const roundLabel = (view: ConnectionsView) => (view.round ? puzzleRoundName(view.round) : null);
+
 export function ConnectionsScreen(props: Props) {
   const { view } = props;
   if (view.final) return <Results {...props} />;
-  if (view.words === null || view.startsAt === null) {
-    return (
-      <PlayScreen
-        label="Connections"
-        latency={props.latency}
-        onQuit={props.onQuit}
-        side={<LiveBoard {...props} />}
-      >
-        <p className="watching">A game is in progress. You’ll be in the next one.</p>
-        <PlayFaces faces={rowsOf(props)} playerId={props.playerId} />
-      </PlayScreen>
-    );
-  }
-  return <Playing {...props} words={view.words} startsAt={view.startsAt} />;
+  if (view.cut) return <Cut {...props} cut={view.cut} />;
+  if (view.words === null || view.startsAt === null) return <Watching {...props} />;
+  // Each Elimination round is a new puzzle, so it starts afresh.
+  return (
+    <Playing
+      key={`${view.round?.index ?? 0}:${view.startsAt}`}
+      {...props}
+      words={view.words}
+      startsAt={view.startsAt}
+    />
+  );
+}
+
+/** Joined too late, or knocked out of an Elimination game: the others' progress. */
+function Watching(props: Props) {
+  const { view } = props;
+  return (
+    <PlayScreen
+      label={roundLabel(view) ?? "Connections"}
+      latency={props.latency}
+      onQuit={props.onQuit}
+      side={<LiveBoard {...props} />}
+    >
+      <p className="watching">
+        {view.me?.out
+          ? `You’re out, in round ${(view.me.outRound ?? 0) + 1}. Watch who makes it to the end.`
+          : view.round
+            ? "An Elimination game is in progress. You’ll be in the next one."
+            : "A game is in progress. You’ll be in the next one."}
+      </p>
+      <PlayFaces faces={rowsOf(props)} playerId={props.playerId} />
+    </PlayScreen>
+  );
+}
+
+/** Between Elimination rounds: who went out, then the next round starts on its own. */
+function Cut(props: Props & { cut: NonNullable<ConnectionsView["cut"]> }) {
+  const { view, cut, room } = props;
+  const avatars = new Map(room.players.map((p) => [p.id, p.avatar]));
+  const stillIn = view.standings.filter((s) => !s.out && !s.left).length;
+  const nextIsFinal = !!view.round && (view.round.index + 2 >= view.round.total || stillIn <= 2);
+  return (
+    <PlayFrame label={roundLabel(view)} latency={props.latency} onQuit={props.onQuit}>
+      <CutPanel
+        client={props.client}
+        playerId={props.playerId}
+        avatarOf={(id) => avatars.get(id) ?? null}
+        round={cut.round + 1}
+        out={cut.out}
+        nextIsFinal={nextIsFinal}
+        until={cut.nextAt}
+        rank={view.me?.rank ?? null}
+        through={view.words !== null && !view.me?.out}
+      />
+    </PlayFrame>
+  );
 }
 
 function Playing(props: Props & { words: string[]; startsAt: number }) {
@@ -139,32 +186,47 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
     setOrder(next);
   };
 
+  const round = roundLabel(view);
   if (!started) {
     return (
-      <PlayFrame label="Connections" latency={props.latency} onQuit={props.onQuit}>
+      <PlayFrame label={round ?? "Connections"} latency={props.latency} onQuit={props.onQuit}>
         <div className="countdown" aria-live="polite">
           <img src="/art/games/connections.webp" alt="" />
-          <p className="countdown-label">Get ready · {LEVEL_NAMES[view.level]}</p>
+          <p className="countdown-label">
+            Get ready ·{" "}
+            {view.round
+              ? LEVEL_NAMES[view.level]
+              : `${connectionsModeName(view.mode)} · ${LEVEL_NAMES[view.level]}`}
+          </p>
           <p className="countdown-number">{countdown}</p>
         </div>
       </PlayFrame>
     );
   }
 
-  const left = view.deadline === null ? 0 : view.deadline - now;
+  // Classic has no clock; Speed and Elimination count down.
+  const left = view.deadline === null ? null : view.deadline - now;
   const me = view.me;
   const missing = (view.answer ?? []).filter((g) => !view.found.some((f) => f.colour === g.colour));
+  const doneText = !view.round
+    ? "Waiting for everyone to finish…"
+    : me?.solved
+      ? "You’re through to the next round."
+      : "Waiting for the round to end…";
   return (
     <PlayScreen
       label={
         <>
+          {round && `${round} · `}
           <b>{view.found.length}</b> / {GROUPS} groups
         </>
       }
       latency={props.latency}
       onQuit={props.onQuit}
     >
-      <PlayTimer ms={over ? (me?.timeMs ?? 0) : timerMs(left)} low={left < 30_000 && !over} />
+      {left !== null && (
+        <PlayTimer ms={over ? (me?.timeMs ?? 0) : timerMs(left)} low={left < 30_000 && !over} />
+      )}
       <p className="play-task">
         {over
           ? me?.solved
@@ -200,7 +262,7 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
         {over ? (
           <p className="verdict good conn-wait" role="status">
             {me?.solved ? "You found every group!" : `${view.found.length} of 4 groups found`}
-            <span className="dim small">Waiting for everyone to finish…</span>
+            <span className="dim small">{doneText}</span>
           </p>
         ) : (
           <>
@@ -247,10 +309,15 @@ function GroupRow({ group, missed = false }: { group: ConnectionsFoundGroup; mis
 }
 
 const progressLabel = (s: ConnectionsStanding) =>
-  s.left ? "Left" : s.solved ? clock(s.timeMs ?? 0) : `${s.found}/${GROUPS}`;
+  s.left ? "Left" : s.out ? "Out" : s.solved ? clock(s.timeMs ?? 0) : `${s.found}/${GROUPS}`;
 
 /** Everyone's progress: faces on a phone, the board on a computer. */
-const rowsOf = ({ view, room }: Props) => rowsFrom(view.standings, room, progressLabel);
+const rowsOf = ({ view, room }: Props) =>
+  rowsFrom(view.standings, room, progressLabel).map((row, i) => ({
+    ...row,
+    // Knocked out of Elimination: dimmed, like someone who left.
+    gone: row.gone || view.standings[i]!.out,
+  }));
 
 function LiveBoard(props: Props) {
   return <PlayBoard rows={rowsOf(props)} playerId={props.playerId} label="Live progress" />;
@@ -271,7 +338,7 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
   const { open: share, dialog: shareDialog } = useShareResults(
     buildCard({
       title: "Connections",
-      subtitle: `${LEVEL_NAMES[view.level]} puzzle`,
+      subtitle: `${connectionsModeName(view.mode)} · ${LEVEL_NAMES[view.level]} puzzle`,
       art: "/art/games/connections.webp",
       colors: CATALOG.find((g) => g.id === "connections")?.colors ?? ["#8b4dff", "#23145a"],
       rows: solo
@@ -325,6 +392,7 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
             <h2 className="display results-title">Connections Results</h2>
             <span className="pill">
               <Icon name="trophy" size={18} />
+              {view.round ? "Elimination · " : ""}
               {LEVEL_NAMES[view.level]} puzzle
             </span>
           </div>
@@ -381,7 +449,7 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
                 <li
                   key={s.playerId}
                   className={[
-                    s.rank === 1 && s.solved ? "first" : "",
+                    s.playerId === view.winnerId || (s.rank === 1 && s.solved) ? "first" : "",
                     s.playerId === playerId ? "me" : "",
                     s.left ? "gone" : "",
                   ]

@@ -33,9 +33,30 @@ describe("drawConnections", () => {
     expect(drawConnections("easy", 3, { seen })[0]?.id).toBe(easy[0]?.id);
   });
 
+  it("draws one different puzzle per round for Elimination, still avoiding repeats", () => {
+    const puzzles = drawConnections("medium", 7, {}, CONNECTIONS, 4);
+    expect(puzzles).toHaveLength(4);
+    expect(new Set(puzzles.map((p) => p.id)).size).toBe(4);
+    expect(puzzles.every((p) => p.level === "medium")).toBe(true);
+    // The first is the one a single draw gets.
+    expect(puzzles[0]).toEqual(drawConnections("medium", 7)[0]);
+    const medium = CONNECTIONS.filter((p) => p.level === "medium");
+    const recent = medium.slice(0, -3).map((p) => p.id);
+    const fresh = drawConnections("medium", 7, { recent }, CONNECTIONS, 3).map((p) => p.id);
+    expect(fresh.sort()).toEqual(
+      medium
+        .slice(-3)
+        .map((p) => p.id)
+        .sort(),
+    );
+  });
+
   it("is what drawContent returns for a connections request", () => {
     expect(drawContent({ kind: "connections-puzzle", level: "hard" }, 5)).toEqual(
       drawConnections("hard", 5),
+    );
+    expect(drawContent({ kind: "connections-puzzle", level: "easy", count: 3 }, 5)).toEqual(
+      drawConnections("easy", 5, {}, CONNECTIONS, 3),
     );
   });
 });

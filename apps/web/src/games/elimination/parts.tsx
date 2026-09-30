@@ -97,56 +97,105 @@ export function Watching({ view }: { view: AnyEliminationView }) {
 }
 
 export function Cut({ context, stage }: { context: EliminationContext; stage: StageOf<"cut"> }) {
-  const { view, client, playerId, avatarOf } = context;
+  const { view } = context;
+  return (
+    <EliminationFrame context={context}>
+      <CutPanel
+        client={context.client}
+        playerId={context.playerId}
+        avatarOf={context.avatarOf}
+        round={stage.round}
+        out={stage.out}
+        tieKept={stage.tieKept}
+        nextIsFinal={stage.next === "final"}
+        until={stage.until}
+        rank={view.me?.rank ?? null}
+        through={view.me?.status === "in" || view.me?.status === "finalist"}
+      />
+    </EliminationFrame>
+  );
+}
+
+/**
+ * A round's knock-outs: who went out, whether you're through, and when the next round starts.
+ * The puzzle games (Connections, Logic), which have their own views, show it in their own frame.
+ */
+export function CutPanel({
+  client,
+  playerId,
+  avatarOf,
+  round,
+  out,
+  tieKept = false,
+  nextIsFinal,
+  until,
+  rank,
+  through,
+}: {
+  client: RoomClient;
+  playerId: string;
+  avatarOf: (playerId: string) => string | null;
+  /** The round that just ended, counting from 1. */
+  round: number;
+  out: readonly { playerId: string; nickname: string }[];
+  tieKept?: boolean;
+  nextIsFinal: boolean;
+  /** When the next round starts. */
+  until: number;
+  /** Your placing, once you're out. */
+  rank: number | null;
+  /** Still in, and playing on. */
+  through: boolean;
+}) {
   const now = useServerNow(client.serverNow);
-  const meOut = stage.out.some((p) => p.playerId === playerId);
-  const through = view.me?.status === "in" || view.me?.status === "finalist";
+  const meOut = out.some((p) => p.playerId === playerId);
   useEffect(() => {
     if (meOut) play("wrong");
     else if (through) play("correct");
   }, [meOut, through]);
-  const seconds = Math.max(0, Math.ceil((stage.until - now) / 1000));
+  const seconds = Math.max(0, Math.ceil((until - now) / 1000));
   return (
-    <EliminationFrame context={context}>
-      <section className="elim-cut panel" aria-labelledby="cut-title">
-        <p className="elim-kicker">Round {stage.round} results</p>
-        <h2 className="display" id="cut-title">
-          {stage.out.length === 0 ? "Nobody goes this round" : `${stage.out.length} knocked out`}
-        </h2>
-        {stage.tieKept && (
-          <p className="muted">
-            {stage.out.length === 0
-              ? "It was a tie at the line, so everyone stays."
-              : "A tie at the line kept an extra player in."}
-          </p>
-        )}
-        {stage.out.length > 0 && (
-          <ul className="elim-out">
-            {stage.out.map((p) => (
-              <li key={p.playerId} className={p.playerId === playerId ? "me" : ""}>
-                <Avatar id={avatarOf(p.playerId)} name={p.nickname} size={56} />
-                <span>{p.playerId === playerId ? "You" : p.nickname}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-        <p className={`elim-you ${meOut ? "bad" : through ? "good" : ""}`} role="status">
-          {meOut
-            ? `You’re out! You finished ${view.me?.rank ? ordinal(view.me.rank) : "this game"}. Stay and watch the rest.`
-            : through
-              ? stage.next === "final"
-                ? "You’re in the final!"
-                : "You’re through to the next round!"
-              : ""}
-        </p>
+    <section className="elim-cut panel" aria-labelledby="cut-title">
+      <p className="elim-kicker">Round {round} results</p>
+      <h2 className="display" id="cut-title">
+        {out.length === 0 ? "Nobody goes this round" : `${out.length} knocked out`}
+      </h2>
+      {tieKept && (
         <p className="muted">
-          {stage.next === "final" ? "The final starts" : `Round ${stage.round + 1} starts`} in{" "}
-          {seconds}s
+          {out.length === 0
+            ? "It was a tie at the line, so everyone stays."
+            : "A tie at the line kept an extra player in."}
         </p>
-      </section>
-    </EliminationFrame>
+      )}
+      {out.length > 0 && (
+        <ul className="elim-out">
+          {out.map((p) => (
+            <li key={p.playerId} className={p.playerId === playerId ? "me" : ""}>
+              <Avatar id={avatarOf(p.playerId)} name={p.nickname} size={56} />
+              <span>{p.playerId === playerId ? "You" : p.nickname}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className={`elim-you ${meOut ? "bad" : through ? "good" : ""}`} role="status">
+        {meOut
+          ? `You’re out! You finished ${rank ? ordinal(rank) : "this game"}. Stay and watch the rest.`
+          : through
+            ? nextIsFinal
+              ? "You’re in the final!"
+              : "You’re through to the next round!"
+            : ""}
+      </p>
+      <p className="muted">
+        {nextIsFinal ? "The final starts" : `Round ${round + 1} starts`} in {seconds}s
+      </p>
+    </section>
   );
 }
+
+/** Where a puzzle game's Elimination is: "Round 2 of 3", "The Final". */
+export const puzzleRoundName = (round: { index: number; total: number; final: boolean }) =>
+  round.final ? "The Final" : `Round ${round.index + 1} of ${round.total - 1}`;
 
 export function FinalIntro({
   context,

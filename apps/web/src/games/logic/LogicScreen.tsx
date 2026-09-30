@@ -23,7 +23,8 @@ import { CATALOG } from "../../catalog";
 import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
 import { clock } from "../jigsaw/JigsawScreen";
-import { gridName } from "./LogicSettingsRows";
+import { CutPanel, puzzleRoundName } from "../elimination/parts";
+import { gridName, logicModeName } from "./LogicSettingsRows";
 
 interface Props {
   view: LogicView;
@@ -40,23 +41,68 @@ interface Props {
 /** How long a wrong number shows in its cell. */
 const WRONG_FLASH_MS = 1200;
 
+/** "Round 2 of 3" or "The Final", for Elimination; null in the race. */
+const roundLabel = (view: LogicView) => (view.round ? puzzleRoundName(view.round) : null);
+
 export function LogicScreen(props: Props) {
   const { view } = props;
   if (view.final) return <Results {...props} />;
-  if (view.grid === null || view.startsAt === null) {
-    return (
-      <PlayScreen
-        label="Logic"
-        latency={props.latency}
-        onQuit={props.onQuit}
-        side={<LiveBoard {...props} />}
-      >
-        <p className="watching">A game is in progress. You’ll be in the next one.</p>
-        <PlayFaces faces={rowsOf(props)} playerId={props.playerId} />
-      </PlayScreen>
-    );
-  }
-  return <Playing {...props} grid={view.grid} startsAt={view.startsAt} />;
+  if (view.cut) return <Cut {...props} cut={view.cut} />;
+  if (view.grid === null || view.startsAt === null) return <Watching {...props} />;
+  // Each Elimination round is a new grid, so it starts afresh.
+  return (
+    <Playing
+      key={`${view.round?.index ?? 0}:${view.startsAt}`}
+      {...props}
+      grid={view.grid}
+      startsAt={view.startsAt}
+    />
+  );
+}
+
+/** Joined too late, or knocked out of an Elimination game: the others' progress. */
+function Watching(props: Props) {
+  const { view } = props;
+  return (
+    <PlayScreen
+      label={roundLabel(view) ?? "Logic"}
+      latency={props.latency}
+      onQuit={props.onQuit}
+      side={<LiveBoard {...props} />}
+    >
+      <p className="watching">
+        {view.me?.out
+          ? `You’re out, in round ${(view.me.outRound ?? 0) + 1}. Watch who makes it to the end.`
+          : view.round
+            ? "An Elimination game is in progress. You’ll be in the next one."
+            : "A game is in progress. You’ll be in the next one."}
+      </p>
+      <PlayFaces faces={rowsOf(props)} playerId={props.playerId} />
+    </PlayScreen>
+  );
+}
+
+/** Between Elimination rounds: who went out, then the next round starts on its own. */
+function Cut(props: Props & { cut: NonNullable<LogicView["cut"]> }) {
+  const { view, cut, room } = props;
+  const avatars = new Map(room.players.map((p) => [p.id, p.avatar]));
+  const stillIn = view.standings.filter((s) => !s.out && !s.left).length;
+  const nextIsFinal = !!view.round && (view.round.index + 2 >= view.round.total || stillIn <= 2);
+  return (
+    <PlayFrame label={roundLabel(view)} latency={props.latency} onQuit={props.onQuit}>
+      <CutPanel
+        client={props.client}
+        playerId={props.playerId}
+        avatarOf={(id) => avatars.get(id) ?? null}
+        round={cut.round + 1}
+        out={cut.out}
+        nextIsFinal={nextIsFinal}
+        until={cut.nextAt}
+        rank={view.me?.rank ?? null}
+        through={view.grid !== null && !view.me?.out}
+      />
+    </PlayFrame>
+  );
 }
 
 function Playing(props: Props & { grid: number[]; startsAt: number }) {
@@ -127,20 +173,30 @@ function Playing(props: Props & { grid: number[]; startsAt: number }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  const round = roundLabel(view);
   if (!started) {
     return (
-      <PlayFrame label="Logic" latency={props.latency} onQuit={props.onQuit}>
+      <PlayFrame label={round ?? "Logic"} latency={props.latency} onQuit={props.onQuit}>
         <div className="countdown" aria-live="polite">
           <img src="/art/games/logic.webp" alt="" />
-          <p className="countdown-label">Get ready · {gridName(size)}</p>
+          <p className="countdown-label">
+            Get ready ·{" "}
+            {view.round ? gridName(size) : `${logicModeName(view.mode)} · ${gridName(size)}`}
+          </p>
           <p className="countdown-number">{countdown}</p>
         </div>
       </PlayFrame>
     );
   }
 
-  const left = view.deadline === null ? 0 : view.deadline - now;
+  // Classic has no clock; Speed and Elimination count down.
+  const left = view.deadline === null ? null : view.deadline - now;
   const me = view.me;
+  const doneText = !view.round
+    ? "Waiting for everyone to finish…"
+    : me?.solved
+      ? "You’re through to the next round."
+      : "Waiting for the round to end…";
   const wrong =
     view.lastWrong && now - view.lastWrong.at < WRONG_FLASH_MS && !over ? view.lastWrong : null;
   const shown = over ? view.solution! : grid;
@@ -161,13 +217,16 @@ function Playing(props: Props & { grid: number[]; startsAt: number }) {
     <PlayScreen
       label={
         <>
+          {round && `${round} · `}
           <b>{filled}</b> / {total} filled
         </>
       }
       latency={props.latency}
       onQuit={props.onQuit}
     >
-      <PlayTimer ms={over ? (me?.timeMs ?? 0) : timerMs(left)} low={left < 60_000 && !over} />
+      {left !== null && (
+        <PlayTimer ms={over ? (me?.timeMs ?? 0) : timerMs(left)} low={left < 60_000 && !over} />
+      )}
       <p className={`play-task${over ? "" : " logic-rules"}`}>
         {over
           ? me?.solved
@@ -227,7 +286,7 @@ function Playing(props: Props & { grid: number[]; startsAt: number }) {
         {over ? (
           <p className="verdict good logic-wait" role="status">
             {me?.solved ? "You cracked it!" : `${filled} of ${total} filled`}
-            <span className="dim small">Waiting for everyone to finish…</span>
+            <span className="dim small">{doneText}</span>
           </p>
         ) : (
           <PlayMistakes left={view.mistakesLeft} max={LOGIC_MAX_MISTAKES} />
@@ -269,10 +328,15 @@ const tracks = (size: number, box: number) =>
 const track = (index: number, box: number) => index + Math.floor(index / box) + 1;
 
 const progressLabel = (s: LogicStanding) =>
-  s.left ? "Left" : s.solved ? clock(s.timeMs ?? 0) : `${s.filled}/${s.total}`;
+  s.left ? "Left" : s.out ? "Out" : s.solved ? clock(s.timeMs ?? 0) : `${s.filled}/${s.total}`;
 
 /** Everyone's progress: faces on a phone, the board on a computer. */
-const rowsOf = ({ view, room }: Props) => rowsFrom(view.standings, room, progressLabel);
+const rowsOf = ({ view, room }: Props) =>
+  rowsFrom(view.standings, room, progressLabel).map((row, i) => ({
+    ...row,
+    // Knocked out of Elimination: dimmed, like someone who left.
+    gone: row.gone || view.standings[i]!.out,
+  }));
 
 function LiveBoard(props: Props) {
   return <PlayBoard rows={rowsOf(props)} playerId={props.playerId} label="Live progress" />;
@@ -293,7 +357,7 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
   const { open: share, dialog: shareDialog } = useShareResults(
     buildCard({
       title: "Logic",
-      subtitle: gridName(view.size),
+      subtitle: `${logicModeName(view.mode)} · ${gridName(view.size)}`,
       art: "/art/games/logic.webp",
       colors: CATALOG.find((g) => g.id === "logic")?.colors ?? ["#8b4dff", "#23145a"],
       rows: solo
@@ -347,6 +411,7 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
             <h2 className="display results-title">Logic Results</h2>
             <span className="pill">
               <Icon name="trophy" size={18} />
+              {view.round ? "Elimination · " : ""}
               {gridName(view.size)}
             </span>
           </div>
@@ -395,7 +460,7 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
                 <li
                   key={s.playerId}
                   className={[
-                    s.rank === 1 && s.solved ? "first" : "",
+                    s.playerId === view.winnerId || (s.rank === 1 && s.solved) ? "first" : "",
                     s.playerId === playerId ? "me" : "",
                     s.left ? "gone" : "",
                   ]
