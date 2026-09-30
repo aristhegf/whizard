@@ -65,21 +65,28 @@
   margin-left: auto;
 }
 
+/* Settings (with the sound in it) and Quit: bare icons, lit on hover. */
 .bar-controls {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 4px;
 }
 
-.quiz-game .quit-btn {
-  min-height: 44px;
-  padding: 0 24px;
-  border: 1.5px solid transparent;
-  background:
-    linear-gradient(180deg, rgb(40 24 96 / 90%), rgb(20 12 60 / 92%)) padding-box,
-    var(--edge-purple) border-box;
-  font-size: 1rem;
-  box-shadow: 0 0 18px rgb(140 80 255 / 25%);
+.quiz-game .bar-controls .icon-btn {
+  width: 40px;
+  height: 40px;
+  color: #cfc8ff;
+  background: transparent;
+  transition:
+    color 150ms ease,
+    background 150ms ease;
+}
+
+@media (hover: hover) {
+  .quiz-game .bar-controls .icon-btn:hover {
+    color: #fff;
+    background: rgb(255 255 255 / 8%);
+  }
 }
 
 /* The stepper: a segment for each question, lit gold as they're done. */
@@ -568,11 +575,6 @@
   background: linear-gradient(180deg, #f6b078, #c46b2e);
 }
 
-/* Along the bottom, on computers only. */
-.quiz-foot {
-  display: none;
-}
-
 @media (min-width: 768px) {
   .quiz-rail {
     display: flex;
@@ -678,16 +680,14 @@
 @media (min-width: 1100px) {
   .quiz-game {
     min-height: calc(100dvh - 24px);
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
-  .bar-controls {
-    display: none;
-  }
-
+  /* Empty rows above and below: the lower one is larger, so the card and the scores sit a
+     little above the middle of the screen. What goes under the card uses the lower row's space. */
   .quiz-stage {
     grid-template-columns: 250px minmax(0, 1fr) 320px;
-    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-rows: 1fr auto auto 2.4fr;
     align-items: stretch;
     gap: 16px 24px;
   }
@@ -695,14 +695,14 @@
   .quiz-rail {
     display: flex;
     flex-direction: column;
-    grid-row: 1 / 4;
+    grid-row: 1 / 5;
     gap: 16px;
     min-height: 0;
   }
 
   .quiz-top {
     grid-column: 2;
-    grid-row: 1;
+    grid-row: 2;
     align-self: end;
   }
 
@@ -712,19 +712,20 @@
 
   .quiz-card-slot {
     grid-column: 2;
-    grid-row: 2;
+    grid-row: 3;
   }
 
   .quiz-game .live-board {
     grid-column: 3;
-    grid-row: 2;
+    grid-row: 3;
     order: 0;
     align-self: stretch;
   }
 
   .quiz-below {
     grid-column: 2;
-    grid-row: 3;
+    grid-row: 4;
+    align-self: start;
     align-content: start;
   }
 
@@ -765,41 +766,6 @@
 
   .ring-number {
     font-size: 2.8rem;
-  }
-
-  .quiz-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding-top: 4px;
-  }
-
-  .quiz-foot-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .quiz-foot .icon-btn,
-  .quiz-foot .bar-btn {
-    min-height: 46px;
-    border: 1.5px solid transparent;
-    border-radius: 999px;
-    background:
-      var(--strip) padding-box,
-      var(--edge-soft) border-box;
-    color: #fff;
-    box-shadow: 0 10px 26px rgb(0 0 0 / 28%);
-  }
-
-  .quiz-foot .icon-btn {
-    width: 46px;
-    height: 46px;
-  }
-
-  .quiz-foot .bar-btn {
-    padding: 0 18px;
   }
 }
 
@@ -842,9 +808,5 @@
 
   .quiz-game .live-board li {
     min-height: 58px;
-  }
-
-  .quiz-foot {
-    padding-top: 0;
   }
 }

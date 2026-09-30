@@ -198,15 +198,21 @@ function Toggle({
   );
 }
 
-/** Opens the settings from the room's bar. */
-export function SettingsButton() {
+/** Opens the settings from the room's bar. `iconOnly` is the bare gear, for the game screens. */
+export function SettingsButton({ iconOnly = false }: { iconOnly?: boolean }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button className="bar-btn" onClick={() => setOpen(true)}>
-        <Icon name="settings" size={20} />
-        <span>Settings</span>
-      </button>
+      {iconOnly ? (
+        <button className="icon-btn" aria-label="Settings" onClick={() => setOpen(true)}>
+          <Icon name="settings" size={22} />
+        </button>
+      ) : (
+        <button className="bar-btn" onClick={() => setOpen(true)}>
+          <Icon name="settings" size={20} />
+          <span>Settings</span>
+        </button>
+      )}
       {open && <SettingsDialog onClose={() => setOpen(false)} />}
     </>
   );

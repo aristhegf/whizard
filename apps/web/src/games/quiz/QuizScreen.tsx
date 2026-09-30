@@ -22,7 +22,6 @@ import { parseQuizSettings } from "./QuizSettingsPanel";
 import { EliminationScreen } from "./EliminationScreen";
 import { ReportQuestion } from "./ReportQuestion";
 import { play } from "../../sounds";
-import { MuteButton } from "../../ui/MuteButton";
 import { SettingsButton } from "../../ui/SettingsDialog";
 import { Podium } from "../../ui/Podium";
 import { buildCard } from "../../share/outcomes";
@@ -117,31 +116,14 @@ function GameBar({ context }: { context: GameContext }) {
         <span className="bar-end">
           {latency}
           <span className="bar-controls">
-            <MuteButton />
-            <button className="btn quit-btn" onClick={onQuit}>
-              Quit
+            <SettingsButton iconOnly />
+            <button className="icon-btn" aria-label="Quit" onClick={onQuit}>
+              <Icon name="logout" size={22} />
             </button>
           </span>
         </span>
       </div>
     </header>
-  );
-}
-
-/** Computers: sound at the left, settings and Quit at the right, along the bottom of the screen. */
-function QuizFoot({ context }: { context: GameContext }) {
-  return (
-    <footer className="quiz-foot">
-      <span className="quiz-foot-group">
-        <MuteButton />
-      </span>
-      <span className="quiz-foot-group end">
-        <SettingsButton />
-        <button className="btn quit-btn" onClick={context.onQuit}>
-          Quit
-        </button>
-      </span>
-    </footer>
   );
 }
 
@@ -199,7 +181,6 @@ function QuizFrame({
         <LiveBoard context={context} />
         <div className="quiz-below">{below}</div>
       </div>
-      <QuizFoot context={context} />
     </div>
   );
 }
