@@ -1,3 +1,4 @@
+import type { PingResult, WaitingPing } from "@whizard/protocol";
 import { api, updateAccount } from "./account";
 
 export type PingSupport = "ready" | "needs-install" | "unsupported";
@@ -73,7 +74,10 @@ export async function disablePings(): Promise<void> {
 
 /** Asks a friend to join a room. `sent` is false if their settings held it back. */
 export const pingFriend = (username: string, room: string) =>
-  api<{ sent: boolean }>(`/api/friends/${encodeURIComponent(username)}/ping`, {
+  api<PingResult>(`/api/friends/${encodeURIComponent(username)}/ping`, {
     method: "POST",
     body: { room },
   });
+
+/** The pings waiting for whoever's signed in: friends asking them to join a room. */
+export const fetchPings = () => api<{ pings: WaitingPing[] }>("/api/pings");

@@ -1,4 +1,6 @@
+import { fileURLToPath } from "node:url";
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { chooseSetting, closeSheet, expectSetting, openSettings } from "./lobby";
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -56,9 +58,11 @@ test("plays a solo jigsaw from the picture page", async ({ browser }) => {
   await page.getByRole("button", { name: /Easy · 16 pieces/ }).click();
   await page.getByRole("button", { name: "The crew" }).click();
   await joinAs(page, "Ada");
-  await expect(page.getByLabel("Picture", { exact: true })).toHaveValue("crew");
-  await expect(page.getByLabel("Level", { exact: true })).toHaveValue("easy");
-  await expect(page.getByLabel("Game Mode", { exact: true })).toHaveValue("classic");
+  await openSettings(page);
+  await expectSetting(page, "Picture", "crew");
+  await expectSetting(page, "Level", "easy");
+  await expectSetting(page, "Game Mode", "classic");
+  await closeSheet(page);
 
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
   await expect(page.getByText(/Get ready/)).toBeVisible();
@@ -81,7 +85,8 @@ test("plays a solo jigsaw from the picture page", async ({ browser }) => {
 
   // Change Picture goes back to the lobby with the same settings.
   await page.getByRole("button", { name: "Change Picture" }).click();
-  await expect(page.getByLabel("Picture", { exact: true })).toHaveValue("crew");
+  await openSettings(page);
+  await expectSetting(page, "Picture", "crew");
 });
 
 test("two players race the same puzzle, and the faster one wins", async ({ browser }) => {
@@ -134,8 +139,8 @@ test("who leaves and comes back shows in one line at the bottom, with faces for 
   // On a phone the scores are faces, no names.
   await expect(host.getByRole("list", { name: "Scores" }).getByRole("listitem")).toHaveCount(2);
 
-  guest.once("dialog", (dialog) => void dialog.accept());
   await guest.getByRole("button", { name: "Quit" }).click();
+  await guest.getByRole("alertdialog").getByRole("button", { name: "Quit" }).click();
   await expect(host.locator(".play-toast")).toHaveText("Tolu left the game");
   await guest.getByRole("button", { name: "Rejoin the game" }).click();
   await expect(host.locator(".play-toast")).toHaveText("Tolu is back in the game");
@@ -148,7 +153,7 @@ test("the host frames their own photo, and everyone plays it", async ({ browser 
   // Choosing the photo on the picture page opens a room, then the framing step.
   await host
     .getByLabel("Choose your photo")
-    .setInputFiles(new URL("./fixtures/photo.jpg", import.meta.url).pathname);
+    .setInputFiles(fileURLToPath(new URL("./fixtures/photo.jpg", import.meta.url)));
   await joinAs(host, "Ada");
 
   const cropper = host.getByRole("dialog", { name: "Frame your jigsaw" });
@@ -166,7 +171,9 @@ test("the host frames their own photo, and everyone plays it", async ({ browser 
   await cropper.getByRole("button", { name: "Use this photo" }).click();
   await expect(cropper).toBeHidden();
 
-  await expect(host.getByLabel("Picture", { exact: true })).toHaveValue("photo");
+  await openSettings(host);
+  await expectSetting(host, "Picture", "photo");
+  await closeSheet(host);
   const art = host.locator(".game-summary img");
   await expect(art).toHaveAttribute("src", /\/api\/rooms\/[A-Z0-9]+\/photo\/[a-z0-9]+$/);
   const src = (await art.getAttribute("src"))!;
@@ -284,8 +291,10 @@ test("Elimination: finishers are safe, the fewest pieces go out, and the final p
   await host.getByRole("button", { name: /Easy · 16 pieces/ }).click();
   await host.getByRole("button", { name: "Game night" }).click();
   await joinAs(host, "Ada");
-  await host.getByLabel("Game Mode", { exact: true }).selectOption("elimination");
-  await expect(host.getByLabel("Level", { exact: true })).toHaveValue("easy");
+  await openSettings(host);
+  await chooseSetting(host, "Game Mode", "elimination");
+  await expectSetting(host, "Level", "easy");
+  await closeSheet(host);
 
   const tolu = await newPlayer(browser);
   await tolu.goto(host.url());
@@ -322,7 +331,7 @@ test("Insane keeps a photo's own shape: the canvas is as wide as the photo", asy
   await page.getByRole("button", { name: /Insane/ }).click();
   await page
     .getByLabel("Choose your photo")
-    .setInputFiles(new URL("./fixtures/photo.jpg", import.meta.url).pathname);
+    .setInputFiles(fileURLToPath(new URL("./fixtures/photo.jpg", import.meta.url)));
   await joinAs(page, "Ada");
   const cropper = page.getByRole("dialog", { name: "Frame your jigsaw" });
   await expect(cropper.getByRole("slider", { name: /The part to use/ })).toBeVisible();

@@ -1,4 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
+import {
+  closeSheet,
+  openSettings as openRoomSettings,
+  chooseSetting,
+  expectSetting,
+} from "./lobby";
 import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
 
 test.describe.configure({ timeout: 90_000 });
@@ -9,20 +15,26 @@ async function openRoom(page: Page) {
   // The home page has a Join button too (for codes), so wait until the room is open.
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   // Signed in, they go straight in under their account name.
-  await page.getByLabel("Questions").selectOption("5");
+  await openRoomSettings(page);
+  await chooseSetting(page, "Questions", "5");
+  await expectSetting(page, "Questions", "5");
+  await closeSheet(page);
 }
 
 async function playSoloGame(page: Page) {
   await page.goto("/");
   await page.getByRole("button", { name: "Create", exact: true }).click();
   const nickname = page.getByLabel("Choose a nickname");
-  const questions = page.getByLabel("Questions");
-  await expect(nickname.or(questions)).toBeVisible();
+  const lobby = page.locator(".lobby");
+  await expect(nickname.or(lobby)).toBeVisible();
   if (await nickname.isVisible()) {
     await nickname.fill("Ada");
     await page.getByRole("button", { name: "Join", exact: true }).click();
   }
-  await questions.selectOption("5");
+  await openRoomSettings(page);
+  await chooseSetting(page, "Questions", "5");
+  await expectSetting(page, "Questions", "5");
+  await closeSheet(page);
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
   for (let i = 1; i <= 5; i++) {
     await expect(page.locator(".progress")).toContainText(`${i} of 5`, { timeout: 10_000 });
@@ -92,8 +104,8 @@ test("changes the username, then not again for a week", async ({ browser }) => {
   const fresh = uniqueUsername();
   await field.fill(`@${fresh.toUpperCase()}`);
   await expect(page.getByText(`@${fresh} is available.`)).toBeVisible();
-  page.once("dialog", (dialog) => void dialog.accept());
   await change.click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Change" }).click();
   await expect(page.getByText(`Friends can find you as @${fresh} now.`)).toBeVisible();
   await expect(page.locator(".profile-id").getByText(`@${fresh}`)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Ada 🧙‍♀️", level: 1 })).toBeVisible();
@@ -137,8 +149,8 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
   // Quiz settings live in the Settings dialog, saved to the account.
   const openSettings = async () => {
     await page.getByRole("button", { name: "Me", exact: true }).click();
-    await page.getByRole("button", { name: "Settings" }).click();
-    return page.getByRole("dialog", { name: "Settings" });
+    await page.getByRole("button", { name: "Settings", exact: true }).click();
+    return page.getByRole("dialog", { name: "Settings", exact: true });
   };
   let settings = await openSettings();
   const explanations = settings.getByRole("group", { name: "Explanations" });
@@ -162,11 +174,14 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Create", exact: true }).click();
   const nickname = page.getByLabel("Choose a nickname");
-  const questions = page.getByLabel("Questions");
-  await expect(nickname.or(questions)).toBeVisible();
+  const lobby = page.locator(".lobby");
+  await expect(nickname.or(lobby)).toBeVisible();
   if (await nickname.isVisible())
     await page.getByRole("button", { name: "Join", exact: true }).click();
-  await questions.selectOption("5");
+  await openRoomSettings(page);
+  await chooseSetting(page, "Questions", "5");
+  await expectSetting(page, "Questions", "5");
+  await closeSheet(page);
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
   await expect(page.locator(".progress")).toContainText("1 of 5", { timeout: 10_000 });
   await page.locator("button.choice").first().click();
@@ -177,8 +192,8 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
 test("deletes the account", async ({ page }) => {
   await withPasskeys(page);
   await signUp(page, uniqueUsername());
-  page.once("dialog", (dialog) => void dialog.accept());
   await page.getByRole("button", { name: "Delete account" }).click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
   await page.getByRole("button", { name: "Me", exact: true }).click();
   await expect(
     page.getByRole("group", { name: "Menu" }).getByRole("link", { name: "Sign in" }),
@@ -287,12 +302,25 @@ test("pings a friend from the friends page and the lobby", async ({ browser }) =
   await ada.goto(`/add/${toluName}`);
   await ada.getByRole("button", { name: "Accept friend request" }).click();
 
-  // Tolu has no device with pings turned on, so the ping is held back.
+  // Ada pings Tolu from the friends page: a room opens, with her friends to ping over the invites.
   await ada.goto("/friends");
   await ada.getByRole("button", { name: "Ping", exact: true }).click();
-  await expect(ada).toHaveURL(/\/r\/[A-Z0-9]{6}/);
-  const pings = ada.getByRole("region", { name: "Ping a friend" });
-  await expect(pings.getByRole("status")).toHaveText("Can’t get pings now");
+  await expect(ada).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
+  const pings = ada.getByRole("dialog", { name: "Ping Friend" });
+  await expect(pings.getByRole("status")).toHaveText("Pinged");
+  const room = new URL(ada.url()).pathname;
+
+  // The same friends are behind Ping Friend in the lobby's invites.
+  await pings.getByRole("button", { name: "Done" }).click();
+  await ada.getByRole("button", { name: "Ping Friend" }).click();
+  await expect(pings.getByRole("button", { name: "Ping Tolu" })).toBeVisible();
+
+  // Tolu has no device with pings turned on, but it's there on the page he has open, and he joins.
+  await tolu.goto("/friends");
+  const ping = tolu.getByRole("region", { name: "Ping from a friend" });
+  await expect(ping).toContainText("Ada wants to play");
+  await ping.getByRole("link", { name: "Join" }).click();
+  await expect(tolu).toHaveURL(new RegExp(`${room}$`));
 
   // Tolu can mute Ada, and turn on quiet hours.
   await tolu.goto("/friends");

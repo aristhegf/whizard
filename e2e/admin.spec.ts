@@ -88,7 +88,7 @@ test("an admin sees open rooms and can close one", async ({ browser }) => {
   const code = host.url().slice(-6);
   await host.getByLabel("Choose a nickname").fill("Zed");
   await host.getByRole("button", { name: "Join", exact: true }).click();
-  await expect(host.getByLabel("Questions")).toBeVisible();
+  await expect(host.getByRole("list", { name: "Players" })).toBeVisible();
 
   await admin.page.goto("/admin/rooms");
   const row = admin.page.locator(".room-row", { hasText: code });
@@ -163,7 +163,7 @@ test("blocked words keep names out, and a flagged player can be removed", async 
   await expect(host).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   await host.getByLabel("Choose a nickname").fill(`Ok${tag}`);
   await host.getByRole("button", { name: "Join", exact: true }).click();
-  await expect(host.getByLabel("Questions")).toBeVisible();
+  await expect(host.getByRole("list", { name: "Players" })).toBeVisible();
 
   // A new player can't use a blocked word, even written with look-alikes.
   await block(`zq${tag}`);

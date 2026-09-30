@@ -44,6 +44,16 @@ export default tseslint.config(
     },
   },
   {
+    // Cult UI components (cult-ui.com), added with `npx shadcn add` and kept as published.
+    files: ["apps/web/src/components/cult/**"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "react-hooks/exhaustive-deps": "off",
+    },
+  },
+  {
     files: ["apps/web/public/sw.js"],
     languageOptions: { globals: globals.serviceworker },
   },

@@ -206,6 +206,24 @@ export const pushSubscriptionSchema = z.object({
 
 export const pingRequestSchema = z.object({ room: z.string().max(16) });
 
+/** What pinging a friend came to. */
+export interface PingResult {
+  /** Whether it went to them at all; their settings can hold it back. */
+  sent: boolean;
+  /** Whether it also went out as a notification, to a device they turned pings on in. */
+  notified: boolean;
+}
+
+/** A friend asking you to join their room, shown on whichever Whizard page you have open. */
+export interface WaitingPing {
+  /** The friend's username. */
+  from: string;
+  displayName: string;
+  room: string;
+  /** When they pinged, in ms since the epoch. */
+  at: number;
+}
+
 export type AccountUpdate = z.infer<typeof accountUpdateSchema>;
 
 export interface MatchPlayer {

@@ -38,6 +38,7 @@ import { Avatar } from "./ui/Avatar";
 import { AvatarPicker } from "./ui/AvatarPicker";
 import { TopLayout } from "./ui/Chrome";
 import { useAction, useLoaded } from "./ui/common";
+import { useConfirm } from "./ui/ConfirmDialog";
 import { HeadingHint } from "./ui/HeadingHint";
 import { Loading } from "./ui/Loading";
 import { useShakeOnError } from "./ui/errorShake";
@@ -485,6 +486,7 @@ function DisplayNameHint({
 const changeDay = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "long" });
 
 function UsernameSetting({ user }: { user: AccountUser }) {
+  const ask = useConfirm();
   const [value, setValue] = useState(user.username);
   const check = useUsernameCheck(value, user.username);
   const { ref, isError, shake } = useShakeOnError<HTMLSpanElement>(check.problem);
@@ -498,24 +500,26 @@ function UsernameSetting({ user }: { user: AccountUser }) {
     event.preventDefault();
     const username = check.username;
     if (!changed || check.blocked || lockedUntil !== null) return;
-    if (
-      !window.confirm(`Change your username to @${username}? You can’t change it again for 7 days.`)
-    ) {
-      return;
-    }
-    void saving.run(async () => {
-      try {
-        await changeUsername(username);
-      } catch (error) {
-        // Turned down by the server (a blocked word, or taken a moment ago): shake, then say why.
-        shake();
-        throw error;
-      }
-      toast.show({
-        title: "Username changed",
-        description: `Friends can find you as @${username} now.`,
-        status: "success",
+    const change = () =>
+      void saving.run(async () => {
+        try {
+          await changeUsername(username);
+        } catch (error) {
+          // Turned down by the server (a blocked word, or taken a moment ago): shake, then say why.
+          shake();
+          throw error;
+        }
+        toast.show({
+          title: "Username changed",
+          description: `Friends can find you as @${username} now.`,
+          status: "success",
+        });
       });
+    ask({
+      title: `Change your username to @${username}?`,
+      text: "You can’t change it again for 7 days.",
+      yes: "Change",
+      run: change,
     });
   };
 
@@ -824,6 +828,7 @@ const longDate = new Intl.DateTimeFormat(undefined, {
 });
 
 function Passkeys() {
+  const ask = useConfirm();
   const [passkeys, setPasskeys] = useState<AccountPasskey[] | null>(null);
   const action = useToastAction();
   const [version, setVersion] = useState(0);
@@ -863,15 +868,18 @@ function Passkeys() {
                 <button
                   className="btn-link"
                   disabled={action.busy}
-                  onClick={() => {
-                    if (!window.confirm("Remove this passkey? It won’t sign you in any more.")) {
-                      return;
-                    }
-                    void action.run(async () => {
-                      await removePasskey(p.id);
-                      reload();
-                    });
-                  }}
+                  onClick={() =>
+                    ask({
+                      title: "Remove this passkey?",
+                      text: "It won’t sign you in any more.",
+                      yes: "Remove",
+                      run: () =>
+                        void action.run(async () => {
+                          await removePasskey(p.id);
+                          reload();
+                        }),
+                    })
+                  }
                 >
                   Remove
                 </button>
@@ -897,6 +905,7 @@ function Passkeys() {
 }
 
 function Data() {
+  const ask = useConfirm();
   const action = useToastAction();
   return (
     <section className="stack" aria-labelledby="data-title">
@@ -929,16 +938,18 @@ function Data() {
         <button
           className="btn-link danger"
           disabled={action.busy}
-          onClick={() => {
-            const sure = window.confirm(
-              "Delete your account? Your stats, history and friends are removed for good.",
-            );
-            if (!sure) return;
-            void action.run(async () => {
-              await deleteAccount();
-              navigate("/");
-            });
-          }}
+          onClick={() =>
+            ask({
+              title: "Delete your account?",
+              text: "Your stats, history and friends are removed for good.",
+              yes: "Delete",
+              run: () =>
+                void action.run(async () => {
+                  await deleteAccount();
+                  navigate("/");
+                }),
+            })
+          }
         >
           Delete account
         </button>

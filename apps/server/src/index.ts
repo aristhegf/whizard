@@ -52,7 +52,7 @@ import {
   signUpOptions,
   signUpVerify,
 } from "./passkeys";
-import { addSubscription, getPushKey, pingFriend, removeSubscription } from "./push";
+import { addSubscription, getPings, getPushKey, pingFriend, removeSubscription } from "./push";
 import { COUNTRY_HEADER, NETWORK_HEADER } from "./presence";
 import { ACCOUNT_HEADER } from "./room";
 import { decideReport, getAdminActivity, getAdminOverview, getAdminReports } from "./admin";
@@ -294,6 +294,7 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["PATCH", /^\/api\/friends\/([^/]+)$/, updateFriend],
   ["DELETE", /^\/api\/friends\/([^/]+)$/, removeFriend],
   ["POST", /^\/api\/friends\/([^/]+)\/ping$/, pingFriend],
+  ["GET", /^\/api\/pings$/, getPings],
   ["GET", /^\/api\/push\/key$/, getPushKey],
   ["POST", /^\/api\/push\/subscriptions$/, addSubscription],
   ["DELETE", /^\/api\/push\/subscriptions$/, removeSubscription],

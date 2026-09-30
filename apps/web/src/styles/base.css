@@ -237,6 +237,60 @@ body {
   background: rgb(255 212 63 / 12%);
 }
 
+/* What an (i) in the lobby's settings opens (InfoTip): a popover, which the browser draws above
+   any sheet or dialog. InfoTip puts it by its (i). */
+.info-tip {
+  position: fixed;
+  inset: auto;
+  max-width: min(260px, calc(100vw - 16px));
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  background: #15134a;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  box-shadow: var(--shadow);
+}
+
+.info-tip:popover-open {
+  animation: info-tip-in 160ms ease-out;
+}
+
+@keyframes info-tip-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+[data-reduce-motion] .info-tip:popover-open {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .info-tip:popover-open {
+    animation: none;
+  }
+}
+
+/* "Are you sure?" (ConfirmDialog). */
+.confirm-dialog {
+  width: min(400px, calc(100vw - 2 * var(--gutter)));
+}
+
+.confirm-dialog[open] {
+  display: grid;
+  gap: 12px;
+}
+
+.confirm-dialog p {
+  margin: 0;
+}
+
 .heading-hint-tip {
   max-width: min(260px, calc(100vw - 16px)) !important;
   padding: 10px 14px;
@@ -1414,6 +1468,53 @@ html[data-reduce-motion] *::after {
   box-shadow: var(--shadow);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+}
+
+/* A friend's ping, along the top of whichever page is open. */
+.ping-bar {
+  position: fixed;
+  top: calc(12px + env(safe-area-inset-top));
+  left: 50%;
+  z-index: 36;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(480px, calc(100% - 2 * var(--gutter)));
+  padding: 8px 8px 8px 16px;
+  transform: translateX(-50%);
+  border: 1.5px solid rgb(255 200 61 / 70%);
+  border-radius: var(--radius);
+  background: var(--panel-strong);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: ping-bar-in 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ping-bar > svg {
+  flex: none;
+  color: var(--gold);
+}
+
+.ping-bar .btn {
+  flex: none;
+}
+
+@keyframes ping-bar-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -16px);
+  }
+}
+
+[data-reduce-motion] .ping-bar {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ping-bar {
+    animation: none;
+  }
 }
 
 .return-text {

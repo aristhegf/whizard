@@ -6,6 +6,7 @@ import {
   type PointerEvent,
   type ReactNode,
 } from "react";
+import { cssZoom } from "./common";
 
 /** How far down, or how fast, a drag has to go to close the sheet rather than spring back. */
 const CLOSE_DISTANCE = 110;
@@ -27,7 +28,8 @@ export function BottomSheet({
   onClose: () => void;
   /** The top of the sheet, which is also what's dragged. Gets `close`, which slides it away. */
   header: (close: () => void) => ReactNode;
-  children: ReactNode;
+  /** What's in it; as a function it gets `close` too, for a choice that should slide it away. */
+  children: ReactNode | ((close: () => void) => ReactNode);
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [closing, setClosing] = useState(false);
@@ -60,8 +62,9 @@ export function BottomSheet({
     if (start.current?.id !== event.pointerId) return;
     last.current = { y: event.clientY, t: event.timeStamp };
     const dy = event.clientY - start.current.y;
-    // Pulling up gives a little, then stops: the sheet is already all the way open.
-    setDrag(dy > 0 ? dy : dy / 6);
+    // Pulling up gives a little, then stops: the sheet is already all the way open. The sheet
+    // moves in its own pixels, which a scaled page makes bigger or smaller than the screen's.
+    setDrag((dy > 0 ? dy : dy / 6) / cssZoom(dialog.current));
   };
 
   const onPointerUp = (event: PointerEvent<HTMLElement>) => {
@@ -108,7 +111,7 @@ export function BottomSheet({
         <span className="sheet-handle" aria-hidden="true" />
         {header(close)}
       </div>
-      {children}
+      {typeof children === "function" ? children(close) : children}
     </dialog>
   );
 }
