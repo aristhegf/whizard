@@ -1,5 +1,4 @@
 import {
-  ELIMINATION_MIN_PLAYERS,
   INSANE_PIECES,
   JIGSAW_LEVELS,
   JIGSAW_MODES,
@@ -8,13 +7,13 @@ import {
   jigsawGrid,
   jigsawSettingsSchema,
   jigsawTimeLimit,
-  roundCount,
   type JigsawLevel,
   type JigsawLevelChoice,
   type JigsawMode,
   type JigsawSettings,
 } from "@whizard/game-core";
 import { SettingRow, SettingSelect } from "../../ui/SettingSelect";
+import { eliminationLength, FixedTimeRow, LevelRow, ModeRow } from "../settingRows";
 
 export function parseJigsawSettings(settings: unknown): JigsawSettings | null {
   const parsed = jigsawSettingsSchema.safeParse(settings);
@@ -54,14 +53,11 @@ export const modeName = (mode: JigsawMode) => JIGSAW_MODES.find((m) => m.id === 
 export const levelSummary = (settings: JigsawSettings) =>
   `${modeName(settings.mode)} · ${levelName(settings.level)}`;
 
-/** The countdown each level gets, for the hint under Level. */
-function timeHint(settings: JigsawSettings): string | null {
-  if (settings.mode === "classic") return "No clock: take as long as you need.";
-  if (settings.level === "auto") {
-    return "Each round a level harder, up to Insane for the final. The countdown grows with the pieces.";
-  }
-  const time = minutes(jigsawTimeLimit(settings.level, piecesOf(settings.level)));
-  return settings.mode === "elimination" ? `${time} for each round.` : `${time} on the countdown.`;
+/** The countdown each level gets, shown where Time would be. */
+function timeValue(settings: JigsawSettings): string {
+  if (settings.mode === "classic") return "No clock";
+  if (settings.level === "auto") return "Grows each round";
+  return minutes(jigsawTimeLimit(settings.level, piecesOf(settings.level)));
 }
 
 /** The jigsaw's rows in the lobby's Room Settings list. Only the host can change them. */
@@ -81,61 +77,34 @@ export function JigsawSettingsRows({
   onPickPhoto: () => void;
 }) {
   const elimination = settings.mode === "elimination";
-  const group = Math.max(players, ELIMINATION_MIN_PLAYERS);
-  const rounds = roundCount(group);
-  const hint = timeHint(settings);
   return (
     <>
-      <SettingRow
-        icon="games"
-        id="jigsaw-mode"
-        label="Game Mode"
-        hint={
-          <>
-            {JIGSAW_MODES.find((m) => m.id === settings.mode)?.description}
-            {elimination &&
-              ` With ${group} players that’s ${rounds} knock-out ${rounds === 1 ? "round" : "rounds"} and the final.`}
-          </>
-        }
-      >
-        <SettingSelect
-          id="jigsaw-mode"
-          label="Game Mode"
-          value={settings.mode}
-          disabled={!editable}
-          options={JIGSAW_MODES.map((m) => ({ value: m.id, label: m.name }))}
-          onChange={(value) => {
-            const mode = value as JigsawMode;
-            // Auto is Elimination's; leaving it, the level goes back to Easy.
-            const level =
-              mode !== "elimination" && settings.level === "auto" ? "easy" : settings.level;
-            onChange({ ...settings, mode, level });
-          }}
-        />
-      </SettingRow>
-      <SettingRow icon="trophy" id="level" label="Level" hint={hint ?? undefined}>
-        <SettingSelect
-          id="level"
-          label="Level"
-          value={settings.level}
-          disabled={!editable}
-          options={[
-            ...(elimination ? [{ value: "auto", label: levelName("auto") }] : []),
-            ...JIGSAW_LEVELS.map((l) => ({ value: l.id, label: levelName(l.id) })),
-          ]}
-          onChange={(value) => onChange({ ...settings, level: value as JigsawLevelChoice })}
-        />
-      </SettingRow>
-      <SettingRow
-        icon="star"
-        id="picture"
-        label="Picture"
-        hint={
+      <ModeRow
+        modes={JIGSAW_MODES}
+        value={settings.mode}
+        extra={
           elimination
-            ? "The first round uses this picture; every round after gets a new one."
-            : undefined
+            ? `${eliminationLength(players, null, "")} The first round uses the picture chosen here.`
+            : null
         }
-      >
+        editable={editable}
+        onChange={(mode) => {
+          // Auto is Elimination's; leaving it, the level goes back to Easy.
+          const level =
+            mode !== "elimination" && settings.level === "auto" ? "easy" : settings.level;
+          onChange({ ...settings, mode, level });
+        }}
+      />
+      <LevelRow
+        choices={[
+          ...(elimination ? [{ value: "auto" as const, label: levelName("auto") }] : []),
+          ...JIGSAW_LEVELS.map((l) => ({ value: l.id, label: levelName(l.id) })),
+        ]}
+        value={settings.level}
+        editable={editable}
+        onChange={(level) => onChange({ ...settings, level })}
+      />
+      <SettingRow icon="star" id="picture" label="Picture">
         <SettingSelect
           id="picture"
           label="Picture"
@@ -172,6 +141,7 @@ export function JigsawSettingsRows({
           </button>
         </div>
       )}
+      <FixedTimeRow label="Time" value={timeValue(settings)} />
     </>
   );
 }

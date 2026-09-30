@@ -70,8 +70,8 @@ async function place(page: Page, cell: number, value: number) {
 
 async function start(page: Page, size: "4" | "6" | "9", button: RegExp) {
   await openSettings(page);
-  await chooseSetting(page, "Grid", size);
-  await expectSetting(page, "Grid", size);
+  await chooseSetting(page, "Level", size);
+  await expectSetting(page, "Level", size);
   await closeSheet(page);
   await page.getByRole("button", { name: button }).press("Enter");
   await expect(grid(page)).toBeVisible({ timeout: 10_000 });

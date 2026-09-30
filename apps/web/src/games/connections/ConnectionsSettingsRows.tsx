@@ -5,7 +5,7 @@ import {
   connectionsSettingsSchema,
   type ConnectionsSettings,
 } from "@whizard/game-core";
-import { SettingRow, SettingSelect } from "../../ui/SettingSelect";
+import { LevelRow, TimeRow } from "../settingRows";
 
 export function parseConnectionsSettings(settings: unknown): ConnectionsSettings | null {
   const parsed = connectionsSettingsSchema.safeParse(settings);
@@ -24,30 +24,22 @@ export function ConnectionsSettingsRows({
 }) {
   return (
     <>
-      <SettingRow icon="trophy" id="level" label="Level">
-        <SettingSelect
-          id="level"
-          label="Level"
-          value={settings.level}
-          disabled={!editable}
-          options={LEVELS.map((level) => ({ value: level, label: LEVEL_NAMES[level] }))}
-          onChange={(value) =>
-            onChange({ ...settings, level: value as ConnectionsSettings["level"] })
-          }
-        />
-      </SettingRow>
-      <SettingRow icon="clock" id="minutes" label="Time">
-        <SettingSelect
-          id="minutes"
-          label="Time"
-          value={String(settings.minutes)}
-          disabled={!editable}
-          options={CONNECTIONS_MINUTES.map((m) => ({ value: String(m), label: `${m} minutes` }))}
-          onChange={(value) =>
-            onChange({ ...settings, minutes: Number(value) as ConnectionsSettings["minutes"] })
-          }
-        />
-      </SettingRow>
+      <LevelRow
+        choices={LEVELS.map((level) => ({ value: level, label: LEVEL_NAMES[level] }))}
+        value={settings.level}
+        editable={editable}
+        onChange={(level) => onChange({ ...settings, level })}
+      />
+      <TimeRow
+        label="Time limit"
+        value={settings.minutes}
+        choices={CONNECTIONS_MINUTES}
+        unit="minutes"
+        editable={editable}
+        onChange={(minutes) =>
+          onChange({ ...settings, minutes: minutes as ConnectionsSettings["minutes"] })
+        }
+      />
     </>
   );
 }

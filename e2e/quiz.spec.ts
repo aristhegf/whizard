@@ -328,8 +328,8 @@ test("an Elimination game knocks players out until two meet in the final", async
   await expectSetting(host, "Questions per round", "5");
   await chooseSetting(host, "Time per question", "10");
   await expectSetting(host, "Time per question", "10");
-  // How long the game will be waits behind the (i) beside the number.
-  await host.getByRole("button", { name: "About Questions per round" }).click();
+  // How long the game will be waits behind the (i) beside Game Mode.
+  await host.getByRole("button", { name: "About Game Mode" }).click();
   await expect(
     host.getByText(/With 3 players that’s 1 knock-out round and the final: 10/),
   ).toBeVisible();
@@ -387,10 +387,8 @@ test("Auto starts easy and gets harder", async ({ browser }) => {
   await openSettings(page);
   await chooseSetting(page, /^Level/, "auto");
   await expectSetting(page, /^Level/, "auto");
-  // What a setting means waits behind the (i) beside it.
-  await page.getByRole("button", { name: "About Level" }).click();
-  await expect(page.getByText(/Starts easy and gets harder each round/)).toBeVisible();
-  await page.keyboard.press("Escape");
+  // The levels are just their names: no (i) to explain them.
+  await expect(page.getByRole("button", { name: "About Level" })).toHaveCount(0);
   await chooseSetting(page, "Questions", "5");
   await expectSetting(page, "Questions", "5");
   await closeSheet(page);

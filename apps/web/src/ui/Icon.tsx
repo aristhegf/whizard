@@ -26,6 +26,7 @@ import {
   House,
   Info,
   Layers,
+  Lock,
   Lightbulb,
   Link,
   Link2,
@@ -125,6 +126,7 @@ const ICONS = {
   layers: Layers,
   puzzle: Puzzle,
   star: Star,
+  lock: Lock,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;
