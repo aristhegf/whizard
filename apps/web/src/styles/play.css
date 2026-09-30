@@ -210,6 +210,15 @@
   align-items: center;
 }
 
+/* A form inside it (Word Rush) lays out as part of the column, so its buttons can go last. */
+.play-column > form {
+  display: contents;
+}
+
+.play-column .play-actions {
+  order: 1;
+}
+
 /* Who joined or left: one slim line of text at the bottom, no box. */
 .play-toast {
   align-self: end;
