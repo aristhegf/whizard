@@ -247,7 +247,9 @@ export {
   type SpotItView,
 } from "./games/spotIt/spotIt";
 export {
+  CONNECTIONS_CLASSIC_LIMIT_MS,
   CONNECTIONS_COUNTDOWN_MS,
+  CONNECTIONS_CUT_MS,
   CONNECTIONS_GROUP_SIZE,
   CONNECTIONS_MAX_MISTAKES,
   GROUP_POINTS,
@@ -260,15 +262,19 @@ export {
 } from "./games/connections/connections";
 export {
   CONNECTIONS_MINUTES,
+  CONNECTIONS_MODES,
   DEFAULT_CONNECTIONS_SETTINGS,
   connectionsSettingsSchema,
   type ConnectionsContentRequest,
   type ConnectionsGroup,
+  type ConnectionsMode,
   type ConnectionsPuzzle,
   type ConnectionsSettings,
 } from "./games/connections/settings";
 export {
+  LOGIC_CLASSIC_LIMIT_MS,
   LOGIC_COUNTDOWN_MS,
+  LOGIC_CUT_MS,
   LOGIC_MAX_MISTAKES,
   LOGIC_POINTS_PER_CELL,
   logicGame,
@@ -281,9 +287,11 @@ export { countSolutions, logicPuzzle, type LogicPuzzle } from "./games/logic/gri
 export {
   DEFAULT_LOGIC_SETTINGS,
   LOGIC_MINUTES,
+  LOGIC_MODES,
   LOGIC_SIZES,
   logicSettingsSchema,
   logicShape,
+  type LogicMode,
   type LogicSettings,
   type LogicSize,
 } from "./games/logic/settings";
