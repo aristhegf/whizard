@@ -18,9 +18,10 @@ import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { play } from "../../sounds";
 import { Brand } from "../../ui/Chrome";
 import { useErrorShake } from "../../ui/errorShake";
+import { PlayToast } from "../../ui/gameNotice";
 import { Icon } from "../../ui/Icon";
-import { MuteButton } from "../../ui/MuteButton";
 import { useServerNow } from "../../useServerNow";
+import { PlayFaces, PlayTimer, PlayTop, type Face } from "../play";
 import { Podium } from "../../ui/Podium";
 import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
@@ -89,11 +90,12 @@ export function RoundsScreen(props: Props) {
       return <Results context={context} results={(stage as Stage<"done">).results} />;
     default:
       return (
-        <div className="game">
-          <Bar context={context} index={null} />
+        <div className="game play">
+          <Top context={context} index={null} />
           <div className="game-layout">
-            <div className="game-main">
+            <div className="game-main play-main">
               <p className="watching">A game is in progress. You’ll be in the next one.</p>
+              <PlayFaces faces={facesOf(context)} playerId={props.playerId} />
             </div>
             <ScoreBoard
               standings={view.standings}
@@ -101,55 +103,61 @@ export function RoundsScreen(props: Props) {
               avatarOf={context.avatarOf}
             />
           </div>
+          <PlayToast />
         </div>
       );
   }
 }
 
-function Bar({
-  context,
-  index,
-  done = false,
-  timer,
-}: {
-  context: Context;
-  index: number | null;
-  done?: boolean;
-  timer?: ReactNode;
-}) {
-  const { view, room, onQuit, latency } = context;
-  const finished = index === null ? 0 : index + (done ? 1 : 0);
+/**
+ * The top of the screen: which round, as plain text, and bare Settings and Quit icons. Before
+ * the first round, the game's name.
+ */
+function Top({ context, index }: { context: Context; index: number | null }) {
+  const { view, onQuit, latency } = context;
   return (
-    <header className="game-bar">
-      <div className="game-bar-row">
-        <span className="bar-brand">
-          <Brand />
-        </span>
-        <span className="room-label" translate="no">
-          Room: {room.code}
-        </span>
-        {index !== null && (
-          <span className="progress">
-            Round {index + 1} / {view.total}
-          </span>
-        )}
-        <span className="bar-end">
-          {latency}
-          {timer}
-          <MuteButton />
-          <button className="btn quit-btn" onClick={onQuit}>
-            Quit
-          </button>
-        </span>
-      </div>
-      {index !== null && (
-        <div className="question-progress" aria-hidden="true">
-          <div style={{ width: `${(finished / Math.max(1, view.total)) * 100}%` }} />
-        </div>
-      )}
-    </header>
+    <PlayTop
+      latency={latency}
+      onQuit={onQuit}
+      label={
+        index === null ? (
+          context.name
+        ) : (
+          <>
+            Round <b>{index + 1}</b> / {view.total}
+          </>
+        )
+      }
+    />
   );
 }
+
+/** Everyone's score, as faces for a phone. Anyone who left, or is out, is dimmed. */
+export function facesOf(context: {
+  view: {
+    standings: {
+      playerId: string;
+      nickname: string;
+      rank: number;
+      score: number;
+      left?: boolean;
+      status?: string;
+    }[];
+  };
+  avatarOf: (playerId: string) => string | null;
+}): Face[] {
+  return context.view.standings.map((s) => ({
+    playerId: s.playerId,
+    nickname: s.nickname,
+    avatar: context.avatarOf(s.playerId),
+    rank: s.rank,
+    value: s.score.toLocaleString(),
+    gone: !!s.left || s.status === "out" || s.status === "left",
+  }));
+}
+
+/** Seconds left, rounded up, as the big timer's milliseconds. */
+export const timerMs = (remaining: number) => Math.ceil(remaining / 1000) * 1000;
 
 // Playing a round ------------------------------------------------------------------------------
 
@@ -191,14 +199,15 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
 
   if (!visible) {
     return (
-      <div className="game">
-        <Bar context={context} index={null} />
+      <div className="game play">
+        <Top context={context} index={null} />
         <div className="countdown" aria-live="polite">
           <img className="countdown-game-art" src={context.art} alt="" />
           <p className="countdown-label">Get ready</p>
           <p className="countdown-number">{countdown}</p>
           <span className="pill pill-glow">{context.name}</span>
         </div>
+        <PlayToast />
       </div>
     );
   }
@@ -212,25 +221,12 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
     });
   const skip = () => client.act({ type: "skip", index: stage.index });
 
-  const timer = (
-    <span
-      className={`timer-pill${remaining / view.timeLimitMs < 0.25 ? " low" : ""}`}
-      role="progressbar"
-      aria-label="Time left"
-      aria-valuemin={0}
-      aria-valuemax={view.timeLimitMs}
-      aria-valuenow={remaining}
-    >
-      <Icon name="clock" size={22} stroke={2.4} />
-      {secondsLeft}s
-    </span>
-  );
-
   return (
-    <div className="game">
-      <Bar context={context} index={stage.index} timer={timer} />
+    <div className="game play">
+      <Top context={context} index={stage.index} />
       <div className="game-layout">
-        <div className="game-main rounds-main">
+        <div className="game-main play-main play-column rounds-main">
+          <PlayTimer ms={timerMs(remaining)} low={remaining / view.timeLimitMs < 0.25} />
           {view.game === "word-rush" ? (
             <WordPuzzle
               puzzle={stage.puzzle as WordPuzzleView}
@@ -246,9 +242,13 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
               onTap={guess}
             />
           )}
-          <button className="btn-link give-up" onClick={skip}>
-            {view.game === "word-rush" ? "Give up on this word" : "Skip this grid"}
-          </button>
+          <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
+          <div className="play-actions">
+            <button className="play-pill" onClick={skip}>
+              <Icon name="skip" size={20} />
+              {view.game === "word-rush" ? "Give up on this word" : "Skip this grid"}
+            </button>
+          </div>
         </div>
         <ScoreBoard
           standings={view.standings}
@@ -256,6 +256,7 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
           avatarOf={context.avatarOf}
         />
       </div>
+      <PlayToast />
     </div>
   );
 }
@@ -443,11 +444,12 @@ export function SpotPuzzle({
   const board = useShakeOnMiss<HTMLDivElement>(tried.length);
   return (
     <div className="spot-puzzle">
-      <p className="word-kind">
-        <span className="pill pill-glow">{SPOT_PROMPTS[grid.kind]}</span>
+      <p className="play-task">
+        {SPOT_PROMPTS[grid.kind]}
         {tried.length > 0 && (
-          <span className="dim small" aria-live="polite">
-            {triesLeft} {triesLeft === 1 ? "try" : "tries"} left
+          <span className="spot-tries" aria-live="polite">
+            {" "}
+            · {triesLeft} {triesLeft === 1 ? "try" : "tries"} left
           </span>
         )}
       </p>
@@ -542,10 +544,10 @@ function Result({ context, stage }: { context: Context; stage: Stage<"result"> }
   useEffect(() => play(solved ? "correct" : "wrong"), [solved]);
 
   return (
-    <div className="game">
-      <Bar context={context} index={stage.index} done />
+    <div className="game play">
+      <Top context={context} index={stage.index} />
       <div className="game-layout">
-        <div className="game-main rounds-main">
+        <div className="game-main play-main rounds-main">
           <Reveal game={view.game} reveal={stage.reveal} />
           <p className={`verdict ${solved ? "good" : "bad"}`} role="status">
             {VERDICTS[stage.outcome]}
@@ -559,6 +561,7 @@ function Result({ context, stage }: { context: Context; stage: Stage<"result"> }
               Next
             </button>
           </div>
+          <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
         </div>
         <ScoreBoard
           standings={view.standings}
@@ -566,6 +569,7 @@ function Result({ context, stage }: { context: Context; stage: Stage<"result"> }
           avatarOf={context.avatarOf}
         />
       </div>
+      <PlayToast />
     </div>
   );
 }
@@ -591,6 +595,7 @@ export function Reveal({ game, reveal }: { game: RoundsGame; reveal: WordReveal 
   const { grid, odd } = reveal as SpotItReveal;
   return (
     <div className="spot-puzzle">
+      <p className="play-task">The odd one out</p>
       <SpotGrid grid={grid} odd={odd} />
     </div>
   );

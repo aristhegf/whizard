@@ -42,8 +42,9 @@ export const ordinal = (n: number) => {
   return `${n}${suffix}`;
 };
 
-export function Bar({ context, timer }: { context: EliminationContext; timer?: ReactNode }) {
-  const { view, room, onQuit, latency } = context;
+/** Where the game is: "Round 2 of 4 · Grid 3 of 5", "The Final · Word 2 of 5". */
+export function eliminationWhere(context: EliminationContext): string {
+  const { view } = context;
   const where = view.inFinal
     ? view.suddenDeath
       ? "Sudden death"
@@ -51,6 +52,15 @@ export function Bar({ context, timer }: { context: EliminationContext; timer?: R
     : view.round !== null
       ? `Round ${view.round} of ${view.rounds}`
       : "";
+  // Between items (knock-outs, the final's intro) there's nothing to count.
+  if (view.stage.kind !== "question" && view.stage.kind !== "reveal") return where;
+  return view.roundItem
+    ? `${where} · ${context.noun} ${view.roundItem.number} of ${view.roundItem.of}`
+    : `${where} · ${context.noun} ${view.questionNumber}`;
+}
+
+export function Bar({ context, timer }: { context: EliminationContext; timer?: ReactNode }) {
+  const { view, room, onQuit, latency } = context;
   return (
     <header className="game-bar">
       <div className="game-bar-row">
@@ -60,14 +70,7 @@ export function Bar({ context, timer }: { context: EliminationContext; timer?: R
         <span className="room-label" translate="no">
           Room: {room.code}
         </span>
-        <span className="progress elim-progress">
-          {where}
-          {/* Between items (knock-outs, the final's intro) there's nothing to count. */}
-          {(view.stage.kind === "question" || view.stage.kind === "reveal") &&
-            (view.roundItem
-              ? ` · ${context.noun} ${view.roundItem.number} of ${view.roundItem.of}`
-              : ` · ${context.noun} ${view.questionNumber}`)}
-        </span>
+        <span className="progress elim-progress">{eliminationWhere(context)}</span>
         <span className="bar-end">
           <span className="pill elim-left" title="Players still in">
             <Icon name="users" size={18} />

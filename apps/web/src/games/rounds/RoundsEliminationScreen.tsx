@@ -13,22 +13,26 @@ import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { play } from "../../sounds";
 import { useServerNow } from "../../useServerNow";
 import {
-  Bar,
   Board,
   Cut,
   Done,
+  eliminationWhere,
   FinalIntro,
-  TimerPill,
   Watching,
   type EliminationContext,
 } from "../elimination/parts";
+import { PlayToast } from "../../ui/gameNotice";
+import { Icon } from "../../ui/Icon";
+import { PlayFaces, PlayTimer, PlayTop } from "../play";
 import { elapsedSince } from "../quiz/QuizScreen";
 import {
+  facesOf,
   Reveal,
   RoundsReview,
   SPOT_PROMPTS,
   SpotGrid,
   SpotPuzzle,
+  timerMs,
   VERDICTS,
   WordPuzzle,
 } from "./RoundsScreen";
@@ -89,6 +93,22 @@ export function RoundsEliminationScreen(props: Props) {
   }
 }
 
+/** Where the game is, as plain text, and how many are still in; bare Settings and Quit. */
+function Top({ context }: { context: Context }) {
+  return (
+    <PlayTop
+      latency={context.latency}
+      onQuit={context.onQuit}
+      label={
+        <>
+          <span className="elim-progress">{eliminationWhere(context) || context.title}</span>
+          <span className="play-alive"> · {context.view.aliveCount} in</span>
+        </>
+      }
+    />
+  );
+}
+
 function Question({ context, stage }: { context: Context; stage: Stage<"question"> }) {
   const { view, client } = context;
   const now = useServerNow(client.serverNow);
@@ -122,14 +142,15 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
 
   if (!visible) {
     return (
-      <div className="game">
-        <Bar context={context} />
+      <div className="game play">
+        <Top context={context} />
         <div className="countdown" aria-live="polite">
           <img className="countdown-game-art" src={context.art} alt="" />
           <p className="countdown-label">Get ready</p>
           <p className="countdown-number">{countdown}</p>
           <span className="pill pill-glow">Elimination · {context.title}</span>
         </div>
+        <PlayToast />
       </div>
     );
   }
@@ -145,13 +166,11 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
   const waiting = `Waiting for the others… ${stage.answeredCount} of ${stage.aliveCount} done`;
 
   return (
-    <div className="game">
-      <Bar
-        context={context}
-        timer={<TimerPill remaining={remaining} limitMs={view.timeLimitMs} />}
-      />
+    <div className="game play">
+      <Top context={context} />
       <div className="game-layout">
-        <div className="game-main rounds-main">
+        <div className="game-main play-main play-column rounds-main">
+          <PlayTimer ms={timerMs(remaining)} low={remaining / view.timeLimitMs < 0.25} />
           <Watching view={view} />
           {!stage.playing ? (
             <Spectate game={view.game} puzzle={stage.puzzle} />
@@ -190,16 +209,20 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
               onTap={guess}
             />
           )}
-          {busy ? (
-            <button className="btn-link give-up" onClick={skip}>
-              {view.game === "word-rush" ? "Give up on this word" : "Skip this grid"}
-            </button>
-          ) : (
-            <p className="muted center">{waiting}</p>
+          {!busy && <p className="muted center">{waiting}</p>}
+          <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
+          {busy && (
+            <div className="play-actions">
+              <button className="play-pill" onClick={skip}>
+                <Icon name="skip" size={20} />
+                {view.game === "word-rush" ? "Give up on this word" : "Skip this grid"}
+              </button>
+            </div>
           )}
         </div>
         <Board context={context} />
       </div>
+      <PlayToast />
     </div>
   );
 }
@@ -216,9 +239,7 @@ function Spectate({
     const grid = puzzle as SpotItPuzzleView;
     return (
       <div className="spot-puzzle">
-        <p className="word-kind">
-          <span className="pill pill-glow">{SPOT_PROMPTS[grid.kind]}</span>
-        </p>
+        <p className="play-task">{SPOT_PROMPTS[grid.kind]}</p>
         <SpotGrid grid={grid} />
       </div>
     );
@@ -249,10 +270,10 @@ function Answer({ context, stage }: { context: Context; stage: Stage<"reveal"> }
     if (stage.playing) play(solved ? "correct" : "wrong");
   }, [stage.playing, solved]);
   return (
-    <div className="game">
-      <Bar context={context} />
+    <div className="game play">
+      <Top context={context} />
       <div className="game-layout">
-        <div className="game-main rounds-main">
+        <div className="game-main play-main rounds-main">
           <Watching view={view} />
           <Reveal game={view.game} reveal={stage.reveal} />
           {stage.playing && result && (
@@ -261,9 +282,11 @@ function Answer({ context, stage }: { context: Context; stage: Stage<"reveal"> }
               {result.points > 0 && <span className="points">+{result.points}</span>}
             </p>
           )}
+          <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
         </div>
         <Board context={context} />
       </div>
+      <PlayToast />
     </div>
   );
 }
