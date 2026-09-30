@@ -8,7 +8,9 @@ import {
   useState,
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
+  type RefObject,
 } from "react";
+import { Icon } from "../../ui/Icon";
 import { KNOB_REACH, PIECE_SIZE, pieceShapes } from "./pieceShape";
 
 /**
@@ -62,7 +64,8 @@ type Gesture =
   | { kind: "pinch"; distance: number; origin: Transform; mid: Point };
 
 export function InsaneBoard({
-  side,
+  cols,
+  rows,
   src,
   board,
   tray,
@@ -70,7 +73,8 @@ export function InsaneBoard({
   storageKey,
   onPlace,
 }: {
-  side: number;
+  cols: number;
+  rows: number;
   src: string;
   /** From the server: `board[spot] === spot` once that piece is placed. */
   board: number[];
@@ -80,8 +84,10 @@ export function InsaneBoard({
   storageKey: string;
   onPlace: (piece: number) => void;
 }) {
-  const size = side * U;
-  const shapes = useMemo(() => pieceShapes(side, src), [side, src]);
+  // The canvas, in the picture's own shape.
+  const width = cols * U;
+  const height = rows * U;
+  const shapes = useMemo(() => pieceShapes(cols, rows, src), [cols, rows, src]);
   const clipId = `insane${useId().replace(/[^a-zA-Z0-9]/g, "")}-`;
 
   const viewport = useRef<HTMLDivElement>(null);
@@ -102,7 +108,7 @@ export function InsaneBoard({
   // Pieces the server has placed, and yours it hasn't confirmed yet.
   const isPlaced = (piece: number) => board[piece] === piece || pending.has(piece);
 
-  const placed = Array.from({ length: side * side }, (_, i) => i).filter(isPlaced);
+  const placed = Array.from({ length: cols * rows }, (_, i) => i).filter(isPlaced);
   const onCanvas = Object.keys(loose)
     .map(Number)
     .filter((p) => !isPlaced(p));
@@ -122,16 +128,16 @@ export function InsaneBoard({
 
   const fitScale = useCallback(() => {
     const r = bounds();
-    return r ? Math.min(r.width / size, r.height / size) * FIT : 1;
-  }, [bounds, size]);
+    return r ? Math.min(r.width / width, r.height / height) * FIT : 1;
+  }, [bounds, width, height]);
 
   const clamp = useCallback(
     (t: Transform): Transform => {
       const r = bounds();
       if (!r) return t;
       const scale = Math.min(Math.max(t.scale, fitScale()), fitScale() * MAX_ZOOM);
-      const w = size * scale;
-      const h = size * scale;
+      const w = width * scale;
+      const h = height * scale;
       const x = Math.min(
         Math.max(t.x, Math.min(0, r.width - w) - PAN_MARGIN),
         Math.max(0, r.width - w) + PAN_MARGIN,
@@ -142,7 +148,7 @@ export function InsaneBoard({
       );
       return { scale, x, y };
     },
-    [bounds, fitScale, size],
+    [bounds, fitScale, width, height],
   );
 
   const fit = useCallback(
@@ -151,16 +157,19 @@ export function InsaneBoard({
       if (!r) return;
       const scale = fitScale();
       zoomed.current = false;
-      apply({ scale, x: (r.width - size * scale) / 2, y: (r.height - size * scale) / 2 }, animate);
+      apply(
+        { scale, x: (r.width - width * scale) / 2, y: (r.height - height * scale) / 2 },
+        animate,
+      );
     },
-    [apply, bounds, fitScale, size],
+    [apply, bounds, fitScale, width, height],
   );
 
   /** Zooms in until the canvas fills the view, around a point on the canvas. */
   const fill = (at: Point) => {
     const r = bounds();
     if (!r) return;
-    let scale = Math.max(r.width / size, r.height / size);
+    let scale = Math.max(r.width / width, r.height / height);
     // A canvas that already nearly fills the view goes in closer instead.
     if (scale < view.current.scale * 1.2) scale = view.current.scale * 2;
     zoomed.current = true;
@@ -245,7 +254,7 @@ export function InsaneBoard({
     const t = view.current;
     const x = (at.x - r.left - t.x) / t.scale - d.grab.x;
     const y = (at.y - r.top - t.y) / t.scale - d.grab.y;
-    const home = { x: (d.piece % side) * U, y: Math.floor(d.piece / side) * U };
+    const home = { x: (d.piece % cols) * U, y: Math.floor(d.piece / cols) * U };
     const tolerance = Math.max(SNAP, SNAP_PX / t.scale);
     if (Math.abs(x - home.x) < tolerance && Math.abs(y - home.y) < tolerance) {
       put(null);
@@ -266,8 +275,8 @@ export function InsaneBoard({
     }
     // It stays on the canvas where it was dropped.
     put({
-      x: Math.min(Math.max(x, 0), size - U),
-      y: Math.min(Math.max(y, 0), size - U),
+      x: Math.min(Math.max(x, 0), width - U),
+      y: Math.min(Math.max(y, 0), height - U),
     });
   };
 
@@ -425,7 +434,7 @@ export function InsaneBoard({
       lastTap.current = null;
       const t = view.current;
       const world = { x: (at.x - t.x) / t.scale, y: (at.y - t.y) / t.scale };
-      const onTheCanvas = world.x >= 0 && world.x <= size && world.y >= 0 && world.y <= size;
+      const onTheCanvas = world.x >= 0 && world.x <= width && world.y >= 0 && world.y <= height;
       if (onTheCanvas) fill(world);
       else fit(true);
     } else {
@@ -436,8 +445,8 @@ export function InsaneBoard({
   // Drawing -------------------------------------------------------------------------------
 
   const art = (piece: number) => {
-    const row = Math.floor(piece / side);
-    const col = piece % side;
+    const row = Math.floor(piece / cols);
+    const col = piece % cols;
     return (
       <svg
         className="insane-art"
@@ -448,9 +457,9 @@ export function InsaneBoard({
           href={src}
           x={-col * U}
           y={-row * U}
-          width={size}
-          height={size}
-          preserveAspectRatio="none"
+          width={width}
+          height={height}
+          preserveAspectRatio="xMidYMid slice"
           clipPath={`url(#${clipId}${piece})`}
         />
         <path className="jigsaw-edge" d={shapes[piece]} />
@@ -476,20 +485,20 @@ export function InsaneBoard({
         ref={viewport}
         className="insane-view"
         role="group"
-        aria-label={`Puzzle canvas, ${side * side} pieces. Pinch or scroll to zoom; double-tap to zoom in or out.`}
+        aria-label={`Puzzle canvas, ${cols * rows} pieces. Pinch or scroll to zoom; double-tap to zoom in or out.`}
         onPointerDown={onViewDown}
         onPointerMove={onViewMove}
         onPointerUp={onViewUp}
         onPointerCancel={onViewUp}
       >
-        <div ref={stage} className="insane-stage" style={{ width: size, height: size }}>
+        <div ref={stage} className="insane-stage" style={{ width, height }}>
           <div className="insane-canvas" />
           {placed.map((piece) => (
             <div
               key={piece}
               className="insane-piece placed"
               data-placed={piece}
-              style={at({ x: (piece % side) * U, y: Math.floor(piece / side) * U })}
+              style={at({ x: (piece % cols) * U, y: Math.floor(piece / cols) * U })}
             >
               {art(piece)}
             </div>
@@ -507,28 +516,32 @@ export function InsaneBoard({
         </div>
       </div>
 
-      <div
-        ref={trayRef}
-        className="insane-tray"
-        role="list"
-        aria-label={`Pieces to place, ${inTray.length} left in the tray`}
-        onPointerMove={onTrayMove}
-        onPointerUp={() => (trayPress.current = null)}
-        onPointerCancel={() => (trayPress.current = null)}
-      >
-        <img className="insane-peek" src={src} alt="The picture" />
-        {inTray.map((piece) => (
-          <div
-            key={piece}
-            role="listitem"
-            className={`insane-piece in-tray${drag?.piece === piece ? " lifted" : ""}`}
-            data-piece={piece}
-            aria-label={`Piece ${piece + 1}`}
-            onPointerDown={(event) => onTrayDown(event, piece)}
-          >
-            {art(piece)}
-          </div>
-        ))}
+      <div className="insane-tray-wrap">
+        <TrayArrow tray={trayRef} direction={-1} count={inTray.length} />
+        <div
+          ref={trayRef}
+          className="insane-tray"
+          role="list"
+          aria-label={`Pieces to place, ${inTray.length} left in the tray`}
+          onPointerMove={onTrayMove}
+          onPointerUp={() => (trayPress.current = null)}
+          onPointerCancel={() => (trayPress.current = null)}
+        >
+          <img className="insane-peek" src={src} alt="The picture" />
+          {inTray.map((piece) => (
+            <div
+              key={piece}
+              role="listitem"
+              className={`insane-piece in-tray${drag?.piece === piece ? " lifted" : ""}`}
+              data-piece={piece}
+              aria-label={`Piece ${piece + 1}`}
+              onPointerDown={(event) => onTrayDown(event, piece)}
+            >
+              {art(piece)}
+            </div>
+          ))}
+        </div>
+        <TrayArrow tray={trayRef} direction={1} count={inTray.length} />
       </div>
 
       {drag && (
@@ -561,4 +574,81 @@ function writeLoose(key: string, loose: Loose) {
   } catch {
     // Private windows and full storage: the pieces just won't survive a reload.
   }
+}
+
+/** How fast the tray slides while the pointer rests on an arrow, in pixels a second. */
+const SLIDE_SPEED = 520;
+
+/**
+ * An arrow at one end of the tray, for a mouse: resting the pointer on it slides the tray along
+ * until it's moved away, and a click jumps a trayful. Hidden at the tray's end, and on touch
+ * screens, where a swipe does it.
+ */
+function TrayArrow({
+  tray,
+  direction,
+  count,
+}: {
+  tray: RefObject<HTMLDivElement | null>;
+  direction: -1 | 1;
+  /** Pieces in the tray, so the arrow shows again as the tray changes. */
+  count: number;
+}) {
+  const [more, setMore] = useState(false);
+  const frame = useRef<number | null>(null);
+
+  useEffect(() => {
+    const el = tray.current;
+    if (!el) return;
+    const check = () =>
+      setMore(
+        direction < 0 ? el.scrollLeft > 1 : el.scrollLeft + el.clientWidth < el.scrollWidth - 1,
+      );
+    check();
+    el.addEventListener("scroll", check, { passive: true });
+    const resized = new ResizeObserver(check);
+    resized.observe(el);
+    return () => {
+      el.removeEventListener("scroll", check);
+      resized.disconnect();
+    };
+  }, [tray, direction, count]);
+
+  const stop = () => {
+    if (frame.current !== null) cancelAnimationFrame(frame.current);
+    frame.current = null;
+  };
+  useEffect(() => stop, []);
+
+  const slide = () => {
+    stop();
+    let last = performance.now();
+    const step = (time: number) => {
+      const el = tray.current;
+      if (!el) return;
+      el.scrollLeft += (direction * SLIDE_SPEED * (time - last)) / 1000;
+      last = time;
+      frame.current = requestAnimationFrame(step);
+    };
+    frame.current = requestAnimationFrame(step);
+  };
+
+  return (
+    <button
+      type="button"
+      className={`tray-arrow ${direction < 0 ? "left" : "right"}`}
+      aria-label={direction < 0 ? "Slide the tray left" : "Slide the tray right"}
+      hidden={!more}
+      onPointerEnter={(event) => {
+        if (event.pointerType === "mouse") slide();
+      }}
+      onPointerLeave={stop}
+      onClick={() => {
+        const el = tray.current;
+        el?.scrollBy({ left: direction * el.clientWidth * 0.8, behavior: "smooth" });
+      }}
+    >
+      <Icon name={direction < 0 ? "chevronLeft" : "chevronRight"} size={22} stroke={2.4} />
+    </button>
+  );
 }

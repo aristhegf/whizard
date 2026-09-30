@@ -38,8 +38,8 @@ import { JigsawScreen } from "./games/jigsaw/JigsawScreen";
 import {
   JigsawSettingsRows,
   parseJigsawSettings,
+  levelSummary,
   pictureName,
-  sizeName,
 } from "./games/jigsaw/JigsawSettingsPanel";
 import { LogicScreen } from "./games/logic/LogicScreen";
 import { gridName, LogicSettingsRows, parseLogicSettings } from "./games/logic/LogicSettingsRows";
@@ -435,14 +435,21 @@ function Lobby({
   const settings = gameId === "quiz" ? parseQuizSettings(room.game.settings) : null;
   const rounds = isRoundsGame(gameId) ? parseRoundsSettings(gameId, room.game.settings) : null;
   const jigsaw = gameId === "jigsaw" ? parseJigsawSettings(room.game.settings) : null;
-  const photo = useJigsawPhoto(room.code, isHost && gameId === "jigsaw");
+  // Insane keeps a photo's own shape; the other levels use a square.
+  const photo = useJigsawPhoto(
+    room.code,
+    isHost && gameId === "jigsaw",
+    jigsaw?.level === "insane" ? "own" : "square",
+  );
   const connections =
     gameId === "connections" ? parseConnectionsSettings(room.game.settings) : null;
   const logic = gameId === "logic" ? parseLogicSettings(room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
   const needMore =
-    settings?.variant === "elimination" || rounds?.mode === "elimination"
+    settings?.variant === "elimination" ||
+    rounds?.mode === "elimination" ||
+    jigsaw?.mode === "elimination"
       ? Math.max(0, ELIMINATION_MIN_PLAYERS - connected.length)
       : 0;
   const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
@@ -507,7 +514,7 @@ function Lobby({
                     ? pictureName(jigsaw.picture)
                     : (game?.description ?? "")}
               </span>
-              {!isHost && jigsaw && <p className="summary muted small">{sizeName(jigsaw.side)}</p>}
+              {!isHost && jigsaw && <p className="summary muted small">{levelSummary(jigsaw)}</p>}
               {!isHost && connections && (
                 <p className="summary muted small">
                   {LEVEL_NAMES[connections.level]} · {connections.minutes} minutes
@@ -633,6 +640,7 @@ function Lobby({
               {jigsaw && (
                 <JigsawSettingsRows
                   settings={jigsaw}
+                  players={connected.length}
                   editable={canEdit}
                   onChange={(next) => client.configure(next)}
                   onPickPhoto={photo.pick}
