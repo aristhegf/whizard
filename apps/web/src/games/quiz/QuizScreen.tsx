@@ -93,9 +93,11 @@ function StandardQuiz(props: Props) {
       return <Results context={context} review={stage.review} />;
     case "watching":
       return (
-        <QuizFrame context={context} index={null}>
-          <p className="watching">A game is in progress. You’ll be in the next one.</p>
-        </QuizFrame>
+        <QuizFrame
+          context={context}
+          index={null}
+          card={<p className="watching">A game is in progress. You’ll be in the next one.</p>}
+        />
       );
   }
 }
@@ -128,17 +130,23 @@ const letter = (i: number) => String.fromCharCode(65 + i);
 
 /**
  * The screen every standard-quiz stage shares: the topic and the mascot at the left, the question
- * in the middle, and everyone's scores at the right. On a laptop it all fits the one screen.
+ * card in the middle with everyone's scores beside it, matched to its height, and a line under the
+ * card. On a laptop it all fits the one screen.
  */
 function QuizFrame({
   context,
   index,
-  children,
+  timed = false,
+  card,
+  below,
 }: {
   context: GameContext;
   /** The question being played, or null before the first (and while watching). */
   index: number | null;
-  children: ReactNode;
+  /** Leaves room beside the stepper for the timer ring. */
+  timed?: boolean;
+  card: ReactNode;
+  below?: ReactNode;
 }) {
   const { categoryName, subtitle } = context;
   return (
@@ -164,31 +172,37 @@ function QuizFrame({
             loading="lazy"
           />
         </aside>
-        <div className="quiz-center">
-          {index !== null && <QuizProgress context={context} index={index} />}
-          {children}
+        <div className={`quiz-top${timed ? " timed" : ""}`}>
+          {index !== null && <QuizStepper context={context} index={index} />}
         </div>
+        <div className="quiz-card-slot">{card}</div>
         <LiveBoard context={context} />
+        <div className="quiz-below">{below}</div>
       </div>
     </div>
   );
 }
 
-/** "Question 4 / 10" with a segment for each question: gold for the ones done. */
-function QuizProgress({ context, index }: { context: GameContext; index: number }) {
+/** A segment for each question: gold for the ones done, half-lit for the one being played. */
+function QuizStepper({ context, index }: { context: GameContext; index: number }) {
   const { view } = context;
   const answered = index + (view.stage.kind === "answer" ? 1 : 0);
   return (
-    <div className="quiz-progress">
-      <span className="progress">
-        Question {index + 1} / {view.total}
-      </span>
-      <span className="quiz-segments" aria-hidden="true">
-        {Array.from({ length: view.total }, (_, i) => (
-          <span key={i} className={i < answered ? "done" : i === index ? "now" : undefined} />
-        ))}
-      </span>
-    </div>
+    <span className="quiz-segments" aria-hidden="true">
+      {Array.from({ length: view.total }, (_, i) => (
+        <span key={i} className={i < answered ? "done" : i === index ? "now" : undefined} />
+      ))}
+    </span>
+  );
+}
+
+/** "Question 4 of 10", in the card. */
+function QuestionChip({ context, index }: { context: GameContext; index: number }) {
+  return (
+    <span className="quiz-chip progress">
+      <Icon name="help" size={20} />
+      Question {index + 1} of {context.view.total}
+    </span>
   );
 }
 
@@ -307,35 +321,39 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
         : "Choose your answer";
 
   return (
-    <QuizFrame context={context} index={stage.index}>
-      <div className={`quiz-card${view.timed ? " timed" : ""}`}>
-        <span className="quiz-chip">
-          <Icon name="help" size={20} />
-          {context.categoryName}
-        </span>
-        <h2 className="prompt">{stage.prompt}</h2>
-        {view.timed && <TimerRing remaining={remaining} limit={view.timeLimitMs} />}
-        <div className="choices">
-          {stage.choices.map((text, i) => (
-            <button
-              key={i}
-              className={`choice${picked === i ? " picked" : ""}`}
-              disabled={picked !== null}
-              onClick={() => handlePick(i)}
-            >
-              <span className="choice-letter" aria-hidden="true">
-                {letter(i)}
-              </span>
-              {text}
-            </button>
-          ))}
+    <QuizFrame
+      context={context}
+      index={stage.index}
+      timed={view.timed}
+      card={
+        <div className={`quiz-card${view.timed ? " timed" : ""}`}>
+          <QuestionChip context={context} index={stage.index} />
+          <h2 className="prompt">{stage.prompt}</h2>
+          {view.timed && <TimerRing remaining={remaining} limit={view.timeLimitMs} />}
+          <div className="choices">
+            {stage.choices.map((text, i) => (
+              <button
+                key={i}
+                className={`choice${picked === i ? " picked" : ""}`}
+                disabled={picked !== null}
+                onClick={() => handlePick(i)}
+              >
+                <span className="choice-letter" aria-hidden="true">
+                  {letter(i)}
+                </span>
+                {text}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
-      <p className="quiz-note">
-        <Icon name="users" size={22} />
-        {note}
-      </p>
-    </QuizFrame>
+      }
+      below={
+        <p className="quiz-note">
+          <Icon name="users" size={22} />
+          {note}
+        </p>
+      }
+    />
   );
 }
 
@@ -359,46 +377,49 @@ function Answer({ context, stage }: { context: GameContext; stage: AnswerStage }
   const verdict = stage.myChoice === null ? "Time’s up" : stage.correct ? "Correct" : "Wrong";
 
   return (
-    <QuizFrame context={context} index={stage.index}>
-      <div className="quiz-card">
-        <span className="quiz-chip">
-          <Icon name="help" size={20} />
-          {context.categoryName}
-        </span>
-        <h2 className="prompt">{stage.prompt}</h2>
-        <div className="choices">
-          {stage.choices.map((text, i) => {
-            const tone =
-              i === stage.correctChoice ? " correct" : i === stage.myChoice ? " wrong" : " faded";
-            return (
-              <div key={i} className={`choice${tone}`}>
-                <span className="choice-letter" aria-hidden="true">
-                  {letter(i)}
-                </span>
-                {text}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      <div className="quiz-result">
-        <p className={`verdict ${stage.correct ? "good" : "bad"}`} role="status">
-          {verdict}
-          {stage.points > 0 && <span className="points">+{stage.points}</span>}
-        </p>
-        {explained && stage.explanation && <Explanation item={stage} />}
-        {paused && (
-          <div className="next-row">
-            <span className="muted">
-              {stage.isLast ? "Results" : "Next"} in {Math.ceil(left / 1000)}
-            </span>
-            <button className="btn" onClick={next}>
-              Skip
-            </button>
+    <QuizFrame
+      context={context}
+      index={stage.index}
+      card={
+        <div className="quiz-card">
+          <QuestionChip context={context} index={stage.index} />
+          <h2 className="prompt">{stage.prompt}</h2>
+          <div className="choices">
+            {stage.choices.map((text, i) => {
+              const tone =
+                i === stage.correctChoice ? " correct" : i === stage.myChoice ? " wrong" : " faded";
+              return (
+                <div key={i} className={`choice${tone}`}>
+                  <span className="choice-letter" aria-hidden="true">
+                    {letter(i)}
+                  </span>
+                  {text}
+                </div>
+              );
+            })}
           </div>
-        )}
-      </div>
-    </QuizFrame>
+        </div>
+      }
+      below={
+        <div className="quiz-result">
+          <p className={`verdict ${stage.correct ? "good" : "bad"}`} role="status">
+            {verdict}
+            {stage.points > 0 && <span className="points">+{stage.points}</span>}
+          </p>
+          {explained && stage.explanation && <Explanation item={stage} />}
+          {paused && (
+            <div className="next-row">
+              <span className="muted">
+                {stage.isLast ? "Results" : "Next"} in {Math.ceil(left / 1000)}
+              </span>
+              <button className="btn" onClick={next}>
+                Skip
+              </button>
+            </div>
+          )}
+        </div>
+      }
+    />
   );
 }
 

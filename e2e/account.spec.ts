@@ -25,7 +25,7 @@ async function playSoloGame(page: Page) {
   await questions.selectOption("5");
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
   for (let i = 1; i <= 5; i++) {
-    await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
+    await expect(page.locator(".progress")).toContainText(`${i} of 5`, { timeout: 10_000 });
     await page.locator("button.choice").first().click();
     await page.getByRole("button", { name: "Skip" }).click();
   }
@@ -168,7 +168,7 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
     await page.getByRole("button", { name: "Join", exact: true }).click();
   await questions.selectOption("5");
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
-  await expect(page.locator(".progress")).toContainText("1 / 5", { timeout: 10_000 });
+  await expect(page.locator(".progress")).toContainText("1 of 5", { timeout: 10_000 });
   await page.locator("button.choice").first().click();
   await expect(page.getByRole("button", { name: "Skip" })).toBeVisible();
   await expect(page.locator(".explanation")).toHaveCount(0);
@@ -226,7 +226,7 @@ test("friends add each other, play together and see their record", async ({ brow
   await ada.getByRole("button", { name: /start game/i }).press("Enter");
   for (const page of [ada, tolu]) {
     for (let i = 1; i <= 5; i++) {
-      await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
+      await expect(page.locator(".progress")).toContainText(`${i} of 5`, { timeout: 10_000 });
       await page.locator("button.choice").first().click();
     }
   }
@@ -263,7 +263,7 @@ test("offers to add signed-in players after a game", async ({ browser }) => {
   await ada.getByRole("button", { name: /start game/i }).press("Enter");
   for (const page of [ada, tolu]) {
     for (let i = 1; i <= 5; i++) {
-      await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
+      await expect(page.locator(".progress")).toContainText(`${i} of 5`, { timeout: 10_000 });
       await page.locator("button.choice").first().click();
     }
   }

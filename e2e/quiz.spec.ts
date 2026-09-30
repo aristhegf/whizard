@@ -23,7 +23,7 @@ async function openRoom(page: Page, nickname = "Ada") {
 }
 
 async function answerFirstChoice(page: Page, question: number, total: number) {
-  await expect(page.locator(".progress")).toContainText(`${question} / ${total}`, {
+  await expect(page.locator(".progress")).toContainText(`${question} of ${total}`, {
     timeout: 10_000,
   });
   const choice = page.locator("button.choice").first();
@@ -44,7 +44,7 @@ test("plays a solo quiz with explanations and a review", async ({ browser }) => 
   await expect(page.getByText("Get ready")).toBeVisible();
 
   for (let i = 1; i <= 5; i++) {
-    await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
+    await expect(page.locator(".progress")).toContainText(`${i} of 5`, { timeout: 10_000 });
     await expect(page.getByRole("progressbar", { name: "Time left" })).toHaveCount(0);
     await answerFirstChoice(page, i, 5);
     await expect(page.locator(".explanation")).toBeVisible();
@@ -75,7 +75,7 @@ test("solo moves on by itself after the explanation", async ({ browser }) => {
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
 
   await answerFirstChoice(page, 1, 10);
-  await expect(page.locator(".progress")).toContainText("2 / 10", { timeout: 6000 });
+  await expect(page.locator(".progress")).toContainText("2 of 10", { timeout: 6000 });
 });
 
 test("every category can be picked and played", async ({ browser }) => {
@@ -104,7 +104,7 @@ test("Speed mode puts a timer on every question", async ({ browser }) => {
   await expect(page.getByLabel("Time per question")).toHaveValue("10");
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
 
-  await expect(page.locator(".progress")).toContainText("1 / 10", { timeout: 10_000 });
+  await expect(page.locator(".progress")).toContainText("1 of 10", { timeout: 10_000 });
   await expect(page.getByRole("progressbar", { name: "Time left" })).toBeVisible();
 });
 
@@ -128,7 +128,7 @@ test("friends play at their own pace and only see points", async ({ browser }) =
     await expect(host.locator(".explanation")).toHaveCount(0);
     await expect(host.getByRole("button", { name: "Skip" })).toHaveCount(0);
   }
-  await expect(guest.locator(".progress")).toContainText("1 / 5");
+  await expect(guest.locator(".progress")).toContainText("1 of 5");
 
   await expect(host.getByRole("heading", { name: "Results so far" })).toBeVisible();
   await expect(host.locator(".board li").filter({ hasText: "Tolu" })).toContainText("Playing");
@@ -175,8 +175,8 @@ test("shows live scores on tablets and computers, but not on phones", async ({ b
   await joinAs(phone, "Tolu");
   await desktop.getByRole("button", { name: /start game/i }).press("Enter");
 
-  await expect(desktop.locator(".progress")).toContainText("1 / 5", { timeout: 10_000 });
-  await expect(phone.locator(".progress")).toContainText("1 / 5", { timeout: 10_000 });
+  await expect(desktop.locator(".progress")).toContainText("1 of 5", { timeout: 10_000 });
+  await expect(phone.locator(".progress")).toContainText("1 of 5", { timeout: 10_000 });
   const live = desktop.getByRole("complementary", { name: "Live scores" });
   await expect(live).toBeVisible();
   await expect(live.getByRole("listitem")).toHaveCount(2);
@@ -192,7 +192,7 @@ test("the quiz fits a laptop screen, with the topic, lettered answers and the ex
   await openRoom(page);
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
 
-  await expect(page.locator(".progress")).toContainText("1 / 10", { timeout: 10_000 });
+  await expect(page.locator(".progress")).toContainText("1 of 10", { timeout: 10_000 });
   await expect(page.locator(".quiz-topic")).toBeVisible();
   await expect(page.locator(".choice-letter")).toHaveText(["A", "B", "C", "D"]);
   const fits = () => page.evaluate(() => document.documentElement.scrollHeight <= innerHeight);
@@ -265,7 +265,7 @@ test("playing again doesn't repeat questions", async ({ browser }) => {
   const play = async () => {
     const prompts: string[] = [];
     for (let i = 1; i <= 5; i++) {
-      await expect(page.locator(".progress")).toContainText(`${i} / 5`, { timeout: 10_000 });
+      await expect(page.locator(".progress")).toContainText(`${i} of 5`, { timeout: 10_000 });
       prompts.push(await page.locator(".prompt").innerText());
       await answerFirstChoice(page, i, 5);
       await page.getByRole("button", { name: "Skip" }).click();

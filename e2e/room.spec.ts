@@ -233,7 +233,7 @@ test("quitting a solo game goes back to the room, and leaving closes it", async 
   const page = await newPlayer(browser);
   const roomUrl = await createRoom(page, "Ada");
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
-  await expect(page.locator(".progress")).toContainText("1 / 10", { timeout: 10_000 });
+  await expect(page.locator(".progress")).toContainText("1 of 10", { timeout: 10_000 });
 
   page.once("dialog", (dialog) => void dialog.accept());
   await page.getByRole("button", { name: "Quit" }).click();
@@ -260,7 +260,7 @@ test("friends hear who quits, leaves and comes back, and who the host is", async
 
   await host.getByRole("button", { name: /start game/i }).press("Enter");
   for (const page of [host, guest]) {
-    await expect(page.locator(".progress")).toContainText("1 / 10", { timeout: 10_000 });
+    await expect(page.locator(".progress")).toContainText("1 of 10", { timeout: 10_000 });
   }
 
   // Tolu quits: back to the room, while Ada plays on.
@@ -268,7 +268,7 @@ test("friends hear who quits, leaves and comes back, and who the host is", async
   await guest.getByRole("button", { name: "Quit" }).click();
   await expect(guest.getByText(/You quit this game/)).toBeVisible();
   await expect(host.getByText("Tolu left the game")).toBeVisible();
-  await expect(host.locator(".progress")).toContainText("1 / 10");
+  await expect(host.locator(".progress")).toContainText("1 of 10");
 
   // Then leaves the room, and comes back, straight in under the same name.
   await guest.getByRole("button", { name: "Leave" }).click();

@@ -19,19 +19,35 @@
   display: none;
 }
 
-.quiz-center {
+.quiz-card-slot,
+.quiz-below {
   display: grid;
-  gap: 14px;
-  align-content: start;
   min-width: 0;
 }
 
-/* Progress: "Question 4 / 10" and a segment for each question. */
-.quiz-progress {
+.quiz-below:empty {
+  display: none;
+}
+
+/* Until the scores get a column of their own, they come after what's under the card. */
+.quiz-game .live-board {
+  order: 1;
+}
+
+/* The stepper: a segment for each question, in a bar above the card. */
+.quiz-top {
+  display: grid;
+  min-width: 0;
+}
+
+.quiz-top:empty {
+  display: none;
+}
+
+.quiz-segments {
   display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 10px 20px;
+  gap: 6px;
+  padding: 12px 20px;
   border: 1.5px solid var(--line-strong);
   border-radius: 999px;
   background: rgb(14 12 46 / 72%);
@@ -39,19 +55,10 @@
 
 .quiz-game .progress {
   margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: #fff;
-  font-family: var(--display);
-  font-size: 1.05rem;
-  font-weight: 800;
-  white-space: nowrap;
   font-variant-numeric: tabular-nums;
-}
-
-.quiz-segments {
-  display: flex;
-  flex: 1;
-  gap: 5px;
-  min-width: 0;
 }
 
 .quiz-segments span {
@@ -384,24 +391,18 @@
   }
 }
 
-/* Computers: the topic and the mascot at the left, the scores at the right, on the one screen. */
-@media (min-width: 1100px) {
-  .quiz-game {
-    min-height: calc(100dvh - 24px);
-    grid-template-rows: auto minmax(0, 1fr);
-  }
-
-  .quiz-stage {
-    grid-template-columns: 280px minmax(0, 1fr) 340px;
-    align-items: stretch;
-    gap: 24px;
-  }
-
+/* Tablets: the topic in a row above the stepper. */
+@media (min-width: 768px) {
   .quiz-rail {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-height: 0;
+  }
+
+  .quiz-topic {
+    flex: none;
+  }
+
+  .quiz-mascot {
+    display: none;
   }
 
   .quiz-topic {
@@ -442,37 +443,112 @@
     font-size: 0.85rem;
     font-weight: 600;
   }
+}
+
+/* Computers: the topic and the mascot at the left, the card in the middle with the scores beside
+   it at the same height, the stepper above and the note below. */
+@media (min-width: 1100px) {
+  .quiz-game {
+    min-height: calc(100dvh - 24px);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .quiz-stage {
+    grid-template-columns: 250px minmax(0, 1fr) 320px;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 16px 24px;
+  }
+
+  .quiz-rail {
+    display: flex;
+    flex-direction: column;
+    grid-row: 1 / 4;
+    gap: 16px;
+    min-height: 0;
+  }
+
+  .quiz-top {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+  }
+
+  /* Room for the timer ring at the bar's right. */
+  .quiz-top.timed {
+    padding-right: 150px;
+  }
+
+  .quiz-card-slot {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .quiz-game .live-board {
+    grid-column: 3;
+    grid-row: 2;
+    order: 0;
+    align-self: stretch;
+  }
+
+  .quiz-below {
+    grid-column: 2;
+    grid-row: 3;
+    align-content: start;
+  }
 
   .quiz-mascot {
+    display: block;
     width: 100%;
-    max-width: 300px;
+    max-width: 280px;
     height: auto;
     margin-top: auto;
     filter: drop-shadow(0 16px 30px rgb(120 40 255 / 45%));
   }
 
-  .quiz-center {
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    align-content: stretch;
-    padding-top: 24px;
-  }
-
+  /* Wider than tall: the answers stay short, the question doesn't grow. */
   .quiz-card {
     align-content: center;
-    gap: clamp(14px, 3vh, 32px);
+    gap: 16px;
+    padding: 20px 26px 24px;
   }
 
-  .quiz-game .live-board {
-    align-self: start;
-    margin-top: 24px;
+  .quiz-game .prompt {
+    font-size: clamp(1.4rem, 1.9vw, 2.1rem);
+  }
+
+  .quiz-card.timed .prompt {
+    padding-right: 0;
+  }
+
+  .quiz-game .choice {
+    min-height: clamp(70px, 11vh, 118px);
+    font-size: 1.3rem;
+  }
+
+  /* The ring sits over the card's top-right corner, between the stepper and the scores. */
+  .timer-ring {
+    top: -66px;
+    right: -6px;
+    width: 132px;
+    height: 132px;
+  }
+
+  .ring-number {
+    font-size: 2.6rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  .quiz-stage {
+    grid-template-columns: 270px minmax(0, 1fr) 340px;
   }
 }
 
 /* Short laptop screens: tighter, so the explanation and the Next row still fit with the question. */
 @media (min-width: 1100px) and (max-height: 820px) {
-  .quiz-center {
-    gap: 8px;
-    padding-top: 10px;
+  .quiz-stage {
+    row-gap: 10px;
   }
 
   .quiz-card {
