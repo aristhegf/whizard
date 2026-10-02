@@ -86,8 +86,8 @@ export const photoPicture = (code: string, photo: string, aspect?: number): Jigs
 export const PHOTO_MAX_ASPECT = 2;
 
 /**
- * The levels, easiest first. Up to Hard the pieces sit on a square board and swap places;
- * Insane has about a hundred, dragged out of a tray onto the picture's canvas.
+ * The levels, easiest first. Every level is dragged out of a tray onto the picture's canvas;
+ * Insane has about a hundred pieces, cut in the picture's own shape for photos.
  */
 export const JIGSAW_LEVELS = [
   { id: "easy", name: "Easy", side: 4 },

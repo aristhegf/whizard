@@ -112,10 +112,10 @@ describe("levels and settings", () => {
   });
 
   it("gives each level a fair countdown with minutes to spare", () => {
-    expect(jigsawTimeLimit("easy", 16)).toBe(150_000);
-    expect(jigsawTimeLimit("medium", 25)).toBe(210_000);
-    expect(jigsawTimeLimit("hard", 36)).toBe(240_000);
-    expect(jigsawTimeLimit("insane", 100)).toBe(900_000);
+    expect(jigsawTimeLimit("easy", 16)).toBe(420_000);
+    expect(jigsawTimeLimit("medium", 25)).toBe(480_000);
+    expect(jigsawTimeLimit("hard", 36)).toBe(570_000);
+    expect(jigsawTimeLimit("insane", 100)).toBe(1_020_000);
   });
 
   it("reads rooms saved with pieces per side, and keeps Auto to Elimination", () => {
@@ -157,15 +157,16 @@ describe("the race: Classic and Speed", () => {
     expect(jigsawGame.nextWakeAt(state)).toBe(START + JIGSAW_CLASSIC_LIMIT_MS);
   });
 
-  it("swaps two pieces, and locks a piece once it's in place", () => {
+  it("places pieces from the tray, and locks a piece once it's in place", () => {
     let state = game();
-    const piece0At = boardOf(state, "p1").indexOf(0);
-    state = act(state, "p1", 0, piece0At);
+    expect(boardOf(state, "p1")).toEqual(Array.from({ length: 16 }, () => -1));
+    expect(state.puzzles[0]!.tray).toHaveLength(16);
+    state = place(state, "p1", 0);
     expect(boardOf(state, "p1")[0]).toBe(0);
     expect(state.players[0]!.moves).toBe(1);
-    expect(() => act(state, "p1", 0, 1)).toThrow(/already in its place/);
-    expect(() => act(state, "p1", 2, 2)).toThrow(/can’t swap/);
-    expect(() => act(state, "p1", 2, 99)).toThrow(/can’t swap/);
+    expect(() => place(state, "p1", 0)).toThrow(/already in its place/);
+    expect(() => place(state, "p1", 99)).toThrow(/no such piece/);
+    expect(() => act(state, "p1", 0, 1)).toThrow(/Drag the pieces/);
   });
 
   it("finishes a player who places every piece, and ranks the fastest first", () => {
@@ -185,7 +186,7 @@ describe("the race: Classic and Speed", () => {
   });
 
   it("shows other players' progress but never their boards", () => {
-    const state = act(game(), "p1", 0, game().players[0]!.board.indexOf(0));
+    const state = place(game(), "p1", 0);
     const view = jigsawGame.viewFor(state, "p2");
     expect(view.board).toEqual(boardOf(state, "p2"));
     expect(view.standings.find((s) => s.playerId === "p1")!.placed).toBeGreaterThan(0);
@@ -193,7 +194,7 @@ describe("the race: Classic and Speed", () => {
   });
 
   it("Speed ends when the countdown runs out, ranking unfinished players by pieces placed", () => {
-    let state = act(game(), "p2", 0, game().players[1]!.board.indexOf(0));
+    let state = place(game(), "p2", 0);
     expect(jigsawGame.nextWakeAt(state)).toBe(START + EASY_LIMIT);
     state = jigsawGame.tick(state, START + EASY_LIMIT);
     expect(jigsawGame.isFinished(state)).toBe(true);
@@ -232,12 +233,14 @@ describe("the race: Classic and Speed", () => {
 
   it("carries on a game saved before modes and levels, as a race", () => {
     const fresh = game(["Ada"]);
+    // Legacy swap boards start scrambled with no tray; new games start empty with a tray.
+    const start = scrambled(16, seededRng(99));
     const legacy = {
       settings: { picture: "random", side: 4 },
       picture,
       side: 4,
-      start: fresh.puzzles[0]!.start,
-      players: fresh.players,
+      start,
+      players: fresh.players.map((p) => ({ ...p, board: [...start] })),
       finishedAt: null,
     } as unknown as JigsawState;
     const view = jigsawGame.viewFor(legacy, "p1");
@@ -251,7 +254,7 @@ describe("insane", () => {
   const insane = (names = ["Ada", "Tolu"], pic: JigsawPicture = picture) =>
     game(names, { level: "insane", pic });
 
-  it("starts every piece in the same shuffled tray for everyone, with 15 minutes", () => {
+  it("starts every piece in the same shuffled tray for everyone, with 17 minutes", () => {
     const state = insane();
     expect(boardOf(state, "p1")).toEqual(Array.from({ length: 100 }, () => -1));
     const tray = state.puzzles[0]!.tray!;
@@ -260,7 +263,7 @@ describe("insane", () => {
     const view = jigsawGame.viewFor(state, "p2");
     expect(view.tray).toEqual(tray);
     expect(view.me?.placed).toBe(0);
-    expect(view.deadline).toBe(START + 900_000);
+    expect(view.deadline).toBe(START + 1_020_000);
   });
 
   it("cuts a photo that kept its own shape into about a hundred pieces in that shape", () => {
@@ -281,8 +284,9 @@ describe("insane", () => {
     expect(() => place(state, "p1", 42)).toThrow(/already in its place/);
     expect(() => place(state, "p1", 100)).toThrow(/no such piece/);
     expect(() => act(state, "p1", 0, 1)).toThrow(/Drag the pieces/);
-    expect(() => place(insane(["Ada"]), "p1", 0, START - 2000)).toThrow(/hasn't started/);
-    expect(() => place(game(["Ada"]), "p1", 0)).toThrow(/Pieces swap/);
+    expect(() => place(state, "p1", 0, START - 2000)).toThrow(/hasn't started/);
+    // Easy drags too now, so placing works there as well.
+    expect(place(game(["Ada"]), "p1", 0).players[0]!.board[0]).toBe(0);
   });
 
   it("finishes when the last piece goes in", () => {

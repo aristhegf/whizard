@@ -35,21 +35,17 @@ const EARLY_TOLERANCE_MS = 1000;
 /** Points per piece in its place, for match history. */
 export const POINTS_PER_PIECE = 100;
 
-/** Seconds a piece takes, as a fair pace, and the extra on top for a slower player. */
-const SWAP_SECONDS_PER_PIECE = 5;
+/** Seconds a dragged piece takes, as a fair pace, and the extra on top for a slower player. */
 const DRAG_SECONDS_PER_PIECE = 7;
-const SWAP_EXTRA_SECONDS = 60;
-const DRAG_EXTRA_SECONDS = 180;
+const DRAG_EXTRA_SECONDS = 300;
 
 /**
- * The countdown for a puzzle, in Speed and Elimination: a fair pace for its pieces, with a
- * few minutes extra, rounded up to the half minute. Easy is 2:30, Medium 3:30, Hard 4:00 and
- * Insane (a hundred pieces) 15:00.
+ * The countdown for a puzzle, in Speed and Elimination: a fair pace for dragging its pieces,
+ * with five minutes extra, rounded up to the half minute. Easy is 7:00, Medium 8:00, Hard
+ * 9:30 and Insane (a hundred pieces) 17:00.
  */
 export function jigsawTimeLimit(level: JigsawLevel, pieces: number): number {
-  const seconds = isInsane(level)
-    ? pieces * DRAG_SECONDS_PER_PIECE + DRAG_EXTRA_SECONDS
-    : pieces * SWAP_SECONDS_PER_PIECE + SWAP_EXTRA_SECONDS;
+  const seconds = pieces * DRAG_SECONDS_PER_PIECE + DRAG_EXTRA_SECONDS;
   return Math.ceil(seconds / 30) * 30_000;
 }
 
@@ -199,9 +195,9 @@ export function makePuzzle(picture: JigsawPicture, level: JigsawLevel, rng: Rng)
   const { cols, rows } = jigsawGrid(level, isInsane(level) ? (picture.aspect ?? 1) : 1);
   const count = cols * rows;
   const pieces = Array.from({ length: count }, (_, i) => i);
-  return isInsane(level)
-    ? { picture, level, cols, rows, start: pieces.map(() => -1), tray: shuffled(pieces, rng) }
-    : { picture, level, cols, rows, start: scrambled(count, rng), tray: null };
+  // Every level is dragged out of a tray onto the canvas, like Insane used to be alone.
+  // Puzzles saved before this (tray null) still swap, so those games carry on.
+  return { picture, level, cols, rows, start: pieces.map(() => -1), tray: shuffled(pieces, rng) };
 }
 
 /**
@@ -364,14 +360,16 @@ function move(
   if (now < player.startsAt - EARLY_TOLERANCE_MS) return { rejected: "The puzzle hasn't started." };
   const board = [...player.board];
   const before = placedCount(board);
+  // Drag puzzles (tray present) place pieces; puzzles saved before trays still swap.
+  const drag = puzzle.tray !== null;
   if (action.type === "place") {
-    if (!isInsane(puzzle.level)) return { rejected: "Pieces swap in this puzzle." };
+    if (!drag) return { rejected: "Pieces swap in this puzzle." };
     const { piece } = action;
     if (piece >= count) return { rejected: "There's no such piece." };
     if (board[piece] === piece) return { rejected: "That piece is already in its place." };
     board[piece] = piece;
   } else {
-    if (isInsane(puzzle.level)) return { rejected: "Drag the pieces onto the picture." };
+    if (drag) return { rejected: "Drag the pieces onto the picture." };
     const { a, b } = action;
     if (a >= count || b >= count || a === b) return { rejected: "Those pieces can’t swap." };
     // Pieces in their place are locked.

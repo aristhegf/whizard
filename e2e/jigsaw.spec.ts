@@ -15,31 +15,41 @@ async function joinAs(page: Page, nickname: string) {
   await expect(page.getByRole("list", { name: "Players" })).toBeVisible();
 }
 
-/** Puts every piece in its place: tap the piece that belongs in the first wrong spot, then the spot. */
-async function solve(page: Page) {
-  const pieces = page.locator(".jigsaw-piece");
+/** Puts every piece in its place: drags each tray piece onto its home on the canvas. */
+async function solve(page: Page, pieces = 16) {
+  const tray = page.getByRole("list", { name: /Pieces to place/ });
   // Pieces can move once the countdown ends.
-  await expect(page.locator(".jigsaw-piece:enabled").first()).toBeVisible({ timeout: 10_000 });
-  for (let i = 0; i < 60; i++) {
-    const board = await pieces.evaluateAll((els) =>
-      els.map((el) => Number((el as HTMLElement).dataset.piece)),
+  await expect(tray.getByRole("listitem").first()).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator(".insane-view")).toBeVisible({ timeout: 10_000 });
+  const canvas = page.locator(".insane-canvas");
+  const cols = Math.round(Math.sqrt(pieces));
+  for (let i = 0; i < pieces + 4; i++) {
+    const remaining = await tray.getByRole("listitem").count();
+    if (remaining === 0) return;
+    const ids = await tray
+      .locator("[data-piece]")
+      .evaluateAll((els) => els.map((el) => Number((el as HTMLElement).dataset.piece)));
+    if (ids.length === 0) return;
+    const target = ids[0]!;
+    const item = tray.locator(`[data-piece="${target}"]`);
+    await item.scrollIntoViewIfNeeded();
+    const box = (await item.boundingBox())!;
+    const c = (await canvas.boundingBox())!;
+    const unit = c.width / cols;
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2, box.y - 30, { steps: 4 });
+    await page.mouse.move(
+      c.x + ((target % cols) + 0.5) * unit,
+      c.y + (Math.floor(target / cols) + 0.5) * unit,
+      { steps: 8 },
     );
-    const spot = board.findIndex((piece, at) => piece !== at);
-    if (spot === -1) return;
-    await pieces.nth(board.indexOf(spot)).click();
-    await pieces.nth(spot).click();
-    // The last swap can end the game and take the board with it, so both are checked in one
-    // read of the page: checking one then the other can wait forever on a board that's gone.
+    await page.mouse.up();
+    // The last place can end the game and take the tray with it.
     await expect
-      .poll(() =>
-        pieces.evaluateAll(
-          (els, at) =>
-            els.length === 0 || (els[at] as HTMLElement | undefined)?.dataset.piece === String(at),
-          spot,
-        ),
-      )
-      .toBe(true);
-    if ((await pieces.count()) === 0) return;
+      .poll(async () => tray.getByRole("listitem").count(), { timeout: 5000 })
+      .toBeLessThan(remaining);
+    if ((await tray.getByRole("listitem").count()) === 0) return;
   }
   throw new Error("The puzzle didn't come together.");
 }
@@ -66,17 +76,29 @@ test("plays a solo jigsaw from the picture page", async ({ browser }) => {
 
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
   await expect(page.getByText(/Get ready/)).toBeVisible();
-  await expect(page.locator(".jigsaw-piece")).toHaveCount(16);
+  const tray = page.getByRole("list", { name: /Pieces to place/ });
+  await expect(tray.getByRole("listitem")).toHaveCount(16);
 
-  // A piece in its place locks.
-  const pieces = page.locator(".jigsaw-piece");
-  const board = await pieces.evaluateAll((els) =>
-    els.map((el) => Number((el as HTMLElement).dataset.piece)),
+  // A piece on its spot snaps in and locks.
+  await expect(page.locator(".insane-view")).toBeVisible({ timeout: 10_000 });
+  const canvas = page.locator(".insane-canvas");
+  const firstBox = (await tray.locator("[data-piece]").first().boundingBox())!;
+  const firstPiece = await tray
+    .locator("[data-piece]")
+    .first()
+    .evaluate((el) => Number((el as HTMLElement).dataset.piece));
+  const c0 = (await canvas.boundingBox())!;
+  const unit0 = c0.width / 4;
+  await page.mouse.move(firstBox.x + firstBox.width / 2, firstBox.y + firstBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(firstBox.x + firstBox.width / 2, firstBox.y - 30, { steps: 4 });
+  await page.mouse.move(
+    c0.x + ((firstPiece % 4) + 0.5) * unit0 + 4,
+    c0.y + (Math.floor(firstPiece / 4) + 0.5) * unit0 - 3,
+    { steps: 8 },
   );
-  await expect(pieces.first()).toBeEnabled({ timeout: 10_000 });
-  await pieces.nth(board.indexOf(0)).click();
-  await pieces.nth(0).click();
-  await expect(pieces.nth(0)).toBeDisabled();
+  await page.mouse.up();
+  await expect(page.locator(`[data-placed="${firstPiece}"]`)).toHaveCount(1);
 
   await solve(page);
   await expect(page.getByRole("heading", { name: /Jigsaw\s+Results/ })).toBeVisible();
@@ -102,14 +124,19 @@ test("two players race the same puzzle, and the faster one wins", async ({ brows
   await expect(guest.locator(".game-summary")).toContainText("Game night");
 
   await host.getByRole("button", { name: /start game/i }).press("Enter");
-  for (const page of [host, guest]) await expect(page.locator(".jigsaw-piece")).toHaveCount(16);
+  for (const page of [host, guest]) {
+    await expect(
+      page.getByRole("list", { name: /Pieces to place/ }).getByRole("listitem"),
+    ).toHaveCount(16);
+  }
 
   // Both start from the same shuffle.
-  const boardOf = (page: Page) =>
+  const trayOf = (page: Page) =>
     page
-      .locator(".jigsaw-piece")
+      .getByRole("list", { name: /Pieces to place/ })
+      .locator("[data-piece]")
       .evaluateAll((els) => els.map((el) => (el as HTMLElement).dataset.piece));
-  expect(await boardOf(host)).toEqual(await boardOf(guest));
+  expect(await trayOf(host)).toEqual(await trayOf(guest));
 
   await solve(guest);
   await expect(guest.getByText(/Waiting for everyone to finish/)).toBeVisible();
@@ -134,7 +161,12 @@ test("who leaves and comes back shows in one line at the bottom, with faces for 
   await guest.goto(host.url());
   await joinAs(guest, "Tolu");
   await host.getByRole("button", { name: /start game/i }).press("Enter");
-  await expect(host.locator(".jigsaw-piece:enabled").first()).toBeVisible({ timeout: 10_000 });
+  await expect(
+    host
+      .getByRole("list", { name: /Pieces to place/ })
+      .getByRole("listitem")
+      .first(),
+  ).toBeVisible({ timeout: 10_000 });
 
   // On a phone the scores are faces, no names.
   await expect(host.getByRole("list", { name: "Scores" }).getByRole("listitem")).toHaveCount(2);
@@ -203,11 +235,16 @@ test("the host frames their own photo, and everyone plays it", async ({ browser 
 
   await host.getByRole("button", { name: /start game/i }).press("Enter");
   for (const page of [host, guest]) {
-    await expect(page.locator(".jigsaw-piece")).toHaveCount(16);
-    await expect(page.locator(".jigsaw-piece").first().locator("image")).toHaveAttribute(
-      "href",
-      src,
-    );
+    await expect(
+      page.getByRole("list", { name: /Pieces to place/ }).getByRole("listitem"),
+    ).toHaveCount(16);
+    await expect(
+      page
+        .getByRole("list", { name: /Pieces to place/ })
+        .locator("[data-piece]")
+        .first()
+        .locator("image"),
+    ).toHaveAttribute("href", src);
   }
   await solve(host);
   await expect(host.getByText("Solved in")).toBeVisible({ timeout: 10_000 });
@@ -273,7 +310,12 @@ test("Classic has no clock, and Next Jigsaw moves straight on to the next pictur
   await page.getByRole("button", { name: "The crew" }).click();
   await joinAs(page, "Ada");
   await page.getByRole("button", { name: /play solo/i }).press("Enter");
-  await expect(page.locator(".jigsaw-piece:enabled").first()).toBeVisible({ timeout: 10_000 });
+  await expect(
+    page
+      .getByRole("list", { name: /Pieces to place/ })
+      .getByRole("listitem")
+      .first(),
+  ).toBeVisible({ timeout: 10_000 });
   await expect(page.locator(".play-timer")).toHaveCount(0);
 
   await solve(page);
@@ -285,7 +327,8 @@ test("Classic has no clock, and Next Jigsaw moves straight on to the next pictur
 test("Elimination: finishers are safe, the fewest pieces go out, and the final picks the winner", async ({
   browser,
 }) => {
-  test.setTimeout(120_000);
+  // Three full drag solves (two round-1, one final): needs the extra time on a loaded machine.
+  test.setTimeout(240_000);
   const host = await newPlayer(browser);
   await host.goto("/games/jigsaw");
   await host.getByRole("button", { name: /Easy · 16 pieces/ }).click();

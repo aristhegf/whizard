@@ -11,12 +11,18 @@ import {
   type RefObject,
 } from "react";
 import { Icon } from "../../ui/Icon";
+import { areNeighbors, colOf, gidOf, homeOf, rowOf, type Groups } from "./clusters";
 import { KNOB_REACH, PIECE_SIZE, pieceShapes } from "./pieceShape";
 
 /**
- * Insane: the picture's canvas, which zooms and pans but never moves on its own, and a tray of
- * pieces underneath. Drag a piece out of the tray and drop it on its spot and it snaps in and
- * locks; drop it anywhere else on the canvas and it stays there until you move it again.
+ * The picture's canvas, which zooms in place but never shifts off its background, and a tray
+ * of pieces underneath (every level now, not just Insane). Drag a piece out of the tray and drop it on
+ * its spot and it snaps in and locks; drop it anywhere else on the canvas and it stays there
+ * until you move it again.
+ *
+ * Pieces that belong together also snap to each other: drop a piece next to its neighbour and
+ * they stick as one cluster, which drags as one until it is placed. Dropping a cluster on its
+ * home locks every piece of it that lines up.
  *
  * Pinch (or the mouse wheel) zooms. Double-tap the canvas to zoom in until it fills the view,
  * and double-tap around it to zoom back out until it all fits.
@@ -32,8 +38,6 @@ const SNAP_PX = 14;
 const MAX_ZOOM = 8;
 /** How much of the view the canvas takes when it fits. */
 const FIT = 0.94;
-/** How far past the view's edge the canvas can be pulled. */
-const PAN_MARGIN = 40;
 const DOUBLE_TAP_MS = 320;
 const TAP_SLOP = 10;
 /** A piece placed but not yet confirmed goes back if the server doesn't agree by then. */
@@ -57,6 +61,10 @@ interface Drag {
   pointerId: number;
   /** Where on the piece it was picked up, in canvas units from its top-left corner. */
   grab: Point;
+  /** The whole cluster moving with it (just itself when alone). */
+  members: number[];
+  /** The canvas zoom when the drag started; the ghost keeps it while moving. */
+  scale: number;
 }
 
 type Gesture =
@@ -98,12 +106,28 @@ export function InsaneBoard({
   // Until someone zooms, the canvas keeps fitting the view as it changes size.
   const zoomed = useRef(false);
 
-  const [loose, setLoose] = useState<Loose>(() => readLoose(storageKey));
+  // Saved canvas state, without pieces the server already shows as placed (after a reload).
+  const [saved] = useState(() => {
+    const read = readSaved(storageKey);
+    const loose: Loose = {};
+    for (const [key, point] of Object.entries(read.loose)) {
+      if (board[Number(key)] !== Number(key)) loose[Number(key)] = point;
+    }
+    return { loose, groups: read.groups };
+  });
+  const [loose, setLoose] = useState<Loose>(saved.loose);
+  const [groups, setGroups] = useState<Groups>(saved.groups);
   const [pending, setPending] = useState<ReadonlySet<number>>(new Set());
   const [drag, setDrag] = useState<Drag | null>(null);
   const dragRef = useRef<Drag | null>(null);
+  const looseRef = useRef(loose);
+  const groupsRef = useRef(groups);
 
-  useEffect(() => writeLoose(storageKey, loose), [storageKey, loose]);
+  useEffect(() => {
+    looseRef.current = loose;
+    groupsRef.current = groups;
+  });
+  useEffect(() => writeSaved(storageKey, loose, groups), [storageKey, loose, groups]);
 
   // Pieces the server has placed, and yours it hasn't confirmed yet.
   const isPlaced = (piece: number) => board[piece] === piece || pending.has(piece);
@@ -138,14 +162,11 @@ export function InsaneBoard({
       const scale = Math.min(Math.max(t.scale, fitScale()), fitScale() * MAX_ZOOM);
       const w = width * scale;
       const h = height * scale;
-      const x = Math.min(
-        Math.max(t.x, Math.min(0, r.width - w) - PAN_MARGIN),
-        Math.max(0, r.width - w) + PAN_MARGIN,
-      );
-      const y = Math.min(
-        Math.max(t.y, Math.min(0, r.height - h) - PAN_MARGIN),
-        Math.max(0, r.height - h) + PAN_MARGIN,
-      );
+      // The canvas never leaves its background: while it fits the view it stays centred and
+      // can't be pushed around; zoomed in past the view, the view moves within it, but its
+      // edges never cross the view's, so it always covers the background.
+      const x = w <= r.width ? (r.width - w) / 2 : Math.min(Math.max(t.x, r.width - w), 0);
+      const y = h <= r.height ? (r.height - h) / 2 : Math.min(Math.max(t.y, r.height - h), 0);
       return { scale, x, y };
     },
     [bounds, fitScale, width, height],
@@ -225,10 +246,16 @@ export function InsaneBoard({
   const moveGhost = (at: Point, d: Drag) => {
     const el = ghost.current;
     if (!el) return;
-    const s = view.current.scale;
-    el.style.width = `${(U + 2 * R) * s}px`;
-    el.style.height = `${(U + 2 * R) * s}px`;
-    el.style.transform = `translate(${at.x - (d.grab.x + R) * s}px, ${at.y - (d.grab.y + R) * s}px)`;
+    const s = d.scale;
+    const dxs = d.members.map((m) => (colOf(m, cols) - colOf(d.piece, cols)) * U);
+    const dys = d.members.map((m) => (rowOf(m, cols) - rowOf(d.piece, cols)) * U);
+    const minDx = Math.min(0, ...dxs);
+    const minDy = Math.min(0, ...dys);
+    const maxDx = Math.max(0, ...dxs);
+    const maxDy = Math.max(0, ...dys);
+    el.style.width = `${(maxDx - minDx + U + 2 * R) * s}px`;
+    el.style.height = `${(maxDy - minDy + U + 2 * R) * s}px`;
+    el.style.transform = `translate(${at.x - (d.grab.x + R - minDx) * s}px, ${at.y - (d.grab.y + R - minDy) * s}px)`;
   };
 
   const inside = (at: Point, el: HTMLElement | null) => {
@@ -237,46 +264,142 @@ export function InsaneBoard({
   };
 
   const drop = (at: Point, d: Drag) => {
-    const put = (next: Point | null) =>
+    const currentLoose = looseRef.current;
+    const currentGroups = groupsRef.current;
+    const removePieces = (pieces: number[]) => {
       setLoose((all) => {
         const copy = { ...all };
-        if (next) copy[d.piece] = next;
-        else delete copy[d.piece];
+        for (const p of pieces) delete copy[p];
         return copy;
       });
-    if (inside(at, trayRef.current)) return put(null);
+      setGroups((all) => {
+        const copy = { ...all };
+        for (const p of pieces) delete copy[p];
+        return copy;
+      });
+    };
+    // Dropped back on the tray: the whole cluster goes home to the tray.
+    if (inside(at, trayRef.current)) {
+      removePieces(d.members);
+      return;
+    }
     if (!inside(at, viewport.current)) {
-      // Let go somewhere else: back where it came from.
-      if (d.from === "tray") put(null);
+      // Let go somewhere else: back where it came from (tray pieces were never on canvas).
       return;
     }
     const r = bounds()!;
     const t = view.current;
-    const x = (at.x - r.left - t.x) / t.scale - d.grab.x;
-    const y = (at.y - r.top - t.y) / t.scale - d.grab.y;
-    const home = { x: (d.piece % cols) * U, y: Math.floor(d.piece / cols) * U };
+    const rawX = (at.x - r.left - t.x) / t.scale - d.grab.x;
+    const rawY = (at.y - r.top - t.y) / t.scale - d.grab.y;
     const tolerance = Math.max(SNAP, SNAP_PX / t.scale);
-    if (Math.abs(x - home.x) < tolerance && Math.abs(y - home.y) < tolerance) {
-      put(null);
-      setPending((all) => new Set(all).add(d.piece));
-      onPlace(d.piece);
+    // Top-left of the dragged piece, clamped so the cluster stays near the canvas.
+    const baseX = Math.min(Math.max(rawX, 0), width - U);
+    const baseY = Math.min(Math.max(rawY, 0), height - U);
+    const pos: Loose = {};
+    for (const m of d.members) {
+      const h = homeOf(m, cols);
+      const hd = homeOf(d.piece, cols);
+      pos[m] = {
+        x: Math.min(Math.max(baseX + (h.x - hd.x), 0), width - U),
+        y: Math.min(Math.max(baseY + (h.y - hd.y), 0), height - U),
+      };
+    }
+
+    // Snap to neighbours: any loose cluster touching this one in the right relative spot joins it.
+    const gid = gidOf(currentGroups, d.piece);
+    const moving = new Set<number>(d.members);
+    const mergedPos: Loose = { ...pos };
+    const mergedGid: Groups = {};
+    for (const m of d.members) mergedGid[m] = d.from === "tray" ? d.piece : gid;
+    let joined = true;
+    while (joined) {
+      joined = false;
+      for (const [key, qAt] of Object.entries(currentLoose)) {
+        const q = Number(key);
+        if (moving.has(q) || board[q] === q || pending.has(q)) continue;
+        const qGid = gidOf(currentGroups, q);
+        // Every piece of q's cluster, to shift it as one.
+        const qMembers = Object.keys(currentLoose)
+          .map(Number)
+          .filter((p) => !moving.has(p) && gidOf(currentGroups, p) === qGid && board[p] !== p);
+        for (const m of [...moving]) {
+          for (const qm of qMembers) {
+            if (!areNeighbors(m, qm, cols)) continue;
+            const hm = homeOf(m, cols);
+            const hq = homeOf(qm, cols);
+            const want = { x: mergedPos[m]!.x + (hq.x - hm.x), y: mergedPos[m]!.y + (hq.y - hm.y) };
+            if (Math.abs(qAt.x - want.x) < tolerance && Math.abs(qAt.y - want.y) < tolerance) {
+              const shift = { x: want.x - qAt.x, y: want.y - qAt.y };
+              for (const p of qMembers) {
+                const atP = currentLoose[p] ?? qAt;
+                mergedPos[p] = {
+                  x: Math.min(Math.max(atP.x + shift.x, 0), width - U),
+                  y: Math.min(Math.max(atP.y + shift.y, 0), height - U),
+                };
+                mergedGid[p] = mergedGid[d.members[0]!]!;
+                moving.add(p);
+              }
+              joined = true;
+              break;
+            }
+          }
+          if (joined) break;
+        }
+        if (joined) break;
+      }
+    }
+
+    // Onto its home: every piece of the (possibly grown) cluster that lines up locks in.
+    const placing = [...moving].filter((p) => {
+      const atP = mergedPos[p] ?? currentLoose[p];
+      if (!atP) return false;
+      const h = homeOf(p, cols);
+      return Math.abs(atP.x - h.x) < tolerance && Math.abs(atP.y - h.y) < tolerance;
+    });
+    if (placing.length > 0) {
+      const rest = [...moving].filter((p) => !placing.includes(p));
+      removePieces(placing);
+      if (rest.length > 0) {
+        setLoose((all) => {
+          const copy = { ...all };
+          for (const p of rest) copy[p] = mergedPos[p]!;
+          return copy;
+        });
+        setGroups((all) => {
+          const copy = { ...all };
+          for (const p of rest) copy[p] = mergedGid[p]!;
+          return copy;
+        });
+      }
+      setPending((all) => {
+        const next = new Set(all);
+        for (const p of placing) next.add(p);
+        return next;
+      });
+      for (const p of placing) onPlace(p);
       // Once the server agrees the board shows it placed anyway; if it doesn't, it goes back
       // to the tray.
       setTimeout(
         () =>
           setPending((all) => {
             const next = new Set(all);
-            next.delete(d.piece);
+            for (const p of placing) next.delete(p);
             return next;
           }),
         OPTIMISTIC_MS,
       );
       return;
     }
-    // It stays on the canvas where it was dropped.
-    put({
-      x: Math.min(Math.max(x, 0), width - U),
-      y: Math.min(Math.max(y, 0), height - U),
+    // It stays on the canvas where it was dropped, stuck to what it touched.
+    setLoose((all) => {
+      const copy = { ...all };
+      for (const p of moving) copy[p] = mergedPos[p]!;
+      return copy;
+    });
+    setGroups((all) => {
+      const copy = { ...all };
+      for (const p of moving) copy[p] = mergedGid[p]!;
+      return copy;
     });
   };
 
@@ -335,6 +458,8 @@ export function InsaneBoard({
         from: "tray",
         pointerId: event.pointerId,
         grab: { x: U / 2, y: U / 2 },
+        members: [press.piece],
+        scale: view.current.scale,
       },
       { x: event.clientX, y: event.clientY },
     );
@@ -373,13 +498,20 @@ export function InsaneBoard({
       const n = Number(piece.dataset.loose);
       const t = view.current;
       const at = local(event);
-      const spot = loose[n]!;
+      const spot = looseRef.current[n] ?? loose[n];
+      if (!spot) return;
+      const gid = gidOf(groupsRef.current, n);
+      const members = Object.keys(looseRef.current)
+        .map(Number)
+        .filter((p) => gidOf(groupsRef.current, p) === gid && board[p] !== p);
       startDrag(
         {
           piece: n,
           from: "canvas",
           pointerId: event.pointerId,
           grab: { x: (at.x - t.x) / t.scale - spot.x, y: (at.y - t.y) / t.scale - spot.y },
+          members: members.length > 0 ? members : [n],
+          scale: t.scale,
         },
         { x: event.clientX, y: event.clientY },
       );
@@ -506,7 +638,7 @@ export function InsaneBoard({
           {onCanvas.map((piece) => (
             <div
               key={piece}
-              className={`insane-piece loose${drag?.piece === piece ? " lifted" : ""}`}
+              className={`insane-piece loose${drag?.members.includes(piece) ? " lifted" : ""}`}
               data-loose={piece}
               style={at(loose[piece]!)}
             >
@@ -532,7 +664,7 @@ export function InsaneBoard({
             <div
               key={piece}
               role="listitem"
-              className={`insane-piece in-tray${drag?.piece === piece ? " lifted" : ""}`}
+              className={`insane-piece in-tray${drag?.members.includes(piece) ? " lifted" : ""}`}
               data-piece={piece}
               aria-label={`Piece ${piece + 1}`}
               onPointerDown={(event) => onTrayDown(event, piece)}
@@ -546,7 +678,27 @@ export function InsaneBoard({
 
       {drag && (
         <div ref={ghost} className="insane-ghost" aria-hidden="true">
-          {art(drag.piece)}
+          {(() => {
+            const s = drag.scale;
+            const dxs = drag.members.map((m) => (colOf(m, cols) - colOf(drag.piece, cols)) * U);
+            const dys = drag.members.map((m) => (rowOf(m, cols) - rowOf(drag.piece, cols)) * U);
+            const minDx = Math.min(0, ...dxs);
+            const minDy = Math.min(0, ...dys);
+            return drag.members.map((m, i) => (
+              <div
+                key={m}
+                style={{
+                  position: "absolute",
+                  left: (dxs[i]! - minDx) * s,
+                  top: (dys[i]! - minDy) * s,
+                  width: (U + 2 * R) * s,
+                  height: (U + 2 * R) * s,
+                }}
+              >
+                {art(m)}
+              </div>
+            ));
+          })()}
         </div>
       )}
     </div>
@@ -555,22 +707,24 @@ export function InsaneBoard({
 
 const STORE = "whizard:insane";
 
-/** Loose pieces for this game from this device, so a reload keeps them where they were. */
-function readLoose(key: string): Loose {
+/** Loose pieces and their clusters for this game on this device, so a reload keeps them. */
+function readSaved(key: string): { loose: Loose; groups: Groups } {
   try {
     const saved = JSON.parse(localStorage.getItem(STORE) ?? "null") as {
       key: string;
       loose: Loose;
+      groups?: Groups;
     } | null;
-    return saved?.key === key ? saved.loose : {};
+    if (saved?.key !== key) return { loose: {}, groups: {} };
+    return { loose: saved.loose ?? {}, groups: saved.groups ?? {} };
   } catch {
-    return {};
+    return { loose: {}, groups: {} };
   }
 }
 
-function writeLoose(key: string, loose: Loose) {
+function writeSaved(key: string, loose: Loose, groups: Groups) {
   try {
-    localStorage.setItem(STORE, JSON.stringify({ key, loose }));
+    localStorage.setItem(STORE, JSON.stringify({ key, loose, groups }));
   } catch {
     // Private windows and full storage: the pieces just won't survive a reload.
   }
