@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
+import { HorizontalAlert } from "@/components/styled-alert";
 
 /** Something to be sure about before it's done. */
 export interface Confirmation {
@@ -7,6 +8,11 @@ export interface Confirmation {
   text?: string;
   /** The button that goes ahead, such as "Quit". */
   yes: string;
+  /**
+   * A second, bigger thing that can be done instead, shown beside Cancel — the host
+   * ending a game for everyone where everyone else is only offered quitting alone.
+   */
+  alt?: { label: string; run: () => void };
   run: () => void;
 }
 
@@ -29,52 +35,22 @@ export const useConfirm = () => useContext(ConfirmContext);
 /**
  * "Are you sure?", as one of Whizard's own dialogs rather than the browser's. The browser's box
  * isn't shown everywhere (apps that embed a browser often leave it out, and it then answers "no"
- * without asking), which left the button behind it doing nothing.
+ * without asking), which left the button behind it doing nothing. Every confirmation on the site
+ * comes through here, so they all share one look: the horizontal panel from `styled-alert`.
  */
 function ConfirmDialog({ ask, onClose }: { ask: Confirmation; onClose: () => void }) {
-  const dialog = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    dialog.current?.showModal();
-  }, []);
-
   return (
-    <dialog
-      ref={dialog}
-      className="app-dialog confirm-dialog"
-      role="alertdialog"
-      aria-labelledby="confirm-title"
-      aria-describedby={ask.text ? "confirm-text" : undefined}
-      onCancel={(event) => {
-        event.preventDefault();
-        onClose();
+    <HorizontalAlert
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
       }}
-      onClick={(event) => {
-        // A tap on the dimmed backdrop is a no.
-        if (event.target === dialog.current) onClose();
-      }}
-    >
-      <h2 id="confirm-title" className="section-title">
-        {ask.title}
-      </h2>
-      {ask.text && (
-        <p id="confirm-text" className="muted">
-          {ask.text}
-        </p>
-      )}
-      <div className="dialog-actions">
-        <button className="btn" onClick={onClose}>
-          Cancel
-        </button>
-        <button
-          className="btn btn-gold"
-          onClick={() => {
-            onClose();
-            ask.run();
-          }}
-        >
-          {ask.yes}
-        </button>
-      </div>
-    </dialog>
+      title={ask.title}
+      description={ask.text ?? ""}
+      confirmLabel={ask.yes}
+      altLabel={ask.alt?.label}
+      onAlt={ask.alt ? () => ask.alt!.run() : undefined}
+      onConfirm={ask.run}
+    />
   );
 }

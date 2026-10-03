@@ -32,5 +32,25 @@
   --color-border: var(--line-strong);
   --color-ring: var(--focus);
   --color-destructive: var(--bad);
+  /* The confirmation dialogs (components/styled-alert): the panel is Whizard's
+     own, and the four tones are Whizard's four colours. */
+  --color-popover: var(--panel-strong);
+  --color-popover-foreground: var(--text);
+  --color-info: var(--purple);
+  --color-info-foreground: #fff;
+  --color-info-soft: var(--panel-raised);
+  --color-info-soft-foreground: var(--accent-soft);
+  --color-success: var(--ok);
+  --color-success-foreground: #03150e;
+  --color-success-soft: var(--panel-raised);
+  --color-success-soft-foreground: var(--ok);
+  --color-warning: var(--gold);
+  --color-warning-foreground: #3a2a00;
+  --color-warning-soft: var(--panel-raised);
+  --color-warning-soft-foreground: var(--gold);
+  --color-danger: var(--bad);
+  --color-danger-foreground: #fff;
+  --color-danger-soft: var(--panel-raised);
+  --color-danger-soft-foreground: var(--bad);
   --font-sans: var(--body);
 }

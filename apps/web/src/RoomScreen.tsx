@@ -57,7 +57,6 @@ import {
   pictureName,
 } from "./games/jigsaw/JigsawSettingsPanel";
 import { LogicScreen } from "./games/logic/LogicScreen";
-import { EndGameContext } from "./games/play";
 import {
   gridName,
   LogicSettingsRows,
@@ -163,14 +162,21 @@ export function RoomScreen({ code }: { code: string }) {
       leave("/");
       return;
     }
-    if (!midGame) {
-      client.quitGame();
-      return;
-    }
+    // Always a choice, kept to one line: quitting alone, and for the host with others
+    // here, ending it for everyone instead. A player on their own is simply asked.
+    const others = (room?.players.length ?? 0) > 1;
+    const forEveryone = others && room?.hostId === state.playerId;
     ask({
       title: "Quit this game?",
-      text: "You’ll go back to the room for the next one.",
+      text: !others
+        ? "You’ll go back to the room."
+        : forEveryone
+          ? "Quit on your own and the game goes on, or end it and everyone comes back to the room."
+          : "Just you: you’ll go back to the room and can rejoin. The game goes on without you.",
       yes: "Quit",
+      ...(forEveryone
+        ? { alt: { label: "End for everyone", run: () => client.backToLobby() } }
+        : {}),
       run: () => client.quitGame(),
     });
   };
@@ -184,9 +190,9 @@ export function RoomScreen({ code }: { code: string }) {
     ask({ title: "Leave this game?", text: "You can’t rejoin it.", yes: "Leave", run: go });
   };
 
-  // The host ends the running game for everybody: everyone comes back to the room, where the
-  // settings can be changed and the game started again. The game screens get it through the
-  // context; the lobby has it as its own button while a game runs without the host in it.
+  // The host waiting in the room while a game runs without them can end it for everybody:
+  // everyone comes back, where the settings can be changed and the game started again. The
+  // host in the game gets the same choice from Quit.
   const endGame = () =>
     ask({
       title: "End this game?",
@@ -194,41 +200,38 @@ export function RoomScreen({ code }: { code: string }) {
       yes: "End Game",
       run: () => client.backToLobby(),
     });
-  const canEndGame = joined && room!.phase === "playing" && room!.hostId === state.playerId;
 
   return (
-    <EndGameContext.Provider value={canEndGame ? endGame : null}>
-      <GameNoticeContext.Provider value={notices}>
-        <div className="page room-page">
-          <h1 className="sr-only">Whizard room {code}</h1>
-          {view?.game === "jigsaw" ? (
-            <JigsawScreen {...gameProps} view={view} />
-          ) : view?.game === "connections" ? (
-            <ConnectionsScreen {...gameProps} view={view} />
-          ) : view?.game === "logic" ? (
-            <LogicScreen {...gameProps} view={view} />
-          ) : view && view.game !== "quiz" && "mode" in view ? (
-            <RoundsEliminationScreen {...gameProps} view={view} />
-          ) : view && view.game !== "quiz" ? (
-            <RoundsScreen {...gameProps} view={view} />
-          ) : view ? (
-            <QuizScreen {...gameProps} view={view} />
-          ) : joined ? (
-            <Lobby
-              client={client}
-              state={state}
-              room={room!}
-              playerId={state.playerId!}
-              sittingOut={sittingOut}
-              onLeave={leave}
-              onEndGame={endGame}
-            />
-          ) : (
-            <JoinScreen code={code} state={state} client={client} />
-          )}
-        </div>
-      </GameNoticeContext.Provider>
-    </EndGameContext.Provider>
+    <GameNoticeContext.Provider value={notices}>
+      <div className="page room-page">
+        <h1 className="sr-only">Whizard room {code}</h1>
+        {view?.game === "jigsaw" ? (
+          <JigsawScreen {...gameProps} view={view} />
+        ) : view?.game === "connections" ? (
+          <ConnectionsScreen {...gameProps} view={view} />
+        ) : view?.game === "logic" ? (
+          <LogicScreen {...gameProps} view={view} />
+        ) : view && view.game !== "quiz" && "mode" in view ? (
+          <RoundsEliminationScreen {...gameProps} view={view} />
+        ) : view && view.game !== "quiz" ? (
+          <RoundsScreen {...gameProps} view={view} />
+        ) : view ? (
+          <QuizScreen {...gameProps} view={view} />
+        ) : joined ? (
+          <Lobby
+            client={client}
+            state={state}
+            room={room!}
+            playerId={state.playerId!}
+            sittingOut={sittingOut}
+            onLeave={leave}
+            onEndGame={endGame}
+          />
+        ) : (
+          <JoinScreen code={code} state={state} client={client} />
+        )}
+      </div>
+    </GameNoticeContext.Provider>
   );
 }
 
