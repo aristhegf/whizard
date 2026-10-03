@@ -20,6 +20,10 @@ describe("parseClientMessage", () => {
     expect(parseClientMessage("{not json")).toBeNull();
   });
 
+  it("accepts the host's endRoom", () => {
+    expect(parseClientMessage(encode({ type: "endRoom" }))).toEqual({ type: "endRoom" });
+  });
+
   it("rejects unknown message types", () => {
     expect(parseClientMessage(JSON.stringify({ type: "hack" }))).toBeNull();
   });

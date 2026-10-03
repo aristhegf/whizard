@@ -158,6 +158,51 @@ test("the host role passes on when the host leaves", async ({ browser }) => {
   await expect(guest.getByRole("button", { name: /play solo/i })).toBeVisible();
 });
 
+test("the host ends the game and everyone comes back to the room", async ({ browser }) => {
+  const host = await newPlayer(browser);
+  const roomUrl = await createRoom(host, "Ada");
+  const guest = await newPlayer(browser);
+  await guest.goto(roomUrl);
+  await joinAs(guest, "Tolu");
+  await expect(players(guest)).toHaveCount(2);
+
+  await host.getByRole("button", { name: /start game/i }).press("Enter");
+  await expect(host.getByText("Get ready")).toBeVisible();
+  await expect(guest.getByText("Get ready")).toBeVisible();
+  // Only the host is offered it.
+  await expect(guest.getByRole("button", { name: "End Game" })).toHaveCount(0);
+
+  await host.getByRole("button", { name: "End Game" }).click();
+  await agree(host, "End Game");
+
+  // Both are back in the room, the game is gone, and the host can set it up again.
+  for (const page of [host, guest]) {
+    await expect(players(page)).toHaveCount(2);
+    await expect(page.getByText("Get ready")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "End Game" })).toHaveCount(0);
+  }
+});
+
+test("the host ends the room for everybody in one go", async ({ browser }) => {
+  const host = await newPlayer(browser);
+  const roomUrl = await createRoom(host, "Ada");
+  const guest = await newPlayer(browser);
+  await guest.goto(roomUrl);
+  await joinAs(guest, "Tolu");
+  await expect(players(guest)).toHaveCount(2);
+  // Only the host is offered it.
+  await expect(guest.getByRole("button", { name: "End Room" })).toHaveCount(0);
+
+  await host.getByRole("button", { name: "End Room" }).click();
+  await agree(host, "End Room");
+
+  await expect(host.getByText("You ended this room for everyone.")).toBeVisible();
+  await expect(guest.getByText("This room was ended by its host.")).toBeVisible();
+  // The room is gone for good: opening it again says so.
+  await guest.goto(roomUrl);
+  await expect(guest.getByRole("alert")).toHaveText(/doesn’t exist or has expired/);
+});
+
 test("explains when a room doesn’t exist", async ({ page }) => {
   await page.goto("/r/ZZZZZZ");
   await expect(page.getByRole("alert")).toHaveText(/doesn’t exist or has expired/);

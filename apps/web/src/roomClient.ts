@@ -48,6 +48,7 @@ const FINAL_CLOSE_MESSAGES: Record<number, string> = {
   [CloseCode.Replaced]: "You opened this room in another tab or device.",
   [CloseCode.RoomExpired]: "This room has closed because nobody was in it.",
   [CloseCode.RoomClosed]: "This room was closed by Whizard.",
+  [CloseCode.RoomEnded]: "This room was ended by its host.",
   [CloseCode.Removed]: "You were removed from this room by Whizard.",
 };
 
@@ -164,10 +165,22 @@ export class RoomClient {
     this.send({ type: "rejoinGame" });
   }
 
+  /** Host only: end the room for everybody. */
+  endRoom(): void {
+    this.send({ type: "endRoom" });
+  }
+
   leave(): void {
     this.send({ type: "leave" });
     clearSession(this.code);
     this.stop();
+  }
+
+  /** Why a final close ended things; to the host who ended the room, it reads as their own doing. */
+  private finalMessage(code: number): string {
+    const host = this.state.playerId !== null && this.state.room?.hostId === this.state.playerId;
+    if (code === CloseCode.RoomEnded && host) return "You ended this room for everyone.";
+    return FINAL_CLOSE_MESSAGES[code] ?? "This room is unavailable.";
   }
 
   private connect(): void {
@@ -200,8 +213,7 @@ export class RoomClient {
         if (event.code !== CloseCode.Replaced) clearSession(this.code);
         this.update({
           connection: "closed",
-          fatal:
-            this.state.fatal ?? FINAL_CLOSE_MESSAGES[event.code] ?? "This room is unavailable.",
+          fatal: this.state.fatal ?? this.finalMessage(event.code),
         });
         return;
       }
