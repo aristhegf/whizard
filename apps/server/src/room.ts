@@ -239,6 +239,9 @@ export class Room extends DurableObject<Env> {
       case "leave":
         await this.handleLeave(ws);
         return;
+      case "endRoom":
+        await this.handleEndRoom(ws);
+        return;
       case "profile":
         await this.handleProfile(ws, message);
         return;
@@ -415,6 +418,29 @@ export class Room extends DurableObject<Env> {
         detail: result.state.code,
       });
     }
+  }
+
+  /**
+   * The host ends the room for everybody: everyone is sent away with the reason and the room
+   * is deleted at once, rather than being left to close player by player. Only the host's own
+   * message counts, so nobody else can close the room over them.
+   */
+  private async handleEndRoom(ws: WebSocket) {
+    const playerId = attachmentOf(ws)?.playerId;
+    const state = await this.load();
+    if (!playerId || !state) {
+      sendError(ws, ErrorCode.NotJoined, "You haven’t joined this room.");
+      return;
+    }
+    if (state.hostId !== playerId) {
+      sendError(ws, ErrorCode.NotHost, "Only the host can do that.");
+      return;
+    }
+    for (const socket of this.ctx.getWebSockets()) {
+      socket.serializeAttachment(null);
+      socket.close(CloseCode.RoomEnded, "The host ended the room");
+    }
+    await this.remove(state);
   }
 
   private async handleLeave(ws: WebSocket) {

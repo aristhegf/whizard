@@ -16,6 +16,8 @@ export const CloseCode = {
   RoomExpired: 4410,
   /** Closed by a Whizard admin. */
   RoomClosed: 4403,
+  /** Ended by the room's own host, for everybody in it. */
+  RoomEnded: 4405,
   /** This player was removed from the room by a Whizard admin. */
   Removed: 4406,
 } as const;
@@ -71,6 +73,8 @@ export const clientMessageSchema = z.discriminatedUnion("type", [
     avatar: z.string().max(CUSTOM_AVATAR_MAX_LENGTH).optional(),
   }),
   z.object({ type: z.literal("leave") }),
+  /** Host only: end the room for everybody, closing it for everyone in it. */
+  z.object({ type: z.literal("endRoom") }),
   /** Change your own nickname or avatar between games. */
   z.object({
     type: z.literal("profile"),

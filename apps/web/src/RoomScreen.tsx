@@ -57,6 +57,7 @@ import {
   pictureName,
 } from "./games/jigsaw/JigsawSettingsPanel";
 import { LogicScreen } from "./games/logic/LogicScreen";
+import { EndGameContext } from "./games/play";
 import {
   gridName,
   LogicSettingsRows,
@@ -183,36 +184,51 @@ export function RoomScreen({ code }: { code: string }) {
     ask({ title: "Leave this game?", text: "You can’t rejoin it.", yes: "Leave", run: go });
   };
 
+  // The host ends the running game for everybody: everyone comes back to the room, where the
+  // settings can be changed and the game started again. The game screens get it through the
+  // context; the lobby has it as its own button while a game runs without the host in it.
+  const endGame = () =>
+    ask({
+      title: "End this game?",
+      text: "Everyone will come back to the room, and this game’s scores won’t be kept.",
+      yes: "End Game",
+      run: () => client.backToLobby(),
+    });
+  const canEndGame = joined && room!.phase === "playing" && room!.hostId === state.playerId;
+
   return (
-    <GameNoticeContext.Provider value={notices}>
-      <div className="page room-page">
-        <h1 className="sr-only">Whizard room {code}</h1>
-        {view?.game === "jigsaw" ? (
-          <JigsawScreen {...gameProps} view={view} />
-        ) : view?.game === "connections" ? (
-          <ConnectionsScreen {...gameProps} view={view} />
-        ) : view?.game === "logic" ? (
-          <LogicScreen {...gameProps} view={view} />
-        ) : view && view.game !== "quiz" && "mode" in view ? (
-          <RoundsEliminationScreen {...gameProps} view={view} />
-        ) : view && view.game !== "quiz" ? (
-          <RoundsScreen {...gameProps} view={view} />
-        ) : view ? (
-          <QuizScreen {...gameProps} view={view} />
-        ) : joined ? (
-          <Lobby
-            client={client}
-            state={state}
-            room={room!}
-            playerId={state.playerId!}
-            sittingOut={sittingOut}
-            onLeave={leave}
-          />
-        ) : (
-          <JoinScreen code={code} state={state} client={client} />
-        )}
-      </div>
-    </GameNoticeContext.Provider>
+    <EndGameContext.Provider value={canEndGame ? endGame : null}>
+      <GameNoticeContext.Provider value={notices}>
+        <div className="page room-page">
+          <h1 className="sr-only">Whizard room {code}</h1>
+          {view?.game === "jigsaw" ? (
+            <JigsawScreen {...gameProps} view={view} />
+          ) : view?.game === "connections" ? (
+            <ConnectionsScreen {...gameProps} view={view} />
+          ) : view?.game === "logic" ? (
+            <LogicScreen {...gameProps} view={view} />
+          ) : view && view.game !== "quiz" && "mode" in view ? (
+            <RoundsEliminationScreen {...gameProps} view={view} />
+          ) : view && view.game !== "quiz" ? (
+            <RoundsScreen {...gameProps} view={view} />
+          ) : view ? (
+            <QuizScreen {...gameProps} view={view} />
+          ) : joined ? (
+            <Lobby
+              client={client}
+              state={state}
+              room={room!}
+              playerId={state.playerId!}
+              sittingOut={sittingOut}
+              onLeave={leave}
+              onEndGame={endGame}
+            />
+          ) : (
+            <JoinScreen code={code} state={state} client={client} />
+          )}
+        </div>
+      </GameNoticeContext.Provider>
+    </EndGameContext.Provider>
   );
 }
 
@@ -540,6 +556,7 @@ function Lobby({
   playerId,
   sittingOut,
   onLeave,
+  onEndGame,
 }: {
   client: RoomClient;
   state: RoomClientState;
@@ -548,6 +565,8 @@ function Lobby({
   /** Quit the game that's running (or just finished), and waiting for the next one. */
   sittingOut: boolean;
   onLeave: (to: string) => void;
+  /** Host only: end the running game and bring everyone back to the room. */
+  onEndGame: () => void;
 }) {
   const ask = useConfirm();
   const isHost = room.hostId === playerId;
@@ -1003,6 +1022,15 @@ function Lobby({
     });
   };
 
+  // Ending the room takes everyone home at once, so it asks first: it can't be undone.
+  const endRoom = () =>
+    ask({
+      title: "End the room for everyone?",
+      text: "Everyone will be sent home and the room will close. This can’t be undone.",
+      yes: "End Room",
+      run: () => client.endRoom(),
+    });
+
   const bar = (
     <header className="room-bar">
       <Tooltip content="Leave the room" side="bottom">
@@ -1010,6 +1038,20 @@ function Lobby({
           <Icon name="logout" size={20} />
         </button>
       </Tooltip>
+      {isHost && room.phase === "playing" && (
+        <Tooltip content="End the game and bring everyone back" side="bottom">
+          <button className="bar-btn end-game-btn" aria-label="End Game" onClick={onEndGame}>
+            <Icon name="flag" size={20} />
+          </button>
+        </Tooltip>
+      )}
+      {isHost && (
+        <Tooltip content="End the room for everyone" side="bottom">
+          <button className="bar-btn end-room-btn" aria-label="End Room" onClick={endRoom}>
+            <Icon name="door" size={20} />
+          </button>
+        </Tooltip>
+      )}
       <div className="room-actions">
         <Latency state={state} />
         <Tooltip content="Invite Friends" side="bottom">

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { createContext, useContext, type ReactNode } from "react";
 import { PlayToast } from "../ui/gameNotice";
 import { Avatar } from "../ui/Avatar";
 import { Icon } from "../ui/Icon";
@@ -10,6 +10,13 @@ import { SettingsButton } from "../ui/SettingsDialog";
  * timer, the players' faces on phones, and a slim notice line at the bottom.
  */
 
+/**
+ * Ends the running game for everybody and brings everyone back to the room. The room screen
+ * supplies it only while a game is running, and only to the host, so nobody else is offered
+ * the button.
+ */
+export const EndGameContext = createContext<(() => void) | null>(null);
+
 export function PlayTop({
   label,
   latency,
@@ -20,12 +27,18 @@ export function PlayTop({
   latency: ReactNode;
   onQuit: () => void;
 }) {
+  const endGame = useContext(EndGameContext);
   return (
     <header className="play-top">
       <span className="play-count">{label}</span>
       <span className="play-icons">
         {latency}
         <SettingsButton iconOnly />
+        {endGame && (
+          <button className="icon-btn play-end" aria-label="End Game" onClick={endGame}>
+            <Icon name="flag" size={22} />
+          </button>
+        )}
         <button className="icon-btn play-quit" aria-label="Quit" onClick={onQuit}>
           <Icon name="logout" size={22} />
         </button>
