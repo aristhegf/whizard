@@ -169,11 +169,22 @@ test("the host ends the game and everyone comes back to the room", async ({ brow
   await host.getByRole("button", { name: /start game/i }).press("Enter");
   await expect(host.getByText("Get ready")).toBeVisible();
   await expect(guest.getByText("Get ready")).toBeVisible();
-  // Only the host is offered it.
+  // No new button for ending the game appears on anyone's game screen.
+  await expect(host.getByRole("button", { name: "End Game" })).toHaveCount(0);
   await expect(guest.getByRole("button", { name: "End Game" })).toHaveCount(0);
 
-  await host.getByRole("button", { name: "End Game" }).click();
-  await agree(host, "End Game");
+  // The guest's Quit offers only quitting alone.
+  await guest.getByRole("button", { name: "Quit" }).click();
+  const guestDialog = guest.getByRole("alertdialog");
+  await expect(guestDialog.getByRole("button", { name: "Quit" })).toBeVisible();
+  await expect(guestDialog.getByRole("button", { name: "End for everyone" })).toHaveCount(0);
+  await guestDialog.getByRole("button", { name: "Cancel" }).click();
+
+  // The host's Quit offers both: quit alone, or end it for everyone.
+  await host.getByRole("button", { name: "Quit" }).click();
+  const hostDialog = host.getByRole("alertdialog");
+  await expect(hostDialog.getByRole("button", { name: "Quit" })).toBeVisible();
+  await hostDialog.getByRole("button", { name: "End for everyone" }).click();
 
   await expect(guest.getByText("Ada ended the game")).toBeVisible();
   await expect(host.getByText(/ended the game/)).toHaveCount(0);

@@ -284,19 +284,8 @@ body {
   }
 }
 
-/* "Are you sure?" (ConfirmDialog). */
-.confirm-dialog {
-  width: min(400px, calc(100vw - 2 * var(--gutter)));
-}
-
-.confirm-dialog[open] {
-  display: grid;
-  gap: 12px;
-}
-
-.confirm-dialog p {
-  margin: 0;
-}
+/* "Are you sure?" (ConfirmDialog) lives in components/styled-alert: it styles
+   itself from the same tokens, so there is nothing to keep here. */
 
 .heading-hint-tip {
   max-width: min(260px, calc(100vw - 16px)) !important;
