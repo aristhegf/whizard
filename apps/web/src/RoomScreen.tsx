@@ -291,6 +291,18 @@ function useRoomToasts(state: RoomClientState, notices: GameNotices) {
         say(nickname, "is back in the game", "info");
       }
     }
+    // A game that stops part-way through was ended by the host: one that runs its course
+    // moves on to "finished", and only the host can bring everyone back mid-game.
+    if (before.phase === "playing" && room.phase === "lobby" && room.hostId !== playerId) {
+      const endedBy = room.hostId ? players.get(room.hostId) : undefined;
+      if (endedBy) {
+        toast.show({
+          title: `${endedBy} ended the game`,
+          description: "You’re back in the room.",
+          status: "neutral",
+        });
+      }
+    }
     const newHost = room.hostId && room.hostId !== playerId ? players.get(room.hostId) : null;
     if (newHost && before.hostId !== room.hostId) say(newHost, "is the host now", "info");
     if (room.hostId === playerId && before.hostId !== playerId) {

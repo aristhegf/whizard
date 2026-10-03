@@ -175,12 +175,47 @@ test("the host ends the game and everyone comes back to the room", async ({ brow
   await host.getByRole("button", { name: "End Game" }).click();
   await agree(host, "End Game");
 
+  await expect(guest.getByText("Ada ended the game")).toBeVisible();
+  await expect(host.getByText(/ended the game/)).toHaveCount(0);
+
   // Both are back in the room, the game is gone, and the host can set it up again.
   for (const page of [host, guest]) {
     await expect(players(page)).toHaveCount(2);
     await expect(page.getByText("Get ready")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "End Game" })).toHaveCount(0);
   }
+});
+
+test("the host waiting in the room can end the game for everyone", async ({ browser }) => {
+  test.setTimeout(90_000);
+  const host = await newPlayer(browser);
+  const roomUrl = await createRoom(host, "Ada");
+  const guest = await newPlayer(browser);
+  await guest.goto(roomUrl);
+  await joinAs(guest, "Tolu");
+  await expect(players(host)).toHaveCount(2);
+  await host.getByRole("button", { name: /start game/i }).press("Enter");
+  for (const page of [host, guest]) {
+    await expect(page.locator(".progress")).toContainText("1 of 10", { timeout: 10_000 });
+  }
+
+  // The host quits to the room and waits there while the guest plays on.
+  await host.getByRole("button", { name: "Quit" }).click();
+  await agree(host, "Quit");
+  await expect(host.locator(".room-code")).toBeVisible();
+  await expect(guest.locator(".progress")).toContainText("1 of 10");
+  await expect(host.getByRole("button", { name: "End Game" })).toBeVisible();
+
+  // From the room, the host ends the game for everyone.
+  await host.getByRole("button", { name: "End Game" }).click();
+  await agree(host, "End Game");
+
+  await expect(guest.getByText("Ada ended the game")).toBeVisible();
+  for (const page of [host, guest]) {
+    await expect(players(page)).toHaveCount(2);
+    await expect(page.getByRole("button", { name: "End Game" })).toHaveCount(0);
+  }
+  await expect(guest.locator(".progress")).toHaveCount(0);
 });
 
 test("the host ends the room for everybody in one go", async ({ browser }) => {
