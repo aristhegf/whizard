@@ -135,7 +135,7 @@ Categories at launch: Bible, Geography, History, Science, Animals, Football, Mov
 Signed-in players change this in **Settings**, and it's saved to their account:
 
 - **Explanations:** after each question (solo games only) or at the end. With friends they always wait for the results.
-- **After you answer:** pause 3 seconds, with Skip, or go straight on after a one-second glance. An explanation always gets the 3 seconds.
+- **After you answer:** pause 3 seconds, with Skip, or go straight on: the next question comes the moment you answer. Signed-in players choose; a guest gets the pause when playing solo and a one-second glance with friends. An explanation shows only while the result waits to be read, so going straight on leaves it for the review.
 
 Guests get the table above. This pacing is decided entirely on the player's own screen: the server only needs to hear "next", so the settings don't change the game rules.
 
@@ -146,7 +146,7 @@ Guests get the table above. This pacing is decided entirely on the player's own 
 
 **Review.** Every player gets a private review of their own game at the end: each question, their answer, the correct answer and the explanation where the category has one.
 
-**Late joiners.** By default, someone who arrives mid-game watches until the next one. If the host turns on **Allow late join**, they join the running game instead, starting from the first question with their own countdown. It works because every player already moves at their own pace.
+**Late joiners.** By default, someone who arrives mid-game joins the running game, starting from the first question with their own countdown. The host's **Allow late join** stays on until they turn it off; with it off, a newcomer watches until the next one instead. It works because every player already moves at their own pace.
 
 **Coming back to a game.** Anyone who was in the running game can always go back into it, with their score and progress, whatever the late-join setting; late join only decides whether a _newcomer_ can enter. Someone who quit it and stayed in the room gets **Rejoin the game** (`rejoinGame`). Someone who left the room, or was dropped after 10 minutes offline, is recognised when they come back (by their account, or the browser's guest ID, against the game's roster) and returns as the same player, under the name they played with. A dropped player is marked as having left the game, so nobody is kept waiting for them. The game decides how they come back (`onPlayerJoined` with a player it already has): in the quiz, Word Rush and Spot It the question they were on starts again with a countdown, so time away doesn't count against them; Jigsaw, Connections and Logic races carry on with the puzzle on the same clock; in an Elimination game they're back in if no cut was made while they were away, and watch if one was.
 

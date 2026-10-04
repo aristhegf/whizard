@@ -45,11 +45,14 @@ export interface Player {
 export interface RoomSettings {
   /** How many people can be in the room. */
   maxPlayers: number;
-  /** Whether someone arriving mid-game joins it, or waits for the next one. */
+  /**
+   * Whether someone arriving mid-game joins it, or waits for the next one. On by default:
+   * new rooms let late joiners straight into the running game until the host turns it off.
+   */
   lateJoin: boolean;
 }
 
-export const DEFAULT_ROOM_SETTINGS: RoomSettings = { maxPlayers: MAX_PLAYERS, lateJoin: false };
+export const DEFAULT_ROOM_SETTINGS: RoomSettings = { maxPlayers: MAX_PLAYERS, lateJoin: true };
 
 export interface RoomState {
   code: string;

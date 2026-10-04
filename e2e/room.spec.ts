@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { closeSheet, openSettings } from "./lobby";
 
 async function newPlayer(browser: Browser): Promise<Page> {
   const context = await browser.newContext();
@@ -89,6 +90,14 @@ test("the room code box says why a code won’t work", async ({ browser }) => {
   // A game already running without late join still lets them in, to wait for the next one.
   const host = await newPlayer(browser);
   const code = (await createRoom(host, "Ada")).split("/").pop()!;
+  // Late join is on by default, so the host turns it off for this game.
+  await openSettings(host);
+  await host.getByRole("switch", { name: "Allow Late Join" }).click();
+  await expect(host.getByRole("switch", { name: "Allow Late Join" })).toHaveAttribute(
+    "aria-checked",
+    "false",
+  );
+  await closeSheet(host);
   await host.getByRole("button", { name: /play solo/i }).press("Enter");
   await expect(host.getByText("Get ready")).toBeVisible();
   await box.fill(code);

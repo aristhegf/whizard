@@ -376,7 +376,13 @@ describe("coming back to a running game", () => {
       connected.add(`p${n + 1}`);
     }
     state = ok(configureGame(state, "p1", settings));
-    return { state: ok(startGame(state, "p1", connected, T0, 1, bank)), connected };
+    // Late joins are off for these tests: they're about coming back, not joining fresh.
+    const closed = configureRoom(state, "p1", { lateJoin: false });
+    if (!closed.ok) throw new Error(closed.error);
+    return {
+      state: ok(startGame(closed.state, "p1", connected, T0, 1, bank)),
+      connected,
+    };
   }
   /** Tolu answers the first question. */
   const answered = (state: RoomState) =>

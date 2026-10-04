@@ -39,7 +39,11 @@ async function playSoloGame(page: Page) {
   for (let i = 1; i <= 5; i++) {
     await expect(page.locator(".progress")).toContainText(`${i} of 5`, { timeout: 10_000 });
     await page.locator("button.choice").first().click();
-    await page.getByRole("button", { name: "Skip" }).click();
+    // The pause offers Skip; "Go straight on" has already asked for the next question.
+    await page
+      .getByRole("button", { name: "Skip" })
+      .click({ timeout: 2000 })
+      .catch(() => undefined);
   }
   await expect(page.getByText("Your score")).toBeVisible();
 }
