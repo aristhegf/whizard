@@ -171,6 +171,14 @@ test("friends play at their own pace and only see points", async ({ browser }) =
 test("a player who arrives mid-game watches until the next one", async ({ browser }) => {
   const host = await newPlayer(browser);
   await openRoom(host);
+  // Late join is on by default; watching needs it off.
+  await openSettings(host);
+  await host.getByRole("switch", { name: "Allow Late Join" }).click();
+  await expect(host.getByRole("switch", { name: "Allow Late Join" })).toHaveAttribute(
+    "aria-checked",
+    "false",
+  );
+  await closeSheet(host);
   await host.getByRole("button", { name: /play solo/i }).press("Enter");
   await expect(host.getByText("Get ready")).toBeVisible();
 
@@ -230,11 +238,13 @@ test("a late joiner plays the running game when the host allows it", async ({ br
   const host = await newPlayer(browser);
   await openRoom(host);
   await openSettings(host);
-  await host.getByRole("switch", { name: "Allow Late Join" }).click();
-  await expect(host.getByRole("switch", { name: "Allow Late Join" })).toHaveAttribute(
-    "aria-checked",
-    "true",
-  );
+  // Late join is on from the start; the host can still turn it off and on again.
+  const lateJoin = host.getByRole("switch", { name: "Allow Late Join" });
+  await expect(lateJoin).toHaveAttribute("aria-checked", "true");
+  await lateJoin.click();
+  await expect(lateJoin).toHaveAttribute("aria-checked", "false");
+  await lateJoin.click();
+  await expect(lateJoin).toHaveAttribute("aria-checked", "true");
   await closeSheet(host);
   await host.getByRole("button", { name: /play solo/i }).press("Enter");
   await answerFirstChoice(host, 1, 10);

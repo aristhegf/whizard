@@ -223,7 +223,7 @@ describe("toSnapshot", () => {
       ],
       phase: "lobby",
       game: { id: "quiz", settings: DEFAULT_QUIZ_SETTINGS },
-      settings: { maxPlayers: MAX_PLAYERS, lateJoin: false },
+      settings: { maxPlayers: MAX_PLAYERS, lateJoin: true },
       sittingOut: [],
     });
     expect(JSON.stringify(snapshot)).not.toContain("token");
@@ -290,6 +290,15 @@ describe("room settings", () => {
     const result = configureRoom(state, "p1", { maxPlayers: 2, lateJoin: true });
     if (!result.ok) throw new Error(result.error);
     expect(toSnapshot(result.state, new Set()).settings).toEqual({ maxPlayers: 2, lateJoin: true });
+  });
+
+  it("lets late joiners into a running game by default, until the host turns it off", () => {
+    const { state } = roomWith("Ada");
+    expect(toSnapshot(state, new Set()).settings.lateJoin).toBe(true);
+
+    const off = configureRoom(state, "p1", { lateJoin: false });
+    if (!off.ok) throw new Error(off.error);
+    expect(toSnapshot(off.state, new Set()).settings.lateJoin).toBe(false);
   });
 
   it("stops new players at the room's capacity", () => {

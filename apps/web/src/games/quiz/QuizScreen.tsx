@@ -39,9 +39,9 @@ import { useShareResults } from "../../share/ShareResults";
 type QuestionStage = Extract<QuizStage, { kind: "question" }>;
 type AnswerStage = Extract<QuizStage, { kind: "answer" }>;
 
-/** Straight on: a glance at the result and points, then the next question. */
+/** Guests with friends have no setting of their own: a glance at the result, then the next question. */
 const QUICK_RESULT_MS = 1000;
-/** A pause, or an explanation to read: time to take it in, with Skip. */
+/** The pause, or an explanation to read: time to take it in, with Skip. */
 const PAUSED_RESULT_MS = 3000;
 
 interface Props {
@@ -325,16 +325,27 @@ function Answer({ context, stage }: { context: GameContext; stage: AnswerStage }
   const { view, client } = context;
   const account = useAccount();
   const user = account.status === "ready" ? account.user : null;
-  // Signed-in players choose both in Settings. Guests see explanations as they go when playing
-  // solo, and go straight on otherwise. With friends, explanations always wait for the results.
+  // Signed-in players choose the pacing in Settings: "Pause 3 seconds" waits (with Skip), and
+  // "Go straight on" asks for the next question before this result has even painted. Guests,
+  // who have no setting of their own, get the explanation flow when solo and a one-second
+  // glance with friends. Explanations show only when the result waits to be read; with friends
+  // they always wait for the results.
   const explained = view.playerCount === 1 && (user?.showExplanations ?? true);
-  const paused = explained || (user?.pauseAfterAnswer ?? false);
+  const paused = user ? user.pauseAfterAnswer : view.playerCount === 1;
+  const straightOn = user !== null && !paused;
   const sent = useRef(false);
   const next = () => {
     if (sent.current) return;
     sent.current = true;
     client.act({ type: "next" });
   };
+  // Straight on: the next question comes immediately, not after a countdown.
+  const goStraightOn = useEffectEvent(() => {
+    if (straightOn) next();
+  });
+  useEffect(() => {
+    goStraightOn();
+  }, [straightOn]);
   const left = useCountdown(paused ? PAUSED_RESULT_MS : QUICK_RESULT_MS, next);
   useEffect(() => play(stage.correct ? "correct" : "wrong"), [stage.correct]);
 
@@ -365,7 +376,7 @@ function Answer({ context, stage }: { context: GameContext; stage: AnswerStage }
           {verdict}
           {stage.points > 0 && <span className="points">+{stage.points}</span>}
         </p>
-        {explained && stage.explanation && <Explanation item={stage} />}
+        {paused && explained && stage.explanation && <Explanation item={stage} />}
         {paused && (
           <p className="quiz-note">
             {stage.isLast ? "Results" : "Next"} in {Math.ceil(left / 1000)}

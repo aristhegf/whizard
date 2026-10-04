@@ -34,7 +34,7 @@
 .play-icons {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
 }
 
 .play-icons .net {
@@ -42,12 +42,37 @@
   margin-right: 8px;
 }
 
-.play-quit {
-  color: #ff5a78;
+/* Settings and Quit: the bare icons wear a chip, so they read as buttons on any screen. */
+.play-icons .icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  border: 1.5px solid var(--line);
+  background: rgb(13 11 48 / 60%);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
 }
 
-.play-quit:hover {
+@media (hover: hover) {
+  .play-icons .icon-btn:hover {
+    color: var(--text);
+    border-color: rgb(190 170 255 / 55%);
+    background: rgb(30 26 86 / 80%);
+  }
+}
+
+.play-icons .play-quit {
+  color: #ff5a78;
+  border-color: rgb(255 90 120 / 35%);
+  background: rgb(255 60 90 / 10%);
+}
+
+.play-icons .play-quit:hover {
   color: #ff8fa3;
+  border-color: rgb(255 143 163 / 55%);
+  background: rgb(255 60 90 / 16%);
 }
 
 .play-main {

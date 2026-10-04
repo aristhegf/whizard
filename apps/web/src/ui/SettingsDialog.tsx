@@ -43,36 +43,50 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
         if (event.target === dialog.current) onClose();
       }}
     >
-      <h2 id="settings-dialog-title" className="section-title">
-        Settings
-      </h2>
-      <section className="settings-list" aria-labelledby="sound-display-title">
+      <header className="settings-head">
+        <span className="settings-badge" aria-hidden="true">
+          <Icon name="settings" size={22} />
+        </span>
+        <div>
+          <h2 id="settings-dialog-title" className="section-title">
+            Settings
+          </h2>
+          <p className="dim small">
+            Sound and motion stay on this device. Your quiz choices follow your account.
+          </p>
+        </div>
+      </header>
+      <section className="settings-card" aria-labelledby="sound-display-title">
         <h3 id="sound-display-title" className="settings-group">
           Sound &amp; display
         </h3>
-        <Toggle
-          id="setting-sound"
-          icon={muted ? "muted" : "sound"}
-          label="Sound"
-          hint="Game sounds and effects"
-          checked={!muted}
-          onChange={(on) => setMuted(!on)}
-        />
-        <Toggle
-          id="setting-reduce-motion"
-          icon="bolt"
-          label="Reduce animations"
-          hint="Keep movement on screen to a minimum"
-          checked={reduceMotion}
-          onChange={setReduceMotion}
-        />
+        <div className="settings-rows">
+          <Toggle
+            id="setting-sound"
+            icon={muted ? "muted" : "sound"}
+            label="Sound"
+            hint="Game sounds and effects"
+            checked={!muted}
+            onChange={(on) => setMuted(!on)}
+          />
+          <Toggle
+            id="setting-reduce-motion"
+            icon="bolt"
+            label="Reduce animations"
+            hint="Keep movement on screen to a minimum"
+            checked={reduceMotion}
+            onChange={setReduceMotion}
+          />
+        </div>
       </section>
-      <section className="settings-list" aria-labelledby="game-settings-title">
+      <section className="settings-card" aria-labelledby="game-settings-title">
         <h3 id="game-settings-title" className="settings-group">
           Quiz
         </h3>
         {user ? (
-          <GameSettings user={user} />
+          <div className="settings-rows">
+            <GameSettings user={user} />
+          </div>
         ) : (
           <p className="muted small settings-note">
             <a
@@ -90,7 +104,7 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
         )}
       </section>
       <div className="dialog-actions">
-        <button className="btn" onClick={onClose}>
+        <button className="btn btn-primary" onClick={onClose}>
           Done
         </button>
       </div>
@@ -115,7 +129,11 @@ function GameSettings({ user }: { user: AccountUser }) {
       <Choice
         id="setting-pause"
         label="After you answer"
-        hint="Go straight on shows your result for a second. With an explanation, you always get 3 seconds, and can skip."
+        hint={
+          user.pauseAfterAnswer
+            ? "The result waits 3 seconds, with Skip — long enough to read an explanation."
+            : "The next question comes the moment you answer. Explanations wait for the review at the end."
+        }
         options={AFTER_ANSWER_CHOICES}
         value={user.pauseAfterAnswer}
         disabled={busy}

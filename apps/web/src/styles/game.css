@@ -2039,32 +2039,179 @@ button.choice:disabled {
   grid-template-columns: 22px 1fr auto;
 }
 
-/* Settings: sound and display for everyone. */
+/* Settings: sound and display for everyone, as a card that suits the game screens too. */
 .settings-dialog {
-  width: min(480px, calc(100vw - 2 * var(--gutter)));
+  width: min(500px, calc(100vw - 2 * var(--gutter)));
+  padding: 0;
+  transition:
+    display 180ms allow-discrete,
+    overlay 180ms allow-discrete,
+    transform 180ms ease,
+    opacity 180ms ease;
 }
 
-.settings-dialog .settings-list {
-  margin: 14px 0 18px;
+@starting-style {
+  .settings-dialog {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+.settings-dialog::backdrop {
+  transition:
+    display 180ms allow-discrete,
+    overlay 180ms allow-discrete,
+    background-color 180ms ease;
+}
+
+@starting-style {
+  .settings-dialog::backdrop {
+    background: rgb(8 4 30 / 0%);
+  }
+}
+
+/* The head stays put while the rows scroll beneath it. */
+.settings-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px 15px;
+  background: var(--panel-strong);
+  border-bottom: 1.5px solid var(--line);
+}
+
+.settings-head h2 {
+  margin: 0;
+}
+
+.settings-head p {
+  margin: 3px 0 0;
+  line-height: 1.35;
+}
+
+.settings-badge {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  color: #eadcff;
+  background: linear-gradient(135deg, rgb(154 77 255 / 35%), rgb(102 48 245 / 25%));
+  border: 1.5px solid rgb(190 150 255 / 45%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 20%),
+    0 8px 20px rgb(122 58 255 / 30%);
+}
+
+/* Each group of settings sits in its own card. */
+.settings-card {
+  display: grid;
+  gap: 4px;
+  margin: 16px 20px 0;
+  padding: 14px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 4%);
 }
 
 .settings-group {
-  margin: 0;
-  font-size: 0.8rem;
+  margin: 0 0 2px;
+  font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--dim);
 }
 
+.settings-rows {
+  display: grid;
+}
+
+.settings-rows > * + * {
+  border-top: 1.5px solid var(--line);
+}
+
+/* The switch rows: a soft chip for the icon, the switch at the end. */
+.settings-card .setting-row {
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: 13px;
+  padding: 12px 0 8px;
+}
+
+.settings-card .toggle-row > svg {
+  box-sizing: border-box;
+  width: 40px;
+  height: 40px;
+  padding: 9px;
+  border-radius: 13px;
+  color: #d9c6ff;
+  background: rgb(122 58 255 / 16%);
+  border: 1px solid rgb(190 150 255 / 30%);
+}
+
+.settings-card .switch {
+  width: 58px;
+  height: 34px;
+}
+
+.settings-card .switch::after {
+  top: 3.5px;
+  width: 24px;
+  height: 24px;
+}
+
+.settings-card .switch[aria-checked="true"]::after {
+  transform: translateX(25px);
+}
+
 .settings-choice {
   display: grid;
-  gap: 8px;
-  padding: 12px 0 4px;
+  gap: 10px;
+  padding: 14px 0 6px;
+}
+
+.settings-choice .dim {
+  line-height: 1.45;
+}
+
+/* The two choices, as one pressed pill with the other waiting its turn. */
+.settings-dialog .segmented {
+  gap: 6px;
+  padding: 5px;
+  border-radius: 14px;
+  background: rgb(4 2 20 / 45%);
+  border-color: var(--line-strong);
+}
+
+.settings-dialog .segmented button {
+  min-height: 44px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+}
+
+@media (hover: hover) {
+  .settings-dialog .segmented button:hover:not([aria-pressed="true"]) {
+    color: var(--text);
+    background: rgb(255 255 255 / 7%);
+  }
 }
 
 .settings-note {
-  margin: 8px 0 0;
+  margin: 6px 0 2px;
+  line-height: 1.5;
+}
+
+.settings-dialog .dialog-actions {
+  padding: 16px 20px 20px;
+}
+
+.settings-dialog .dialog-actions .btn {
+  width: 100%;
+  min-height: 54px;
 }
 
 /* Your own row in the lobby: tap it to change your name or avatar. */
