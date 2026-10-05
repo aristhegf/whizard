@@ -68,8 +68,8 @@ export async function recordMatch(env: Env, result: FinishedGame, finishedAt: nu
     if (!entry) continue;
     statements.push(
       env.DB.prepare(
-        `INSERT INTO match_players (match_id, placing, user_id, guest_id, nickname, score, correct)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO match_players (match_id, placing, user_id, guest_id, nickname, score, correct, best_ms)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       ).bind(
         id,
         player.placing,
@@ -78,6 +78,7 @@ export async function recordMatch(env: Env, result: FinishedGame, finishedAt: nu
         entry.nickname,
         player.score,
         player.correct,
+        player.bestMs ?? null,
       ),
     );
   }
@@ -113,13 +114,13 @@ async function matchesFor(
   limit: number,
 ): Promise<MatchRecord[]> {
   const { results: matches } = await env.DB.prepare(
-    `SELECT m.*, mp.correct AS my_correct FROM matches m
+    `SELECT m.*, mp.correct AS my_correct, mp.best_ms AS my_best FROM matches m
        JOIN match_players mp ON mp.match_id = m.id
       WHERE mp.user_id = ? AND m.finished_at < ?
       ORDER BY m.finished_at DESC LIMIT ?`,
   )
     .bind(userId, before, limit)
-    .all<MatchRow & { my_correct: number | null }>();
+    .all<MatchRow & { my_correct: number | null; my_best: number | null }>();
   if (matches.length === 0) return [];
 
   const ids = matches.map((m) => m.id);
@@ -142,6 +143,7 @@ async function matchesFor(
     startedAt: m.started_at,
     finishedAt: m.finished_at,
     myCorrect: m.my_correct,
+    myBestMs: m.my_best,
     players: players
       .filter((p) => p.match_id === m.id)
       .map((p): MatchPlayer => ({
@@ -200,7 +202,7 @@ export async function playerStats(
   now: number,
 ): Promise<PlayerStats> {
   const db = env.DB;
-  const [totals, categories, games, fastest, days] = await db.batch<
+  const [totals, categories, games, fastest, reactionBest, days] = await db.batch<
     Record<string, number | string | null>
   >([
     db
@@ -249,6 +251,14 @@ export async function playerStats(
          ) WHERE n = 1`,
       )
       .bind(userId, ...TIMED_GAMES),
+    // Reaction's best is the fastest single tap, kept per player with the match.
+    db
+      .prepare(
+        `SELECT MIN(mp.best_ms) AS time, NULL AS difficulty
+           FROM match_players mp JOIN matches m ON m.id = mp.match_id
+          WHERE mp.user_id = ? AND m.game = 'reaction' AND mp.best_ms IS NOT NULL`,
+      )
+      .bind(userId),
     db
       .prepare(
         // Cast, since a bound number can arrive as a real and make the division exact.
@@ -266,6 +276,8 @@ export async function playerStats(
     accuracy: Number(c["accuracy"] ?? 0),
   }));
   const times = new Map((fastest?.results ?? []).map((f) => [String(f["game"]), f]));
+  const reaction = reactionBest?.results[0];
+  if (reaction && reaction["time"] !== null) times.set("reaction", reaction);
 
   const bestAt = (game: string, topScore: number): GameBest | null => {
     const topic = topics[0];

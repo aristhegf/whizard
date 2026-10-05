@@ -98,8 +98,9 @@ export interface TestGame {
   rounds?: number;
   startedAt?: number;
   finishedAt: number;
-  /** Best first: [user ID, score, correct]. A null ID is a guest. */
-  players: [string | null, number, number | null][];
+  /** Best first: [user ID, score, correct]. A null ID is a guest. The fourth item is a
+   * player's fastest single tap, for Reaction. */
+  players: [string | null, number, number | null, (number | null)?][];
 }
 
 export async function addGame(db: D1Database, game: TestGame): Promise<string> {
@@ -121,13 +122,13 @@ export async function addGame(db: D1Database, game: TestGame): Promise<string> {
       game.finishedAt,
     )
     .run();
-  for (const [i, [userId, score, correct]] of game.players.entries()) {
+  for (const [i, [userId, score, correct, bestMs]] of game.players.entries()) {
     await db
       .prepare(
-        `INSERT INTO match_players (match_id, placing, user_id, guest_id, nickname, score, correct)
-         VALUES (?, ?, ?, NULL, ?, ?, ?)`,
+        `INSERT INTO match_players (match_id, placing, user_id, guest_id, nickname, score, correct, best_ms)
+         VALUES (?, ?, ?, NULL, ?, ?, ?, ?)`,
       )
-      .bind(id, i + 1, userId, userId ?? "Guest", score, correct)
+      .bind(id, i + 1, userId, userId ?? "Guest", score, correct, bestMs ?? null)
       .run();
   }
   return id;

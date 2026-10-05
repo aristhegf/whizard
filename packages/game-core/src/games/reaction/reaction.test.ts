@@ -202,8 +202,8 @@ describe("reaction", () => {
     const summary = reactionGame.summarize(done);
     expect(summary).toMatchObject({ rounds: 5, category: null, difficulty: null, mode: null });
     expect(summary.players).toEqual([
-      { playerId: "ada", placing: 1, score: 5 * 2750, correct: null },
-      { playerId: "tolu", placing: 2, score: 5 * 2600, correct: null },
+      { playerId: "ada", placing: 1, score: 5 * 2750, correct: null, bestMs: 250 },
+      { playerId: "tolu", placing: 2, score: 5 * 2600, correct: null, bestMs: 400 },
     ]);
   });
 

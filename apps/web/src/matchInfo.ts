@@ -106,6 +106,10 @@ export function withWhom(match: MatchRecord): string {
 
 export const formatPoints = (points: number) => points.toLocaleString("en-US");
 
+/** A time as the game writes it: "241 ms", or "4.32 s". */
+export const formatMs = (ms: number) =>
+  ms >= 1000 ? `${(ms / 1000).toFixed(2)} s` : `${Math.round(ms)} ms`;
+
 /** A game's best, as its label and value: "Best topic", "Bible 81%"; "Fastest", "2:14". */
 export function bestOf(
   game: string,
@@ -114,6 +118,9 @@ export function bestOf(
   if (best.kind === "accuracy") {
     const topic = topicName(best.category ?? null) ?? "Quiz";
     return { label: "Best topic", value: `${topic} ${Math.round(best.value * 100)}%` };
+  }
+  if (game === "reaction" && best.kind === "time") {
+    return { label: "Fastest reaction", value: formatMs(best.value) };
   }
   if (best.kind === "time") {
     const level = levelName(game, best.difficulty ?? null);
