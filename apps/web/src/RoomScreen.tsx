@@ -13,6 +13,7 @@ import {
   type JigsawView,
   type LogicView,
   type QuizSettings,
+  type ReactionView,
   type SpotItView,
   type WordRushView,
 } from "@whizard/game-core";
@@ -66,6 +67,8 @@ import {
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { TopicOptions } from "./games/quiz/TopicPicker";
+import { ReactionScreen } from "./games/reaction/ReactionScreen";
+import { ReactionSettingsRows, parseReactionSettings } from "./games/reaction/ReactionSettingsRows";
 import { RoundsEliminationScreen } from "./games/rounds/RoundsEliminationScreen";
 import { RoundsScreen } from "./games/rounds/RoundsScreen";
 import {
@@ -118,7 +121,13 @@ export function RoomScreen({ code }: { code: string }) {
 
   const view = inGame
     ? (state.game as
-        AnyQuizView | WordRushView | SpotItView | JigsawView | ConnectionsView | LogicView)
+        | AnyQuizView
+        | WordRushView
+        | SpotItView
+        | JigsawView
+        | ConnectionsView
+        | LogicView
+        | ReactionView)
     : null;
   // Leaving mid-game can't be undone, so it asks first while you're still playing: in a
   // jigsaw until you finish, in Elimination only while you're still in it.
@@ -131,6 +140,9 @@ export function RoomScreen({ code }: { code: string }) {
       midGame = view.words !== null && (view.round ? !view.final : view.answer === null);
     } else if (view.game === "logic") {
       midGame = view.grid !== null && (view.round ? !view.final : view.solution === null);
+    } else if (view.game === "reaction") {
+      // Anyone with a round still to play is mid-game; the results and the waiting screens aren't.
+      midGame = view.stage.kind !== "done" && view.stage.kind !== "watching";
     } else {
       const stage = view.stage.kind;
       const stillIn =
@@ -211,6 +223,8 @@ export function RoomScreen({ code }: { code: string }) {
           <ConnectionsScreen {...gameProps} view={view} />
         ) : view?.game === "logic" ? (
           <LogicScreen {...gameProps} view={view} />
+        ) : view?.game === "reaction" ? (
+          <ReactionScreen {...gameProps} view={view} />
         ) : view && view.game !== "quiz" && "mode" in view ? (
           <RoundsEliminationScreen {...gameProps} view={view} />
         ) : view && view.game !== "quiz" ? (
@@ -523,6 +537,7 @@ function settingsSummary({
   jigsaw,
   connections,
   logic,
+  reaction,
 }: {
   gameId: string;
   settings: ReturnType<typeof parseQuizSettings> | null;
@@ -530,6 +545,7 @@ function settingsSummary({
   jigsaw: ReturnType<typeof parseJigsawSettings> | null;
   connections: ReturnType<typeof parseConnectionsSettings> | null;
   logic: ReturnType<typeof parseLogicSettings> | null;
+  reaction: ReturnType<typeof parseReactionSettings> | null;
 }): string | null {
   // The jigsaw's own line is written with dots, for the pages that list it; here it's a list.
   if (jigsaw) return levelSummary(jigsaw).replaceAll(" · ", ", ");
@@ -542,8 +558,12 @@ function settingsSummary({
   }
   if (logic) {
     const { mode, size, minutes } = logic;
-    const grid = gridName(size).replaceAll(" · ", ", ");
+    const grid = gridName(size).replaceAll(" · ", ",");
     return `${logicModeName(mode)}, ${grid}${puzzleTime(mode, minutes)}`;
+  }
+  if (reaction) {
+    const { rounds, tapSeconds } = reaction;
+    return `${rounds} rounds, ${tapSeconds}s to tap`;
   }
   if (rounds) {
     const each =
@@ -601,6 +621,7 @@ function Lobby({
   const connections =
     gameId === "connections" ? parseConnectionsSettings(room.game.settings) : null;
   const logic = gameId === "logic" ? parseLogicSettings(room.game.settings) : null;
+  const reaction = gameId === "reaction" ? parseReactionSettings(room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
   const needMore =
@@ -647,7 +668,15 @@ function Lobby({
       ? photoPicture(room.code, jigsaw.photo).src
       : jigsaw && JIGSAW_PICTURES.find((p) => p.id === jigsaw.picture)?.src) ||
     (game?.art ?? "/art/games/quiz.webp");
-  const summary = settingsSummary({ gameId, settings, rounds, jigsaw, connections, logic });
+  const summary = settingsSummary({
+    gameId,
+    settings,
+    rounds,
+    jigsaw,
+    connections,
+    logic,
+    reaction,
+  });
   const kind = GAME_GROUPS.find((g) => g.id === game?.groups[0]);
 
   const canChangeTopic = isHost && !!(settings || jigsaw);
@@ -772,6 +801,13 @@ function Lobby({
         <LogicSettingsRows
           settings={logic}
           players={connected.length}
+          editable={canEdit}
+          onChange={(next) => client.configure(next)}
+        />
+      )}
+      {reaction && (
+        <ReactionSettingsRows
+          settings={reaction}
           editable={canEdit}
           onChange={(next) => client.configure(next)}
         />
