@@ -295,3 +295,24 @@ export {
   type LogicSettings,
   type LogicSize,
 } from "./games/logic/settings";
+export {
+  EARLY_TOLERANCE_MS,
+  REACTION_COUNTDOWN_MS,
+  REACTION_PAUSE_MS,
+  reactionGame,
+  standingsOf as reactionStandings,
+  type ReactionAction,
+  type ReactionRecord,
+  type ReactionRoundTime,
+  type ReactionStage,
+  type ReactionState,
+  type ReactionStanding,
+  type ReactionView,
+} from "./games/reaction/reaction";
+export {
+  DEFAULT_REACTION_SETTINGS,
+  REACTION_ROUNDS,
+  REACTION_TAP_SECONDS,
+  reactionSettingsSchema,
+  type ReactionSettings,
+} from "./games/reaction/settings";

@@ -99,11 +99,12 @@ export const CATALOG: CatalogGame[] = [
     id: "reaction",
     name: "Reaction",
     description: "Be the fastest. Sharp eyes, quick fingers.",
-    players: "2-20 players",
+    players: "1-20 players",
     groups: ["skill"],
     art: "/art/games/reaction.webp",
     colors: ["#2f78ff", "#101c5e"],
     href: null,
+    starts: "reaction",
   },
   {
     id: "spot-it",
