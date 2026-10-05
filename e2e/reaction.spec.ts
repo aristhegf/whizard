@@ -42,8 +42,9 @@ test("a solo game: a false start loses the round, and the rest go on green", asy
   await expect(page.getByText("Get ready")).toBeVisible();
   // The pad appears for the wait: tapping before the signal is a false start.
   const waiting = page.getByRole("button", { name: "Wait for the signal" });
-  await expect(waiting).toBeVisible({ timeout: 8000 });    await waiting.click();
-    // Solo, the round ends on the spot and shows its verdict: the time is none.
+  await expect(waiting).toBeVisible({ timeout: 8000 });
+  await waiting.click();
+  // Solo, the round ends on the spot and shows its verdict: the time is none.
   await expect(page.locator(".verdict")).toHaveText(/False start/);
 
   for (let round = 2; round <= 5; round++) {
