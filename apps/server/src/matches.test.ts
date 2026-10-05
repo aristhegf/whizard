@@ -93,12 +93,18 @@ describe("a player's stats", () => {
       finishedAt: daysAgo(0) + 5 * HOUR,
       players: [["ada", 8420, 10]],
     });
+    // One game of Reaction: its best is the fastest single tap, not the points.
+    await addGame(db, {
+      game: "reaction",
+      finishedAt: daysAgo(0) + 4 * HOUR,
+      players: [["ada", 8700, null, 241]],
+    });
     return { DB: db } as unknown as Env;
   }
 
   it("totals, per game, with each game's best", async () => {
     const stats = await playerStats(await seed(), "ada", 0, now);
-    expect(stats.played).toBe(11);
+    expect(stats.played).toBe(12);
     expect(stats.groupGames).toBe(2);
     expect(stats.wins).toBe(1);
     expect(stats.categories[0]).toEqual({ category: "bible", games: 1, accuracy: 0.8 });
@@ -117,6 +123,7 @@ describe("a player's stats", () => {
         best: { kind: "time", value: 134_000, difficulty: "medium" },
       },
       { game: "word-rush", played: 2, wins: 0, best: { kind: "score", value: 8420 } },
+      { game: "reaction", played: 1, wins: 0, best: { kind: "time", value: 241 } },
     ]);
   });
 

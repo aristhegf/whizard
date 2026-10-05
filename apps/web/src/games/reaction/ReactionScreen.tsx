@@ -2,6 +2,7 @@ import type { ReactionStage, ReactionView } from "@whizard/game-core";
 import { useEffect, useRef, type ReactNode } from "react";
 import { AddFromGame } from "../../FriendsScreen";
 import { CATALOG } from "../../catalog";
+import { formatMs } from "../../matchInfo";
 import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
@@ -24,10 +25,6 @@ interface Props {
   /** Quits the game. Asks first while it's still running. */
   onQuit: () => void;
 }
-
-/** A time as the game writes it: "241 ms", or "4.32 s". */
-export const formatMs = (ms: number) =>
-  ms >= 1000 ? `${(ms / 1000).toFixed(2)} s` : `${Math.round(ms)} ms`;
 
 type CountdownStage = Extract<ReactionStage, { kind: "countdown" }>;
 type WaitStage = Extract<ReactionStage, { kind: "wait" }>;

@@ -365,13 +365,13 @@ Sign-in with Google can be added later as a second way in.
 
 ### Recording results
 
-When a game finishes, the room saves one match record to D1: the game, category, level and mode, and each player's placing, score and correct answers, with their user ID or guest ID. The room keeps a roster of who started, so a result is saved even if someone closes the tab before the end. Players who quit mid-game aren't included.
+When a game finishes, the room saves one match record to D1: the game, category, level and mode, and each player's placing, score and correct answers (and, for Reaction, their fastest tap), with their user ID or guest ID. The room keeps a roster of who started, so a result is saved even if someone closes the tab before the end. Players who quit mid-game aren't included.
 
 Stats, head-to-head records and leaderboards are all queries over these records, so new stats can be added later without touching any game. History shows your own correct answers but only other players' placings and scores.
 
 `GET /api/me/stats` (`playerStats` in `matches.ts`) gives the profile its numbers: games, wins (first place in games with at least one other player) out of those games, each game played with its wins and its best, and the streak.
 
-- **A game's best.** The quiz's is the topic with the most answers right. Jigsaw, Connections and Logic have the fastest solve: no player's own time is stored, but a solo game that was solved to the end (`correct` equals `rounds`) lasts exactly as long as that player took, so it's `finished_at - started_at`, counting the few seconds of countdown at the start. A game with others lasts until the last one finishes, so it's never timed. Without a solved solo game, and for Word Rush, Spot It and Reaction, it's the most points in one game.
+- **A game's best.** The quiz's is the topic with the most answers right. Jigsaw, Connections and Logic have the fastest solve: no player's own time is stored, but a solo game that was solved to the end (`correct` equals `rounds`) lasts exactly as long as that player took, so it's `finished_at - started_at`, counting the few seconds of countdown at the start. A game with others lasts until the last one finishes, so it's never timed. Without a solved solo game, and for Word Rush and Spot It, it's the most points in one game. Reaction's is its fastest single tap, the fastest of those across your games (`best_ms`, kept with the match, shown as "Fastest reaction" and in the history row); with no recorded tap, the points count instead.
 - **The streak** is the days in a row with at least one finished game, up to today or yesterday, and the longest run ever. Days are counted in the viewer's time zone: the page sends how many minutes its clock is ahead of UTC (`?tz=`), and without it they're UTC days.
 
 These queries are unit-tested against the real migrations in an in-memory SQLite database (`testDb.ts`, using Node's `node:sqlite` behind the few D1 calls the server makes).

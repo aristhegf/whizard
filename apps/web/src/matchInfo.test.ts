@@ -71,6 +71,7 @@ describe("history details", () => {
     expect(solveTime(match({ ...jigsaw, myCorrect: 25 }))).toBe(134_000);
     expect(solveTime(match({ ...jigsaw, myCorrect: 20 }))).toBeNull();
     expect(solveTime(match({ game: "quiz", myCorrect: 10 }))).toBeNull();
+    expect(solveTime(match({ game: "reaction", myBestMs: 241 }))).toBeNull();
   });
 
   it("reads days and times the way people say them", () => {
@@ -99,6 +100,20 @@ describe("history details", () => {
     expect(bestOf("word-rush", { kind: "score", value: 8420 })).toEqual({
       label: "Best score",
       value: "8,420",
+    });
+    // Reaction's best is its fastest single tap, in the game's own units.
+    expect(bestOf("reaction", { kind: "time", value: 241 })).toEqual({
+      label: "Fastest reaction",
+      value: "241 ms",
+    });
+    expect(bestOf("reaction", { kind: "time", value: 4320 })).toEqual({
+      label: "Fastest reaction",
+      value: "4.32 s",
+    });
+    // Without a recorded tap (every round missed), the points still count as the best.
+    expect(bestOf("reaction", { kind: "score", value: 8700 })).toEqual({
+      label: "Best score",
+      value: "8,700",
     });
   });
 });

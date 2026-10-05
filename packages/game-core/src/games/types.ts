@@ -28,6 +28,8 @@ export interface GameSummary {
     score: number;
     /** Correct answers, for games that have them. */
     correct: number | null;
+    /** The player's fastest single round, for Reaction's \"Fastest reaction\" stat. */
+    bestMs?: number | null;
   }[];
   /** How each piece of content (such as a question) went, for games that have them. */
   items?: ItemResult[];

@@ -430,6 +430,7 @@ export const reactionGame: GameModule<
         // Scaled to a whole game, so a late joiner's score reads like everyone else's.
         score: s.played > 0 ? Math.round((s.points / s.played) * rounds) : 0,
         correct: null,
+        bestMs: s.bestMs,
       })),
     };
   },

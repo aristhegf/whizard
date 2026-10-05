@@ -247,6 +247,8 @@ export interface MatchRecord {
   finishedAt: number;
   /** Your own correct answers. Nobody else's are shown. */
   myCorrect: number | null;
+  /** Your own fastest single tap in Reaction, for the history row. Null for other games. */
+  myBestMs?: number | null;
   players: MatchPlayer[];
 }
 
@@ -259,8 +261,8 @@ export interface CategoryStat {
 
 /**
  * A player's best at one game. `accuracy` is a share of questions right (0 to 1) in the quiz
- * topic `category`; `time` is the fastest solo solve in ms, at `difficulty`; `score` is the most
- * points in one game.
+ * topic `category`; `time` is the fastest solo solve in ms at `difficulty`, or, for Reaction, the
+ * fastest single tap; `score` is the most points in one game.
  */
 export interface GameBest {
   kind: "accuracy" | "time" | "score";

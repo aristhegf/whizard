@@ -26,6 +26,7 @@ import {
 import {
   bestOf,
   dayLabel,
+  formatMs,
   formatPoints,
   gameInfo,
   matchTitle,
@@ -425,9 +426,11 @@ function MatchRow({ match }: { match: MatchRecord }) {
   const result =
     time !== null
       ? clock(time)
-      : match.game === "connections" && match.myCorrect !== null
-        ? `${match.myCorrect}/${match.rounds}`
-        : formatPoints(me?.score ?? 0);
+      : match.myBestMs != null
+        ? formatMs(match.myBestMs)
+        : match.game === "connections" && match.myCorrect !== null
+          ? `${match.myCorrect}/${match.rounds}`
+          : formatPoints(me?.score ?? 0);
   return (
     <li>
       <img src={gameInfo(match.game).art} alt="" width={44} height={44} loading="lazy" />
