@@ -12,8 +12,9 @@ Free to play, with no sign-up needed. An optional account keeps your stats and l
 - **Word Rush:** unscramble words or fill in their missing letters, with a hint for each, in Speed or Elimination
 - **Spot It:** find the odd one out in a grid, in Speed or Elimination
 - **Reaction:** everyone sees the signal at the same instant; tap the moment the pad lights up green, and don't tap early
+- **Memory:** the same set of items on every screen for the same beat, then the question — which one was NOT shown, what sat in position 4, how many animals did you see?
 - **Levels everywhere:** Easy, Medium, Hard, or Auto, which starts easy and gets harder round by round
-- **Coming later:** Memory, Pattern, Connections, social games like Most Likely To and How Well Do You Know Me?, and party games like Impostor and Draw & Guess
+- **Coming later:** Pattern, social games like Most Likely To and How Well Do You Know Me?, and party games like Impostor and Draw & Guess
 
 The full list is in [docs/GAMES.md](docs/GAMES.md).
 

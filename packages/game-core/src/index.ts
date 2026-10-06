@@ -296,6 +296,32 @@ export {
   type LogicSize,
 } from "./games/logic/settings";
 export {
+  MEMORY_ANSWER_ALLOWANCE_MS,
+  MEMORY_ANSWER_MS,
+  MEMORY_COUNTDOWN_MS,
+  MEMORY_RESULT_MS,
+  MEMORY_SET_SIZE,
+  memoryGame,
+  standingsOf as memoryStandings,
+  type MemoryAction,
+  type MemoryAnswer,
+  type MemoryItem,
+  type MemoryQuestionType,
+  type MemoryRecord,
+  type MemoryRound,
+  type MemoryStage,
+  type MemoryState,
+  type MemoryStanding,
+  type MemoryView,
+} from "./games/memory/memory";
+export {
+  DEFAULT_MEMORY_SETTINGS,
+  MEMORY_REVEAL_SECONDS,
+  MEMORY_ROUNDS,
+  memorySettingsSchema,
+  type MemorySettings,
+} from "./games/memory/settings";
+export {
   EARLY_TOLERANCE_MS,
   REACTION_COUNTDOWN_MS,
   REACTION_PAUSE_MS,
