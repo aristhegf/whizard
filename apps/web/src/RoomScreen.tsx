@@ -12,6 +12,7 @@ import {
   type ConnectionsView,
   type JigsawView,
   type LogicView,
+  type MemoryView,
   type QuizSettings,
   type ReactionView,
   type SpotItView,
@@ -64,6 +65,8 @@ import {
   logicModeName,
   parseLogicSettings,
 } from "./games/logic/LogicSettingsRows";
+import { MemoryScreen } from "./games/memory/MemoryScreen";
+import { MemorySettingsRows, parseMemorySettings } from "./games/memory/MemorySettingsRows";
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { TopicOptions } from "./games/quiz/TopicPicker";
@@ -127,7 +130,8 @@ export function RoomScreen({ code }: { code: string }) {
         | JigsawView
         | ConnectionsView
         | LogicView
-        | ReactionView)
+        | ReactionView
+        | MemoryView)
     : null;
   // Leaving mid-game can't be undone, so it asks first while you're still playing: in a
   // jigsaw until you finish, in Elimination only while you're still in it.
@@ -141,6 +145,9 @@ export function RoomScreen({ code }: { code: string }) {
     } else if (view.game === "logic") {
       midGame = view.grid !== null && (view.round ? !view.final : view.solution === null);
     } else if (view.game === "reaction") {
+      // Anyone with a round still to play is mid-game; the results and the waiting screens aren't.
+      midGame = view.stage.kind !== "done" && view.stage.kind !== "watching";
+    } else if (view.game === "memory") {
       // Anyone with a round still to play is mid-game; the results and the waiting screens aren't.
       midGame = view.stage.kind !== "done" && view.stage.kind !== "watching";
     } else {
@@ -225,6 +232,8 @@ export function RoomScreen({ code }: { code: string }) {
           <LogicScreen {...gameProps} view={view} />
         ) : view?.game === "reaction" ? (
           <ReactionScreen {...gameProps} view={view} />
+        ) : view?.game === "memory" ? (
+          <MemoryScreen {...gameProps} view={view} />
         ) : view && view.game !== "quiz" && "mode" in view ? (
           <RoundsEliminationScreen {...gameProps} view={view} />
         ) : view && view.game !== "quiz" ? (
@@ -538,6 +547,7 @@ function settingsSummary({
   connections,
   logic,
   reaction,
+  memory,
 }: {
   gameId: string;
   settings: ReturnType<typeof parseQuizSettings> | null;
@@ -546,6 +556,7 @@ function settingsSummary({
   connections: ReturnType<typeof parseConnectionsSettings> | null;
   logic: ReturnType<typeof parseLogicSettings> | null;
   reaction: ReturnType<typeof parseReactionSettings> | null;
+  memory: ReturnType<typeof parseMemorySettings> | null;
 }): string | null {
   // The jigsaw's own line is written with dots, for the pages that list it; here it's a list.
   if (jigsaw) return levelSummary(jigsaw).replaceAll(" · ", ", ");
@@ -564,6 +575,10 @@ function settingsSummary({
   if (reaction) {
     const { rounds, tapSeconds } = reaction;
     return `${rounds} rounds, ${tapSeconds}s to tap`;
+  }
+  if (memory) {
+    const { rounds, revealSeconds } = memory;
+    return `${rounds} rounds, ${revealSeconds}s to remember`;
   }
   if (rounds) {
     const each =
@@ -622,6 +637,7 @@ function Lobby({
     gameId === "connections" ? parseConnectionsSettings(room.game.settings) : null;
   const logic = gameId === "logic" ? parseLogicSettings(room.game.settings) : null;
   const reaction = gameId === "reaction" ? parseReactionSettings(room.game.settings) : null;
+  const memory = gameId === "memory" ? parseMemorySettings(room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
   const needMore =
@@ -676,6 +692,7 @@ function Lobby({
     connections,
     logic,
     reaction,
+    memory,
   });
   const kind = GAME_GROUPS.find((g) => g.id === game?.groups[0]);
 
@@ -808,6 +825,13 @@ function Lobby({
       {reaction && (
         <ReactionSettingsRows
           settings={reaction}
+          editable={canEdit}
+          onChange={(next) => client.configure(next)}
+        />
+      )}
+      {memory && (
+        <MemorySettingsRows
+          settings={memory}
           editable={canEdit}
           onChange={(next) => client.configure(next)}
         />

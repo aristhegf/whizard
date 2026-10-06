@@ -1,0 +1,85 @@
+/* Memory -------------------------------------------------------------------------------- */
+
+/* The six items to remember: the same flat night tiles every game's tiles are. */
+.memory-set {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.memory-item {
+  display: grid;
+  place-items: center;
+  gap: 4px;
+  padding: 16px 8px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  background: rgb(13 11 48 / 70%);
+  text-align: center;
+}
+
+.memory-emoji {
+  font-size: clamp(1.9rem, 7vw, 2.8rem);
+  line-height: 1;
+}
+
+.memory-name {
+  overflow: hidden;
+  max-width: 100%;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The line under the choices: what to do, then how long is left. */
+.memory-status {
+  margin: 0;
+  min-height: 1.4em;
+  text-align: center;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* Between rounds: everyone's answers, the scores' order. */
+.memory-answers {
+  display: grid;
+  gap: 8px;
+  width: min(420px, 100%);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.memory-answers li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 4%);
+}
+
+.memory-answers li.me {
+  border-color: rgb(190 150 255 / 45%);
+  background: rgb(122 58 255 / 10%);
+}
+
+.memory-answers .name {
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.memory-answers .time {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}

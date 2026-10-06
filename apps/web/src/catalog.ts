@@ -67,11 +67,12 @@ export const CATALOG: CatalogGame[] = [
     id: "memory",
     name: "Memory",
     description: "Remember, match and win",
-    players: "2-12 players",
+    players: "1-12 players",
     groups: ["puzzle"],
     art: "/art/games/memory.webp",
     colors: ["#15b58c", "#0b2a3c"],
     href: null,
+    starts: "memory",
   },
   {
     id: "logic",
