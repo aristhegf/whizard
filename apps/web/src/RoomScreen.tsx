@@ -8,6 +8,7 @@ import {
   QUIZ_CATEGORIES,
   QUIZ_VARIANTS,
   ROUNDS_MODES,
+  reactionLevelName,
   type AnyQuizView,
   type ConnectionsView,
   type JigsawView,
@@ -71,11 +72,7 @@ import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { TopicOptions } from "./games/quiz/TopicPicker";
 import { ReactionScreen } from "./games/reaction/ReactionScreen";
-import {
-  ReactionSettingsRows,
-  parseReactionSettings,
-  reactionLevelName,
-} from "./games/reaction/ReactionSettingsRows";
+import { ReactionSettingsRows, parseReactionSettings } from "./games/reaction/ReactionSettingsRows";
 import { RoundsEliminationScreen } from "./games/rounds/RoundsEliminationScreen";
 import { RoundsScreen } from "./games/rounds/RoundsScreen";
 import {

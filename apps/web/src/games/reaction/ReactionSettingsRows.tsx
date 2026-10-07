@@ -15,14 +15,6 @@ export function parseReactionSettings(settings: unknown): ReactionSettings | nul
   return parsed.success ? parsed.data : null;
 }
 
-/** The level as the lobby's one line says it: "Hard", or "Insane 6×6". */
-export function reactionLevelName(settings: ReactionSettings): string {
-  const name = REACTION_LEVEL_NAMES[settings.level];
-  return settings.level === "insane"
-    ? `${name} ${settings.insaneSize}×${settings.insaneSize}`
-    : name;
-}
-
 /** Reaction's rows in the lobby's Room Settings list. Only the host can change them. */
 export function ReactionSettingsRows({
   settings,

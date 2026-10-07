@@ -107,6 +107,9 @@ function Round(props: Props & { stage: CountdownStage | WaitStage }) {
   const missed = !myTap && now >= endsAt;
   const locked = !!myTap || missed;
   const [wrongCell, setWrongCell] = useState<number | null>(null);
+  // Wrong tiles never reach the server; they're counted here and reported with the tap,
+  // so a first-try find (no misses) is what feeds the streak bonus.
+  const misses = useRef(0);
 
   useEffect(() => {
     if (!started) play("tick");
@@ -139,6 +142,7 @@ function Round(props: Props & { stage: CountdownStage | WaitStage }) {
     if (locked) return;
     if (options[index]!.id !== target.id) {
       // Wrong tile: red on the spot, and nothing else happens — they keep their chance.
+      misses.current += 1;
       setWrongCell(index);
       play("wrong");
       if (flash.current !== null) window.clearTimeout(flash.current);
@@ -149,6 +153,7 @@ function Round(props: Props & { stage: CountdownStage | WaitStage }) {
       type: "tap",
       choice: index,
       clientElapsedMs: Math.round(client.serverNow() - signalAt),
+      misses: misses.current,
     });
   };
 
@@ -239,12 +244,11 @@ function Round(props: Props & { stage: CountdownStage | WaitStage }) {
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 
-/** Between rounds: this round's times with a medal each, and the countdown to the next. */
+/** Between rounds: this round's times with a medal each, and the live standings beneath. */
 function RoundResult(props: Props & { stage: ResultStage }) {
   const { view, client, stage, playerId } = props;
   const now = useServerNow(client.serverNow);
   const seconds = Math.max(0, Math.ceil((stage.endsAt - now) / 1000));
-  const me = view.me;
   const mine = stage.times.find((t) => t.playerId === playerId) ?? null;
   const points = mine?.ms !== null && mine ? Math.max(0, view.windowMs - mine.ms) : 0;
   const verdict = !mine
@@ -253,13 +257,15 @@ function RoundResult(props: Props & { stage: ResultStage }) {
       ? "Too slow"
       : formatMs(mine.ms);
   const good = !!mine && mine.ms !== null;
-  const names = new Map(view.standings.map((s) => [s.playerId, s.nickname]));
   const last = stage.round + 1 >= view.rounds;
   // A medal for each distinct time, so equal taps share one (ties at the top both take gold).
   const medals = new Map<number, string>();
   for (const t of stage.times) {
     if (t.ms !== null && !medals.has(t.ms)) medals.set(t.ms, MEDALS[medals.size] ?? "");
   }
+  // Where everyone stood last round, so this round's arrows can show places gained or lost.
+  const previous = new Map(stage.previous.map((p) => [p.playerId, p.rank]));
+  const names = new Map(view.standings.map((s) => [s.playerId, s.nickname]));
 
   return (
     <PlayScreen
@@ -270,7 +276,6 @@ function RoundResult(props: Props & { stage: ResultStage }) {
       }
       latency={props.latency}
       onQuit={props.onQuit}
-      side={<LiveBoard {...props} />}
     >
       <p className={`verdict ${good ? "good" : "bad"}`} role="status">
         {verdict}
@@ -291,11 +296,50 @@ function RoundResult(props: Props & { stage: ResultStage }) {
           </li>
         ))}
       </ul>
+      {/* The leaderboard as it stands now: ranks, the places moved since last round, first-try
+          streaks and everyone's average. It's up between every round, not only at the end. */}
+      <section className="reaction-standings" aria-label="Live standings">
+        <p className="reaction-standings-title">
+          Live standings <span>after round {stage.round + 1}</span>
+        </p>
+        <ol>
+          {view.standings.map((s) => {
+            const isMe = s.playerId === playerId;
+            const was = previous.get(s.playerId);
+            const moved = was === undefined ? 0 : was - s.rank;
+            return (
+              <li key={s.playerId} className={`${isMe ? "me" : ""}${s.left ? " gone" : ""}`}>
+                <span className={`rank m${s.rank}`}>{s.rank}</span>
+                <Avatar id={roomAvatar(props.room, s.playerId)} name={s.nickname} size={34} />
+                <span className="name">{isMe ? "You" : s.nickname}</span>
+                {/* Streak and movement render every row so the columns line up; empty
+                    slots are hidden by CSS. */}
+                <span
+                  className="streak"
+                  title={s.streak >= 2 ? `${s.streak} first-try rounds in a row` : undefined}
+                >
+                  {s.streak >= 2 ? `🔥${s.streak}` : ""}
+                </span>
+                <span
+                  className={`move${moved > 0 ? " up" : moved < 0 ? " down" : ""}`}
+                  aria-hidden="true"
+                >
+                  {moved > 0 ? "▲" : moved < 0 ? "▼" : ""}
+                </span>
+                <span className="sr-only">
+                  {moved > 0 ? `Up ${moved}` : moved < 0 ? `Down ${-moved}` : ""}
+                </span>
+                <span className="avg">
+                  {s.left ? "Left" : s.avgMs === null ? "—" : formatMs(s.avgMs)}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
       <p className="reaction-status" role="status">
         {last ? "Results" : "Next round"} in {seconds}
       </p>
-      <PlayFaces faces={rowsOf(props)} playerId={playerId} />
-      {me && <p className="dim small center">Your average: {formatMs(me.avgMs ?? 0)}</p>}
     </PlayScreen>
   );
 }
@@ -320,7 +364,12 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
   const { open: share, dialog: shareDialog } = useShareResults(
     buildCard({
       title: "Reaction",
-      subtitle: `${view.rounds} rounds`,
+      subtitle: `${view.rounds} rounds · ${view.levelName}`,
+      // The average rides above the big fastest hit, so the card leads with both times.
+      kicker:
+        me?.avgMs != null
+          ? `Average ${formatMs(me.avgMs)} over ${me.played} ${me.played === 1 ? "round" : "rounds"}`
+          : undefined,
       art: "/art/games/reaction.webp",
       colors: CATALOG.find((g) => g.id === "reaction")?.colors ?? ["#2f78ff", "#101c5e"],
       rows: solo
@@ -385,6 +434,12 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
                 {me.played} {me.played === 1 ? "round" : "rounds"}
                 {me.avgMs !== null && ` · ${formatMs(me.avgMs)} on average`}
               </p>
+              {me.streakBonus > 0 && (
+                <p className="streak-bonus">
+                  🔥 Streak bonus +{me.streakBonus.toLocaleString("en-US")}
+                  {me.bestStreak >= 2 && ` · best run ${me.bestStreak}`}
+                </p>
+              )}
             </div>
           ) : (
             <Podium
@@ -395,6 +450,13 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
               }))}
               avatarOf={avatarOf}
             />
+          )}
+
+          {!solo && me && me.streakBonus > 0 && (
+            <p className="streak-bonus center">
+              🔥 Streak bonus +{me.streakBonus.toLocaleString("en-US")}
+              {me.bestStreak >= 2 && ` · best run ${me.bestStreak} first-try rounds`}
+            </p>
           )}
 
           {isHost ? (

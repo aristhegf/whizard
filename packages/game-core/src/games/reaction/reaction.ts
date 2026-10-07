@@ -3,6 +3,7 @@ import { seededRng, shuffled, type Rng } from "../../random";
 import type { GameModule, Rejection } from "../types";
 import {
   DEFAULT_REACTION_SETTINGS,
+  reactionLevelName,
   reactionSettingsSchema,
   type ReactionLevel,
   type ReactionSettings,
@@ -41,6 +42,11 @@ export const NETWORK_ALLOWANCE_MS = 250;
  * after the network's round trip. The client locks the board at the window itself.
  */
 const ARRIVAL_GRACE_MS = 400;
+/**
+ * Points for finding the target first try, round after round: every round past the first two
+ * in a streak pays this, so a clean run through the game is worth a whole extra round.
+ */
+export const REACTION_STREAK_BONUS = 1000;
 
 export const reactionActionSchema = z.object({
   type: z.literal("tap"),
@@ -48,6 +54,12 @@ export const reactionActionSchema = z.object({
   choice: z.number().int(),
   /** Milliseconds from the options appearing to the tap, measured on the player's own screen. */
   clientElapsedMs: z.number(),
+  /**
+   * Wrong tiles tapped along the way, counted on the player's screen and reported with the
+   * tap (the wrong tiles flash red there and never reach the server). A first-try find —
+   * none of these — keeps the streak going.
+   */
+  misses: z.number().int().min(0).max(99).default(0),
 });
 
 export type ReactionAction = z.infer<typeof reactionActionSchema>;
@@ -131,6 +143,8 @@ export interface ReactionRound {
 export interface ReactionRecord {
   /** The reaction time credited for the round, or null if they never tapped the target. */
   ms: number | null;
+  /** Wrong tiles tapped before the target. Zero is a first-try find, which keeps a streak. */
+  misses: number;
 }
 
 interface ReactionPlayer {
@@ -161,6 +175,8 @@ export interface ReactionState {
   delays: number[];
   /** Every round's target and board, from the room's seed. */
   rounds: ReactionRound[];
+  /** Everyone's ranks as each round's result went up, for the movement arrows between rounds. */
+  rankHistory: { playerId: string; rank: number }[][];
   finishedAt: number | null;
 }
 
@@ -180,6 +196,12 @@ export interface ReactionStanding {
   bestMs: number | null;
   /** Rounds they have a record for. */
   played: number;
+  /** Rounds found first try in a row at the end of their game so far. */
+  streak: number;
+  /** Their longest run of first-try finds. */
+  bestStreak: number;
+  /** Points paid for their streaks: 1,000 for each round past the first two in a run. */
+  streakBonus: number;
   left: boolean;
 }
 
@@ -187,6 +209,12 @@ export interface ReactionStanding {
 export interface ReactionRoundTime {
   playerId: string;
   ms: number | null;
+}
+
+/** Where everyone stood at the last round's result, for this round's movement arrows. */
+export interface ReactionRankMark {
+  playerId: string;
+  rank: number;
 }
 
 export type ReactionStage =
@@ -206,7 +234,13 @@ export type ReactionStage =
       target: ReactionItem;
       options: ReactionItem[];
     }
-  | { kind: "result"; round: number; endsAt: number; times: ReactionRoundTime[] }
+  | {
+      kind: "result";
+      round: number;
+      endsAt: number;
+      times: ReactionRoundTime[];
+      previous: ReactionRankMark[];
+    }
   /** Joined mid-round: they're in from the next one. */
   | { kind: "queued" }
   | { kind: "watching" }
@@ -215,6 +249,8 @@ export type ReactionStage =
 export interface ReactionView {
   game: "reaction";
   rounds: number;
+  /** The level as the lobby says it: "Hard", or "Insane 6×6". */
+  levelName: string;
   windowMs: number;
   stage: ReactionStage;
   /** This player's record for the current round, once they have one. */
@@ -251,10 +287,18 @@ const allTapped = (state: ReactionState) =>
 function startResult(state: ReactionState, at: number): ReactionState {
   const players = state.players.map((p) =>
     inRound(p, state.round) && !recordOf(p, state.round)
-      ? withRecord(p, state.round, { ms: null })
+      ? withRecord(p, state.round, { ms: null, misses: 0 })
       : p,
   );
-  return { ...state, players, phase: "result", resultEndsAt: at + REACTION_PAUSE_MS };
+  const filled = { ...state, players };
+  // The ranks as they stand now: the next round's result shows them beside these.
+  const ranks = standingsOf(filled).map((s) => ({ playerId: s.playerId, rank: s.rank }));
+  return {
+    ...filled,
+    phase: "result",
+    resultEndsAt: at + REACTION_PAUSE_MS,
+    rankHistory: [...state.rankHistory, ranks],
+  };
 }
 
 /** The round's countdown starts at `startsAt`, with its wait and window worked out. */
@@ -274,6 +318,9 @@ function beginRound(state: ReactionState, round: number, startsAt: number): Reac
 /** Points for a round: the window less their time, so a miss scores nothing. */
 const pointsOf = (record: ReactionRecord | null, windowMs: number) =>
   Math.max(0, windowMs - (record?.ms ?? windowMs));
+
+/** A closed-out streak's pay: each round past the first two in a row. */
+const streakBonusOf = (run: number) => Math.max(0, run - 2) * REACTION_STREAK_BONUS;
 
 // Rounds ----------------------------------------------------------------------------------
 
@@ -328,7 +375,11 @@ export function standingsOf(state: ReactionState): ReactionStanding[] {
       points: 0,
       bestMs: null,
       played: 0,
+      streak: 0,
+      bestStreak: 0,
+      streakBonus: 0,
     };
+    let run = 0;
     for (let round = 0; round < state.settings.rounds; round++) {
       const record = recordOf(p, round);
       if (!record) continue;
@@ -337,7 +388,18 @@ export function standingsOf(state: ReactionState): ReactionStanding[] {
       total.points += pointsOf(record, windowMs);
       if (record.ms !== null)
         total.bestMs = total.bestMs === null ? record.ms : Math.min(total.bestMs, record.ms);
+      // First try — no wrong tile on the way — extends the streak; anything else closes it.
+      if (record.ms !== null && (record.misses ?? 0) === 0) {
+        run++;
+        total.bestStreak = Math.max(total.bestStreak, run);
+      } else {
+        total.streakBonus += streakBonusOf(run);
+        run = 0;
+      }
     }
+    // A run still going at the end of their game pays too.
+    total.streakBonus += streakBonusOf(run);
+    total.streak = run;
     if (total.played > 0) total.avgMs = total.totalMs / total.played;
     totals.set(p.id, total);
   }
@@ -410,12 +472,20 @@ function viewFor(state: ReactionState, playerId: string): ReactionView {
         return { playerId: p.id, ms: record.ms };
       })
       .sort((a, b) => (a.ms ?? Number.MAX_SAFE_INTEGER) - (b.ms ?? Number.MAX_SAFE_INTEGER));
-    stage = { kind: "result", round: state.round, endsAt: state.resultEndsAt ?? 0, times };
+    stage = {
+      kind: "result",
+      round: state.round,
+      endsAt: state.resultEndsAt ?? 0,
+      times,
+      // Where everyone stood last round, for this round's arrows up and down.
+      previous: state.round > 0 ? (state.rankHistory[state.round - 1] ?? []) : [],
+    };
   }
 
   return {
     game: "reaction",
     rounds: state.settings.rounds,
+    levelName: reactionLevelName(state.settings),
     windowMs,
     stage,
     myTap: player && !player.left ? recordOf(player, state.round) : null,
@@ -468,6 +538,7 @@ export const reactionGame: GameModule<
       resultEndsAt: null,
       delays,
       rounds: makeRounds(rng, settings),
+      rankHistory: [],
       finishedAt: null,
     };
     return beginRound(state, 0, now + REACTION_COUNTDOWN_MS);
@@ -493,7 +564,7 @@ export const reactionGame: GameModule<
     const next: ReactionState = {
       ...state,
       players: state.players.map((p) =>
-        p.id === playerId ? withRecord(p, state.round, { ms }) : p,
+        p.id === playerId ? withRecord(p, state.round, { ms, misses: action.misses ?? 0 }) : p,
       ),
     };
     // The round ends as soon as everyone still in has found the target.
@@ -511,7 +582,7 @@ export const reactionGame: GameModule<
         ...known,
         left: false,
         records: missed
-          ? [...known.records].map((r, i) => (i === state.round ? { ms: null } : r))
+          ? [...known.records].map((r, i) => (i === state.round ? { ms: null, misses: 0 } : r))
           : known.records,
       };
       return { ...state, players: state.players.map((p) => (p.id === player.id ? restored : p)) };
@@ -571,7 +642,7 @@ export const reactionGame: GameModule<
         playerId: s.playerId,
         placing: s.rank,
         // Scaled to a whole game, so a late joiner's score reads like everyone else's.
-        score: s.played > 0 ? Math.round((s.points / s.played) * rounds) : 0,
+        score: s.played > 0 ? Math.round(((s.points + s.streakBonus) / s.played) * rounds) : 0,
         correct: null,
         bestMs: s.bestMs,
       })),

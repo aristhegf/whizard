@@ -33,6 +33,14 @@ export const reactionSettingsSchema = z.object({
 
 export type ReactionSettings = z.infer<typeof reactionSettingsSchema>;
 
+/** The level as the lobby's one line says it: "Hard", or "Insane 6×6". */
+export function reactionLevelName(settings: ReactionSettings): string {
+  const name = REACTION_LEVEL_NAMES[settings.level];
+  return settings.level === "insane"
+    ? `${name} ${settings.insaneSize}×${settings.insaneSize}`
+    : name;
+}
+
 export const DEFAULT_REACTION_SETTINGS: ReactionSettings = {
   rounds: 10,
   tapSeconds: 3,

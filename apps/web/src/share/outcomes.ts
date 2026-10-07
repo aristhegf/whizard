@@ -46,6 +46,8 @@ export interface ResultFacts {
   me: string;
   /** The sharer's own result, big: "9,240" and "points", or "2:31" and "to finish". */
   score: { value: string; unit: string };
+  /** The game's own words above the score, where it has better ones (Reaction's "Fastest hit"). */
+  kicker?: string;
   /** Right answers, for a perfect or a bad game. Null where there's no such thing. */
   correct: { got: number; of: number } | null;
   /** Items answered, to work out time per answer for the speed champion. */
@@ -207,6 +209,8 @@ export function buildCard(f: ResultFacts): ShareCard {
   } else if (multi && rank) {
     kicker = `${ordinal(rank)} place`;
   }
+  // The game's own headline for its score, where it asked for one.
+  if (f.kicker) kicker = f.kicker;
 
   const headline = outcome === "crowd" && rank ? [`#${rank} OF`, `${players}!`] : copy.headline;
   const meBelow = at >= BOARD_ROWS ? f.rows[at] : undefined;
