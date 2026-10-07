@@ -75,7 +75,9 @@ See the target, find it, tap it. The round says what to tap — “Tap the 🍌 
 - **Players:** 1 to 20
 - **Levels:** Easy (1 tile: pure reaction), Medium (2: pick the right one), Hard (4: find it among four), Insane — a 5×5, 6×6 or 7×7 grid to search, the host picks the size
 - **Settings:** level (and the grid for Insane); 5, 10 or 15 rounds; 2, 3 or 5 seconds to find and tap
-- **Points:** faster taps score more, down to nothing at the end of the window; a miss scores nothing. The standings rank everyone by their average round, fastest first, and equal times share the rank
+- **Points:** faster taps score more, down to nothing at the end of the window; a miss scores nothing. The standings rank everyone by their average round, fastest first, and equal times share the rank. Rounds found first try — no wrong tile on the way — build a streak, and every round past the first two in a row pays a 1,000-point streak bonus
+- **Between rounds:** the live standings come up with each round's times — rank, where everyone stood last round (▲▼ places gained or lost), first-try streaks on fire, and everyone's average
+- **Sharing:** the share card leads with your fastest single hit and your average time, with the level it was played on
 - **Timing:** each round's wait comes from the room's seed, and the options reach every screen at the same moment (details in [ARCHITECTURE.md](ARCHITECTURE.md#fair-timing-and-scoring))
 
 ### 🧠 Memory

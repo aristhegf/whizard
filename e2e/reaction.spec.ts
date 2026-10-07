@@ -69,9 +69,15 @@ test("a solo game: the wrong tile is turned down, the right one records the time
       await expect(grid.locator(".reaction-cell.wrong")).toHaveCount(1);
       await expect(target).toBeEnabled();
     }
-    // Solo, finding the target ends the round on the spot and shows the time.
+    // Solo, finding the target ends the round on the spot and shows the time (over a second,
+    // as the deliberate wrong tap makes round one, it's written in seconds).
     await target.click();
-    await expect(page.locator(".verdict")).toHaveText(/\d+ ms/, { timeout: 8_000 });
+    await expect(page.locator(".verdict")).toHaveText(/\d+ (ms|s)/, { timeout: 8_000 });
+    if (round === 1) {
+      // The live standings come up under the times, one row a player.
+      await expect(page.locator(".reaction-standings li")).toHaveCount(1, { timeout: 8_000 });
+      await expect(page.locator(".reaction-standings-title")).toContainText("after round 1");
+    }
   }
 
   await expect(page.getByRole("heading", { name: "Reaction Results" })).toBeVisible({
@@ -79,6 +85,8 @@ test("a solo game: the wrong tile is turned down, the right one records the time
   });
   await expect(page.getByText("Fastest reaction")).toBeVisible();
   await expect(page.locator(".pill")).toContainText("5 rounds");
+  // The wrong tile broke the run in round one; the four first-try rounds after it paid out.
+  await expect(page.getByText(/Streak bonus/)).toBeVisible();
 });
 
 test("friends search the same grid and see the final times", async ({ browser }) => {
@@ -112,10 +120,18 @@ test("friends search the same grid and see the final times", async ({ browser })
         await grid.getByRole("button", { name, exact: true }).click();
       }),
     );
-    // Both times are up between rounds.
+    // Both times are up between rounds, over the standings as they stand.
     if (round < 5) {
       for (const page of [host, guest]) {
         await expect(page.locator(".reaction-times li")).toHaveCount(2, { timeout: 8_000 });
+        await expect(page.locator(".reaction-standings li")).toHaveCount(2);
+        await expect(page.locator(".reaction-standings-title")).toContainText(
+          `after round ${round}`,
+        );
+        // Every round so far found first try: the streak is on the board.
+        if (round >= 2) {
+          await expect(page.locator(".reaction-standings .streak").first()).toContainText("🔥");
+        }
       }
     }
   }
