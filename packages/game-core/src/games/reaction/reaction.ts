@@ -1,17 +1,21 @@
 import { z } from "zod";
-import { seededRng } from "../../random";
+import { seededRng, shuffled, type Rng } from "../../random";
 import type { GameModule, Rejection } from "../types";
 import {
   DEFAULT_REACTION_SETTINGS,
   reactionSettingsSchema,
+  type ReactionLevel,
   type ReactionSettings,
 } from "./settings";
 
 /**
- * Reaction: WAIT… then TAP! Every round the same signal reaches everyone at the same server
- * moment (the client reveals it against its clock offset, as the quiz's first question does);
- * the fastest legitimate tap wins the round. A tap before the signal is a false start and costs
- * the round; nobody who misses the window scores for it. Everyone plays every round together,
+ * Reaction: see the target, find it, tap it. Every round the announcement says what to tap
+ * ("Tap the 🍌 Banana"); after the countdown a hidden wait holds the options back, then they
+ * appear on every screen at the same server-timed moment (the client reveals them against its
+ * clock offset, as the quiz's first question does). The fastest correct tap wins the round: a
+ * wrong tile is turned down without locking anyone out, and only the target records a time.
+ * The level sets how much is on screen to find the target among: Easy one tile (pure reaction),
+ * Medium two, Hard four, Insane a grid of 25, 36 or 49. Everyone plays every round together,
  * so the room's tick drives the countdown, the window and the pause between rounds.
  */
 
@@ -23,8 +27,8 @@ export const REACTION_PAUSE_MS = 3000;
 const WAIT_MIN_MS = 1500;
 const WAIT_MAX_MS = 4000;
 /**
- * A tap this long before the signal is a false start. The client reveals the signal from its
- * own estimate of the server clock, so a little slack keeps an honest fast tap honest.
+ * A tap this long before the options are up means the client's clock is off (or the tap is
+ * made up): nothing was on screen yet, so there was nothing to tap.
  */
 export const EARLY_TOLERANCE_MS = 100;
 /**
@@ -34,23 +38,99 @@ export const EARLY_TOLERANCE_MS = 100;
 export const NETWORK_ALLOWANCE_MS = 250;
 /**
  * The server keeps the window open this long past its end, so a tap made in time still lands
- * after the network's round trip. The client locks the pad at the window itself.
+ * after the network's round trip. The client locks the board at the window itself.
  */
 const ARRIVAL_GRACE_MS = 400;
 
 export const reactionActionSchema = z.object({
   type: z.literal("tap"),
-  /** Milliseconds from the signal to the tap, measured on the player's own screen. */
+  /** Which tile was tapped, by its index in the round's options. */
+  choice: z.number().int(),
+  /** Milliseconds from the options appearing to the tap, measured on the player's own screen. */
   clientElapsedMs: z.number(),
 });
 
 export type ReactionAction = z.infer<typeof reactionActionSchema>;
 
-/** One round for one player: their time, a false start, or nothing at all. */
+/** One tile: what the announcement asks for, and how it shows on the board. */
+export interface ReactionItem {
+  id: string;
+  emoji: string;
+  name: string;
+}
+
+/** What's on screen each round by level: one tile to react to, then more to choose from. */
+const CHOICES: Record<Exclude<ReactionLevel, "insane">, number> = {
+  easy: 1,
+  medium: 2,
+  hard: 4,
+};
+
+/** How many tiles this game's rounds show. Insane is the host's grid: 25, 36 or 49. */
+export function reactionChoiceCount(settings: ReactionSettings): number {
+  return settings.level === "insane"
+    ? settings.insaneSize * settings.insaneSize
+    : CHOICES[settings.level];
+}
+
+/**
+ * The categories a round can be about, one per round in a shuffled deck. The announcement
+ * names the target, and the board holds the rest of that category around it.
+ */
+const KINDS: readonly ReactionItem[][] = [
+  [
+    { id: "apple", emoji: "🍎", name: "Apple" },
+    { id: "banana", emoji: "🍌", name: "Banana" },
+    { id: "orange", emoji: "🍊", name: "Orange" },
+    { id: "grapes", emoji: "🍇", name: "Grapes" },
+    { id: "watermelon", emoji: "🍉", name: "Watermelon" },
+    { id: "strawberry", emoji: "🍓", name: "Strawberry" },
+    { id: "pear", emoji: "🍐", name: "Pear" },
+    { id: "peach", emoji: "🍑", name: "Peach" },
+  ],
+  [
+    { id: "dog", emoji: "🐶", name: "Dog" },
+    { id: "cat", emoji: "🐱", name: "Cat" },
+    { id: "mouse", emoji: "🐭", name: "Mouse" },
+    { id: "rabbit", emoji: "🐰", name: "Rabbit" },
+    { id: "panda", emoji: "🐼", name: "Panda" },
+    { id: "frog", emoji: "🐸", name: "Frog" },
+    { id: "fox", emoji: "🦊", name: "Fox" },
+    { id: "monkey", emoji: "🐵", name: "Monkey" },
+  ],
+  [
+    { id: "car", emoji: "🚗", name: "Car" },
+    { id: "bus", emoji: "🚌", name: "Bus" },
+    { id: "taxi", emoji: "🚕", name: "Taxi" },
+    { id: "bike", emoji: "🚲", name: "Bike" },
+    { id: "plane", emoji: "✈️", name: "Plane" },
+    { id: "ship", emoji: "🚢", name: "Ship" },
+    { id: "train", emoji: "🚂", name: "Train" },
+    { id: "scooter", emoji: "🛵", name: "Scooter" },
+  ],
+  [
+    { id: "guitar", emoji: "🎸", name: "Guitar" },
+    { id: "drum", emoji: "🥁", name: "Drum" },
+    { id: "trumpet", emoji: "🎺", name: "Trumpet" },
+    { id: "piano", emoji: "🎹", name: "Piano" },
+    { id: "violin", emoji: "🎻", name: "Violin" },
+    { id: "saxophone", emoji: "🎷", name: "Saxophone" },
+    { id: "accordion", emoji: "🪗", name: "Accordion" },
+    { id: "microphone", emoji: "🎤", name: "Microphone" },
+  ],
+];
+
+/** One round: the target the announcement asks for, the tiles it sits among, and where it is. */
+export interface ReactionRound {
+  target: ReactionItem;
+  options: ReactionItem[];
+  correct: number;
+}
+
+/** One round for one player: their time, or nothing if they never found the target. */
 export interface ReactionRecord {
-  /** The reaction time credited for the round, or null if they never tapped legitimately. */
+  /** The reaction time credited for the round, or null if they never tapped the target. */
   ms: number | null;
-  falseStart: boolean;
 }
 
 interface ReactionPlayer {
@@ -67,11 +147,11 @@ export interface ReactionState {
   settings: ReactionSettings;
   players: ReactionPlayer[];
   round: number;
-  /** Countdown to the round, the wait for the signal, or the times after it. */
+  /** Countdown to the round, the wait for the options, or the times after it. */
   phase: "countdown" | "wait" | "result";
   /** When the countdown ends and the wait begins. */
   roundStartsAt: number;
-  /** When the pad lights up. */
+  /** When the options appear on every screen. */
   signalAt: number;
   /** When the server closes the round's window (grace included). */
   roundEndsAt: number;
@@ -79,12 +159,15 @@ export interface ReactionState {
   resultEndsAt: number | null;
   /** The wait after the countdown for each round, from the room's seed. */
   delays: number[];
+  /** Every round's target and board, from the room's seed. */
+  rounds: ReactionRound[];
   finishedAt: number | null;
 }
 
 export interface ReactionStanding {
   playerId: string;
   nickname: string;
+  /** Shared on equal averages: two players on the same time are level. */
   rank: number;
   /** Their total time across the rounds they played, misses as the full window. */
   totalMs: number;
@@ -97,7 +180,6 @@ export interface ReactionStanding {
   bestMs: number | null;
   /** Rounds they have a record for. */
   played: number;
-  falseStarts: number;
   left: boolean;
 }
 
@@ -105,12 +187,25 @@ export interface ReactionStanding {
 export interface ReactionRoundTime {
   playerId: string;
   ms: number | null;
-  falseStart: boolean;
 }
 
 export type ReactionStage =
-  | { kind: "countdown"; round: number; startsAt: number; signalAt: number }
-  | { kind: "wait"; round: number; signalAt: number; endsAt: number }
+  | {
+      kind: "countdown";
+      round: number;
+      startsAt: number;
+      signalAt: number;
+      target: ReactionItem;
+      options: ReactionItem[];
+    }
+  | {
+      kind: "wait";
+      round: number;
+      signalAt: number;
+      endsAt: number;
+      target: ReactionItem;
+      options: ReactionItem[];
+    }
   | { kind: "result"; round: number; endsAt: number; times: ReactionRoundTime[] }
   /** Joined mid-round: they're in from the next one. */
   | { kind: "queued" }
@@ -148,7 +243,7 @@ function withRecord(p: ReactionPlayer, round: number, record: ReactionRecord): R
 const recordOf = (p: ReactionPlayer, round: number): ReactionRecord | null =>
   p.records[round] ?? null;
 
-/** Every player still in has tapped (or false-started) this round. */
+/** Every player still in has found the target this round. */
 const allTapped = (state: ReactionState) =>
   active(state).every((p) => p.inFrom > state.round || !!recordOf(p, state.round));
 
@@ -156,7 +251,7 @@ const allTapped = (state: ReactionState) =>
 function startResult(state: ReactionState, at: number): ReactionState {
   const players = state.players.map((p) =>
     inRound(p, state.round) && !recordOf(p, state.round)
-      ? withRecord(p, state.round, { ms: null, falseStart: false })
+      ? withRecord(p, state.round, { ms: null })
       : p,
   );
   return { ...state, players, phase: "result", resultEndsAt: at + REACTION_PAUSE_MS };
@@ -176,9 +271,46 @@ function beginRound(state: ReactionState, round: number, startsAt: number): Reac
   };
 }
 
-/** Points for a round: the window less their time, so a miss or a false start scores nothing. */
+/** Points for a round: the window less their time, so a miss scores nothing. */
 const pointsOf = (record: ReactionRecord | null, windowMs: number) =>
   Math.max(0, windowMs - (record?.ms ?? windowMs));
+
+// Rounds ----------------------------------------------------------------------------------
+
+/**
+ * One round's board from the room's seed: the target, and `count` tiles around it. Small
+ * boards are all different things; a big grid repeats the others so the target stands alone
+ * as the one of its kind, exactly once.
+ */
+function makeRound(rng: Rng, count: number, pool: readonly ReactionItem[]): ReactionRound {
+  const items = shuffled(pool, rng);
+  const target = items[0]!;
+  const others = items.slice(1);
+  const cells =
+    count <= others.length + 1
+      ? others.slice(0, count - 1)
+      : Array.from({ length: count - 1 }, () => others[Math.floor(rng() * others.length)]!);
+  const options = shuffled([target, ...cells], rng);
+  return { target, options, correct: options.findIndex((o) => o.id === target.id) };
+}
+
+/** Every round's board, categories turning round by round, from the room's seed. */
+function makeRounds(rng: Rng, settings: ReactionSettings): ReactionRound[] {
+  const count = reactionChoiceCount(settings);
+  let deck: (readonly ReactionItem[])[] = [];
+  let last: readonly ReactionItem[] | null = null;
+  return Array.from({ length: settings.rounds }, () => {
+    if (deck.length === 0) {
+      deck = shuffled(KINDS, rng);
+      // The deck refills mid-game; don't serve the same category twice across the refill.
+      if (deck.length > 1 && deck[deck.length - 1] === last) {
+        [deck[0], deck[deck.length - 1]] = [deck[deck.length - 1]!, deck[0]!];
+      }
+    }
+    last = deck.pop()!;
+    return makeRound(rng, count, last);
+  });
+}
 
 // Views ------------------------------------------------------------------------------------
 
@@ -196,7 +328,6 @@ export function standingsOf(state: ReactionState): ReactionStanding[] {
       points: 0,
       bestMs: null,
       played: 0,
-      falseStarts: 0,
     };
     for (let round = 0; round < state.settings.rounds; round++) {
       const record = recordOf(p, round);
@@ -204,8 +335,7 @@ export function standingsOf(state: ReactionState): ReactionStanding[] {
       total.played++;
       total.totalMs += record.ms ?? windowMs;
       total.points += pointsOf(record, windowMs);
-      if (record.falseStart) total.falseStarts++;
-      else if (record.ms !== null)
+      if (record.ms !== null)
         total.bestMs = total.bestMs === null ? record.ms : Math.min(total.bestMs, record.ms);
     }
     if (total.played > 0) total.avgMs = total.totalMs / total.played;
@@ -222,13 +352,20 @@ export function standingsOf(state: ReactionState): ReactionStanding[] {
       a.nickname.localeCompare(b.nickname)
     );
   });
-  return rows.map((p, i) => ({
-    playerId: p.id,
-    nickname: p.nickname,
-    rank: i + 1,
-    ...totals.get(p.id)!,
-    left: p.left,
-  }));
+  let rank = 0;
+  return rows.map((p, i) => {
+    const total = totals.get(p.id)!;
+    // Equal averages share the rank, and the next distinct one takes the next number.
+    const prev = i > 0 ? totals.get(rows[i - 1]!.id)! : null;
+    if (prev === null || prev.avgMs !== total.avgMs) rank = i + 1;
+    return {
+      playerId: p.id,
+      nickname: p.nickname,
+      rank,
+      ...total,
+      left: p.left,
+    };
+  });
 }
 
 function viewFor(state: ReactionState, playerId: string): ReactionView {
@@ -236,6 +373,7 @@ function viewFor(state: ReactionState, playerId: string): ReactionView {
   const standings = standingsOf(state);
   const me = standings.find((s) => s.playerId === playerId) ?? null;
   const windowMs = windowMsOf(state);
+  const round = state.rounds[state.round]!;
 
   let stage: ReactionStage;
   if (state.finishedAt !== null) {
@@ -245,11 +383,15 @@ function viewFor(state: ReactionState, playerId: string): ReactionView {
   } else if (player.inFrom > state.round) {
     stage = { kind: "queued" };
   } else if (state.phase === "countdown") {
+    // The board rides along with the countdown, so each screen shows it at `signalAt` on its
+    // own clock, exactly together (as the quiz reveals its first question).
     stage = {
       kind: "countdown",
       round: state.round,
       startsAt: state.roundStartsAt,
       signalAt: state.signalAt,
+      target: round.target,
+      options: round.options,
     };
   } else if (state.phase === "wait") {
     stage = {
@@ -257,19 +399,17 @@ function viewFor(state: ReactionState, playerId: string): ReactionView {
       round: state.round,
       signalAt: state.signalAt,
       endsAt: state.signalAt + windowMs,
+      target: round.target,
+      options: round.options,
     };
   } else {
     const times = state.players
       .filter((p) => inRound(p, state.round) && recordOf(p, state.round))
       .map((p) => {
         const record = recordOf(p, state.round)!;
-        return { playerId: p.id, ms: record.ms, falseStart: record.falseStart };
+        return { playerId: p.id, ms: record.ms };
       })
-      .sort(
-        (a, b) =>
-          (a.ms ?? Number.MAX_SAFE_INTEGER) - (b.ms ?? Number.MAX_SAFE_INTEGER) ||
-          Number(b.falseStart) - Number(a.falseStart),
-      );
+      .sort((a, b) => (a.ms ?? Number.MAX_SAFE_INTEGER) - (b.ms ?? Number.MAX_SAFE_INTEGER));
     stage = { kind: "result", round: state.round, endsAt: state.resultEndsAt ?? 0, times };
   }
 
@@ -303,7 +443,7 @@ export const reactionGame: GameModule<
   defaultSettings: DEFAULT_REACTION_SETTINGS,
   actionSchema: reactionActionSchema,
 
-  // Every wait comes from the room's seed; nothing comes from the content bank.
+  // Every wait and every board comes from the room's seed; nothing comes from the content bank.
   contentNeeded: () => null,
 
   setup({ settings, players, seed, now }) {
@@ -327,6 +467,7 @@ export const reactionGame: GameModule<
       roundEndsAt: 0,
       resultEndsAt: null,
       delays,
+      rounds: makeRounds(rng, settings),
       finishedAt: null,
     };
     return beginRound(state, 0, now + REACTION_COUNTDOWN_MS);
@@ -339,19 +480,23 @@ export const reactionGame: GameModule<
     if (player.inFrom > state.round) return reject("You're in from the next round.");
     if (state.phase === "result") return reject("That round is over.");
     if (recordOf(player, state.round)) return reject("You've already tapped.");
-
-    // Too soon is a false start and costs the round; anything else is a reaction to time.
-    const falseStart = now < state.signalAt - EARLY_TOLERANCE_MS;
+    // Nothing was on screen yet: the client's clock is off, or the tap is made up.
+    if (now < state.signalAt - EARLY_TOLERANCE_MS)
+      return reject("Too soon — the options aren't up yet.");
+    // Only the target counts. A wrong tile is turned down and the player keeps tapping, so a
+    // rejection never locks anyone out or costs them the round.
+    if (action.choice !== state.rounds[state.round]!.correct)
+      return reject("Not that one — keep going.");
     const serverMs = Math.max(0, now - state.signalAt);
     const floor = Math.max(0, serverMs - NETWORK_ALLOWANCE_MS);
-    const ms = falseStart ? null : Math.min(Math.max(action.clientElapsedMs, floor), serverMs);
+    const ms = Math.min(Math.max(action.clientElapsedMs, floor), serverMs);
     const next: ReactionState = {
       ...state,
       players: state.players.map((p) =>
-        p.id === playerId ? withRecord(p, state.round, { ms, falseStart }) : p,
+        p.id === playerId ? withRecord(p, state.round, { ms }) : p,
       ),
     };
-    // The round ends as soon as everyone still in has tapped.
+    // The round ends as soon as everyone still in has found the target.
     return allTapped(next) ? startResult(next, now) : next;
   },
 
@@ -366,9 +511,7 @@ export const reactionGame: GameModule<
         ...known,
         left: false,
         records: missed
-          ? [...known.records].map((r, i) =>
-              i === state.round ? { ms: null, falseStart: false } : r,
-            )
+          ? [...known.records].map((r, i) => (i === state.round ? { ms: null } : r))
           : known.records,
       };
       return { ...state, players: state.players.map((p) => (p.id === player.id ? restored : p)) };
@@ -424,9 +567,9 @@ export const reactionGame: GameModule<
       difficulty: null,
       mode: null,
       rounds,
-      players: stayed.map((s, i) => ({
+      players: stayed.map((s) => ({
         playerId: s.playerId,
-        placing: i + 1,
+        placing: s.rank,
         // Scaled to a whole game, so a late joiner's score reads like everyone else's.
         score: s.played > 0 ? Math.round((s.points / s.played) * rounds) : 0,
         correct: null,

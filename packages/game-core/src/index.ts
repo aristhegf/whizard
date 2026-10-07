@@ -325,10 +325,13 @@ export {
   EARLY_TOLERANCE_MS,
   REACTION_COUNTDOWN_MS,
   REACTION_PAUSE_MS,
+  reactionChoiceCount,
   reactionGame,
   standingsOf as reactionStandings,
   type ReactionAction,
+  type ReactionItem,
   type ReactionRecord,
+  type ReactionRound,
   type ReactionRoundTime,
   type ReactionStage,
   type ReactionState,
@@ -337,8 +340,12 @@ export {
 } from "./games/reaction/reaction";
 export {
   DEFAULT_REACTION_SETTINGS,
+  REACTION_INSANE_SIZES,
+  REACTION_LEVEL_NAMES,
+  REACTION_LEVELS,
   REACTION_ROUNDS,
   REACTION_TAP_SECONDS,
   reactionSettingsSchema,
+  type ReactionLevel,
   type ReactionSettings,
 } from "./games/reaction/settings";

@@ -3,14 +3,19 @@ import {
   NETWORK_ALLOWANCE_MS,
   REACTION_COUNTDOWN_MS,
   REACTION_PAUSE_MS,
+  reactionChoiceCount,
   reactionGame,
   type ReactionState,
   type ReactionView,
 } from "./reaction";
-import { DEFAULT_REACTION_SETTINGS, reactionSettingsSchema } from "./settings";
+import {
+  DEFAULT_REACTION_SETTINGS,
+  reactionSettingsSchema,
+  type ReactionSettings,
+} from "./settings";
 
 const T0 = 1_000_000;
-const SETTINGS = { rounds: 5, tapSeconds: 3 } as const;
+const SETTINGS: ReactionSettings = { rounds: 5, tapSeconds: 3, level: "easy", insaneSize: 5 };
 
 function setup(ids: string[] = ["ada"], settings = SETTINGS, seed = 7): ReactionState {
   return reactionGame.setup({
@@ -27,11 +32,21 @@ function tick(state: ReactionState, now: number): ReactionState {
 }
 
 /** A tap, as the room runs it: a tick first, then the action, throwing on a rejection. */
-function act(state: ReactionState, playerId: string, clientMs: number, now: number): ReactionState {
+function act(
+  state: ReactionState,
+  playerId: string,
+  clientMs: number,
+  now: number,
+  choice?: number,
+): ReactionState {
   const result = reactionGame.onAction(
     tick(state, now),
     playerId,
-    { type: "tap", clientElapsedMs: clientMs },
+    {
+      type: "tap",
+      choice: choice ?? state.rounds[state.round]!.correct,
+      clientElapsedMs: clientMs,
+    },
     now,
   );
   if ("rejected" in result) throw new Error(result.rejected);
@@ -41,12 +56,16 @@ function act(state: ReactionState, playerId: string, clientMs: number, now: numb
 const viewOf = (state: ReactionState, playerId: string) =>
   reactionGame.viewFor(state, playerId) as ReactionView;
 
-/** Through the countdown, to the round waiting for its signal. */
+/** Through the countdown, to the round waiting for its options. */
 function toWait(state: ReactionState): ReactionState {
   const started = tick(state, state.roundStartsAt);
   expect(started.phase).toBe("wait");
   return started;
 }
+
+/** The wrong tile of the current round: any option that isn't the target. */
+const wrongChoice = (state: ReactionState) =>
+  state.rounds[state.round]!.options.findIndex((_, i) => i !== state.rounds[state.round]!.correct);
 
 /** The whole game, one tap a round from each player. */
 function playAll(state: ReactionState, times: Record<string, number>): ReactionState {
@@ -76,6 +95,16 @@ describe("reaction", () => {
     expect(reactionSettingsSchema.safeParse({ rounds: 5, tapSeconds: 3 }).success).toBe(true);
     expect(reactionSettingsSchema.safeParse({ rounds: 7, tapSeconds: 3 }).success).toBe(false);
     expect(reactionSettingsSchema.safeParse({ rounds: 5, tapSeconds: 4 }).success).toBe(false);
+    expect(
+      reactionSettingsSchema.safeParse({ rounds: 5, tapSeconds: 3, level: "nope" }).success,
+    ).toBe(false);
+    expect(
+      reactionSettingsSchema.safeParse({ rounds: 5, tapSeconds: 3, insaneSize: 9 }).success,
+    ).toBe(false);
+  });
+
+  it("reads rooms saved before the levels existed as Easy on a 5×5", () => {
+    expect(reactionSettingsSchema.parse({ rounds: 5, tapSeconds: 3 })).toEqual(SETTINGS);
   });
 
   it("starts everyone on the same countdown, with a seeded wait", () => {
@@ -93,9 +122,54 @@ describe("reaction", () => {
       kind: "countdown",
       startsAt: T0 + REACTION_COUNTDOWN_MS,
       signalAt: state.signalAt,
+      target: { id: state.rounds[0]!.target.id },
     });
+    // The board rides along with the countdown, hidden until the signal on each client's clock.
+    if (view.stage.kind !== "countdown") throw new Error("not a countdown");
+    expect(view.stage.options).toEqual(state.rounds[0]!.options);
     expect(view.standings).toHaveLength(2);
     expect(view.standings.every((s) => s.avgMs === null)).toBe(true);
+  });
+
+  it("gives each level its board, with the target exactly once", () => {
+    const counts: [ReactionSettings["level"], number][] = [
+      ["easy", 1],
+      ["medium", 2],
+      ["hard", 4],
+    ];
+    for (const [level, count] of counts) {
+      const state = setup(["ada"], { ...SETTINGS, level });
+      expect(reactionChoiceCount({ ...SETTINGS, level })).toBe(count);
+      for (const round of state.rounds) {
+        expect(round.options).toHaveLength(count);
+        // Every small board is all different things, with the target among them once.
+        expect(new Set(round.options.map((o) => o.id)).size).toBe(count);
+        expect(round.options[round.correct]!.id).toBe(round.target.id);
+      }
+    }
+  });
+
+  it("spreads Insane over the host's grid, the target standing alone", () => {
+    for (const insaneSize of [5, 6, 7] as const) {
+      const state = setup(["ada"], { ...SETTINGS, level: "insane", insaneSize });
+      expect(reactionChoiceCount({ ...SETTINGS, level: "insane", insaneSize })).toBe(
+        insaneSize * insaneSize,
+      );
+      for (const round of state.rounds) {
+        expect(round.options).toHaveLength(insaneSize * insaneSize);
+        // The target is the one of its kind; the rest repeat the category around it.
+        expect(round.options.filter((o) => o.id === round.target.id)).toHaveLength(1);
+        expect(round.options[round.correct]!.id).toBe(round.target.id);
+      }
+    }
+  });
+
+  it("deals the same boards from the same seed, and different ones from another", () => {
+    expect(setup(["ada"], SETTINGS, 9).rounds).toEqual(setup(["ada"], SETTINGS, 9).rounds);
+    expect(setup(["ada"], SETTINGS, 9).rounds).not.toEqual(setup(["ada"], SETTINGS, 10).rounds);
+    // Categories turn round to round: a long game isn't one board of the same kind.
+    const rounds = setup(["ada"], { ...SETTINGS, rounds: 15 }, 4).rounds;
+    expect(new Set(rounds.map((r) => r.target.id)).size).toBeGreaterThan(4);
   });
 
   it("credits the client's own reaction within reach of the server's", () => {
@@ -103,7 +177,7 @@ describe("reaction", () => {
     const at = state.signalAt + 360;
     const tapped = act(state, "ada", 300, at);
     const record = viewOf(tapped, "ada").myTap!;
-    expect(record).toEqual({ ms: 300, falseStart: false });
+    expect(record).toEqual({ ms: 300 });
 
     // A claim faster than the network can explain is floored to the server's allowance.
     const cheated = act(state, "ada", 5, at);
@@ -114,23 +188,44 @@ describe("reaction", () => {
     expect(viewOf(slow, "ada").myTap!.ms).toBe(360);
   });
 
-  it("calls a tap before the signal a false start", () => {
+  it("turns down a tap before the options are up", () => {
     const state = toWait(setup());
-    const early = act(state, "ada", 0, state.signalAt - 500);
-    const record = viewOf(early, "ada").myTap!;
-    expect(record).toEqual({ ms: null, falseStart: true });
-    // Solo: everyone has "tapped", so the round shows its times straight away.
-    expect(early.phase).toBe("result");
+    const early = reactionGame.onAction(
+      state,
+      "ada",
+      { type: "tap", choice: 0, clientElapsedMs: 0 },
+      state.signalAt - 500,
+    );
+    expect(early).toEqual({ rejected: "Too soon — the options aren't up yet." });
+    expect(viewOf(state, "ada").myTap).toBeNull();
   });
 
   it("allows for the clock's error right around the signal", () => {
     const state = toWait(setup());
     // Arrives 50ms "early": within tolerance, so it's a real tap (a very fast one).
     const tapped = act(state, "ada", 80, state.signalAt - 50);
-    expect(viewOf(tapped, "ada").myTap).toEqual({ ms: 0, falseStart: false });
+    expect(viewOf(tapped, "ada").myTap).toEqual({ ms: 0 });
   });
 
-  it("ends the round as soon as everyone has tapped, times fastest first", () => {
+  it("turns down a wrong tile without locking the player out", () => {
+    const state = toWait(setup(["ada"], { ...SETTINGS, level: "medium" }));
+    const wrong = wrongChoice(state);
+    const refused = reactionGame.onAction(
+      state,
+      "ada",
+      { type: "tap", choice: wrong, clientElapsedMs: 120 },
+      state.signalAt + 150,
+    );
+    expect(refused).toEqual({ rejected: "Not that one — keep going." });
+    // No record: the round is still theirs to win, with no delay on the next tap.
+    expect(viewOf(state, "ada").myTap).toBeNull();
+    expect(state.phase).toBe("wait");
+    const right = act(state, "ada", 300, state.signalAt + 320);
+    expect(viewOf(right, "ada").myTap!.ms).toBe(300);
+    expect(right.phase).toBe("result");
+  });
+
+  it("ends the round as soon as everyone has found it, times fastest first", () => {
     let state = toWait(setup(["ada", "tolu"]));
     state = act(state, "ada", 220, state.signalAt + 280);
     expect(state.phase).toBe("wait");
@@ -145,16 +240,15 @@ describe("reaction", () => {
     expect(stage.endsAt).toBe(state.resultEndsAt);
   });
 
-  it("marks anyone who never tapped as missed when the window closes", () => {
+  it("marks anyone who never found it as missed when the window closes", () => {
     let state = toWait(setup(["ada", "tolu"]));
     state = act(state, "ada", 200, state.signalAt + 250);
     state = tick(state, state.roundEndsAt);
     expect(state.phase).toBe("result");
     const stage = viewOf(state, "ada").stage;
     if (stage.kind !== "result") throw new Error("no result");
-    // Tolu never tapped: the full window, and not a false start.
-    const tolu = viewOf(state, "tolu").myTap!;
-    expect(tolu).toEqual({ ms: null, falseStart: false });
+    // Tolu never found it: the full window.
+    expect(viewOf(state, "tolu").myTap).toEqual({ ms: null });
     expect(stage.times.map((t) => t.ms)).toEqual([200, null]);
   });
 
@@ -165,7 +259,7 @@ describe("reaction", () => {
     const result = reactionGame.onAction(
       state,
       "ada",
-      { type: "tap", clientElapsedMs: 100 },
+      { type: "tap", choice: 0, clientElapsedMs: 100 },
       state.roundStartsAt + 10_000,
     );
     expect(result).toEqual({ rejected: "That round is over." });
@@ -178,7 +272,7 @@ describe("reaction", () => {
     const again = reactionGame.onAction(
       state,
       "ada",
-      { type: "tap", clientElapsedMs: 100 },
+      { type: "tap", choice: 0, clientElapsedMs: 100 },
       state.signalAt + 400,
     );
     expect(again).toEqual({ rejected: "You've already tapped." });
@@ -191,7 +285,7 @@ describe("reaction", () => {
 
     const standings = viewOf(done, "ada").standings;
     expect(standings.map((s) => s.playerId)).toEqual(["ada", "tolu"]);
-    expect(standings[0]).toMatchObject({ rank: 1, played: 5, falseStarts: 0 });
+    expect(standings[0]).toMatchObject({ rank: 1, played: 5 });
     expect(standings[0]!.totalMs).toBe(5 * 250);
     expect(standings[0]!.avgMs).toBe(250);
     expect(standings[0]!.bestMs).toBe(250);
@@ -207,12 +301,22 @@ describe("reaction", () => {
     ]);
   });
 
-  it("counts a false start as the window, in time and points", () => {
-    const state = setup();
-    const busted = act(state, "ada", 0, state.signalAt - 400);
-    const done = playAll(busted, { ada: 250 });
+  it("shares the rank between players on the same times", () => {
+    const done = playAll(setup(["ada", "tolu", "chidi"]), { ada: 250, tolu: 250, chidi: 400 });
+    const standings = viewOf(done, "ada").standings;
+    expect(standings.map((s) => s.playerId)).toEqual(["ada", "tolu", "chidi"]);
+    expect(standings.map((s) => s.rank)).toEqual([1, 1, 3]);
+    // The match keeps the shared places too.
+    expect(reactionGame.summarize(done).players.map((p) => p.placing)).toEqual([1, 1, 3]);
+  });
+
+  it("counts a missed round as the window, in time and points", () => {
+    const state = toWait(setup());
+    // The window closes without a tap, then the rest of the game is played fast.
+    const missed = tick(state, state.roundEndsAt);
+    const done = playAll(missed, { ada: 250 });
     const me = viewOf(done, "ada").me!;
-    expect(me).toMatchObject({ played: 5, falseStarts: 1, bestMs: 250 });
+    expect(me).toMatchObject({ played: 5, bestMs: 250 });
     expect(me.totalMs).toBe(3000 + 4 * 250);
     expect(me.points).toBe(4 * 2750);
     expect(me.avgMs).toBe((3000 + 4 * 250) / 5);
@@ -247,7 +351,7 @@ describe("reaction", () => {
     const refused = reactionGame.onAction(
       state,
       "tolu",
-      { type: "tap", clientElapsedMs: 100 },
+      { type: "tap", choice: 0, clientElapsedMs: 100 },
       state.signalAt + 1000,
     );
     expect(refused).toEqual({ rejected: "You're in from the next round." });
@@ -259,7 +363,7 @@ describe("reaction", () => {
     state = toWait(state);
     expect(viewOf(state, "tolu").stage).toMatchObject({ kind: "wait", round: 1 });
     state = act(state, "tolu", 300, state.signalAt + 350);
-    expect(viewOf(state, "tolu").myTap).toEqual({ ms: 300, falseStart: false });
+    expect(viewOf(state, "tolu").myTap).toEqual({ ms: 300 });
   });
 
   it("lets a late joiner straight into the countdown they arrive on", () => {
@@ -268,7 +372,7 @@ describe("reaction", () => {
     const waiting = toWait(joined);
     expect(viewOf(waiting, "tolu").stage).toMatchObject({ kind: "wait", round: 0 });
     const tapped = act(waiting, "tolu", 300, waiting.signalAt + 350);
-    expect(viewOf(tapped, "tolu").myTap).toEqual({ ms: 300, falseStart: false });
+    expect(viewOf(tapped, "tolu").myTap).toEqual({ ms: 300 });
   });
 
   it("fills a miss for someone who comes back mid-round without tapping", () => {
@@ -281,7 +385,7 @@ describe("reaction", () => {
       state.signalAt + 500,
     );
     expect(back.players.find((p) => p.id === "tolu")!.left).toBe(false);
-    expect(viewOf(back, "tolu").myTap).toEqual({ ms: null, falseStart: false });
+    expect(viewOf(back, "tolu").myTap).toEqual({ ms: null });
     // With their miss on the books, one tap still ends the round.
     state = act(back, "ada", 220, state.signalAt + 280);
     expect(state.phase).toBe("result");
@@ -302,7 +406,7 @@ describe("reaction", () => {
     const result = reactionGame.onAction(
       state,
       "nobody",
-      { type: "tap", clientElapsedMs: 100 },
+      { type: "tap", choice: 0, clientElapsedMs: 100 },
       state.signalAt + 200,
     );
     expect(result).toEqual({ rejected: "You're watching this game." });

@@ -69,13 +69,14 @@ Fill the grid so every row, column and box holds each number once, from the clue
 
 ### ⚡ Reaction
 
-WAIT… then TAP! Everyone gets the same signal at the same instant; the fastest legitimate reaction wins.
+See the target, find it, tap it. The round says what to tap — “Tap the 🍌 Banana” — the countdown runs 3, 2, 1, and the options come up at an instant nobody can guess. The fastest correct tap wins.
 
-- **How it plays:** all together, round by round. The pad says WAIT… while the signal is held back, then lights up green — tap the moment it does. Tap too early and the round is lost; too slow and it's missed
+- **How it plays:** all together, round by round. What to tap is announced, then the board appears on every screen at the same moment. A wrong tile flashes red where you tap it and you carry on — only the target counts, so a mistake never costs the round. Too slow and it's missed
 - **Players:** 1 to 20
-- **Settings:** 5, 10 or 15 rounds; 2, 3 or 5 seconds to tap
-- **Points:** faster taps score more, down to nothing at the end of the window; a miss or a false start scores nothing. The standings rank everyone by their average round, fastest first
-- **Timing:** each round's wait comes from the room's seed, and the signal reaches every screen at the same moment (details in [ARCHITECTURE.md](ARCHITECTURE.md#fair-timing-and-scoring))
+- **Levels:** Easy (1 tile: pure reaction), Medium (2: pick the right one), Hard (4: find it among four), Insane — a 5×5, 6×6 or 7×7 grid to search, the host picks the size
+- **Settings:** level (and the grid for Insane); 5, 10 or 15 rounds; 2, 3 or 5 seconds to find and tap
+- **Points:** faster taps score more, down to nothing at the end of the window; a miss scores nothing. The standings rank everyone by their average round, fastest first, and equal times share the rank
+- **Timing:** each round's wait comes from the room's seed, and the options reach every screen at the same moment (details in [ARCHITECTURE.md](ARCHITECTURE.md#fair-timing-and-scoring))
 
 ### 🧠 Memory
 
