@@ -1,74 +1,72 @@
 /* Reaction --------------------------------------------------------------------------------- */
 
-/* The pad: WAIT… then TAP! Night while it waits, green at the signal, purple once you're in. */
-.reaction-pad {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  min-height: clamp(240px, 46dvh, 420px);
-  padding: 20px;
-  border-radius: 24px;
-  border: 1.5px solid var(--line-strong);
-  background: rgb(13 11 48 / 70%);
-  color: var(--muted);
-  cursor: pointer;
-  user-select: none;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  transition:
-    background-color 90ms ease,
-    border-color 90ms ease,
-    color 90ms ease,
-    box-shadow 160ms ease;
-}
-
-.reaction-pad:disabled {
-  cursor: default;
-}
-
-.pad-word {
-  font-family: var(--display);
-  font-size: clamp(2.6rem, 11vw, 4.4rem);
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  line-height: 1;
+/* What to tap: "Tap the 🍌 Banana", over the countdown, the wait and above the board. */
+.reaction-ask {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35em;
+  margin: 0;
   text-align: center;
-}
-
-/* The signal: the pad lights up. */
-.reaction-pad.go {
-  background: linear-gradient(160deg, #16d99a, #0aa96f);
-  border-color: rgb(160 255 220 / 60%);
-  color: #04321f;
-  box-shadow:
-    0 0 46px rgb(15 198 128 / 45%),
-    inset 0 1px 0 rgb(255 255 255 / 45%);
-}
-
-.reaction-pad.go .pad-word {
-  text-shadow: 0 2px 0 rgb(255 255 255 / 30%);
-}
-
-/* Your reaction time, in place of the pad's word. */
-.reaction-pad.hit {
-  background: linear-gradient(135deg, #9a4dff, #6f35ff);
-  border-color: rgb(190 150 255 / 55%);
-  color: #fff;
-  box-shadow: var(--glow-purple, 0 10px 30px rgb(122 58 255 / 40%));
-}
-
-/* A false start, or the window closed without a tap. */
-.reaction-pad.bust {
-  background: linear-gradient(160deg, rgb(229 53 76 / 92%), rgb(150 24 44 / 88%));
-  border-color: rgb(255 150 165 / 45%);
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.03em;
   color: #fff;
 }
 
-.reaction-pad.bust .pad-word {
-  font-size: clamp(1.7rem, 7vw, 2.8rem);
+.reaction-ask b {
+  letter-spacing: 0.05em;
 }
 
-/* The line under the pad: what to do, then what happened. */
+.reaction-ask span {
+  font-size: 1.35em;
+  line-height: 1;
+}
+
+.reaction-ask.big {
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 7vw, 2.4rem);
+}
+
+/* The board: the same flat tiles as Spot It's grid, sized by how many there are. */
+.reaction-grid {
+  display: grid;
+  gap: 3px;
+  width: min(100%, 460px);
+}
+
+.reaction-cell {
+  aspect-ratio: 1;
+}
+
+.reaction-glyph {
+  font-size: clamp(1.5rem, 9vw, 2.6rem);
+  line-height: 1;
+}
+
+/* One big tile to react to, or a pair: the glyph fills them. */
+.reaction-grid[style*="repeat(1"] .reaction-glyph,
+.reaction-grid[style*="repeat(2"] .reaction-glyph {
+  font-size: clamp(2.4rem, 14vw, 4rem);
+}
+
+/* The full grid: smaller glyphs, like Spot It's emoji cells. */
+.reaction-grid[style*="repeat(5"] .reaction-glyph,
+.reaction-grid[style*="repeat(6"] .reaction-glyph,
+.reaction-grid[style*="repeat(7"] .reaction-glyph {
+  font-size: clamp(0.9rem, 4.6vw, 1.6rem);
+}
+
+/* A wrong tile, red on the spot; the target once the round is settled for you. */
+.reaction-cell.wrong {
+  background: rgb(229 53 76 / 85%);
+}
+
+.reaction-cell.target {
+  box-shadow: inset 0 0 0 3px rgb(22 217 154 / 85%);
+}
+
+/* The line under the board: wait for it, tap it, locked in, too slow. */
 .reaction-status {
   margin: 0;
   min-height: 1.4em;
@@ -77,7 +75,7 @@
   color: var(--muted);
 }
 
-/* Between rounds: each player's time, fastest first. */
+/* Between rounds: each player's time with its medal, fastest first. */
 .reaction-times {
   display: grid;
   gap: 8px;

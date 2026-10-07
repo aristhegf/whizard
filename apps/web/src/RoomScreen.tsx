@@ -71,7 +71,11 @@ import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { TopicOptions } from "./games/quiz/TopicPicker";
 import { ReactionScreen } from "./games/reaction/ReactionScreen";
-import { ReactionSettingsRows, parseReactionSettings } from "./games/reaction/ReactionSettingsRows";
+import {
+  ReactionSettingsRows,
+  parseReactionSettings,
+  reactionLevelName,
+} from "./games/reaction/ReactionSettingsRows";
 import { RoundsEliminationScreen } from "./games/rounds/RoundsEliminationScreen";
 import { RoundsScreen } from "./games/rounds/RoundsScreen";
 import {
@@ -574,7 +578,7 @@ function settingsSummary({
   }
   if (reaction) {
     const { rounds, tapSeconds } = reaction;
-    return `${rounds} rounds, ${tapSeconds}s to tap`;
+    return `${rounds} rounds, ${reactionLevelName(reaction)} level, ${tapSeconds}s to tap`;
   }
   if (memory) {
     const { rounds, revealSeconds } = memory;

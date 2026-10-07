@@ -1,5 +1,5 @@
 import type { ReactionStage, ReactionView } from "@whizard/game-core";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AddFromGame } from "../../FriendsScreen";
 import { CATALOG } from "../../catalog";
 import { formatMs } from "../../matchInfo";
@@ -12,7 +12,7 @@ import { Avatar } from "../../ui/Avatar";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { Podium } from "../../ui/Podium";
-import { PlayBoard, PlayFaces, PlayScreen, rowsFrom, Staged } from "../play";
+import { PlayBoard, PlayFaces, PlayScreen, PlayTimer, rowsFrom, Staged, timerMs } from "../play";
 
 interface Props {
   view: ReactionView;
@@ -73,42 +73,84 @@ function Watching(props: Props & { message: string }) {
   );
 }
 
+/** What the round asks for: "Tap the 🍌 Banana", over the countdown, the wait and the board. */
+function Ask({ target, big = false }: { target: CountdownStage["target"]; big?: boolean }) {
+  return (
+    <p className={`reaction-ask${big ? " big" : ""}`}>
+      Tap the <span aria-hidden="true">{target.emoji}</span> <b>{target.name}</b>
+    </p>
+  );
+}
+
+/** How many tiles across the board sits: one, a pair, a square of four, or the grid. */
+const colsOf = (tiles: number) =>
+  tiles <= 1 ? 1 : tiles <= 2 ? 2 : tiles === 4 ? 2 : Math.round(Math.sqrt(tiles));
+
 /**
- * One round: the countdown, the wait with the pad armed, then the signal. The signal itself is
- * revealed on the player's own clock (against its server offset), so every screen lights up
- * together; the pad takes taps from the wait on, so an early one is a false start.
+ * One round: what to tap, the hidden wait, then the board. The board is revealed on the
+ * player's own clock against its server offset, so every screen lights up together; a wrong
+ * tile is turned down on the spot without a round trip, so the next tap lands at once. Only
+ * the target sends a tap, and it records the reaction time.
  */
 function Round(props: Props & { stage: CountdownStage | WaitStage }) {
   const { view, client, stage, playerId } = props;
+  const { target, options } = stage;
   const now = useServerNow(client.serverNow);
   const signalAt = stage.signalAt;
-  const endsAt = signalAt + view.windowMs;
   const startsAt = stage.kind === "countdown" ? stage.startsAt : signalAt;
+  const endsAt = signalAt + view.windowMs;
   const started = stage.kind === "wait" || now >= startsAt;
-  const lit = now >= signalAt;
+  const shown = now >= signalAt;
   const countdown = Math.max(1, Math.ceil((startsAt - now) / 1000));
+  const remaining = Math.max(0, endsAt - now);
   const myTap = view.myTap;
   const missed = !myTap && now >= endsAt;
+  const locked = !!myTap || missed;
+  const [wrongCell, setWrongCell] = useState<number | null>(null);
 
   useEffect(() => {
     if (!started) play("tick");
   }, [started, countdown]);
-  const wasLit = useRef(lit);
+  const wasShown = useRef(shown);
   useEffect(() => {
-    if (lit && !wasLit.current) play("go");
-    wasLit.current = lit;
-  }, [lit]);
+    if (shown && !wasShown.current) play("go");
+    wasShown.current = shown;
+  }, [shown]);
   const lastTap = useRef(myTap);
   useEffect(() => {
     if (myTap && myTap !== lastTap.current) play(myTap.ms === null ? "wrong" : "correct");
     lastTap.current = myTap;
   }, [myTap]);
+  const flash = useRef<number | null>(null);
+  useEffect(
+    () => () => {
+      if (flash.current !== null) window.clearTimeout(flash.current);
+    },
+    [],
+  );
 
   const label = (
     <>
       Round <b>{stage.round + 1}</b> of {view.rounds}
     </>
   );
+
+  const pick = (index: number) => {
+    if (locked) return;
+    if (options[index]!.id !== target.id) {
+      // Wrong tile: red on the spot, and nothing else happens — they keep their chance.
+      setWrongCell(index);
+      play("wrong");
+      if (flash.current !== null) window.clearTimeout(flash.current);
+      flash.current = window.setTimeout(() => setWrongCell(null), 500);
+      return;
+    }
+    client.act({
+      type: "tap",
+      choice: index,
+      clientElapsedMs: Math.round(client.serverNow() - signalAt),
+    });
+  };
 
   if (!started) {
     return (
@@ -118,85 +160,86 @@ function Round(props: Props & { stage: CountdownStage | WaitStage }) {
           <p className="countdown-label">Get ready</p>
           <p className="countdown-number">{countdown}</p>
         </div>
+        <Ask target={target} big />
       </PlayScreen>
     );
   }
 
-  const tap = () => {
-    if (myTap || missed) return;
-    client.act({ type: "tap", clientElapsedMs: Math.round(client.serverNow() - signalAt) });
-  };
-
-  const pad = myTap
+  const status = myTap
     ? myTap.ms === null
-      ? "bust"
-      : "hit"
-    : missed
-      ? "bust"
-      : lit
-        ? "go"
-        : "waiting";
-  const word = myTap
-    ? myTap.falseStart
-      ? "False start"
-      : myTap.ms === null
-        ? "Missed"
-        : formatMs(myTap.ms)
-    : missed
-      ? "Too slow"
-      : lit
-        ? "TAP!"
-        : "WAIT…";
-  const padLabel = !myTap
-    ? missed
-      ? "Too slow: the round is over"
-      : lit
-        ? "Tap now!"
-        : "Wait for the signal"
-    : myTap.falseStart
-      ? "False start: this round is lost"
-      : myTap.ms === null
-        ? "You missed this round"
-        : `Your time: ${formatMs(myTap.ms)}`;
-  const status = !myTap
-    ? missed
-      ? "You didn’t tap in time. The next round is coming."
-      : lit
-        ? "Tap!"
-        : "Wait for it…"
-    : myTap.falseStart
-      ? "Too soon! That round is lost."
-      : myTap.ms === null
+      ? view.playerCount > 1
         ? "You missed this round."
-        : view.playerCount > 1
-          ? `Locked in at ${formatMs(myTap.ms)}. Waiting for the others…`
-          : `Your reaction: ${formatMs(myTap.ms)}`;
+        : "Too slow."
+      : view.playerCount > 1
+        ? `Locked in at ${formatMs(myTap.ms)}. Waiting for the others…`
+        : `Your reaction: ${formatMs(myTap.ms)}`
+    : missed
+      ? "Too slow. The next round is coming."
+      : wrongCell !== null
+        ? "Not that one — try again!"
+        : shown
+          ? "Tap it!"
+          : "Wait for it…";
 
   return (
     <PlayScreen label={label} latency={props.latency} onQuit={props.onQuit}>
-      <p className="play-task">Wait for the signal, then tap the moment the pad turns green.</p>
-      <Staged aside={<LiveBoard {...props} />}>
-        <button
-          type="button"
-          className={`reaction-pad ${pad}`}
-          aria-label={padLabel}
-          disabled={!!myTap || missed}
-          onClick={tap}
-        >
-          <span className="pad-word" aria-hidden="true">
-            {word}
-          </span>
-        </button>
-        <p className="reaction-status" role="status">
-          {status}
-        </p>
-      </Staged>
+      {!shown ? (
+        <Staged aside={<LiveBoard {...props} />}>
+          <Ask target={target} big />
+          <p className="reaction-status" role="status">
+            {status}
+          </p>
+        </Staged>
+      ) : (
+        <>
+          <PlayTimer
+            ms={timerMs(remaining)}
+            low={remaining > 0 && remaining / view.windowMs < 0.25}
+          />
+          <Ask target={target} />
+          <Staged aside={<LiveBoard {...props} />}>
+            <div
+              className="reaction-grid"
+              role="group"
+              aria-label="Options"
+              style={{ gridTemplateColumns: `repeat(${colsOf(options.length)}, minmax(0, 1fr))` }}
+            >
+              {options.map((item, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  className={[
+                    "play-tile",
+                    "reaction-cell",
+                    wrongCell === index ? "wrong" : "",
+                    locked && item.id === target.id ? "target" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  aria-label={item.name}
+                  disabled={locked}
+                  onClick={() => pick(index)}
+                >
+                  <span className="reaction-glyph" aria-hidden="true">
+                    {item.emoji}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p className="reaction-status" role="status">
+              {status}
+            </p>
+          </Staged>
+        </>
+      )}
       <PlayFaces faces={rowsOf(props)} playerId={playerId} />
     </PlayScreen>
   );
 }
 
-/** Between rounds: this round's times, and the countdown to the next. */
+const MEDALS = ["🥇", "🥈", "🥉"];
+
+/** Between rounds: this round's times with a medal each, and the countdown to the next. */
 function RoundResult(props: Props & { stage: ResultStage }) {
   const { view, client, stage, playerId } = props;
   const now = useServerNow(client.serverNow);
@@ -206,14 +249,17 @@ function RoundResult(props: Props & { stage: ResultStage }) {
   const points = mine?.ms !== null && mine ? Math.max(0, view.windowMs - mine.ms) : 0;
   const verdict = !mine
     ? "You weren’t in that round"
-    : mine.falseStart
-      ? "False start"
-      : mine.ms === null
-        ? "Too slow"
-        : formatMs(mine.ms);
-  const good = !!mine && !mine.falseStart && mine.ms !== null;
+    : mine.ms === null
+      ? "Too slow"
+      : formatMs(mine.ms);
+  const good = !!mine && mine.ms !== null;
   const names = new Map(view.standings.map((s) => [s.playerId, s.nickname]));
   const last = stage.round + 1 >= view.rounds;
+  // A medal for each distinct time, so equal taps share one (ties at the top both take gold).
+  const medals = new Map<number, string>();
+  for (const t of stage.times) {
+    if (t.ms !== null && !medals.has(t.ms)) medals.set(t.ms, MEDALS[medals.size] ?? "");
+  }
 
   return (
     <PlayScreen
@@ -240,7 +286,7 @@ function RoundResult(props: Props & { stage: ResultStage }) {
             />
             <span className="name">{t.playerId === playerId ? "You" : names.get(t.playerId)}</span>
             <span className="time">
-              {t.falseStart ? "False start" : t.ms === null ? "—" : formatMs(t.ms)}
+              {t.ms === null ? "—" : `${medals.get(t.ms) ?? ""} ${formatMs(t.ms)}`}
             </span>
           </li>
         ))}
@@ -338,8 +384,6 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
               <p className="muted">
                 {me.played} {me.played === 1 ? "round" : "rounds"}
                 {me.avgMs !== null && ` · ${formatMs(me.avgMs)} on average`}
-                {me.falseStarts > 0 &&
-                  ` · ${me.falseStarts} false start${me.falseStarts > 1 ? "s" : ""}`}
               </p>
             </div>
           ) : (
