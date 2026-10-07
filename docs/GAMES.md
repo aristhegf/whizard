@@ -8,7 +8,7 @@ Every game runs in the same room: one room code, the same lobby, the same live r
 
 Everyone answers the same questions. This is the foundation game and has the biggest content library.
 
-- **Categories:** Bible, Geography, History, Science, Animals, Football, Movies, Music, Nigerian culture, General knowledge, Pop culture
+- **Categories:** Bible, Quran, Geography, History, Science, Animals, Football, Movies, Music, Nigerian culture, General knowledge, Pop culture
 - **How it plays:** everyone starts together on the same questions, then plays at their own pace. The leaderboard shows points only, and each player reviews their own answers at the end (details in [ARCHITECTURE.md](ARCHITECTURE.md#quiz-launch-game))
 - **Players:** 1 to 16. Play solo, or with friends
 - **Modes:** Classic (no clock, points for right answers), Speed (a timer on every question, faster answers score more) and Elimination (knock-out rounds, 3 or more players; the number of questions is per round, and the final has as many)

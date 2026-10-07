@@ -88,6 +88,14 @@ describe("problemsWith", () => {
     expect(problemsWith(bible)).toContain("Bible questions need a verse reference");
     expect(problemsWith({ ...bible, reference: "Genesis 6:14" })).toEqual([]);
   });
+
+  it("requires a reference for Quran questions", () => {
+    const quran = q("How many chapters does the Quran have?", ["114", "99", "120", "100"], {
+      category: "quran",
+    });
+    expect(problemsWith(quran)).toContain("Quran questions need a reference");
+    expect(problemsWith({ ...quran, reference: "Al-Fatiha 1:1" })).toEqual([]);
+  });
 });
 
 describe("repeatsAcrossCategories", () => {

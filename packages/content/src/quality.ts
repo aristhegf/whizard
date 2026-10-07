@@ -79,5 +79,8 @@ export function problemsWith(question: StoredQuestion): string[] {
   if (question.category === "bible" && !question.reference) {
     problems.push("Bible questions need a verse reference");
   }
+  if (question.category === "quran" && !question.reference) {
+    problems.push("Quran questions need a reference");
+  }
   return problems;
 }

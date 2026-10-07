@@ -160,6 +160,7 @@ export interface TopicStyle {
 
 export const TOPIC_STYLES: Record<QuizCategory, TopicStyle> = {
   bible: { art: "/art/topics/bible.webp", colors: ["#ffb52c", "#5a2014"], chip: "Bible" },
+  quran: { art: "/art/topics/quran.svg", colors: ["#25c08c", "#053b33"], chip: "Quran" },
   "general-knowledge": {
     art: "/art/topics/general-knowledge.webp",
     colors: ["#1aa6ff", "#1015a8"],

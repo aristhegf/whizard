@@ -22,6 +22,7 @@ import movies from "./questions/movies.json";
 import music from "./questions/music.json";
 import nigerianCulture from "./questions/nigerian-culture.json";
 import popCulture from "./questions/pop-culture.json";
+import quran from "./questions/quran.json";
 import science from "./questions/science.json";
 import connectionsFile from "./connections/puzzles.json";
 import {
@@ -40,6 +41,7 @@ export * from "./schema";
 /** One file per category. They ship with the Worker until reports and history need D1. */
 export const QUESTION_FILES: Record<QuizCategory, unknown> = {
   bible,
+  quran,
   geography,
   history,
   science,

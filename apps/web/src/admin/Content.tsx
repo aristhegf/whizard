@@ -241,6 +241,15 @@ const EMPTY: QuestionInput = {
   reference: null,
 };
 
+/** Categories whose questions must say where the answer can be checked. */
+const REQUIRED_REFERENCE: Record<string, { label: string; hint: string }> = {
+  bible: { label: "Verse reference", hint: "Required for Bible questions, e.g. John 3:16" },
+  quran: {
+    label: "Reference (surah and ayah)",
+    hint: "Required for Quran questions, e.g. Al-Baqarah 2:255",
+  },
+};
+
 function Editor({ id }: { id: string | null }) {
   const [detail, setDetail] = useState<AdminQuestionDetail | null>(null);
   const [category, setCategory] = useState<string>(QUIZ_CATEGORIES[0]!.id);
@@ -327,7 +336,7 @@ function Editor({ id }: { id: string | null }) {
   }
   if (id && !detail) return <p className="admin-loading">Loading…</p>;
 
-  const isBible = category === "bible";
+  const reference = REQUIRED_REFERENCE[category];
   return (
     <div className="admin-grid">
       <section className="panel admin-panel span-8" aria-labelledby="editor-title">
@@ -428,14 +437,14 @@ function Editor({ id }: { id: string | null }) {
             />
           </Field>
           <Field
-            label={isBible ? "Verse reference" : "Reference (optional)"}
-            hint={isBible ? "Required for Bible questions, e.g. John 3:16" : "Where to check it"}
+            label={reference?.label ?? "Reference (optional)"}
+            hint={reference?.hint ?? "Where to check it"}
           >
             <input
               value={form.reference ?? ""}
               maxLength={60}
               onChange={(e) => set("reference", e.target.value || null)}
-              required={isBible}
+              required={!!reference}
             />
           </Field>
 

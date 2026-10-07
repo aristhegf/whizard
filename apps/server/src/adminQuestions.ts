@@ -280,7 +280,9 @@ function problems(question: StoredQuestion, bank: Bank): string[] {
         ? "The answer gives itself away in the question."
         : p === "Bible questions need a verse reference"
           ? "Bible questions need a verse reference, e.g. John 3:16."
-          : p,
+          : p === "Quran questions need a reference"
+            ? "Quran questions need a reference, e.g. Al-Baqarah 2:255."
+            : p,
   );
   const others = bank.questions.filter((q) => q.id !== question.id);
   const same = findDuplicate(question, others);

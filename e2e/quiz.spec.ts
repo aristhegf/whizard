@@ -97,7 +97,7 @@ test("every category can be picked and played", async ({ browser }) => {
   await openGameCard(page);
   await page.getByRole("button", { name: "Change topic" }).click();
   const topics = page.getByRole("dialog", { name: "Choose a topic" });
-  await expect(topics.getByRole("radio")).toHaveCount(11);
+  await expect(topics.getByRole("radio")).toHaveCount(12);
   await expect(topics.getByRole("radio", { disabled: true })).toHaveCount(0);
   await topics.getByRole("radio", { name: "Nigerian culture" }).click();
   // Picking a topic goes on to the game's settings.

@@ -121,7 +121,7 @@ The host picks a **mode**, a **category**, a **level** (easy, medium, hard or Au
 
 In both modes, ties are broken by who answered faster overall. A Classic question still closes after 5 minutes without an answer, so a player who walks away can't hold up everyone's final results.
 
-Categories at launch: Bible, Geography, History, Science, Animals, Football, Movies, Music, Nigerian culture, General knowledge, Pop culture.
+Categories at launch: Bible, Quran, Geography, History, Science, Animals, Football, Movies, Music, Nigerian culture, General knowledge, Pop culture.
 
 **Everyone starts together, then plays at their own pace.** The first question appears for every player at the same moment, and every player gets the same questions in the same order. After that nobody waits for anybody: answering takes you straight on to your next question.
 
@@ -303,7 +303,7 @@ Each game that needs content gets its own set: quiz questions first, then Word R
 
 The questions are JSON files in `packages/content/src/questions/`, one per category, bundled with the Worker. At a few thousand questions that is small, fast and needs no database. Every change goes through a pull request, so each new question gets reviewed and tested before it ships.
 
-What changes while the site runs lives in D1 instead: which questions each player has seen, reports that take a question out of play, and questions admins edit or add from the **Content** page (`custom_questions`). A row with a shipped question's ID replaces it; any other ID is a new question. Games, reports and the topic counts all read the shipped bank with those rows applied (`loadBank`), which each Worker reloads at most every 15 seconds, so an edit reaches new games within a minute; if D1 can't be reached, games fall back to the shipped bank. Admin edits pass the same checks as the shipped bank (limits, four different answers, no giveaways, Bible references, no near-duplicates in the category or repeats of another category's fact). To make an edit permanent, copy it into the category's JSON file through a pull request and then undo the edit. That gives the benefits the original plan wanted from moving the whole bank to D1 (no redeploy to retire a bad question, no repeats) without moving the questions themselves, which only pays off at many thousands. The room draws questions through a single `drawContent` function, so moving the bank later wouldn't change the rooms.
+What changes while the site runs lives in D1 instead: which questions each player has seen, reports that take a question out of play, and questions admins edit or add from the **Content** page (`custom_questions`). A row with a shipped question's ID replaces it; any other ID is a new question. Games, reports and the topic counts all read the shipped bank with those rows applied (`loadBank`), which each Worker reloads at most every 15 seconds, so an edit reaches new games within a minute; if D1 can't be reached, games fall back to the shipped bank. Admin edits pass the same checks as the shipped bank (limits, four different answers, no giveaways, Bible and Quran references, no near-duplicates in the category or repeats of another category's fact). To make an edit permanent, copy it into the category's JSON file through a pull request and then undo the edit. That gives the benefits the original plan wanted from moving the whole bank to D1 (no redeploy to retire a bad question, no repeats) without moving the questions themselves, which only pays off at many thousands. The room draws questions through a single `drawContent` function, so moving the bank later wouldn't change the rooms.
 
 A lint rule blocks the web app from importing `packages/content`, so answers can never end up in the browser.
 
@@ -318,7 +318,7 @@ A lint rule blocks the web app from importing `packages/content`, so answers can
 
 Every question in the bank must pass these checks, which run as tests on every push:
 
-- **Shape:** four choices, length limits, a known category and level, and a verse reference for Bible questions.
+- **Shape:** four choices, length limits, a known category and level, and a verse reference for Bible questions or a reference for Quran questions.
 - **No giveaways:** all four choices are different, and the answer doesn't appear in the prompt.
 - **No duplicates:** within a category, no two questions share a prompt. Two questions with the same answer and prompts at least 70% similar (by character trigrams) also count as the same question. This keeps "Which river flows through Cairo?" and "…through Baghdad?" apart while catching rewordings.
 - **No repeats across categories:** a fact belongs to one category. Across categories the bar is lower, the same answer and prompts at least 50% alike, because a player who plays both would get it twice.
@@ -333,6 +333,8 @@ New questions are written in batches and fact-checked independently before they 
 The launch bank had 740 questions: 140 Bible, and 60 (20 per level) in each of the other ten categories. Each set was written, then reviewed by a separate fact-checker that assumed nothing. That review changed 28 questions, mostly tightening explanations, removing a second defensible answer, or replacing questions that were too easy for their level.
 
 The bank then grew to 1,980: 180 in every category, 60 per level. The new questions went through the same two steps, with each category's writer and fact-checker working separately. The fact-checkers changed or replaced about a fifth of them: removing claims in explanations that couldn't be confirmed, swapping wrong choices that could also be defended, rewording anything that depended on the translation (Bible) or could go out of date, and cutting facts another category already asks. The same pass removed 22 older questions that repeated another category's, such as "What is the chemical symbol for gold?" in both Science and General knowledge.
+
+Quran was added later as a twelfth category with 180 of its own, 60 per level, every question carrying a reference: an ayah where the answer comes from the Quran itself, or a named source such as Ibn Ishaq for the Sira. That took the bank to 2,160 across twelve categories.
 
 ## Accounts (optional)
 

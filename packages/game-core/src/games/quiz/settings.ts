@@ -3,6 +3,7 @@ import { LEVEL_CHOICES, type LevelChoice } from "../levels";
 
 export const QUIZ_CATEGORIES = [
   { id: "bible", name: "Bible" },
+  { id: "quran", name: "Quran" },
   { id: "geography", name: "Geography" },
   { id: "history", name: "History" },
   { id: "science", name: "Science" },

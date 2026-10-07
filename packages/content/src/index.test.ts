@@ -43,11 +43,27 @@ describe("question bank", () => {
   });
 
   it("has no duplicate questions within a category", () => {
-    const duplicates: string[] = [];
-    QUESTIONS.forEach((a, i) => {
-      for (const b of QUESTIONS.slice(i + 1)) {
-        if (a.category === b.category && isDuplicate(a, b)) duplicates.push(`${a.id} ~ ${b.id}`);
+    // Group by normalized prompt and answer first: the all-pairs scan over the whole
+    // bank runs close to the test timeout once a category reaches a few hundred.
+    const groups = new Map<string, StoredQuestion[]>();
+    for (const q of QUESTIONS) {
+      for (const key of [`p:${normalize(q.prompt)}`, `a:${normalize(q.choices[0]!)}`]) {
+        groups.set(key, [...(groups.get(key) ?? []), q]);
       }
+    }
+    const byId = new Map(QUESTIONS.map((q) => [q.id, q] as const));
+    const pairs = new Set<string>();
+    for (const list of groups.values()) {
+      list.forEach((a, i) => {
+        for (const b of list.slice(i + 1)) {
+          if (a.category === b.category)
+            pairs.add(a.id < b.id ? `${a.id} ~ ${b.id}` : `${b.id} ~ ${a.id}`);
+        }
+      });
+    }
+    const duplicates = [...pairs].filter((pair) => {
+      const [a, b] = pair.split(" ~ ");
+      return isDuplicate(byId.get(a!)!, byId.get(b!)!);
     });
     expect(duplicates).toEqual([]);
   });

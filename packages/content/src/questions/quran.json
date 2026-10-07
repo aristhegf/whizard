@@ -1,0 +1,1977 @@
+[
+  {
+    "id": "quran-001",
+    "category": "quran",
+    "topic": "The Quran",
+    "difficulty": "easy",
+    "prompt": "How many chapters, called surahs, are in the Quran?",
+    "choices": ["114", "99", "120", "86"],
+    "explanation": "The Quran is divided into 114 chapters of very unequal length.",
+    "reference": "As-Suyuti, Al-Itqan fi Ulum al-Quran"
+  },
+  {
+    "id": "quran-002",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "Which surah is recited in every unit of the daily prayer?",
+    "choices": ["Al-Fatiha", "Al-Ikhlas", "Al-Kawthar", "An-Nas"],
+    "explanation": "Al-Fatiha, the Opening, is recited in every rak'ah of prayer.",
+    "reference": "Sahih al-Bukhari, Prayer"
+  },
+  {
+    "id": "quran-003",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "Which surah tells the story of the believers who slept in a cave?",
+    "choices": ["Al-Kahf", "Al-Fil", "Maryam", "Saba"],
+    "explanation": "Al-Kahf tells of young believers who took shelter in a cave while their people persecuted them.",
+    "reference": "Al-Kahf 18:9"
+  },
+  {
+    "id": "quran-004",
+    "category": "quran",
+    "topic": "Revelation",
+    "difficulty": "easy",
+    "prompt": "Which angel brought God's messages down to the prophets?",
+    "choices": ["Jibril", "Mikail", "Israfil", "Malik"],
+    "explanation": "Jibril, the angel of revelation, brought the Quran to the Prophet Muhammad.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-005",
+    "category": "quran",
+    "topic": "Revelation",
+    "difficulty": "easy",
+    "prompt": "Which month does the Quran name as the month of its revelation?",
+    "choices": ["Ramadan", "Muharram", "Shawwal", "Dhul-Hijjah"],
+    "explanation": "God says the Quran was revealed in Ramadan as a guidance for all of humankind.",
+    "reference": "Al-Baqarah 2:185"
+  },
+  {
+    "id": "quran-006",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "Which pillar of Islam is giving a share of wealth to those in need?",
+    "choices": ["Zakat", "Sawm", "Hajj", "Shahadah"],
+    "explanation": "Zakat is required charity that purifies a Muslim's wealth and helps the poor.",
+    "reference": "At-Tawbah 9:60"
+  },
+  {
+    "id": "quran-007",
+    "category": "quran",
+    "topic": "Places",
+    "difficulty": "easy",
+    "prompt": "In which city stands the Kaaba, the holiest site in Islam?",
+    "choices": ["Makkah", "Madinah", "Jerusalem", "Cairo"],
+    "explanation": "The Kaaba stands in the Sacred Mosque in Makkah, the direction of Muslim prayer.",
+    "reference": "Al-Fath 48:24"
+  },
+  {
+    "id": "quran-008",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "Which surah is named after a river promised to the Prophet in Paradise?",
+    "choices": ["Al-Kawthar", "Al-Fil", "An-Nasr", "Al-Asr"],
+    "explanation": "Al-Kawthar takes its name from the river of abundance God promised His Prophet.",
+    "reference": "Al-Kawthar 108:1"
+  },
+  {
+    "id": "quran-009",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "How many verses make up the Opening surah of the Quran?",
+    "choices": ["Seven", "Five", "Six", "Nine"],
+    "explanation": "Al-Fatiha has seven verses and is recited in every unit of prayer.",
+    "reference": "Al-Fatiha 1:1-7"
+  },
+  {
+    "id": "quran-010",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "easy",
+    "prompt": "Who was the first person to believe in the Prophet's message?",
+    "choices": ["Khadijah", "Aisha", "Abu Bakr", "Ali"],
+    "explanation": "Khadijah, the Prophet's wife, was the first to believe and comfort him.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-011",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "Which short surah declares that God is one and has no equal?",
+    "choices": ["Al-Ikhlas", "Al-Falaq", "An-Nas", "Al-Fajr"],
+    "explanation": "Al-Ikhlas states the core of Islamic belief: God is unique and has no equal.",
+    "reference": "Al-Ikhlas 112:1-4"
+  },
+  {
+    "id": "quran-012",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "easy",
+    "prompt": "To which city did the Prophet migrate, leaving Makkah behind?",
+    "choices": ["Madinah", "Taif", "Jerusalem", "Damascus"],
+    "explanation": "The Prophet and his followers migrated to Madinah, where Islam grew into a community.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-013",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "Which pillar requires a journey to Makkah once in a Muslim's lifetime?",
+    "choices": ["Hajj", "Zakat", "Sawm", "Salah"],
+    "explanation": "Hajj is the pilgrimage to Makkah that every Muslim who is able must make.",
+    "reference": "Aal-Imran 3:97"
+  },
+  {
+    "id": "quran-014",
+    "category": "quran",
+    "topic": "Places",
+    "difficulty": "easy",
+    "prompt": "Which mosque houses the tomb of the Prophet Muhammad?",
+    "choices": [
+      "The Prophet's Mosque",
+      "Al-Aqsa Mosque",
+      "The Sacred Mosque",
+      "The mosque at Quba"
+    ],
+    "explanation": "The Prophet's Mosque in Madinah contains the tomb where he was laid to rest.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-015",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Which animal kept the sleepers of the cave company at its entrance?",
+    "choices": ["A dog", "A cat", "A bird", "A wolf"],
+    "explanation": "The Quran mentions a dog stretching out its paws at the mouth of the cave.",
+    "reference": "Al-Kahf 18:18"
+  },
+  {
+    "id": "quran-016",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "In Yusuf's dream, how many stars bowed down before him?",
+    "choices": ["Eleven", "Seven", "Twelve", "Nine"],
+    "explanation": "Yusuf dreamed of eleven stars, the sun and the moon bowing before him.",
+    "reference": "Yusuf 12:4"
+  },
+  {
+    "id": "quran-017",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "Which pillar of Islam is fasting from dawn to sunset in Ramadan?",
+    "choices": ["Sawm", "Zakat", "Hajj", "Salah"],
+    "explanation": "Sawm is fasting during Ramadan, one of the five pillars of Islam.",
+    "reference": "Al-Baqarah 2:183"
+  },
+  {
+    "id": "quran-018",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "What is the declaration of faith that makes a person Muslim?",
+    "choices": ["Shahadah", "Takbir", "Taslim", "Dua"],
+    "explanation": "The Shahadah testifies that there is no god but God and Muhammad is His messenger.",
+    "reference": "Sahih al-Bukhari, Faith"
+  },
+  {
+    "id": "quran-019",
+    "category": "quran",
+    "topic": "Revelation",
+    "difficulty": "easy",
+    "prompt": "On a mountain near Makkah, in which cave did the first revelation come?",
+    "choices": ["The cave of Hira", "The cave of Thawr", "The cave of Arqam", "The cave of Uhud"],
+    "explanation": "Jibril came to the Prophet in the cave of Hira on Mount Nur above Makkah.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-020",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "What is the longest surah in the Quran?",
+    "choices": ["Al-Baqarah", "Aal-Imran", "An-Nisa", "Al-Ma'idah"],
+    "explanation": "Al-Baqarah, the Cow, is far longer than any other surah in the Quran.",
+    "reference": "As-Suyuti, Al-Itqan fi Ulum al-Quran"
+  },
+  {
+    "id": "quran-021",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Which prophet was thrown into a well by his own brothers?",
+    "choices": ["Yusuf", "Ayyub", "Yunus", "Ibrahim"],
+    "explanation": "Yusuf's brothers threw him into a well out of jealousy, and he was carried off to Egypt.",
+    "reference": "Yusuf 12:9-10"
+  },
+  {
+    "id": "quran-022",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Which prophet was swallowed by a great fish after abandoning his people?",
+    "choices": ["Yunus", "Nuh", "Ayyub", "Sulayman"],
+    "explanation": "Yunus was swallowed until he called out from the darkness, and God saved him.",
+    "reference": "As-Saffat 37:140-144"
+  },
+  {
+    "id": "quran-023",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "Which prayer is offered just after the sun passes its highest point?",
+    "choices": ["Dhuhr", "Fajr", "Asr", "Maghrib"],
+    "explanation": "Dhuhr begins just after midday, when the sun starts to decline from its zenith.",
+    "reference": "An-Nisa 4:103"
+  },
+  {
+    "id": "quran-024",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "Which voluntary prayer is prayed in the last third of the night?",
+    "choices": ["Tahajjud", "Ishraq", "Witr", "Duha"],
+    "explanation": "Tahajjud is the night prayer God tells the Prophet to rise and offer.",
+    "reference": "Al-Isra 17:79"
+  },
+  {
+    "id": "quran-025",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Which surah recalls the army of elephants that attacked the Kaaba?",
+    "choices": ["Al-Fil", "Al-Adiyat", "Al-Qari'ah", "Al-Humazah"],
+    "explanation": "Al-Fil recalls Abrahah's army of elephants and the birds that defeated it.",
+    "reference": "Al-Fil 105:1-5"
+  },
+  {
+    "id": "quran-026",
+    "category": "quran",
+    "topic": "The Quran",
+    "difficulty": "easy",
+    "prompt": "What is a bound copy of the whole Quran called?",
+    "choices": ["A mushaf", "A minbar", "A mihrab", "A madrassah"],
+    "explanation": "A mushaf is a physical copy of the Quran bound between covers.",
+    "reference": "As-Suyuti, Al-Itqan fi Ulum al-Quran"
+  },
+  {
+    "id": "quran-027",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "Which surah comes last in the order of the mushaf?",
+    "choices": ["An-Nas", "Al-Falaq", "Al-Fajr", "Al-Adiyat"],
+    "explanation": "An-Nas, Mankind, is the final surah in the arrangement Muslims read today.",
+    "reference": "As-Suyuti, Al-Itqan fi Ulum al-Quran"
+  },
+  {
+    "id": "quran-028",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "Which surah recounts the Prophet's night journey to the farthest mosque?",
+    "choices": ["Al-Isra", "Al-Anfal", "Al-Ankabut", "Al-Ahzab"],
+    "explanation": "Al-Isra recounts the night journey from the Sacred Mosque to the farthest mosque.",
+    "reference": "Al-Isra 17:1"
+  },
+  {
+    "id": "quran-029",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "What is the call to prayer announced from the mosque?",
+    "choices": ["Adhan", "Iqamah", "Khutbah", "Dua"],
+    "explanation": "The adhan is the public call that summons Muslims to come and pray.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-030",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Whose people were destroyed by a rain of stones for their wrongdoing?",
+    "choices": [
+      "The people of Lut",
+      "The people of Nuh",
+      "The people of Thamud",
+      "The people of Aad"
+    ],
+    "explanation": "Lot's people were pelted with stones as a punishment for their persistent immorality.",
+    "reference": "Al-Hijr 15:73-74"
+  },
+  {
+    "id": "quran-031",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Whose people were drowned in the great flood?",
+    "choices": [
+      "The people of Nuh",
+      "The people of Lut",
+      "The people of Thamud",
+      "The people of Aad"
+    ],
+    "explanation": "God saved Nuh and the believers on the ark and drowned the rest of his people.",
+    "reference": "Hud 11:40-43"
+  },
+  {
+    "id": "quran-032",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "Which surah carries the name of Isa's mother?",
+    "choices": ["Maryam", "Ta-Ha", "Al-Qasas", "Al-Ahzab"],
+    "explanation": "Surah Maryam tells of Maryam's birth, her devotion and the miracle of her son.",
+    "reference": "Maryam 19:16-22"
+  },
+  {
+    "id": "quran-033",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "What is the sermon called that is delivered at the Friday prayer?",
+    "choices": ["Khutbah", "Adhan", "Dua", "Iqamah"],
+    "explanation": "The khutbah is the sermon a Muslim leader gives before the Friday noon prayer.",
+    "reference": "Al-Jumu'ah 62:9"
+  },
+  {
+    "id": "quran-034",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Which people were seized by the mighty blast for slaying the she-camel?",
+    "choices": [
+      "The people of Thamud",
+      "The people of Aad",
+      "The people of Lut",
+      "The people of Nuh"
+    ],
+    "explanation": "Salih's people slaughtered the she-camel God had given them and were destroyed by a blast.",
+    "reference": "Hud 11:66-68"
+  },
+  {
+    "id": "quran-035",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "easy",
+    "prompt": "Who was the father of the prophet Yusuf?",
+    "choices": ["Ya'qub", "Ibrahim", "Ismail", "Ayyub"],
+    "explanation": "Ya'qub, also called Israel, was Yusuf's father and mourned his long absence.",
+    "reference": "Yusuf 12:8"
+  },
+  {
+    "id": "quran-036",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Which creature spoke to Sulayman, warning its people of his approaching army?",
+    "choices": ["An ant", "A hoopoe", "A locust", "A bee"],
+    "explanation": "An ant warned its colony to take shelter as Sulayman's army was about to march through.",
+    "reference": "An-Naml 27:18-19"
+  },
+  {
+    "id": "quran-037",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Which bird brought Sulayman news of the Queen of Saba?",
+    "choices": ["A hoopoe", "A raven", "A dove", "A swallow"],
+    "explanation": "The hoopoe reported to Sulayman that the Queen of Saba worshipped the sun.",
+    "reference": "An-Naml 27:20-24"
+  },
+  {
+    "id": "quran-038",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "Which surah promises that with hardship comes ease?",
+    "choices": ["Ash-Sharh", "Ad-Duha", "Al-Layl", "Al-Fajr"],
+    "explanation": "Ash-Sharh assures the Prophet that every hardship is followed by a relief.",
+    "reference": "Ash-Sharh 94:5-6"
+  },
+  {
+    "id": "quran-039",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "The Night of Decree is better than how many months of ordinary worship?",
+    "choices": ["A thousand months", "A hundred months", "Three months", "Ten months"],
+    "explanation": "God calls the Night of Decree better than a thousand months of ordinary worship.",
+    "reference": "Al-Qadr 97:3"
+  },
+  {
+    "id": "quran-040",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Who built the Kaaba alongside his son Isma'il?",
+    "choices": ["Ibrahim and Isma'il", "Adam and Seth", "Nuh and Sam", "Yusuf and Ya'qub"],
+    "explanation": "The Quran says the Kaaba's foundations were raised by Ibrahim and his son Isma'il.",
+    "reference": "Al-Baqarah 2:127"
+  },
+  {
+    "id": "quran-041",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "Besides Hajj, what is the smaller, year-round pilgrimage to Makkah called?",
+    "choices": ["Umrah", "Hajj", "Ziyarah", "Tawaf"],
+    "explanation": "Umrah is a visit to the Kaaba that can be made at any time of year.",
+    "reference": "Sahih al-Bukhari, Hajj"
+  },
+  {
+    "id": "quran-042",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "What do Muslims call the five daily obligatory prayers?",
+    "choices": ["Salah", "Dhikr", "Dua", "Sawm"],
+    "explanation": "Salah is the ritual prayer performed facing Makkah five times each day.",
+    "reference": "Al-Baqarah 2:43"
+  },
+  {
+    "id": "quran-043",
+    "category": "quran",
+    "topic": "The Quran",
+    "difficulty": "easy",
+    "prompt": "What does the phrase 'Bismillah' mean in English?",
+    "choices": [
+      "In the name of God",
+      "God is great",
+      "There is no god but God",
+      "Praise be to God"
+    ],
+    "explanation": "Bismillah opens with 'In the name of God, the Most Gracious, the Most Merciful.'",
+    "reference": "An-Naml 27:30"
+  },
+  {
+    "id": "quran-044",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "Which prayer is offered before sunrise?",
+    "choices": ["Fajr", "Dhuhr", "Asr", "Isha"],
+    "explanation": "Fajr is the dawn prayer, offered from first light until shortly before sunrise.",
+    "reference": "Sahih al-Bukhari, Prayer"
+  },
+  {
+    "id": "quran-045",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "Which prayer is offered just after sunset?",
+    "choices": ["Maghrib", "Isha", "Asr", "Fajr"],
+    "explanation": "Maghrib is the sunset prayer, offered right after the sun disappears below the horizon.",
+    "reference": "Sahih al-Bukhari, Prayer"
+  },
+  {
+    "id": "quran-046",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "easy",
+    "prompt": "Which prophet remained patient through a long illness and lost his wealth and children?",
+    "choices": ["Ayyub", "Yunus", "Yusuf", "Ibrahim"],
+    "explanation": "God restored Ayyub's health, family and wealth when he turned back to his Lord.",
+    "reference": "Sad 38:41-44"
+  },
+  {
+    "id": "quran-047",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "Which surah contains the story of Adam's two sons?",
+    "choices": ["Al-Ma'idah", "Al-Kahf", "Al-An'am", "An-Nisa"],
+    "explanation": "Al-Ma'idah recounts how one son killed the other and God sent a crow to show burial.",
+    "reference": "Al-Ma'idah 5:27-31"
+  },
+  {
+    "id": "quran-048",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Which people built a great dam to hold back the water of a valley?",
+    "choices": ["Saba", "Thamud", "Aad", "Quraysh"],
+    "explanation": "The people of Saba had a great dam holding the water of a valley God blessed them with.",
+    "reference": "Saba 34:15-16"
+  },
+  {
+    "id": "quran-049",
+    "category": "quran",
+    "topic": "The Quran",
+    "difficulty": "easy",
+    "prompt": "What is the Arabic word for God that appears throughout the Quran?",
+    "choices": ["Allah", "Rab", "Ilah", "Rahman"],
+    "explanation": "Allah is simply the Arabic word for the one God, used throughout the Quran.",
+    "reference": "Al-Ikhlas 112:1"
+  },
+  {
+    "id": "quran-050",
+    "category": "quran",
+    "topic": "Places",
+    "difficulty": "easy",
+    "prompt": "What is the name of the Great Mosque that surrounds the Kaaba?",
+    "choices": [
+      "The Sacred Mosque",
+      "Al-Aqsa Mosque",
+      "The Prophet's Mosque",
+      "The mosque at Quba"
+    ],
+    "explanation": "The Sacred Mosque, al-Masjid al-Haram, is the mosque around the Kaaba in Makkah.",
+    "reference": "Al-Baqarah 2:144"
+  },
+  {
+    "id": "quran-051",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "Which surah invites believers to invite others to God with wisdom and kind words?",
+    "choices": ["An-Nahl", "Al-Baqarah", "Al-An'am", "Luqman"],
+    "explanation": "An-Nahl instructs Muslims to invite others to God's path with wisdom and kind words.",
+    "reference": "An-Nahl 16:125"
+  },
+  {
+    "id": "quran-052",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "Which surah contains the line 'To you your religion, and to me mine'?",
+    "choices": ["Al-Kafirun", "Al-Falaq", "An-Nasr", "Al-Masad"],
+    "explanation": "Al-Kafirun ends with a clear declaration that worship belongs to each their own.",
+    "reference": "Al-Kafirun 109:6"
+  },
+  {
+    "id": "quran-053",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "easy",
+    "prompt": "Which surah asks God for refuge from the evil of what He created?",
+    "choices": ["Al-Falaq", "An-Nas", "Al-Ikhlas", "Al-Fajr"],
+    "explanation": "Al-Falaq asks for refuge from every kind of evil, from envy to the dark of night.",
+    "reference": "Al-Falaq 113:1-5"
+  },
+  {
+    "id": "quran-054",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "How many times a day must a Muslim pray?",
+    "choices": ["Five", "Three", "Seven", "Four"],
+    "explanation": "Muslims pray five times a day: Fajr, Dhuhr, Asr, Maghrib and Isha.",
+    "reference": "Sahih al-Bukhari, Faith"
+  },
+  {
+    "id": "quran-055",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "easy",
+    "prompt": "In which month is the Hajj performed?",
+    "choices": ["Dhul-Hijjah", "Muharram", "Ramadan", "Rajab"],
+    "explanation": "The pilgrims gather at Arafah in Dhul-Hijjah, the final month of the Islamic year.",
+    "reference": "Al-Baqarah 2:197"
+  },
+  {
+    "id": "quran-056",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "easy",
+    "prompt": "Who was the Prophet's cousin and the fourth rightly guided caliph?",
+    "choices": ["Ali", "Abu Bakr", "Umar", "Uthman"],
+    "explanation": "Ali was the Prophet's cousin, son-in-law, and the fourth of the righteous caliphs.",
+    "reference": "At-Tirmidhi, The Virtues of the Companions"
+  },
+  {
+    "id": "quran-057",
+    "category": "quran",
+    "topic": "Revelation",
+    "difficulty": "easy",
+    "prompt": "Which surah opens with the command 'Read, in the name of your Lord'?",
+    "choices": ["Al-Alaq", "Al-Muddaththir", "Al-Fatiha", "Al-Qadr"],
+    "explanation": "The first verses revealed to the Prophet begin: Read, in the name of your Lord who created.",
+    "reference": "Al-Alaq 96:1-5"
+  },
+  {
+    "id": "quran-058",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Which well burst from the ground for Hajar and her infant son?",
+    "choices": ["Zamzam", "The Nile", "The Euphrates", "The Jordan"],
+    "explanation": "God brought forth the Zamzam spring for Hajar and Isma'il in the barren valley of Makkah.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-059",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "easy",
+    "prompt": "Which mountain did the ark come to rest on after the flood?",
+    "choices": ["Mount Judi", "Mount Sinai", "Mount Nebo", "Mount Arafat"],
+    "explanation": "The Quran states that the ark settled on Mount Judi when the waters receded.",
+    "reference": "Hud 11:44"
+  },
+  {
+    "id": "quran-060",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "easy",
+    "prompt": "Which prophet was also a king who received the Zabur?",
+    "choices": ["Dawud", "Sulayman", "Musa", "Yusuf"],
+    "explanation": "God gave Dawud the Zabur, a scripture for the Israelites, and made him a king.",
+    "reference": "Al-Isra 17:55"
+  },
+  {
+    "id": "quran-061",
+    "category": "quran",
+    "topic": "The Quran",
+    "difficulty": "medium",
+    "prompt": "In which surah would you find the verse of the Throne?",
+    "choices": ["Al-Baqarah", "Aal-Imran", "An-Nisa", "Al-An'am"],
+    "explanation": "The verse of the Throne, Ayat al-Kursi, is the 255th verse of Al-Baqarah.",
+    "reference": "Al-Baqarah 2:255"
+  },
+  {
+    "id": "quran-062",
+    "category": "quran",
+    "topic": "The Quran",
+    "difficulty": "medium",
+    "prompt": "What does the Quran's longest verse deal with?",
+    "choices": [
+      "Recording loans",
+      "Inheritance shares",
+      "The laws of fasting",
+      "Marriage and divorce"
+    ],
+    "explanation": "The longest verse, 2:282, sets out how to record a debt when money is lent.",
+    "reference": "Al-Baqarah 2:282"
+  },
+  {
+    "id": "quran-063",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "medium",
+    "prompt": "How long did the people of the cave sleep?",
+    "choices": ["309 years", "300 years", "400 years", "70 years"],
+    "explanation": "The Quran says they slept three hundred years and increased by nine more.",
+    "reference": "Al-Kahf 18:25"
+  },
+  {
+    "id": "quran-064",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "In which direction did Muslims first pray before the qiblah changed?",
+    "choices": ["Jerusalem", "Makkah", "Madinah", "Mount Arafat"],
+    "explanation": "For about sixteen months the Prophet prayed facing Jerusalem before the change.",
+    "reference": "Sahih al-Bukhari, Prayer"
+  },
+  {
+    "id": "quran-065",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "The Quran lists how many groups entitled to receive zakat?",
+    "choices": ["Eight", "Six", "Ten", "Five"],
+    "explanation": "The verse names eight causes: the poor, the needy, collectors, new Muslims, freeing slaves, debtors, God's cause, and stranded travellers.",
+    "reference": "At-Tawbah 9:60"
+  },
+  {
+    "id": "quran-066",
+    "category": "quran",
+    "topic": "Revelation",
+    "difficulty": "medium",
+    "prompt": "In which two cities was the Quran revealed?",
+    "choices": [
+      "Makkah and Madinah",
+      "Makkah and Taif",
+      "Jerusalem and Makkah",
+      "Madinah and Damascus"
+    ],
+    "explanation": "Most of the Quran came down in Makkah and the rest after the migration to Madinah.",
+    "reference": "As-Suyuti, Al-Itqan fi Ulum al-Quran"
+  },
+  {
+    "id": "quran-067",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "medium",
+    "prompt": "Which prophet did God speak to directly?",
+    "choices": ["Musa", "Isa", "Yusuf", "Nuh"],
+    "explanation": "The Quran says God spoke to Musa directly, without an intermediary.",
+    "reference": "Al-Nisa 4:164"
+  },
+  {
+    "id": "quran-068",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah is known as the heart of the Quran?",
+    "choices": ["Ya-Sin", "Al-Fatiha", "Al-Kahf", "Ar-Rahman"],
+    "explanation": "A hadith describes Ya-Sin as the heart of the Quran.",
+    "reference": "As-Suyuti, Al-Itqan fi Ulum al-Quran"
+  },
+  {
+    "id": "quran-069",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah shares its name with iron?",
+    "choices": ["Al-Hadid", "An-Nur", "Al-Fajr", "Al-Qasas"],
+    "explanation": "Al-Hadid, Iron, takes its name from the verse about God sending down iron.",
+    "reference": "Al-Hadid 57:25"
+  },
+  {
+    "id": "quran-070",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah tells of the moon being split?",
+    "choices": ["Al-Qamar", "An-Najm", "Al-Fajr", "Al-Inshiqaq"],
+    "explanation": "Al-Qamar opens with the splitting of the moon, a sign shown to the disbelievers.",
+    "reference": "Al-Qamar 54:1-2"
+  },
+  {
+    "id": "quran-071",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah is named after the Day of Resurrection?",
+    "choices": ["Al-Qiyamah", "Al-Qari'ah", "At-Takathur", "Al-Infitar"],
+    "explanation": "Al-Qiyamah takes its name from the resurrection of every soul on the final day.",
+    "reference": "Al-Qiyamah 75:1"
+  },
+  {
+    "id": "quran-072",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah is named 'The Striking Calamity'?",
+    "choices": ["Al-Qari'ah", "Al-Qiyamah", "Al-Haqqah", "Al-Ma'un"],
+    "explanation": "Al-Qari'ah describes the earthquake that strikes people on the final day.",
+    "reference": "Al-Qari'ah 101:1-3"
+  },
+  {
+    "id": "quran-073",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah recalls the conquest of Makkah?",
+    "choices": ["Al-Fath", "Al-Anfal", "Muhammad", "Al-Hujurat"],
+    "explanation": "Al-Fath, Victory, was revealed around the treaty of Hudaybiyyah and the conquest that followed.",
+    "reference": "Al-Fath 48:1"
+  },
+  {
+    "id": "quran-074",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah does not begin with the Bismillah?",
+    "choices": ["At-Tawbah", "Al-Fatiha", "An-Naml", "Ar-Rahman"],
+    "explanation": "At-Tawbah, Repentance, is the only surah that opens without the Bismillah.",
+    "reference": "As-Suyuti, Al-Itqan fi Ulum al-Quran"
+  },
+  {
+    "id": "quran-075",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah takes its name from unseen beings said to be made of fire?",
+    "choices": ["Al-Jinn", "Al-Fil", "An-Nas", "Al-Qasas"],
+    "explanation": "Al-Jinn describes a group of jinn who heard the Quran and believed in it.",
+    "reference": "Al-Jinn 72:1"
+  },
+  {
+    "id": "quran-076",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "medium",
+    "prompt": "Which prophet was sent to the people of Aad?",
+    "choices": ["Hud", "Salih", "Shu'ayb", "Nuh"],
+    "explanation": "God sent Hud to call the people of Aad to worship Him alone.",
+    "reference": "Al-A'raf 7:65"
+  },
+  {
+    "id": "quran-077",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "medium",
+    "prompt": "Which prophet warned the people of Madyan for their cheating in trade?",
+    "choices": ["Shu'ayb", "Hud", "Salih", "Lut"],
+    "explanation": "God sent Shu'ayb to Madyan to call its people away from cheating in trade.",
+    "reference": "Al-A'raf 7:85"
+  },
+  {
+    "id": "quran-078",
+    "category": "quran",
+    "topic": "The Quran",
+    "difficulty": "medium",
+    "prompt": "Ayat al-Kursi is which verse of the Quran?",
+    "choices": ["The 255th", "The 286th", "The 100th", "The 40th"],
+    "explanation": "The 255th verse praises God's eternal watchfulness over all things.",
+    "reference": "Al-Baqarah 2:255"
+  },
+  {
+    "id": "quran-079",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah shares its name with the famous light verse?",
+    "choices": ["An-Nur", "Al-Qamar", "Ash-Shams", "Ad-Duha"],
+    "explanation": "An-Nur opens with the parable of God as the light of the heavens and the earth.",
+    "reference": "An-Nur 24:35"
+  },
+  {
+    "id": "quran-080",
+    "category": "quran",
+    "topic": "Ethics",
+    "difficulty": "medium",
+    "prompt": "Which surah forbids backbiting and mutual spying?",
+    "choices": ["Al-Hujurat", "Al-Asr", "Al-Qasas", "Al-Fajr"],
+    "explanation": "Al-Hujurat tells believers not to spy, not to backbite, and to hold back from suspicion.",
+    "reference": "Al-Hujurat 49:12"
+  },
+  {
+    "id": "quran-081",
+    "category": "quran",
+    "topic": "Ethics",
+    "difficulty": "medium",
+    "prompt": "Which surah commends settling matters through consultation?",
+    "choices": ["Ash-Shura", "Al-Mujadila", "Al-Hujurat", "An-Nisa"],
+    "explanation": "Ash-Shura praises those whose affairs are settled by consultation between them.",
+    "reference": "Ash-Shura 42:38"
+  },
+  {
+    "id": "quran-082",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah begins with an oath by the passing of time?",
+    "choices": ["Al-Asr", "Al-Fajr", "Ad-Duha", "At-Tin"],
+    "explanation": "Al-Asr swears by time and warns that all humankind is in loss except the faithful.",
+    "reference": "Al-Asr 103:1-3"
+  },
+  {
+    "id": "quran-083",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah opens with the counsel of a wise father to his son?",
+    "choices": ["Luqman", "Al-Ankabut", "Al-Ahqaf", "Saba"],
+    "explanation": "Luqman advises his son to be grateful, to watch his words, and to worship God alone.",
+    "reference": "Luqman 31:12-19"
+  },
+  {
+    "id": "quran-084",
+    "category": "quran",
+    "topic": "Ethics",
+    "difficulty": "medium",
+    "prompt": "Which surah says God does not change a people's condition until they change themselves?",
+    "choices": ["Ar-Rad", "Al-Anfal", "Al-Fath", "Al-Bayyinah"],
+    "explanation": "Ar-Rad warns that God lifts or lowers a people only after they change their own ways.",
+    "reference": "Ar-Rad 13:11"
+  },
+  {
+    "id": "quran-085",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah describes the Muslim community as the best of nations?",
+    "choices": ["Aal-Imran", "An-Nisa", "Al-Ma'idah", "Al-Baqarah"],
+    "explanation": "The verse calls believers the best nation brought forth for mankind, if they keep their duty.",
+    "reference": "Aal-Imran 3:110"
+  },
+  {
+    "id": "quran-086",
+    "category": "quran",
+    "topic": "Ethics",
+    "difficulty": "medium",
+    "prompt": "How many needy people must be fed to atone for a broken oath?",
+    "choices": ["Ten", "Seven", "Thirty", "Five"],
+    "explanation": "For a broken oath the Quran sets feeding ten poor people, clothing them, or freeing a slave.",
+    "reference": "Al-Ma'idah 5:89"
+  },
+  {
+    "id": "quran-087",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah contains the verse 'Today I have perfected your religion'?",
+    "choices": ["Al-Ma'idah", "Aal-Imran", "An-Nisa", "Al-Anfal"],
+    "explanation": "The verse announcing the completion of God's favor comes near the end of Al-Ma'idah.",
+    "reference": "Al-Ma'idah 5:3"
+  },
+  {
+    "id": "quran-088",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah describes the Prophet as a mercy to the worlds?",
+    "choices": ["Al-Anbiya", "At-Tawbah", "Al-Fath", "Al-Hujurat"],
+    "explanation": "Al-Anbiya contains the message that the Prophet was sent as a mercy to all the worlds.",
+    "reference": "Al-Anbiya 21:107"
+  },
+  {
+    "id": "quran-089",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "medium",
+    "prompt": "Which surah recounts the defense of Madinah at the battle of the trench?",
+    "choices": ["Al-Ahzab", "Al-Hashr", "Al-Anfal", "Muhammad"],
+    "explanation": "Al-Ahzab recalls how the believers dug a trench to hold off the confederate armies.",
+    "reference": "Al-Ahzab 33:9"
+  },
+  {
+    "id": "quran-090",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "medium",
+    "prompt": "Which was the first battle fought by the Muslims?",
+    "choices": ["Badr", "Uhud", "Khaybar", "Hunayn"],
+    "explanation": "Badr came in the second year after the migration and was the first field battle of Islam.",
+    "reference": "Al-Anfal 8:7"
+  },
+  {
+    "id": "quran-091",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "medium",
+    "prompt": "Which battle was a setback for the Muslims despite an early advantage?",
+    "choices": ["Uhud", "Badr", "Hunayn", "Tabuk"],
+    "explanation": "At Uhud the archers left their post and the Muslims were turned back from an early lead.",
+    "reference": "Aal-Imran 3:152"
+  },
+  {
+    "id": "quran-092",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "medium",
+    "prompt": "Which prophet understood the speech of birds and animals?",
+    "choices": ["Sulayman", "Dawud", "Yusuf", "Ilyas"],
+    "explanation": "God gave Sulayman understanding of the case, so he could hear the hoopoe and the ant.",
+    "reference": "An-Naml 27:16"
+  },
+  {
+    "id": "quran-093",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "What is the funeral prayer for the dead called?",
+    "choices": ["Salat al-Janazah", "Salat al-Eid", "Tahajjud", "Salat al-Kusuf"],
+    "explanation": "Salat al-Janazah is the congregational prayer offered for a deceased Muslim.",
+    "reference": "Sahih al-Bukhari, Funerals"
+  },
+  {
+    "id": "quran-094",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "What is the prayer offered on the two Eids called?",
+    "choices": ["Salat al-Eid", "Salat al-Janazah", "Salat al-Kusuf", "Salat al-Istisqa"],
+    "explanation": "Muslims gather in open prayer grounds for the Eid prayer after the sermon.",
+    "reference": "Sahih al-Bukhari, The Two Eids"
+  },
+  {
+    "id": "quran-095",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "medium",
+    "prompt": "In which surah is Sulayman found dead, propped up on his staff?",
+    "choices": ["Saba", "Sad", "An-Naml", "Al-Fath"],
+    "explanation": "Only termites had eaten through his staff, so his people only learned of his death when he fell.",
+    "reference": "Saba 34:14"
+  },
+  {
+    "id": "quran-096",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "medium",
+    "prompt": "By what name does the Quran call Abraham's father?",
+    "choices": ["Azar", "Terah", "Nahor", "Laban"],
+    "explanation": "The Quran names Abraham's father Azar, whom he called to give up idol worship.",
+    "reference": "Al-An'am 6:74"
+  },
+  {
+    "id": "quran-097",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah begins 'Blessed is He in whose hand is dominion'?",
+    "choices": ["Al-Mulk", "Al-Fajr", "Al-Qalam", "Al-Haqqah"],
+    "explanation": "Al-Mulk, Sovereignty, opens by praising the One who holds all dominion over creation.",
+    "reference": "Al-Mulk 67:1"
+  },
+  {
+    "id": "quran-098",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah mentions the peoples of Ya'juj and Ma'juj?",
+    "choices": ["Al-Kahf", "Al-Qasas", "Saba", "Al-Ankabut"],
+    "explanation": "Al-Kahf tells how Dhul-Qarnayn walled up Ya'juj and Ma'juj behind a great barrier.",
+    "reference": "Al-Kahf 18:94-96"
+  },
+  {
+    "id": "quran-099",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "How many verses does Surah Al-Baqarah have?",
+    "choices": ["286", "285", "120", "200"],
+    "explanation": "Al-Baqarah closes with 286 verses, the highest count of any surah.",
+    "reference": "Al-Baqarah 2:286"
+  },
+  {
+    "id": "quran-100",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "medium",
+    "prompt": "In which surah is the Queen of Saba's throne brought before Sulayman?",
+    "choices": ["An-Naml", "Al-Qasas", "Al-Ankabut", "Al-Fatir"],
+    "explanation": "Al-Naml recounts how Sulayman's throne was carried in the blink of an eye before the queen.",
+    "reference": "An-Naml 27:40"
+  },
+  {
+    "id": "quran-101",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "medium",
+    "prompt": "Which surah predicts the return of the Romans to victory?",
+    "choices": ["Ar-Rum", "Al-Fath", "Al-Anfal", "At-Tawbah"],
+    "explanation": "Ar-Rum foretold that the defeated Romans would rise again within a few years.",
+    "reference": "Ar-Rum 30:2-4"
+  },
+  {
+    "id": "quran-102",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "medium",
+    "prompt": "In which year did the Prophet begin the migration to Madinah?",
+    "choices": ["622 CE", "610 CE", "630 CE", "632 CE"],
+    "explanation": "The migration in 622 CE marks year one of the Islamic lunar calendar.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-103",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "medium",
+    "prompt": "Who was the first muezzin to call Muslims to prayer?",
+    "choices": ["Bilal", "Umar", "Abu Bakr", "Ali"],
+    "explanation": "Bilal, freed by Abu Bakr, was chosen by the Prophet to give the first call to prayer.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-104",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "medium",
+    "prompt": "Which surah recounts Ibrahim breaking the idols of his people?",
+    "choices": ["Al-Anbiya", "Al-An'am", "Saba", "Al-Kahf"],
+    "explanation": "Al-Anbiya tells how Ibrahim shattered the idols and challenged his people to question them.",
+    "reference": "Al-Anbiya 21:51-70"
+  },
+  {
+    "id": "quran-105",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "medium",
+    "prompt": "What was the title of the high official who bought Yusuf?",
+    "choices": ["Al-Aziz", "The King", "The Treasurer", "The Commander"],
+    "explanation": "Al-Aziz, the chief minister of Egypt, bought Yusuf and later raised him in his house.",
+    "reference": "Yusuf 12:21"
+  },
+  {
+    "id": "quran-106",
+    "category": "quran",
+    "topic": "The Quran",
+    "difficulty": "medium",
+    "prompt": "How many months of the year does the Quran call sacred?",
+    "choices": ["Four", "Three", "Five", "Six"],
+    "explanation": "Four months are sacred: Dhul-Qa'dah, Dhul-Hijjah, Muharram and Rajab.",
+    "reference": "At-Tawbah 9:36"
+  },
+  {
+    "id": "quran-107",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "What short call tells Muslims to line up for the prayer?",
+    "choices": ["Iqamah", "Adhan", "Khutbah", "Takbir"],
+    "explanation": "The iqamah is given once worshippers have gathered, saying the prayer is about to begin.",
+    "reference": "Sahih al-Bukhari, Prayer"
+  },
+  {
+    "id": "quran-108",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "medium",
+    "prompt": "Who alone refused to obey God's command to bow before the first human?",
+    "choices": ["Iblis", "Jibril", "Mikail", "Israfil"],
+    "explanation": "Every angel obeyed, but Iblis was too proud and was cast out of grace.",
+    "reference": "Al-Baqarah 2:34"
+  },
+  {
+    "id": "quran-109",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "What is the pre-dawn meal taken before a day of fasting called?",
+    "choices": ["Suhoor", "Iftar", "Dua", "Zakat"],
+    "explanation": "Suhoor is the meal Muslims eat before dawn during Ramadan while they fast.",
+    "reference": "Sahih al-Bukhari, Fasting"
+  },
+  {
+    "id": "quran-110",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "What is the meal that breaks the daily Ramadan fast called?",
+    "choices": ["Iftar", "Suhoor", "Imsak", "Eid"],
+    "explanation": "Iftar is the meal with which Muslims break their fast each evening in Ramadan.",
+    "reference": "Sahih al-Bukhari, Fasting"
+  },
+  {
+    "id": "quran-111",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "What is the extra night prayer performed in Ramadan mosques called?",
+    "choices": ["Tarawih", "Tahajjud", "Witr", "Ishraq"],
+    "explanation": "Tarawih is the congregational night prayer Muslims offer in mosques throughout Ramadan.",
+    "reference": "Sahih al-Bukhari, Prayer"
+  },
+  {
+    "id": "quran-112",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "medium",
+    "prompt": "Which people were swept away by a howling wind for rejecting their prophet?",
+    "choices": [
+      "The people of Aad",
+      "The people of Thamud",
+      "The people of Lut",
+      "The people of Saba"
+    ],
+    "explanation": "God sent a violent wind against Aad for days in misery, destroying them to their very roots.",
+    "reference": "Al-Ahqaf 46:25"
+  },
+  {
+    "id": "quran-113",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "medium",
+    "prompt": "Which people were turned into apes for breaking the Sabbath?",
+    "choices": [
+      "The Sabbath-breakers",
+      "The people of Aad",
+      "The people of Lut",
+      "The people of Nuh"
+    ],
+    "explanation": "For their persistent disobedience, We said to the Sabbath-breakers: be apes, despised.",
+    "reference": "Al-A'raf 7:166"
+  },
+  {
+    "id": "quran-114",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "What is the standing in prayer at Arafah during Hajj called?",
+    "choices": ["Wuquf", "Tawaf", "Sa'i", "Ramy"],
+    "explanation": "Wuquf is the rite of standing at Arafah in Dhul-Hijjah, the core of Hajj.",
+    "reference": "Sahih al-Bukhari, Hajj"
+  },
+  {
+    "id": "quran-115",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "What is the act of circling the Kaaba called?",
+    "choices": ["Tawaf", "Wuquf", "Sa'i", "Halq"],
+    "explanation": "Tawaf is circling the Kaaba seven times, beginning and ending at the Black Stone.",
+    "reference": "Sahih al-Bukhari, Hajj"
+  },
+  {
+    "id": "quran-116",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "What is the walk between the hills of Safa and Marwah called?",
+    "choices": ["Sa'i", "Tawaf", "Wuquf", "Ramy"],
+    "explanation": "Sa'i is walked seven times between Safa and Marwah, following Hajar's search for water.",
+    "reference": "Al-Baqarah 2:158"
+  },
+  {
+    "id": "quran-117",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "What is the rite of casting stones at the pillars in Mina called?",
+    "choices": ["Ramy", "Tawaf", "Sa'i", "Halq"],
+    "explanation": "Ramy is the symbolic stoning of the three pillars on the days of Tashriq at Mina.",
+    "reference": "Sahih al-Bukhari, Hajj"
+  },
+  {
+    "id": "quran-118",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "What is the shaving of the head that completes the Hajj called?",
+    "choices": ["Halq", "Taqsir", "Ghusl", "Wudu"],
+    "explanation": "Halq is the shaving of the head that a pilgrim performs at the end of Hajj.",
+    "reference": "Sahih al-Bukhari, Hajj"
+  },
+  {
+    "id": "quran-119",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "medium",
+    "prompt": "What is the practice of staying in the mosque for worship in Ramadan called?",
+    "choices": ["I'tikaf", "Wuquf", "Tahajjud", "Qiyam"],
+    "explanation": "I'tikaf is remaining in the mosque for days of worship and remembrance during Ramadan.",
+    "reference": "Al-Baqarah 2:187"
+  },
+  {
+    "id": "quran-120",
+    "category": "quran",
+    "topic": "Places",
+    "difficulty": "medium",
+    "prompt": "Which mosque did the Prophet found soon after arriving in Madinah?",
+    "choices": [
+      "The mosque at Quba",
+      "The Prophet's Mosque",
+      "Al-Aqsa Mosque",
+      "The Sacred Mosque"
+    ],
+    "explanation": "The Prophet prayed at Quba on the way into Madinah and built its mosque.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-121",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "What was the name of the Prophet's she-camel?",
+    "choices": ["Qaswa", "Duldul", "Al-Buraq", "Barakah"],
+    "explanation": "Qaswa was the she-camel that carried the Prophet into Madinah at the Hijrah.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-122",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "Who nursed the Prophet during his years in the desert?",
+    "choices": [
+      "Halimah al-Sa'diyyah",
+      "Aminah bint Wahb",
+      "Khadijah bint Khuwaylid",
+      "Fatimah bint Asad"
+    ],
+    "explanation": "Halimah of the tribe of Sa'd was given the care of the orphan infant in the desert.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-123",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "What was the name of the Prophet's grandfather who cared for him as a child?",
+    "choices": ["Abd al-Muttalib", "Abu Talib", "Al-Abbas", "Abdullah"],
+    "explanation": "Abd al-Muttalib took charge of the boy after his father died and cared for him in Makkah.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-124",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "Which daughter of the Prophet married his cousin Ali?",
+    "choices": ["Fatimah", "Zaynab", "Ruqayyah", "Umm Kulthum"],
+    "explanation": "Fatimah, the Prophet's daughter by Khadijah, married Ali and bore Hasan and Husayn.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-125",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "How many archers did the Prophet post on the hill at Uhud?",
+    "choices": ["Fifty", "One hundred", "Two hundred", "Three hundred"],
+    "explanation": "The Prophet set fifty archers on the hill and told them not to leave their position.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-126",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "In which year of the Hijrah was the battle of the Trench fought?",
+    "choices": ["The fifth year", "The second year", "The eighth year", "The tenth year"],
+    "explanation": "The confederate armies besieged Madinah in year five of the Hijrah, when the trench was dug.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-127",
+    "category": "quran",
+    "topic": "The Quran",
+    "difficulty": "hard",
+    "prompt": "What name does the Quran give to Pharaoh's believing wife?",
+    "choices": ["It does not name her", "Asiya", "Maryam", "Hajar"],
+    "explanation": "The Quran calls her only the wife of Pharaoh; the name Asiya is not in its text.",
+    "reference": "At-Tahrim 66:11"
+  },
+  {
+    "id": "quran-128",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "Who questioned the women of the city about their conduct toward Yusuf?",
+    "choices": ["The king", "The chief minister", "Yaqub", "The chief priest"],
+    "explanation": "When the king summoned Yusuf, he had the women questioned and they declared him innocent.",
+    "reference": "Yusuf 12:50-51"
+  },
+  {
+    "id": "quran-129",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "In which year of the Hijrah was Makkah conquered?",
+    "choices": ["The eighth year", "The sixth year", "The ninth year", "The tenth year"],
+    "explanation": "The Prophet entered Makkah in year eight of the Hijrah with little bloodshed.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-130",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "How old was the Prophet when he died?",
+    "choices": ["63 years", "60 years", "65 years", "55 years"],
+    "explanation": "The Prophet passed away in Madinah about sixty-three years after his birth.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-131",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "In which year of the Hijrah did the Prophet pass away?",
+    "choices": ["The eleventh year", "The ninth year", "The tenth year", "The twelfth year"],
+    "explanation": "The Prophet passed away in Madinah in the eleventh year of the Hijrah and was buried there.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-132",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "hard",
+    "prompt": "How many verses does surah An-Nas have?",
+    "choices": ["Six", "Five", "Seven", "Three"],
+    "explanation": "Surah An-Nas has six verses, and each one asks God for refuge from the whisperer.",
+    "reference": "An-Nas 114:6"
+  },
+  {
+    "id": "quran-133",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "Which wife of the Prophet narrated more hadiths than any other?",
+    "choices": ["Aisha", "Hafsah", "Umm Salamah", "Safiyyah"],
+    "explanation": "Aisha, daughter of Abu Bakr, reported more of the Prophet's sayings than his other wives.",
+    "reference": "At-Tirmidhi, The Virtues of the Companions"
+  },
+  {
+    "id": "quran-134",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "Which prophet did the two prisoners ask to explain their dreams?",
+    "choices": ["Yusuf", "Yaqub", "Musa", "Ilyas"],
+    "explanation": "The two prisoners turned to Yusuf, whose gift of interpretation was already known to them.",
+    "reference": "Yusuf 12:36-37"
+  },
+  {
+    "id": "quran-135",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "What was the name of the Prophet's father, who died before his son was born?",
+    "choices": ["Abdullah", "Abu Talib", "Al-Abbas", "Hamza"],
+    "explanation": "Abdullah died in Yathrib before his son was born, so the Prophet never knew his father.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-136",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "What was the name of the Prophet's mother?",
+    "choices": ["Aminah", "Halimah", "Khadijah", "Fatimah"],
+    "explanation": "Aminah bint Wahb bore the Prophet and died at Abwa when he was six years old.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-137",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "Who raised the Prophet after his grandfather died?",
+    "choices": ["Abu Talib", "Al-Abbas", "Hamza", "Abdullah"],
+    "explanation": "Abu Talib, the Prophet's uncle, raised him after his grandfather died and sheltered him in Makkah.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-138",
+    "category": "quran",
+    "topic": "Places",
+    "difficulty": "hard",
+    "prompt": "Where did the Prophet and Abu Bakr shelter while the Quraysh searched for them?",
+    "choices": [
+      "The cave of Thawr",
+      "The cave of Hira",
+      "The house of Arqam",
+      "The valley of Mina"
+    ],
+    "explanation": "They hid in the cave of Thawr south of Makkah while the Quraysh searched the town.",
+    "reference": "At-Tawbah 9:40"
+  },
+  {
+    "id": "quran-139",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "Which uncle of the Prophet embraced Islam early and was martyred at Uhud?",
+    "choices": ["Hamza", "Al-Abbas", "Abu Lahab", "Abdullah"],
+    "explanation": "Hamza entered Islam at an early date and fell defending the Muslims at Uhud.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-140",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "hard",
+    "prompt": "Which surah of the Quran is named after the Prophet himself?",
+    "choices": ["Muhammad", "Al-Fath", "Al-Anfal", "An-Nasr"],
+    "explanation": "The forty-seventh surah of the Quran carries the name Muhammad and was revealed in Madinah.",
+    "reference": "Muhammad 47:1"
+  },
+  {
+    "id": "quran-141",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "In which year of the Hijrah was the battle of Badr fought?",
+    "choices": ["The second year", "The first year", "The fourth year", "The sixth year"],
+    "explanation": "The battle of the wells of Badr took place in the second year of the Hijrah.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-142",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "About how many Quraysh fighters marched out to Badr?",
+    "choices": [
+      "About a thousand",
+      "About five hundred",
+      "About two thousand",
+      "About three hundred"
+    ],
+    "explanation": "Ibn Ishaq reports the Quraysh came with about a thousand men, a hundred horses and two hundred camels.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-143",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "How many Muslims fought in the battle of Uhud?",
+    "choices": ["Seven hundred", "One thousand", "Three hundred", "Three thousand"],
+    "explanation": "Seven hundred Muslims took the field at Uhud against a larger Quraysh army.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-144",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What false explanation did Yusuf's brothers give their father for his disappearance?",
+    "choices": [
+      "A wolf devoured him",
+      "He ran away from home",
+      "Bandits seized him",
+      "He fell into the well"
+    ],
+    "explanation": "They came with a stained shirt and a tale that a wolf had devoured Yusuf, but he did not believe them.",
+    "reference": "Yusuf 12:16-18"
+  },
+  {
+    "id": "quran-145",
+    "category": "quran",
+    "topic": "Revelation",
+    "difficulty": "hard",
+    "prompt": "Roughly how long did the revelation of the Quran take?",
+    "choices": ["About 23 years", "About 10 years", "About 40 years", "About 13 years"],
+    "explanation": "Revelation began in Makkah and continued until the Prophet's death, about twenty-three years later.",
+    "reference": "As-Suyuti, Al-Itqan fi Ulum al-Quran"
+  },
+  {
+    "id": "quran-146",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What did Pharaoh proclaim as he faced drowning?",
+    "choices": [
+      "He believed in the God of Israel",
+      "He freed the Israelites",
+      "He denied God's signs",
+      "He repented of his tyranny"
+    ],
+    "explanation": "At the moment of drowning Pharaoh declared belief, and it was said to him: only now?",
+    "reference": "Yunus 10:90-91"
+  },
+  {
+    "id": "quran-147",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What did God teach Adam that the angels were not able to do?",
+    "choices": [
+      "The names of all things",
+      "The language of the angels",
+      "How to read and write",
+      "The secrets of the heavens"
+    ],
+    "explanation": "God taught Adam the names of all things, and when the angels could not name them, they praised Him.",
+    "reference": "Al-Baqarah 2:31-33"
+  },
+  {
+    "id": "quran-148",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What reason did Iblis give for refusing to bow before Adam?",
+    "choices": [
+      "Fire is better than clay",
+      "Clay is nobler than fire",
+      "Man is weak and proud",
+      "He was too proud to serve"
+    ],
+    "explanation": "Iblis argued that he was made of fire while Adam was made of clay, and so he refused.",
+    "reference": "Al-A'raf 7:12"
+  },
+  {
+    "id": "quran-149",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What question did the angels ask God when He appointed a vicegerent on earth?",
+    "choices": [
+      "Whether they would shed blood",
+      "When the Hour would come",
+      "Who would be their king",
+      "Why clay was used"
+    ],
+    "explanation": "The angels asked: will You place on earth one who sheds blood, while we declare Your praise?",
+    "reference": "Al-Baqarah 2:30"
+  },
+  {
+    "id": "quran-150",
+    "category": "quran",
+    "topic": "Sira",
+    "difficulty": "hard",
+    "prompt": "Who did the Prophet send to Madinah to teach its people before the Hijrah?",
+    "choices": ["Mus'ab ibn Umayr", "Bilal ibn Rabah", "Abu Salamah", "Umar ibn al-Khattab"],
+    "explanation": "Mus'ab ibn Umayr was sent to Madinah to teach the Quran and lead prayer before the migration.",
+    "reference": "Ibn Ishaq, Sirat Rasul Allah"
+  },
+  {
+    "id": "quran-151",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "According to Al-Kahf, what was to become of the boy that led to his killing?",
+    "choices": [
+      "He would lead his parents into disbelief",
+      "The boy was dying of illness",
+      "The boy had already sinned",
+      "The boy would attack his siblings"
+    ],
+    "explanation": "The boy's parents were believers, and God replaced him with a better child who would not grieve them.",
+    "reference": "Al-Kahf 18:80-81"
+  },
+  {
+    "id": "quran-152",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What did Pharaoh's believing wife ask God for?",
+    "choices": [
+      "A house in Paradise",
+      "A house of eternal youth",
+      "A garden of great rivers",
+      "Forgiveness from her husband"
+    ],
+    "explanation": "She prayed: build me a house in Paradise with You and save me from Pharaoh and his works.",
+    "reference": "At-Tahrim 66:11"
+  },
+  {
+    "id": "quran-153",
+    "category": "quran",
+    "topic": "Revelation",
+    "difficulty": "hard",
+    "prompt": "Which scripture did God give to Musa?",
+    "choices": ["The Torah", "The Injeel", "The Zabur", "The Suhuf"],
+    "explanation": "God gave Musa the Torah as guidance and judgment for the children of Israel.",
+    "reference": "Al-Ma'idah 5:44"
+  },
+  {
+    "id": "quran-154",
+    "category": "quran",
+    "topic": "Revelation",
+    "difficulty": "hard",
+    "prompt": "Which scripture did God give to Isa?",
+    "choices": ["The Injeel", "The Torah", "The Zabur", "The Quran"],
+    "explanation": "God gave Isa the Injeel, which held guidance and light and confirmed the Torah.",
+    "reference": "Al-Ma'idah 5:46"
+  },
+  {
+    "id": "quran-155",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "According to Al-Kahf, who knows the true number of the people in the cave?",
+    "choices": [
+      "Only a few with knowledge",
+      "The scholars of scripture",
+      "Every believer may guess",
+      "The number is exactly five"
+    ],
+    "explanation": "Al-Kahf says God has most knowledge of their number, and none knows it except a few.",
+    "reference": "Al-Kahf 18:22"
+  },
+  {
+    "id": "quran-156",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What did the young men pray for when they took shelter in the cave?",
+    "choices": [
+      "Mercy and guidance from God",
+      "Victory over their persecutors",
+      "A hidden way out of the city",
+      "Riches and long life"
+    ],
+    "explanation": "They prayed: our Lord, grant us mercy from Yourself and prepare for us right guidance in our affair.",
+    "reference": "Al-Kahf 18:10"
+  },
+  {
+    "id": "quran-157",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What place did Musa resolve to reach on his journey in Al-Kahf?",
+    "choices": [
+      "The junction of the two seas",
+      "The valley of the shadowless land",
+      "The meeting of the two rivers",
+      "The far end of the western coast"
+    ],
+    "explanation": "Musa said he would not stop until he reached the meeting place of the two seas, even if it took years.",
+    "reference": "Al-Kahf 18:60"
+  },
+  {
+    "id": "quran-158",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What did the boastful man in Al-Kahf's vineyard parable claim?",
+    "choices": [
+      "That his garden would never decline",
+      "That the Hour was very near",
+      "That God would not judge him",
+      "That his wealth would double"
+    ],
+    "explanation": "He dismissed his friend's warning, saying his garden would never dwindle and that he would find a better place with God.",
+    "reference": "Al-Kahf 18:40-42"
+  },
+  {
+    "id": "quran-159",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "Who was the mysterious servant whom Musa met in Al-Kahf?",
+    "choices": [
+      "A servant God had taught knowledge",
+      "The prophet Ilyas",
+      "An angel in human form",
+      "A scholar from Bani Isra'il"
+    ],
+    "explanation": "Musa was told: I have a servant whom I taught knowledge from Our own presence; he asked to follow him.",
+    "reference": "Al-Kahf 18:65"
+  },
+  {
+    "id": "quran-160",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What made Musa lose patience with the servant he was following?",
+    "choices": [
+      "The servant's unexplained deeds",
+      "The long distance they traveled",
+      "The servant's refusal to eat",
+      "An enemy blocking their road"
+    ],
+    "explanation": "The servant performed deeds Musa could not understand, and Musa pressed him for answers he had promised not to ask for.",
+    "reference": "Al-Kahf 18:70-71"
+  },
+  {
+    "id": "quran-161",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "hard",
+    "prompt": "What sign did the prophet Salih present to his people from God?",
+    "choices": ["A she-camel", "A great flood", "A howling wind", "A mighty blast"],
+    "explanation": "Salih told his people that the she-camel was a sign from God and that they should let her graze untouched.",
+    "reference": "Hud 11:64"
+  },
+  {
+    "id": "quran-162",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "hard",
+    "prompt": "Which surah asks its reciter: guide us along the straight path?",
+    "choices": ["Al-Fatiha", "Al-Falaq", "Al-Ikhlas", "Al-Asr"],
+    "explanation": "Al-Fatiha closes by asking God to guide its reciter along the straight path, the way of those He blessed.",
+    "reference": "Al-Fatiha 1:4"
+  },
+  {
+    "id": "quran-163",
+    "category": "quran",
+    "topic": "Worship",
+    "difficulty": "hard",
+    "prompt": "Which surah instructs believers to leave trade when the Friday prayer is called?",
+    "choices": ["Al-Jumu'ah", "Al-Istisqa", "Al-Kusuf", "Adh-Dhuha"],
+    "explanation": "Al-Jumu'ah tells believers: when the call is made on Friday, hasten to the remembrance of God and leave off business.",
+    "reference": "Al-Jumu'ah 62:9"
+  },
+  {
+    "id": "quran-164",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "hard",
+    "prompt": "Which surah does the Quran call the Criterion between truth and falsehood?",
+    "choices": ["Al-Furqan", "Al-Ma'idah", "Al-Fath", "Al-Anfal"],
+    "explanation": "Al-Furqan, the Criterion, was sent down as a blessing to separate truth from falsehood.",
+    "reference": "Al-Furqan 25:1"
+  },
+  {
+    "id": "quran-165",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "hard",
+    "prompt": "What did Isa make from clay, by God's permission?",
+    "choices": ["A bird", "A clay man", "A lamp", "A lamb"],
+    "explanation": "As a sign to the people, Isa formed a bird from clay, breathed into it, and it became a living bird.",
+    "reference": "Aal-Imran 3:49"
+  },
+  {
+    "id": "quran-166",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "hard",
+    "prompt": "What did the infant Isa say when he spoke in the cradle?",
+    "choices": [
+      "I am a servant of God",
+      "I am the Messiah",
+      "I am the word of God",
+      "I am a prophet like Musa"
+    ],
+    "explanation": "Isa said: God has made me a prophet and given me the Book, and He made me blessed wherever I may be.",
+    "reference": "Maryam 19:30"
+  },
+  {
+    "id": "quran-167",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "hard",
+    "prompt": "Who received the good news that his wife would bear a son named Yahya?",
+    "choices": ["Zakariya", "Imran", "Yusuf", "Yunus"],
+    "explanation": "God gave Zakariya the glad tidings of a boy whose name had never been given to anyone before.",
+    "reference": "Maryam 19:7"
+  },
+  {
+    "id": "quran-168",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "Who took charge of Maryam and found provision in her chamber?",
+    "choices": ["Zakariya", "Imran", "Harun", "Yusuf"],
+    "explanation": "Whenever Zakariya visited her he found her supplied with food, and he asked from where it came.",
+    "reference": "Aal-Imran 3:37"
+  },
+  {
+    "id": "quran-169",
+    "category": "quran",
+    "topic": "Surahs",
+    "difficulty": "hard",
+    "prompt": "What does the name Aal-Imran mean?",
+    "choices": [
+      "The family of Imran",
+      "The army of faith",
+      "The people of the cave",
+      "The tribe of Quraysh"
+    ],
+    "explanation": "Aal-Imran means the family of Imran; the surah tells of his wife's prayer and of Mary.",
+    "reference": "Aal-Imran 3:33"
+  },
+  {
+    "id": "quran-170",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What refuge did Nuh's son refuse when the flood came?",
+    "choices": [
+      "A mountain for safety",
+      "A house on high ground",
+      "A valley away from the water",
+      "The back of a great whale"
+    ],
+    "explanation": "Nuh called his son aboard, but he said he would take refuge on a mountain; then the wave came between them.",
+    "reference": "Hud 11:42-43"
+  },
+  {
+    "id": "quran-171",
+    "category": "quran",
+    "topic": "Ethics",
+    "difficulty": "hard",
+    "prompt": "How does the Quran liken spending wealth in the way of God?",
+    "choices": [
+      "Like a seed that sprouts seven ears",
+      "Like a river flowing through a garden",
+      "Like treasure hidden in the earth",
+      "Like a lamp lit in every house"
+    ],
+    "explanation": "A grain sprouts seven ears, each bearing a hundred grains; God multiplies whom He wills and gives without measure.",
+    "reference": "Al-Baqarah 2:261"
+  },
+  {
+    "id": "quran-172",
+    "category": "quran",
+    "topic": "Ethics",
+    "difficulty": "hard",
+    "prompt": "What does the Quran say awaits those who consume the wealth of orphans unjustly?",
+    "choices": ["Fire", "A painful scourge", "Life without ease", "Loss on the Day of Judgment"],
+    "explanation": "An-Nisa warns that such people are only swallowing fire and will be engulfed in a blazing fire.",
+    "reference": "An-Nisa 4:10"
+  },
+  {
+    "id": "quran-173",
+    "category": "quran",
+    "topic": "The Quran",
+    "difficulty": "hard",
+    "prompt": "What does the Quran call the verses whose meaning is certain?",
+    "choices": [
+      "The definitive verses",
+      "The verses of parable",
+      "The verses of wisdom",
+      "The hidden verses"
+    ],
+    "explanation": "Aal-Imran says the Book contains definitive verses as its foundation, while others are figured in it.",
+    "reference": "Aal-Imran 3:7"
+  },
+  {
+    "id": "quran-174",
+    "category": "quran",
+    "topic": "The Quran",
+    "difficulty": "hard",
+    "prompt": "According to surah Luqman, who alone has knowledge of the Hour?",
+    "choices": ["Only God", "The angels", "The prophets", "Those rooted in knowledge"],
+    "explanation": "Luqman tells his son that knowledge of the Hour belongs to none but God, who alone knows rain and wombs.",
+    "reference": "Luqman 31:34"
+  },
+  {
+    "id": "quran-175",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "hard",
+    "prompt": "Whom did God make the mountains and birds to glorify with in surah Saba?",
+    "choices": ["Dawud", "Sulayman", "Musa", "Ilyas"],
+    "explanation": "God made the mountains and the birds to repeat their praises with Dawud, after making iron soft for him.",
+    "reference": "Saba 34:10"
+  },
+  {
+    "id": "quran-176",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "hard",
+    "prompt": "How did the wind serve Sulayman, according to surah Saba?",
+    "choices": [
+      "It blew by his command where he wished",
+      "It blew only during the winter months",
+      "It stopped at the edge of his realm",
+      "It carried his ships across the sea"
+    ],
+    "explanation": "God ran the wind for Sulayman by his command to whatever land he wished, and angels served him as well.",
+    "reference": "Saba 34:12"
+  },
+  {
+    "id": "quran-177",
+    "category": "quran",
+    "topic": "The Quran",
+    "difficulty": "hard",
+    "prompt": "Who bore the trust that the heavens, earth and mountains refused?",
+    "choices": ["Humanity", "The jinn", "The angels", "The mountains"],
+    "explanation": "The Quran says the heavens, earth and mountains declined the trust out of fear, but man undertook it.",
+    "reference": "Al-Ahzab 33:72"
+  },
+  {
+    "id": "quran-178",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What did Pharaoh do to the sons of the children of Israel?",
+    "choices": [
+      "He killed them",
+      "He exiled them to the desert",
+      "He drowned them at the sea",
+      "He spared them for labor"
+    ],
+    "explanation": "God recalls that Pharaoh afflicted the Israelites with the worst torment, killing their sons and sparing their women.",
+    "reference": "Al-A'raf 7:141"
+  },
+  {
+    "id": "quran-179",
+    "category": "quran",
+    "topic": "Stories",
+    "difficulty": "hard",
+    "prompt": "What did those who refused to enter say lived in the Holy Land?",
+    "choices": [
+      "A people of tyrannical strength",
+      "A people of deep-rooted faith",
+      "An army none could defeat",
+      "A race of wicked giants"
+    ],
+    "explanation": "They said the Holy Land held a people of tyrannical strength and refused to enter it, while two men trusted God.",
+    "reference": "Al-Ma'idah 5:21-22"
+  },
+  {
+    "id": "quran-180",
+    "category": "quran",
+    "topic": "Prophets",
+    "difficulty": "hard",
+    "prompt": "Whom did God save from the fire into which his own people had thrown him?",
+    "choices": ["Ibrahim", "Lut", "Nuh", "Yunus"],
+    "explanation": "God said: O fire, be coolness and safety upon Ibrahim, and He delivered him from the fire.",
+    "reference": "Al-Anbiya 21:69"
+  }
+]
