@@ -8,7 +8,7 @@ import {
   repeatsAcrossCategories,
   type StoredQuestion,
 } from "@whizard/content";
-import { QUIZ_CATEGORIES, QUIZ_DIFFICULTIES, randomToken } from "@whizard/game-core";
+import { QUIZ_CATEGORIES, QUIZ_DIFFICULTIES } from "@whizard/game-core";
 import {
   QUESTION_FILTERS,
   QUESTION_SORTS,
@@ -332,12 +332,45 @@ export function insertQuestion(
     );
 }
 
-/** A fresh id for a question an admin adds, e.g. `bible-a8x2k`. */
-export function newQuestionId(category: string, taken: (id: string) => boolean): string {
-  let id: string;
-  do id = `${category}-a${randomToken(4).toLowerCase().replace(/[-_]/g, "x").slice(0, 5)}`;
-  while (taken(id));
-  return id;
+/** A question's place in its category's numbering: 511 for `bible-511`, or null if none. */
+function sequenceNumber(question: StoredQuestion): number | null {
+  const prefix = `${question.category}-`;
+  if (!question.id.startsWith(prefix)) return null;
+  const tail = question.id.slice(prefix.length);
+  return /^\d+$/.test(tail) ? Number(tail) : null;
+}
+
+/**
+ * Hands out ids that continue the bank's own numbering instead of restarting it: the next id
+ * for a category and level is the first free number after the last question of that same
+ * category and level, skipping numbers other levels already use — so an import joins the
+ * sequence at `bible-511`, `bible-512`, … whatever ids the file carries. Each call takes the
+ * next one, so a batch numbers itself in order.
+ */
+export function idAllocator(
+  questions: readonly StoredQuestion[],
+): (category: string, difficulty: string) => string {
+  const used = new Map<string, Set<number>>();
+  const after = new Map<string, number>();
+  for (const question of questions) {
+    const n = sequenceNumber(question);
+    if (n === null) continue;
+    const numbers = used.get(question.category) ?? new Set<number>();
+    numbers.add(n);
+    used.set(question.category, numbers);
+    const level = `${question.category}|${question.difficulty}`;
+    after.set(level, Math.max(after.get(level) ?? 1, n + 1));
+  }
+  return (category, difficulty) => {
+    const numbers = used.get(category) ?? new Set<number>();
+    used.set(category, numbers);
+    const level = `${category}|${difficulty}`;
+    let n = after.get(level) ?? 1;
+    while (numbers.has(n)) n++;
+    after.set(level, n + 1);
+    numbers.add(n);
+    return `${category}-${String(n).padStart(3, "0")}`;
+  };
 }
 
 async function save(
@@ -388,7 +421,7 @@ export async function addQuestion(context: RequestContext): Promise<Response> {
   const { user } = await requireAdmin(context);
   const input = await readInput(context.request, newSchema);
   const bank = await loadBank(context.env);
-  const id = newQuestionId(input.category, (candidate) => bank.find(candidate) !== undefined);
+  const id = idAllocator(bank.questions)(input.category, input.difficulty);
   const { reference, category, ...rest } = input;
   const question: StoredQuestion = {
     ...rest,

@@ -139,7 +139,7 @@ test("an admin can edit a question, undo it, and add their own", async ({ browse
 
   await page.getByLabel(/^Wrong answer 1/).fill(`${word}a`);
   await page.getByRole("button", { name: "Add question" }).click();
-  await expect(page).toHaveURL(/\/admin\/content\/pop-culture-a[a-z0-9]+$/);
+  await expect(page).toHaveURL(/\/admin\/content\/pop-culture-\d+$/);
   await expect(page.locator(".status-pill", { hasText: "Added" })).toBeVisible();
   await page.getByRole("button", { name: "Delete question" }).click();
   await expect(page).toHaveURL(/\/admin\/content$/);

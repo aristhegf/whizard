@@ -78,7 +78,7 @@ The same **Content** page takes a whole file of new questions: **Import file**, 
 ```
 
 - **`category`** may be the category's id or its name, in any case: `bible`, `Bible` and `POP CULTURE` all work. **`difficulty`** is `easy`, `medium` or `hard`, and blank means easy.
-- **`choices`** is exactly four, the first correct. **`id`** and **`reference`** may be left out: a missing id is made fresh (`bible-a8x2k`), and a given one is kept when the bank isn't using it already.
-- **CSV** carries the same fields as columns: `id,category,topic,difficulty,prompt,choice_1,choice_2,choice_3,choice_4,explanation,reference`, with `id` and `reference` optional.
+- **`choices`** is exactly four, the first correct. **`reference`** may be left out. Any **`id`** in the file is ignored: each question is numbered where that topic's and level's own sequence left off — skipping numbers other levels of the topic already use — so imports join the bank's numbering (`bible-511`, `bible-512`, …) instead of restarting it, and the next import continues after that. Questions added one by hand continue the same sequence.
+- **CSV** carries the same fields as columns: `id,category,topic,difficulty,prompt,choice_1,choice_2,choice_3,choice_4,explanation,reference`, with `reference` optional and any `id` column ignored.
 - Every row runs through the same checks as a question typed by hand. Rows that fail come back numbered ("Row 7: …") with what to fix; rows that repeat a question the bank or an earlier row in the file already asks are skipped rather than refused, so one repeat doesn't hold up the rest. One file may carry up to 1,000 questions.
 - Imported questions live in the database beside single additions, so the same advice holds: anything lasting goes into the category's file through a pull request.
