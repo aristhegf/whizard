@@ -5,16 +5,18 @@ import {
   type AdminQuestionDetail,
   type AdminQuestionList,
   type QuestionFilter,
+  type QuestionImportResult,
   type QuestionInput,
   type QuestionSort,
   type ReportAction,
 } from "@whizard/protocol";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   addQuestion,
   decideReport,
   fetchAdminQuestion,
   fetchAdminQuestions,
+  importQuestions,
   revertQuestion,
   saveQuestion,
 } from "../api";
@@ -70,6 +72,13 @@ function Browser() {
   const [pages, setPages] = useState(1);
   const [data, setData] = useState<AdminQuestionList | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [reload, setReload] = useState(0);
+  const [importing, setImporting] = useState(false);
+  const [imported, setImported] = useState<{ name: string; result: QuestionImportResult } | null>(
+    null,
+  );
+  const [importProblem, setImportProblem] = useState<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setSearch(query.trim().toLowerCase()), 250);
@@ -103,7 +112,25 @@ function Browser() {
     return () => {
       live = false;
     };
-  }, [category, difficulty, search, filter, sort, pages]);
+  }, [category, difficulty, search, filter, sort, pages, reload]);
+
+  /** Reads a JSON or CSV file of questions and sends it to be checked and added, row by row. */
+  const importFile = async (file: File | null) => {
+    if (!file) return;
+    setImporting(true);
+    setImportProblem(null);
+    setImported(null);
+    try {
+      const result = await importQuestions(file.name, await file.text());
+      setImported({ name: file.name, result });
+      if (result.added > 0) setReload((n) => n + 1);
+    } catch (e) {
+      setImportProblem(e instanceof Error ? e.message : String(e));
+    } finally {
+      setImporting(false);
+      if (fileInput.current) fileInput.current.value = "";
+    }
+  };
 
   const reset =
     <T,>(set: (v: T) => void) =>
@@ -121,14 +148,64 @@ function Browser() {
           title="Question Bank"
           subtitle={data ? `${formatNumber(data.total)} questions` : "Loading…"}
         >
-          <a
-            className="btn btn-small btn-primary admin-head-action"
-            {...linkTo("/admin/content/new")}
-          >
-            <Icon name="plus" size={18} />
-            Add a question
-          </a>
+          <span className="admin-head-actions">
+            <input
+              ref={fileInput}
+              className="sr-only"
+              type="file"
+              accept=".json,.csv,application/json,text/csv"
+              aria-label="Import a question file"
+              onChange={(e) => void importFile(e.target.files?.[0] ?? null)}
+            />
+            <button
+              type="button"
+              className="btn btn-small"
+              disabled={importing}
+              onClick={() => fileInput.current?.click()}
+            >
+              <Icon name="upload" size={18} />
+              {importing ? "Importing…" : "Import file"}
+            </button>
+            <a className="btn btn-small btn-primary" {...linkTo("/admin/content/new")}>
+              <Icon name="plus" size={18} />
+              Add a question
+            </a>
+          </span>
         </PanelHead>
+
+        {importProblem && (
+          <p className="error" role="alert">
+            Couldn’t import that file. {importProblem}
+          </p>
+        )}
+        {imported && (
+          <div className="import-report" role="status">
+            <p className={imported.result.added > 0 ? "ok-text" : undefined}>
+              {imported.result.added > 0
+                ? `Imported ${formatNumber(imported.result.added)} ${
+                    imported.result.added === 1 ? "question" : "questions"
+                  } from ${imported.name}.`
+                : `Nothing new was imported from ${imported.name}.`}
+            </p>
+            {(imported.result.errors.length > 0 || imported.result.skipped.length > 0) && (
+              <ul>
+                {imported.result.errors.map((note) => (
+                  <li key={`error-${note.row}`} className="error">
+                    Row {note.row}: {note.message}
+                  </li>
+                ))}
+                {imported.result.skipped.map((note) => (
+                  <li key={`skipped-${note.row}`}>
+                    Row {note.row}: {note.message}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <button type="button" className="btn btn-small" onClick={() => setImported(null)}>
+              Dismiss
+            </button>
+          </div>
+        )}
 
         <div className="content-tools">
           <label className="admin-search">

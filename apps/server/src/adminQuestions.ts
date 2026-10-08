@@ -271,25 +271,73 @@ async function readInput<T>(request: Request, schema: z.ZodType<T>): Promise<T> 
   return parsed.data;
 }
 
-/** The checks the shipped bank passes in CI, with plain messages. */
-function problems(question: StoredQuestion, bank: Bank): string[] {
-  const found = problemsWith(question).map((p) =>
+/** The checks the schema can't express, with plain messages the forms show. */
+export function plainProblems(question: StoredQuestion): string[] {
+  return problemsWith(question).map((p) =>
     p === "choices are not all different"
       ? "The four answers must all be different."
-      : p === "the answer appears in the prompt"
-        ? "The answer gives itself away in the question."
-        : p === "Bible questions need a verse reference"
-          ? "Bible questions need a verse reference, e.g. John 3:16."
-          : p === "Quran questions need a reference"
-            ? "Quran questions need a reference, e.g. Al-Baqarah 2:255."
-            : p,
+      : p === "a choice is empty"
+        ? "An answer can’t be empty."
+        : p === "the answer appears in the prompt"
+          ? "The answer gives itself away in the question."
+          : p === "Bible questions need a verse reference"
+            ? "Bible questions need a verse reference, e.g. John 3:16."
+            : p === "Quran questions need a reference"
+              ? "Quran questions need a reference, e.g. Al-Baqarah 2:255."
+              : p,
   );
+}
+
+/** The checks the shipped bank passes in CI, with plain messages. */
+function problems(question: StoredQuestion, bank: Bank): string[] {
+  const found = plainProblems(question);
   const others = bank.questions.filter((q) => q.id !== question.id);
   const same = findDuplicate(question, others);
   if (same) found.push(`It asks the same thing as ${same.id}: “${same.prompt}”`);
   const elsewhere = others.find((q) => repeatsAcrossCategories(question, q));
   if (elsewhere) found.push(`Another topic already asks this, in ${elsewhere.id}.`);
   return found;
+}
+
+/** A statement that puts an admin's own question in `custom_questions`. */
+export function insertQuestion(
+  db: D1Database,
+  question: StoredQuestion,
+  userId: string,
+  now: number,
+) {
+  return db
+    .prepare(
+      `INSERT INTO custom_questions (id, category, topic, difficulty, prompt, choices,
+                                     explanation, reference, created_at, updated_at, updated_by)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT (id) DO UPDATE SET
+         topic = excluded.topic, difficulty = excluded.difficulty,
+         prompt = excluded.prompt, choices = excluded.choices,
+         explanation = excluded.explanation, reference = excluded.reference,
+         updated_at = excluded.updated_at, updated_by = excluded.updated_by`,
+    )
+    .bind(
+      question.id,
+      question.category,
+      question.topic,
+      question.difficulty,
+      question.prompt,
+      JSON.stringify(question.choices),
+      question.explanation,
+      question.reference ?? null,
+      now,
+      now,
+      userId,
+    );
+}
+
+/** A fresh id for a question an admin adds, e.g. `bible-a8x2k`. */
+export function newQuestionId(category: string, taken: (id: string) => boolean): string {
+  let id: string;
+  do id = `${category}-a${randomToken(4).toLowerCase().replace(/[-_]/g, "x").slice(0, 5)}`;
+  while (taken(id));
+  return id;
 }
 
 async function save(
@@ -311,31 +359,7 @@ async function save(
   await db.batch([
     same
       ? db.prepare("DELETE FROM custom_questions WHERE id = ?").bind(question.id)
-      : db
-          .prepare(
-            `INSERT INTO custom_questions (id, category, topic, difficulty, prompt, choices,
-                                           explanation, reference, created_at, updated_at,
-                                           updated_by)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-             ON CONFLICT (id) DO UPDATE SET
-               topic = excluded.topic, difficulty = excluded.difficulty,
-               prompt = excluded.prompt, choices = excluded.choices,
-               explanation = excluded.explanation, reference = excluded.reference,
-               updated_at = excluded.updated_at, updated_by = excluded.updated_by`,
-          )
-          .bind(
-            question.id,
-            question.category,
-            question.topic,
-            question.difficulty,
-            question.prompt,
-            JSON.stringify(question.choices),
-            question.explanation,
-            question.reference ?? null,
-            now,
-            now,
-            userId,
-          ),
+      : insertQuestion(db, question, userId, now),
     logAdmin(db, userId, created ? "question:add" : "question:edit", question.id),
   ]);
   forgetBank();
@@ -364,9 +388,7 @@ export async function addQuestion(context: RequestContext): Promise<Response> {
   const { user } = await requireAdmin(context);
   const input = await readInput(context.request, newSchema);
   const bank = await loadBank(context.env);
-  let id: string;
-  do id = `${input.category}-a${randomToken(4).toLowerCase().replace(/[-_]/g, "x").slice(0, 5)}`;
-  while (bank.find(id));
+  const id = newQuestionId(input.category, (candidate) => bank.find(candidate) !== undefined);
   const { reference, category, ...rest } = input;
   const question: StoredQuestion = {
     ...rest,

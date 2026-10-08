@@ -145,6 +145,68 @@ test("an admin can edit a question, undo it, and add their own", async ({ browse
   await expect(page).toHaveURL(/\/admin\/content$/);
 });
 
+test("an admin can import questions from a JSON file and a CSV file", async ({ browser }) => {
+  const admin = await signedUp(browser);
+  grantAdmin(admin.username);
+  const page = admin.page;
+  const tag = Math.random().toString(36).slice(2, 8);
+  await page.goto("/admin/content");
+
+  // A JSON file in the bank's own row shape: one question to add, one to fix.
+  const json = JSON.stringify([
+    {
+      id: `test-${tag}`,
+      category: "pop-culture",
+      topic: "Testing",
+      difficulty: "easy",
+      prompt: `Which tag was imported as ${tag}?`,
+      choices: [`answer-${tag}`, `wrong-a-${tag}`, `wrong-b-${tag}`, `wrong-c-${tag}`],
+      explanation: "It was typed into the import test.",
+    },
+    {
+      category: "pop-culture",
+      topic: "Testing",
+      difficulty: "easy",
+      prompt: `A broken row for ${tag}`,
+      choices: [`broken-${tag}`, `broken-${tag}`, `nope-${tag}`, `nada-${tag}`],
+      explanation: "Two answers are the same, so this row is refused.",
+    },
+  ]);
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "questions.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(json),
+  });
+  await expect(page.getByText("Imported 1 question from questions.json.")).toBeVisible();
+  await expect(page.getByText("Row 2: The four answers must all be different.")).toBeVisible();
+
+  // The new question is in the bank.
+  await page.getByLabel("Search questions").fill(`imported as ${tag}`);
+  await expect(page.locator(".content-row")).toHaveCount(1);
+
+  // The same shape as a CSV file, header row and all.
+  const csv = [
+    "id,category,topic,difficulty,prompt,choice_1,choice_2,choice_3,choice_4,explanation,reference",
+    `csv-${tag},pop-culture,Testing,easy,"Which CSV tag ${tag}?","c-answer-${tag}","c-wrong-a-${tag}","c-wrong-b-${tag}","c-wrong-c-${tag}",Imported from a CSV.,`,
+  ].join("\r\n");
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "questions.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from(csv),
+  });
+  await expect(page.getByText("Imported 1 question from questions.csv.")).toBeVisible();
+
+  // Both are the admin's own, so both can be deleted again after the test.
+  for (const search of [`imported as ${tag}`, `CSV tag ${tag}`]) {
+    await page.getByLabel("Search questions").fill(search);
+    await expect(page.locator(".content-row")).toHaveCount(1);
+    await page.locator(".content-row").first().click();
+    await expect(page.locator(".status-pill", { hasText: "Added" })).toBeVisible();
+    await page.getByRole("button", { name: "Delete question" }).click();
+    await expect(page).toHaveURL(/\/admin\/content$/);
+  }
+});
+
 test("blocked words keep names out, and a flagged player can be removed", async ({ browser }) => {
   const admin = await signedUp(browser);
   grantAdmin(admin.username);
