@@ -334,7 +334,7 @@ The launch bank had 740 questions: 140 Bible, and 60 (20 per level) in each of t
 
 The bank then grew to 1,980: 180 in every category, 60 per level. The new questions went through the same two steps, with each category's writer and fact-checker working separately. The fact-checkers changed or replaced about a fifth of them: removing claims in explanations that couldn't be confirmed, swapping wrong choices that could also be defended, rewording anything that depended on the translation (Bible) or could go out of date, and cutting facts another category already asks. The same pass removed 22 older questions that repeated another category's, such as "What is the chemical symbol for gold?" in both Science and General knowledge.
 
-Quran was added later as a twelfth category with 180 of its own, 60 per level, every question carrying a reference: an ayah where the answer comes from the Quran itself, or a named source such as Ibn Ishaq for the Sira. That took the bank to 2,160 across twelve categories.
+Quran was added later as a twelfth category with 180 of its own, 60 per level, every question carrying a reference: an ayah where the answer comes from the Quran itself, or a named source such as Ibn Ishaq for the Sira. That took the bank to 2,160 across twelve categories. The Bible category has since been expanded from 180 questions to 510 (170 per level), taking the bank to 2,490.
 
 ## Accounts (optional)
 

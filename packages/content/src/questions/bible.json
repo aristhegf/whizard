@@ -512,6 +512,1266 @@
   {
     "id": "bible-051",
     "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "For how many days did Jesus fast in the wilderness before the devil tempted him?",
+    "choices": ["Forty", "Seven", "Twelve", "Three"],
+    "explanation": "Jesus fasted forty days and forty nights, and then the tempter came to him.",
+    "reference": "Matthew 4:1-3"
+  },
+  {
+    "id": "bible-052",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "To which country did Joseph take Mary and the young Jesus to escape King Herod?",
+    "choices": ["Egypt", "Syria", "Babylon", "Moab"],
+    "explanation": "An angel warned Joseph in a dream, so he took the child and his mother by night and fled to Egypt.",
+    "reference": "Matthew 2:13-14"
+  },
+  {
+    "id": "bible-053",
+    "category": "bible",
+    "topic": "Deuteronomy",
+    "difficulty": "easy",
+    "prompt": "Who took over leading Israel after Moses died?",
+    "choices": ["Joshua", "Caleb", "Aaron", "Eleazar"],
+    "explanation": "Moses had laid his hands on Joshua son of Nun, and after Moses died the Israelites listened to Joshua.",
+    "reference": "Deuteronomy 34:9"
+  },
+  {
+    "id": "bible-054",
+    "category": "bible",
+    "topic": "Deuteronomy",
+    "difficulty": "easy",
+    "prompt": "How many commandments did God write on the tablets of stone?",
+    "choices": ["Ten", "Twelve", "Seven", "Five"],
+    "explanation": "Moses recalls that the Lord wrote the Ten Commandments on the tablets and gave them to him.",
+    "reference": "Deuteronomy 10:4"
+  },
+  {
+    "id": "bible-055",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "Jesus told his followers they are the salt of the earth and the what of the world?",
+    "choices": ["The light", "The hope", "The bread", "The strength"],
+    "explanation": "In the Sermon on the Mount Jesus said, \"You are the salt of the earth\" and \"You are the light of the world.\"",
+    "reference": "Matthew 5:13-14"
+  },
+  {
+    "id": "bible-056",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "Which of these was one of the gifts the wise men gave to the child Jesus?",
+    "choices": ["Frankincense", "Silver", "Pearls", "Olive oil"],
+    "explanation": "The wise men opened their treasures and gave him gold, frankincense and myrrh.",
+    "reference": "Matthew 2:11"
+  },
+  {
+    "id": "bible-057",
+    "category": "bible",
+    "topic": "Isaiah",
+    "difficulty": "easy",
+    "prompt": "In Isaiah 9:6, the promised child is called the Prince of what?",
+    "choices": ["Peace", "Glory", "Light", "Life"],
+    "explanation": "Isaiah says he will be called Wonderful Counsellor, Mighty God, Everlasting Father, Prince of Peace.",
+    "reference": "Isaiah 9:6"
+  },
+  {
+    "id": "bible-058",
+    "category": "bible",
+    "topic": "2 Samuel",
+    "difficulty": "easy",
+    "prompt": "Which king danced before the Lord with all his might as the ark was brought into Jerusalem?",
+    "choices": ["David", "Saul", "Solomon", "Hezekiah"],
+    "explanation": "As the ark of the Lord was brought into the city of David, David danced before the Lord with all his might.",
+    "reference": "2 Samuel 6:14-16"
+  },
+  {
+    "id": "bible-059",
+    "category": "bible",
+    "topic": "Ephesians",
+    "difficulty": "easy",
+    "prompt": "Ephesians 6:1 tells children to obey whom in the Lord, because this is right?",
+    "choices": ["Their parents", "Their teachers", "Their rulers", "Their elders"],
+    "explanation": "Paul writes, \"Children, obey your parents in the Lord, for this is right.\"",
+    "reference": "Ephesians 6:1"
+  },
+  {
+    "id": "bible-060",
+    "category": "bible",
+    "topic": "Revelation",
+    "difficulty": "easy",
+    "prompt": "In Revelation 1:8, the Lord says, \"I am the Alpha and the...\" what?",
+    "choices": ["Omega", "Beta", "Delta", "Sigma"],
+    "explanation": "Alpha and Omega are the first and last letters of the Greek alphabet, meaning the beginning and the end.",
+    "reference": "Revelation 1:8"
+  },
+  {
+    "id": "bible-061",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "What did God create on the second day of creation?",
+    "choices": ["The sky", "The sun", "The sea", "The moon"],
+    "explanation": "On the second day God made the vault he called sky and separated the waters.",
+    "reference": "Genesis 1:6-8"
+  },
+  {
+    "id": "bible-062",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "Whom did Jacob marry by mistake on his wedding night?",
+    "choices": ["Leah", "Rachel", "Sarah", "Rebekah"],
+    "explanation": "Jacob worked seven years for Rachel, but Laban gave him Leah in the dark.",
+    "reference": "Genesis 29:23-25"
+  },
+  {
+    "id": "bible-063",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "Who was the first man God formed from the dust of the ground?",
+    "choices": ["Adam", "Enoch", "Noah", "Seth"],
+    "explanation": "God formed Adam from dust and breathed life into him in the garden.",
+    "reference": "Genesis 2:7"
+  },
+  {
+    "id": "bible-064",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "Whom did Adam blame when God asked him about the fruit?",
+    "choices": ["Eve", "The serpent", "Cain", "Abel"],
+    "explanation": "Adam pointed to Eve, saying the woman God gave him made him eat.",
+    "reference": "Genesis 3:12"
+  },
+  {
+    "id": "bible-065",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "Which brother traded his birthright for a bowl of stew?",
+    "choices": ["Esau", "Jacob", "Ishmael", "Issachar"],
+    "explanation": "Esau came hungry from the field and sold his firstborn rights to Jacob.",
+    "reference": "Genesis 25:29-34"
+  },
+  {
+    "id": "bible-066",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "easy",
+    "prompt": "How many plagues did God send on Egypt?",
+    "choices": ["Ten", "Three", "Seven", "Twelve"],
+    "explanation": "Ten plagues struck Egypt, the last taking the firstborn of every house.",
+    "reference": "Exodus 7:14-12:30"
+  },
+  {
+    "id": "bible-067",
+    "category": "bible",
+    "topic": "Numbers",
+    "difficulty": "easy",
+    "prompt": "How many years did the Israelites wander in the wilderness?",
+    "choices": ["Forty years", "Seven years", "Ten years", "Twenty years"],
+    "explanation": "Because they refused to enter Canaan, they wandered forty years for the forty days of spying.",
+    "reference": "Numbers 14:33-34"
+  },
+  {
+    "id": "bible-068",
+    "category": "bible",
+    "topic": "Numbers",
+    "difficulty": "easy",
+    "prompt": "How many times did Balaam's donkey fall before it spoke?",
+    "choices": ["Three times", "Once", "Five times", "Seven times"],
+    "explanation": "The donkey fell three times, each time pressing Balaam against the wall.",
+    "reference": "Numbers 22:25-32"
+  },
+  {
+    "id": "bible-069",
+    "category": "bible",
+    "topic": "Joshua",
+    "difficulty": "easy",
+    "prompt": "What did the Israelites carry around the walls of Jericho each day?",
+    "choices": ["The ark", "A golden calf", "A stone pillar", "The table of showbread"],
+    "explanation": "Priests carried the ark of the covenant while the procession marched around the city.",
+    "reference": "Joshua 6:6-13"
+  },
+  {
+    "id": "bible-070",
+    "category": "bible",
+    "topic": "1 Samuel",
+    "difficulty": "easy",
+    "prompt": "What weapon did young David use against Goliath?",
+    "choices": ["A sling", "A spear", "A sword", "A bow"],
+    "explanation": "David chose five smooth stones and his sling from the stream.",
+    "reference": "1 Samuel 17:40"
+  },
+  {
+    "id": "bible-071",
+    "category": "bible",
+    "topic": "1 Samuel",
+    "difficulty": "easy",
+    "prompt": "Whom did David spare in the cave when he cut a piece from the king's robe?",
+    "choices": ["Saul", "Jonathan", "Abner", "Michal"],
+    "explanation": "David secretly cut Saul's robe but would not harm the Lord's anointed king.",
+    "reference": "1 Samuel 24:4-10"
+  },
+  {
+    "id": "bible-072",
+    "category": "bible",
+    "topic": "1 Kings",
+    "difficulty": "easy",
+    "prompt": "Which king showed God-given wisdom in the case of two women and a baby?",
+    "choices": ["Solomon", "David", "Rehoboam", "Jehoshaphat"],
+    "explanation": "When one woman claimed the living baby, Solomon's ruling revealed the true mother.",
+    "reference": "1 Kings 3:16-28"
+  },
+  {
+    "id": "bible-073",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "easy",
+    "prompt": "Which prophet was taken up to heaven in a whirlwind?",
+    "choices": ["Elijah", "Elisha", "Moses", "Isaiah"],
+    "explanation": "Elijah was carried up to heaven in a whirlwind, and his cloak fell to the ground.",
+    "reference": "2 Kings 2:11"
+  },
+  {
+    "id": "bible-074",
+    "category": "bible",
+    "topic": "Ruth",
+    "difficulty": "easy",
+    "prompt": "Which city was Naomi from, where Ruth followed her?",
+    "choices": ["Bethlehem", "Jericho", "Moab", "Nazareth"],
+    "explanation": "Naomi returned to Bethlehem, and Ruth refused to part from her.",
+    "reference": "Ruth 1:16-19"
+  },
+  {
+    "id": "bible-075",
+    "category": "bible",
+    "topic": "Esther",
+    "difficulty": "easy",
+    "prompt": "What did Esther and her attendants do for three days before she went to the king?",
+    "choices": [
+      "They fasted",
+      "They prepared a feast",
+      "They sent gifts",
+      "They hid in the palace"
+    ],
+    "explanation": "Esther called for three days of fasting before risking her life before the king.",
+    "reference": "Esther 4:16"
+  },
+  {
+    "id": "bible-076",
+    "category": "bible",
+    "topic": "Job",
+    "difficulty": "easy",
+    "prompt": "What did Job do every day after his children feasted?",
+    "choices": [
+      "He offered sacrifices",
+      "He sent them gifts",
+      "He joined the feast",
+      "He sang praises"
+    ],
+    "explanation": "Job rose early and offered burnt offerings, fearing his children had sinned.",
+    "reference": "Job 1:4-5"
+  },
+  {
+    "id": "bible-077",
+    "category": "bible",
+    "topic": "Psalms",
+    "difficulty": "easy",
+    "prompt": "What does Psalm 23 say the Lord makes the psalmist lie down in?",
+    "choices": ["Green pastures", "Still waters", "The valley", "A safe tower"],
+    "explanation": "The shepherd psalm says he makes his sheep lie down in green pastures.",
+    "reference": "Psalm 23:1-3"
+  },
+  {
+    "id": "bible-078",
+    "category": "bible",
+    "topic": "Proverbs",
+    "difficulty": "easy",
+    "prompt": "According to Proverbs, what is more precious than rubies?",
+    "choices": ["Wisdom", "Gold", "Silver", "Long life"],
+    "explanation": "Proverbs says wisdom is more profitable than silver and outranks fine gold.",
+    "reference": "Proverbs 3:13-15"
+  },
+  {
+    "id": "bible-079",
+    "category": "bible",
+    "topic": "Ecclesiastes",
+    "difficulty": "easy",
+    "prompt": "In Ecclesiastes, what does the Teacher call better than laughter?",
+    "choices": ["Sorrow", "Wealth", "Food", "Sleep"],
+    "explanation": "The Teacher says a sorrowful face is better than laughter because it deepens the heart.",
+    "reference": "Ecclesiastes 7:2-4"
+  },
+  {
+    "id": "bible-080",
+    "category": "bible",
+    "topic": "Isaiah",
+    "difficulty": "easy",
+    "prompt": "What did Isaiah say those who wait on the Lord will renew?",
+    "choices": ["Their strength", "A crown", "A sword", "Fresh bread"],
+    "explanation": "Waiting on the Lord renews a believer's strength, Isaiah promises, so the weary keep going.",
+    "reference": "Isaiah 40:29-31"
+  },
+  {
+    "id": "bible-081",
+    "category": "bible",
+    "topic": "Jeremiah",
+    "difficulty": "easy",
+    "prompt": "What material was the potter reshaping when Jeremiah watched?",
+    "choices": ["Clay", "Stone", "Bronze", "Wax"],
+    "explanation": "The potter worked clay on the wheel, and the marred lump was made again.",
+    "reference": "Jeremiah 18:3-6"
+  },
+  {
+    "id": "bible-082",
+    "category": "bible",
+    "topic": "Ezekiel",
+    "difficulty": "easy",
+    "prompt": "How many wings did each of the four living creatures have?",
+    "choices": ["Four wings", "Six wings", "Two wings", "Eight wings"],
+    "explanation": "Ezekiel saw each creature with four wings, its wings touching the others.",
+    "reference": "Ezekiel 1:6-11"
+  },
+  {
+    "id": "bible-083",
+    "category": "bible",
+    "topic": "Daniel",
+    "difficulty": "easy",
+    "prompt": "What happened to the three men when they walked out of Nebuchadnezzar's furnace?",
+    "choices": [
+      "They came out unharmed",
+      "They were badly burned",
+      "The king set them free",
+      "An angel closed the flames"
+    ],
+    "explanation": "Not a hair was singed, and they carried no smell of fire, the king's men saw.",
+    "reference": "Daniel 3:24-27"
+  },
+  {
+    "id": "bible-084",
+    "category": "bible",
+    "topic": "Jonah",
+    "difficulty": "easy",
+    "prompt": "How long was Jonah inside the great fish?",
+    "choices": ["Three days and three nights", "Seven days", "One night", "Forty days"],
+    "explanation": "Jonah spent three days and three nights in the belly of the fish.",
+    "reference": "Jonah 1:17"
+  },
+  {
+    "id": "bible-085",
+    "category": "bible",
+    "topic": "Malachi",
+    "difficulty": "easy",
+    "prompt": "What did Malachi tell the people to bring into God's storehouse?",
+    "choices": ["Tithes", "Firstborn sons", "Golden rings", "Sacred oil"],
+    "explanation": "Malachi challenged Israel to test God by bringing the full tithe.",
+    "reference": "Malachi 3:10"
+  },
+  {
+    "id": "bible-086",
+    "category": "bible",
+    "topic": "Psalms",
+    "difficulty": "easy",
+    "prompt": "How many songs are in the book of Psalms?",
+    "choices": [
+      "One hundred fifty",
+      "One hundred twenty",
+      "Two hundred",
+      "One hundred seventy-six"
+    ],
+    "explanation": "The psalter closes with 150 songs, the last a hallelujah psalm.",
+    "reference": "Psalm 150"
+  },
+  {
+    "id": "bible-087",
+    "category": "bible",
+    "topic": "Proverbs",
+    "difficulty": "easy",
+    "prompt": "Proverbs says there is a friend who sticks closer than what?",
+    "choices": ["A brother", "A neighbor", "A ruler", "A twin"],
+    "explanation": "Proverbs praises a friend who stays loyal beyond even family ties.",
+    "reference": "Proverbs 27:9-10"
+  },
+  {
+    "id": "bible-088",
+    "category": "bible",
+    "topic": "1 Kings",
+    "difficulty": "easy",
+    "prompt": "What did Elijah call down from heaven on Mount Carmel?",
+    "choices": ["Fire", "Rain", "Thunder", "A great wind"],
+    "explanation": "Fire fell from heaven and consumed the offering, the water, and the wood.",
+    "reference": "1 Kings 18:36-38"
+  },
+  {
+    "id": "bible-089",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "easy",
+    "prompt": "Which reluctant leader was hiding and threshing wheat when an angel greeted him?",
+    "choices": ["Gideon", "Deborah", "Ehud", "Samson"],
+    "explanation": "An angel greeted Gideon as a mighty warrior while he threshed wheat in secret.",
+    "reference": "Judges 6:11-16"
+  },
+  {
+    "id": "bible-090",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "On which day did God rest after creating the world?",
+    "choices": ["The seventh day", "The third day", "The sixth day", "The eighth day"],
+    "explanation": "Having finished on the sixth day, God rested on the seventh and blessed it.",
+    "reference": "Genesis 2:1-3"
+  },
+  {
+    "id": "bible-091",
+    "category": "bible",
+    "topic": "1 Kings",
+    "difficulty": "easy",
+    "prompt": "Which woman fed Elijah with flour and oil that never ran out?",
+    "choices": ["The widow of Zarephath", "Naomi", "The queen of Sheba", "Deborah"],
+    "explanation": "God sent Elijah to a widow whose jar of flour never ran dry.",
+    "reference": "1 Kings 17:8-16"
+  },
+  {
+    "id": "bible-092",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "easy",
+    "prompt": "In which river did Naaman wash to be healed of leprosy?",
+    "choices": ["The Jordan", "The Red Sea", "The Nile", "The Euphrates"],
+    "explanation": "Naaman washed seven times in the river, and his skin became clean like a boy's.",
+    "reference": "2 Kings 5:9-14"
+  },
+  {
+    "id": "bible-093",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "What did God create on the fourth day?",
+    "choices": ["The sun, moon and stars", "The birds and fish", "Dry land", "The animals"],
+    "explanation": "On the fourth day God set lights in the sky to mark days and seasons.",
+    "reference": "Genesis 1:14-19"
+  },
+  {
+    "id": "bible-094",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "easy",
+    "prompt": "Whose staff turned into a serpent in Pharaoh's court?",
+    "choices": ["Aaron", "Moses", "Joshua", "Miriam"],
+    "explanation": "God told Aaron to throw down his staff before Pharaoh, and it turned into a snake.",
+    "reference": "Exodus 7:9-12"
+  },
+  {
+    "id": "bible-095",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "easy",
+    "prompt": "What did Elisha ask for before Elijah was taken up to heaven?",
+    "choices": ["A double portion", "A golden chariot", "A new cloak", "Forty prophets"],
+    "explanation": "He asked to become the prophet who would inherit his master's spirit twice over.",
+    "reference": "2 Kings 2:9-10"
+  },
+  {
+    "id": "bible-096",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "easy",
+    "prompt": "What did the widow pour into Elisha's jars so they never ran empty?",
+    "choices": ["Oil", "Wine", "Flour", "Water"],
+    "explanation": "She filled many jars with a little oil, which only stopped when the jars were full.",
+    "reference": "2 Kings 4:1-7"
+  },
+  {
+    "id": "bible-097",
+    "category": "bible",
+    "topic": "Return from Exile",
+    "difficulty": "easy",
+    "prompt": "Which scribe read the Law aloud to the gathered people after the exiles returned?",
+    "choices": ["Ezra", "Nehemiah", "Zerubbabel", "Haggai"],
+    "explanation": "Ezra stood on a wooden platform and read from the book of the law all morning.",
+    "reference": "Nehemiah 8:1-8"
+  },
+  {
+    "id": "bible-098",
+    "category": "bible",
+    "topic": "Jonah",
+    "difficulty": "easy",
+    "prompt": "How long did it take to walk across the largest city in the book of Jonah?",
+    "choices": ["A day's walk", "Three days", "A mile", "Half an hour"],
+    "explanation": "The city was so large that crossing it took a full day's journey.",
+    "reference": "Jonah 3:3-4"
+  },
+  {
+    "id": "bible-099",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "What did Jacob set up and anoint at Bethel after his dream?",
+    "choices": ["A stone pillar", "An altar", "A tent", "A well"],
+    "explanation": "Jacob set the stone he had used as a pillow upright and poured oil on it.",
+    "reference": "Genesis 28:18-22"
+  },
+  {
+    "id": "bible-100",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "easy",
+    "prompt": "What drink did Sisera accept before falling asleep in the tent?",
+    "choices": ["Milk", "Water", "Wine", "Honey"],
+    "explanation": "The woman of the tent offered warm milk, and the general fell fast asleep.",
+    "reference": "Judges 4:17-21"
+  },
+  {
+    "id": "bible-101",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "easy",
+    "prompt": "Which queen ended her life as Jehu's riders came for her?",
+    "choices": ["Jezebel", "Athaliah", "Vashti", "Herodias"],
+    "explanation": "Jehu ordered her thrown from the palace window, and the dogs ate her body.",
+    "reference": "2 Kings 9:30-37"
+  },
+  {
+    "id": "bible-102",
+    "category": "bible",
+    "topic": "Birth of Jesus",
+    "difficulty": "easy",
+    "prompt": "How did God's angel tell Joseph the truth about Mary?",
+    "choices": ["In a dream", "From a prophet", "At the temple", "Through Mary herself"],
+    "explanation": "An angel of the Lord appeared to Joseph in a dream and told him not to fear.",
+    "reference": "Matthew 1:19-21"
+  },
+  {
+    "id": "bible-103",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "What did Jesus tell his disciples to do for those who persecute them?",
+    "choices": ["Pray for them", "Fight them", "Flee from them", "Ignore them"],
+    "explanation": "Jesus said to love enemies and pray for those who mistreat you.",
+    "reference": "Matthew 5:43-44"
+  },
+  {
+    "id": "bible-104",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "Which commandments did Jesus say sum up the whole law?",
+    "choices": [
+      "Love God and your neighbor",
+      "Honor your parents",
+      "Keep the Sabbath",
+      "Never steal"
+    ],
+    "explanation": "Jesus named loving God with all your heart and loving your neighbor as yourself.",
+    "reference": "Matthew 22:37-39"
+  },
+  {
+    "id": "bible-105",
+    "category": "bible",
+    "topic": "Mark",
+    "difficulty": "easy",
+    "prompt": "Jesus said true uncleanness comes from within, from where?",
+    "choices": ["The heart", "Food on the hands", "Unclean animals", "The tongue"],
+    "explanation": "Jesus said evil thoughts and wicked deeds that come from within defile a person.",
+    "reference": "Mark 7:14-23"
+  },
+  {
+    "id": "bible-106",
+    "category": "bible",
+    "topic": "Luke",
+    "difficulty": "easy",
+    "prompt": "What sign did the angel give the shepherds to look for?",
+    "choices": [
+      "A baby wrapped in cloths",
+      "A bright star",
+      "A shepherd's staff",
+      "A decorated tree"
+    ],
+    "explanation": "The angel said the babe would be wrapped in cloth and lying among the animals' feed.",
+    "reference": "Luke 2:10-12"
+  },
+  {
+    "id": "bible-107",
+    "category": "bible",
+    "topic": "Parables",
+    "difficulty": "easy",
+    "prompt": "What did the father do when the prodigal son returned home?",
+    "choices": [
+      "He ran and embraced him",
+      "He turned him away",
+      "He locked the gate",
+      "He asked for proof"
+    ],
+    "explanation": "The father saw him coming, ran to him, and kissed him before any speech.",
+    "reference": "Luke 15:18-24"
+  },
+  {
+    "id": "bible-108",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "easy",
+    "prompt": "Of what must a person be born, Jesus said, to enter God's kingdom?",
+    "choices": ["Water and the Spirit", "Good deeds", "The temple", "Royal blood"],
+    "explanation": "Jesus told a night visitor that no one can enter the kingdom unless born of water and the Spirit.",
+    "reference": "John 3:3-8"
+  },
+  {
+    "id": "bible-109",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "easy",
+    "prompt": "Who declared, \"I am the light of the world\"?",
+    "choices": ["Jesus", "John the Baptist", "Moses", "Paul"],
+    "explanation": "Jesus spoke these words in the temple courts, promising to guide his followers.",
+    "reference": "John 8:12"
+  },
+  {
+    "id": "bible-110",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "easy",
+    "prompt": "What did Jesus wash for his disciples before the Last Supper?",
+    "choices": ["Their feet", "Their hands", "Their robes", "Their sandals"],
+    "explanation": "He girded himself with a towel and washed each disciple's feet.",
+    "reference": "John 13:4-14"
+  },
+  {
+    "id": "bible-111",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "easy",
+    "prompt": "Where did the apostles teach daily after the Spirit came at Pentecost?",
+    "choices": ["The temple", "A cave", "Corinth", "Antioch"],
+    "explanation": "Day by day they broke bread in homes with glad hearts and met in the temple courts.",
+    "reference": "Acts 2:44-47"
+  },
+  {
+    "id": "bible-112",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "easy",
+    "prompt": "What did the men traveling with the future apostle experience on the Damascus road?",
+    "choices": [
+      "They heard a voice",
+      "They saw a vision",
+      "They felt an earthquake",
+      "They fell asleep"
+    ],
+    "explanation": "They saw the light and heard the voice, but could not make out the words.",
+    "reference": "Acts 9:6-7"
+  },
+  {
+    "id": "bible-113",
+    "category": "bible",
+    "topic": "Romans",
+    "difficulty": "easy",
+    "prompt": "According to Romans 8:28, God works all things for the good of whom?",
+    "choices": ["Those who love him", "The rich", "All nations", "The priests"],
+    "explanation": "All things work together for good for those who love God and are called by him.",
+    "reference": "Romans 8:28"
+  },
+  {
+    "id": "bible-114",
+    "category": "bible",
+    "topic": "1 Corinthians",
+    "difficulty": "easy",
+    "prompt": "Which chapter holds Paul's famous passage about love?",
+    "choices": ["Chapter 13", "Chapter 12", "Chapter 15", "Chapter 10"],
+    "explanation": "Paul's hymn to love says it never fails, and the greatest of these is love.",
+    "reference": "1 Corinthians 13:4-13"
+  },
+  {
+    "id": "bible-115",
+    "category": "bible",
+    "topic": "Galatians",
+    "difficulty": "easy",
+    "prompt": "What does Galatians 5 tell believers to do for one another?",
+    "choices": [
+      "Serve one another in love",
+      "Judge one another",
+      "Avoid one another",
+      "Test one another"
+    ],
+    "explanation": "Paul urges the Galatians to serve one another through love, for the whole law is fulfilled.",
+    "reference": "Galatians 5:13-14"
+  },
+  {
+    "id": "bible-116",
+    "category": "bible",
+    "topic": "Ephesians",
+    "difficulty": "easy",
+    "prompt": "Which piece of God's armor protects the heart?",
+    "choices": ["Righteousness", "Faith", "Peace", "Salvation"],
+    "explanation": "The breastplate of righteousness guards the heart as a soldier guards his chest.",
+    "reference": "Ephesians 6:13-17"
+  },
+  {
+    "id": "bible-117",
+    "category": "bible",
+    "topic": "Philippians",
+    "difficulty": "easy",
+    "prompt": "Paul wrote he can face anything through whom?",
+    "choices": ["Christ", "Peter", "An angel", "His own will"],
+    "explanation": "I can do all things through Christ who strengthens me, Paul wrote from prison.",
+    "reference": "Philippians 4:12-13"
+  },
+  {
+    "id": "bible-118",
+    "category": "bible",
+    "topic": "Colossians",
+    "difficulty": "easy",
+    "prompt": "Which quality does Colossians 3:12 list first for God's chosen people?",
+    "choices": ["Compassion", "Wisdom", "Courage", "Wealth"],
+    "explanation": "Clothe yourselves with compassion and kindness, humility, gentleness and patience.",
+    "reference": "Colossians 3:12-14"
+  },
+  {
+    "id": "bible-119",
+    "category": "bible",
+    "topic": "James",
+    "difficulty": "easy",
+    "prompt": "According to James, what should a person do when lacking wisdom?",
+    "choices": ["Ask God", "Consult the elders", "Study the stars", "Wait for a sign"],
+    "explanation": "If any of you lacks wisdom, let them ask God, who gives generously to all.",
+    "reference": "James 1:5-6"
+  },
+  {
+    "id": "bible-120",
+    "category": "bible",
+    "topic": "1 John",
+    "difficulty": "easy",
+    "prompt": "According to 1 John, what is God?",
+    "choices": ["Love", "Angry", "Far away", "A judge"],
+    "explanation": "Whoever does not love does not know God, for God is love.",
+    "reference": "1 John 4:7-8"
+  },
+  {
+    "id": "bible-121",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "Who was the first man created by God?",
+    "choices": ["Adam", "Moses", "Abraham", "David"],
+    "explanation": "God formed Adam from the dust of the ground and breathed life into him.",
+    "reference": "Genesis 2:7"
+  },
+  {
+    "id": "bible-122",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "What did God place in the sky as a promise to never flood the earth again?",
+    "choices": ["A rainbow", "A cross", "A star", "A dove"],
+    "explanation": "God set a rainbow in the clouds as a covenant sign with Noah and all living creatures.",
+    "reference": "Genesis 9:13"
+  },
+  {
+    "id": "bible-123",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "Who was the first woman created by God?",
+    "choices": ["Eve", "Sarah", "Mary", "Ruth"],
+    "explanation": "God created Eve from one of Adam's ribs to be his helper and companion.",
+    "reference": "Genesis 2:22"
+  },
+  {
+    "id": "bible-124",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "What animal tricked Eve into eating the forbidden fruit?",
+    "choices": ["A serpent", "A lion", "A goat", "A wolf"],
+    "explanation": "The serpent was the craftiest of the wild animals and deceived Eve into disobeying God.",
+    "reference": "Genesis 3:1"
+  },
+  {
+    "id": "bible-125",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "How many days did it take God to create the heavens and the earth?",
+    "choices": ["Six days", "Three days", "Seven days", "Twelve days"],
+    "explanation": "God completed his work of creation in six days and rested on the seventh day.",
+    "reference": "Genesis 2:2"
+  },
+  {
+    "id": "bible-126",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "Which son of Jacob was given a beautiful coat of many colors?",
+    "choices": ["Joseph", "Benjamin", "Judah", "Reuben"],
+    "explanation": "Jacob loved Joseph more than his other sons and made him an ornate, colorful robe.",
+    "reference": "Genesis 37:3"
+  },
+  {
+    "id": "bible-127",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "easy",
+    "prompt": "Who did God choose to lead the Israelites out of slavery in Egypt?",
+    "choices": ["Moses", "Aaron", "Joshua", "Elijah"],
+    "explanation": "God called Moses from a burning bush to rescue his people from Pharaoh.",
+    "reference": "Exodus 3:10"
+  },
+  {
+    "id": "bible-128",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "easy",
+    "prompt": "What sea did God part so the Israelites could cross on dry land?",
+    "choices": ["The Red Sea", "The Dead Sea", "The Mediterranean Sea", "The Sea of Galilee"],
+    "explanation": "God sent a strong east wind that divided the Red Sea, creating a safe path for the Israelites.",
+    "reference": "Exodus 14:21"
+  },
+  {
+    "id": "bible-129",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "easy",
+    "prompt": "What food did God rain down from the sky for the Israelites in the desert?",
+    "choices": ["Manna", "Locusts", "Honey", "Olives"],
+    "explanation": "God provided daily flakes of bread from heaven, which the Israelites called manna.",
+    "reference": "Exodus 16:4"
+  },
+  {
+    "id": "bible-130",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "easy",
+    "prompt": "Where did Moses receive the Ten Commandments from God?",
+    "choices": ["Mount Sinai", "Mount Zion", "Mount Carmel", "Mount Ararat"],
+    "explanation": "God descended on Mount Sinai in fire and gave Moses the tablets of the law.",
+    "reference": "Exodus 19:20"
+  },
+  {
+    "id": "bible-131",
+    "category": "bible",
+    "topic": "1 Samuel",
+    "difficulty": "easy",
+    "prompt": "What weapon did the young boy David use to defeat the giant Goliath?",
+    "choices": ["A sling and a stone", "A sword and shield", "A bow and arrow", "A heavy spear"],
+    "explanation": "David struck the Philistine giant in the forehead with a single stone from his sling.",
+    "reference": "1 Samuel 17:49"
+  },
+  {
+    "id": "bible-132",
+    "category": "bible",
+    "topic": "Jonah",
+    "difficulty": "easy",
+    "prompt": "What swallowed Jonah when he tried to run away from God?",
+    "choices": ["A huge fish", "A giant sea turtle", "A great shark", "A crocodile"],
+    "explanation": "God provided a huge fish to swallow Jonah, keeping him inside for three days and nights.",
+    "reference": "Jonah 1:17"
+  },
+  {
+    "id": "bible-133",
+    "category": "bible",
+    "topic": "Daniel",
+    "difficulty": "easy",
+    "prompt": "Where was Daniel thrown for praying to God instead of the king?",
+    "choices": ["A lions' den", "A fiery furnace", "A deep well", "A dungeon"],
+    "explanation": "God sent an angel to shut the mouths of the lions, saving Daniel's life.",
+    "reference": "Daniel 6:16"
+  },
+  {
+    "id": "bible-134",
+    "category": "bible",
+    "topic": "Joshua",
+    "difficulty": "easy",
+    "prompt": "Which city's walls fell down after the Israelites marched around them for seven days?",
+    "choices": ["Jericho", "Babylon", "Jerusalem", "Nineveh"],
+    "explanation": "The walls of Jericho collapsed when the priests blew their trumpets and the people shouted.",
+    "reference": "Joshua 6:20"
+  },
+  {
+    "id": "bible-135",
+    "category": "bible",
+    "topic": "Luke",
+    "difficulty": "easy",
+    "prompt": "Where was Jesus born, according to the Christmas story?",
+    "choices": ["Bethlehem", "Nazareth", "Jerusalem", "Capernaum"],
+    "explanation": "Joseph and Mary traveled to Bethlehem for a census, where Mary gave birth to Jesus.",
+    "reference": "Luke 2:4"
+  },
+  {
+    "id": "bible-136",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "Who was the earthly mother of Jesus?",
+    "choices": ["Mary", "Martha", "Elizabeth", "Sarah"],
+    "explanation": "Mary, a virgin pledged to marry Joseph, conceived Jesus through the Holy Spirit.",
+    "reference": "Matthew 1:18"
+  },
+  {
+    "id": "bible-137",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "What guided the Magi (Wise Men) to find baby Jesus?",
+    "choices": ["A star", "An angel", "A dream", "A burning bush"],
+    "explanation": "The star they had seen in the east went ahead of them until it stopped over where Jesus was.",
+    "reference": "Matthew 2:9"
+  },
+  {
+    "id": "bible-138",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "Jesus went down into the water to be baptized. Who performed the baptism?",
+    "choices": ["John the Baptist", "Peter", "James", "Moses"],
+    "explanation": "John the Baptist baptized Jesus, and the Spirit of God descended like a dove.",
+    "reference": "Matthew 3:13-16"
+  },
+  {
+    "id": "bible-139",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "How many main disciples did Jesus choose to follow him?",
+    "choices": ["Twelve", "Ten", "Three", "Seven"],
+    "explanation": "Jesus called twelve men to be his apostles and sent them out to preach.",
+    "reference": "Matthew 10:1-2"
+  },
+  {
+    "id": "bible-140",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "easy",
+    "prompt": "What did Jesus turn water into at a wedding in Cana?",
+    "choices": ["Wine", "Milk", "Honey", "Oil"],
+    "explanation": "When the wine ran out, Jesus performed his first miracle by turning six stone jars of water into wine.",
+    "reference": "John 2:9"
+  },
+  {
+    "id": "bible-141",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "Which disciple stepped out of a boat to walk on water towards Jesus?",
+    "choices": ["Peter", "John", "Andrew", "Thomas"],
+    "explanation": "Peter walked on the water but began to sink when he saw the wind and became afraid.",
+    "reference": "Matthew 14:29"
+  },
+  {
+    "id": "bible-142",
+    "category": "bible",
+    "topic": "Mark",
+    "difficulty": "easy",
+    "prompt": "What did Jesus use to feed a crowd of 5,000 men?",
+    "choices": [
+      "5 loaves and 2 fish",
+      "3 loaves and 1 fish",
+      "10 loaves and 5 fish",
+      "7 loaves and no fish"
+    ],
+    "explanation": "Jesus blessed the boy's small lunch, and it multiplied to feed the entire crowd with baskets left over.",
+    "reference": "Mark 6:41-43"
+  },
+  {
+    "id": "bible-143",
+    "category": "bible",
+    "topic": "Luke",
+    "difficulty": "easy",
+    "prompt": "Who was the short tax collector that climbed a sycamore-fig tree to see Jesus?",
+    "choices": ["Zacchaeus", "Matthew", "Nicodemus", "Bartimaeus"],
+    "explanation": "Zacchaeus was too short to see over the crowd, so he climbed a tree, and Jesus later visited his house.",
+    "reference": "Luke 19:3-4"
+  },
+  {
+    "id": "bible-144",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "Which disciple betrayed Jesus to the religious leaders?",
+    "choices": ["Judas Iscariot", "Thomas", "Peter", "Philip"],
+    "explanation": "Judas betrayed Jesus for thirty pieces of silver by identifying him with a kiss in the garden.",
+    "reference": "Matthew 26:14-15"
+  },
+  {
+    "id": "bible-145",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "On what day did Jesus rise from the dead?",
+    "choices": ["The third day", "The first day", "The seventh day", "The fifth day"],
+    "explanation": "After being crucified and buried, Jesus was resurrected early on the morning of the third day.",
+    "reference": "Matthew 16:21"
+  },
+  {
+    "id": "bible-146",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "Who was the earthly father of Jesus?",
+    "choices": ["Joseph", "Zechariah", "David", "Jacob"],
+    "explanation": "Joseph, a carpenter, was engaged to Mary and became the earthly father who raised Jesus.",
+    "reference": "Matthew 1:19"
+  },
+  {
+    "id": "bible-147",
+    "category": "bible",
+    "topic": "Daniel",
+    "difficulty": "easy",
+    "prompt": "What were the names of Daniel's three friends who were thrown into a fiery furnace?",
+    "choices": [
+      "Shadrach, Meshach, and Abednego",
+      "Peter, James, and John",
+      "Cain, Abel, and Seth",
+      "Gideon, Samson, and Samuel"
+    ],
+    "explanation": "They refused to bow to King Nebuchadnezzar's golden statue and God protected them in the fire.",
+    "reference": "Daniel 3:19-20"
+  },
+  {
+    "id": "bible-148",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "easy",
+    "prompt": "Which friend of Jesus was brought back to life after four days?",
+    "choices": ["Lazarus", "John the Baptist", "Jairus's daughter", "Nicodemus"],
+    "explanation": "Jesus wept with Lazarus's sisters before calling him to come out of the tomb alive.",
+    "reference": "John 11:43-44"
+  },
+  {
+    "id": "bible-149",
+    "category": "bible",
+    "topic": "Revelation",
+    "difficulty": "easy",
+    "prompt": "What is the last book of the Bible?",
+    "choices": ["Revelation", "Genesis", "Malachi", "Jude"],
+    "explanation": "The Book of Revelation was written by the apostle John and contains visions of the end times.",
+    "reference": "Revelation 1:1"
+  },
+  {
+    "id": "bible-150",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "What did Jesus ride into Jerusalem on the week before his death?",
+    "choices": ["A donkey", "A horse", "A camel", "A chariot"],
+    "explanation": "Fulfilling prophecy, Jesus rode into the city on a donkey while crowds waved palm branches.",
+    "reference": "Matthew 21:7"
+  },
+  {
+    "id": "bible-151",
+    "category": "bible",
+    "topic": "1 Samuel",
+    "difficulty": "easy",
+    "prompt": "Who was the young boy who heard God calling him in the night?",
+    "choices": ["Samuel", "David", "Solomon", "Isaac"],
+    "explanation": "Samuel thought Eli the priest was calling him, but Eli realized it was God speaking to the boy.",
+    "reference": "1 Samuel 3:4"
+  },
+  {
+    "id": "bible-152",
+    "category": "bible",
+    "topic": "Luke",
+    "difficulty": "easy",
+    "prompt": "In one of Jesus' stories, who helped the beaten traveler when others ignored him?",
+    "choices": ["The Good Samaritan", "A priest", "A Levite", "A Roman soldier"],
+    "explanation": "The Samaritan bandaged the man's wounds and paid for him to stay at an inn.",
+    "reference": "Luke 10:33"
+  },
+  {
+    "id": "bible-153",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "After Jesus was arrested, which disciple said three times that he did not know him?",
+    "choices": ["Peter", "John", "Judas", "Thomas"],
+    "explanation": "Out of fear, Peter swore he did not know Jesus, fulfilling the prediction Jesus had made.",
+    "reference": "Matthew 26:74-75"
+  },
+  {
+    "id": "bible-154",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "easy",
+    "prompt": "What did God speak out of when he called Moses in the desert?",
+    "choices": ["A burning bush", "A thundercloud", "A pillar of salt", "A raging river"],
+    "explanation": "Moses saw a bush that was on fire but was not burning up, and God spoke to him from within it.",
+    "reference": "Exodus 3:4"
+  },
+  {
+    "id": "bible-155",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "easy",
+    "prompt": "Who was the strongest man in the Bible until his hair was cut?",
+    "choices": ["Samson", "Goliath", "David", "Saul"],
+    "explanation": "Samson lost his immense God-given strength when Delilah shaved off his hair while he slept.",
+    "reference": "Judges 16:19"
+  },
+  {
+    "id": "bible-156",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "What bird did Noah send out from the ark that brought back an olive leaf?",
+    "choices": ["A dove", "A raven", "An eagle", "A sparrow"],
+    "explanation": "The dove returning with a fresh olive leaf proved to Noah that the floodwaters had receded.",
+    "reference": "Genesis 8:11"
+  },
+  {
+    "id": "bible-157",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "According to Jesus, you should love your neighbor as you love who?",
+    "choices": ["Yourself", "God", "Your family", "Your enemies"],
+    "explanation": "Jesus taught that loving your neighbor as yourself is the second greatest commandment.",
+    "reference": "Matthew 22:39"
+  },
+  {
+    "id": "bible-158",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "easy",
+    "prompt": "Who was blinded by a bright light on the road to Damascus?",
+    "choices": ["Saul (Paul)", "Peter", "Stephen", "Philip"],
+    "explanation": "Jesus appeared to Saul in a blinding flash of light, converting him to Christianity.",
+    "reference": "Acts 9:3-4"
+  },
+  {
+    "id": "bible-159",
+    "category": "bible",
+    "topic": "Luke",
+    "difficulty": "easy",
+    "prompt": "In a famous parable, who took his inheritance early and wasted it all?",
+    "choices": ["The Prodigal Son", "The Older Brother", "The Rich Fool", "The Unjust Steward"],
+    "explanation": "The young son squandered his wealth in wild living but was welcomed back by his forgiving father.",
+    "reference": "Luke 15:13"
+  },
+  {
+    "id": "bible-160",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "What was the name of the garden where Adam and Eve lived?",
+    "choices": [
+      "The Garden of Eden",
+      "The Garden of Gethsemane",
+      "The Hanging Gardens",
+      "The Promised Land"
+    ],
+    "explanation": "God planted a beautiful garden in Eden for the first man and woman to live in and care for.",
+    "reference": "Genesis 2:8"
+  },
+  {
+    "id": "bible-161",
+    "category": "bible",
+    "topic": "Numbers",
+    "difficulty": "easy",
+    "prompt": "What animal spoke to the prophet Balaam?",
+    "choices": ["A donkey", "A serpent", "A sheep", "A camel"],
+    "explanation": "God opened the donkey's mouth to complain to Balaam after he had struck it three times.",
+    "reference": "Numbers 22:28"
+  },
+  {
+    "id": "bible-162",
+    "category": "bible",
+    "topic": "1 Kings",
+    "difficulty": "easy",
+    "prompt": "Which king was famous for his great wisdom and for building the Temple?",
+    "choices": ["Solomon", "David", "Saul", "Hezekiah"],
+    "explanation": "God gave Solomon unmatched wisdom, and he constructed the first permanent temple in Jerusalem.",
+    "reference": "1 Kings 3:12"
+  },
+  {
+    "id": "bible-163",
+    "category": "bible",
+    "topic": "Esther",
+    "difficulty": "easy",
+    "prompt": "Which Jewish woman became Queen of Persia and saved her people from death?",
+    "choices": ["Esther", "Ruth", "Naomi", "Deborah"],
+    "explanation": "Esther bravely approached the king uninvited to expose a plot to destroy the Jewish people.",
+    "reference": "Esther 7:3"
+  },
+  {
+    "id": "bible-164",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "easy",
+    "prompt": "Who was Abraham's promised son, born when Sarah was very old?",
+    "choices": ["Isaac", "Ishmael", "Jacob", "Esau"],
+    "explanation": "God kept his promise to Abraham and Sarah, giving them a son named Isaac in their old age.",
+    "reference": "Genesis 21:2"
+  },
+  {
+    "id": "bible-165",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "easy",
+    "prompt": "What prayer did Jesus teach his disciples when they asked him how to pray?",
+    "choices": ["The Lord's Prayer", "The Hail Mary", "The Serenity Prayer", "The Sinner's Prayer"],
+    "explanation": "Jesus taught them a model prayer that begins with 'Our Father in heaven, hallowed be your name.'",
+    "reference": "Matthew 6:9"
+  },
+  {
+    "id": "bible-166",
+    "category": "bible",
+    "topic": "Luke",
+    "difficulty": "easy",
+    "prompt": "What angel appeared to Mary to tell her she would have a baby named Jesus?",
+    "choices": ["Gabriel", "Michael", "Raphael", "Lucifer"],
+    "explanation": "God sent the angel Gabriel to Nazareth to deliver the good news of Jesus' birth to the virgin Mary.",
+    "reference": "Luke 1:26-27"
+  },
+  {
+    "id": "bible-167",
+    "category": "bible",
+    "topic": "Psalms",
+    "difficulty": "easy",
+    "prompt": "Who wrote many of the songs and poems found in the Book of Psalms?",
+    "choices": ["David", "Moses", "Solomon", "Isaiah"],
+    "explanation": "King David, who started as a shepherd boy, was a skilled musician who wrote numerous Psalms praising God.",
+    "reference": "Psalms 23:1"
+  },
+  {
+    "id": "bible-168",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "easy",
+    "prompt": "How many plagues did God send on Egypt before Pharaoh let the Israelites go?",
+    "choices": ["Ten", "Seven", "Twelve", "Three"],
+    "explanation": "God sent ten disastrous plagues, ending with the death of the firstborn, to convince Pharaoh.",
+    "reference": "Exodus 11:1"
+  },
+  {
+    "id": "bible-169",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "easy",
+    "prompt": "Who was the first person to see Jesus after he rose from the dead?",
+    "choices": ["Mary Magdalene", "Peter", "John", "Thomas"],
+    "explanation": "Jesus appeared first to Mary Magdalene while she was crying outside the empty tomb.",
+    "reference": "John 20:16"
+  },
+  {
+    "id": "bible-170",
+    "category": "bible",
+    "topic": "Ruth",
+    "difficulty": "easy",
+    "prompt": "Which loyal daughter-in-law told Naomi, 'Where you go I will go'?",
+    "choices": ["Ruth", "Orpah", "Rachel", "Leah"],
+    "explanation": "Ruth refused to leave her mother-in-law Naomi, choosing to follow her and worship her God.",
+    "reference": "Ruth 1:16"
+  },
+  {
+    "id": "bible-171",
+    "category": "bible",
     "topic": "Genesis",
     "difficulty": "medium",
     "prompt": "What did Esau get from Jacob in exchange for his birthright?",
@@ -520,7 +1780,7 @@
     "reference": "Genesis 25:33-34"
   },
   {
-    "id": "bible-052",
+    "id": "bible-172",
     "category": "bible",
     "topic": "Exodus",
     "difficulty": "medium",
@@ -530,7 +1790,7 @@
     "reference": "Exodus 7:20"
   },
   {
-    "id": "bible-053",
+    "id": "bible-173",
     "category": "bible",
     "topic": "Numbers",
     "difficulty": "medium",
@@ -540,7 +1800,7 @@
     "reference": "Numbers 22:28"
   },
   {
-    "id": "bible-054",
+    "id": "bible-174",
     "category": "bible",
     "topic": "Numbers",
     "difficulty": "medium",
@@ -550,7 +1810,7 @@
     "reference": "Numbers 14:6-9"
   },
   {
-    "id": "bible-055",
+    "id": "bible-175",
     "category": "bible",
     "topic": "Joshua",
     "difficulty": "medium",
@@ -560,7 +1820,7 @@
     "reference": "Joshua 2:1-6"
   },
   {
-    "id": "bible-056",
+    "id": "bible-176",
     "category": "bible",
     "topic": "Joshua",
     "difficulty": "medium",
@@ -570,7 +1830,7 @@
     "reference": "Joshua 3:17"
   },
   {
-    "id": "bible-057",
+    "id": "bible-177",
     "category": "bible",
     "topic": "Judges",
     "difficulty": "medium",
@@ -580,7 +1840,7 @@
     "reference": "Judges 4:4-9"
   },
   {
-    "id": "bible-058",
+    "id": "bible-178",
     "category": "bible",
     "topic": "Judges",
     "difficulty": "medium",
@@ -590,7 +1850,7 @@
     "reference": "Judges 6:37"
   },
   {
-    "id": "bible-059",
+    "id": "bible-179",
     "category": "bible",
     "topic": "Ruth",
     "difficulty": "medium",
@@ -600,7 +1860,7 @@
     "reference": "Ruth 4:13"
   },
   {
-    "id": "bible-060",
+    "id": "bible-180",
     "category": "bible",
     "topic": "Ruth",
     "difficulty": "medium",
@@ -610,7 +1870,7 @@
     "reference": "Ruth 1:4"
   },
   {
-    "id": "bible-061",
+    "id": "bible-181",
     "category": "bible",
     "topic": "1 Samuel",
     "difficulty": "medium",
@@ -620,7 +1880,7 @@
     "reference": "1 Samuel 1:20"
   },
   {
-    "id": "bible-062",
+    "id": "bible-182",
     "category": "bible",
     "topic": "1 Samuel",
     "difficulty": "medium",
@@ -630,7 +1890,7 @@
     "reference": "1 Samuel 3:4-9"
   },
   {
-    "id": "bible-063",
+    "id": "bible-183",
     "category": "bible",
     "topic": "2 Samuel",
     "difficulty": "medium",
@@ -640,7 +1900,7 @@
     "reference": "2 Samuel 11:14-17"
   },
   {
-    "id": "bible-064",
+    "id": "bible-184",
     "category": "bible",
     "topic": "1 Kings",
     "difficulty": "medium",
@@ -650,7 +1910,7 @@
     "reference": "1 Kings 18:19-20"
   },
   {
-    "id": "bible-065",
+    "id": "bible-185",
     "category": "bible",
     "topic": "1 Kings",
     "difficulty": "medium",
@@ -660,7 +1920,7 @@
     "reference": "1 Kings 17:6"
   },
   {
-    "id": "bible-066",
+    "id": "bible-186",
     "category": "bible",
     "topic": "1 Kings",
     "difficulty": "medium",
@@ -670,7 +1930,7 @@
     "reference": "1 Kings 16:30-31"
   },
   {
-    "id": "bible-067",
+    "id": "bible-187",
     "category": "bible",
     "topic": "1 Kings",
     "difficulty": "medium",
@@ -680,7 +1940,7 @@
     "reference": "1 Kings 10:1"
   },
   {
-    "id": "bible-068",
+    "id": "bible-188",
     "category": "bible",
     "topic": "2 Kings",
     "difficulty": "medium",
@@ -690,7 +1950,7 @@
     "reference": "2 Kings 2:11-13"
   },
   {
-    "id": "bible-069",
+    "id": "bible-189",
     "category": "bible",
     "topic": "Return from Exile",
     "difficulty": "medium",
@@ -700,7 +1960,7 @@
     "reference": "Nehemiah 2:17-18"
   },
   {
-    "id": "bible-070",
+    "id": "bible-190",
     "category": "bible",
     "topic": "Esther",
     "difficulty": "medium",
@@ -710,7 +1970,7 @@
     "reference": "Esther 2:7"
   },
   {
-    "id": "bible-071",
+    "id": "bible-191",
     "category": "bible",
     "topic": "Job",
     "difficulty": "medium",
@@ -720,7 +1980,7 @@
     "reference": "Job 1:9-11"
   },
   {
-    "id": "bible-072",
+    "id": "bible-192",
     "category": "bible",
     "topic": "Psalms",
     "difficulty": "medium",
@@ -730,7 +1990,7 @@
     "reference": "Psalm 119:105"
   },
   {
-    "id": "bible-073",
+    "id": "bible-193",
     "category": "bible",
     "topic": "Proverbs",
     "difficulty": "medium",
@@ -740,7 +2000,7 @@
     "reference": "Proverbs 3:5"
   },
   {
-    "id": "bible-074",
+    "id": "bible-194",
     "category": "bible",
     "topic": "Proverbs",
     "difficulty": "medium",
@@ -750,7 +2010,7 @@
     "reference": "Proverbs 6:6"
   },
   {
-    "id": "bible-075",
+    "id": "bible-195",
     "category": "bible",
     "topic": "Wisdom books",
     "difficulty": "medium",
@@ -760,7 +2020,7 @@
     "reference": "Ecclesiastes 3:1-2"
   },
   {
-    "id": "bible-076",
+    "id": "bible-196",
     "category": "bible",
     "topic": "Isaiah",
     "difficulty": "medium",
@@ -770,7 +2030,7 @@
     "reference": "Isaiah 7:14"
   },
   {
-    "id": "bible-077",
+    "id": "bible-197",
     "category": "bible",
     "topic": "Isaiah",
     "difficulty": "medium",
@@ -780,7 +2040,7 @@
     "reference": "Isaiah 40:31"
   },
   {
-    "id": "bible-078",
+    "id": "bible-198",
     "category": "bible",
     "topic": "Prophets",
     "difficulty": "medium",
@@ -790,7 +2050,7 @@
     "reference": "Ezekiel 37:1-10"
   },
   {
-    "id": "bible-079",
+    "id": "bible-199",
     "category": "bible",
     "topic": "Daniel",
     "difficulty": "medium",
@@ -800,7 +2060,7 @@
     "reference": "Daniel 2:28-33"
   },
   {
-    "id": "bible-080",
+    "id": "bible-200",
     "category": "bible",
     "topic": "Jonah",
     "difficulty": "medium",
@@ -810,7 +2070,7 @@
     "reference": "Jonah 1:3"
   },
   {
-    "id": "bible-081",
+    "id": "bible-201",
     "category": "bible",
     "topic": "Beatitudes",
     "difficulty": "medium",
@@ -820,7 +2080,7 @@
     "reference": "Matthew 5:5"
   },
   {
-    "id": "bible-082",
+    "id": "bible-202",
     "category": "bible",
     "topic": "Disciples",
     "difficulty": "medium",
@@ -830,7 +2090,7 @@
     "reference": "Matthew 10:3"
   },
   {
-    "id": "bible-083",
+    "id": "bible-203",
     "category": "bible",
     "topic": "Matthew",
     "difficulty": "medium",
@@ -840,7 +2100,7 @@
     "reference": "Matthew 26:15"
   },
   {
-    "id": "bible-084",
+    "id": "bible-204",
     "category": "bible",
     "topic": "Luke",
     "difficulty": "medium",
@@ -850,7 +2110,7 @@
     "reference": "Luke 1:57-60"
   },
   {
-    "id": "bible-085",
+    "id": "bible-205",
     "category": "bible",
     "topic": "Luke",
     "difficulty": "medium",
@@ -860,7 +2120,7 @@
     "reference": "Luke 9:30-31"
   },
   {
-    "id": "bible-086",
+    "id": "bible-206",
     "category": "bible",
     "topic": "Parables",
     "difficulty": "medium",
@@ -870,7 +2130,7 @@
     "reference": "Luke 15:15"
   },
   {
-    "id": "bible-087",
+    "id": "bible-207",
     "category": "bible",
     "topic": "John",
     "difficulty": "medium",
@@ -880,7 +2140,7 @@
     "reference": "John 3:1-3"
   },
   {
-    "id": "bible-088",
+    "id": "bible-208",
     "category": "bible",
     "topic": "Acts",
     "difficulty": "medium",
@@ -890,7 +2150,7 @@
     "reference": "Acts 2:3"
   },
   {
-    "id": "bible-089",
+    "id": "bible-209",
     "category": "bible",
     "topic": "Acts",
     "difficulty": "medium",
@@ -900,7 +2160,7 @@
     "reference": "Acts 7:59"
   },
   {
-    "id": "bible-090",
+    "id": "bible-210",
     "category": "bible",
     "topic": "Acts",
     "difficulty": "medium",
@@ -910,7 +2170,7 @@
     "reference": "Acts 13:2"
   },
   {
-    "id": "bible-091",
+    "id": "bible-211",
     "category": "bible",
     "topic": "Romans",
     "difficulty": "medium",
@@ -920,7 +2180,7 @@
     "reference": "Romans 6:23"
   },
   {
-    "id": "bible-092",
+    "id": "bible-212",
     "category": "bible",
     "topic": "Galatians",
     "difficulty": "medium",
@@ -930,7 +2190,7 @@
     "reference": "Galatians 5:22"
   },
   {
-    "id": "bible-093",
+    "id": "bible-213",
     "category": "bible",
     "topic": "Ephesians",
     "difficulty": "medium",
@@ -940,7 +2200,7 @@
     "reference": "Ephesians 6:17"
   },
   {
-    "id": "bible-094",
+    "id": "bible-214",
     "category": "bible",
     "topic": "Letters of Paul",
     "difficulty": "medium",
@@ -950,7 +2210,7 @@
     "reference": "Philippians 4:13"
   },
   {
-    "id": "bible-095",
+    "id": "bible-215",
     "category": "bible",
     "topic": "1 Thessalonians",
     "difficulty": "medium",
@@ -960,7 +2220,7 @@
     "reference": "1 Thessalonians 5:2"
   },
   {
-    "id": "bible-096",
+    "id": "bible-216",
     "category": "bible",
     "topic": "Hebrews",
     "difficulty": "medium",
@@ -970,7 +2230,7 @@
     "reference": "Hebrews 11:1"
   },
   {
-    "id": "bible-097",
+    "id": "bible-217",
     "category": "bible",
     "topic": "1 Peter",
     "difficulty": "medium",
@@ -980,7 +2240,7 @@
     "reference": "1 Peter 5:8"
   },
   {
-    "id": "bible-098",
+    "id": "bible-218",
     "category": "bible",
     "topic": "Revelation",
     "difficulty": "medium",
@@ -990,7 +2250,7 @@
     "reference": "Revelation 1:11"
   },
   {
-    "id": "bible-099",
+    "id": "bible-219",
     "category": "bible",
     "topic": "Revelation",
     "difficulty": "medium",
@@ -1000,7 +2260,7 @@
     "reference": "Revelation 1:9"
   },
   {
-    "id": "bible-100",
+    "id": "bible-220",
     "category": "bible",
     "topic": "Revelation",
     "difficulty": "medium",
@@ -1010,7 +2270,1267 @@
     "reference": "Revelation 21:2"
   },
   {
-    "id": "bible-101",
+    "id": "bible-221",
+    "category": "bible",
+    "topic": "2 Samuel",
+    "difficulty": "medium",
+    "prompt": "Which prophet told David a story about a rich man who took a poor man's only lamb?",
+    "choices": ["Nathan", "Gad", "Samuel", "Elijah"],
+    "explanation": "Nathan told David the story, then said to him, \"You are the man,\" about his sin with Bathsheba.",
+    "reference": "2 Samuel 12:1-7"
+  },
+  {
+    "id": "bible-222",
+    "category": "bible",
+    "topic": "Esther",
+    "difficulty": "medium",
+    "prompt": "Which queen refused to come when the king sent for her during his feast?",
+    "choices": ["Vashti", "Jezebel", "Michal", "Athaliah"],
+    "explanation": "Queen Vashti refused to come at the king's command, and he later chose Esther to be queen in her place.",
+    "reference": "Esther 1:10-12"
+  },
+  {
+    "id": "bible-223",
+    "category": "bible",
+    "topic": "Job",
+    "difficulty": "medium",
+    "prompt": "When Job was struck with painful sores, what did his wife tell him to do?",
+    "choices": ["Curse God and die", "Pray for healing", "Offer a sacrifice", "Go to his friends"],
+    "explanation": "Job's wife asked if he was still holding on to his integrity and told him to curse God and die.",
+    "reference": "Job 2:7-9"
+  },
+  {
+    "id": "bible-224",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "medium",
+    "prompt": "Which prophet made an iron axe head float after it fell into the water?",
+    "choices": ["Elisha", "Elijah", "Isaiah", "Nathan"],
+    "explanation": "Elisha cut a stick and threw it where the borrowed axe head had sunk, and the iron floated.",
+    "reference": "2 Kings 6:5-7"
+  },
+  {
+    "id": "bible-225",
+    "category": "bible",
+    "topic": "Nehemiah",
+    "difficulty": "medium",
+    "prompt": "What was Nehemiah's job in the palace of the king of Persia?",
+    "choices": ["Cupbearer", "Baker", "Scribe", "Gatekeeper"],
+    "explanation": "Nehemiah says, \"I was the king's cupbearer,\" and served wine to King Artaxerxes.",
+    "reference": "Nehemiah 1:11; 2:1"
+  },
+  {
+    "id": "bible-226",
+    "category": "bible",
+    "topic": "Isaiah",
+    "difficulty": "medium",
+    "prompt": "Who answered God's call by saying, \"Here am I. Send me!\"?",
+    "choices": ["Isaiah", "Jeremiah", "Samuel", "Moses"],
+    "explanation": "When the Lord asked whom he should send, Isaiah answered, \"Here am I. Send me!\"",
+    "reference": "Isaiah 6:8"
+  },
+  {
+    "id": "bible-227",
+    "category": "bible",
+    "topic": "Romans",
+    "difficulty": "medium",
+    "prompt": "Romans 3:23 says all have sinned and fall short of the what of God?",
+    "choices": ["Glory", "Kingdom", "Mercy", "Law"],
+    "explanation": "Romans 3:23 says all have sinned and fall short of the glory of God.",
+    "reference": "Romans 3:23"
+  },
+  {
+    "id": "bible-228",
+    "category": "bible",
+    "topic": "Philippians",
+    "difficulty": "medium",
+    "prompt": "Philippians 2:10 says that at the name of Jesus every what should bow?",
+    "choices": ["Knee", "Head", "Nation", "Heart"],
+    "explanation": "Paul writes that at the name of Jesus every knee should bow, in heaven and on earth and under the earth.",
+    "reference": "Philippians 2:10"
+  },
+  {
+    "id": "bible-229",
+    "category": "bible",
+    "topic": "Hebrews",
+    "difficulty": "medium",
+    "prompt": "Which book says \"Jesus Christ is the same yesterday and today and forever\"?",
+    "choices": ["Hebrews", "James", "1 John", "Colossians"],
+    "explanation": "The line comes near the end of the letter to the Hebrews, in chapter 13.",
+    "reference": "Hebrews 13:8"
+  },
+  {
+    "id": "bible-230",
+    "category": "bible",
+    "topic": "2 Chronicles",
+    "difficulty": "medium",
+    "prompt": "Which book contains \"If my people, who are called by my name, will humble themselves and pray\"?",
+    "choices": ["2 Chronicles", "1 Kings", "Deuteronomy", "Isaiah"],
+    "explanation": "God spoke these words to Solomon at night after the temple was dedicated, in 2 Chronicles 7:14.",
+    "reference": "2 Chronicles 7:14"
+  },
+  {
+    "id": "bible-231",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "medium",
+    "prompt": "Which son of Jacob was sold into slavery by his brothers?",
+    "choices": ["Joseph", "Judah", "Benjamin", "Reuben"],
+    "explanation": "His brothers stripped his robe and sold him to Ishmaelite traders bound for Egypt.",
+    "reference": "Genesis 37:26-28"
+  },
+  {
+    "id": "bible-232",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "medium",
+    "prompt": "How many years of plenty preceded the famine in Egypt?",
+    "choices": ["Seven years", "Three years", "Twelve years", "Forty years"],
+    "explanation": "Joseph told Pharaoh that seven fat years would be followed by seven lean ones.",
+    "reference": "Genesis 41:25-36"
+  },
+  {
+    "id": "bible-233",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "medium",
+    "prompt": "What did Joseph's brothers use to stain his robe before showing their father?",
+    "choices": ["Goat's blood", "Sheep's blood", "Red paint", "Wine"],
+    "explanation": "They slaughtered a goat and stained the many-colored robe with its blood.",
+    "reference": "Genesis 37:31-35"
+  },
+  {
+    "id": "bible-234",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "medium",
+    "prompt": "What did God tell the Israelites to put on their doorposts at Passover?",
+    "choices": ["Lamb's blood", "Olive oil", "Fine flour", "Salt"],
+    "explanation": "Each household marked its door with blood so the destroying angel would pass over.",
+    "reference": "Exodus 12:6-13"
+  },
+  {
+    "id": "bible-235",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "medium",
+    "prompt": "Who held Moses' hands up during the battle against Amalek?",
+    "choices": ["Aaron and Hur", "Joshua and Caleb", "Nadab and Abihu", "Elijah and Elisha"],
+    "explanation": "They seated Moses on a stone and held up his hands until sunset.",
+    "reference": "Exodus 17:8-13"
+  },
+  {
+    "id": "bible-236",
+    "category": "bible",
+    "topic": "Leviticus",
+    "difficulty": "medium",
+    "prompt": "How many times did the high priest sprinkle blood on the mercy seat?",
+    "choices": ["Seven times", "Three times", "Twelve times", "Once"],
+    "explanation": "He entered with the incense and sprinkled the blood seven times before the ark.",
+    "reference": "Leviticus 16:11-15"
+  },
+  {
+    "id": "bible-237",
+    "category": "bible",
+    "topic": "Numbers",
+    "difficulty": "medium",
+    "prompt": "Which leader was barred from entering Canaan after striking the rock?",
+    "choices": ["Moses", "Aaron", "Joshua", "Caleb"],
+    "explanation": "Because he struck the rock in anger, Moses saw the land but did not enter it.",
+    "reference": "Numbers 20:10-12"
+  },
+  {
+    "id": "bible-238",
+    "category": "bible",
+    "topic": "Deuteronomy",
+    "difficulty": "medium",
+    "prompt": "Which commandment forbids coveting your neighbor's possessions?",
+    "choices": [
+      "The tenth commandment",
+      "The fourth commandment",
+      "The second commandment",
+      "The ninth commandment"
+    ],
+    "explanation": "The tenth forbids coveting a neighbor's house, wife, servants, or animals.",
+    "reference": "Deuteronomy 5:20-21"
+  },
+  {
+    "id": "bible-239",
+    "category": "bible",
+    "topic": "Joshua",
+    "difficulty": "medium",
+    "prompt": "What did Joshua command the sun to do over Gibeon?",
+    "choices": ["Stand still", "Set early", "Hide behind clouds", "Shine brighter"],
+    "explanation": "Joshua commanded the sun to halt in the sky until the battle was won.",
+    "reference": "Joshua 10:12-14"
+  },
+  {
+    "id": "bible-240",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "medium",
+    "prompt": "Which offering did fire from heaven consume under Gideon?",
+    "choices": [
+      "Gideon's sacrifice",
+      "Samson's vow",
+      "Saul's burnt offering",
+      "Samuel's grain offering"
+    ],
+    "explanation": "The angel of the Lord touched the offering with fire from the rock beneath it.",
+    "reference": "Judges 6:20-24"
+  },
+  {
+    "id": "bible-241",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "medium",
+    "prompt": "What weapon did Samson use to kill a thousand Philistines?",
+    "choices": ["A jawbone", "A spear", "A bow", "A sling"],
+    "explanation": "Samson found the fresh jawbone of a donkey and struck down the men of Lehi.",
+    "reference": "Judges 15:14-17"
+  },
+  {
+    "id": "bible-242",
+    "category": "bible",
+    "topic": "1 Samuel",
+    "difficulty": "medium",
+    "prompt": "What did Saul offer in secret that Samuel rebuked him for?",
+    "choices": ["A burnt offering", "A wave offering", "A peace offering", "A tithe"],
+    "explanation": "Saul waited seven days, then sacrificed without Samuel, and lost the kingdom.",
+    "reference": "1 Samuel 13:8-14"
+  },
+  {
+    "id": "bible-243",
+    "category": "bible",
+    "topic": "2 Samuel",
+    "difficulty": "medium",
+    "prompt": "Which daughter of David was violated by her half brother?",
+    "choices": ["Tamar", "Michal", "Bathsheba", "Abishag"],
+    "explanation": "Amnon assaulted her, and her brother Absalom later avenged the disgrace.",
+    "reference": "2 Samuel 13:1-22"
+  },
+  {
+    "id": "bible-244",
+    "category": "bible",
+    "topic": "2 Samuel",
+    "difficulty": "medium",
+    "prompt": "Which woman did David take as his wife after Uriah died?",
+    "choices": ["Bathsheba", "Michal", "Abigail", "Ahinoam"],
+    "explanation": "The prophet Nathan confronted David, and the woman later became his queen.",
+    "reference": "2 Samuel 11:26-12:25"
+  },
+  {
+    "id": "bible-245",
+    "category": "bible",
+    "topic": "1 Kings",
+    "difficulty": "medium",
+    "prompt": "What kind of wood did Solomon use to build the temple?",
+    "choices": ["Cedar", "Olive", "Pine", "Oak"],
+    "explanation": "The temple framework was built of cedar boards, framed with stone blocks.",
+    "reference": "1 Kings 6:9-18"
+  },
+  {
+    "id": "bible-246",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "medium",
+    "prompt": "What did Elisha's frightened servant see surrounding the city?",
+    "choices": ["Chariots of fire", "Angels with swords", "A wall of water", "A cloud of arrows"],
+    "explanation": "Elisha prayed his eyes might see, and the hills were full of horses and chariots.",
+    "reference": "2 Kings 6:15-17"
+  },
+  {
+    "id": "bible-247",
+    "category": "bible",
+    "topic": "Return from Exile",
+    "difficulty": "medium",
+    "prompt": "Which Persian king allowed Ezra to take exiles back to Jerusalem?",
+    "choices": ["Artaxerxes", "Cyrus", "Darius", "Ahasuerus"],
+    "explanation": "Artaxerxes sent Ezra with silver, gold, and a letter to the governors beyond the river.",
+    "reference": "Ezra 7:11-21"
+  },
+  {
+    "id": "bible-248",
+    "category": "bible",
+    "topic": "Nehemiah",
+    "difficulty": "medium",
+    "prompt": "Which official began the mockery against the feeble Jews rebuilding the wall?",
+    "choices": ["Sanballat", "Tobiah", "Geshem", "Shemaiah"],
+    "explanation": "He mocked the Jews and asked what they thought they were rebuilding.",
+    "reference": "Nehemiah 4:1-3"
+  },
+  {
+    "id": "bible-249",
+    "category": "bible",
+    "topic": "Job",
+    "difficulty": "medium",
+    "prompt": "What did Job's three friends do for seven days when they first arrived?",
+    "choices": ["Sat in silence", "Wept and argued aloud", "Left at once", "Ate a feast"],
+    "explanation": "For seven days they sat on the ground with him, saying nothing at all.",
+    "reference": "Job 2:11-13"
+  },
+  {
+    "id": "bible-250",
+    "category": "bible",
+    "topic": "Proverbs",
+    "difficulty": "medium",
+    "prompt": "What does Proverbs 22:1 say is better than riches?",
+    "choices": ["A good name", "Silver", "A long life", "Many friends"],
+    "explanation": "A good name is chosen above great wealth, and favor is better than silver or gold.",
+    "reference": "Proverbs 22:1"
+  },
+  {
+    "id": "bible-251",
+    "category": "bible",
+    "topic": "Isaiah",
+    "difficulty": "medium",
+    "prompt": "What did Isaiah say the suffering servant looked like?",
+    "choices": ["No beauty or majesty", "A tall warrior", "Richly dressed", "A golden crown"],
+    "explanation": "He had no beauty to attract us; he was despised and rejected, a man of sorrows.",
+    "reference": "Isaiah 53:2-3"
+  },
+  {
+    "id": "bible-252",
+    "category": "bible",
+    "topic": "Jeremiah",
+    "difficulty": "medium",
+    "prompt": "What would God write on his people's hearts in the new covenant?",
+    "choices": ["My law", "New stone tablets", "The Ten Words", "A royal decree"],
+    "explanation": "The new covenant would put God's law within and write it on their hearts.",
+    "reference": "Jeremiah 31:31-34"
+  },
+  {
+    "id": "bible-253",
+    "category": "bible",
+    "topic": "Ezekiel",
+    "difficulty": "medium",
+    "prompt": "How many days did Ezekiel lie on his right side for Judah's sin?",
+    "choices": ["Three hundred ninety days", "Forty days", "Seven days", "Fifty-two days"],
+    "explanation": "He was bound with cords and lay on his side for 390 days, then 40 more for Israel.",
+    "reference": "Ezekiel 4:4-8"
+  },
+  {
+    "id": "bible-254",
+    "category": "bible",
+    "topic": "Daniel",
+    "difficulty": "medium",
+    "prompt": "What did the humbled king eat in the fields like cattle?",
+    "choices": ["Grass", "Wild honey", "Barley bread", "Roots and water"],
+    "explanation": "His hair grew like eagle feathers and he ate grass until seven times passed.",
+    "reference": "Daniel 4:25-34"
+  },
+  {
+    "id": "bible-255",
+    "category": "bible",
+    "topic": "Hosea",
+    "difficulty": "medium",
+    "prompt": "What idol did Israel chase after instead of the Lord, says Hosea?",
+    "choices": ["Baal", "Dagon", "Molech", "Ashtoreth"],
+    "explanation": "Israel adorned herself for the baals, forgetting that God gave her grain and wine.",
+    "reference": "Hosea 2:8-13"
+  },
+  {
+    "id": "bible-256",
+    "category": "bible",
+    "topic": "Joel",
+    "difficulty": "medium",
+    "prompt": "What did Joel promise would be poured out on sons and daughters?",
+    "choices": ["The Spirit", "A sword", "Riches", "New visions"],
+    "explanation": "Your sons and daughters will prophesy, old men dream dreams, young men see visions.",
+    "reference": "Joel 2:28-32"
+  },
+  {
+    "id": "bible-257",
+    "category": "bible",
+    "topic": "Haggai",
+    "difficulty": "medium",
+    "prompt": "What luxury did Israel enjoy while the temple lay in ruins?",
+    "choices": ["Paneled houses", "Stone towers", "Golden idols", "Fresh wine"],
+    "explanation": "The Lord asked why his people lived in fine houses while his house lay in ruins.",
+    "reference": "Haggai 1:2-5"
+  },
+  {
+    "id": "bible-258",
+    "category": "bible",
+    "topic": "1 Chronicles",
+    "difficulty": "medium",
+    "prompt": "Which king's census of Israel brought anger and plague?",
+    "choices": ["David", "Saul", "Solomon", "Rehoboam"],
+    "explanation": "David ordered a count of the fighting men, and a plague followed the census.",
+    "reference": "1 Chronicles 21:1-7"
+  },
+  {
+    "id": "bible-259",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "medium",
+    "prompt": "What did King Hezekiah do with the bronze object Moses had set on a pole?",
+    "choices": [
+      "He broke it into pieces",
+      "He polished it daily",
+      "He buried it quietly",
+      "He gave it to the priests"
+    ],
+    "explanation": "Hezekiah broke it to pieces because people had been burning incense to it.",
+    "reference": "2 Kings 18:1-4"
+  },
+  {
+    "id": "bible-260",
+    "category": "bible",
+    "topic": "Esther",
+    "difficulty": "medium",
+    "prompt": "Whom did Esther invite to her first banquet to expose the plot?",
+    "choices": ["The king and Haman", "Mordecai", "Her attendants", "The royal officials"],
+    "explanation": "At that banquet she would ask to be spared, but she invited her enemy too.",
+    "reference": "Esther 5:4-8"
+  },
+  {
+    "id": "bible-261",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "medium",
+    "prompt": "How long did the Philistines oppress Israel before Samuel rose?",
+    "choices": ["Forty years", "Seven years", "Twenty years", "Fifty years"],
+    "explanation": "The Philistines ruled Israel for forty years, until the Lord raised up Samuel.",
+    "reference": "Judges 13:1"
+  },
+  {
+    "id": "bible-262",
+    "category": "bible",
+    "topic": "1 Samuel",
+    "difficulty": "medium",
+    "prompt": "Which king of Amalek was Samuel told to put under the ban?",
+    "choices": ["Agag", "Nahash", "Achish", "Doeg"],
+    "explanation": "Saul spared Agag and the best animals, which cost him the kingdom.",
+    "reference": "1 Samuel 15:1-33"
+  },
+  {
+    "id": "bible-263",
+    "category": "bible",
+    "topic": "2 Samuel",
+    "difficulty": "medium",
+    "prompt": "What did David do when he heard that Absalom had died?",
+    "choices": [
+      "He wept bitterly",
+      "He rejoiced aloud",
+      "He held a feast",
+      "He praised his generals"
+    ],
+    "explanation": "The king cried out in grief for his son at the gate above the city.",
+    "reference": "2 Samuel 18:31-33"
+  },
+  {
+    "id": "bible-264",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "medium",
+    "prompt": "Who was the last king of Judah taken to Babylon in chains?",
+    "choices": ["Zedekiah", "Jehoiachin", "Jehoiakim", "Josiah"],
+    "explanation": "Nebuchadnezzar forced him to watch his sons killed, then blinded him.",
+    "reference": "2 Kings 25:1-7"
+  },
+  {
+    "id": "bible-265",
+    "category": "bible",
+    "topic": "Return from Exile",
+    "difficulty": "medium",
+    "prompt": "Who led the first group of exiles back to rebuild the temple?",
+    "choices": ["Zerubbabel", "Ezra", "Nehemiah", "Mordecai"],
+    "explanation": "Zerubbabel, with the priest Jeshua, laid the foundation of the second temple.",
+    "reference": "Ezra 3:1-3"
+  },
+  {
+    "id": "bible-266",
+    "category": "bible",
+    "topic": "Birth of Jesus",
+    "difficulty": "medium",
+    "prompt": "Who took Jesus and Mary to Egypt until Herod died?",
+    "choices": ["Joseph", "James", "John", "Simon"],
+    "explanation": "An angel warned Joseph in a dream, and the family stayed until Herod was dead.",
+    "reference": "Matthew 2:13-15"
+  },
+  {
+    "id": "bible-267",
+    "category": "bible",
+    "topic": "Beatitudes",
+    "difficulty": "medium",
+    "prompt": "What did Jesus say the pure in heart will do?",
+    "choices": ["See God", "Never die again", "Be made rulers", "Understand everything"],
+    "explanation": "Blessed are the pure in heart, for they will see God, Jesus said.",
+    "reference": "Matthew 5:8"
+  },
+  {
+    "id": "bible-268",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "medium",
+    "prompt": "How many times did Jesus say to forgive a brother who sins?",
+    "choices": ["Seventy times seven", "Seven times", "Forty times", "Ten times"],
+    "explanation": "Peter asked if seven was enough; Jesus answered seventy times seven.",
+    "reference": "Matthew 18:21-22"
+  },
+  {
+    "id": "bible-269",
+    "category": "bible",
+    "topic": "Birth of Jesus",
+    "difficulty": "medium",
+    "prompt": "What did the wise men do when they found the child with his mother?",
+    "choices": [
+      "They knelt and worshiped",
+      "They offered a lamb",
+      "They built an altar",
+      "They sang a psalm"
+    ],
+    "explanation": "They opened their treasures and offered gold, frankincense, and myrrh.",
+    "reference": "Matthew 2:9-11"
+  },
+  {
+    "id": "bible-270",
+    "category": "bible",
+    "topic": "Mark",
+    "difficulty": "medium",
+    "prompt": "What did the Son of Man come to do, according to Jesus?",
+    "choices": ["Serve and give his life", "Judge the nations", "Build a temple", "Rule forever"],
+    "explanation": "The Son of Man did not come to be served but to serve and to give his life.",
+    "reference": "Mark 10:42-45"
+  },
+  {
+    "id": "bible-271",
+    "category": "bible",
+    "topic": "Parables",
+    "difficulty": "medium",
+    "prompt": "What did the Good Samaritan pour on the wounded man's wounds?",
+    "choices": ["Oil and wine", "Bread and water", "A linen cloak", "A wooden staff"],
+    "explanation": "He bandaged the man's wounds, pouring on oil and wine, and set him on his animal.",
+    "reference": "Luke 10:33-35"
+  },
+  {
+    "id": "bible-272",
+    "category": "bible",
+    "topic": "Luke",
+    "difficulty": "medium",
+    "prompt": "Who took Jesus' body and laid it in his own tomb?",
+    "choices": ["Joseph of Arimathea", "Nicodemus", "John the disciple", "Simon of Cyrene"],
+    "explanation": "He laid Jesus in his own new tomb, cut from the rock, before the Sabbath.",
+    "reference": "Luke 23:50-53"
+  },
+  {
+    "id": "bible-273",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "medium",
+    "prompt": "How does Jesus say true worshipers will worship the Father?",
+    "choices": [
+      "In spirit and truth",
+      "Only in Jerusalem",
+      "Through the priests",
+      "At fixed hours"
+    ],
+    "explanation": "The hour is coming when true worshipers will worship the Father in spirit and truth.",
+    "reference": "John 4:19-24"
+  },
+  {
+    "id": "bible-274",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "medium",
+    "prompt": "Which sign prompted Jesus to say he is the bread of life?",
+    "choices": [
+      "Feeding the five thousand",
+      "Turning water to wine",
+      "Walking on water",
+      "Raising Lazarus"
+    ],
+    "explanation": "After the crowd ate the loaves, Jesus taught them about the true bread from heaven.",
+    "reference": "John 6:5-14; 6:35"
+  },
+  {
+    "id": "bible-275",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "medium",
+    "prompt": "Who did Jesus question about his love after the resurrection by the sea?",
+    "choices": ["Peter", "Andrew", "James", "Philip"],
+    "explanation": "Three times Jesus asked if he loved him, matching the three denials.",
+    "reference": "John 21:15-19"
+  },
+  {
+    "id": "bible-276",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "medium",
+    "prompt": "Who was struck dead after lying about the price of an offering?",
+    "choices": ["Ananias", "Sapphira", "Simon", "Dorcas"],
+    "explanation": "He withheld part of the price while claiming to give it all, and fell down dead.",
+    "reference": "Acts 5:1-6"
+  },
+  {
+    "id": "bible-277",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "medium",
+    "prompt": "Whose shadow was said to fall on the sick as he passed by?",
+    "choices": ["Peter's", "Paul's", "John's", "Stephen's"],
+    "explanation": "People laid the sick in the street so that his passing shadow might fall on them.",
+    "reference": "Acts 5:14-16"
+  },
+  {
+    "id": "bible-278",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "medium",
+    "prompt": "Before which council were Peter and John questioned for healing a man?",
+    "choices": ["The Sanhedrin", "The Areopagus", "The Roman Senate", "The temple guards"],
+    "explanation": "The high priest and rulers questioned them for teaching the people through Jesus.",
+    "reference": "Acts 4:1-8"
+  },
+  {
+    "id": "bible-279",
+    "category": "bible",
+    "topic": "Romans",
+    "difficulty": "medium",
+    "prompt": "According to Romans 8, what can separate a believer from God's love?",
+    "choices": ["Nothing", "Death", "Angels", "Trouble"],
+    "explanation": "Neither trouble, hardship, persecution, nor anything in all creation can.",
+    "reference": "Romans 8:35-39"
+  },
+  {
+    "id": "bible-280",
+    "category": "bible",
+    "topic": "Romans",
+    "difficulty": "medium",
+    "prompt": "By what are believers to be transformed, says Paul?",
+    "choices": [
+      "The renewing of their minds",
+      "Human wisdom",
+      "A stricter law",
+      "Outer cleanliness"
+    ],
+    "explanation": "Be transformed by the renewing of your mind, so you can discern God's will.",
+    "reference": "Romans 12:1-2"
+  },
+  {
+    "id": "bible-281",
+    "category": "bible",
+    "topic": "1 Corinthians",
+    "difficulty": "medium",
+    "prompt": "What does Paul say the church is, with many parts?",
+    "choices": ["One body", "One flock", "One vineyard", "One tree"],
+    "explanation": "The eye cannot say to the hand, I don't need you; the body has many parts.",
+    "reference": "1 Corinthians 12:12-27"
+  },
+  {
+    "id": "bible-282",
+    "category": "bible",
+    "topic": "2 Corinthians",
+    "difficulty": "medium",
+    "prompt": "What did Paul call the weakness that kept him from pride?",
+    "choices": ["A thorn in the flesh", "A crown", "A vision", "A messenger"],
+    "explanation": "A thorn in the flesh was given so Paul would not boast beyond measure.",
+    "reference": "2 Corinthians 12:7-9"
+  },
+  {
+    "id": "bible-283",
+    "category": "bible",
+    "topic": "Galatians",
+    "difficulty": "medium",
+    "prompt": "With what spirit should one restore a person caught in sin?",
+    "choices": [
+      "In a spirit of gentleness",
+      "With public shame",
+      "By avoiding them",
+      "With strict fasting"
+    ],
+    "explanation": "Restore such a person gently, watching yourself so you won't be tempted.",
+    "reference": "Galatians 6:1"
+  },
+  {
+    "id": "bible-284",
+    "category": "bible",
+    "topic": "Ephesians",
+    "difficulty": "medium",
+    "prompt": "What does Paul say the marriage union reflects?",
+    "choices": [
+      "Christ and his church",
+      "A business partnership",
+      "Two families joined",
+      "Earthly friendship"
+    ],
+    "explanation": "Paul says the one-flesh union points to the profound mystery of Christ and his church.",
+    "reference": "Ephesians 5:25-32"
+  },
+  {
+    "id": "bible-285",
+    "category": "bible",
+    "topic": "Philippians",
+    "difficulty": "medium",
+    "prompt": "In which city were the Christians Paul told to rejoice in the Lord?",
+    "choices": ["Philippi", "Thessalonica", "Corinth", "Ephesus"],
+    "explanation": "Paul wrote from prison to the church he founded in Philippi, his beloved assembly.",
+    "reference": "Philippians 4:4"
+  },
+  {
+    "id": "bible-286",
+    "category": "bible",
+    "topic": "Colossians",
+    "difficulty": "medium",
+    "prompt": "What does Paul tell believers to set their minds on?",
+    "choices": ["Things above", "Riches on earth", "Human traditions", "Food and drink"],
+    "explanation": "Set your minds on things above, not on earthly things, Paul urged.",
+    "reference": "Colossians 3:1-4"
+  },
+  {
+    "id": "bible-287",
+    "category": "bible",
+    "topic": "2 Thessalonians",
+    "difficulty": "medium",
+    "prompt": "What did Paul say should happen to anyone unwilling to work?",
+    "choices": [
+      "Let them not eat",
+      "Let them be silent",
+      "Let them be excommunicated",
+      "Let them give double"
+    ],
+    "explanation": "Paul quoted the rule: the one who is unwilling to work shall not eat.",
+    "reference": "2 Thessalonians 3:6-10"
+  },
+  {
+    "id": "bible-288",
+    "category": "bible",
+    "topic": "1 Timothy",
+    "difficulty": "medium",
+    "prompt": "Whom did Paul leave to set things in order at Ephesus?",
+    "choices": ["Timothy", "Titus", "Luke", "Silas"],
+    "explanation": "Paul urged Timothy to stay at Ephesus and instruct certain men not to teach otherwise.",
+    "reference": "1 Timothy 1:3-4"
+  },
+  {
+    "id": "bible-289",
+    "category": "bible",
+    "topic": "2 Timothy",
+    "difficulty": "medium",
+    "prompt": "What had Paul fought, finished, and kept before his death?",
+    "choices": ["The good fight", "A mighty battle", "The second coming", "The Gentile mission"],
+    "explanation": "I have fought the good fight, I have finished the race, I have kept the faith.",
+    "reference": "2 Timothy 4:6-8"
+  },
+  {
+    "id": "bible-290",
+    "category": "bible",
+    "topic": "Titus",
+    "difficulty": "medium",
+    "prompt": "On which island did Paul leave Titus to appoint elders?",
+    "choices": ["Crete", "Cyprus", "Malta", "Rhodes"],
+    "explanation": "Paul left Titus in Crete to set in order what remained and appoint elders.",
+    "reference": "Titus 1:4-5"
+  },
+  {
+    "id": "bible-291",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "medium",
+    "prompt": "Who is recorded as the oldest man in the Bible, living to be 969 years old?",
+    "choices": ["Methuselah", "Noah", "Adam", "Enoch"],
+    "explanation": "Methuselah lived longer than anyone else in the biblical genealogy before the great flood.",
+    "reference": "Genesis 5:27"
+  },
+  {
+    "id": "bible-292",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "medium",
+    "prompt": "Who was sold to Midianite merchants by his own brothers for twenty shekels of silver?",
+    "choices": ["Joseph", "Benjamin", "Isaac", "Esau"],
+    "explanation": "Out of jealousy, Joseph's brothers sold him into slavery instead of killing him.",
+    "reference": "Genesis 37:28"
+  },
+  {
+    "id": "bible-293",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "medium",
+    "prompt": "Which of Jacob's wives did he love the most and work fourteen years to marry?",
+    "choices": ["Rachel", "Leah", "Rebekah", "Zilpah"],
+    "explanation": "Jacob was tricked into marrying Leah first, but worked another seven years for Rachel.",
+    "reference": "Genesis 29:30"
+  },
+  {
+    "id": "bible-294",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "medium",
+    "prompt": "In the first of the ten plagues that Moses announced, what did the water of the Nile turn into?",
+    "choices": ["Water turned to blood", "Frogs", "Locusts", "Darkness"],
+    "explanation": "Aaron struck the water of the Nile with his staff and it was changed into blood.",
+    "reference": "Exodus 7:20"
+  },
+  {
+    "id": "bible-295",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "medium",
+    "prompt": "What idol did the Israelites build to worship while Moses was on Mount Sinai?",
+    "choices": ["A golden calf", "A bronze serpent", "A silver star", "An iron bull"],
+    "explanation": "Aaron took the people's gold earrings and fashioned them into a calf for them to worship.",
+    "reference": "Exodus 32:4"
+  },
+  {
+    "id": "bible-296",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "medium",
+    "prompt": "What was the name of Moses and Aaron's older sister?",
+    "choices": ["Miriam", "Zipporah", "Jochebed", "Dinah"],
+    "explanation": "Miriam, a prophetess, watched over baby Moses in the river and later led women in worship.",
+    "reference": "Exodus 15:20"
+  },
+  {
+    "id": "bible-297",
+    "category": "bible",
+    "topic": "Joshua",
+    "difficulty": "medium",
+    "prompt": "Who took over leadership of the Israelites after Moses died?",
+    "choices": ["Joshua", "Caleb", "Aaron", "Eleazar"],
+    "explanation": "God appointed Joshua to lead the Israelites across the Jordan River into the Promised Land.",
+    "reference": "Joshua 1:1-2"
+  },
+  {
+    "id": "bible-298",
+    "category": "bible",
+    "topic": "Joshua",
+    "difficulty": "medium",
+    "prompt": "Who hid the Israelite spies on her roof in the city of Jericho?",
+    "choices": ["Rahab", "Ruth", "Deborah", "Jael"],
+    "explanation": "Rahab hid the spies under stalks of flax and asked them to spare her family when Jericho fell.",
+    "reference": "Joshua 2:4-6"
+  },
+  {
+    "id": "bible-299",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "medium",
+    "prompt": "Which judge defeated the massive Midianite army with only 300 men?",
+    "choices": ["Gideon", "Samson", "Jephthah", "Ehud"],
+    "explanation": "God reduced Gideon's army to 300 men so Israel could not boast they saved themselves.",
+    "reference": "Judges 7:7"
+  },
+  {
+    "id": "bible-300",
+    "category": "bible",
+    "topic": "1 Samuel",
+    "difficulty": "medium",
+    "prompt": "Which man from the tribe of Benjamin was chosen to rule Israel when the people demanded a king?",
+    "choices": ["Saul", "David", "Solomon", "Jeroboam"],
+    "explanation": "The people demanded a king, so God chose Saul, a tall and handsome Benjaminite.",
+    "reference": "1 Samuel 10:1"
+  },
+  {
+    "id": "bible-301",
+    "category": "bible",
+    "topic": "1 Samuel",
+    "difficulty": "medium",
+    "prompt": "Who was King Saul's son and David's closest friend?",
+    "choices": ["Jonathan", "Absalom", "Abner", "Ish-Bosheth"],
+    "explanation": "Jonathan and David made a covenant of friendship, and Jonathan protected David from Saul.",
+    "reference": "1 Samuel 18:3"
+  },
+  {
+    "id": "bible-302",
+    "category": "bible",
+    "topic": "2 Samuel",
+    "difficulty": "medium",
+    "prompt": "What prophet confronted King David by telling him a story about a stolen sheep?",
+    "choices": ["Nathan", "Gad", "Samuel", "Elijah"],
+    "explanation": "Nathan used the parable to expose David's sin of adultery with Bathsheba and the murder of Uriah.",
+    "reference": "2 Samuel 12:1-7"
+  },
+  {
+    "id": "bible-303",
+    "category": "bible",
+    "topic": "1 Kings",
+    "difficulty": "medium",
+    "prompt": "What great structure did King Solomon spend seven years building in Jerusalem?",
+    "choices": ["The Temple", "His Palace", "The City Wall", "The Tower of Babel"],
+    "explanation": "Solomon constructed the first permanent temple for the Lord using cedar, stone, and gold.",
+    "reference": "1 Kings 6:38"
+  },
+  {
+    "id": "bible-304",
+    "category": "bible",
+    "topic": "1 Kings",
+    "difficulty": "medium",
+    "prompt": "Which wealthy royal traveled a great distance to test Solomon's wisdom with hard questions?",
+    "choices": ["The Queen of Sheba", "The Queen of Egypt", "Queen Jezebel", "Queen Vashti"],
+    "explanation": "Hearing of his fame, the Queen of Sheba came to test him and was amazed by his answers.",
+    "reference": "1 Kings 10:1"
+  },
+  {
+    "id": "bible-305",
+    "category": "bible",
+    "topic": "1 Kings",
+    "difficulty": "medium",
+    "prompt": "What prophet challenged the prophets of Baal to a contest on Mount Carmel?",
+    "choices": ["Elijah", "Elisha", "Isaiah", "Jeremiah"],
+    "explanation": "God answered Elijah by sending fire from heaven to consume the altar, proving He is the true God.",
+    "reference": "1 Kings 18:36-38"
+  },
+  {
+    "id": "bible-306",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "medium",
+    "prompt": "Who succeeded Elijah as prophet and asked for a double portion of his spirit?",
+    "choices": ["Elisha", "Enoch", "Amos", "Micah"],
+    "explanation": "Elisha watched as Elijah was taken up to heaven in a whirlwind and received his mantle.",
+    "reference": "2 Kings 2:9"
+  },
+  {
+    "id": "bible-307",
+    "category": "bible",
+    "topic": "Nehemiah",
+    "difficulty": "medium",
+    "prompt": "Who was the cupbearer to the Persian king who returned to rebuild Jerusalem's walls?",
+    "choices": ["Nehemiah", "Ezra", "Zerubbabel", "Mordecai"],
+    "explanation": "Nehemiah wept over the ruined city and requested permission from King Artaxerxes to rebuild it.",
+    "reference": "Nehemiah 2:1-5"
+  },
+  {
+    "id": "bible-308",
+    "category": "bible",
+    "topic": "Jeremiah",
+    "difficulty": "medium",
+    "prompt": "Which major prophet is often referred to as the 'Weeping Prophet'?",
+    "choices": ["Jeremiah", "Isaiah", "Ezekiel", "Daniel"],
+    "explanation": "Jeremiah expressed deep sorrow over the sins of his people and the impending destruction of Jerusalem.",
+    "reference": "Jeremiah 9:1"
+  },
+  {
+    "id": "bible-309",
+    "category": "bible",
+    "topic": "Hosea",
+    "difficulty": "medium",
+    "prompt": "Which minor prophet was commanded by God to marry an unfaithful woman named Gomer?",
+    "choices": ["Hosea", "Amos", "Jonah", "Joel"],
+    "explanation": "His marriage symbolized God's enduring love for the unfaithful nation of Israel.",
+    "reference": "Hosea 1:2-3"
+  },
+  {
+    "id": "bible-310",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "medium",
+    "prompt": "Where did Joseph take Mary and baby Jesus to escape King Herod's slaughter?",
+    "choices": ["Egypt", "Syria", "Babylon", "Galilee"],
+    "explanation": "An angel warned Joseph in a dream to flee to Egypt until those trying to kill Jesus were dead.",
+    "reference": "Matthew 2:13-14"
+  },
+  {
+    "id": "bible-311",
+    "category": "bible",
+    "topic": "Gospels",
+    "difficulty": "medium",
+    "prompt": "Which of the four Gospels is NOT considered a Synoptic Gospel?",
+    "choices": ["John", "Matthew", "Mark", "Luke"],
+    "explanation": "Matthew, Mark, and Luke share a similar structure, while John offers a different, distinct perspective.",
+    "reference": "John 1:1"
+  },
+  {
+    "id": "bible-312",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "medium",
+    "prompt": "What was Matthew's profession before he was called to follow Jesus?",
+    "choices": ["Tax collector", "Fisherman", "Tentmaker", "Carpenter"],
+    "explanation": "Jesus saw Matthew sitting at the tax collector's booth and told him to follow him.",
+    "reference": "Matthew 9:9"
+  },
+  {
+    "id": "bible-313",
+    "category": "bible",
+    "topic": "Luke",
+    "difficulty": "medium",
+    "prompt": "Which relative of Mary gave birth to a son who was to prepare the way for Jesus?",
+    "choices": ["Elizabeth", "Mary", "Anna", "Martha"],
+    "explanation": "Elizabeth was barren and old, but an angel promised her husband Zechariah she would have a son.",
+    "reference": "Luke 1:13"
+  },
+  {
+    "id": "bible-314",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "medium",
+    "prompt": "What is the shortest verse in the English Bible?",
+    "choices": ["Jesus wept.", "Rejoice always.", "Pray continually.", "God is love."],
+    "explanation": "Jesus showed deep emotion and compassion as he wept before raising Lazarus from the dead.",
+    "reference": "John 11:35"
+  },
+  {
+    "id": "bible-315",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "medium",
+    "prompt": "Who was the Jewish high priest that presided over the late-night trial of Jesus?",
+    "choices": ["Caiaphas", "Annas", "Pilate", "Herod"],
+    "explanation": "Caiaphas accused Jesus of blasphemy and determined he was worthy of death.",
+    "reference": "Matthew 26:65-66"
+  },
+  {
+    "id": "bible-316",
+    "category": "bible",
+    "topic": "Luke",
+    "difficulty": "medium",
+    "prompt": "Who was forced by Roman soldiers to carry the cross of Jesus?",
+    "choices": ["Simon of Cyrene", "Joseph of Arimathea", "Nicodemus", "John"],
+    "explanation": "As they led Jesus away, they seized Simon, who was on his way in from the country, to carry the cross.",
+    "reference": "Luke 23:26"
+  },
+  {
+    "id": "bible-317",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "medium",
+    "prompt": "What title was written on a sign fastened to the cross above Jesus' head?",
+    "choices": ["King of the Jews", "Son of God", "Prophet of Nazareth", "The Messiah"],
+    "explanation": "Pilate had a notice prepared in Aramaic, Latin, and Greek declaring Jesus the King of the Jews.",
+    "reference": "John 19:19"
+  },
+  {
+    "id": "bible-318",
+    "category": "bible",
+    "topic": "Mark",
+    "difficulty": "medium",
+    "prompt": "Who bravely asked Pontius Pilate for the body of Jesus to bury him?",
+    "choices": ["Joseph of Arimathea", "Peter", "Mary Magdalene", "Nicodemus"],
+    "explanation": "Joseph, a prominent council member, wrapped the body in linen and placed it in his own new tomb.",
+    "reference": "Mark 15:43-46"
+  },
+  {
+    "id": "bible-319",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "medium",
+    "prompt": "Which disciple refused to believe Jesus was alive until he touched his wounds?",
+    "choices": ["Thomas", "Philip", "Bartholomew", "Andrew"],
+    "explanation": "Thomas said he would not believe unless he saw and touched the nail marks in Jesus' hands.",
+    "reference": "John 20:25"
+  },
+  {
+    "id": "bible-320",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "medium",
+    "prompt": "Who was chosen by casting lots to replace Judas Iscariot as an apostle?",
+    "choices": ["Matthias", "Barsabbas", "Paul", "Barnabas"],
+    "explanation": "The apostles prayed and cast lots, and Matthias was added to the eleven apostles.",
+    "reference": "Acts 1:26"
+  },
+  {
+    "id": "bible-321",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "medium",
+    "prompt": "On what Jewish festival did the Holy Spirit descend upon the apostles like tongues of fire?",
+    "choices": ["Pentecost", "Passover", "Tabernacles", "Day of Atonement"],
+    "explanation": "They were all filled with the Holy Spirit and began speaking in other languages.",
+    "reference": "Acts 2:1-4"
+  },
+  {
+    "id": "bible-322",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "medium",
+    "prompt": "Who was the first Christian martyr, stoned to death for preaching about Jesus?",
+    "choices": ["Stephen", "James", "Philip", "Paul"],
+    "explanation": "While being stoned, Stephen looked up to heaven and asked God not to hold the sin against them.",
+    "reference": "Acts 7:59-60"
+  },
+  {
+    "id": "bible-323",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "medium",
+    "prompt": "What Roman centurion had a vision and became the first prominent Gentile convert?",
+    "choices": ["Cornelius", "Julius", "Claudius", "Felix"],
+    "explanation": "Peter preached to Cornelius and his household, and the Holy Spirit fell upon them all.",
+    "reference": "Acts 10:1-2"
+  },
+  {
+    "id": "bible-324",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "medium",
+    "prompt": "What physical trade did the Apostle Paul practice to support himself financially?",
+    "choices": ["Tentmaker", "Carpenter", "Fisherman", "Blacksmith"],
+    "explanation": "Paul stayed and worked with Aquila and Priscilla in Corinth because they were also tentmakers.",
+    "reference": "Acts 18:3"
+  },
+  {
+    "id": "bible-325",
+    "category": "bible",
+    "topic": "Epistles",
+    "difficulty": "medium",
+    "prompt": "Who wrote the majority of the letters (epistles) in the New Testament?",
+    "choices": ["Paul", "Peter", "John", "James"],
+    "explanation": "The Apostle Paul wrote thirteen of the twenty-seven books of the New Testament to various churches.",
+    "reference": "Romans 1:1"
+  },
+  {
+    "id": "bible-326",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "medium",
+    "prompt": "In what city were the disciples of Jesus first called 'Christians'?",
+    "choices": ["Antioch", "Jerusalem", "Rome", "Ephesus"],
+    "explanation": "Barnabas and Saul taught a large number of people in Antioch, where the term was coined.",
+    "reference": "Acts 11:26"
+  },
+  {
+    "id": "bible-327",
+    "category": "bible",
+    "topic": "Revelation",
+    "difficulty": "medium",
+    "prompt": "To which island was the Apostle John exiled when he received the visions in Revelation?",
+    "choices": ["Patmos", "Cyprus", "Malta", "Crete"],
+    "explanation": "John was exiled to the island of Patmos because of his testimony for the word of God.",
+    "reference": "Revelation 1:9"
+  },
+  {
+    "id": "bible-328",
+    "category": "bible",
+    "topic": "Luke",
+    "difficulty": "medium",
+    "prompt": "Which author of a Gospel was not a disciple, but a physician who traveled with Paul?",
+    "choices": ["Luke", "Mark", "Matthew", "John"],
+    "explanation": "Luke, described by Paul as the 'dear doctor', carefully investigated everything to write his Gospel.",
+    "reference": "Colossians 4:14"
+  },
+  {
+    "id": "bible-329",
+    "category": "bible",
+    "topic": "Mark",
+    "difficulty": "medium",
+    "prompt": "What name did the demon inside the possessed man of the Gerasenes give to Jesus?",
+    "choices": ["Legion", "Beelzebub", "Abaddon", "Lucifer"],
+    "explanation": "The evil spirits answered, 'My name is Legion, for we are many,' before being sent into the pigs.",
+    "reference": "Mark 5:9"
+  },
+  {
+    "id": "bible-330",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "medium",
+    "prompt": "How many baskets of broken pieces were left over after Jesus fed the 5,000?",
+    "choices": ["Twelve", "Seven", "Five", "Ten"],
+    "explanation": "After everyone had eaten and was satisfied, the disciples picked up twelve basketfuls of leftovers.",
+    "reference": "Matthew 14:20"
+  },
+  {
+    "id": "bible-331",
+    "category": "bible",
+    "topic": "Daniel",
+    "difficulty": "medium",
+    "prompt": "What arrogant Babylonian king lost his mind and lived like a wild animal for seven years?",
+    "choices": ["Nebuchadnezzar", "Belshazzar", "Darius", "Cyrus"],
+    "explanation": "God humbled Nebuchadnezzar until he acknowledged that the Most High is sovereign over all kingdoms.",
+    "reference": "Daniel 4:33"
+  },
+  {
+    "id": "bible-332",
+    "category": "bible",
+    "topic": "Daniel",
+    "difficulty": "medium",
+    "prompt": "Who translated the mysterious handwriting on the wall during Belshazzar's feast?",
+    "choices": ["Daniel", "Isaiah", "Ezekiel", "Ezra"],
+    "explanation": "Daniel interpreted the words 'Mene, Mene, Tekel, Parsin' declaring the end of Belshazzar's reign.",
+    "reference": "Daniel 5:25-28"
+  },
+  {
+    "id": "bible-333",
+    "category": "bible",
+    "topic": "Philemon",
+    "difficulty": "medium",
+    "prompt": "Which New Testament book is a short letter written to a master about his runaway slave?",
+    "choices": ["Philemon", "Titus", "Jude", "Galatians"],
+    "explanation": "Paul wrote to Philemon urging him to welcome back his runaway slave, Onesimus, as a brother.",
+    "reference": "Philemon 1:15-16"
+  },
+  {
+    "id": "bible-334",
+    "category": "bible",
+    "topic": "New Testament",
+    "difficulty": "medium",
+    "prompt": "How many books are there in the New Testament?",
+    "choices": ["27", "39", "66", "12"],
+    "explanation": "The New Testament consists of 27 books, including Gospels, history, epistles, and prophecy.",
+    "reference": "2 Timothy 3:16"
+  },
+  {
+    "id": "bible-335",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "medium",
+    "prompt": "What was the name of the pool where Jesus sent a blind man to wash his eyes and see?",
+    "choices": ["Siloam", "Bethesda", "Jordan", "Gennesaret"],
+    "explanation": "Jesus put mud on the man's eyes and told him to wash in the Pool of Siloam, and he came home seeing.",
+    "reference": "John 9:7"
+  },
+  {
+    "id": "bible-336",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "medium",
+    "prompt": "Who fell asleep, tumbled out of a third-story window, and was raised back to life by Paul?",
+    "choices": ["Eutychus", "Timothy", "Apollos", "Silas"],
+    "explanation": "Eutychus fell asleep during Paul's long nighttime sermon, but Paul threw himself on him and restored him.",
+    "reference": "Acts 20:9-10"
+  },
+  {
+    "id": "bible-337",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "medium",
+    "prompt": "Who were the husband and wife that taught Apollos the way of God more adequately?",
+    "choices": [
+      "Aquila and Priscilla",
+      "Ananias and Sapphira",
+      "Zechariah and Elizabeth",
+      "Peter and his wife"
+    ],
+    "explanation": "They heard Apollos preaching passionately but with incomplete knowledge, so they invited him to their home.",
+    "reference": "Acts 18:26"
+  },
+  {
+    "id": "bible-338",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "medium",
+    "prompt": "Which female prophet and judge led Israel into a victorious battle with Barak?",
+    "choices": ["Deborah", "Jael", "Miriam", "Huldah"],
+    "explanation": "Deborah held court under a palm tree and commanded Barak to lead troops against the Canaanites.",
+    "reference": "Judges 4:4-6"
+  },
+  {
+    "id": "bible-339",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "medium",
+    "prompt": "What is the name of the mountain where Noah's ark finally came to rest?",
+    "choices": ["Mount Ararat", "Mount Sinai", "Mount Nebo", "Mount Zion"],
+    "explanation": "As the floodwaters receded after many months, the ark settled on the mountains of Ararat.",
+    "reference": "Genesis 8:4"
+  },
+  {
+    "id": "bible-340",
+    "category": "bible",
+    "topic": "Numbers",
+    "difficulty": "medium",
+    "prompt": "How many spies did Moses send to explore the land of Canaan?",
+    "choices": ["Twelve", "Two", "Ten", "Seven"],
+    "explanation": "Moses sent one leader from each of the twelve ancestral tribes to scout the Promised Land.",
+    "reference": "Numbers 13:2"
+  },
+  {
+    "id": "bible-341",
     "category": "bible",
     "topic": "Genesis",
     "difficulty": "hard",
@@ -1020,7 +3540,7 @@
     "reference": "Genesis 32:30"
   },
   {
-    "id": "bible-102",
+    "id": "bible-342",
     "category": "bible",
     "topic": "Exodus",
     "difficulty": "hard",
@@ -1030,7 +3550,7 @@
     "reference": "Exodus 3:1"
   },
   {
-    "id": "bible-103",
+    "id": "bible-343",
     "category": "bible",
     "topic": "Numbers",
     "difficulty": "hard",
@@ -1040,7 +3560,7 @@
     "reference": "Numbers 21:9"
   },
   {
-    "id": "bible-104",
+    "id": "bible-344",
     "category": "bible",
     "topic": "Deuteronomy",
     "difficulty": "hard",
@@ -1050,7 +3570,7 @@
     "reference": "Deuteronomy 34:1-5"
   },
   {
-    "id": "bible-105",
+    "id": "bible-345",
     "category": "bible",
     "topic": "Joshua",
     "difficulty": "hard",
@@ -1060,7 +3580,7 @@
     "reference": "Joshua 7:1-5"
   },
   {
-    "id": "bible-106",
+    "id": "bible-346",
     "category": "bible",
     "topic": "Judges",
     "difficulty": "hard",
@@ -1070,7 +3590,7 @@
     "reference": "Judges 4:21"
   },
   {
-    "id": "bible-107",
+    "id": "bible-347",
     "category": "bible",
     "topic": "Ruth",
     "difficulty": "hard",
@@ -1080,7 +3600,7 @@
     "reference": "Ruth 4:17"
   },
   {
-    "id": "bible-108",
+    "id": "bible-348",
     "category": "bible",
     "topic": "1 Samuel",
     "difficulty": "hard",
@@ -1090,7 +3610,7 @@
     "reference": "1 Samuel 25:39-42"
   },
   {
-    "id": "bible-109",
+    "id": "bible-349",
     "category": "bible",
     "topic": "2 Samuel",
     "difficulty": "hard",
@@ -1100,7 +3620,7 @@
     "reference": "2 Samuel 18:9"
   },
   {
-    "id": "bible-110",
+    "id": "bible-350",
     "category": "bible",
     "topic": "1 Kings",
     "difficulty": "hard",
@@ -1110,7 +3630,7 @@
     "reference": "1 Kings 19:8-13"
   },
   {
-    "id": "bible-111",
+    "id": "bible-351",
     "category": "bible",
     "topic": "1 Kings",
     "difficulty": "hard",
@@ -1120,7 +3640,7 @@
     "reference": "1 Kings 12:20"
   },
   {
-    "id": "bible-112",
+    "id": "bible-352",
     "category": "bible",
     "topic": "2 Kings",
     "difficulty": "hard",
@@ -1130,7 +3650,7 @@
     "reference": "2 Kings 5:14"
   },
   {
-    "id": "bible-113",
+    "id": "bible-353",
     "category": "bible",
     "topic": "2 Kings",
     "difficulty": "hard",
@@ -1140,7 +3660,7 @@
     "reference": "2 Kings 20:1-6"
   },
   {
-    "id": "bible-114",
+    "id": "bible-354",
     "category": "bible",
     "topic": "2 Kings",
     "difficulty": "hard",
@@ -1150,7 +3670,7 @@
     "reference": "2 Kings 22:1"
   },
   {
-    "id": "bible-115",
+    "id": "bible-355",
     "category": "bible",
     "topic": "1 Chronicles",
     "difficulty": "hard",
@@ -1160,7 +3680,7 @@
     "reference": "1 Chronicles 4:10"
   },
   {
-    "id": "bible-116",
+    "id": "bible-356",
     "category": "bible",
     "topic": "Return from Exile",
     "difficulty": "hard",
@@ -1170,7 +3690,7 @@
     "reference": "Ezra 1:1-3"
   },
   {
-    "id": "bible-117",
+    "id": "bible-357",
     "category": "bible",
     "topic": "Esther",
     "difficulty": "hard",
@@ -1180,7 +3700,7 @@
     "reference": "Esther 9:24-26"
   },
   {
-    "id": "bible-118",
+    "id": "bible-358",
     "category": "bible",
     "topic": "Job",
     "difficulty": "hard",
@@ -1190,7 +3710,7 @@
     "reference": "Job 2:11"
   },
   {
-    "id": "bible-119",
+    "id": "bible-359",
     "category": "bible",
     "topic": "Psalms",
     "difficulty": "hard",
@@ -1200,7 +3720,7 @@
     "reference": "Psalm 46:10"
   },
   {
-    "id": "bible-120",
+    "id": "bible-360",
     "category": "bible",
     "topic": "Isaiah",
     "difficulty": "hard",
@@ -1215,7 +3735,7 @@
     "reference": "Isaiah 6:6-7"
   },
   {
-    "id": "bible-121",
+    "id": "bible-361",
     "category": "bible",
     "topic": "Prophets",
     "difficulty": "hard",
@@ -1225,7 +3745,7 @@
     "reference": "Jeremiah 38:6"
   },
   {
-    "id": "bible-122",
+    "id": "bible-362",
     "category": "bible",
     "topic": "Jeremiah",
     "difficulty": "hard",
@@ -1235,7 +3755,7 @@
     "reference": "Jeremiah 18:2-6"
   },
   {
-    "id": "bible-123",
+    "id": "bible-363",
     "category": "bible",
     "topic": "Ezekiel",
     "difficulty": "hard",
@@ -1245,7 +3765,7 @@
     "reference": "Ezekiel 1:6"
   },
   {
-    "id": "bible-124",
+    "id": "bible-364",
     "category": "bible",
     "topic": "Daniel",
     "difficulty": "hard",
@@ -1255,7 +3775,7 @@
     "reference": "Daniel 5:1-5"
   },
   {
-    "id": "bible-125",
+    "id": "bible-365",
     "category": "bible",
     "topic": "Prophets",
     "difficulty": "hard",
@@ -1265,7 +3785,7 @@
     "reference": "Hosea 1:2-3"
   },
   {
-    "id": "bible-126",
+    "id": "bible-366",
     "category": "bible",
     "topic": "Prophets",
     "difficulty": "hard",
@@ -1275,7 +3795,7 @@
     "reference": "Micah 5:2"
   },
   {
-    "id": "bible-127",
+    "id": "bible-367",
     "category": "bible",
     "topic": "Matthew",
     "difficulty": "hard",
@@ -1285,7 +3805,7 @@
     "reference": "Matthew 26:57"
   },
   {
-    "id": "bible-128",
+    "id": "bible-368",
     "category": "bible",
     "topic": "Mark",
     "difficulty": "hard",
@@ -1295,7 +3815,7 @@
     "reference": "Mark 10:46"
   },
   {
-    "id": "bible-129",
+    "id": "bible-369",
     "category": "bible",
     "topic": "Mark",
     "difficulty": "hard",
@@ -1305,7 +3825,7 @@
     "reference": "Mark 5:22-42"
   },
   {
-    "id": "bible-130",
+    "id": "bible-370",
     "category": "bible",
     "topic": "Luke",
     "difficulty": "hard",
@@ -1315,7 +3835,7 @@
     "reference": "Luke 2:42-46"
   },
   {
-    "id": "bible-131",
+    "id": "bible-371",
     "category": "bible",
     "topic": "Luke",
     "difficulty": "hard",
@@ -1325,7 +3845,7 @@
     "reference": "Luke 1:3"
   },
   {
-    "id": "bible-132",
+    "id": "bible-372",
     "category": "bible",
     "topic": "John",
     "difficulty": "hard",
@@ -1335,7 +3855,7 @@
     "reference": "John 4:5-6"
   },
   {
-    "id": "bible-133",
+    "id": "bible-373",
     "category": "bible",
     "topic": "Acts",
     "difficulty": "hard",
@@ -1345,7 +3865,7 @@
     "reference": "Acts 1:26"
   },
   {
-    "id": "bible-134",
+    "id": "bible-374",
     "category": "bible",
     "topic": "Acts",
     "difficulty": "hard",
@@ -1355,7 +3875,7 @@
     "reference": "Acts 16:12-25"
   },
   {
-    "id": "bible-135",
+    "id": "bible-375",
     "category": "bible",
     "topic": "Acts",
     "difficulty": "hard",
@@ -1365,7 +3885,7 @@
     "reference": "Acts 10:1-5"
   },
   {
-    "id": "bible-136",
+    "id": "bible-376",
     "category": "bible",
     "topic": "1 Corinthians",
     "difficulty": "hard",
@@ -1375,7 +3895,7 @@
     "reference": "1 Corinthians 3:6"
   },
   {
-    "id": "bible-137",
+    "id": "bible-377",
     "category": "bible",
     "topic": "Hebrews",
     "difficulty": "hard",
@@ -1385,7 +3905,7 @@
     "reference": "Hebrews 11:5"
   },
   {
-    "id": "bible-138",
+    "id": "bible-378",
     "category": "bible",
     "topic": "2 Timothy",
     "difficulty": "hard",
@@ -1395,7 +3915,7 @@
     "reference": "2 Timothy 1:5"
   },
   {
-    "id": "bible-139",
+    "id": "bible-379",
     "category": "bible",
     "topic": "Philemon",
     "difficulty": "hard",
@@ -1405,7 +3925,7 @@
     "reference": "Philemon 1:10"
   },
   {
-    "id": "bible-140",
+    "id": "bible-380",
     "category": "bible",
     "topic": "Revelation",
     "difficulty": "hard",
@@ -1415,207 +3935,7 @@
     "reference": "Revelation 3:14-16"
   },
   {
-    "id": "bible-141",
-    "category": "bible",
-    "topic": "Matthew",
-    "difficulty": "easy",
-    "prompt": "For how many days did Jesus fast in the wilderness before the devil tempted him?",
-    "choices": ["Forty", "Seven", "Twelve", "Three"],
-    "explanation": "Jesus fasted forty days and forty nights, and then the tempter came to him.",
-    "reference": "Matthew 4:1-3"
-  },
-  {
-    "id": "bible-142",
-    "category": "bible",
-    "topic": "Matthew",
-    "difficulty": "easy",
-    "prompt": "To which country did Joseph take Mary and the young Jesus to escape King Herod?",
-    "choices": ["Egypt", "Syria", "Babylon", "Moab"],
-    "explanation": "An angel warned Joseph in a dream, so he took the child and his mother by night and fled to Egypt.",
-    "reference": "Matthew 2:13-14"
-  },
-  {
-    "id": "bible-143",
-    "category": "bible",
-    "topic": "Deuteronomy",
-    "difficulty": "easy",
-    "prompt": "Who took over leading Israel after Moses died?",
-    "choices": ["Joshua", "Caleb", "Aaron", "Eleazar"],
-    "explanation": "Moses had laid his hands on Joshua son of Nun, and after Moses died the Israelites listened to Joshua.",
-    "reference": "Deuteronomy 34:9"
-  },
-  {
-    "id": "bible-144",
-    "category": "bible",
-    "topic": "Deuteronomy",
-    "difficulty": "easy",
-    "prompt": "How many commandments did God write on the tablets of stone?",
-    "choices": ["Ten", "Twelve", "Seven", "Five"],
-    "explanation": "Moses recalls that the Lord wrote the Ten Commandments on the tablets and gave them to him.",
-    "reference": "Deuteronomy 10:4"
-  },
-  {
-    "id": "bible-145",
-    "category": "bible",
-    "topic": "Matthew",
-    "difficulty": "easy",
-    "prompt": "Jesus told his followers they are the salt of the earth and the what of the world?",
-    "choices": ["The light", "The hope", "The bread", "The strength"],
-    "explanation": "In the Sermon on the Mount Jesus said, \"You are the salt of the earth\" and \"You are the light of the world.\"",
-    "reference": "Matthew 5:13-14"
-  },
-  {
-    "id": "bible-146",
-    "category": "bible",
-    "topic": "Matthew",
-    "difficulty": "easy",
-    "prompt": "Which of these was one of the gifts the wise men gave to the child Jesus?",
-    "choices": ["Frankincense", "Silver", "Pearls", "Olive oil"],
-    "explanation": "The wise men opened their treasures and gave him gold, frankincense and myrrh.",
-    "reference": "Matthew 2:11"
-  },
-  {
-    "id": "bible-147",
-    "category": "bible",
-    "topic": "Isaiah",
-    "difficulty": "easy",
-    "prompt": "In Isaiah 9:6, the promised child is called the Prince of what?",
-    "choices": ["Peace", "Glory", "Light", "Life"],
-    "explanation": "Isaiah says he will be called Wonderful Counsellor, Mighty God, Everlasting Father, Prince of Peace.",
-    "reference": "Isaiah 9:6"
-  },
-  {
-    "id": "bible-148",
-    "category": "bible",
-    "topic": "2 Samuel",
-    "difficulty": "easy",
-    "prompt": "Which king danced before the Lord with all his might as the ark was brought into Jerusalem?",
-    "choices": ["David", "Saul", "Solomon", "Hezekiah"],
-    "explanation": "As the ark of the Lord was brought into the city of David, David danced before the Lord with all his might.",
-    "reference": "2 Samuel 6:14-16"
-  },
-  {
-    "id": "bible-149",
-    "category": "bible",
-    "topic": "Ephesians",
-    "difficulty": "easy",
-    "prompt": "Ephesians 6:1 tells children to obey whom in the Lord, because this is right?",
-    "choices": ["Their parents", "Their teachers", "Their rulers", "Their elders"],
-    "explanation": "Paul writes, \"Children, obey your parents in the Lord, for this is right.\"",
-    "reference": "Ephesians 6:1"
-  },
-  {
-    "id": "bible-150",
-    "category": "bible",
-    "topic": "Revelation",
-    "difficulty": "easy",
-    "prompt": "In Revelation 1:8, the Lord says, \"I am the Alpha and the...\" what?",
-    "choices": ["Omega", "Beta", "Delta", "Sigma"],
-    "explanation": "Alpha and Omega are the first and last letters of the Greek alphabet, meaning the beginning and the end.",
-    "reference": "Revelation 1:8"
-  },
-  {
-    "id": "bible-151",
-    "category": "bible",
-    "topic": "2 Samuel",
-    "difficulty": "medium",
-    "prompt": "Which prophet told David a story about a rich man who took a poor man's only lamb?",
-    "choices": ["Nathan", "Gad", "Samuel", "Elijah"],
-    "explanation": "Nathan told David the story, then said to him, \"You are the man,\" about his sin with Bathsheba.",
-    "reference": "2 Samuel 12:1-7"
-  },
-  {
-    "id": "bible-152",
-    "category": "bible",
-    "topic": "Esther",
-    "difficulty": "medium",
-    "prompt": "Which queen refused to come when the king sent for her during his feast?",
-    "choices": ["Vashti", "Jezebel", "Michal", "Athaliah"],
-    "explanation": "Queen Vashti refused to come at the king's command, and he later chose Esther to be queen in her place.",
-    "reference": "Esther 1:10-12"
-  },
-  {
-    "id": "bible-153",
-    "category": "bible",
-    "topic": "Job",
-    "difficulty": "medium",
-    "prompt": "When Job was struck with painful sores, what did his wife tell him to do?",
-    "choices": ["Curse God and die", "Pray for healing", "Offer a sacrifice", "Go to his friends"],
-    "explanation": "Job's wife asked if he was still holding on to his integrity and told him to curse God and die.",
-    "reference": "Job 2:7-9"
-  },
-  {
-    "id": "bible-154",
-    "category": "bible",
-    "topic": "2 Kings",
-    "difficulty": "medium",
-    "prompt": "Which prophet made an iron axe head float after it fell into the water?",
-    "choices": ["Elisha", "Elijah", "Isaiah", "Nathan"],
-    "explanation": "Elisha cut a stick and threw it where the borrowed axe head had sunk, and the iron floated.",
-    "reference": "2 Kings 6:5-7"
-  },
-  {
-    "id": "bible-155",
-    "category": "bible",
-    "topic": "Nehemiah",
-    "difficulty": "medium",
-    "prompt": "What was Nehemiah's job in the palace of the king of Persia?",
-    "choices": ["Cupbearer", "Baker", "Scribe", "Gatekeeper"],
-    "explanation": "Nehemiah says, \"I was the king's cupbearer,\" and served wine to King Artaxerxes.",
-    "reference": "Nehemiah 1:11; 2:1"
-  },
-  {
-    "id": "bible-156",
-    "category": "bible",
-    "topic": "Isaiah",
-    "difficulty": "medium",
-    "prompt": "Who answered God's call by saying, \"Here am I. Send me!\"?",
-    "choices": ["Isaiah", "Jeremiah", "Samuel", "Moses"],
-    "explanation": "When the Lord asked whom he should send, Isaiah answered, \"Here am I. Send me!\"",
-    "reference": "Isaiah 6:8"
-  },
-  {
-    "id": "bible-157",
-    "category": "bible",
-    "topic": "Romans",
-    "difficulty": "medium",
-    "prompt": "Romans 3:23 says all have sinned and fall short of the what of God?",
-    "choices": ["Glory", "Kingdom", "Mercy", "Law"],
-    "explanation": "Romans 3:23 says all have sinned and fall short of the glory of God.",
-    "reference": "Romans 3:23"
-  },
-  {
-    "id": "bible-158",
-    "category": "bible",
-    "topic": "Philippians",
-    "difficulty": "medium",
-    "prompt": "Philippians 2:10 says that at the name of Jesus every what should bow?",
-    "choices": ["Knee", "Head", "Nation", "Heart"],
-    "explanation": "Paul writes that at the name of Jesus every knee should bow, in heaven and on earth and under the earth.",
-    "reference": "Philippians 2:10"
-  },
-  {
-    "id": "bible-159",
-    "category": "bible",
-    "topic": "Hebrews",
-    "difficulty": "medium",
-    "prompt": "Which book says \"Jesus Christ is the same yesterday and today and forever\"?",
-    "choices": ["Hebrews", "James", "1 John", "Colossians"],
-    "explanation": "The line comes near the end of the letter to the Hebrews, in chapter 13.",
-    "reference": "Hebrews 13:8"
-  },
-  {
-    "id": "bible-160",
-    "category": "bible",
-    "topic": "2 Chronicles",
-    "difficulty": "medium",
-    "prompt": "Which book contains \"If my people, who are called by my name, will humble themselves and pray\"?",
-    "choices": ["2 Chronicles", "1 Kings", "Deuteronomy", "Isaiah"],
-    "explanation": "God spoke these words to Solomon at night after the temple was dedicated, in 2 Chronicles 7:14.",
-    "reference": "2 Chronicles 7:14"
-  },
-  {
-    "id": "bible-161",
+    "id": "bible-381",
     "category": "bible",
     "topic": "Obadiah",
     "difficulty": "hard",
@@ -1625,7 +3945,7 @@
     "reference": "Obadiah 1:1"
   },
   {
-    "id": "bible-162",
+    "id": "bible-382",
     "category": "bible",
     "topic": "Job",
     "difficulty": "hard",
@@ -1635,7 +3955,7 @@
     "reference": "Job 1:1"
   },
   {
-    "id": "bible-163",
+    "id": "bible-383",
     "category": "bible",
     "topic": "2 Samuel",
     "difficulty": "hard",
@@ -1645,7 +3965,7 @@
     "reference": "2 Samuel 6:6-7"
   },
   {
-    "id": "bible-164",
+    "id": "bible-384",
     "category": "bible",
     "topic": "Nehemiah",
     "difficulty": "hard",
@@ -1655,7 +3975,7 @@
     "reference": "Nehemiah 6:15"
   },
   {
-    "id": "bible-165",
+    "id": "bible-385",
     "category": "bible",
     "topic": "Jeremiah",
     "difficulty": "hard",
@@ -1665,7 +3985,7 @@
     "reference": "Jeremiah 36:4"
   },
   {
-    "id": "bible-166",
+    "id": "bible-386",
     "category": "bible",
     "topic": "2 Kings",
     "difficulty": "hard",
@@ -1675,7 +3995,7 @@
     "reference": "2 Kings 4:8-37"
   },
   {
-    "id": "bible-167",
+    "id": "bible-387",
     "category": "bible",
     "topic": "Ezra",
     "difficulty": "hard",
@@ -1685,7 +4005,7 @@
     "reference": "Ezra 5:1-2"
   },
   {
-    "id": "bible-168",
+    "id": "bible-388",
     "category": "bible",
     "topic": "2 Chronicles",
     "difficulty": "hard",
@@ -1695,7 +4015,7 @@
     "reference": "2 Chronicles 26:16-21"
   },
   {
-    "id": "bible-169",
+    "id": "bible-389",
     "category": "bible",
     "topic": "Revelation",
     "difficulty": "hard",
@@ -1705,7 +4025,7 @@
     "reference": "Revelation 4:4"
   },
   {
-    "id": "bible-170",
+    "id": "bible-390",
     "category": "bible",
     "topic": "1 Peter",
     "difficulty": "hard",
@@ -1715,7 +4035,7 @@
     "reference": "1 Peter 3:20"
   },
   {
-    "id": "bible-171",
+    "id": "bible-391",
     "category": "bible",
     "topic": "James",
     "difficulty": "hard",
@@ -1725,7 +4045,7 @@
     "reference": "James 5:17"
   },
   {
-    "id": "bible-172",
+    "id": "bible-392",
     "category": "bible",
     "topic": "Deuteronomy",
     "difficulty": "hard",
@@ -1735,7 +4055,7 @@
     "reference": "Deuteronomy 8:3"
   },
   {
-    "id": "bible-173",
+    "id": "bible-393",
     "category": "bible",
     "topic": "Habakkuk",
     "difficulty": "hard",
@@ -1745,7 +4065,7 @@
     "reference": "Habakkuk 3:17-18"
   },
   {
-    "id": "bible-174",
+    "id": "bible-394",
     "category": "bible",
     "topic": "Zechariah",
     "difficulty": "hard",
@@ -1755,7 +4075,7 @@
     "reference": "Zechariah 9:9"
   },
   {
-    "id": "bible-175",
+    "id": "bible-395",
     "category": "bible",
     "topic": "Ezekiel",
     "difficulty": "hard",
@@ -1765,7 +4085,7 @@
     "reference": "Ezekiel 3:1-3"
   },
   {
-    "id": "bible-176",
+    "id": "bible-396",
     "category": "bible",
     "topic": "Philippians",
     "difficulty": "hard",
@@ -1775,7 +4095,7 @@
     "reference": "Philippians 3:5"
   },
   {
-    "id": "bible-177",
+    "id": "bible-397",
     "category": "bible",
     "topic": "Lamentations",
     "difficulty": "hard",
@@ -1785,7 +4105,7 @@
     "reference": "Lamentations 3:22-23"
   },
   {
-    "id": "bible-178",
+    "id": "bible-398",
     "category": "bible",
     "topic": "Psalms",
     "difficulty": "hard",
@@ -1795,7 +4115,7 @@
     "reference": "Psalm 24:1"
   },
   {
-    "id": "bible-179",
+    "id": "bible-399",
     "category": "bible",
     "topic": "Amos",
     "difficulty": "hard",
@@ -1805,7 +4125,7 @@
     "reference": "Amos 1:1; 7:14-15"
   },
   {
-    "id": "bible-180",
+    "id": "bible-400",
     "category": "bible",
     "topic": "Revelation",
     "difficulty": "hard",
@@ -1813,5 +4133,1235 @@
     "choices": ["Smyrna", "Ephesus", "Sardis", "Thyatira"],
     "explanation": "Jesus told the suffering church in Smyrna, \"Be faithful unto death, and I will give you the crown of life.\"",
     "reference": "Revelation 2:8-10"
+  },
+  {
+    "id": "bible-401",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "hard",
+    "prompt": "Which man was the father of Enoch, the seventh from Adam?",
+    "choices": ["Jared", "Methuselah", "Lamech", "Enos"],
+    "explanation": "Jared fathered Enoch and lived to see him walk with God in his generations.",
+    "reference": "Genesis 5:15-18"
+  },
+  {
+    "id": "bible-402",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "hard",
+    "prompt": "How many years did Methuselah live?",
+    "choices": [
+      "Nine hundred sixty-nine",
+      "Nine hundred thirty",
+      "Seven hundred seventy-seven",
+      "Eight hundred seventy-five"
+    ],
+    "explanation": "Methuselah, the longest-lived man in Scripture, died at 969.",
+    "reference": "Genesis 5:27"
+  },
+  {
+    "id": "bible-403",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "hard",
+    "prompt": "What did Abraham name the place where God provided the ram?",
+    "choices": ["The Lord will provide", "Mount Nebo", "The mountain of God", "Mount Horeb"],
+    "explanation": "Abraham called the place Jehovah-jireh, which means the Lord will provide.",
+    "reference": "Genesis 22:14"
+  },
+  {
+    "id": "bible-404",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "hard",
+    "prompt": "In which cave did Abraham bury Sarah?",
+    "choices": [
+      "The cave of Machpelah",
+      "The cave of Adullam",
+      "The tomb of Rachel",
+      "The well of Bethlehem"
+    ],
+    "explanation": "Abraham paid full price for the field and buried Sarah in the cave at Mamre.",
+    "reference": "Genesis 23:16-20"
+  },
+  {
+    "id": "bible-405",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "hard",
+    "prompt": "What name did Moses give his first son, born in Midian?",
+    "choices": ["Gershom", "Eliezer", "Joshua", "Caleb"],
+    "explanation": "Moses named him Gershom, saying he had been a stranger in a foreign land.",
+    "reference": "Exodus 2:22"
+  },
+  {
+    "id": "bible-406",
+    "category": "bible",
+    "topic": "Leviticus",
+    "difficulty": "hard",
+    "prompt": "Which of Aaron's sons was struck down for offering unauthorized fire?",
+    "choices": ["Nadab", "Eleazar", "Ithamar", "Moses"],
+    "explanation": "Nadab and Abihu offered strange fire, and fire came out from the Lord's presence.",
+    "reference": "Leviticus 10:1-2"
+  },
+  {
+    "id": "bible-407",
+    "category": "bible",
+    "topic": "Numbers",
+    "difficulty": "hard",
+    "prompt": "How many Israelites died in the plague after the Baal Peor incident?",
+    "choices": ["Twenty-four thousand", "Fourteen thousand", "Twelve thousand", "Seventy thousand"],
+    "explanation": "The plague struck when the people joined the Baal of Peor, and 24,000 died.",
+    "reference": "Numbers 25:6-9"
+  },
+  {
+    "id": "bible-408",
+    "category": "bible",
+    "topic": "Numbers",
+    "difficulty": "hard",
+    "prompt": "What did Aaron's staff do overnight before the tent of meeting?",
+    "choices": [
+      "It budded and bore almonds",
+      "It turned into a serpent",
+      "It split in two",
+      "It caught fire"
+    ],
+    "explanation": "Overnight it sprouted, budded, and ripened almonds, as a sign of priesthood.",
+    "reference": "Numbers 17:8"
+  },
+  {
+    "id": "bible-409",
+    "category": "bible",
+    "topic": "Deuteronomy",
+    "difficulty": "hard",
+    "prompt": "How many cities of refuge did Moses set apart east of the Jordan?",
+    "choices": ["Three", "Six", "Seven", "Twelve"],
+    "explanation": "Moses named Bezer, Ramoth, and Golan as places of safety east of the river.",
+    "reference": "Deuteronomy 4:41-43"
+  },
+  {
+    "id": "bible-410",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "hard",
+    "prompt": "Which patriarch's bones were carried out of Egypt in a coffin?",
+    "choices": ["Joseph", "Judah", "Benjamin", "Levi"],
+    "explanation": "Joseph made the Israelites swear to carry his bones when God led them out.",
+    "reference": "Exodus 13:19"
+  },
+  {
+    "id": "bible-411",
+    "category": "bible",
+    "topic": "Joshua",
+    "difficulty": "hard",
+    "prompt": "Over which two places did Joshua command the sun to stand still?",
+    "choices": ["Gibeon and Aijalon", "Jericho and Ai", "Hebron and Debir", "Bethel and Gilgal"],
+    "explanation": "The sun halted in the middle of the sky and did not move down for about a day.",
+    "reference": "Joshua 10:12-13"
+  },
+  {
+    "id": "bible-412",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "hard",
+    "prompt": "Which left-handed judge killed the king of Moab in his upper room?",
+    "choices": ["Ehud", "Shamgar", "Gideon", "Tola"],
+    "explanation": "Ehud, who could use either hand, struck the obese king and escaped through the porch.",
+    "reference": "Judges 3:15-21"
+  },
+  {
+    "id": "bible-413",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "hard",
+    "prompt": "Whom did Jephthah sacrifice to keep his vow?",
+    "choices": ["His daughter", "His firstborn son", "A lamb", "His wife"],
+    "explanation": "His only child came out to meet him with dancing, and he did as he had vowed.",
+    "reference": "Judges 11:30-40"
+  },
+  {
+    "id": "bible-414",
+    "category": "bible",
+    "topic": "Ruth",
+    "difficulty": "hard",
+    "prompt": "Which woman, once of Jericho, was Boaz's mother?",
+    "choices": ["Rahab", "Naomi", "Orpah", "Ruth"],
+    "explanation": "The genealogy in Ruth ends with Boaz, whose mother was Rahab of Jericho.",
+    "reference": "Ruth 4:20-21; Matthew 1:5"
+  },
+  {
+    "id": "bible-415",
+    "category": "bible",
+    "topic": "1 Samuel",
+    "difficulty": "hard",
+    "prompt": "What were the names of Samuel's two sons?",
+    "choices": [
+      "Joel and Abijah",
+      "Nadab and Abihu",
+      "Hophni and Phinehas",
+      "Gideon and Abimelech"
+    ],
+    "explanation": "The corrupt sons judged at Beer-sheba and caused the people to demand a king.",
+    "reference": "1 Samuel 8:1-3"
+  },
+  {
+    "id": "bible-416",
+    "category": "bible",
+    "topic": "1 Samuel",
+    "difficulty": "hard",
+    "prompt": "What did Hannah do as she prayed before the Lord without words?",
+    "choices": [
+      "Moved her lips silently",
+      "Wept aloud in the court",
+      "Sat with covered eyes",
+      "Tore her garments"
+    ],
+    "explanation": "Eli thought she was drunk because her lips moved but no sound came out.",
+    "reference": "1 Samuel 1:12-13"
+  },
+  {
+    "id": "bible-417",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "hard",
+    "prompt": "What fell on Gehazi for his greed in taking Naaman's gift?",
+    "choices": ["Leprosy", "Blindness", "A wasting disease", "Sudden death"],
+    "explanation": "Elisha said the leprosy of Naaman would cling to Gehazi and his descendants forever.",
+    "reference": "2 Kings 5:20-27"
+  },
+  {
+    "id": "bible-418",
+    "category": "bible",
+    "topic": "1 Chronicles",
+    "difficulty": "hard",
+    "prompt": "Which Levite musician led the thanksgiving songs in David's time?",
+    "choices": ["Asaph", "Heman", "Korah", "Ethan"],
+    "explanation": "David set Asaph and his relatives to prophesy with lyres and trumpets.",
+    "reference": "1 Chronicles 16:4-7"
+  },
+  {
+    "id": "bible-419",
+    "category": "bible",
+    "topic": "2 Chronicles",
+    "difficulty": "hard",
+    "prompt": "Which royal woman seized Judah's throne and tried to kill David's heirs?",
+    "choices": ["Athaliah", "Jezebel", "Vashti", "Herodias"],
+    "explanation": "Athaliah killed the royal princes, but a baby was hidden away in the temple.",
+    "reference": "2 Chronicles 22:10-12"
+  },
+  {
+    "id": "bible-420",
+    "category": "bible",
+    "topic": "Ezra",
+    "difficulty": "hard",
+    "prompt": "How many people returned from exile in the first census?",
+    "choices": [
+      "Forty-two thousand three hundred sixty",
+      "One hundred twenty thousand",
+      "Seventy thousand",
+      "Twelve thousand"
+    ],
+    "explanation": "With their servants and animals, the whole company was much larger still.",
+    "reference": "Ezra 2:64-65"
+  },
+  {
+    "id": "bible-421",
+    "category": "bible",
+    "topic": "Nehemiah",
+    "difficulty": "hard",
+    "prompt": "What did Nehemiah do when the nobles charged their own people interest?",
+    "choices": [
+      "He rebuked the nobles",
+      "He taxed their fields",
+      "He arrested them at once",
+      "He sold his own grain"
+    ],
+    "explanation": "Nehemiah was angry and made the officials promise to return what they charged.",
+    "reference": "Nehemiah 5:6-11"
+  },
+  {
+    "id": "bible-422",
+    "category": "bible",
+    "topic": "Esther",
+    "difficulty": "hard",
+    "prompt": "How many provinces did Ahasuerus rule from India to Cush?",
+    "choices": [
+      "One hundred twenty-seven",
+      "One hundred fifty",
+      "One hundred twenty",
+      "Ninety-five"
+    ],
+    "explanation": "The king's realm stretched from India in the east to Cush in the west.",
+    "reference": "Esther 1:1"
+  },
+  {
+    "id": "bible-423",
+    "category": "bible",
+    "topic": "Job",
+    "difficulty": "hard",
+    "prompt": "What was the name of Job's first daughter after his restoration?",
+    "choices": ["Jemimah", "Keziah", "Keren-happuch", "Dinah"],
+    "explanation": "Job named his daughters, and no such fine women were found in all the land.",
+    "reference": "Job 42:14"
+  },
+  {
+    "id": "bible-424",
+    "category": "bible",
+    "topic": "Psalms",
+    "difficulty": "hard",
+    "prompt": "Which psalm is the longest, with 176 verses?",
+    "choices": ["Psalm 119", "Psalm 23", "Psalm 90", "Psalm 1"],
+    "explanation": "Psalm 119 stands at the middle of the psalter and celebrates God's word.",
+    "reference": "Psalm 119"
+  },
+  {
+    "id": "bible-425",
+    "category": "bible",
+    "topic": "Proverbs",
+    "difficulty": "hard",
+    "prompt": "What does a gentle answer turn away, says Proverbs?",
+    "choices": ["Wrath", "Judgment", "Poverty", "Death"],
+    "explanation": "A soft answer turns away wrath, but grievous words stir up anger.",
+    "reference": "Proverbs 15:1"
+  },
+  {
+    "id": "bible-426",
+    "category": "bible",
+    "topic": "Isaiah",
+    "difficulty": "hard",
+    "prompt": "What filled the temple in Isaiah's vision of the Lord?",
+    "choices": [
+      "His robe filled the temple",
+      "A golden lampstand",
+      "A wheel within a wheel",
+      "A closed scroll"
+    ],
+    "explanation": "Isaiah saw the Lord high and lifted up, and seraphim crying Holy, holy, holy.",
+    "reference": "Isaiah 6:1-4"
+  },
+  {
+    "id": "bible-427",
+    "category": "bible",
+    "topic": "Jeremiah",
+    "difficulty": "hard",
+    "prompt": "What did God tell Jeremiah to buy at Anathoth to show hope?",
+    "choices": [
+      "A field with a deed",
+      "A house in the city",
+      "A new stone tablet",
+      "A priest's garment"
+    ],
+    "explanation": "Jeremiah sealed the deed, weighed the silver, and gave it to Baruch as a witness.",
+    "reference": "Jeremiah 32:6-15"
+  },
+  {
+    "id": "bible-428",
+    "category": "bible",
+    "topic": "Ezekiel",
+    "difficulty": "hard",
+    "prompt": "What fuel did Ezekiel use to bake his bread during the siege sign?",
+    "choices": ["Cattle dung", "Olive wood", "Dried thorns", "Charcoal"],
+    "explanation": "He was told to bake it over human waste, but asked to use cattle dung instead.",
+    "reference": "Ezekiel 4:12-15"
+  },
+  {
+    "id": "bible-429",
+    "category": "bible",
+    "topic": "Daniel",
+    "difficulty": "hard",
+    "prompt": "What Babylonian names did the chief official give to Daniel's three friends?",
+    "choices": [
+      "Shadrach, Meshach and Abednego",
+      "Daniel, Hananiah, Mishael",
+      "Ezra, Nehemiah, Mordecai",
+      "Joshua, Caleb, Othniel"
+    ],
+    "explanation": "Before their rename, their Hebrew names were Hananiah, Mishael, and Azariah.",
+    "reference": "Daniel 1:6-7"
+  },
+  {
+    "id": "bible-430",
+    "category": "bible",
+    "topic": "Hosea",
+    "difficulty": "hard",
+    "prompt": "What price did Hosea pay to buy back his wife from the market?",
+    "choices": [
+      "Fifteen shekels of silver",
+      "Thirty pieces of silver",
+      "Ten shekels of silver",
+      "Five rings of gold"
+    ],
+    "explanation": "He paid fifteen shekels and a homer and a half of barley to reclaim her.",
+    "reference": "Hosea 3:1-3"
+  },
+  {
+    "id": "bible-431",
+    "category": "bible",
+    "topic": "Zechariah",
+    "difficulty": "hard",
+    "prompt": "What stood beside the golden lampstand in Zechariah's vision?",
+    "choices": ["Two olive trees", "Two golden calves", "Seven stone pillars", "A burning bush"],
+    "explanation": "Two olive trees stood, one on the right of the lamp and one on its left.",
+    "reference": "Zechariah 4:1-3"
+  },
+  {
+    "id": "bible-432",
+    "category": "bible",
+    "topic": "1 Kings",
+    "difficulty": "hard",
+    "prompt": "How many wives did Solomon have, not counting his concubines?",
+    "choices": ["Seven hundred", "Three hundred", "One hundred", "Twelve"],
+    "explanation": "His many wives turned his heart after other gods in his old age.",
+    "reference": "1 Kings 11:3"
+  },
+  {
+    "id": "bible-433",
+    "category": "bible",
+    "topic": "Matthew",
+    "difficulty": "hard",
+    "prompt": "Which town rejected Jesus when he taught in its synagogue?",
+    "choices": ["Nazareth", "Capernaum", "Bethlehem", "Bethany"],
+    "explanation": "Jesus said a prophet is not without honor except in his own town and family.",
+    "reference": "Matthew 13:54-57"
+  },
+  {
+    "id": "bible-434",
+    "category": "bible",
+    "topic": "Parables",
+    "difficulty": "hard",
+    "prompt": "Which tiny seed did Jesus compare to the kingdom of heaven?",
+    "choices": ["A mustard seed", "A grain of wheat", "A fig shoot", "A cedar branch"],
+    "explanation": "Though the smallest of seeds, it grows into a tree large enough for birds to nest.",
+    "reference": "Matthew 13:31-32"
+  },
+  {
+    "id": "bible-435",
+    "category": "bible",
+    "topic": "Mark",
+    "difficulty": "hard",
+    "prompt": "Who was healed just by touching Jesus' cloak in the crowd?",
+    "choices": [
+      "A woman with twelve years of bleeding",
+      "A man let down through the roof",
+      "A blind man from Bethsaida",
+      "A centurion's servant girl"
+    ],
+    "explanation": "Jesus felt power leave him and told her that her faith had made her well.",
+    "reference": "Mark 5:25-34"
+  },
+  {
+    "id": "bible-436",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "hard",
+    "prompt": "Which council member brought a hundred pounds of spices to embalm Jesus?",
+    "choices": ["Nicodemus", "Joseph of Arimathea", "Gamaliel", "Caiaphas"],
+    "explanation": "The same man who once came to Jesus at night now helped prepare his body.",
+    "reference": "John 19:39"
+  },
+  {
+    "id": "bible-437",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "hard",
+    "prompt": "What did Jesus do with his finger while the accusers waited?",
+    "choices": [
+      "Wrote on the ground",
+      "Pointed to the temple",
+      "Traced a circle",
+      "Held up two fingers"
+    ],
+    "explanation": "He stooped down and wrote on the ground, then let each accuser cast the first stone.",
+    "reference": "John 8:6-8"
+  },
+  {
+    "id": "bible-438",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "hard",
+    "prompt": "Which of the twelve did Jesus call a devil?",
+    "choices": ["Judas Iscariot", "Thomas", "Simon Peter", "Andrew"],
+    "explanation": "Jesus answered, Did I not choose you, the twelve? Yet one of you is a devil.",
+    "reference": "John 6:70-71"
+  },
+  {
+    "id": "bible-439",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "hard",
+    "prompt": "In which city were Paul and Barnabas mistaken for gods?",
+    "choices": ["Lystra", "Derbe", "Antioch", "Iconium"],
+    "explanation": "The people tried to offer sacrifices, but the two tore their clothes and stopped them.",
+    "reference": "Acts 14:8-19"
+  },
+  {
+    "id": "bible-440",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "hard",
+    "prompt": "Which apostle escaped a city by being lowered in a basket?",
+    "choices": ["Paul", "Peter", "Barnabas", "Silas"],
+    "explanation": "His followers lowered him through an opening in the wall to flee the governor's guards.",
+    "reference": "Acts 9:25; 2 Corinthians 11:33"
+  },
+  {
+    "id": "bible-441",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "hard",
+    "prompt": "What did Paul do when the prison doors opened at midnight?",
+    "choices": [
+      "He stayed and called out",
+      "He ran for the gates",
+      "He hid in the cells",
+      "He climbed the wall"
+    ],
+    "explanation": "Paul and Silas stayed put, and the jailer, seeing them, asked how to be saved.",
+    "reference": "Acts 16:25-30"
+  },
+  {
+    "id": "bible-442",
+    "category": "bible",
+    "topic": "Romans",
+    "difficulty": "hard",
+    "prompt": "Who did Paul commend to the church in Rome to deliver his letter?",
+    "choices": ["Phoebe", "Priscilla", "Aquila", "Mary"],
+    "explanation": "Paul called Phoebe a deacon of the church and asked the believers to welcome her.",
+    "reference": "Romans 16:1-2"
+  },
+  {
+    "id": "bible-443",
+    "category": "bible",
+    "topic": "1 Corinthians",
+    "difficulty": "hard",
+    "prompt": "What cannot inherit, according to Paul, if made of flesh and blood?",
+    "choices": ["The kingdom of God", "Eternal life", "A heavenly name", "The promised land"],
+    "explanation": "Paul wrote that flesh and blood cannot inherit the kingdom of God.",
+    "reference": "1 Corinthians 15:50"
+  },
+  {
+    "id": "bible-444",
+    "category": "bible",
+    "topic": "2 Corinthians",
+    "difficulty": "hard",
+    "prompt": "Which companion did Paul trust to carry the collection for Jerusalem?",
+    "choices": ["Titus", "Luke", "Timothy", "Mark"],
+    "explanation": "Paul praised Titus for his earnest care and sent him ahead with the gift.",
+    "reference": "2 Corinthians 8:16-24"
+  },
+  {
+    "id": "bible-445",
+    "category": "bible",
+    "topic": "Galatians",
+    "difficulty": "hard",
+    "prompt": "Who were regarded as the pillars of the church in Jerusalem?",
+    "choices": [
+      "James, Cephas and John",
+      "Peter, Paul and Barnabas",
+      "Stephen, Philip and Nicolas",
+      "Luke, Mark and Silas"
+    ],
+    "explanation": "Paul met the reputed pillars and agreed they should preach to the Gentiles as he did.",
+    "reference": "Galatians 2:9"
+  },
+  {
+    "id": "bible-446",
+    "category": "bible",
+    "topic": "Ephesians",
+    "difficulty": "hard",
+    "prompt": "What mystery of the gospel did Paul reveal to the Gentiles?",
+    "choices": [
+      "Gentiles are fellow heirs",
+      "The law would end soon",
+      "Angels would judge",
+      "Jerusalem would fall"
+    ],
+    "explanation": "The mystery is that Gentiles are fellow heirs, members of the same body, in Christ.",
+    "reference": "Ephesians 3:4-9"
+  },
+  {
+    "id": "bible-447",
+    "category": "bible",
+    "topic": "Philippians",
+    "difficulty": "hard",
+    "prompt": "Why were some preaching Christ out of envy, says Paul?",
+    "choices": [
+      "Out of envy and strife",
+      "Out of love for him",
+      "To honor the apostles",
+      "To fulfill the law"
+    ],
+    "explanation": "Some preached from rivalry, thinking they could add to Paul's chains, but he rejoiced.",
+    "reference": "Philippians 1:15-18"
+  },
+  {
+    "id": "bible-448",
+    "category": "bible",
+    "topic": "Colossians",
+    "difficulty": "hard",
+    "prompt": "Who did Paul call his fellow prisoner in greetings to Colossae?",
+    "choices": ["Aristarchus", "Epaphras", "Onesimus", "Justus"],
+    "explanation": "Aristarchus, who was with Paul in Rome, is named among those sending greetings.",
+    "reference": "Colossians 4:10"
+  },
+  {
+    "id": "bible-449",
+    "category": "bible",
+    "topic": "1 Thessalonians",
+    "difficulty": "hard",
+    "prompt": "What will happen to believers who have died, according to Paul?",
+    "choices": [
+      "They will rise with him",
+      "They will sleep forever",
+      "They will return as angels",
+      "They will be reborn at once"
+    ],
+    "explanation": "Paul wrote that the dead in Christ will rise first when the Lord returns.",
+    "reference": "1 Thessalonians 4:13-18"
+  },
+  {
+    "id": "bible-450",
+    "category": "bible",
+    "topic": "2 Thessalonians",
+    "difficulty": "hard",
+    "prompt": "What will the man of lawlessness do before Christ returns?",
+    "choices": [
+      "Exalts himself above God",
+      "Destroy the temple",
+      "Gather the exiles",
+      "Sign a peace treaty"
+    ],
+    "explanation": "Paul wrote that he opposes and exalts himself above every so-called god or object of worship.",
+    "reference": "2 Thessalonians 2:3-4"
+  },
+  {
+    "id": "bible-451",
+    "category": "bible",
+    "topic": "1 Timothy",
+    "difficulty": "hard",
+    "prompt": "What did Paul call the root of all kinds of evil?",
+    "choices": ["The love of money", "Pride", "Envy", "Lust"],
+    "explanation": "Paul warned that some, eager for money, have wandered from the faith and pierced themselves.",
+    "reference": "1 Timothy 6:6-10"
+  },
+  {
+    "id": "bible-452",
+    "category": "bible",
+    "topic": "2 Timothy",
+    "difficulty": "hard",
+    "prompt": "Which companion deserted Paul because he loved the present world?",
+    "choices": ["Demas", "Luke", "Trophimus", "Erastus"],
+    "explanation": "Paul noted that only Luke was with him, and asked Timothy to bring Mark.",
+    "reference": "2 Timothy 4:9-10"
+  },
+  {
+    "id": "bible-453",
+    "category": "bible",
+    "topic": "Titus",
+    "difficulty": "hard",
+    "prompt": "How did Paul say Cretans are by nature, quoting a prophet?",
+    "choices": [
+      "Liars and evil beasts",
+      "Wise and faithful",
+      "Generous and brave",
+      "Quiet and obedient"
+    ],
+    "explanation": "Paul quoted the saying to rebuke sharply, so they may be sound in faith.",
+    "reference": "Titus 1:12-13"
+  },
+  {
+    "id": "bible-454",
+    "category": "bible",
+    "topic": "Philemon",
+    "difficulty": "hard",
+    "prompt": "Where did Paul say the church gathered in Philemon's letter?",
+    "choices": ["In his house", "By the river", "In the upper room", "At the marketplace"],
+    "explanation": "Paul greeted the church that met in Philemon's home along with Apphia and Archippus.",
+    "reference": "Philemon 1-2"
+  },
+  {
+    "id": "bible-455",
+    "category": "bible",
+    "topic": "Hebrews",
+    "difficulty": "hard",
+    "prompt": "Which priest-king does the writer say resembles the Son of God?",
+    "choices": ["Melchizedek", "Aaron", "Elijah", "Zadok"],
+    "explanation": "Melchizedek, king of Salem and priest of God Most High, had no recorded genealogy.",
+    "reference": "Hebrews 7:1-3"
+  },
+  {
+    "id": "bible-456",
+    "category": "bible",
+    "topic": "James",
+    "difficulty": "hard",
+    "prompt": "Faith without works, says James, is like what?",
+    "choices": [
+      "A body without the spirit",
+      "A tree without fruit",
+      "A lamp without oil",
+      "A house without walls"
+    ],
+    "explanation": "Just as the body without the spirit is dead, so faith without works is dead.",
+    "reference": "James 2:17-26"
+  },
+  {
+    "id": "bible-457",
+    "category": "bible",
+    "topic": "1 Peter",
+    "difficulty": "hard",
+    "prompt": "How does Peter describe the inheritance kept for believers?",
+    "choices": [
+      "Imperishable and unfading",
+      "Made of gold and silver",
+      "Hidden in the earth",
+      "Bought with money"
+    ],
+    "explanation": "Peter called it an inheritance that can never fade, kept in heaven for those guarded by faith.",
+    "reference": "1 Peter 1:3-5"
+  },
+  {
+    "id": "bible-458",
+    "category": "bible",
+    "topic": "2 Peter",
+    "difficulty": "hard",
+    "prompt": "What do scoffers ask, according to Peter's second letter?",
+    "choices": [
+      "Where is the promise of his coming",
+      "Who will rule the nations",
+      "When will the temple rise",
+      "How long will Rome last"
+    ],
+    "explanation": "They ask where the promise of his coming is, having forgotten the flood of long ago.",
+    "reference": "2 Peter 3:3-4"
+  },
+  {
+    "id": "bible-459",
+    "category": "bible",
+    "topic": "1 John",
+    "difficulty": "hard",
+    "prompt": "What does John say about one who hates a brother while claiming light?",
+    "choices": [
+      "He is still in darkness",
+      "He is forgiven",
+      "He is a new creation",
+      "He is the beloved"
+    ],
+    "explanation": "Whoever hates a brother is in the darkness and walks around in it, John wrote.",
+    "reference": "1 John 2:9-11"
+  },
+  {
+    "id": "bible-460",
+    "category": "bible",
+    "topic": "Jude",
+    "difficulty": "hard",
+    "prompt": "What did the archangel Michael dispute over with the devil?",
+    "choices": [
+      "The body of Moses",
+      "The keys of the kingdom",
+      "The throne of David",
+      "The sealed scroll"
+    ],
+    "explanation": "Michael did not dare to slander, but said the Lord rebuke you.",
+    "reference": "Jude 1:9"
+  },
+  {
+    "id": "bible-461",
+    "category": "bible",
+    "topic": "Numbers",
+    "difficulty": "hard",
+    "prompt": "What object did the Lord instruct Moses to make of metal so that bitten Israelites would live when they looked at it?",
+    "choices": ["A bronze serpent", "A golden calf", "A silver lamb", "An iron eagle"],
+    "explanation": "Moses made a bronze snake on a pole; anyone bitten who looked at it lived.",
+    "reference": "Numbers 21:9"
+  },
+  {
+    "id": "bible-462",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "hard",
+    "prompt": "Which left-handed judge assassinated the Moabite King Eglon?",
+    "choices": ["Ehud", "Gideon", "Othniel", "Shamgar"],
+    "explanation": "Ehud strapped a double-edged sword to his right thigh and killed the unusually fat king.",
+    "reference": "Judges 3:15-16"
+  },
+  {
+    "id": "bible-463",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "hard",
+    "prompt": "Which king of Judah prayed to God and had fifteen years added to his life?",
+    "choices": ["Hezekiah", "Josiah", "Uzziah", "Manasseh"],
+    "explanation": "After becoming deathly ill, Hezekiah wept bitterly, and God promised him fifteen more years.",
+    "reference": "2 Kings 20:5-6"
+  },
+  {
+    "id": "bible-464",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "hard",
+    "prompt": "Under which respected Pharisee and teacher of the law did the Apostle Paul study?",
+    "choices": ["Gamaliel", "Nicodemus", "Caiaphas", "Annas"],
+    "explanation": "Paul stated he was thoroughly trained in the law of their ancestors under Gamaliel.",
+    "reference": "Acts 22:3"
+  },
+  {
+    "id": "bible-465",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "hard",
+    "prompt": "Which high priest found the Book of the Law in the temple during King Josiah's reign?",
+    "choices": ["Hilkiah", "Eliashib", "Abiathar", "Zadok"],
+    "explanation": "Hilkiah found the lost scroll in the temple, prompting King Josiah to enact major religious reforms.",
+    "reference": "2 Kings 22:8"
+  },
+  {
+    "id": "bible-466",
+    "category": "bible",
+    "topic": "2 Samuel",
+    "difficulty": "hard",
+    "prompt": "Who was struck dead by God for reaching out to steady the Ark of the Covenant?",
+    "choices": ["Uzzah", "Abinadab", "Eleazar", "Korah"],
+    "explanation": "The oxen stumbled, and Uzzah touched the ark, resulting in his immediate death for his irreverent act.",
+    "reference": "2 Samuel 6:6-7"
+  },
+  {
+    "id": "bible-467",
+    "category": "bible",
+    "topic": "Joshua",
+    "difficulty": "hard",
+    "prompt": "Which city defeated the Israelites because Achan kept plunder from Jericho?",
+    "choices": ["Ai", "Gibeon", "Hebron", "Hazor"],
+    "explanation": "The small city of Ai routed the Israelites because Achan sinned by stealing devoted things.",
+    "reference": "Joshua 7:4-5"
+  },
+  {
+    "id": "bible-468",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "hard",
+    "prompt": "What other name was given to Gideon after he destroyed his father's altar to Baal?",
+    "choices": ["Jerub-Baal", "Jedidiah", "Abimelech", "Ephraim"],
+    "explanation": "He was named Jerub-Baal, meaning 'let Baal contend with him,' because he broke the altar.",
+    "reference": "Judges 6:32"
+  },
+  {
+    "id": "bible-469",
+    "category": "bible",
+    "topic": "John",
+    "difficulty": "hard",
+    "prompt": "What was the name of the high priest's servant whose ear Peter cut off?",
+    "choices": ["Malchus", "Cornelius", "Rufus", "Alexander"],
+    "explanation": "Simon Peter drew his sword and struck Malchus, cutting off his right ear, which Jesus then healed.",
+    "reference": "John 18:10"
+  },
+  {
+    "id": "bible-470",
+    "category": "bible",
+    "topic": "Deuteronomy",
+    "difficulty": "hard",
+    "prompt": "Which king of Bashan had an iron bed that was over thirteen feet long?",
+    "choices": ["Og", "Sihon", "Balak", "Eglon"],
+    "explanation": "Og was one of the last of the Rephaites, known for his massive iron bedstead.",
+    "reference": "Deuteronomy 3:11"
+  },
+  {
+    "id": "bible-471",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "hard",
+    "prompt": "Who was the oldest of Jacob's twelve sons?",
+    "choices": ["Reuben", "Simeon", "Levi", "Judah"],
+    "explanation": "Reuben was Jacob's firstborn with his wife Leah, but he lost his rights of the firstborn due to sin.",
+    "reference": "Genesis 29:32"
+  },
+  {
+    "id": "bible-472",
+    "category": "bible",
+    "topic": "Luke",
+    "difficulty": "hard",
+    "prompt": "Who was the Roman Emperor when Jesus Christ was born?",
+    "choices": ["Caesar Augustus", "Tiberius Caesar", "Julius Caesar", "Nero"],
+    "explanation": "Caesar Augustus issued a decree that a census should be taken of the entire Roman world.",
+    "reference": "Luke 2:1"
+  },
+  {
+    "id": "bible-473",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "hard",
+    "prompt": "On which island was the Apostle Paul shipwrecked while traveling to Rome?",
+    "choices": ["Malta", "Cyprus", "Crete", "Rhodes"],
+    "explanation": "After the ship was destroyed by a storm, everyone made it safely to the shore of Malta.",
+    "reference": "Acts 28:1"
+  },
+  {
+    "id": "bible-474",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "hard",
+    "prompt": "Who was Paul's first convert in Philippi, known as a dealer in purple cloth?",
+    "choices": ["Lydia", "Priscilla", "Chloe", "Dorcas"],
+    "explanation": "The Lord opened Lydia's heart to Paul's message, and she and her household were baptized.",
+    "reference": "Acts 16:14"
+  },
+  {
+    "id": "bible-475",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "hard",
+    "prompt": "What did Jacob name the place where he wrestled with a man until daybreak?",
+    "choices": ["Peniel", "Bethel", "Shechem", "Hebron"],
+    "explanation": "He named it Peniel, saying, 'It is because I saw God face to face, and yet my life was spared.'",
+    "reference": "Genesis 32:30"
+  },
+  {
+    "id": "bible-476",
+    "category": "bible",
+    "topic": "Ezekiel",
+    "difficulty": "hard",
+    "prompt": "Which prophet had a vision of a valley full of dry, lifeless bones?",
+    "choices": ["Ezekiel", "Jeremiah", "Daniel", "Isaiah"],
+    "explanation": "God commanded Ezekiel to prophesy to the bones, which then came together and were covered with flesh.",
+    "reference": "Ezekiel 37:1"
+  },
+  {
+    "id": "bible-477",
+    "category": "bible",
+    "topic": "2 Chronicles",
+    "difficulty": "hard",
+    "prompt": "Which king of Judah entered the temple to offer incense himself and was struck with leprosy for his pride?",
+    "choices": ["Uzziah", "Ahaz", "Joash", "Amaziah"],
+    "explanation": "King Uzziah proudly entered the temple to burn incense, and leprosy broke out on his forehead.",
+    "reference": "2 Chronicles 26:19"
+  },
+  {
+    "id": "bible-478",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "hard",
+    "prompt": "What commander of the Syrian army was healed of leprosy by washing in the Jordan?",
+    "choices": ["Naaman", "Ben-Hadad", "Hazael", "Sennacherib"],
+    "explanation": "Elisha told Naaman to wash in the Jordan River seven times, and his flesh was completely restored.",
+    "reference": "2 Kings 5:14"
+  },
+  {
+    "id": "bible-479",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "hard",
+    "prompt": "What father-in-law of Moses came to the wilderness and advised him to appoint judges to lead Israel?",
+    "choices": ["Jethro", "Laban", "Terah", "Amram"],
+    "explanation": "Jethro advised Moses to appoint judges to help him handle the disputes of the Israelites.",
+    "reference": "Exodus 18:1"
+  },
+  {
+    "id": "bible-480",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "hard",
+    "prompt": "What was the specific name of the hurricane-force wind that struck Paul's ship?",
+    "choices": ["The Northeaster", "The Sirocco", "The Mistral", "The Levant"],
+    "explanation": "Also called Euroaquilo, this fierce wind drove the ship hopelessly out to sea.",
+    "reference": "Acts 27:14"
+  },
+  {
+    "id": "bible-481",
+    "category": "bible",
+    "topic": "Ruth",
+    "difficulty": "hard",
+    "prompt": "Who was the grandfather of King David?",
+    "choices": ["Obed", "Jesse", "Boaz", "Salmon"],
+    "explanation": "Boaz and Ruth were the parents of Obed, who became the father of Jesse, the father of David.",
+    "reference": "Ruth 4:17"
+  },
+  {
+    "id": "bible-482",
+    "category": "bible",
+    "topic": "Numbers",
+    "difficulty": "hard",
+    "prompt": "Which prophet was hired by Balak to curse the Israelites, but blessed them instead?",
+    "choices": ["Balaam", "Balak", "Korah", "Dathan"],
+    "explanation": "God put His own words into Balaam's mouth, forcing him to bless Israel three times.",
+    "reference": "Numbers 24:10"
+  },
+  {
+    "id": "bible-483",
+    "category": "bible",
+    "topic": "Jude",
+    "difficulty": "hard",
+    "prompt": "Which archangel disputed with the devil over the body of Moses?",
+    "choices": ["Michael", "Gabriel", "Raphael", "Uriel"],
+    "explanation": "Michael did not dare bring a slanderous accusation, but said, 'The Lord rebuke you!'",
+    "reference": "Jude 1:9"
+  },
+  {
+    "id": "bible-484",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "hard",
+    "prompt": "From which city did Paul escape by being lowered down the wall in a basket?",
+    "choices": ["Damascus", "Jerusalem", "Ephesus", "Corinth"],
+    "explanation": "His followers took him by night and lowered him in a basket through an opening in the wall.",
+    "reference": "Acts 9:25"
+  },
+  {
+    "id": "bible-485",
+    "category": "bible",
+    "topic": "Old Testament",
+    "difficulty": "hard",
+    "prompt": "Which is the shortest book in the Old Testament, consisting of only one chapter?",
+    "choices": ["Obadiah", "Nahum", "Haggai", "Joel"],
+    "explanation": "Obadiah contains only 21 verses, focusing on a prophecy of judgment against Edom.",
+    "reference": "Obadiah 1:1"
+  },
+  {
+    "id": "bible-486",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "hard",
+    "prompt": "What animal came out of the woods to maul the youths who mocked Elisha's baldness?",
+    "choices": ["Two bears", "A lion", "A pack of wolves", "A leopard"],
+    "explanation": "After Elisha cursed them in the name of the Lord, two bears mauled forty-two of the boys.",
+    "reference": "2 Kings 2:24"
+  },
+  {
+    "id": "bible-487",
+    "category": "bible",
+    "topic": "Esther",
+    "difficulty": "hard",
+    "prompt": "What Jewish festival celebrates the Jews being saved from Haman's plot?",
+    "choices": ["Purim", "Hanukkah", "Passover", "Rosh Hashanah"],
+    "explanation": "They established the festival of Purim, named after 'pur' (the lot Haman cast to destroy them).",
+    "reference": "Esther 9:26"
+  },
+  {
+    "id": "bible-488",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "hard",
+    "prompt": "Which Roman governor left Paul in prison for two years to grant a favor to the Jews?",
+    "choices": ["Felix", "Festus", "Pilate", "Agrippa"],
+    "explanation": "Hoping to get a bribe, Felix conversed with Paul often but left him in prison when succeeded by Festus.",
+    "reference": "Acts 24:27"
+  },
+  {
+    "id": "bible-489",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "hard",
+    "prompt": "What was the name of the woman Abraham married after Sarah died?",
+    "choices": ["Keturah", "Hagar", "Milcah", "Reumah"],
+    "explanation": "Abraham took a second wife named Keturah, and she bore him six sons.",
+    "reference": "Genesis 25:1"
+  },
+  {
+    "id": "bible-490",
+    "category": "bible",
+    "topic": "Ezekiel",
+    "difficulty": "hard",
+    "prompt": "By what river was Ezekiel sitting when the heavens opened and he saw visions of God?",
+    "choices": ["Kebar River", "Tigris River", "Euphrates River", "Jordan River"],
+    "explanation": "Ezekiel was among the exiles by the Kebar River in Babylon when he received his initial visions.",
+    "reference": "Ezekiel 1:1"
+  },
+  {
+    "id": "bible-491",
+    "category": "bible",
+    "topic": "Revelation",
+    "difficulty": "hard",
+    "prompt": "In Revelation, what is the Hebrew name for the angel of the Abyss?",
+    "choices": ["Abaddon", "Apollyon", "Lucifer", "Beelzebul"],
+    "explanation": "His name in Hebrew is Abaddon, and in Greek it is Apollyon, which means Destroyer.",
+    "reference": "Revelation 9:11"
+  },
+  {
+    "id": "bible-492",
+    "category": "bible",
+    "topic": "Nehemiah",
+    "difficulty": "hard",
+    "prompt": "Who was the high priest that helped rebuild the Sheep Gate in Nehemiah's time?",
+    "choices": ["Eliashib", "Ezra", "Joshua", "Sanballat"],
+    "explanation": "Eliashib the high priest and his fellow priests went to work and rebuilt the Sheep Gate.",
+    "reference": "Nehemiah 3:1"
+  },
+  {
+    "id": "bible-493",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "hard",
+    "prompt": "Who was the only female reigning monarch of the Kingdom of Judah?",
+    "choices": ["Athaliah", "Jezebel", "Maakah", "Zibiah"],
+    "explanation": "Athaliah unlawfully seized the throne by destroying the royal family after her son's death.",
+    "reference": "2 Kings 11:1"
+  },
+  {
+    "id": "bible-494",
+    "category": "bible",
+    "topic": "Revelation",
+    "difficulty": "hard",
+    "prompt": "Which of the seven churches in Revelation was rebuked for forsaking its first love?",
+    "choices": ["Ephesus", "Smyrna", "Pergamum", "Laodicea"],
+    "explanation": "Jesus commended their hard work but stated they had forsaken the love they had at first.",
+    "reference": "Revelation 2:4"
+  },
+  {
+    "id": "bible-495",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "hard",
+    "prompt": "Who was the father of Methuselah, known for walking faithfully with God?",
+    "choices": ["Enoch", "Jared", "Lamech", "Cainan"],
+    "explanation": "Enoch walked faithfully with God; then he was no more, because God took him away.",
+    "reference": "Genesis 5:24"
+  },
+  {
+    "id": "bible-496",
+    "category": "bible",
+    "topic": "Exodus",
+    "difficulty": "hard",
+    "prompt": "What was the name of Moses' mother who hid him in a papyrus basket?",
+    "choices": ["Jochebed", "Zipporah", "Miriam", "Bithiah"],
+    "explanation": "Jochebed, an Amramite, bravely hid her infant son to protect him from Pharaoh's decree.",
+    "reference": "Exodus 6:20"
+  },
+  {
+    "id": "bible-497",
+    "category": "bible",
+    "topic": "Numbers",
+    "difficulty": "hard",
+    "prompt": "Which tribe of Israel was excluded from the military census because they were priests?",
+    "choices": ["Levi", "Judah", "Simeon", "Benjamin"],
+    "explanation": "God ordered Moses not to count the Levites, assigning them the care of the tabernacle instead.",
+    "reference": "Numbers 1:47-49"
+  },
+  {
+    "id": "bible-498",
+    "category": "bible",
+    "topic": "Esther",
+    "difficulty": "hard",
+    "prompt": "Which is the only book in the Bible that does not mention God explicitly?",
+    "choices": ["Esther", "Song of Solomon", "Ruth", "Ecclesiastes"],
+    "explanation": "Though God's providence is clear throughout the story, the actual word 'God' is absent from the text.",
+    "reference": "Esther 1:1"
+  },
+  {
+    "id": "bible-499",
+    "category": "bible",
+    "topic": "1 Chronicles",
+    "difficulty": "hard",
+    "prompt": "What was the name of Goliath's brother, who was killed by Elhanan?",
+    "choices": ["Lahmi", "Saph", "Ishbi-Benob", "Sippai"],
+    "explanation": "Elhanan killed Lahmi the brother of Goliath, who had a spear with a shaft like a weaver's rod.",
+    "reference": "1 Chronicles 20:5"
+  },
+  {
+    "id": "bible-500",
+    "category": "bible",
+    "topic": "Deuteronomy",
+    "difficulty": "hard",
+    "prompt": "How old was Moses when he died on Mount Nebo?",
+    "choices": ["120 years old", "100 years old", "110 years old", "130 years old"],
+    "explanation": "Moses was 120 when he died, yet his eyes were not weak nor his strength gone.",
+    "reference": "Deuteronomy 34:7"
+  },
+  {
+    "id": "bible-501",
+    "category": "bible",
+    "topic": "2 Kings",
+    "difficulty": "hard",
+    "prompt": "Which military commander was recognized by his furious, reckless chariot driving?",
+    "choices": ["Jehu", "Abner", "Joab", "Benaiah"],
+    "explanation": "The watchman recognized Jehu son of Nimshi because he drove his chariot like a madman.",
+    "reference": "2 Kings 9:20"
+  },
+  {
+    "id": "bible-502",
+    "category": "bible",
+    "topic": "Numbers",
+    "difficulty": "hard",
+    "prompt": "Who led a rebellion against Moses and was swallowed by the earth?",
+    "choices": ["Korah", "Dathan", "Abiram", "Zimri"],
+    "explanation": "Korah and his followers challenged Moses' authority, and the ground opened and swallowed them.",
+    "reference": "Numbers 16:32"
+  },
+  {
+    "id": "bible-503",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "hard",
+    "prompt": "Which judge struck down six hundred Philistines with an oxgoad?",
+    "choices": ["Shamgar", "Samson", "Gideon", "Jair"],
+    "explanation": "Shamgar son of Anath saved Israel by using a farming implement as a deadly weapon.",
+    "reference": "Judges 3:31"
+  },
+  {
+    "id": "bible-504",
+    "category": "bible",
+    "topic": "1 Samuel",
+    "difficulty": "hard",
+    "prompt": "What name meaning 'the glory has departed from Israel' was given to Phinehas's son?",
+    "choices": ["Ichabod", "Ebenezer", "Lo-Ammi", "Jabez"],
+    "explanation": "His dying mother named him Ichabod because the Ark of God had been captured by the Philistines.",
+    "reference": "1 Samuel 4:21"
+  },
+  {
+    "id": "bible-505",
+    "category": "bible",
+    "topic": "2 Samuel",
+    "difficulty": "hard",
+    "prompt": "What was the name of Jonathan's son who was lame in both feet?",
+    "choices": ["Mephibosheth", "Ish-Bosheth", "Absalom", "Adonijah"],
+    "explanation": "David showed Mephibosheth kindness for Jonathan's sake and allowed him to eat at his table.",
+    "reference": "2 Samuel 9:6"
+  },
+  {
+    "id": "bible-506",
+    "category": "bible",
+    "topic": "Genesis",
+    "difficulty": "hard",
+    "prompt": "Who was Leah's maidservant that became the mother of Gad and Asher?",
+    "choices": ["Zilpah", "Bilhah", "Hagar", "Dinah"],
+    "explanation": "When Leah stopped having children, she gave her servant Zilpah to Jacob as a wife.",
+    "reference": "Genesis 30:9"
+  },
+  {
+    "id": "bible-507",
+    "category": "bible",
+    "topic": "Acts",
+    "difficulty": "hard",
+    "prompt": "Which prophet predicted a severe famine that would spread over the entire Roman world?",
+    "choices": ["Agabus", "Silas", "Barnabas", "Philip"],
+    "explanation": "Through the Spirit, Agabus accurately predicted a famine that occurred during the reign of Claudius.",
+    "reference": "Acts 11:28"
+  },
+  {
+    "id": "bible-508",
+    "category": "bible",
+    "topic": "3 John",
+    "difficulty": "hard",
+    "prompt": "In 3 John, who is called out for loving to be first and refusing to welcome the brothers?",
+    "choices": ["Diotrephes", "Demas", "Alexander", "Hymenaeus"],
+    "explanation": "John rebukes Diotrephes for gossiping maliciously and stopping those who wanted to show hospitality.",
+    "reference": "3 John 1:9"
+  },
+  {
+    "id": "bible-509",
+    "category": "bible",
+    "topic": "Revelation",
+    "difficulty": "hard",
+    "prompt": "In Revelation, which church was located in a city described as where Satan has his throne?",
+    "choices": ["Pergamum", "Thyatira", "Sardis", "Philadelphia"],
+    "explanation": "Jesus praises the church in Pergamum for remaining true to His name despite their evil surroundings.",
+    "reference": "Revelation 2:13"
+  },
+  {
+    "id": "bible-510",
+    "category": "bible",
+    "topic": "Judges",
+    "difficulty": "hard",
+    "prompt": "Who was the very first judge of Israel, delivering them from Cushan-Rishathaim?",
+    "choices": ["Othniel", "Ehud", "Gideon", "Barak"],
+    "explanation": "Othniel, Caleb's younger brother, was empowered by the Spirit of the Lord to lead Israel to victory.",
+    "reference": "Judges 3:9"
   }
 ]
