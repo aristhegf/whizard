@@ -90,7 +90,7 @@ export function TopicsPage() {
             aria-pressed={filter === id}
             onClick={() => setFilter(id)}
           >
-            {TOPIC_STYLES[id].chip}
+            {TOPIC_STYLES[id]!.chip}
           </button>
         ))}
       </div>
@@ -105,7 +105,7 @@ export function TopicsPage() {
       <div className="topics-wrap">
         <ul className="topic-grid">
           {topics.map((c) => {
-            const style = TOPIC_STYLES[c.id];
+            const style = TOPIC_STYLES[c.id]!;
             return (
               <li key={c.id}>
                 <TiltCard className="tilt tilt-topic" max={10}>

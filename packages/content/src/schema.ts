@@ -1,10 +1,9 @@
 import {
   CONNECTIONS_GROUP_SIZE,
   LEVELS,
-  QUIZ_CATEGORIES,
   QUIZ_DIFFICULTIES,
   WORD_LEVELS,
-  type QuizCategory,
+  topicIdSchema,
 } from "@whizard/game-core";
 import { z } from "zod";
 
@@ -14,7 +13,7 @@ export const EXPLANATION_MAX = 160;
 
 export const storedQuestionSchema = z.object({
   id: z.string().min(1),
-  category: z.enum(QUIZ_CATEGORIES.map((c) => c.id) as [QuizCategory, ...QuizCategory[]]),
+  category: topicIdSchema,
   topic: z.string().min(1),
   difficulty: z.enum(QUIZ_DIFFICULTIES),
   prompt: z.string().min(1).max(PROMPT_MAX),

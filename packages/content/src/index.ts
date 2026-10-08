@@ -8,6 +8,7 @@ import {
   type ContentRequest,
   type QuizCategory,
   type QuizDifficulty,
+  type ShippedTopicId,
   type Level,
   type WordLevel,
 } from "@whizard/game-core";
@@ -39,7 +40,7 @@ export * from "./quality";
 export * from "./schema";
 
 /** One file per category. They ship with the Worker until reports and history need D1. */
-export const QUESTION_FILES: Record<QuizCategory, unknown> = {
+export const QUESTION_FILES: Record<ShippedTopicId, unknown> = {
   bible,
   quran,
   geography,

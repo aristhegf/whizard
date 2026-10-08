@@ -109,12 +109,14 @@ export {
 } from "./games/quiz/scoring";
 export {
   DEFAULT_QUIZ_SETTINGS,
+  DEFAULT_TOPIC_COLORS,
   QUIZ_CATEGORIES,
   QUIZ_DIFFICULTIES,
   QUIZ_QUESTION_COUNTS,
   QUIZ_TIME_LIMITS_SECONDS,
   QUIZ_VARIANTS,
   quizSettingsSchema,
+  topicIdSchema,
   type QuizCategory,
   type QuizContentRequest,
   type QuizDifficulty,
@@ -122,6 +124,7 @@ export {
   type QuizQuestion,
   type QuizSettings,
   type QuizVariant,
+  type ShippedTopicId,
 } from "./games/quiz/settings";
 export {
   JIGSAW_CLASSIC_LIMIT_MS,

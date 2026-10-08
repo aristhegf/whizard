@@ -51,7 +51,7 @@ export function TopicOptions({
             disabled={soon}
             onClick={() => onPick(c.id)}
           >
-            <img src={TOPIC_STYLES[c.id].art} alt="" loading="lazy" />
+            <img src={TOPIC_STYLES[c.id]!.art} alt="" loading="lazy" />
             <span>{c.name}</span>
             {soon && <span className="dim small">Soon</span>}
           </button>
