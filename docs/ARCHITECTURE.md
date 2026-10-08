@@ -328,7 +328,7 @@ Every question in the bank must pass these checks, which run as tests on every p
 
 New questions are written in batches and fact-checked independently before they ship: someone who didn't write a batch reviews every question as a skeptic and fixes or replaces anything doubtful. The tests above then gate the commit. The full standard, including the format, the rules and what to avoid in each category, is in [QUESTIONS.md](QUESTIONS.md).
 
-Admins can also upload a whole batch at once from the **Content** page (**Import file**, a JSON or CSV file in the bank's own row shape). `POST /api/admin/questions/import` checks every row with the same rules as a question typed by hand: rows that fail come back with their row number and what to fix, rows that repeat what the bank or an earlier row already asks are skipped rather than refused, and everything that passes is stored in `custom_questions` beside single additions, with one line in the admin log.
+Admins can also upload a whole batch at once from the **Content** page (**Import file**, a JSON or CSV file in the bank's own row shape). `POST /api/admin/questions/import` checks every row with the same rules as a question typed by hand: rows that fail come back with their row number and what to fix, rows that repeat what the bank or an earlier row already asks are skipped rather than refused, and everything that passes is stored in `custom_questions` beside single additions under ids that continue the category's own numbering — an import joins `bible-510` as `bible-511` rather than restarting at 1 — with one line in the admin log.
 
 ### Starter set
 

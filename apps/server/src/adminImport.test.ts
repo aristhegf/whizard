@@ -72,7 +72,7 @@ describe("reading an import file", () => {
     const rows = parseImportText(csv, "questions.csv");
     expect(rows.map((r) => r.row)).toEqual([2, 3]);
     const question = questionOf(rows[0]!.data);
-    expect(question.id).toBe("whizard-easy-027");
+    expect(question.id).toBe(""); // Ids are assigned while planning, never taken from the file.
     expect(question.choices[0]).toBe("Shadrach, Meshach, and Abednego");
     expect(question.reference).toBe("Daniel 3:19-20");
     expect(questionOf(rows[1]!.data).prompt).toBe("Who led Israel out of Egypt?");
@@ -121,7 +121,7 @@ describe("reading an import file", () => {
 describe("checking a row", () => {
   it("maps a JSON row onto a stored question", () => {
     expect(questionOf(stored())).toEqual({
-      id: "whizard-easy-001",
+      id: "",
       category: "bible",
       topic: "Genesis",
       difficulty: "easy",
@@ -194,24 +194,49 @@ describe("checking a row", () => {
     expect(errorOf("just a line")).toMatch(/must be an object/);
   });
 
-  it("checks the shape of an id the file gives", () => {
-    expect(errorOf(stored({ id: "not valid!" }))).toMatch(/letters, numbers, dashes/);
-    expect(questionOf(stored({ id: "" })).id).toBe("");
+  it("ignores any id the file gives", () => {
+    expect(questionOf(stored({ id: "not valid!" })).id).toBe("");
+    expect(questionOf(stored({ id: "bible-001" })).id).toBe("");
   });
 });
 
 describe("planning an import", () => {
-  it("adds a new row, keeping the id the file gives it", () => {
+  it("numbers a new row in the category's sequence, ignoring the file's id", () => {
     const plan = planImport([row(stored())], []);
     expect(plan.add).toHaveLength(1);
-    expect(plan.add[0]!.id).toBe("whizard-easy-001");
+    expect(plan.add[0]!.id).toBe("bible-001");
     expect(plan.skipped).toEqual([]);
     expect(plan.errors).toEqual([]);
   });
 
-  it("generates an id in the category when the file has none", () => {
+  it("numbers a row that comes without an id the same way", () => {
     const plan = planImport([row(flat())], []);
-    expect(plan.add[0]!.id).toMatch(/^bible-a[a-z0-9x]+$/);
+    expect(plan.add[0]!.id).toBe("bible-001");
+  });
+
+  it("continues where the last question of the same topic and level ended", () => {
+    // The bank as it ships: Bible numbered 001 to 510, easy first, no gaps.
+    const bank = Array.from(
+      { length: 510 },
+      (_, i) =>
+        ({
+          id: `bible-${String(i + 1).padStart(3, "0")}`,
+          category: "bible",
+          topic: "Genesis",
+          difficulty: i < 170 ? "easy" : i < 340 ? "medium" : "hard",
+          prompt: `Shipped question ${i + 1}`,
+          choices: ["One", "Two", "Three", "Four"],
+          explanation: "So the numbering is realistic.",
+        }) satisfies StoredQuestion,
+    );
+    const second = stored({
+      id: "whizard-easy-002",
+      prompt: "Who was the first woman created by God?",
+      choices: ["Eve", "Sarah", "Mary", "Ruth"],
+      explanation: "God created Eve from one of Adam's ribs to be his helper.",
+    });
+    const plan = planImport([row(stored()), row(second)], bank);
+    expect(plan.add.map((q) => q.id)).toEqual(["bible-511", "bible-512"]);
   });
 
   it("skips a question the bank already asks", () => {
@@ -235,7 +260,7 @@ describe("planning an import", () => {
   it("skips a row the file already asked", () => {
     const plan = planImport([row(stored(), 1), row(stored({ id: "whizard-easy-002" }), 2)], []);
     expect(plan.add).toHaveLength(1);
-    expect(plan.skipped).toEqual([{ row: 2, message: "Already asked as whizard-easy-001." }]);
+    expect(plan.skipped).toEqual([{ row: 2, message: "Already asked as bible-001." }]);
   });
 
   it("skips a fact another topic already asks", () => {
@@ -255,7 +280,7 @@ describe("planning an import", () => {
     expect(plan.skipped[0]!.message).toMatch(/Another topic already asks this/);
   });
 
-  it("skips a row whose id is already used by a different question", () => {
+  it("takes no notice of an id the file shares with the bank", () => {
     const bank = [
       {
         id: "whizard-easy-001",
@@ -269,8 +294,8 @@ describe("planning an import", () => {
       } satisfies StoredQuestion,
     ];
     const plan = planImport([row(stored())], bank);
-    expect(plan.add).toEqual([]);
-    expect(plan.skipped).toEqual([{ row: 1, message: "The id whizard-easy-001 is already used." }]);
+    expect(plan.add).toHaveLength(1);
+    expect(plan.add[0]!.id).toBe("bible-001");
   });
 
   it("reports rows to fix with their number, and still adds the good ones", () => {

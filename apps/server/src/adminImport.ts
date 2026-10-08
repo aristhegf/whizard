@@ -10,7 +10,7 @@ import {
 import { QUIZ_CATEGORIES, QUIZ_DIFFICULTIES } from "@whizard/game-core";
 import type { ImportNote, QuestionImportResult } from "@whizard/protocol";
 import { logAdmin, requireAdmin } from "./admin";
-import { insertQuestion, newQuestionId, plainProblems } from "./adminQuestions";
+import { idAllocator, insertQuestion, plainProblems } from "./adminQuestions";
 import { forgetBank, loadBank } from "./bank";
 import { HttpError, requireSameOrigin, type RequestContext } from "./http";
 
@@ -18,9 +18,6 @@ import { HttpError, requireSameOrigin, type RequestContext } from "./http";
 export const IMPORT_MAX_ROWS = 1000;
 /** And how big the file behind them may be: a thousand questions is a few hundred KB. */
 const IMPORT_MAX_BYTES = 1024 * 1024;
-
-/** How an id may be written in a file. Admin-made ids may be anything URL-safe and readable. */
-const ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
 
 /** The CSV header for the bank's own row shape, which is also what a JSON file uses. */
 const STORED_COLUMNS = [
@@ -197,11 +194,11 @@ function fieldProblem(value: unknown, label: string, max: number): string {
 /**
  * A row renamed onto the bank's fields. The bank's own shape has `prompt` and `choices`; the
  * flat shape spells those out as `question`, `correct_answer` and `wrong_answer_1` to `3`.
+ * A file's `id` is left out: ids are assigned while planning the import.
  */
 function canonicalRow(row: Record<string, unknown>): Record<string, unknown> {
   if ("prompt" in row || "choices" in row) return row;
   return {
-    id: row.id,
     category: row.topic,
     difficulty: row.level,
     topic: row.sub_topic,
@@ -221,10 +218,6 @@ export function rowToQuestion(data: unknown): { question: StoredQuestion } | { e
     return { error: "Not a question: each row must be an object." };
   }
   const row = canonicalRow(data as Record<string, unknown>);
-  const id = cell(row.id) ?? "";
-  if (id && (id.length > 64 || !ID_PATTERN.test(id))) {
-    return { error: "An id can use letters, numbers, dashes and underscores, up to 64 of them." };
-  }
   const choices = Array.isArray(row.choices) ? row.choices : null;
   if (!choices || choices.length !== 4) return { error: "There must be four answers." };
   const fields: [unknown, string, number][] = [
@@ -254,7 +247,8 @@ export function rowToQuestion(data: unknown): { question: StoredQuestion } | { e
   const reference = cell(row.reference) ?? "";
   if (reference.length > 60) return { error: "The reference can be up to 60 characters." };
   const question: StoredQuestion = {
-    id,
+    // Filled in by planImport, continuing the category's numbering.
+    id: "",
     category: category as StoredQuestion["category"],
     topic: cell(row.topic)!,
     difficulty: difficulty as StoredQuestion["difficulty"],
@@ -298,7 +292,7 @@ const entryOf = (question: StoredQuestion): Entry => ({
 });
 
 export interface ImportPlan {
-  /** Questions ready to store, each with an id that's free in the bank. */
+  /** Questions ready to store, numbered where each topic's and level's sequence left off. */
   add: StoredQuestion[];
   skipped: ImportNote[];
   errors: ImportNote[];
@@ -306,7 +300,8 @@ export interface ImportPlan {
 
 /**
  * Works out what an import can take: new questions, rows the bank or an earlier row already
- * asks (skipped, so one repeat doesn't hold up the rest of the file), and rows to fix.
+ * asks (skipped, so one repeat doesn't hold up the rest of the file), and rows to fix. New
+ * questions get ids that continue the bank's own numbering; the file's ids are not used.
  */
 export function planImport(
   rows: readonly ImportRow[],
@@ -316,7 +311,7 @@ export function planImport(
   const skipped: ImportNote[] = [];
   const errors: ImportNote[] = [];
   const pool = existing.map(entryOf);
-  const taken = new Set(existing.map((q) => q.id));
+  const nextId = idAllocator(existing);
   for (const { row, data } of rows) {
     const built = rowToQuestion(data);
     if ("error" in built) {
@@ -344,12 +339,7 @@ export function planImport(
       skipped.push({ row, message: `Another topic already asks this, in ${elsewhere.id}.` });
       continue;
     }
-    if (question.id && taken.has(question.id)) {
-      skipped.push({ row, message: `The id ${question.id} is already used.` });
-      continue;
-    }
-    if (!question.id) question.id = newQuestionId(question.category, (id) => taken.has(id));
-    taken.add(question.id);
+    question.id = nextId(question.category, question.difficulty);
     add.push(question);
     pool.push(entryOf(question));
   }
