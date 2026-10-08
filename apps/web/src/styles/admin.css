@@ -1339,6 +1339,33 @@
   flex: none;
 }
 
+/* The head's actions, together on the right: the file picker and the main button. */
+.admin-head-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: none;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* What an Import file upload did: what went in, and every row that didn't. */
+.import-report {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+}
+
+.import-report ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 /* Topics down, levels across. Each cell is shaded by how many questions it has. */
 .coverage {
   width: 100%;

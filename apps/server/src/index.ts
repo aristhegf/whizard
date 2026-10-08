@@ -59,6 +59,7 @@ import { ACCOUNT_HEADER } from "./room";
 import { decideReport, getAdminActivity, getAdminOverview, getAdminReports } from "./admin";
 import { getAdminAnalytics } from "./adminAnalytics";
 import { getAdminGames } from "./adminGames";
+import { importQuestions } from "./adminImport";
 import { endPro, getAdminPayments, giveProFree, recordPayment } from "./adminPayments";
 import { actOnName, addBlockedWord, getModeration, removeBlockedWord } from "./adminModeration";
 import {
@@ -253,6 +254,7 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/admin\/questions\/summary$/, getQuestionsSummary],
   ["GET", /^\/api\/admin\/questions$/, listQuestions],
   ["POST", /^\/api\/admin\/questions$/, addQuestion],
+  ["POST", /^\/api\/admin\/questions\/import$/, importQuestions],
   ["GET", /^\/api\/admin\/questions\/([^/]+)$/, getQuestion],
   ["PATCH", /^\/api\/admin\/questions\/([^/]+)$/, updateQuestion],
   ["DELETE", /^\/api\/admin\/questions\/([^/]+)$/, revertQuestion],

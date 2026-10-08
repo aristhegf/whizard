@@ -15,6 +15,7 @@ import type {
   AdminQuestionsSummary,
   NewQuestionInput,
   QuestionFilter,
+  QuestionImportResult,
   QuestionInput,
   QuestionSort,
   AdminRooms,
@@ -188,6 +189,9 @@ export const saveQuestion = (id: string, input: QuestionInput) =>
   adminPost<{ id: string }>(`questions/${encodeURIComponent(id)}`, input, "PATCH");
 export const addQuestion = (input: NewQuestionInput) =>
   adminPost<{ id: string }>("questions", input);
+/** Sends a JSON or CSV file of questions for the server to check and add, row by row. */
+export const importQuestions = (filename: string, text: string) =>
+  adminPost<QuestionImportResult>("questions/import", { filename, text });
 export const fetchModeration = () => adminGet<AdminModeration>("moderation");
 export const addBlockedWord = (word: string, anywhere: boolean) =>
   adminPost("moderation/words", { word, anywhere });

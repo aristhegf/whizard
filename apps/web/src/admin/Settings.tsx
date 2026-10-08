@@ -17,6 +17,7 @@ const ACTIONS: Record<string, string> = {
   "room:close": "closed room",
   "question:edit": "edited",
   "question:add": "added",
+  "question:import": "imported",
   "question:revert": "undid edits to",
   "question:delete": "deleted",
   "word:add": "blocked the word",

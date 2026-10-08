@@ -59,3 +59,26 @@ Quiz questions live in `packages/content/src/questions/`, one JSON file per cate
 ## Fixing or adding one question from the admin page
 
 For a quick fix, or a single new question, admins can use **Content** at `/admin/content` instead. It runs the same checks, and the change reaches new games within a minute, with no deploy. The edit lives in the database on top of these files, so for anything lasting, copy it into the category's file through a pull request (with a fact-check as above) and then press **Undo my edits**. The **Questions** page shows which questions players get wrong most and which look easier or harder than their level, which is a good place to find what to fix.
+
+## Importing a whole file from the admin page
+
+The same **Content** page takes a whole file of new questions: **Import file**, beside **Add a question**, accepts a JSON or CSV file. The format is the bank's own row shape, one object per question:
+
+```json
+{
+  "id": "whizard-easy-001",
+  "category": "bible",
+  "topic": "Genesis",
+  "difficulty": "easy",
+  "prompt": "Who was the first man created by God?",
+  "choices": ["Adam", "Moses", "Abraham", "David"],
+  "explanation": "God formed Adam from the dust of the ground and breathed life into him.",
+  "reference": "Genesis 2:7"
+}
+```
+
+- **`category`** may be the category's id or its name, in any case: `bible`, `Bible` and `POP CULTURE` all work. **`difficulty`** is `easy`, `medium` or `hard`, and blank means easy.
+- **`choices`** is exactly four, the first correct. **`id`** and **`reference`** may be left out: a missing id is made fresh (`bible-a8x2k`), and a given one is kept when the bank isn't using it already.
+- **CSV** carries the same fields as columns: `id,category,topic,difficulty,prompt,choice_1,choice_2,choice_3,choice_4,explanation,reference`, with `id` and `reference` optional.
+- Every row runs through the same checks as a question typed by hand. Rows that fail come back numbered ("Row 7: …") with what to fix; rows that repeat a question the bank or an earlier row in the file already asks are skipped rather than refused, so one repeat doesn't hold up the rest. One file may carry up to 1,000 questions.
+- Imported questions live in the database beside single additions, so the same advice holds: anything lasting goes into the category's file through a pull request.

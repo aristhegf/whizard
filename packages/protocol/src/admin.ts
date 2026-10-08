@@ -232,6 +232,22 @@ export interface AdminQuestionList {
   more: boolean;
 }
 
+/** One row of a file import that wasn't added, and why. */
+export interface ImportNote {
+  /** The row's place in the file: its number in a JSON array, or the CSV's line. */
+  row: number;
+  message: string;
+}
+
+/** How `POST /api/admin/questions/import` went: what went in, and what didn't and why. */
+export interface QuestionImportResult {
+  added: number;
+  /** Rows the bank or an earlier row already asks. */
+  skipped: ImportNote[];
+  /** Rows to fix in the file, with what's wrong. */
+  errors: ImportNote[];
+}
+
 // Payments --------------------------------------------------------------------------------------
 
 /** Pro's monthly price in naira, as on the pricing page. */
