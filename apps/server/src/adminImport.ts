@@ -7,12 +7,19 @@ import {
   repeatsAcrossCategories,
   type StoredQuestion,
 } from "@whizard/content";
-import { QUIZ_CATEGORIES, QUIZ_DIFFICULTIES } from "@whizard/game-core";
+import { QUIZ_DIFFICULTIES } from "@whizard/game-core";
 import type { ImportNote, QuestionImportResult } from "@whizard/protocol";
 import { logAdmin, requireAdmin } from "./admin";
 import { idAllocator, insertQuestion, plainProblems } from "./adminQuestions";
 import { forgetBank, loadBank } from "./bank";
 import { HttpError, requireSameOrigin, type RequestContext } from "./http";
+import { getTopics } from "./topics";
+
+/** What the matcher needs of a catalogue row: its immutable id and its current name. */
+export interface TopicLabel {
+  id: string;
+  name: string;
+}
 
 /** How many questions one import may carry. */
 export const IMPORT_MAX_ROWS = 1000;
@@ -211,9 +218,13 @@ function canonicalRow(row: Record<string, unknown>): Record<string, unknown> {
 
 /**
  * Maps one row of an import file onto a question ready to store, or says what's wrong with it.
- * The checks and the wording are the ones the single-question editor runs.
+ * The checks and the wording are the ones the single-question editor runs. The topic is
+ * matched against the live catalogue the caller passes, never a shipped constant.
  */
-export function rowToQuestion(data: unknown): { question: StoredQuestion } | { error: string } {
+export function rowToQuestion(
+  data: unknown,
+  topics: readonly TopicLabel[],
+): { question: StoredQuestion } | { error: string } {
   if (typeof data !== "object" || data === null || Array.isArray(data)) {
     return { error: "Not a question: each row must be an object." };
   }
@@ -235,10 +246,10 @@ export function rowToQuestion(data: unknown): { question: StoredQuestion } | { e
     if (wrong) return { error: wrong };
   }
   const topic = cell(row.category)!;
-  const category = categoryOf(topic);
+  const category = categoryOf(topic, topics);
   if (!category) {
     return {
-      error: `Unknown topic “${topic}”. Topics are: ${QUIZ_CATEGORIES.map((c) => c.name).join(", ")}.`,
+      error: `Unknown topic “${topic}”. Topics are: ${topics.map((t) => t.name).join(", ")}.`,
     };
   }
   const level = cell(row.difficulty) ?? "";
@@ -262,11 +273,11 @@ export function rowToQuestion(data: unknown): { question: StoredQuestion } | { e
   return { question };
 }
 
-/** The category a file's topic means: "Bible", "bible" and "BIBLE" are all bible. */
-export function categoryOf(value: string): string | null {
+/** The category a file's topic means: "Life sciences", "life sciences" and the id all match. */
+export function categoryOf(value: string, topics: readonly TopicLabel[]): string | null {
   const key = normalize(value);
   return (
-    QUIZ_CATEGORIES.find((c) => normalize(c.id) === key || normalize(c.name) === key)?.id ?? null
+    topics.find((topic) => normalize(topic.id) === key || normalize(topic.name) === key)?.id ?? null
   );
 }
 
@@ -302,10 +313,12 @@ export interface ImportPlan {
  * Works out what an import can take: new questions, rows the bank or an earlier row already
  * asks (skipped, so one repeat doesn't hold up the rest of the file), and rows to fix. New
  * questions get ids that continue the bank's own numbering; the file's ids are not used.
+ * Topics are matched against the live catalogue the caller passes.
  */
 export function planImport(
   rows: readonly ImportRow[],
   existing: readonly StoredQuestion[],
+  topics: readonly TopicLabel[],
 ): ImportPlan {
   const add: StoredQuestion[] = [];
   const skipped: ImportNote[] = [];
@@ -313,7 +326,7 @@ export function planImport(
   const pool = existing.map(entryOf);
   const nextId = idAllocator(existing);
   for (const { row, data } of rows) {
-    const built = rowToQuestion(data);
+    const built = rowToQuestion(data, topics);
     if ("error" in built) {
       errors.push({ row, message: built.error });
       continue;
@@ -379,14 +392,14 @@ export async function importQuestions(context: RequestContext): Promise<Response
   }
 
   forgetBank();
-  const bank = await loadBank(env);
-  const { add, skipped, errors } = planImport(rows, bank.questions);
+  const [bank, topics] = await Promise.all([loadBank(env), getTopics(env)]);
+  const { add, skipped, errors } = planImport(rows, bank.questions, topics);
   if (add.length > 0) {
     const db = env.DB;
     const now = Date.now();
     await db.batch([
       ...add.map((question) => insertQuestion(db, question, user.id, now)),
-      logAdmin(db, user.id, "question:import", logTarget(add)),
+      logAdmin(db, user.id, "question:import", logTarget(add, topics)),
     ]);
     forgetBank();
   }
@@ -395,11 +408,11 @@ export async function importQuestions(context: RequestContext): Promise<Response
 }
 
 /** "50 questions (Bible)" for the activity log, so one import is one line. */
-function logTarget(added: readonly StoredQuestion[]): string {
-  const topics = [
+function logTarget(added: readonly StoredQuestion[], topics: readonly TopicLabel[]): string {
+  const names = [
     ...new Set(
-      added.map((q) => QUIZ_CATEGORIES.find((c) => c.id === q.category)?.name ?? q.category),
+      added.map((q) => topics.find((topic) => topic.id === q.category)?.name ?? q.category),
     ),
   ];
-  return `${added.length} ${added.length === 1 ? "question" : "questions"} (${topics.join(", ")})`;
+  return `${added.length} ${added.length === 1 ? "question" : "questions"} (${names.join(", ")})`;
 }

@@ -1,7 +1,45 @@
 import type { StoredQuestion } from "@whizard/content";
 import { QUIZ_CATEGORIES } from "@whizard/game-core";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { Env } from "./env";
 import { parseImportText, planImport, rowToQuestion, type ImportRow } from "./adminImport";
+import { forgetBank } from "./bank";
+import { forgetSettings } from "./settings";
+import { createSession } from "./sessions";
+import { addUser, testDb } from "./testDb";
+import { forgetTopics } from "./topics";
+
+// The Worker's Durable Object base isn't Node's to load; the routes under test never touch one.
+vi.mock("cloudflare:workers", () => ({ DurableObject: class {} }));
+const app = (await import("./index")).default;
+
+const ctx = {
+  waitUntil: () => {},
+  passThroughOnException: () => {},
+} as unknown as ExecutionContext;
+
+/** A request through the real route table, as the runtime would hand it over. */
+async function call(
+  env: Env,
+  path: string,
+  init?: { method?: string; headers?: Record<string, string>; body?: BodyInit },
+): Promise<Response> {
+  return app.fetch(new Request(`http://localhost${path}`, init), env, ctx);
+}
+
+// A signed-in admin's request, as a page of the admin UI would send it.
+async function adminEnv(): Promise<{ env: Env; headers: Record<string, string> }> {
+  const env = { DB: await testDb() } as unknown as Env;
+  await addUser(env.DB, "boss");
+  await env.DB.prepare("UPDATE users SET is_admin = 1 WHERE id = 'boss'").run();
+  const cookie = (await createSession(env, "boss", Date.now())).split(";")[0]!;
+  return { env, headers: { Cookie: cookie, Origin: "http://localhost" } };
+}
+
+const jsonBody = (headers: Record<string, string>, body: unknown) => ({
+  headers: { ...headers, "Content-Type": "application/json" },
+  body: JSON.stringify(body),
+});
 
 /** One row of the bank's own shape, as a JSON question file writes it. */
 function stored(over: Record<string, unknown> = {}): Record<string, unknown> {
@@ -35,14 +73,14 @@ function flat(over: Record<string, unknown> = {}): Record<string, unknown> {
   };
 }
 
-function questionOf(data: unknown): StoredQuestion {
-  const built = rowToQuestion(data);
+function questionOf(data: unknown, topics: readonly { id: string; name: string }[] = QUIZ_CATEGORIES): StoredQuestion {
+  const built = rowToQuestion(data, topics);
   if ("error" in built) throw new Error(built.error);
   return built.question;
 }
 
-function errorOf(data: unknown): string {
-  const built = rowToQuestion(data);
+function errorOf(data: unknown, topics: readonly { id: string; name: string }[] = QUIZ_CATEGORIES): string {
+  const built = rowToQuestion(data, topics);
   return "error" in built ? built.error : "expected an error, got a question";
 }
 
@@ -145,6 +183,13 @@ describe("checking a row", () => {
     }
   });
 
+  it("matches a live custom topic by name or id, in any case", () => {
+    const topics = [...QUIZ_CATEGORIES, { id: "mars", name: "Mars" }];
+    expect(questionOf(stored({ category: "mars" }), topics).category).toBe("mars");
+    expect(questionOf(stored({ category: "Mars" }), topics).category).toBe("mars");
+    expect(questionOf(stored({ category: "MARS" }), topics).category).toBe("mars");
+  });
+
   it("treats a blank level as easy and refuses an unknown one", () => {
     expect(questionOf(stored({ difficulty: "" })).difficulty).toBe("easy");
     expect(questionOf(stored({ difficulty: "Easy" })).difficulty).toBe("easy");
@@ -202,7 +247,7 @@ describe("checking a row", () => {
 
 describe("planning an import", () => {
   it("numbers a new row in the category's sequence, ignoring the file's id", () => {
-    const plan = planImport([row(stored())], []);
+    const plan = planImport([row(stored())], [], QUIZ_CATEGORIES);
     expect(plan.add).toHaveLength(1);
     expect(plan.add[0]!.id).toBe("bible-001");
     expect(plan.skipped).toEqual([]);
@@ -210,7 +255,7 @@ describe("planning an import", () => {
   });
 
   it("numbers a row that comes without an id the same way", () => {
-    const plan = planImport([row(flat())], []);
+    const plan = planImport([row(flat())], [], QUIZ_CATEGORIES);
     expect(plan.add[0]!.id).toBe("bible-001");
   });
 
@@ -235,7 +280,7 @@ describe("planning an import", () => {
       choices: ["Eve", "Sarah", "Mary", "Ruth"],
       explanation: "God created Eve from one of Adam's ribs to be his helper.",
     });
-    const plan = planImport([row(stored()), row(second)], bank);
+    const plan = planImport([row(stored()), row(second)], bank, QUIZ_CATEGORIES);
     expect(plan.add.map((q) => q.id)).toEqual(["bible-511", "bible-512"]);
   });
 
@@ -252,13 +297,13 @@ describe("planning an import", () => {
         reference: "Genesis 2:7",
       } satisfies StoredQuestion,
     ];
-    const plan = planImport([row(stored({ id: "whizard-easy-900" }))], bank);
+    const plan = planImport([row(stored({ id: "whizard-easy-900" }))], bank, QUIZ_CATEGORIES);
     expect(plan.add).toEqual([]);
     expect(plan.skipped).toEqual([{ row: 1, message: "Already asked as bible-001." }]);
   });
 
   it("skips a row the file already asked", () => {
-    const plan = planImport([row(stored(), 1), row(stored({ id: "whizard-easy-002" }), 2)], []);
+    const plan = planImport([row(stored(), 1), row(stored({ id: "whizard-easy-002" }), 2)], [], QUIZ_CATEGORIES);
     expect(plan.add).toHaveLength(1);
     expect(plan.skipped).toEqual([{ row: 2, message: "Already asked as bible-001." }]);
   });
@@ -275,7 +320,7 @@ describe("planning an import", () => {
         explanation: "God formed Adam from the dust of the ground and breathed life into him.",
       } satisfies StoredQuestion,
     ];
-    const plan = planImport([row(stored())], bank);
+    const plan = planImport([row(stored())], bank, QUIZ_CATEGORIES);
     expect(plan.add).toEqual([]);
     expect(plan.skipped[0]!.message).toMatch(/Another topic already asks this/);
   });
@@ -293,17 +338,92 @@ describe("planning an import", () => {
         reference: "Exodus 19:20",
       } satisfies StoredQuestion,
     ];
-    const plan = planImport([row(stored())], bank);
+    const plan = planImport([row(stored())], bank, QUIZ_CATEGORIES);
     expect(plan.add).toHaveLength(1);
     expect(plan.add[0]!.id).toBe("bible-001");
   });
 
   it("reports rows to fix with their number, and still adds the good ones", () => {
-    const plan = planImport([row(flat(), 1), row(stored({ difficulty: "brutal" }), 2)], []);
+    const plan = planImport([row(flat(), 1), row(stored({ difficulty: "brutal" }), 2)], [], QUIZ_CATEGORIES);
     expect(plan.add).toHaveLength(1);
     expect(plan.skipped).toEqual([]);
     expect(plan.errors).toHaveLength(1);
     expect(plan.errors[0]!.row).toBe(2);
     expect(plan.errors[0]!.message).toMatch(/Unknown level/);
+  });
+});
+
+describe("import against the live catalogue", () => {
+  beforeEach(() => {
+    forgetTopics();
+    forgetBank();
+    forgetSettings();
+  });
+
+  it("matches a renamed topic by its new name and id, and rejects a name that no longer exists", async () => {
+    const { env, headers } = await adminEnv();
+    const created = await call(env, "/api/admin/topics", {
+      method: "POST",
+      ...jsonBody(headers, { name: "Biology" }),
+    });
+    expect(created.status).toBe(201);
+    const rename = (name: string) =>
+      call(env, "/api/admin/topics/biology", {
+        method: "PATCH",
+        ...jsonBody(headers, { name }),
+      });
+    expect((await rename("Life sciences")).status).toBe(200);
+    // Renamed again so the intermediate name is no longer any live id or name: a topic's
+    // immutable id keeps its original name matching (spec §9 normalised id *or* name), so
+    // only a name that never was the id can genuinely die.
+    expect((await rename("Natural sciences")).status).toBe(200);
+
+    const file = (category: string, prompt: string, choices: [string, string, string, string]) => ({
+      category,
+      topic: "Cells",
+      difficulty: "easy",
+      prompt,
+      choices,
+      explanation: "First taught in biology class.",
+    });
+    const response = await call(env, "/api/admin/questions/import", {
+      method: "POST",
+      ...jsonBody(headers, {
+        filename: "biology.json",
+        text: JSON.stringify([
+          file("Natural sciences", "Which part of a cell holds its DNA?", [
+            "Nucleus",
+            "Ribosome",
+            "Mitochondrion",
+            "Golgi apparatus",
+          ]),
+          file("biology", "What produces a cell's energy?", [
+            "Mitochondria",
+            "Nucleus",
+            "Ribosome",
+            "Vacuole",
+          ]),
+          file("Life sciences", "What assembles proteins?", [
+            "Ribosomes",
+            "Nucleus",
+            "Mitochondria",
+            "Lysosome",
+          ]),
+        ]),
+      }),
+    });
+    expect(response.status).toBe(200);
+    const body = (await response.json()) as {
+      added: number;
+      errors: { row: number; message: string }[];
+    };
+    expect(body.added).toBe(2); // the new name and the id both matched the live topic
+    expect(body.errors).toHaveLength(1);
+    expect(body.errors[0]!.row).toBe(3);
+    expect(body.errors[0]!.message).toMatch(
+      /^Unknown topic “Life sciences”\. Topics are: Bible, /,
+    );
+    expect(body.errors[0]!.message).toContain("Natural sciences"); // live names, not the old ones
+    expect(body.errors[0]!.message).not.toContain("Biology");
   });
 });

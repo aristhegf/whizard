@@ -8,7 +8,7 @@ import {
   repeatsAcrossCategories,
   type StoredQuestion,
 } from "@whizard/content";
-import { QUIZ_CATEGORIES, QUIZ_DIFFICULTIES } from "@whizard/game-core";
+import { QUIZ_CATEGORIES, QUIZ_DIFFICULTIES, topicIdSchema } from "@whizard/game-core";
 import {
   QUESTION_FILTERS,
   QUESTION_SORTS,
@@ -27,6 +27,7 @@ import { forgetBank, loadBank, shippedQuestion, type Bank } from "./bank";
 import type { Env } from "./env";
 import { HttpError, requireSameOrigin, type RequestContext } from "./http";
 import { outOfPlay, type OutOfPlay } from "./reports";
+import { getTopics, isKnown } from "./topics";
 
 /** A question needs this many answers before it's called hard or easy. */
 const MIN_ANSWERS = 5;
@@ -253,8 +254,10 @@ const inputSchema = z.object({
     .transform((v) => (v ? v : null)),
 });
 
+// Shape only: membership is checked against the live catalogue in the handler, so a
+// freshly created topic passes and a deleted one doesn't.
 const newSchema = inputSchema.extend({
-  category: z.enum(QUIZ_CATEGORIES.map((c) => c.id) as [string, ...string[]], "Pick a topic."),
+  category: topicIdSchema,
 });
 
 async function readInput<T>(request: Request, schema: z.ZodType<T>): Promise<T> {
@@ -396,7 +399,7 @@ async function save(
     logAdmin(db, userId, created ? "question:add" : "question:edit", question.id),
   ]);
   forgetBank();
-  return Response.json({ ok: true, id: question.id });
+  return Response.json({ ok: true, id: question.id }, created ? { status: 201 } : undefined);
 }
 
 /** `PATCH /api/admin/questions/:id`: new wording for a question. Its category stays. */
@@ -420,13 +423,18 @@ export async function addQuestion(context: RequestContext): Promise<Response> {
   requireSameOrigin(context);
   const { user } = await requireAdmin(context);
   const input = await readInput(context.request, newSchema);
+  // Membership is a catalogue check, not a shape one: any live id passes, whatever else
+  // the shipped constant holds.
+  if (!isKnown(await getTopics(context.env), input.category)) {
+    throw new HttpError(400, "invalid_question", "Pick a topic.");
+  }
   const bank = await loadBank(context.env);
   const id = idAllocator(bank.questions)(input.category, input.difficulty);
   const { reference, category, ...rest } = input;
   const question: StoredQuestion = {
     ...rest,
     id,
-    category: category as StoredQuestion["category"],
+    category,
     ...(reference ? { reference } : {}),
   };
   return save(context, question, user.id, true);
