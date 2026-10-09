@@ -1,6 +1,6 @@
 import { DEFAULT_TOPIC_COLORS, QUIZ_CATEGORIES, type QuizDifficulty } from "@whizard/game-core";
 import { useEffect, useSyncExternalStore } from "react";
-import { fetchQuizCategories } from "./api";
+import { type AdminTopicInfo, fetchAdminTopics, fetchQuizCategories } from "./api";
 import { errorText } from "./ui/common";
 
 /** One topic as the catalogue serves it: what it's called, what it looks like, how many questions. */
@@ -16,11 +16,23 @@ export interface TopicInfo {
 }
 
 /** What readers of the catalogue see: the rows, whether a fetch is on, and why the last one failed. */
-export interface TopicsState {
-  topics: TopicInfo[];
+export interface TopicsState<T = TopicInfo> {
+  topics: T[];
   loading: boolean;
   error: string | null;
 }
+
+/** A screen's end of the catalogue: the state, plus the way to force a refetch. */
+export interface TopicsView<T = TopicInfo> extends TopicsState<T> {
+  reload: () => void;
+}
+
+/**
+ * The two catalogues of the same topics: `public` is `GET /api/quiz/categories` — live
+ * topics only, what players pick from; `admin` is `GET /api/admin/topics` — every topic
+ * with the switches the admin owns, off ones included.
+ */
+export type CatalogueMode = "public" | "admin";
 
 /** Where a topic's picture goes when it has none of its own. */
 const GENERIC_ART = "/art/games/quiz.webp";
@@ -47,80 +59,140 @@ function shippedInfo(id: string): TopicInfo | undefined {
  */
 const shippedRows = (): TopicInfo[] => QUIZ_CATEGORIES.map((topic) => shippedInfo(topic.id)!);
 
-let topics = shippedRows();
-let loading = false;
-let error: string | null = null;
-/** A fetch has run to completion (any outcome); only `invalidateTopics` starts the next one. */
-let settled = false;
-let fetching = false;
-/** Bumped when the cache clears, so a fetch still in flight can't answer for the new one. */
-let generation = 0;
-let snapshot: TopicsState = { topics, loading, error };
-const listeners = new Set<() => void>();
-let queued = false;
+/** The shipped twelve as the admin list serves them: never off, no questions counted yet. */
+const shippedAdminRows = (): AdminTopicInfo[] =>
+  QUIZ_CATEGORIES.map((topic, index) => ({
+    id: topic.id,
+    name: topic.name,
+    tagline: topic.tagline,
+    colors: [topic.colors[0], topic.colors[1]],
+    sortOrder: index,
+    art: topic.art,
+    artVersion: 0,
+    off: false,
+    questionCount: 0,
+  }));
+
+/** One mode's catalogue in memory: its rows, its fetch status, and who is waiting on it. */
+interface Cache<T> {
+  topics: T[];
+  loading: boolean;
+  error: string | null;
+  /** A fetch has run to completion (any outcome); only `invalidateTopics` starts the next one. */
+  settled: boolean;
+  fetching: boolean;
+  /** Bumped when the cache clears, so a fetch still in flight can't answer for the new one. */
+  generation: number;
+  snapshot: TopicsState<T>;
+  listeners: Set<() => void>;
+  queued: boolean;
+}
+
+function makeCache<T>(fallback: () => T[]): Cache<T> {
+  const topics = fallback();
+  return {
+    topics,
+    loading: false,
+    error: null,
+    settled: false,
+    fetching: false,
+    generation: 0,
+    snapshot: { topics, loading: false, error: null },
+    listeners: new Set(),
+    queued: false,
+  };
+}
+
+/** The two catalogues, kept apart: separate rows, separate fetches, separate subscribers. */
+const caches = {
+  public: makeCache(shippedRows),
+  admin: makeCache(shippedAdminRows),
+};
 
 /**
  * Rebuilds the snapshot and wakes every subscriber. Coalesced to the next microtask because a
  * label read can happen halfway through a render, and components must not update mid-render.
  */
-function publish(): void {
-  if (queued) return;
-  queued = true;
+function publish<T>(cache: Cache<T>): void {
+  if (cache.queued) return;
+  cache.queued = true;
   queueMicrotask(() => {
-    queued = false;
-    snapshot = { topics, loading, error };
-    for (const listener of [...listeners]) listener();
+    cache.queued = false;
+    cache.snapshot = { topics: cache.topics, loading: cache.loading, error: cache.error };
+    for (const listener of [...cache.listeners]) listener();
   });
 }
 
-/** Starts the one shared fetch when the cache is stale and nothing is already fetching. */
-function ensureLoaded(): void {
-  if (settled || fetching) return;
-  const mine = ++generation;
-  fetching = true;
-  loading = true;
-  publish();
-  fetchQuizCategories().then(
+/** Starts one mode's shared fetch when its cache is stale and nothing is already fetching. */
+function ensureLoaded<T>(
+  cache: Cache<T>,
+  fetchRows: () => Promise<T[]>,
+  fallback: () => T[],
+): void {
+  if (cache.settled || cache.fetching) return;
+  const mine = ++cache.generation;
+  cache.fetching = true;
+  cache.loading = true;
+  publish(cache);
+  fetchRows().then(
     (rows) => {
-      if (mine !== generation) return;
-      topics = rows;
-      loading = false;
-      fetching = false;
-      settled = true;
-      error = null;
-      publish();
+      if (mine !== cache.generation) return;
+      cache.topics = rows;
+      cache.loading = false;
+      cache.fetching = false;
+      cache.settled = true;
+      cache.error = null;
+      publish(cache);
     },
     (cause: unknown) => {
-      if (mine !== generation) return;
+      if (mine !== cache.generation) return;
       // Failure mode keeps the shipped rows only — live rows are never half-applied.
-      topics = shippedRows();
-      loading = false;
-      fetching = false;
-      settled = true;
-      error = errorText(cause);
-      publish();
+      cache.topics = fallback();
+      cache.loading = false;
+      cache.fetching = false;
+      cache.settled = true;
+      cache.error = errorText(cause);
+      publish(cache);
     },
   );
 }
 
-/**
- * Drops the cached catalogue so the next read fetches it again — call this after editing
- * topics. `useTopics().reload()` is this.
- */
-export function invalidateTopics(): void {
-  generation++;
-  topics = shippedRows();
-  loading = false;
-  error = null;
-  settled = false;
-  fetching = false;
-  publish();
+/** Drops one mode's cached catalogue so its next read fetches it again. */
+function invalidate<T>(cache: Cache<T>, fallback: () => T[]): void {
+  cache.generation++;
+  cache.topics = fallback();
+  cache.loading = false;
+  cache.error = null;
+  cache.settled = false;
+  cache.fetching = false;
+  publish(cache);
 }
 
-/** A topic in the live catalogue, else the shipped constant, else nothing at all. */
+const ensurePublic = (): void => ensureLoaded(caches.public, fetchQuizCategories, shippedRows);
+const ensureAdmin = (): void => ensureLoaded(caches.admin, fetchAdminTopics, shippedAdminRows);
+
+/**
+ * Loads (or reuses) one mode's catalogue without subscribing — the read path's kick, and
+ * what a test calls to drive a refetch after `invalidateTopics()`.
+ */
+export function ensureTopics(mode: CatalogueMode): void {
+  if (mode === "admin") ensureAdmin();
+  else ensurePublic();
+}
+
+/**
+ * Drops both cached catalogues so the next read fetches them again — call this after
+ * editing topics. `useTopics().reload()` is this; the public and admin lists move together.
+ */
+export function invalidateTopics(): void {
+  invalidate(caches.public, shippedRows);
+  invalidate(caches.admin, shippedAdminRows);
+}
+
+/** A topic in the live public catalogue, else the shipped constant, else nothing at all. */
 export function topicInfo(id: string): TopicInfo | undefined {
-  ensureLoaded();
-  return topics.find((topic) => topic.id === id) ?? shippedInfo(id);
+  ensurePublic();
+  return caches.public.topics.find((topic) => topic.id === id) ?? shippedInfo(id);
 }
 
 /** What a topic is called: live name, shipped name, then the id itself (never throws). */
@@ -139,34 +211,49 @@ export function topicStyle(id: string): { colors: [string, string]; art: string 
 /** A topic's picture URL, already resolved by the catalogue. */
 export const artSrc = (info: Pick<TopicInfo, "art">): string => info.art;
 
-/** Where a component subscribes to the catalogue; the first subscriber starts the fetch. */
-export function subscribeTopics(listener: () => void): () => void {
-  listeners.add(listener);
-  ensureLoaded();
+/** Where a component subscribes to a catalogue; the first subscriber starts its fetch. */
+export function subscribeTopics(mode: CatalogueMode, listener: () => void): () => void {
+  const cache = caches[mode];
+  cache.listeners.add(listener);
+  ensureTopics(mode);
   return () => {
-    listeners.delete(listener);
+    cache.listeners.delete(listener);
   };
 }
 
-/** The snapshot, stable between changes — the `getSnapshot` half of `useSyncExternalStore`. */
-export function getTopicsState(): TopicsState {
-  return snapshot;
+/** One mode's snapshot, stable between changes — the `getSnapshot` half of `useSyncExternalStore`. */
+export function getTopicsState(mode: "public"): TopicsState<TopicInfo>;
+export function getTopicsState(mode: "admin"): TopicsState<AdminTopicInfo>;
+export function getTopicsState(
+  mode: CatalogueMode,
+): TopicsState<TopicInfo> | TopicsState<AdminTopicInfo> {
+  return caches[mode].snapshot;
 }
 
+/** Stable per-mode seams, so `useSyncExternalStore` sees the same functions each render. */
+const SUBSCRIBERS: Record<CatalogueMode, (listener: () => void) => () => void> = {
+  public: (listener) => subscribeTopics("public", listener),
+  admin: (listener) => subscribeTopics("admin", listener),
+};
+
+const SNAPSHOTS: Record<CatalogueMode, () => TopicsState<TopicInfo | AdminTopicInfo>> = {
+  public: () => getTopicsState("public"),
+  admin: () => getTopicsState("admin"),
+};
+
 /**
- * The catalogue for a screen: fetched once for the whole app, refetched after
- * `invalidateTopics()`, falling back to the shipped topics when the fetch fails.
+ * The catalogue for a screen: `useTopics()` (or `useTopics("public")`) is the public list
+ * players pick from, `useTopics("admin")` is the admin list — every topic, off ones
+ * included. Each is fetched once for the whole app, refetched after `invalidateTopics()`,
+ * and falls back to the shipped topics when its fetch fails.
  */
-export function useTopics(): {
-  topics: TopicInfo[];
-  loading: boolean;
-  error: string | null;
-  reload: () => void;
-} {
-  const state = useSyncExternalStore(subscribeTopics, getTopicsState, getTopicsState);
+export function useTopics(mode?: "public"): TopicsView<TopicInfo>;
+export function useTopics(mode: "admin"): TopicsView<AdminTopicInfo>;
+export function useTopics(mode: CatalogueMode = "public"): TopicsView<TopicInfo | AdminTopicInfo> {
+  const state = useSyncExternalStore(SUBSCRIBERS[mode], SNAPSHOTS[mode], SNAPSHOTS[mode]);
   // A render after `invalidateTopics` is where a stale cache gets refilled.
   useEffect(() => {
-    ensureLoaded();
+    ensureTopics(mode);
   });
   return { ...state, reload: invalidateTopics };
 }

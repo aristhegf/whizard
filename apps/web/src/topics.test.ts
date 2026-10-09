@@ -1,6 +1,8 @@
 import { QUIZ_CATEGORIES } from "@whizard/game-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { type AdminTopicInfo } from "./api";
 import {
+  ensureTopics,
   getTopicsState,
   invalidateTopics,
   subscribeTopics,
@@ -20,6 +22,37 @@ const row = (id: string, name: string): TopicInfo => ({
   art: `/art/topics/${id}.webp`,
   questions: { easy: 3, medium: 2, hard: 1 },
 });
+
+/** One row as `GET /api/admin/topics` serves it: the admin fields, off switch included. */
+const adminRow = (id: string, name: string, off: boolean): AdminTopicInfo => ({
+  id,
+  name,
+  tagline: "A topic admins added",
+  colors: ["#123456", "#654321"],
+  sortOrder: 3,
+  art: `/art/topics/${id}.webp`,
+  artVersion: 0,
+  off,
+  questionCount: 7,
+});
+
+/** Answers each catalogue fetch from its own endpoint, so one mock serves both modes. */
+function servesBoth(): ReturnType<typeof vi.fn> {
+  const fetchMock = vi.fn(async (input: unknown) => {
+    const url = String(input);
+    if (url === "/api/admin/topics") {
+      return {
+        ok: true,
+        json: async () => ({
+          topics: [adminRow("mars", "Mars Colony", false), adminRow("bible", "Bible", true)],
+        }),
+      };
+    }
+    return { ok: true, json: async () => ({ categories: [row("mars", "Mars Colony")] }) };
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  return fetchMock;
+}
 
 /** Serves the next catalogue fetch with these rows, clearing the store first. */
 function serves(rows: TopicInfo[]): void {
@@ -82,7 +115,7 @@ describe("the live topic catalogue", () => {
     topicStyle("mars");
     await flush();
 
-    expect(getTopicsState().topics.map((topic) => topic.id)).toEqual(["mars"]);
+    expect(getTopicsState("public").topics.map((topic) => topic.id)).toEqual(["mars"]);
     expect(topicStyle("mars")).toEqual({
       colors: ["#123456", "#654321"],
       art: "/art/topics/mars.webp",
@@ -101,16 +134,16 @@ describe("the live topic catalogue", () => {
       ),
     );
     invalidateTopics();
-    const unsubscribe = subscribeTopics(() => {});
+    const unsubscribe = subscribeTopics("public", () => {});
     await flush();
 
-    expect(getTopicsState().loading).toBe(true);
-    expect(getTopicsState().error).toBeNull();
+    expect(getTopicsState("public").loading).toBe(true);
+    expect(getTopicsState("public").error).toBeNull();
 
     answer!({ ok: false, status: 500 });
     await flush();
 
-    const failed = getTopicsState();
+    const failed = getTopicsState("public");
     expect(failed.loading).toBe(false);
     expect(failed.error).toBe("Could not load categories (500)");
     expect(failed.topics.map((topic) => topic.id)).toEqual(QUIZ_CATEGORIES.map((c) => c.id));
@@ -120,8 +153,50 @@ describe("the live topic catalogue", () => {
     topicName("mars");
     await flush();
 
-    expect(getTopicsState().error).toBeNull();
+    expect(getTopicsState("public").error).toBeNull();
     expect(topicName("mars")).toBe("Mars Colony");
     unsubscribe();
+  });
+
+  it("admin mode fetches the admin catalogue and includes off topics", async () => {
+    const fetchMock = servesBoth();
+    invalidateTopics();
+
+    topicName("mars"); // Loads the public catalogue first.
+    await flush();
+    expect(fetchMock).toHaveBeenCalledWith("/api/quiz/categories");
+    expect(topicName("mars")).toBe("Mars Colony");
+
+    const unsubscribe = subscribeTopics("admin", () => {});
+    await flush();
+
+    expect(fetchMock).toHaveBeenCalledWith("/api/admin/topics");
+    const admin = getTopicsState("admin");
+    expect(admin.loading).toBe(false);
+    expect(admin.error).toBeNull();
+    // Off topics are part of the admin list; the public endpoint never includes them.
+    expect(admin.topics.map((topic) => topic.off)).toEqual([false, true]);
+    // Separate caches: the admin rows never bleed into the public one.
+    expect(getTopicsState("public").topics.map((topic) => topic.id)).toEqual(["mars"]);
+    unsubscribe();
+  });
+
+  it("invalidateTopics forces a refetch in both modes", async () => {
+    const fetchMock = servesBoth();
+    invalidateTopics();
+
+    ensureTopics("public");
+    ensureTopics("admin");
+    await flush();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+
+    invalidateTopics();
+    ensureTopics("public");
+    ensureTopics("admin");
+    await flush();
+
+    expect(fetchMock).toHaveBeenCalledTimes(4);
+    expect(getTopicsState("public").topics.map((topic) => topic.name)).toEqual(["Mars Colony"]);
+    expect(getTopicsState("admin").topics.map((topic) => topic.off)).toEqual([false, true]);
   });
 });
