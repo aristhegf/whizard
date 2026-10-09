@@ -124,10 +124,13 @@ export function slugify(name: string): string {
   return slug || "topic";
 }
 
+/** How many ids to try before a name's collisions look deliberate rather than accidental. */
+const PROBE_LIMIT = 50;
+
 /** The first id nobody has taken for this name: `biology`, then `biology-2`, `biology-3`, … */
 export async function nextSlug(env: Env, name: string): Promise<string> {
   const base = slugify(name);
-  for (let n = 1; ; n++) {
+  for (let n = 1; n <= PROBE_LIMIT; n++) {
     const suffix = n === 1 ? "" : `-${n}`;
     const candidate = suffix ? `${base.slice(0, 40 - suffix.length)}${suffix}` : base;
     const row = await env.DB.prepare(`SELECT EXISTS(SELECT 1 FROM topics WHERE id = ?) AS "exists"`)
@@ -135,6 +138,39 @@ export async function nextSlug(env: Env, name: string): Promise<string> {
       .first<{ exists: number }>();
     if (!row?.exists) return candidate;
   }
+  // Fifty names taken by different topics: stamp the id with the clock, still within 40.
+  const stamp = Date.now().toString(36);
+  return `${base.slice(0, 40 - stamp.length - 1)}-${stamp}`;
+}
+
+/**
+ * The canvas size a WebP header declares — `VP8X`, `VP8L` or `VP8 ` after the `RIFF`/`WEBP`
+ * signature — or null when the bytes aren't a parsable WebP at all. The upload path trusts
+ * this header alone, exactly as it does for a photo.
+ */
+export function webpDimensions(bytes: Uint8Array): { width: number; height: number } | null {
+  const ascii = (from: number, to: number) => String.fromCharCode(...bytes.subarray(from, to));
+  if (bytes.length < 12 || ascii(0, 4) !== "RIFF" || ascii(8, 12) !== "WEBP") return null;
+  const kind = ascii(12, 16);
+  if (kind === "VP8X") {
+    if (bytes.length < 30) return null;
+    const at = (start: number) =>
+      1 + bytes[start]! + (bytes[start + 1]! << 8) + (bytes[start + 2]! << 16);
+    return { width: at(24), height: at(27) };
+  }
+  if (kind === "VP8L") {
+    if (bytes.length < 25 || bytes[20] !== 0x2f) return null;
+    const bits = bytes[21]! | (bytes[22]! << 8) | (bytes[23]! << 16) | (bytes[24]! << 24);
+    return { width: (bits & 0x3fff) + 1, height: ((bits >>> 14) & 0x3fff) + 1 };
+  }
+  if (kind === "VP8 ") {
+    if (bytes.length < 30 || bytes[23] !== 0x9d || bytes[24] !== 0x01 || bytes[25] !== 0x2a) {
+      return null;
+    }
+    const at = (start: number) => (bytes[start]! | (bytes[start + 1]! << 8)) & 0x3fff;
+    return { width: at(26), height: at(28) };
+  }
+  return null;
 }
 
 /**

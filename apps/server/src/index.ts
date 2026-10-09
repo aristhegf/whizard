@@ -69,6 +69,7 @@ import {
   revertQuestion,
   updateQuestion,
 } from "./adminQuestions";
+import { createTopic, deleteTopic, listTopics, updateTopic, uploadTopicArt } from "./adminTopics";
 import { loadBank } from "./bank";
 import { getPhoto, uploadPhoto } from "./photos";
 import { getSite, siteSettings } from "./settings";
@@ -246,7 +247,7 @@ async function roomStatus({ env, params }: RequestContext): Promise<Response> {
   return Response.json({ code, ...status }, { headers: { "Cache-Control": "no-store" } });
 }
 
-type Method = "GET" | "POST" | "PATCH" | "DELETE";
+type Method = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
 
 const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/health$/, health],
@@ -284,6 +285,11 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["DELETE", /^\/api\/admin\/moderation\/words\/([^/]+)$/, removeBlockedWord],
   ["POST", /^\/api\/admin\/moderation\/names\/(\d+)$/, actOnName],
   ["GET", /^\/api\/admin\/settings$/, getAdminSettings],
+  ["GET", /^\/api\/admin\/topics$/, listTopics],
+  ["POST", /^\/api\/admin\/topics$/, createTopic],
+  ["PUT", /^\/api\/admin\/topics\/([^/]+)\/art$/, uploadTopicArt],
+  ["PATCH", /^\/api\/admin\/topics\/([^/]+)$/, updateTopic],
+  ["DELETE", /^\/api\/admin\/topics\/([^/]+)$/, deleteTopic],
   ["GET", /^\/api\/admin\/games$/, getAdminGames],
   ["GET", /^\/api\/admin\/payments$/, getAdminPayments],
   ["POST", /^\/api\/admin\/payments$/, recordPayment],

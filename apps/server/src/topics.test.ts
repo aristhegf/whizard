@@ -3,8 +3,9 @@ import { QUIZ_CATEGORIES } from "@whizard/game-core";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { forgetBank, type Bank } from "./bank";
 import type { Env } from "./env";
-import { forgetSettings } from "./settings";
-import { testDb } from "./testDb";
+import { forgetSettings, siteSettings } from "./settings";
+import { createSession } from "./sessions";
+import { addUser, testDb } from "./testDb";
 import {
   categoriesPayload,
   customCounts,
@@ -14,6 +15,7 @@ import {
   nextSlug,
   playableCounts,
   slugify,
+  webpDimensions,
 } from "./topics";
 
 // The Worker's Durable Object base isn't Node's to load; the routes under test never touch one.
@@ -26,8 +28,12 @@ const ctx = {
 } as unknown as ExecutionContext;
 
 /** A request through the real route table, as the runtime would hand it over. */
-async function call(env: Env, path: string): Promise<Response> {
-  return app.fetch(new Request(`http://localhost${path}`), env, ctx);
+async function call(
+  env: Env,
+  path: string,
+  init?: { method?: string; headers?: Record<string, string>; body?: BodyInit },
+): Promise<Response> {
+  return app.fetch(new Request(`http://localhost${path}`, init), env, ctx);
 }
 
 // The migration as plain text. Node is named at run time so the Worker's type check doesn't go
@@ -35,6 +41,7 @@ async function call(env: Env, path: string): Promise<Response> {
 const fsModule = "node:fs";
 const fs = (await import(fsModule)) as {
   readFileSync(path: URL, encoding: "utf8"): string;
+  readFileSync(path: URL): Uint8Array;
 };
 const sql = fs.readFileSync(
   new URL("../migrations/0020_topics.sql", (import.meta as ImportMeta & { url: string }).url),
@@ -354,5 +361,300 @@ describe("the public endpoints", () => {
     const body = (await response.json()) as { error: { code: string; message: string } };
     expect(body.error.code).toBe("not_found");
     expect(body.error.message).toMatch(/topic/i);
+  });
+});
+
+// Minimal WebP containers, header bytes only: the server validates the signature and the
+// dimensions the header declares, never the picture data behind them.
+function ascii(bytes: Uint8Array, at: number, text: string): void {
+  for (let i = 0; i < text.length; i++) bytes[at + i] = text.charCodeAt(i);
+}
+
+function container(kind: string, length: number): Uint8Array {
+  const bytes = new Uint8Array(length);
+  ascii(bytes, 0, "RIFF");
+  ascii(bytes, 8, "WEBP");
+  ascii(bytes, 12, kind);
+  return bytes;
+}
+
+function vp8x(width: number, height: number): Uint8Array {
+  const bytes = container("VP8X", 30);
+  const w = width - 1;
+  const h = height - 1;
+  bytes[24] = w & 0xff;
+  bytes[25] = (w >> 8) & 0xff;
+  bytes[26] = (w >> 16) & 0xff;
+  bytes[27] = h & 0xff;
+  bytes[28] = (h >> 8) & 0xff;
+  bytes[29] = (h >> 16) & 0xff;
+  return bytes;
+}
+
+function vp8l(width: number, height: number): Uint8Array {
+  const bytes = container("VP8L", 25);
+  bytes[20] = 0x2f;
+  const bits = (width - 1) | ((height - 1) << 14);
+  bytes[21] = bits & 0xff;
+  bytes[22] = (bits >>> 8) & 0xff;
+  bytes[23] = (bits >>> 16) & 0xff;
+  bytes[24] = (bits >>> 24) & 0xff;
+  return bytes;
+}
+
+function vp8(width: number, height: number): Uint8Array {
+  const bytes = container("VP8 ", 30);
+  bytes[23] = 0x9d;
+  bytes[24] = 0x01;
+  bytes[25] = 0x2a;
+  bytes[26] = width & 0xff;
+  bytes[27] = (width >> 8) & 0x3f;
+  bytes[28] = height & 0xff;
+  bytes[29] = (height >> 8) & 0x3f;
+  return bytes;
+}
+
+// A signed-in admin's request, as a page of the admin UI would send it.
+async function adminEnv(): Promise<{ env: Env; headers: Record<string, string> }> {
+  const env = { DB: await testDb() } as unknown as Env;
+  await addUser(env.DB, "boss");
+  await env.DB.prepare("UPDATE users SET is_admin = 1 WHERE id = 'boss'").run();
+  const cookie = (await createSession(env, "boss", Date.now())).split(";")[0]!;
+  return { env, headers: { Cookie: cookie, Origin: "http://localhost" } };
+}
+
+const jsonBody = (headers: Record<string, string>, body: unknown) => ({
+  headers: { ...headers, "Content-Type": "application/json" },
+  body: JSON.stringify(body),
+});
+
+async function postTopic(env: Env, headers: Record<string, string>, name: string) {
+  return call(env, "/api/admin/topics", { method: "POST", ...jsonBody(headers, { name }) });
+}
+
+async function errorOf(response: Response): Promise<{ code: string; message: string }> {
+  const body = (await response.json()) as { error: { code: string; message: string } };
+  return body.error;
+}
+
+describe("admin topics", () => {
+  beforeEach(() => {
+    forgetTopics();
+    forgetSettings();
+    forgetBank();
+  });
+
+  it("webpDimensions reads VP8, VP8L and VP8X", async () => {
+    expect(webpDimensions(vp8x(640, 480))).toEqual({ width: 640, height: 480 });
+    expect(webpDimensions(vp8l(1000, 500))).toEqual({ width: 1000, height: 500 });
+    expect(webpDimensions(vp8(320, 240))).toEqual({ width: 320, height: 240 });
+    expect(webpDimensions(new Uint8Array(64))).toBeNull();
+    const jpeg = new Uint8Array(32);
+    jpeg.set([0xff, 0xd8, 0xff, 0xe0]);
+    expect(webpDimensions(jpeg)).toBeNull();
+    const png = new Uint8Array(32);
+    png.set([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    expect(webpDimensions(png)).toBeNull();
+    const real = fs.readFileSync(
+      new URL(
+        "../../web/public/art/topics/bible.webp",
+        (import.meta as ImportMeta & { url: string }).url,
+      ),
+    );
+    expect(webpDimensions(real.slice(0, 20))).toBeNull();
+    const size = webpDimensions(real);
+    expect(size!.width).toBeGreaterThan(0);
+    expect(size!.height).toBeGreaterThan(0);
+  });
+
+  it("create slugs and rejects duplicates", async () => {
+    const { env, headers } = await adminEnv();
+    await getTopics(env); // the catalogue is cached, so the create has to drop it
+    const created = await postTopic(env, headers, "Biology");
+    expect(created.status).toBe(201);
+    const { topic } = (await created.json()) as { topic: Record<string, unknown> };
+    expect(topic).toEqual({
+      id: "biology",
+      name: "Biology",
+      tagline: "",
+      colors: ["#6d5bff", "#1a1747"],
+      sortOrder: 13,
+      art: "/art/games/quiz.webp",
+      artVersion: 0,
+      off: false,
+      questionCount: 0,
+    });
+    expect((await getTopics(env)).map((t) => t.id)).toContain("biology");
+
+    const again = await postTopic(env, headers, "biology");
+    expect(again.status).toBe(409);
+    expect(await errorOf(again)).toEqual({
+      code: "topic_exists",
+      message: "A topic with that name already exists.",
+    });
+
+    const empty = await postTopic(env, headers, "   ");
+    expect(empty.status).toBe(400);
+    expect((await errorOf(empty)).message).toBe("Pick a topic.");
+
+    const badColors = await call(env, "/api/admin/topics", {
+      method: "POST",
+      ...jsonBody(headers, { name: "Art", colors: ["red", "blue"] }),
+    });
+    expect(badColors.status).toBe(400);
+  });
+
+  it("rename keeps the id", async () => {
+    const { env, headers } = await adminEnv();
+    await postTopic(env, headers, "Biology");
+    await getTopics(env);
+    const renamed = await call(env, "/api/admin/topics/biology", {
+      method: "PATCH",
+      ...jsonBody(headers, { name: "Life sciences" }),
+    });
+    expect(renamed.status).toBe(200);
+    const { topic } = (await renamed.json()) as { topic: { id: string; name: string } };
+    expect(topic.id).toBe("biology");
+    expect(topic.name).toBe("Life sciences");
+    const topics = await getTopics(env);
+    expect(topics.find((t) => t.id === "biology")!.name).toBe("Life sciences");
+
+    const clash = await postTopic(env, headers, "Life Sciences");
+    expect(clash.status).toBe(409);
+    expect((await errorOf(clash)).message).toBe("A topic with that name already exists.");
+  });
+
+  it("delete refuses non-empty and strips availability on success", async () => {
+    const { env, headers } = await adminEnv();
+    await postTopic(env, headers, "Mars");
+    await env.DB.prepare(
+      `INSERT INTO custom_questions
+         (id, category, topic, difficulty, prompt, choices, explanation, created_at, updated_at)
+       VALUES ('mars-1', 'mars', 'Mars', 'easy', 'How far is Mars?', '["1","2","3","4"]',
+               'About 225 million km.', 0, 0)`,
+    ).run();
+    await env.DB.prepare(
+      "INSERT INTO site_settings (key, value, updated_at) VALUES ('topics_off', ?, 0)",
+    )
+      .bind(JSON.stringify(["mars"]))
+      .run();
+    await env.DB.prepare(
+      "INSERT INTO site_settings (key, value, updated_at) VALUES ('quiz_defaults', ?, 0)",
+    )
+      .bind(JSON.stringify({ category: "mars" }))
+      .run();
+    // The create's own listing cached the settings before these inserts; drop that copy.
+    forgetSettings();
+    const before = await siteSettings(env); // cached, so the delete has to drop it
+    expect(before.topicsOff).toContain("mars");
+
+    const refused = await call(env, "/api/admin/topics/mars", { method: "DELETE", headers });
+    expect(refused.status).toBe(409);
+    expect(await errorOf(refused)).toEqual({
+      code: "topic_has_questions",
+      message: "That topic has questions — delete them first.",
+    });
+    expect(
+      (await env.DB.prepare("SELECT COUNT(*) AS n FROM custom_questions").first<{ n: number }>())!
+        .n,
+    ).toBe(1);
+    expect(await env.DB.prepare("SELECT id FROM topics WHERE id = 'mars'").first()).not.toBeNull();
+
+    await env.DB.prepare("DELETE FROM custom_questions WHERE category = 'mars'").run();
+    forgetBank(); // the merged bank is cached too; the question behind the guard is gone
+    const deleted = await call(env, "/api/admin/topics/mars", { method: "DELETE", headers });
+    expect(deleted.status).toBe(204);
+    expect(await env.DB.prepare("SELECT id FROM topics WHERE id = 'mars'").first()).toBeNull();
+    expect((await getTopics(env)).map((topic) => topic.id)).not.toContain("mars");
+    const after = await siteSettings(env);
+    expect(after.topicsOff).not.toContain("mars");
+    expect(after.quizDefaults.category).toBe("bible");
+  });
+
+  it("upload validates signature, size and dimensions", async () => {
+    const { env, headers } = await adminEnv();
+    await getTopics(env); // cached, so an upload has to drop it for the list to see the bump
+    const put = (body: Uint8Array) =>
+      call(env, "/api/admin/topics/bible/art", {
+        method: "PUT",
+        headers: { ...headers, "Content-Type": "image/webp" },
+        body,
+      });
+
+    const uploaded = await put(vp8x(512, 512));
+    expect(uploaded.status).toBe(200);
+    expect(await uploaded.json()).toEqual({ version: 1 });
+    const list = (await (await call(env, "/api/admin/topics", { headers })).json()) as {
+      topics: { id: string; art: string; artVersion: number }[];
+    };
+    const bible = list.topics.find((topic) => topic.id === "bible")!;
+    expect(bible.artVersion).toBe(1);
+    expect(bible.art).toBe("/api/topics/bible/art?v=1");
+
+    const jpeg = new Uint8Array(64);
+    jpeg.set([0xff, 0xd8, 0xff, 0xe0]);
+    const wrongFormat = await put(jpeg);
+    expect(wrongFormat.status).toBe(415);
+    expect((await errorOf(wrongFormat)).code).toBe("bad_art");
+
+    const fat = new Uint8Array(400_001);
+    fat.set(vp8x(512, 512));
+    const tooLarge = await put(fat);
+    expect(tooLarge.status).toBe(413);
+    expect((await errorOf(tooLarge)).code).toBe("art_too_large");
+
+    for (const size of [
+      [3000, 3000],
+      [16, 16],
+    ]) {
+      const wrongSize = await put(vp8x(size[0]!, size[1]!));
+      expect(wrongSize.status).toBe(413);
+      expect((await errorOf(wrongSize)).code).toBe("art_too_big");
+    }
+  });
+
+  it("every admin route sets no-store", async () => {
+    const { env, headers } = await adminEnv();
+    const read = await call(env, "/api/admin/topics", { headers });
+    expect(read.status).toBe(200);
+    expect(read.headers.get("Cache-Control")).toBe("no-store");
+
+    const created = await postTopic(env, headers, "No Store");
+    expect(created.status).toBe(201);
+    expect(created.headers.get("Cache-Control")).toBe("no-store");
+
+    const patched = await call(env, "/api/admin/topics/no-store", {
+      method: "PATCH",
+      ...jsonBody(headers, { tagline: "Fresh every time" }),
+    });
+    expect(patched.status).toBe(200);
+    expect(patched.headers.get("Cache-Control")).toBe("no-store");
+
+    const art = await call(env, "/api/admin/topics/no-store/art", {
+      method: "PUT",
+      headers: { ...headers, "Content-Type": "image/webp" },
+      body: vp8x(256, 256),
+    });
+    expect(art.status).toBe(200);
+    expect(art.headers.get("Cache-Control")).toBe("no-store");
+
+    const removed = await call(env, "/api/admin/topics/no-store", { method: "DELETE", headers });
+    expect(removed.status).toBe(204);
+    expect(removed.headers.get("Cache-Control")).toBe("no-store");
+  });
+
+  it("nextSlug gives up probing and stamps the id instead", async () => {
+    const busy = {
+      DB: {
+        prepare: () => ({
+          all: async () => ({ results: [] }),
+          bind: () => ({ first: async () => ({ exists: 1 }) }),
+        }),
+      },
+    } as unknown as Env;
+    const id = await nextSlug(busy, "Biology");
+    expect(id.startsWith("biology")).toBe(true);
+    expect(id).not.toBe("biology");
+    expect(id.length).toBeLessThanOrEqual(40);
   });
 });
