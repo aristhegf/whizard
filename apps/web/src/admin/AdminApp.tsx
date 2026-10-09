@@ -19,6 +19,7 @@ import { Questions } from "./Questions";
 import { Reports } from "./Reports";
 import { Rooms } from "./Rooms";
 import { Settings } from "./Settings";
+import { Topics } from "./Topics";
 import { Users } from "./Users";
 
 interface Section {
@@ -38,12 +39,14 @@ const SUBTITLES: Record<string, string> = {
   moderation: "The names players choose, and the words they can’t use.",
   settings: "Site switches, admins, and what admins have done.",
   games: "Which games and topics are on, and what new rooms start with.",
+  topics: "The catalogue of subjects: names, colours, pictures and questions.",
   payments: "Pro members, and payments recorded by hand.",
 };
 
 const SECTIONS: Section[] = [
   { id: "dashboard", label: "Dashboard", icon: "chart" },
   { id: "games", label: "Games", icon: "games" },
+  { id: "topics", label: "Topics", icon: "star" },
   { id: "questions", label: "Questions", icon: "help" },
   { id: "rooms", label: "Rooms", icon: "door" },
   { id: "users", label: "Users", icon: "users" },
@@ -177,6 +180,8 @@ function AdminShell({
           <Settings me={user.id} />
         ) : current.id === "games" ? (
           <Games />
+        ) : current.id === "topics" ? (
+          <Topics />
         ) : (
           <Payments />
         )}

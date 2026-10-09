@@ -1,4 +1,3 @@
-import { QUIZ_CATEGORIES } from "@whizard/game-core";
 import {
   QUESTION_FILTERS,
   QUESTION_SORTS,
@@ -22,6 +21,7 @@ import {
 } from "../api";
 import { formatNumber, formatPercent } from "../format";
 import { linkTo, navigate } from "../router";
+import { useTopics } from "../topics";
 import { Icon } from "../ui/Icon";
 import { PanelHead, StatBox } from "./parts";
 import {
@@ -63,6 +63,10 @@ export function Content({ item }: { item: string | null }) {
 
 function Browser() {
   const initial = new URLSearchParams(location.search);
+  const { topics: catalogue } = useTopics("admin");
+  /** A row's topic: the admin catalogue first — it knows uploaded art and off topics. */
+  const nameOf = (id: string) => catalogue.find((c) => c.id === id)?.name ?? topicName(id);
+  const artOf = (id: string) => catalogue.find((c) => c.id === id)?.art ?? topicArt(id);
   const [category, setCategory] = useState(initial.get("category") ?? "");
   const [difficulty, setDifficulty] = useState(initial.get("difficulty") ?? "");
   const [query, setQuery] = useState("");
@@ -221,7 +225,7 @@ function Browser() {
             <span className="sr-only">Topic</span>
             <select value={category} onChange={(e) => reset(setCategory)(e.target.value)}>
               <option value="">All topics</option>
-              {QUIZ_CATEGORIES.map((c) => (
+              {catalogue.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
@@ -267,19 +271,18 @@ function Browser() {
         <ul className="content-list">
           {(data?.questions ?? []).map((q) => {
             const share = rightShare(q);
+            const art = artOf(q.category);
             return (
               <li key={q.id}>
                 <a className="content-row" {...linkTo(editPath(q.id))}>
                   <span className="rank-art">
-                    {topicArt(q.category) && (
-                      <img src={topicArt(q.category)} alt="" loading="lazy" />
-                    )}
+                    {art && <img src={art} alt="" loading="lazy" />}
                   </span>
                   <span className="content-text">
                     <strong>{q.prompt}</strong>
                     <span className="report-answer">✓ {q.choices[0]}</span>
                     <span className="content-meta">
-                      {q.id} · {topicName(q.category)} · {LEVEL_NAMES[q.difficulty]} · {q.topic}
+                      {q.id} · {nameOf(q.category)} · {LEVEL_NAMES[q.difficulty]} · {q.topic}
                     </span>
                   </span>
                   <span className="content-share">
@@ -328,14 +331,18 @@ const REQUIRED_REFERENCE: Record<string, { label: string; hint: string }> = {
 };
 
 function Editor({ id }: { id: string | null }) {
+  const { topics: catalogue } = useTopics("admin");
   const [detail, setDetail] = useState<AdminQuestionDetail | null>(null);
-  const [category, setCategory] = useState<string>(QUIZ_CATEGORIES[0]!.id);
+  // Nothing chosen yet: the form falls back to the catalogue's first topic.
+  const [category, setCategory] = useState<string | null>(null);
   const [form, setForm] = useState<QuestionInput>(EMPTY);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
   const [version, setVersion] = useState(0);
+  const chosen = category ?? catalogue[0]?.id ?? "";
+  const chosenName = catalogue.find((c) => c.id === chosen)?.name ?? topicName(chosen);
 
   useEffect(() => {
     if (!id) return;
@@ -380,7 +387,7 @@ function Editor({ id }: { id: string | null }) {
         setSaved("Saved. New games use it within a minute.");
         setVersion((v) => v + 1);
       } else {
-        const { id: newId } = await addQuestion({ ...form, category });
+        const { id: newId } = await addQuestion({ ...form, category: chosen });
         navigate(editPath(newId));
       }
     } catch (e) {
@@ -413,7 +420,7 @@ function Editor({ id }: { id: string | null }) {
   }
   if (id && !detail) return <p className="admin-loading">Loading…</p>;
 
-  const reference = REQUIRED_REFERENCE[category];
+  const reference = REQUIRED_REFERENCE[chosen];
   return (
     <div className="admin-grid">
       <section className="panel admin-panel span-8" aria-labelledby="editor-title">
@@ -423,7 +430,7 @@ function Editor({ id }: { id: string | null }) {
           title={id ? "Edit Question" : "Add a Question"}
           subtitle={
             id
-              ? `${id} · ${topicName(category)}`
+              ? `${id} · ${chosenName}`
               : "Checked the same way as the questions that ship with Whizard."
           }
         >
@@ -442,10 +449,10 @@ function Editor({ id }: { id: string | null }) {
           <div className="form-row">
             <Field label="Topic">
               {id ? (
-                <input value={topicName(category)} disabled />
+                <input value={chosenName} disabled />
               ) : (
-                <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                  {QUIZ_CATEGORIES.map((c) => (
+                <select value={chosen} onChange={(e) => setCategory(e.target.value)}>
+                  {catalogue.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}
                     </option>

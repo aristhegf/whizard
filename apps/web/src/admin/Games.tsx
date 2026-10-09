@@ -1,6 +1,5 @@
 import {
   DEFAULT_QUIZ_SETTINGS,
-  QUIZ_CATEGORIES,
   LEVEL_CHOICES,
   LEVEL_NAMES as LEVEL_CHOICE_NAMES,
   QUIZ_QUESTION_COUNTS,
@@ -12,13 +11,15 @@ import { useState } from "react";
 import { fetchAdminGames, updateSettings } from "../api";
 import { CATALOG, isPlayable } from "../catalog";
 import { formatNumber } from "../format";
+import { useTopics } from "../topics";
 import { useLoaded } from "../ui/common";
 import { KpiTiles, PanelHead } from "./parts";
-import { topicArt, topicName } from "./questionParts";
+import { topicName } from "./questionParts";
 
 /** `/admin/games`: which games and topics are on, and what new rooms start with. */
 export function Games() {
   const { data, error, reload } = useLoaded(fetchAdminGames);
+  const { topics: catalogue } = useTopics("admin");
   const [problem, setProblem] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
 
@@ -43,9 +44,12 @@ export function Games() {
   }
   const settings = data?.settings;
   const played = (id: string) => data?.games.find((g) => g.id === id);
+  const stats = (id: string) => data?.topics.find((t) => t.id === id);
+  /** The catalogue's name for a topic, falling back to whatever the shared lookup knows. */
+  const label = (id: string) => catalogue.find((c) => c.id === id)?.name ?? topicName(id);
   const live = CATALOG.filter(isPlayable);
   const on = live.filter((g) => !settings?.gamesOff.includes(g.id));
-  const topicsOn = QUIZ_CATEGORIES.filter((c) => !settings?.topicsOff.includes(c.id));
+  const topicsOn = catalogue.filter((c) => !settings?.topicsOff.includes(c.id));
   const top = [...(data?.topics ?? [])].sort((a, b) => b.last30 - a.last30)[0];
   const total30 = (data?.games ?? []).reduce((sum, g) => sum + g.last30, 0);
 
@@ -71,14 +75,14 @@ export function Games() {
             tone: "green",
             icon: "layers",
             label: "Topics On",
-            value: data ? `${topicsOn.length} of ${QUIZ_CATEGORIES.length}` : "–",
+            value: data ? `${topicsOn.length} of ${catalogue.length}` : "–",
             note: "quiz topics players can pick",
           },
           {
             tone: "orange",
             icon: "trophy",
             label: "Top Topic",
-            value: top && top.last30 > 0 ? topicName(top.id) : "–",
+            value: top && top.last30 > 0 ? label(top.id) : "–",
             note:
               top && top.last30 > 0 ? `${formatNumber(top.last30)} games, 30 days` : "no games yet",
           },
@@ -154,7 +158,7 @@ export function Games() {
       {settings && (
         <Defaults
           defaults={settings.quizDefaults}
-          topicsOff={settings.topicsOff}
+          topics={catalogue.filter((c) => !settings.topicsOff.includes(c.id))}
           onSave={(quizDefaults) => void save({ quizDefaults }, "New rooms will start like this.")}
         />
       )}
@@ -167,22 +171,24 @@ export function Games() {
           subtitle="A topic that's off is hidden and can't be picked. Keep at least one on."
         />
         <ul className="topic-admin-grid">
-          {(data?.topics ?? []).map((t) => {
+          {catalogue.map((t) => {
+            const topicStats = stats(t.id);
             const isOn = !settings?.topicsOff.includes(t.id);
             return (
               <li key={t.id} className={isOn ? "topic-admin" : "topic-admin off"}>
-                {topicArt(t.id) && <img src={topicArt(t.id)} alt="" loading="lazy" />}
+                {t.art && <img src={t.art} alt="" loading="lazy" />}
                 <span className="name-text">
-                  <strong>{topicName(t.id)}</strong>
+                  <strong>{t.name}</strong>
                   <span>
-                    {formatNumber(t.questions)} questions · {formatNumber(t.last30)} games
+                    {formatNumber(topicStats?.questions ?? 0)} questions ·{" "}
+                    {formatNumber(topicStats?.last30 ?? 0)} games
                   </span>
                 </span>
                 <button
                   type="button"
                   role="switch"
                   aria-checked={isOn}
-                  aria-label={`${topicName(t.id)} on`}
+                  aria-label={`${t.name} on`}
                   className={isOn ? "toggle on" : "toggle"}
                   onClick={() =>
                     settings &&
@@ -192,7 +198,7 @@ export function Games() {
                           ? [...settings.topicsOff, t.id]
                           : settings.topicsOff.filter((id) => id !== t.id),
                       },
-                      isOn ? `${topicName(t.id)} is off.` : `${topicName(t.id)} is on.`,
+                      isOn ? `${t.name} is off.` : `${t.name} is on.`,
                     )
                   }
                 >
@@ -209,11 +215,11 @@ export function Games() {
 
 function Defaults({
   defaults,
-  topicsOff,
+  topics,
   onSave,
 }: {
   defaults: QuizDefaults;
-  topicsOff: string[];
+  topics: { id: string; name: string }[];
   onSave: (defaults: QuizDefaults) => void;
 }) {
   const [form, setForm] = useState({ ...DEFAULT_QUIZ_SETTINGS, ...defaults });
@@ -237,7 +243,7 @@ function Defaults({
         <label className="form-field">
           <span className="form-label">Topic</span>
           <select value={form.category} onChange={(e) => set("category", e.target.value)}>
-            {QUIZ_CATEGORIES.filter((c) => !topicsOff.includes(c.id)).map((c) => (
+            {topics.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
               </option>
