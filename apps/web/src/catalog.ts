@@ -1,4 +1,4 @@
-import type { GameId, QuizCategory } from "@whizard/game-core";
+import type { GameId } from "@whizard/game-core";
 import type { IconName } from "./ui/Icon";
 
 export type GameGroup = "knowledge" | "skill" | "puzzle" | "social" | "couples";
@@ -149,45 +149,6 @@ export const CATALOG: CatalogGame[] = [
     href: null,
   },
 ];
-
-export interface TopicStyle {
-  art: string;
-  /** Top and bottom of the tile's colour wash. */
-  colors: [string, string];
-  /** Shorter name for filter chips. */
-  chip: string;
-}
-
-export const TOPIC_STYLES: Record<QuizCategory, TopicStyle> = {
-  bible: { art: "/art/topics/bible.webp", colors: ["#ffb52c", "#5a2014"], chip: "Bible" },
-  quran: { art: "/art/topics/quran.svg", colors: ["#25c08c", "#053b33"], chip: "Quran" },
-  "general-knowledge": {
-    art: "/art/topics/general-knowledge.webp",
-    colors: ["#1aa6ff", "#1015a8"],
-    chip: "General",
-  },
-  history: { art: "/art/topics/history.webp", colors: ["#ff4b3e", "#6a0b34"], chip: "History" },
-  geography: {
-    art: "/art/topics/geography.webp",
-    colors: ["#26c15f", "#023c3c"],
-    chip: "Geography",
-  },
-  science: { art: "/art/topics/science.webp", colors: ["#1f9dff", "#062585"], chip: "Science" },
-  animals: { art: "/art/topics/animals.svg", colors: ["#f2a93b", "#3f2a0a"], chip: "Animals" },
-  football: { art: "/art/topics/football.webp", colors: ["#ff8a1f", "#6b1228"], chip: "Football" },
-  movies: { art: "/art/topics/movies.webp", colors: ["#8f3cff", "#2a0580"], chip: "Movies" },
-  music: { art: "/art/topics/music.webp", colors: ["#de45ff", "#5e0480"], chip: "Music" },
-  "nigerian-culture": {
-    art: "/art/topics/nigerian-culture.webp",
-    colors: ["#2fc44a", "#012e2e"],
-    chip: "Nigerian Culture",
-  },
-  "pop-culture": {
-    art: "/art/topics/pop-culture.webp",
-    colors: ["#22b4ff", "#0232a3"],
-    chip: "Pop Culture",
-  },
-};
 
 export const cardWash = ([top, bottom]: [string, string]) =>
   `linear-gradient(165deg, ${top} 0%, color-mix(in oklab, ${top} 55%, ${bottom}) 45%, ${bottom} 100%)`;

@@ -1,46 +1,21 @@
 import { TiltCard } from "@/components/motion/tilt-card";
-import type { QuizCategory } from "@whizard/game-core";
 import { useState, type CSSProperties } from "react";
-import { fetchQuizCategories, type QuizCategoryInfo } from "../api";
-import { TOPIC_STYLES, cardWash } from "../catalog";
+import { cardWash } from "../catalog";
+import { artSrc, useTopics } from "../topics";
 import { createFailed, TopLayout, startRoom } from "../ui/Chrome";
 import { HeadingHint } from "../ui/HeadingHint";
 import { Icon } from "../ui/Icon";
-import { useLoaded } from "../ui/common";
-
-/** Shown first: the topics most people start with. */
-const POPULAR: QuizCategory[] = [
-  "bible",
-  "general-knowledge",
-  "history",
-  "geography",
-  "science",
-  "nigerian-culture",
-  "football",
-  "movies",
-  "music",
-  "pop-culture",
-  "animals",
-];
-
-const questionTotal = (c: QuizCategoryInfo) =>
-  c.questions.easy + c.questions.medium + c.questions.hard;
+import { browseRows, isComingSoon } from "../topicTiles";
 
 export function TopicsPage() {
-  const categories = useLoaded(fetchQuizCategories);
-  const [filter, setFilter] = useState<QuizCategory | "popular">("popular");
+  const { topics: rows, loading, error: loadError } = useTopics("public");
   const [query, setQuery] = useState("");
-  const [starting, setStarting] = useState<QuizCategory | null>(null);
+  const [starting, setStarting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const byId = new Map((categories.data ?? []).map((c) => [c.id, c]));
-  const needle = query.trim().toLowerCase();
-  const topics = POPULAR.filter((id) => byId.has(id))
-    .map((id) => byId.get(id)!)
-    .filter((c) => filter === "popular" || c.id === filter)
-    .filter((c) => !needle || c.name.toLowerCase().includes(needle));
+  const topics = browseRows(rows, query);
 
-  const start = async (category: QuizCategory) => {
+  const start = async (category: string) => {
     setStarting(category);
     setError(null);
     try {
@@ -75,52 +50,35 @@ export function TopicsPage() {
         </div>
       </header>
 
-      <div className="chips" role="group" aria-label="Topics">
-        <button
-          className="chip"
-          aria-pressed={filter === "popular"}
-          onClick={() => setFilter("popular")}
-        >
-          Popular
-        </button>
-        {POPULAR.filter((id) => byId.has(id)).map((id) => (
-          <button
-            key={id}
-            className="chip"
-            aria-pressed={filter === id}
-            onClick={() => setFilter(id)}
-          >
-            {TOPIC_STYLES[id]!.chip}
-          </button>
-        ))}
-      </div>
-
       {error && (
         <p className="error" role="alert">
           {error}
         </p>
       )}
-      {categories.error && <p className="error">{categories.error}</p>}
+      {loadError && <p className="error">{loadError}</p>}
 
       <div className="topics-wrap">
         <ul className="topic-grid">
-          {topics.map((c) => {
-            const style = TOPIC_STYLES[c.id]!;
+          {topics.map((row) => {
+            const soon = isComingSoon(row, loading);
             return (
-              <li key={c.id}>
+              <li key={row.id}>
                 <TiltCard className="tilt tilt-topic" max={10}>
                   <button
                     className="topic-tile"
-                    style={{ "--wash": cardWash(style.colors) } as CSSProperties}
-                    disabled={starting !== null}
-                    onClick={() => void start(c.id)}
+                    style={{ "--wash": cardWash(row.colors) } as CSSProperties}
+                    disabled={starting !== null || soon}
+                    onClick={() => void start(row.id)}
                   >
                     <span className="topic-art">
-                      <img src={style.art} alt="" loading="lazy" />
+                      <img src={artSrc(row)} alt="" loading="lazy" />
                     </span>
                     <span className="topic-foot">
-                      <span className="topic-name">{starting === c.id ? "Starting…" : c.name}</span>
-                      <span className="topic-count">{questionTotal(c)} questions</span>
+                      <span className="topic-name">
+                        {starting === row.id ? "Starting…" : row.name}
+                      </span>
+                      {soon && <span className="topic-count">Coming soon</span>}
+                      <span className="topic-tagline">{row.tagline}</span>
                     </span>
                   </button>
                 </TiltCard>

@@ -1,14 +1,15 @@
-import { QUIZ_CATEGORIES, type QuizSettings } from "@whizard/game-core";
-import { useEffect, useRef, useState } from "react";
-import { fetchQuizCategories, type QuizCategoryInfo } from "../../api";
-import { TOPIC_STYLES } from "../../catalog";
+import type { QuizSettings } from "@whizard/game-core";
+import { useEffect, useRef } from "react";
+import { artSrc, useTopics } from "../../topics";
+import { isPickerSoon } from "../../topicTiles";
 
 type Category = QuizSettings["category"];
 
 /**
  * The quiz's topics as a grid of choices, for the lobby's topic chooser and for choosing a game.
- * Topics with no questions yet show as coming soon and can't be picked. `onPick` gets the topic
- * tapped, even when it's the one already chosen.
+ * It maps the live catalogue — new topics appear on their own — and topics with no questions yet
+ * show as coming soon and can't be picked. `onPick` gets the topic tapped, even when it's the one
+ * already chosen.
  */
 export function TopicOptions({
   value,
@@ -19,40 +20,24 @@ export function TopicOptions({
   labelledBy: string;
   onPick: (category: Category) => void;
 }) {
-  const [available, setAvailable] = useState<QuizCategoryInfo[] | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetchQuizCategories()
-      .then((result) => !cancelled && setAvailable(result))
-      .catch(() => !cancelled && setAvailable([]));
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const empty = (id: Category) => {
-    if (!available) return false;
-    const info = available.find((i) => i.id === id);
-    return !info || info.questions.easy + info.questions.medium + info.questions.hard === 0;
-  };
+  const { topics, loading } = useTopics("public");
 
   return (
     <div className="topic-options" role="radiogroup" aria-labelledby={labelledBy}>
-      {QUIZ_CATEGORIES.map((c) => {
-        const soon = empty(c.id) && c.id !== value;
+      {topics.map((row) => {
+        const soon = isPickerSoon(row, value, loading);
         return (
           <button
-            key={c.id}
+            key={row.id}
             type="button"
             role="radio"
-            aria-checked={c.id === value}
+            aria-checked={row.id === value}
             className="topic-option"
             disabled={soon}
-            onClick={() => onPick(c.id)}
+            onClick={() => onPick(row.id)}
           >
-            <img src={TOPIC_STYLES[c.id]!.art} alt="" loading="lazy" />
-            <span>{c.name}</span>
+            <img src={artSrc(row)} alt="" loading="lazy" />
+            <span>{row.name}</span>
             {soon && <span className="dim small">Soon</span>}
           </button>
         );

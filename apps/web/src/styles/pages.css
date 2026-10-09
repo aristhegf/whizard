@@ -138,7 +138,7 @@ button.topic-tile {
   filter: drop-shadow(0 10px 14px rgb(0 0 0 / 38%));
 }
 
-/* The count moves under the name when both don't fit on one line. */
+/* The count badge moves under the name when both don't fit on one line. */
 .topic-foot {
   display: flex;
   flex-wrap: wrap;
@@ -152,6 +152,19 @@ button.topic-tile {
   font-size: 1.1rem;
   line-height: 1.1;
   text-shadow: 0 2px 8px rgb(0 0 0 / 35%);
+}
+
+/* The tagline takes its own line beneath the name, clipped to two. */
+.topic-tagline {
+  flex: 1 1 100%;
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.25;
+  color: rgb(255 255 255 / 72%);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .topic-count {
@@ -177,6 +190,10 @@ button.topic-tile {
     font-size: 1.4rem;
   }
 
+  .topic-tagline {
+    font-size: 0.9rem;
+  }
+
   .topic-count {
     padding: 5px 14px;
     font-size: 0.95rem;
@@ -191,11 +208,6 @@ button.topic-tile {
 
   .topic-name {
     font-size: clamp(1.2rem, 1.35vw, 1.65rem);
-  }
-
-  .topics-page .chip {
-    min-height: 46px;
-    padding: 0 22px;
   }
 }
 
