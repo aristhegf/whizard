@@ -252,12 +252,22 @@ export async function uploadTopicArt(context: RequestContext): Promise<Response>
   const id = decodeURIComponent(context.params[0] ?? "");
   const current = (await getTopics(env)).find((topic) => topic.id === id);
   if (!current) throw new HttpError(404, "not_found", "That topic doesn’t exist.");
+  // §8: size first (declared and actual → 413), then signature (→ 415), then
+  // header parse and dimension range (→ 415). An oversize non-WebP is 413.
+  const declared = Number(context.request.headers.get("Content-Length") ?? 0);
+  if (declared > ART_MAX_BYTES) {
+    throw new HttpError(413, "art_too_large", "That image is too big. Keep it under 400 KB.");
+  }
   const bytes = new Uint8Array(await context.request.arrayBuffer());
-  const size = webpDimensions(bytes);
-  if (!size) throw new HttpError(415, "bad_art", "That isn’t a WebP image we can use.");
   if (bytes.byteLength > ART_MAX_BYTES) {
     throw new HttpError(413, "art_too_large", "That image is too big. Keep it under 400 KB.");
   }
+  const chunk = (from: number, to: number) => String.fromCharCode(...bytes.subarray(from, to));
+  if (bytes.length < 12 || chunk(0, 4) !== "RIFF" || chunk(8, 12) !== "WEBP") {
+    throw new HttpError(415, "bad_art", "That isn’t a WebP image we can use.");
+  }
+  const size = webpDimensions(bytes);
+  if (!size) throw new HttpError(415, "bad_art", "That WebP image’s header can’t be read.");
   if (
     size.width < ART_MIN_EDGE ||
     size.height < ART_MIN_EDGE ||
@@ -265,7 +275,7 @@ export async function uploadTopicArt(context: RequestContext): Promise<Response>
     size.height > ART_MAX_EDGE
   ) {
     throw new HttpError(
-      413,
+      415,
       "art_too_big",
       "Images must be between 32 and 2048 pixels on each side.",
     );

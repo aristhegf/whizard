@@ -603,12 +603,26 @@ describe("admin topics", () => {
     expect(tooLarge.status).toBe(413);
     expect((await errorOf(tooLarge)).code).toBe("art_too_large");
 
+    // Size is judged before the signature: an oversize non-WebP is 413, not 415 (§8.1).
+    const oversizeJunk = await put(new Uint8Array(400_001));
+    expect(oversizeJunk.status).toBe(413);
+    expect((await errorOf(oversizeJunk)).code).toBe("art_too_large");
+
+    // The declared length is judged too, so an oversize upload never has to arrive.
+    const declared = await call(env, "/api/admin/topics/bible/art", {
+      method: "PUT",
+      headers: { ...headers, "Content-Type": "image/webp", "Content-Length": "500000" },
+      body: vp8x(512, 512),
+    });
+    expect(declared.status).toBe(413);
+    expect((await errorOf(declared)).code).toBe("art_too_large");
+
     for (const size of [
       [3000, 3000],
       [16, 16],
     ]) {
       const wrongSize = await put(vp8x(size[0]!, size[1]!));
-      expect(wrongSize.status).toBe(413);
+      expect(wrongSize.status).toBe(415);
       expect((await errorOf(wrongSize)).code).toBe("art_too_big");
     }
   });
