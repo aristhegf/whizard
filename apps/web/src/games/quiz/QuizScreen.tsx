@@ -1,6 +1,5 @@
 import {
   LEVEL_NAMES,
-  QUIZ_CATEGORIES,
   QUIZ_VARIANTS,
   type AnyQuizView,
   type QuizReviewItem,
@@ -10,10 +9,10 @@ import {
 } from "@whizard/game-core";
 import { useEffect, useEffectEvent, useRef, useState, type ReactNode } from "react";
 import { useAccount } from "../../account";
-import { TOPIC_STYLES } from "../../catalog";
 import { AddFromGame } from "../../FriendsScreen";
 import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { useServerNow } from "../../useServerNow";
+import { topicName, topicStyle } from "../../topics";
 import { Avatar } from "../../ui/Avatar";
 import {
   PlayBoard,
@@ -76,7 +75,7 @@ export function QuizScreen(props: Omit<Props, "view"> & { view: AnyQuizView }) {
 function StandardQuiz(props: Props) {
   const { view, room } = props;
   const settings = parseQuizSettings(room.game.settings);
-  const categoryName = QUIZ_CATEGORIES.find((c) => c.id === settings?.category)?.name ?? "Quiz";
+  const categoryName = settings ? topicName(settings.category) : "Quiz";
   const subtitle = [
     QUIZ_VARIANTS.find((v) => v.id === settings?.variant)?.name,
     settings ? LEVEL_NAMES[settings.difficulty] : "",
@@ -255,7 +254,7 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
   }, [visible, stage.startsAt, client]);
 
   if (!visible) {
-    const topic = TOPIC_STYLES[context.categoryId as keyof typeof TOPIC_STYLES];
+    const topic = context.categoryId ? topicStyle(context.categoryId) : null;
     return (
       <PlayFrame label={context.categoryName} latency={context.latency} onQuit={context.onQuit}>
         <div className="countdown" aria-live="polite">
@@ -441,7 +440,7 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
     ? `I scored ${view.me.score.toLocaleString()} in a ${categoryName} quiz on Whizard!`
     : `Play a ${categoryName} quiz with me on Whizard!`;
   const settings = parseQuizSettings(room.game.settings);
-  const topic = TOPIC_STYLES[context.categoryId as keyof typeof TOPIC_STYLES];
+  const topic = context.categoryId ? topicStyle(context.categoryId) : null;
   const level = settings ? LEVEL_NAMES[settings.difficulty] : "";
   const { open: share, dialog: shareDialog } = useShareResults(
     buildCard({

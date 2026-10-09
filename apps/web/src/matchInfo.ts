@@ -1,12 +1,7 @@
-import {
-  JIGSAW_LEVELS,
-  JIGSAW_PICTURES,
-  LEVEL_NAMES,
-  LOGIC_SIZES,
-  QUIZ_CATEGORIES,
-} from "@whizard/game-core";
+import { JIGSAW_LEVELS, JIGSAW_PICTURES, LEVEL_NAMES, LOGIC_SIZES } from "@whizard/game-core";
 import type { GameBest, MatchRecord } from "@whizard/protocol";
 import { CATALOG } from "./catalog";
+import { topicName as catalogueTopicName } from "./topics";
 
 // How a finished game reads on the profile pages: its name, art, level, day and result.
 
@@ -16,8 +11,8 @@ export function gameInfo(id: string): { name: string; art: string } {
   return { name: game?.name ?? "Game", art: game?.art ?? "/art/games/quiz.webp" };
 }
 
-export const topicName = (id: string | null) =>
-  QUIZ_CATEGORIES.find((c) => c.id === id)?.name ?? null;
+/** A topic's name from the live catalogue; null only when the match has no topic. */
+export const topicName = (id: string | null) => (id === null ? null : catalogueTopicName(id));
 
 /** A level as players know it: "Medium", or a Logic grid with its size, "Medium 6×6". */
 export function levelName(game: string, difficulty: string | null): string | null {

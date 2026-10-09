@@ -1,4 +1,3 @@
-import { QUIZ_CATEGORIES } from "@whizard/game-core";
 import {
   GROUP_NAME_MAX_LENGTH,
   USERNAME_MAX_LENGTH,
@@ -25,6 +24,7 @@ import {
   shareLink,
   updateGroup,
 } from "./social";
+import { useTopics } from "./topics";
 import { Avatar } from "./ui/Avatar";
 import { TopLayout } from "./ui/Chrome";
 import { errorText, useLoaded } from "./ui/common";
@@ -493,6 +493,7 @@ function Group({ id, me }: { id: string; me: string }) {
   const leaving = useToastAction();
   const loadBoard = useCallback(() => fetchLeaderboard(id, category), [id, category]);
   const board = useLoaded(loadBoard);
+  const { topics } = useTopics();
 
   if (groups.error) return <ErrorLine error={groups.error} />;
   if (!groups.data) return <Loading />;
@@ -530,7 +531,7 @@ function Group({ id, me }: { id: string; me: string }) {
           onChange={(event) => setCategory(event.target.value || null)}
         >
           <option value="">All categories</option>
-          {QUIZ_CATEGORIES.map((c) => (
+          {topics.map((c) => (
             <option key={c.id} value={c.id}>
               {c.name}
             </option>

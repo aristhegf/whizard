@@ -1,9 +1,9 @@
-import { QUIZ_CATEGORIES, QUIZ_VARIANTS } from "@whizard/game-core";
+import { QUIZ_VARIANTS } from "@whizard/game-core";
 import { STATS_RANGES, type AdminAnalytics, type StatsRange } from "@whizard/protocol";
 import { useCallback } from "react";
 import { fetchAdminAnalytics } from "../api";
-import { TOPIC_STYLES } from "../catalog";
 import { countryFlag, countryName, formatNumber, formatPercent } from "../format";
+import { topicName, topicStyle } from "../topics";
 import { GamesChart } from "./GamesChart";
 import {
   Bar,
@@ -188,8 +188,8 @@ export function Analytics({
         title="Topics Started"
         icon="help"
         entries={s?.topics.slice(0, TOP)}
-        label={(id) => QUIZ_CATEGORIES.find((c) => c.id === id)?.name ?? id}
-        art={(id) => TOPIC_STYLES[id as keyof typeof TOPIC_STYLES]?.art}
+        label={topicName}
+        art={(id) => topicStyle(id).art}
         empty="No quiz games yet."
         tone="blue"
         leaderTone="gold"

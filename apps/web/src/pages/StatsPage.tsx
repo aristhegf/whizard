@@ -1,6 +1,5 @@
 import { ActionSwapCascadeText } from "@/components/motion/action-swap-cascade";
 import { Tooltip } from "@/components/motion/tooltip";
-import { QUIZ_CATEGORIES, type QuizCategory } from "@whizard/game-core";
 import type {
   CommunityStats,
   LeaderboardEntry,
@@ -9,8 +8,9 @@ import type {
 } from "@whizard/protocol";
 import { useState, type CSSProperties, type ReactNode } from "react";
 import { fetchCommunityStats } from "../api";
-import { CATALOG, isPlayable, TOPIC_STYLES } from "../catalog";
+import { CATALOG, isPlayable } from "../catalog";
 import { linkTo } from "../router";
+import { topicName, topicStyle, useTopics } from "../topics";
 import { Avatar } from "../ui/Avatar";
 import { CreateRoomButton, TopLayout } from "../ui/Chrome";
 import { useLoaded } from "../ui/common";
@@ -39,14 +39,6 @@ function flag(code: string): string {
   return String.fromCodePoint(...[...code].map((c) => 0x1f1a5 + c.charCodeAt(0)));
 }
 
-function topicName(id: string): string {
-  return QUIZ_CATEGORIES.find((c) => c.id === id)?.name ?? id;
-}
-
-function topicArt(id: string): string | undefined {
-  return TOPIC_STYLES[id as QuizCategory]?.art;
-}
-
 function gameName(id: string): string {
   return CATALOG.find((g) => g.id === id)?.name ?? id;
 }
@@ -57,7 +49,7 @@ function trendingName(entry: TrendingEntry): string {
 }
 
 function trendingArt(entry: TrendingEntry): string | undefined {
-  if (entry.game === "quiz" && entry.topic) return topicArt(entry.topic);
+  if (entry.game === "quiz" && entry.topic) return topicStyle(entry.topic).art;
   return CATALOG.find((g) => g.id === entry.game)?.art;
 }
 
@@ -328,13 +320,16 @@ function MostPlayedGames({ entries }: { entries: StatsEntry[] | undefined }) {
 
 function PopularTopics({ entries }: { entries: StatsEntry[] | undefined }) {
   const [expanded, setExpanded] = useState(false);
+  const { topics } = useTopics();
   // Every topic, like the games panel: played ones by how often, then the rest.
-  const rows: BarRow[] = QUIZ_CATEGORIES.map((c) => ({
-    key: c.id,
-    name: c.name,
-    art: topicArt(c.id),
-    count: entries?.find((e) => e.name === c.id)?.count ?? 0,
-  })).sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
+  const rows: BarRow[] = topics
+    .map((c) => ({
+      key: c.id,
+      name: c.name,
+      art: c.art,
+      count: entries?.find((e) => e.name === c.id)?.count ?? 0,
+    }))
+    .sort((a, b) => (b.count ?? 0) - (a.count ?? 0));
   return (
     <Panel
       id="topics-title"

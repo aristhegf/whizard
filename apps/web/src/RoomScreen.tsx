@@ -5,7 +5,6 @@ import {
   LEVEL_NAMES,
   MAX_PLAYERS,
   NICKNAME_INPUT_MAX_LENGTH,
-  QUIZ_CATEGORIES,
   QUIZ_VARIANTS,
   ROUNDS_MODES,
   reactionLevelName,
@@ -103,6 +102,7 @@ import { QrCode } from "./ui/QrCode";
 import { usePrefersStill } from "./display";
 import { reportInvite } from "./presence";
 import { play } from "./sounds";
+import { topicName } from "./topics";
 import { SettingsButton } from "./ui/SettingsDialog";
 import { SlideToPlay } from "./ui/SlideToPlay";
 import { useRoom } from "./useRoom";
@@ -591,7 +591,7 @@ function settingsSummary({
   }
   if (settings) {
     const variant = QUIZ_VARIANTS.find((v) => v.id === settings.variant)?.name;
-    const topic = QUIZ_CATEGORIES.find((c) => c.id === settings.category)?.name;
+    const topic = topicName(settings.category);
     const level = settings.difficulty[0]!.toUpperCase() + settings.difficulty.slice(1);
     const count = `${settings.count} questions${settings.variant === "elimination" ? " a round" : ""}`;
     const time = settings.variant === "classic" ? "" : `, ${settings.timeLimitSeconds}s each`;
@@ -649,7 +649,6 @@ function Lobby({
     logic?.mode === "elimination"
       ? Math.max(0, ELIMINATION_MIN_PLAYERS - connected.length)
       : 0;
-  const category = QUIZ_CATEGORIES.find((c) => c.id === settings?.category);
   const url = `${location.origin}${roomPath(room.code)}`;
   // Arriving from Ping on the friends page opens the invites, where that ping goes out.
   const [inviting, setInviting] = useState(() => new URLSearchParams(location.search).has("ping"));
@@ -679,7 +678,7 @@ function Lobby({
     joined.current = connected.length;
   }, [connected.length]);
 
-  const title = settings ? `${category?.name ?? "Quiz"} Quiz` : (game?.name ?? "Quiz");
+  const title = settings ? `${topicName(settings.category)} Quiz` : (game?.name ?? "Quiz");
   const art =
     (jigsaw?.picture === "photo" && jigsaw.photo
       ? photoPicture(room.code, jigsaw.photo).src

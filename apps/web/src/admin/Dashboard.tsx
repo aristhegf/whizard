@@ -1,4 +1,3 @@
-import { QUIZ_CATEGORIES } from "@whizard/game-core";
 import {
   STATS_RANGES,
   type ActivityItem,
@@ -8,8 +7,9 @@ import {
 } from "@whizard/protocol";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { fetchAdminActivity, fetchAdminOverview } from "../api";
-import { CATALOG, TOPIC_STYLES } from "../catalog";
+import { CATALOG } from "../catalog";
 import { countryFlag, countryName, formatNumber, formatPercent, timeAgo } from "../format";
+import { topicName, topicStyle } from "../topics";
 import { Icon, type IconName } from "../ui/Icon";
 import { GamesChart } from "./GamesChart";
 import {
@@ -27,8 +27,6 @@ import {
 const OVERVIEW_REFRESH_MS = 60_000;
 const ACTIVITY_REFRESH_MS = 15_000;
 
-const topicName = (id: string | null | undefined) =>
-  QUIZ_CATEGORIES.find((c) => c.id === id)?.name ?? "Quiz";
 const gameName = (id: string) => CATALOG.find((g) => g.id === id)?.name ?? id;
 
 export function Dashboard({
@@ -94,7 +92,7 @@ export function Dashboard({
         icon="layers"
         entries={data?.topics}
         label={topicName}
-        art={(id) => TOPIC_STYLES[id as keyof typeof TOPIC_STYLES]?.art}
+        art={(id) => topicStyle(id).art}
         empty="No quiz games finished yet."
         leaderTone="gold"
         tone="blue"

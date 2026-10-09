@@ -1,15 +1,14 @@
-import { QUIZ_CATEGORIES } from "@whizard/game-core";
 import type { AdminQuestion, QuestionPlay } from "@whizard/protocol";
-import { TOPIC_STYLES } from "../catalog";
 import { formatNumber, formatPercent } from "../format";
 import { linkTo } from "../router";
+import { topicName, topicStyle } from "../topics";
 import { Bar } from "./parts";
 
 export const LEVELS = ["easy", "medium", "hard"] as const;
 export const LEVEL_NAMES: Record<string, string> = { easy: "Easy", medium: "Medium", hard: "Hard" };
 
-export const topicName = (id: string) => QUIZ_CATEGORIES.find((c) => c.id === id)?.name ?? id;
-export const topicArt = (id: string) => TOPIC_STYLES[id as keyof typeof TOPIC_STYLES]?.art;
+export { topicName };
+export const topicArt = (id: string) => topicStyle(id).art;
 
 export const editPath = (id: string) => `/admin/content/${encodeURIComponent(id)}`;
 

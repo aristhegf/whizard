@@ -1,13 +1,12 @@
 import {
-  QUIZ_CATEGORIES,
   type EliminationStage,
   type EliminationView,
   type QuizReviewItem,
 } from "@whizard/game-core";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { TOPIC_STYLES } from "../../catalog";
 import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { play } from "../../sounds";
+import { topicName, topicStyle } from "../../topics";
 import { GeneratingArt } from "../../ui/GeneratingArt";
 import { useServerNow } from "../../useServerNow";
 import {
@@ -46,7 +45,8 @@ interface Context extends Props, Omit<EliminationContext, "view"> {
 export function EliminationScreen(props: Props) {
   const { view, room } = props;
   const settings = parseQuizSettings(room.game.settings);
-  const categoryName = QUIZ_CATEGORIES.find((c) => c.id === settings?.category)?.name ?? "Quiz";
+  const categoryName = settings ? topicName(settings.category) : "Quiz";
+  const style = settings ? topicStyle(settings.category) : null;
   const avatars = new Map(room.players.map((p) => [p.id, p.avatar]));
   const context: Context = {
     ...props,
@@ -55,12 +55,8 @@ export function EliminationScreen(props: Props) {
     avatarOf: (id) => avatars.get(id) ?? null,
     title: `${categoryName} Quiz`,
     noun: "Question",
-    art:
-      TOPIC_STYLES[settings?.category as keyof typeof TOPIC_STYLES]?.art ?? "/art/games/quiz.webp",
-    colors: TOPIC_STYLES[settings?.category as keyof typeof TOPIC_STYLES]?.colors ?? [
-      "#ff8c1a",
-      "#4a1530",
-    ],
+    art: style?.art ?? "/art/games/quiz.webp",
+    colors: style?.colors ?? ["#ff8c1a", "#4a1530"],
   };
   const { stage } = view;
   switch (stage.kind) {
@@ -108,7 +104,7 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
   }, [visible, stage.startsAt, client]);
 
   if (!visible) {
-    const topic = TOPIC_STYLES[context.categoryId as keyof typeof TOPIC_STYLES];
+    const topic = context.categoryId ? topicStyle(context.categoryId) : null;
     return (
       <EliminationFrame context={context}>
         <div className="countdown" aria-live="polite">

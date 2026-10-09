@@ -1,9 +1,9 @@
-import { QUIZ_CATEGORIES } from "@whizard/game-core";
 import type { LiveRoom } from "@whizard/protocol";
 import { useState } from "react";
 import { closeRoom, fetchAdminRooms } from "../api";
-import { CATALOG, TOPIC_STYLES } from "../catalog";
+import { CATALOG } from "../catalog";
 import { formatNumber, timeAgo } from "../format";
+import { topicName, topicStyle } from "../topics";
 import { KpiTiles, PanelHead, useRefreshing } from "./parts";
 
 const REFRESH_MS = 10_000;
@@ -18,7 +18,7 @@ const LEVELS: Record<string, string> = { easy: "Easy", medium: "Medium", hard: "
 
 function roomTitle(room: LiveRoom): string {
   if (room.game === "quiz") {
-    const topic = QUIZ_CATEGORIES.find((c) => c.id === room.topic)?.name ?? "Quiz";
+    const topic = (room.topic ? topicName(room.topic) : null) ?? "Quiz";
     return `${topic} Quiz`;
   }
   return CATALOG.find((g) => g.id === room.game)?.name ?? room.game;
@@ -92,7 +92,9 @@ function RoomRow({ room, onClosed }: { room: LiveRoom; onClosed: () => void }) {
   const [failed, setFailed] = useState(false);
   const art =
     room.game === "quiz"
-      ? TOPIC_STYLES[room.topic as keyof typeof TOPIC_STYLES]?.art
+      ? room.topic
+        ? topicStyle(room.topic).art
+        : undefined
       : CATALOG.find((g) => g.id === room.game)?.art;
   const phase = PHASES[room.phase];
 

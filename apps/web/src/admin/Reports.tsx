@@ -1,4 +1,3 @@
-import { QUIZ_CATEGORIES } from "@whizard/game-core";
 import {
   REPORT_REASONS,
   type ReportAction,
@@ -8,6 +7,7 @@ import {
 import { useEffect, useState } from "react";
 import { decideReport, fetchAdminReports } from "../api";
 import { timeAgo } from "../format";
+import { topicName } from "../topics";
 import { useLoaded } from "../ui/common";
 
 const STATUS: Record<ReportStatus, { label: string; hint: string }> = {
@@ -18,7 +18,6 @@ const STATUS: Record<ReportStatus, { label: string; hint: string }> = {
 };
 
 const reasonLabel = (id: string) => REPORT_REASONS.find((r) => r.id === id)?.label ?? id;
-const topicName = (id: string) => QUIZ_CATEGORIES.find((c) => c.id === id)?.name ?? id;
 
 type Filter = "check" | "decided" | "all";
 

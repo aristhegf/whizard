@@ -177,7 +177,9 @@ async function adminPost<T = unknown>(path: string, body: unknown, method = "POS
     } | null;
     throw new Error(body?.error?.message ?? `Could not save that (${response.status})`);
   }
-  return (await response.json()) as T;
+  // A 204 (a delete) has no body to parse.
+  const text = await response.text();
+  return (text ? JSON.parse(text) : undefined) as T;
 }
 
 export const decideReport = (questionId: string, action: ReportAction) =>
@@ -233,6 +235,9 @@ export const revertQuestion = (id: string) =>
 export interface QuizCategoryInfo {
   id: QuizCategory;
   name: string;
+  tagline: string;
+  colors: [string, string];
+  art: string;
   questions: Record<QuizDifficulty, number>;
 }
 
@@ -242,3 +247,55 @@ export async function fetchQuizCategories(): Promise<QuizCategoryInfo[]> {
   const body = (await response.json()) as { categories: QuizCategoryInfo[] };
   return body.categories;
 }
+
+/** One topic as the admin list serves it: the public fields, plus the switches the admin owns. */
+export interface AdminTopicInfo {
+  id: string;
+  name: string;
+  tagline: string;
+  colors: [string, string];
+  sortOrder: number;
+  art: string;
+  artVersion: number;
+  off: boolean;
+  questionCount: number;
+}
+
+/** What an edit can change; a topic's id never moves. */
+export interface TopicChanges {
+  name?: string;
+  tagline?: string;
+  colors?: [string, string];
+}
+
+export const fetchAdminTopics = () =>
+  adminGet<{ topics: AdminTopicInfo[] }>("topics").then((body) => body.topics);
+
+export const createTopic = (input: { name: string; tagline?: string; colors?: [string, string] }) =>
+  adminPost<{ topic: AdminTopicInfo }>("topics", input).then((body) => body.topic);
+
+export const updateTopic = (id: string, changes: TopicChanges) =>
+  adminPost<{ topic: AdminTopicInfo }>(`topics/${encodeURIComponent(id)}`, changes, "PATCH").then(
+    (body) => body.topic,
+  );
+
+/** Only a topic with no questions anywhere can go; the server answers 409 with why not. */
+export const deleteTopic = (id: string) =>
+  adminPost<void>(`topics/${encodeURIComponent(id)}`, undefined, "DELETE");
+
+/** Replaces a topic's picture with a WebP the server checks; the new version number comes back. */
+export const uploadTopicArt = async (id: string, picture: Blob): Promise<number> => {
+  const response = await fetch(`/api/admin/topics/${encodeURIComponent(id)}/art`, {
+    method: "PUT",
+    headers: { "Content-Type": "image/webp" },
+    body: picture,
+  });
+  if (!response.ok) {
+    const body = (await response.json().catch(() => null)) as {
+      error?: { message?: string };
+    } | null;
+    throw new Error(body?.error?.message ?? `Could not save that picture (${response.status})`);
+  }
+  const body = (await response.json()) as { version: number };
+  return body.version;
+};
