@@ -76,8 +76,7 @@ import { closeRoom, getAdminRooms } from "./adminRooms";
 import { getAdminSettings, grantAdmin, revokeAdmin, updateSettings } from "./adminSettings";
 import { getAdminUsers, manageUser } from "./adminUsers";
 import { reportQuestion } from "./reports";
-import { TOPIC_UNAVAILABLE_MESSAGE } from "./gameRules";
-import { categoriesPayload, getTopics, isKnown, settingsTopicProblems, topicArt } from "./topics";
+import { categoriesPayload, getTopics, isKnown, topicArt } from "./topics";
 import { getSiteStats } from "./stats";
 import { getCommunityStats } from "./community";
 import { currentSession, hasSessionCookie } from "./sessions";
@@ -125,6 +124,9 @@ async function getTopicArt({ env, params }: RequestContext): Promise<Response> {
 /**
  * Creates a room. The body can pick the game and preset its settings, e.g.
  * `{"settings":{"category":"music"}}` or `{"game":"word-rush"}`. The quiz is the default.
+ * Settings are stored as they arrive: a preset naming a topic the catalogue doesn't hold is
+ * not rejected here but swapped by `newRoomSettings` for one that is live and on (spec §9 —
+ * the rejection gates are configure, handleStart and the admin settings writes).
  */
 async function createRoom({ env, request, ctx }: RequestContext): Promise<Response> {
   if (!(await withinLimit(env.ROOM_LIMIT, request))) {
@@ -150,12 +152,6 @@ async function createRoom({ env, request, ctx }: RequestContext): Promise<Respon
     } catch {
       return jsonError(400, "bad_request", "Request body must be JSON.");
     }
-  }
-  // Room settings are stored as they arrive, so this is the gate: a topic id that names no
-  // live topic never reaches a room.
-  const problems = await settingsTopicProblems(env, settings);
-  if (problems.length > 0) {
-    return jsonError(400, "unknown_topic", TOPIC_UNAVAILABLE_MESSAGE);
   }
   // The deploy's smoke test still gets a room, so a pause can't fail a deploy.
   const site = await siteSettings(env);

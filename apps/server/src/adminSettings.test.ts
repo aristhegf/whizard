@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createRoomState } from "@whizard/game-core";
+import { parseServerMessage } from "@whizard/protocol";
 import type { Env } from "./env";
 import { forgetSettings } from "./settings";
 import { createSession } from "./sessions";
@@ -8,6 +10,7 @@ import { forgetTopics } from "./topics";
 // The Worker's Durable Object base isn't Node's to load; the routes under test never touch one.
 vi.mock("cloudflare:workers", () => ({ DurableObject: class {} }));
 const app = (await import("./index")).default;
+const { Room } = await import("./room");
 
 const ctx = {
   waitUntil: () => {},
@@ -52,6 +55,49 @@ async function errorOf(response: Response): Promise<{ code: string; message: str
   return body.error;
 }
 
+/** A joined player's socket: its attachment, and every message the server sent it. */
+function socket(playerId: string): { ws: WebSocket; sent: string[] } {
+  const sent: string[] = [];
+  let attachment: unknown = { playerId, account: null };
+  const ws = {
+    readyState: 1,
+    serializeAttachment: (value: unknown) => {
+      attachment = value;
+    },
+    deserializeAttachment: () => attachment,
+    send: (data: string) => {
+      sent.push(data);
+    },
+    close: () => {},
+  };
+  return { ws: ws as unknown as WebSocket, sent };
+}
+
+/**
+ * Sends a `configure` message through the room's own WebSocket handler and returns the error
+ * it answered with, or null if it didn't answer with one. This is the rejection path spec §9
+ * designates for settings that arrive after a room exists (line 234): createRoom itself never
+ * rejects an unknown id — spec §9 line 233 stores presets unvalidated and lets `newRoomSettings`
+ * substitute a live topic with a 201.
+ */
+async function configureRejection(
+  env: Env,
+  settings: unknown,
+): Promise<{ code: string; message: string } | null> {
+  const room = new Room({} as never, env) as unknown as {
+    env: Env;
+    ctx: { storage: { get: (key: string) => Promise<unknown> } };
+    webSocketMessage: (ws: WebSocket, data: string) => Promise<void>;
+  };
+  room.env = env;
+  room.ctx = { storage: { get: async () => createRoomState("ABC234", Date.now()) } };
+  const { ws, sent } = socket("p1");
+  await room.webSocketMessage(ws, JSON.stringify({ type: "configure", settings }));
+  const [first] = sent;
+  const message = first ? parseServerMessage(first) : null;
+  return message?.type === "error" ? { code: message.code, message: message.message } : null;
+}
+
 /** A custom topic's row, as the admin create would leave it: colours parse, sorts last. */
 const MARS_TOPIC = `INSERT INTO topics (id, name, tagline, colors, sort_order)
   VALUES ('mars', 'Mars', 'Red dust and rovers', '["#ff0000","#5a2014"]', 13)`;
@@ -62,24 +108,23 @@ describe("topic ids in settings", () => {
     forgetSettings();
   });
 
+  // These two drove POST /api/rooms in the first draft; spec §9 (line 233) has createRoom
+  // store unknown presets instead, substituting a live topic, so they now target the
+  // configure gate (line 234), which had no coverage.
   it("rejects unknown category in quiz settings", async () => {
     const env = await roomEnv();
-    const response = await call(env, "/api/rooms", {
-      method: "POST",
-      body: JSON.stringify({ settings: { category: "nope" } }),
+    expect(await configureRejection(env, { category: "nope" })).toEqual({
+      code: "bad_settings",
+      message: MESSAGE,
     });
-    expect(response.status).toBe(400);
-    expect((await errorOf(response)).message).toBe(MESSAGE);
   });
 
   it("rejects unknown ids in elimination topics", async () => {
     const env = await roomEnv();
-    const response = await call(env, "/api/rooms", {
-      method: "POST",
-      body: JSON.stringify({ settings: { topics: ["bible", "nope"] } }),
+    expect(await configureRejection(env, { topics: ["bible", "nope"] })).toEqual({
+      code: "bad_settings",
+      message: MESSAGE,
     });
-    expect(response.status).toBe(400);
-    expect((await errorOf(response)).message).toBe(MESSAGE);
   });
 
   it("accepts every live id including a freshly created one", async () => {
@@ -91,6 +136,13 @@ describe("topic ids in settings", () => {
     });
     expect(response.status).toBe(201);
     expect((await response.json()) as { code: string }).toHaveProperty("code");
+    // Spec §9 line 233: this path never rejects an unknown id — newRoomSettings swaps it
+    // for a live topic instead, so the preset `{ category: "nope" }` still creates a room.
+    const substituted = await call(env, "/api/rooms", {
+      method: "POST",
+      body: JSON.stringify({ settings: { category: "nope" } }),
+    });
+    expect(substituted.status).toBe(201);
   });
 
   it("adminGames game-config write validates too", async () => {
