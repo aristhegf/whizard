@@ -1,7 +1,9 @@
 import { questionCounts, type QuestionCounts } from "@whizard/content";
-import { QUIZ_CATEGORIES } from "@whizard/game-core";
+import { QUIZ_CATEGORIES, type QuizDifficulty } from "@whizard/game-core";
 import type { Bank } from "./bank";
 import type { Env } from "./env";
+import { outOfPlay } from "./reports";
+import { siteSettings } from "./settings";
 
 /** A topic as every caller sees it: a row of the table, or its shipped fallback twin. */
 export interface TopicRow {
@@ -155,10 +157,96 @@ export function playableCounts(bank: Bank, out: ReadonlySet<string>): QuestionCo
   return questionCounts(bank.questions.filter((question) => !out.has(question.id)));
 }
 
+/** A catalogue entry as the public endpoint serves it: exactly the six fields clients need. */
+export interface PublicTopic {
+  id: string;
+  name: string;
+  tagline: string;
+  colors: readonly [string, string];
+  art: string;
+  questions: Record<QuizDifficulty, number>;
+}
+
+/**
+ * Where a topic's picture comes from: its uploaded bytes behind a versioned URL (a replace
+ * bumps `art_version`, so no client keeps a stale tile), the artwork that ships with the
+ * site, or the generic image for a topic with neither.
+ */
+export function artUrl(topic: TopicRow): string {
+  if (topic.hasArt) return `/api/topics/${topic.id}/art?v=${topic.artVersion}`;
+  return (
+    QUIZ_CATEGORIES.find((category) => category.id === topic.id)?.art ?? "/art/games/quiz.webp"
+  );
+}
+
+/**
+ * `GET /api/quiz/categories`: the live catalogue in `sort_order`, minus the topics an admin
+ * turned off, each with its artwork URL and how many questions it can still play. One pass
+ * per request reads settings and out-of-play questions alongside the (cached) catalogue.
+ */
+export async function categoriesPayload(
+  env: Env,
+  bank: Bank,
+): Promise<{ categories: PublicTopic[] }> {
+  const [topics, settings, out] = await Promise.all([
+    getTopics(env),
+    siteSettings(env),
+    outOfPlay(env, bank),
+  ]);
+  const counts = playableCounts(bank, new Set(out.keys()));
+  const categories = topics
+    .filter((topic) => !settings.topicsOff.includes(topic.id))
+    .map((topic) => ({
+      id: topic.id,
+      name: topic.name,
+      tagline: topic.tagline,
+      colors: topic.colors,
+      art: artUrl(topic),
+      questions: counts[topic.id] ?? { easy: 0, medium: 0, hard: 0 },
+    }));
+  return { categories };
+}
+
 /** How many questions admins have filed under each topic — the admin list's custom counts. */
 export async function customCounts(env: Env): Promise<Map<string, number>> {
   const { results } = await env.DB.prepare(
     "SELECT category, COUNT(*) AS count FROM custom_questions GROUP BY category",
   ).all<{ category: string; count: number }>();
   return new Map(results.map((row) => [row.category, row.count]));
+}
+
+/** What serving a topic's art comes to: its bytes, a redirect to static art, or no such topic. */
+export type TopicArt =
+  | { kind: "bytes"; bytes: Uint8Array }
+  | { kind: "redirect"; location: string }
+  | { kind: "unknown" };
+
+/** A stored blob as bytes a Response body wants, or null when it isn't bytes at all. */
+function asBytes(value: unknown): Uint8Array | null {
+  if (value instanceof Uint8Array) return value;
+  if (value instanceof ArrayBuffer) return new Uint8Array(value);
+  if (ArrayBuffer.isView(value)) {
+    return new Uint8Array(value.buffer, value.byteOffset, value.byteLength);
+  }
+  return null;
+}
+
+/**
+ * `GET /api/topics/:id/art`: the uploaded WebP when there is one, a redirect to the artwork
+ * that ships when there isn't, and `unknown` only for an id in neither the catalogue nor the
+ * table — a topic that exists but has no art still redirects, so client images never 404.
+ */
+export async function topicArt(env: Env, id: string): Promise<TopicArt> {
+  if (!isKnown(await getTopics(env), id)) return { kind: "unknown" };
+  let stored: unknown = null;
+  try {
+    const row = await env.DB.prepare("SELECT art FROM topics WHERE id = ?").bind(id).first();
+    stored = row?.art ?? null;
+  } catch (error) {
+    console.error("Couldn't read the topic's artwork", error);
+  }
+  const bytes = asBytes(stored);
+  if (bytes) return { kind: "bytes", bytes };
+  const shipped = QUIZ_CATEGORIES.find((category) => category.id === id)?.art;
+  return { kind: "redirect", location: shipped ?? "/art/games/quiz.webp" };
 }

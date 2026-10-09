@@ -1,10 +1,12 @@
-import type { StoredQuestion } from "@whizard/content";
+import { questionVersion, type StoredQuestion } from "@whizard/content";
 import { QUIZ_CATEGORIES } from "@whizard/game-core";
-import { beforeEach, describe, expect, it } from "vitest";
-import type { Bank } from "./bank";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { forgetBank, type Bank } from "./bank";
 import type { Env } from "./env";
+import { forgetSettings } from "./settings";
 import { testDb } from "./testDb";
 import {
+  categoriesPayload,
   customCounts,
   forgetTopics,
   getTopics,
@@ -13,6 +15,20 @@ import {
   playableCounts,
   slugify,
 } from "./topics";
+
+// The Worker's Durable Object base isn't Node's to load; the routes under test never touch one.
+vi.mock("cloudflare:workers", () => ({ DurableObject: class {} }));
+const app = (await import("./index")).default;
+
+const ctx = {
+  waitUntil: () => {},
+  passThroughOnException: () => {},
+} as unknown as ExecutionContext;
+
+/** A request through the real route table, as the runtime would hand it over. */
+async function call(env: Env, path: string): Promise<Response> {
+  return app.fetch(new Request(`http://localhost${path}`), env, ctx);
+}
 
 // The migration as plain text. Node is named at run time so the Worker's type check doesn't go
 // looking for its modules, as in testDb.ts; the `URL` and `import.meta` casts are the same ones.
@@ -202,5 +218,141 @@ describe("the topic catalogue", () => {
       ["bible", 2],
       ["mars", 1],
     ]);
+  });
+});
+
+// A custom topic's row and question, as an admin's insert would leave them: colours parse,
+// the row sorts after the shipped twelve, and the question counts from `custom_questions`.
+const MARS_TOPIC = `INSERT INTO topics (id, name, tagline, colors, sort_order)
+  VALUES ('mars', 'Mars', 'Red dust and rovers', '["#ff0000","#5a2014"]', 13)`;
+
+describe("the public endpoints", () => {
+  beforeEach(() => {
+    forgetTopics();
+    forgetSettings();
+    forgetBank();
+  });
+
+  it("GET /api/quiz/categories is no-store and ordered", async () => {
+    const env = { DB: await testDb() } as unknown as Env;
+    await env.DB.prepare(
+      `UPDATE topics SET sort_order = CASE id WHEN 'quran' THEN 1 WHEN 'bible' THEN 2 END
+        WHERE id IN ('quran', 'bible')`,
+    ).run();
+    await env.DB.prepare(
+      "INSERT INTO site_settings (key, value, updated_at) VALUES ('topics_off', ?, 0)",
+    )
+      .bind(JSON.stringify(["music"]))
+      .run();
+
+    const response = await call(env, "/api/quiz/categories");
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+    const { categories } = (await response.json()) as { categories: Record<string, unknown>[] };
+    expect(categories.map((category) => category.id)).toEqual([
+      "quran",
+      "bible",
+      "geography",
+      "history",
+      "science",
+      "animals",
+      "football",
+      "movies",
+      "nigerian-culture",
+      "general-knowledge",
+      "pop-culture",
+    ]);
+    expect(Object.keys(categories[1]!).sort()).toEqual([
+      "art",
+      "colors",
+      "id",
+      "name",
+      "questions",
+      "tagline",
+    ]);
+    expect(categories[1]!.art).toBe("/art/topics/bible.webp");
+    expect(Object.keys(categories[1]!.questions as object).sort()).toEqual([
+      "easy",
+      "hard",
+      "medium",
+    ]);
+  });
+
+  it("counts only playable shipped questions", async () => {
+    const env = { DB: await testDb() } as unknown as Env;
+    const five = Array.from({ length: 5 }, (_, i) => question(`bible-custom-${i + 1}`, "bible"));
+    const retired = five[4]!;
+    await env.DB.prepare(
+      "INSERT INTO question_retired (question_id, version, retired_at) VALUES (?, ?, 0)",
+    )
+      .bind(retired.id, questionVersion(retired))
+      .run();
+    await env.DB.prepare(MARS_TOPIC).run();
+    await env.DB.prepare(
+      `INSERT INTO custom_questions
+         (id, category, topic, difficulty, prompt, choices, explanation, created_at, updated_at)
+       VALUES ('mars-1', 'mars', 'Mars', 'easy', 'How far is Mars?', '["1","2","3","4"]',
+               'About 225 million km.', 0, 0)`,
+    ).run();
+
+    const payload = await categoriesPayload(env, bankOf(five));
+    expect(payload.categories.find((category) => category.id === "bible")!.questions).toEqual({
+      easy: 4,
+      medium: 0,
+      hard: 0,
+    });
+
+    const response = await call(env, "/api/quiz/categories");
+    const { categories } = (await response.json()) as {
+      categories: { id: string; questions: unknown }[];
+    };
+    expect(categories.find((category) => category.id === "mars")!.questions).toEqual({
+      easy: 1,
+      medium: 0,
+      hard: 0,
+    });
+  });
+
+  it("GET /api/topics/:id/art serves the blob with immutable caching", async () => {
+    const env = { DB: await testDb() } as unknown as Env;
+    const bytes = new Uint8Array([0x52, 0x49, 0x46, 0x46, 0x26, 0, 0, 0, 0x57, 0x45, 0x42, 0x50]);
+    await env.DB.prepare(
+      "UPDATE topics SET art = ?, art_type = 'image/webp', art_version = 3 WHERE id = 'bible'",
+    )
+      .bind(bytes)
+      .run();
+
+    for (const version of [0, 3]) {
+      const response = await call(env, `/api/topics/bible/art?v=${version}`);
+      expect(response.status).toBe(200);
+      expect(response.headers.get("Content-Type")).toBe("image/webp");
+      expect(response.headers.get("Cache-Control")).toBe("public, max-age=31536000, immutable");
+      expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
+      expect(new Uint8Array(await response.arrayBuffer())).toEqual(bytes);
+    }
+  });
+
+  it("art falls back to the shipped path", async () => {
+    const env = { DB: await testDb() } as unknown as Env;
+    const response = await call(env, "/api/topics/quran/art");
+    expect(response.status).toBe(302);
+    expect(response.headers.get("Location")).toBe("/art/topics/quran.svg");
+  });
+
+  it("art falls back to the generic image", async () => {
+    const env = { DB: await testDb() } as unknown as Env;
+    await env.DB.prepare(MARS_TOPIC).run();
+    const response = await call(env, "/api/topics/mars/art");
+    expect(response.status).toBe(302);
+    expect(response.headers.get("Location")).toBe("/art/games/quiz.webp");
+  });
+
+  it("art 404s only for unknown ids", async () => {
+    const env = { DB: await testDb() } as unknown as Env;
+    const response = await call(env, "/api/topics/does-not-exist/art");
+    expect(response.status).toBe(404);
+    const body = (await response.json()) as { error: { code: string; message: string } };
+    expect(body.error.code).toBe("not_found");
+    expect(body.error.message).toMatch(/topic/i);
   });
 });

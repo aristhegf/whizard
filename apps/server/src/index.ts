@@ -1,4 +1,3 @@
-import { questionCounts } from "@whizard/content";
 import {
   DEFAULT_QUIZ_SETTINGS,
   QUIZ_CATEGORIES,
@@ -77,6 +76,7 @@ import { closeRoom, getAdminRooms } from "./adminRooms";
 import { getAdminSettings, grantAdmin, revokeAdmin, updateSettings } from "./adminSettings";
 import { getAdminUsers, manageUser } from "./adminUsers";
 import { reportQuestion } from "./reports";
+import { categoriesPayload, topicArt } from "./topics";
 import { getSiteStats } from "./stats";
 import { getCommunityStats } from "./community";
 import { currentSession, hasSessionCookie } from "./sessions";
@@ -90,15 +90,35 @@ async function health(): Promise<Response> {
   return Response.json({ ok: true, protocolVersion: PROTOCOL_VERSION });
 }
 
+/**
+ * `GET /api/quiz/categories`: the live topic catalogue — ordered, minus the topics an admin
+ * turned off, each with playable question counts and its artwork URL. Never cached by HTTP:
+ * an admin's change has to reach every client immediately.
+ */
 async function quizCategories({ env }: RequestContext): Promise<Response> {
-  const counts = questionCounts((await loadBank(env)).questions);
-  // Topics an admin turned off aren't offered.
-  const { topicsOff } = await siteSettings(env);
-  const categories = QUIZ_CATEGORIES.filter((c) => !topicsOff.includes(c.id)).map((c) => ({
-    ...c,
-    questions: counts[c.id] ?? { easy: 0, medium: 0, hard: 0 },
-  }));
-  return Response.json({ categories }, { headers: { "Cache-Control": "public, max-age=60" } });
+  const payload = await categoriesPayload(env, await loadBank(env));
+  return Response.json(payload, { headers: { "Cache-Control": "no-store" } });
+}
+
+/**
+ * `GET /api/topics/:id/art`: a topic's uploaded WebP behind its immutable versioned URL, or
+ * a redirect to the artwork that ships. Only an id nobody knows gets a 404.
+ */
+async function getTopicArt({ env, params }: RequestContext): Promise<Response> {
+  const art = await topicArt(env, decodeURIComponent(params[0] ?? ""));
+  if (art.kind === "unknown") {
+    return jsonError(404, "not_found", "That topic doesn't exist.");
+  }
+  if (art.kind === "redirect") {
+    return new Response(null, { status: 302, headers: { Location: art.location } });
+  }
+  return new Response(art.bytes, {
+    headers: {
+      "Content-Type": "image/webp",
+      "Cache-Control": "public, max-age=31536000, immutable",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
 }
 
 /**
@@ -231,6 +251,7 @@ type Method = "GET" | "POST" | "PATCH" | "DELETE";
 const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/health$/, health],
   ["GET", /^\/api\/quiz\/categories$/, quizCategories],
+  ["GET", /^\/api\/topics\/([^/]+)\/art$/, getTopicArt],
   ["POST", /^\/api\/rooms$/, createRoom],
   ["GET", /^\/api\/rooms\/([^/]+)$/, roomStatus],
   ["GET", /^\/api\/rooms\/([^/]+)\/ws$/, roomSocket],
