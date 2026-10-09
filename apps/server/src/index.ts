@@ -1,6 +1,5 @@
 import {
   DEFAULT_QUIZ_SETTINGS,
-  QUIZ_CATEGORIES,
   gameModule,
   generateRoomCode,
   isGameId,
@@ -77,7 +76,8 @@ import { closeRoom, getAdminRooms } from "./adminRooms";
 import { getAdminSettings, grantAdmin, revokeAdmin, updateSettings } from "./adminSettings";
 import { getAdminUsers, manageUser } from "./adminUsers";
 import { reportQuestion } from "./reports";
-import { categoriesPayload, topicArt } from "./topics";
+import { TOPIC_UNAVAILABLE_MESSAGE } from "./gameRules";
+import { categoriesPayload, getTopics, isKnown, settingsTopicProblems, topicArt } from "./topics";
 import { getSiteStats } from "./stats";
 import { getCommunityStats } from "./community";
 import { currentSession, hasSessionCookie } from "./sessions";
@@ -151,6 +151,12 @@ async function createRoom({ env, request, ctx }: RequestContext): Promise<Respon
       return jsonError(400, "bad_request", "Request body must be JSON.");
     }
   }
+  // Room settings are stored as they arrive, so this is the gate: a topic id that names no
+  // live topic never reaches a room.
+  const problems = await settingsTopicProblems(env, settings);
+  if (problems.length > 0) {
+    return jsonError(400, "unknown_topic", TOPIC_UNAVAILABLE_MESSAGE);
+  }
   // The deploy's smoke test still gets a room, so a pause can't fail a deploy.
   const site = await siteSettings(env);
   if (!request.headers.has("X-Whizard-Smoke-Test")) {
@@ -168,6 +174,7 @@ async function createRoom({ env, request, ctx }: RequestContext): Promise<Respon
       // The deploy's smoke test makes a room each time; it isn't a real one.
       if (!request.headers.has("X-Whizard-Smoke-Test")) {
         const topic = (settings as { category?: unknown } | undefined)?.category;
+        const topics = game === "quiz" ? await getTopics(env) : [];
         ctx.waitUntil(
           Promise.all([
             count(env, { rooms_created: 1 }),
@@ -176,8 +183,8 @@ async function createRoom({ env, request, ctx }: RequestContext): Promise<Respon
               topic:
                 game !== "quiz"
                   ? null
-                  : QUIZ_CATEGORIES.some((c) => c.id === topic)
-                    ? (topic as string)
+                  : typeof topic === "string" && isKnown(topics, topic)
+                    ? topic
                     : DEFAULT_QUIZ_SETTINGS.category,
             }),
           ]),

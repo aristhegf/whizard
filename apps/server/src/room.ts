@@ -57,13 +57,20 @@ import {
 import type { Env } from "./env";
 import { count, logActivity, recordPlayerDays, sizeBucket } from "./analytics";
 import { loadBank, recordQuestionStats } from "./bank";
-import { GAME_OFF_MESSAGE, newRoomSettings, TOPIC_OFF_MESSAGE, topicOf } from "./gameRules";
+import {
+  GAME_OFF_MESSAGE,
+  newRoomSettings,
+  TOPIC_OFF_MESSAGE,
+  TOPIC_UNAVAILABLE_MESSAGE,
+  topicOf,
+} from "./gameRules";
 import { liveRoomOf, removeLiveRoom, saveLiveRoom } from "./liveRooms";
 import { recordMatch } from "./matches";
 import { NAME_BLOCKED_MESSAGE, recordName, refusedName } from "./moderation";
 import { retiredQuestions } from "./reports";
 import { loadSeen, recordSeen, viewerKey } from "./seen";
 import { siteSettings } from "./settings";
+import { getTopics, settingsTopicProblems } from "./topics";
 
 const STATE_KEY = "room";
 /** The host's jigsaw photo, if they've brought one. Deleted with the room. */
@@ -132,7 +139,8 @@ export class Room extends DurableObject<Env> {
   async create(code: string, gameSettings?: unknown, gameId: GameId = "quiz"): Promise<boolean> {
     if (await this.load()) return false;
     const state = { ...createRoomState(code, Date.now()), game: defaultGameConfig(gameId) };
-    const settings = newRoomSettings(state, await siteSettings(this.env), gameSettings);
+    const [site, rows] = await Promise.all([siteSettings(this.env), getTopics(this.env)]);
+    const settings = newRoomSettings(state, site, gameSettings, rows.map((row) => row.id));
     await this.save({ ...state, game: { ...state.game, settings } });
     return true;
   }
@@ -252,7 +260,7 @@ export class Room extends DurableObject<Env> {
         });
         return;
       case "chooseGame": {
-        const site = await siteSettings(this.env);
+        const [site, rows] = await Promise.all([siteSettings(this.env), getTopics(this.env)]);
         const game = message.game;
         if (!isGameId(game) || site.gamesOff.includes(game)) {
           sendError(ws, ErrorCode.BadSettings, GAME_OFF_MESSAGE);
@@ -262,18 +270,24 @@ export class Room extends DurableObject<Env> {
           const result = chooseGame(state, playerId, game);
           if (!result.ok || result.state === state) return result;
           // Admins' defaults and topics that are off apply here too, as for a new room.
-          const settings = newRoomSettings(result.state, site, null);
+          const settings = newRoomSettings(result.state, site, null, rows.map((row) => row.id));
           return { ok: true, state: { ...result.state, game: { id: game, settings } } };
         });
         return;
       }
       case "configure": {
+        const [site, problems] = await Promise.all([
+          siteSettings(this.env),
+          settingsTopicProblems(this.env, message.settings),
+        ]);
         const topic = topicOf(message.settings);
-        const off = topic !== null && (await siteSettings(this.env)).topicsOff.includes(topic);
+        const off = topic !== null && site.topicsOff.includes(topic);
         await this.handleGame(ws, (state, playerId) =>
-          off
-            ? { ok: false, error: "bad_settings", message: TOPIC_OFF_MESSAGE }
-            : configureGame(state, playerId, message.settings),
+          problems.length > 0
+            ? { ok: false, error: "bad_settings", message: TOPIC_UNAVAILABLE_MESSAGE }
+            : off
+              ? { ok: false, error: "bad_settings", message: TOPIC_OFF_MESSAGE }
+              : configureGame(state, playerId, message.settings),
         );
         return;
       }
@@ -484,6 +498,12 @@ export class Room extends DurableObject<Env> {
       return;
     }
     const topic = before ? topicOf(before.game.settings) : null;
+    // Belt and braces: a room can hold a topic the catalogue has since lost.
+    const problems = before ? await settingsTopicProblems(this.env, before.game.settings) : [];
+    if (problems.length > 0) {
+      sendError(ws, ErrorCode.BadSettings, TOPIC_UNAVAILABLE_MESSAGE);
+      return;
+    }
     if (topic && site.topicsOff.includes(topic)) {
       sendError(ws, ErrorCode.BadSettings, TOPIC_OFF_MESSAGE);
       return;

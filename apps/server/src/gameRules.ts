@@ -1,8 +1,10 @@
-import { gameModule, QUIZ_CATEGORIES, type RoomState } from "@whizard/game-core";
+import { DEFAULT_QUIZ_SETTINGS, gameModule, type RoomState } from "@whizard/game-core";
 import type { SiteSettings } from "@whizard/protocol";
 
 export const TOPIC_OFF_MESSAGE = "That topic is turned off for now. Pick another.";
 export const GAME_OFF_MESSAGE = "That game is turned off for now. Try again soon.";
+/** What every settings write answers with when a topic id names no live topic. */
+export const TOPIC_UNAVAILABLE_MESSAGE = "That topic isn't available. Pick another.";
 
 /** The quiz topic in a game's settings, if it has one. */
 export function topicOf(settings: unknown): string | null {
@@ -13,9 +15,15 @@ export function topicOf(settings: unknown): string | null {
 /**
  * A new room's game settings: the built-in ones, then the admins' defaults, then anything the
  * room was made with (such as the topic someone picked). Whatever doesn't fit is left out, and
- * a topic that's turned off is swapped for one that's on.
+ * a topic that's off — or that the live catalogue (`topicIds`) no longer holds — is swapped for
+ * one that's in it and on, so a dead id never reaches a room's settings.
  */
-export function newRoomSettings(state: RoomState, site: SiteSettings, preset: unknown): unknown {
+export function newRoomSettings(
+  state: RoomState,
+  site: SiteSettings,
+  preset: unknown,
+  topicIds: readonly string[],
+): unknown {
   const schema = gameModule(state.game.id).settingsSchema;
   const base = state.game.settings as Record<string, unknown>;
   const admin = state.game.id === "quiz" ? site.quizDefaults : {};
@@ -35,11 +43,11 @@ export function newRoomSettings(state: RoomState, site: SiteSettings, preset: un
     }
   }
   const topic = topicOf(settings);
-  if (topic && site.topicsOff.includes(topic)) {
-    const fallback = [topicOf(admin), ...QUIZ_CATEGORIES.map((c) => c.id)].find(
-      (id): id is string => !!id && !site.topicsOff.includes(id),
-    );
-    if (fallback) settings = { ...settings, category: fallback };
+  const usable = (id: string | null): id is string =>
+    !!id && topicIds.includes(id) && !site.topicsOff.includes(id);
+  if (topic && !usable(topic)) {
+    const fallback = [topicOf(admin), ...topicIds].find(usable) ?? DEFAULT_QUIZ_SETTINGS.category;
+    settings = { ...settings, category: fallback };
   }
   return settings;
 }

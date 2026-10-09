@@ -113,6 +113,28 @@ export function isKnown(topics: readonly { id: string }[], id: string): boolean 
   return topics.some((topic) => topic.id === id);
 }
 
+/**
+ * The topic ids a settings object carries that name no live topic: its `category` (the quiz's
+ * topic) and any of its `topics` list entries. Empty means every id in it is playable — the
+ * only answer that lets settings through. Membership is judged against the live catalogue,
+ * never the shipped constant, so a freshly created topic passes and a deleted one doesn't.
+ */
+export async function settingsTopicProblems(env: Env, settings: unknown): Promise<string[]> {
+  if (settings === null || settings === undefined) return [];
+  const record = settings as { category?: unknown; topics?: unknown };
+  const candidates: unknown[] = [record.category];
+  if (Array.isArray(record.topics)) candidates.push(...record.topics);
+  if (!candidates.some((value) => typeof value === "string")) return [];
+  const topics = await getTopics(env);
+  const problems: string[] = [];
+  for (const value of candidates) {
+    if (typeof value === "string" && !isKnown(topics, value) && !problems.includes(value)) {
+      problems.push(value);
+    }
+  }
+  return problems;
+}
+
 /** A name as its id: lowercase, hyphenated, ≤ 40 characters, or `topic` when nothing's left. */
 export function slugify(name: string): string {
   const slug = name

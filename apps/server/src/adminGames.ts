@@ -1,5 +1,5 @@
 import { questionCounts } from "@whizard/content";
-import { GAME_IDS, QUIZ_CATEGORIES } from "@whizard/game-core";
+import { GAME_IDS } from "@whizard/game-core";
 import type { AdminGames } from "@whizard/protocol";
 import { requireAdmin } from "./admin";
 import { dayOf } from "./analytics";
@@ -7,6 +7,7 @@ import { loadBank } from "./bank";
 import type { RequestContext } from "./http";
 import { outOfPlay } from "./reports";
 import { forgetSettings, siteSettings } from "./settings";
+import { getTopics } from "./topics";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -17,9 +18,10 @@ export async function getAdminGames(context: RequestContext): Promise<Response> 
   const now = Date.now();
   forgetSettings();
   const bank = await loadBank(env);
-  const [settings, out, { results }] = await Promise.all([
+  const [settings, out, topics, { results }] = await Promise.all([
     siteSettings(env),
     outOfPlay(env, bank),
+    getTopics(env),
     env.DB.prepare(
       `SELECT day, metric, count FROM daily_counts
         WHERE day >= ? AND (metric LIKE 'game:%' OR metric LIKE 'topic:%')`,
@@ -45,12 +47,13 @@ export async function getAdminGames(context: RequestContext): Promise<Response> 
       last30: sum(`game:${id}`),
       last7: sum(`game:${id}`, weekStart),
     })),
-    topics: QUIZ_CATEGORIES.map((c) => {
-      const levels = inPlay[c.id];
+    // The live catalogue, so topics admins add show up with their counts.
+    topics: topics.map((topic) => {
+      const levels = inPlay[topic.id];
       return {
-        id: c.id,
+        id: topic.id,
         questions: levels ? levels.easy + levels.medium + levels.hard : 0,
-        last30: sum(`topic:${c.id}`),
+        last30: sum(`topic:${topic.id}`),
       };
     }),
   };

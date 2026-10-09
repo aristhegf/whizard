@@ -7,17 +7,18 @@ import {
 import {
   DEFAULT_QUIZ_SETTINGS,
   GAME_IDS,
-  QUIZ_CATEGORIES,
   quizSettingsSchema,
+  topicIdSchema,
 } from "@whizard/game-core";
 import { z } from "zod";
 import { logAdmin, requireAdmin } from "./admin";
+import { TOPIC_UNAVAILABLE_MESSAGE } from "./gameRules";
 import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./http";
 import { asAvatar } from "./sessions";
 import { forgetSettings, siteSettings } from "./settings";
+import { getTopics, isKnown, settingsTopicProblems } from "./topics";
 
 const LOG_SIZE = 50;
-const TOPIC_IDS = QUIZ_CATEGORIES.map((c) => c.id) as [string, ...string[]];
 
 /** `GET /api/admin/settings`: the site switches, the admins and what admins did lately. */
 export async function getAdminSettings(context: RequestContext): Promise<Response> {
@@ -81,7 +82,8 @@ const settingsSchema = z.object({
   roomsPaused: z.boolean().optional(),
   signupsPaused: z.boolean().optional(),
   quizDefaults: quizSettingsSchema.partial().optional(),
-  topicsOff: z.array(z.enum(TOPIC_IDS)).optional(),
+  // Shape only: membership of each id is checked against the live catalogue on save.
+  topicsOff: z.array(topicIdSchema).optional(),
   gamesOff: z.array(z.enum(GAME_IDS as unknown as [string, ...string[]])).optional(),
 });
 
@@ -91,10 +93,22 @@ export async function updateSettings(context: RequestContext): Promise<Response>
   const { user } = await requireAdmin(context);
   const update = await readJson(context.request, settingsSchema);
   const current = await siteSettings(context.env);
+  const topics = await getTopics(context.env);
   const topicsOff = update.topicsOff ?? current.topicsOff;
   const defaultTopic =
     (update.quizDefaults ?? current.quizDefaults).category ?? DEFAULT_QUIZ_SETTINGS.category;
-  if (topicsOff.length >= TOPIC_IDS.length) {
+  // Membership is a catalogue check: an id no live topic holds is refused on write, whether
+  // it's a default topic or one an admin turned off.
+  if (update.topicsOff !== undefined && update.topicsOff.some((id) => !isKnown(topics, id))) {
+    throw new HttpError(400, "unknown_topic", TOPIC_UNAVAILABLE_MESSAGE);
+  }
+  if (update.quizDefaults !== undefined) {
+    const problems = await settingsTopicProblems(context.env, update.quizDefaults);
+    if (problems.length > 0) {
+      throw new HttpError(400, "unknown_topic", TOPIC_UNAVAILABLE_MESSAGE);
+    }
+  }
+  if (topicsOff.length >= topics.length) {
     throw new HttpError(400, "all_topics_off", "Keep at least one topic on.");
   }
   if (topicsOff.includes(defaultTopic)) {
