@@ -2,6 +2,7 @@
 //
 //   node scripts/set-admin.mjs <username> grant|revoke
 import { execFileSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
 const [username = "", action = "grant"] = process.argv.slice(2);
 if (!/^[a-z][a-z0-9_]{2,19}$/.test(username) || !["grant", "revoke"].includes(action)) {
@@ -12,10 +13,15 @@ const where =
   process.env.STATS_LOCAL === "1"
     ? ["--local", "--persist-to", "../web/.wrangler/state"]
     : ["--remote"];
+// Wrangler runs straight through node: spawning "pnpm" needs a shell on Windows, and a shell
+// would mangle the SQL passed as a single argument.
+const wrangler = fileURLToPath(
+  new URL("../node_modules/wrangler/bin/wrangler.js", import.meta.url),
+);
 const execute = (sql) =>
   execFileSync(
-    "pnpm",
-    ["exec", "wrangler", "d1", "execute", "DB", ...where, "--json", "--command", sql],
+    process.execPath,
+    [wrangler, "d1", "execute", "DB", ...where, "--json", "--command", sql],
     { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] },
   );
 const pause = (ms) => Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
