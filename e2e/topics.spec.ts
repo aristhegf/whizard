@@ -4,9 +4,10 @@ import { readFileSync } from "node:fs";
 import { openGameCard } from "./lobby";
 import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
 
-// Every test here makes an account, an admin and topics through the form, so they get twice
-// the usual budget: a loaded machine would otherwise cut the slower ones off mid-flight.
-test.describe.configure({ timeout: 180_000 });
+// Every test here makes an account, an admin and topics through the form, so they get a
+// wide budget: on a loaded machine the full loop (create, file, play, rename, delete)
+// needs over 110s alone, and a 180s ceiling was already cutting it close in parallel runs.
+test.describe.configure({ timeout: 240_000 });
 
 /** Every topic this file makes carries the run's own fingerprint, in its name and so its id. */
 const RUN = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
@@ -210,6 +211,9 @@ test("every shipped topic is in both catalogues, with counts only on the admin s
   expect(published.length).toBeGreaterThanOrEqual(11);
 
   await gotoBrowse(page);
+  // Spec §16.11: the chips row and its Popular filter are gone — search is the only filter.
+  await expect(page.locator(".topics-page .chip")).toHaveCount(0);
+  await expect(page.getByRole("group", { name: "Topics" })).toHaveCount(0);
   for (const id of SHIPPED) {
     const inPublic = published.some((topic) => topic.id === id);
     if (!inPublic) {
@@ -365,12 +369,18 @@ test("a topic with no questions shows as coming soon, and counts live in the adm
   await expect(tile.locator(".topic-count")).toHaveText("Coming soon");
   await expect(tile.locator(".topic-name")).toHaveText(soon);
   await expect(tile.locator(".topic-tagline")).toHaveText(soonTagline);
+  // The search really filters: only the match stays on the grid.
+  await expect(page.locator(".topic-tile")).toHaveCount(1);
 
   // A shipped topic with a bank behind it starts right away, with no badge at all.
   await page.getByPlaceholder("Search topics…").fill("Bible");
   const bible = tileFor(page, "Bible");
   await expect(bible).toBeEnabled();
   await expect(bible.locator(".topic-count")).toHaveCount(0);
+
+  // Clearing the search brings the whole grid back (shipped minus none + this one).
+  await page.getByPlaceholder("Search topics…").fill("");
+  await expect.poll(() => page.locator(".topic-tile").count()).toBeGreaterThanOrEqual(12);
 
   // The list panel's own subtitle and its rows come from the same read of the catalogue.
   await page.goto("/admin/topics");
@@ -390,6 +400,36 @@ test("a topic with no questions shows as coming soon, and counts live in the adm
     /· \d[\d,]* questions$/,
   );
 
+  // Spec §16.10's other half: a CSV import row naming the new topic lands a question,
+  // and the next load enables its tile.
+  const marker = `csv${Math.random().toString(36).slice(2, 8)}`;
+  const csv = [
+    "id,category,topic,difficulty,prompt,choice_1,choice_2,choice_3,choice_4,explanation,reference",
+    `${soon}j,${soon},Testing,easy,"Which marker did the CSV carry, ${marker}?","${marker}a","${marker}b","${marker}c","${marker}d",It came in from a CSV.,`,
+  ].join("\r\n");
+  await page.goto("/admin/content");
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "questions.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from(csv),
+  });
+  await expect(page.getByText("Imported 1 question from questions.csv.")).toBeVisible();
+
+  await gotoBrowse(page);
+  await page.getByPlaceholder("Search topics…").fill(soon);
+  await expect(tile).toBeEnabled();
+  await expect(tile.locator(".topic-count")).toHaveCount(0);
+
+  // Cleanup: the imported question first, then the topic itself.
+  await page.goto("/admin/content");
+  await page.getByLabel("Search questions").fill(`carry, ${marker}`);
+  await expect(page.locator(".content-row")).toHaveCount(1);
+  await page.locator(".content-row").first().click();
+  await expect(page.locator(".status-pill", { hasText: "Added" })).toBeVisible();
+  await page.getByRole("button", { name: "Delete question" }).click();
+  await expect(page).toHaveURL(/\/admin\/content$/);
+
+  await page.goto("/admin/topics");
   await deleteTopicRow(page, id);
 });
 
@@ -398,7 +438,7 @@ test("a topic's picture goes in through the form and the server's gates hold", a
 }) => {
   // The heaviest test here: an account, an admin, three picture rounds and a server probe.
   // Like jigsaw's slowest, it gets the longer budget a long run's last tests need.
-  test.setTimeout(240_000);
+  test.setTimeout(300_000);
   const admin = await signedUp(browser);
   grantAdmin(admin.username);
   const page = admin.page;

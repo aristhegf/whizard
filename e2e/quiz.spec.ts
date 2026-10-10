@@ -99,7 +99,7 @@ test("every category can be picked and played", async ({ browser }) => {
   const topics = page.getByRole("dialog", { name: "Choose a topic" });
   // Topics can be added, or turned off by another admin test, while this runs: the shipped
   // ones only have to be there — Nigerian culture among them, ready to play.
-  expect(await topics.getByRole("radio").count()).toBeGreaterThanOrEqual(11);
+  await expect.poll(() => topics.getByRole("radio").count()).toBeGreaterThanOrEqual(11);
   const nigerian = topics.getByRole("radio", { name: "Nigerian culture" });
   await expect(nigerian).toBeVisible();
   await expect(nigerian).toBeEnabled();
