@@ -115,9 +115,9 @@ describe("topic membership on question writes", () => {
       ...jsonBody(headers, question({ category: "nope", prompt: "Which rover landed first?" })),
     });
     expect(edited.status).toBe(200);
-    const detail = (await (
-      await call(env, `/api/admin/questions/${id}`, { headers })
-    ).json()) as { category: string };
+    const detail = (await (await call(env, `/api/admin/questions/${id}`, { headers })).json()) as {
+      category: string;
+    };
     expect(detail.category).toBe("mars");
   });
 });

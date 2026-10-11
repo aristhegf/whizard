@@ -39,24 +39,24 @@
 
 ## File Structure
 
-| File | Responsibility |
-|---|---|
-| Create: `apps/server/migrations/0020_topics.sql` | `topics` table + seed of the 12 |
-| Create: `apps/server/src/topics.ts` | Catalogue cache/fallback, slug helpers, emptiness, playable counts, WebP header parse, art URL + art endpoint |
-| Create: `apps/server/src/topics.test.ts` | Seed consistency + module unit tests |
-| Create: `apps/server/src/adminTopics.ts` | Admin list/create/patch/delete/upload handlers |
-| Create: `apps/server/src/adminSettings.test.ts` | Settings membership-validation tests |
-| Create: `apps/web/src/topics.ts` | Live-catalogue store, `useTopics`, `topicName`/`topicStyle` lookups |
-| Create: `apps/web/src/topics.test.ts` | Lookup-chain unit tests |
-| Create: `apps/web/src/admin/Topics.tsx` | Admin Topics section UI |
-| Create: `apps/web/src/admin/artwork.ts` (+ `.test.ts`) | `squareWebP` resize + `dominantColors` extraction |
-| Create: `e2e/topics.spec.ts` | Seed, CRUD, full-loop, Coming-soon, artwork e2e |
-| Modify: `packages/game-core/src/games/quiz/settings.ts`, `packages/game-core/src/index.ts` | Shipped catalogue fields, `ShippedTopicId`, `QuizCategory = string`, `topicIdSchema`, `DEFAULT_TOPIC_COLORS` |
-| Modify: `packages/content/src/schema.ts`, `packages/content/src/index.ts` | Schema uses `topicIdSchema`; shipped-only maps keyed `ShippedTopicId` |
-| Modify: `apps/server/src/{index,gameRules,room,adminQuestions,adminImport,adminSettings,adminGames}.ts` | Routes + every validation site from spec §9 |
-| Modify: `apps/web/src/{api,catalog,matchInfo,RoomScreen,FriendsScreen}`, `pages/{TopicsPage,StatsPage}.tsx`, `games/quiz/{TopicPicker,QuizScreen,EliminationScreen}.tsx`, `admin/{AdminApp,Content,Games,Analytics,Dashboard,Rooms,Reports,questionParts}.tsx` | Live catalogue everywhere |
-| Modify: `e2e/quiz.spec.ts` | Seeded-based picker assertions |
-| Modify: `docs/ARCHITECTURE.md`, `docs/QUESTIONS.md`, `README.md` | Drop "fixed 12" claims |
+| File                                                                                                                                                                                                                                                           | Responsibility                                                                                                |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Create: `apps/server/migrations/0020_topics.sql`                                                                                                                                                                                                               | `topics` table + seed of the 12                                                                               |
+| Create: `apps/server/src/topics.ts`                                                                                                                                                                                                                            | Catalogue cache/fallback, slug helpers, emptiness, playable counts, WebP header parse, art URL + art endpoint |
+| Create: `apps/server/src/topics.test.ts`                                                                                                                                                                                                                       | Seed consistency + module unit tests                                                                          |
+| Create: `apps/server/src/adminTopics.ts`                                                                                                                                                                                                                       | Admin list/create/patch/delete/upload handlers                                                                |
+| Create: `apps/server/src/adminSettings.test.ts`                                                                                                                                                                                                                | Settings membership-validation tests                                                                          |
+| Create: `apps/web/src/topics.ts`                                                                                                                                                                                                                               | Live-catalogue store, `useTopics`, `topicName`/`topicStyle` lookups                                           |
+| Create: `apps/web/src/topics.test.ts`                                                                                                                                                                                                                          | Lookup-chain unit tests                                                                                       |
+| Create: `apps/web/src/admin/Topics.tsx`                                                                                                                                                                                                                        | Admin Topics section UI                                                                                       |
+| Create: `apps/web/src/admin/artwork.ts` (+ `.test.ts`)                                                                                                                                                                                                         | `squareWebP` resize + `dominantColors` extraction                                                             |
+| Create: `e2e/topics.spec.ts`                                                                                                                                                                                                                                   | Seed, CRUD, full-loop, Coming-soon, artwork e2e                                                               |
+| Modify: `packages/game-core/src/games/quiz/settings.ts`, `packages/game-core/src/index.ts`                                                                                                                                                                     | Shipped catalogue fields, `ShippedTopicId`, `QuizCategory = string`, `topicIdSchema`, `DEFAULT_TOPIC_COLORS`  |
+| Modify: `packages/content/src/schema.ts`, `packages/content/src/index.ts`                                                                                                                                                                                      | Schema uses `topicIdSchema`; shipped-only maps keyed `ShippedTopicId`                                         |
+| Modify: `apps/server/src/{index,gameRules,room,adminQuestions,adminImport,adminSettings,adminGames}.ts`                                                                                                                                                        | Routes + every validation site from spec §9                                                                   |
+| Modify: `apps/web/src/{api,catalog,matchInfo,RoomScreen,FriendsScreen}`, `pages/{TopicsPage,StatsPage}.tsx`, `games/quiz/{TopicPicker,QuizScreen,EliminationScreen}.tsx`, `admin/{AdminApp,Content,Games,Analytics,Dashboard,Rooms,Reports,questionParts}.tsx` | Live catalogue everywhere                                                                                     |
+| Modify: `e2e/quiz.spec.ts`                                                                                                                                                                                                                                     | Seeded-based picker assertions                                                                                |
+| Modify: `docs/ARCHITECTURE.md`, `docs/QUESTIONS.md`, `README.md`                                                                                                                                                                                               | Drop "fixed 12" claims                                                                                        |
 
 Task order: 1 → 2 → (3, 4) → (5, 6) → 7 → (8, 9) → 10 → 11.
 
@@ -65,12 +65,14 @@ Task order: 1 → 2 → (3, 4) → (5, 6) → 7 → (8, 9) → 10 → 11.
 ### Task 1: Shipped-catalogue foundation + migration
 
 **Files:**
+
 - Modify: `packages/game-core/src/games/quiz/settings.ts`, `packages/game-core/src/index.ts` (exports)
 - Modify: `packages/content/src/schema.ts:17`, `packages/content/src/index.ts:42,67`
 - Create: `apps/server/migrations/0020_topics.sql`
 - Test: `apps/server/src/topics.test.ts` (created here; Tasks 2–4 append to it)
 
 **Interfaces:**
+
 - Produces: `QUIZ_CATEGORIES` entries gain `tagline: string`, `colors: readonly [string, string]`, `art: string`; `type ShippedTopicId` (12-member union); `type QuizCategory = string`; `topicIdSchema` (zod: `min(1).max(40).regex(/^[a-z0-9][a-z0-9-]*$/, "Pick a topic.")`); `DEFAULT_TOPIC_COLORS = ["#6d5bff", "#1a1747"]` (readonly tuple). All exported from `@whizard/game-core`.
 - Consumed by: every later task (`topicIdSchema` replaces every `z.enum` of 12).
 
@@ -86,8 +88,9 @@ const sql = readFileSync(new URL("../migrations/0020_topics.sql", import.meta.ur
 
 describe("the topics migration", () => {
   it("seeds exactly the shipped twelve, in order, with taglines and colours", () => {
-    const rows = [...sql.matchAll(/\('([^']+)', '((?:[^']|'')*)', '((?:[^']|'')*)', '(\[[^\]]*\])', (\d+)\)/g)]
-      .map((m) => ({ id: m[1]!, name: m[2]!, tagline: m[3]!, colors: m[4]!, sort: Number(m[5]) }));
+    const rows = [
+      ...sql.matchAll(/\('([^']+)', '((?:[^']|'')*)', '((?:[^']|'')*)', '(\[[^\]]*\])', (\d+)\)/g),
+    ].map((m) => ({ id: m[1]!, name: m[2]!, tagline: m[3]!, colors: m[4]!, sort: Number(m[5]) }));
     expect(rows).toHaveLength(12);
     expect(rows.map((r) => r.id)).toEqual(QUIZ_CATEGORIES.map((c) => c.id));
     rows.forEach((row, i) => {
@@ -139,10 +142,12 @@ git add -A && git commit -m "Seed the topics table and widen the shipped topic c
 ### Task 2: Server catalogue module
 
 **Files:**
+
 - Create: `apps/server/src/topics.ts`
 - Modify: `apps/server/src/topics.test.ts`
 
 **Interfaces:**
+
 - Produces:
   - `interface TopicRow { id: string; name: string; tagline: string; colors: readonly [string, string]; sortOrder: number; hasArt: boolean; artVersion: number }`
   - `async getTopics(env: Env): Promise<TopicRow[]>` — D1 only, or complete fallback; never merged
@@ -191,11 +196,13 @@ git add -A && git commit -m "Read the topic catalogue from D1 with an all-or-not
 ### Task 3: Public catalogue + artwork endpoints
 
 **Files:**
+
 - Modify: `apps/server/src/index.ts` (routes `GET /api/quiz/categories`, `GET /api/topics/:id/art`)
 - Modify: `apps/server/src/topics.ts` (art helpers)
 - Test: `apps/server/src/topics.test.ts` (append)
 
 **Interfaces:**
+
 - Produces:
   - `GET /api/quiz/categories` → `{ categories: { id, name, tagline, colors, art, questions }[] }`, `Cache-Control: no-store`, ordered by `sort_order`, off topics excluded, `questions` from `playableCounts` only
   - `GET /api/topics/:id/art?v=N` → 200 WebP (`Cache-Control: public, max-age=31536000, immutable`) | 302 to shipped/static fallback | 404 **only** when the id itself is unknown
@@ -231,12 +238,14 @@ git add -A && git commit -m "Serve the live topic catalogue and topic artwork"
 ### Task 4: Admin topics CRUD handlers
 
 **Files:**
+
 - Create: `apps/server/src/adminTopics.ts`
 - Modify: `apps/server/src/index.ts` (mount under `/api/admin/topics`)
 - Modify: `apps/server/src/topics.ts` (upload validation helpers)
 - Test: `apps/server/src/topics.test.ts` (append)
 
 **Interfaces:**
+
 - Produces (all admin-authed, all `Cache-Control: no-store`, all `requireSameOrigin` for mutations, all calling `forgetTopics()` before responding):
   - `GET /api/admin/topics` → full list incl. `topics_off` flag, `custom_count`, `bank_count`, `hasArt`, `artVersion`
   - `POST /api/admin/topics` `{ name }` → `{ id: slug, … }` (201); 409 `A topic with that name already exists.`; validation error `"Pick a topic."` for empty/oversized
@@ -276,10 +285,12 @@ git add -A && git commit -m "Add admin topic create, edit, delete and artwork en
 ### Task 5: Runtime settings validation
 
 **Files:**
+
 - Modify: `apps/server/src/gameRules.ts`, `apps/server/src/room.ts`, `apps/server/src/index.ts` (room settings upsert), `apps/server/src/adminGames.ts`
 - Create: `apps/server/src/adminSettings.test.ts` (settings-validation tests)
 
 **Interfaces:**
+
 - Produces: every settings write/accept path validates `quiz_settings.category` + `elimination_settings.topics` against `getTopics()` and rejects unknown ids with `That topic isn't available. Pick another.`
 - Consumed by: ensures no code path can inject a dead id once Task 6 loosens the zod enum.
 
@@ -309,12 +320,14 @@ git add -A && git commit -m "Validate topic ids on every settings write path"
 ### Task 6: Admin write paths — questions, import, defaults
 
 **Files:**
+
 - Modify: `apps/server/src/adminQuestions.ts` (create/update topic membership)
 - Modify: `apps/server/src/adminImport.ts` (`categoryOf` match messages + id validation)
 - Modify: `apps/server/src/adminSettings.ts` (`quiz_defaults.category` + `settingsTopicProblems` export if not placed in Task 5)
 - Test: extend `adminSettings.test.ts` or a colocated `adminImport.test.ts`
 
 **Interfaces:**
+
 - Produces: admin question create/update accepts any **live** id (400 with the spec message otherwise); import maps category by **name or id** against the live list; `quiz_defaults.category` validated on save.
 - Consumed by: admin UI (Task 9) and e2e (Task 10) create questions under custom topics.
 
@@ -341,10 +354,12 @@ git add -A && git commit -m "Validate topic ids on admin question and import wri
 ### Task 7: Client live-catalogue module
 
 **Files:**
+
 - Create: `apps/web/src/topics.ts`, `apps/web/src/topics.test.ts`
 - Modify: `apps/web/src/api.ts` (`QuizCategoryInfo` gains `tagline`; add `fetchQuizCategories`, `fetchAdminTopics` + admin mutations)
 
 **Interfaces:**
+
 - Produces (apps/web/src/topics.ts):
   - `useTopics(): { topics: TopicInfo[]; loading: boolean; error: string | null; reload: () => void }` — fetches `/api/quiz/categories` once per store (shared module state, `no-store` so always revalidates on reload), merges onto `QUIZ_CATEGORIES` **only when the fetch fails** (mirrors server rule: fallback, never merge)
   - `topicName(id): string` — live row → shipped row → the raw id (last-resort never-throw)
@@ -375,11 +390,13 @@ git add -A && git commit -m "Look topic labels up in the live catalogue"
 ### Task 8: Browse grid + picker rewrite; delete TOPIC_STYLES
 
 **Files:**
+
 - Modify: `apps/web/src/pages/TopicsPage.tsx`, `apps/web/src/games/quiz/TopicPicker.tsx`, `apps/web/src/catalog.ts`
 - Modify: `apps/web/src/pages/TopicsPage` styles for `tagline` + art thumbnails
 - Delete: `TOPIC_STYLES` (and `chip` field) from wherever it survives after Task 7
 
 **Interfaces:**
+
 - Produces: browse grid renders live rows (art `<img>` → tagline → name → `N questions` / `Coming soon`), ordered by `sort_order`; TopicPicker renders live list (off topics excluded server-side already); "Coming soon" when `questions === 0`.
 - Consumed by: humans + e2e Task 10.
 
@@ -403,10 +420,12 @@ git add -A && git commit -m "Render the browse grid and picker from the live cat
 ### Task 9: Admin Topics section + artwork pipeline
 
 **Files:**
+
 - Create: `apps/web/src/admin/Topics.tsx`, `apps/web/src/admin/artwork.ts`, `apps/web/src/admin/artwork.test.ts`
 - Modify: `apps/web/src/admin/AdminApp.tsx` (nav entry "Topics"), `Content.tsx` (topic select from live list + free-text id via datalist), `Games.tsx` (custom-game topic checkboxes from live list)
 
 **Interfaces:**
+
 - Produces:
   - `squareWebP(file: File): Promise<Blob>` — client downscale to ≤ 1024 square, export `image/webp` quality 0.85 (browser nicety only; server still validates)
   - `dominantColors(img: HTMLImageElement): readonly [string, string]` — quantize r/g/b >> 4, alpha ≥ 128, top-2 bins (lexicographic tie-break), return `#rrggbb` pair; falls back to `DEFAULT_TOPIC_COLORS` when < 2 bins
@@ -432,10 +451,12 @@ git add -A && git commit -m "Add the admin Topics section with artwork upload"
 ### Task 10: End-to-end tests
 
 **Files:**
+
 - Create: `e2e/topics.spec.ts`
 - Modify: `e2e/quiz.spec.ts:100-101` (Review Focus 1)
 
 **Interfaces:**
+
 - Consumes: everything. Uses `grantAdmin(page)` (`scripts/set-admin.mjs` helper imported per existing e2e pattern), unique topic names per run (`Topic ${Date.now()}`), UI-driven mutations only (Origin header rule).
 
 - [ ] **Step 1: Write `e2e/topics.spec.ts`** — five specs from spec §16:
@@ -463,6 +484,7 @@ git add -A && git commit -m "Cover the topic catalogue end to end"
 ### Task 11: Docs + full verification
 
 **Files:**
+
 - Modify: `docs/ARCHITECTURE.md`, `docs/QUESTIONS.md`, `README.md` — replace "fixed 12" claims with "seeded 12, admin-editable, D1-authoritative"; document `/api/topics/:id/art` and the Topics admin section.
 
 - [ ] **Step 1: Sweep** — `grep -rn "fixed 12\|twelve topics\|hardcoded topic" docs/ README.md` and update each hit; add a short "Topics" subsection to ARCHITECTURE (table + cache + fallback rule).
@@ -472,7 +494,9 @@ git add -A && git commit -m "Cover the topic catalogue end to end"
 pnpm format && pnpm lint && pnpm typecheck && pnpm test && pnpm build
 pnpm exec playwright test
 ```
+
 All PASS. Fix anything red before proceeding (per Review Focus list, re-check items 1–5).
+
 - [ ] **Step 3: Commit**
 
 ```bash
@@ -495,5 +519,3 @@ Ready to implement. **Review this plan first**, then choose:
 2. **executing-plans** — I execute all tasks inline in this session.
 
 Say which you'd like.
-
-

@@ -34,7 +34,7 @@ reference use the ID. Renaming changes only `name`.
 
 1. **D1 is authoritative during normal operation.** The shipped 12-topic constant is used
    **only** when the D1 catalogue cannot be loaded, **all-or-nothing**: D1 success → D1 only;
-   D1 error *or* zero rows → the complete shipped fallback (with a logged warning). A partial
+   D1 error _or_ zero rows → the complete shipped fallback (with a logged warning). A partial
    or stale D1 result is never merged with the fallback.
 2. **No duplication of "availability".** `topics_off` stays the sole switch for on/off.
 3. **Every topic mutation invalidates the catalogue cache before its response completes**
@@ -72,20 +72,20 @@ The migration inserts all 12 so the catalogue is complete immediately after migr
 `sort_order` = index in `QUIZ_CATEGORIES` (1–12). Colours and art paths come from
 `TOPIC_STYLES` (`apps/web/src/catalog.ts:161`). Taglines are new, short, and never blank:
 
-| # | id | name | tagline | colors | art (static until uploaded) |
-|---|----|------|---------|--------|------------------------------|
-| 1 | `bible` | Bible | Stories, verses and wisdom | `["#ffb52c","#5a2014"]` | `/art/topics/bible.webp` |
-| 2 | `quran` | Quran | Surahs, verses and teachings | `["#25c08c","#053b33"]` | `/art/topics/quran.svg` |
-| 3 | `geography` | Geography | Places, maps and landmarks | `["#26c15f","#023c3c"]` | `/art/topics/geography.webp` |
-| 4 | `history` | History | Moments that shaped the world | `["#ff4b3e","#6a0b34"]` | `/art/topics/history.webp` |
-| 5 | `science` | Science | How the world works | `["#1f9dff","#062585"]` | `/art/topics/science.webp` |
-| 6 | `animals` | Animals | Wildlife from every habitat | `["#f2a93b","#3f2a0a"]` | `/art/topics/animals.svg` |
-| 7 | `football` | Football | Clubs, players and the beautiful game | `["#ff8a1f","#6b1228"]` | `/art/topics/football.webp` |
-| 8 | `movies` | Movies | Film, screen and cinema | `["#8f3cff","#2a0580"]` | `/art/topics/movies.webp` |
-| 9 | `music` | Music | Artists, genres and songs | `["#de45ff","#5e0480"]` | `/art/topics/music.webp` |
-| 10 | `nigerian-culture` | Nigerian culture | Language, food and tradition | `["#2fc44a","#012e2e"]` | `/art/topics/nigerian-culture.webp` |
-| 11 | `general-knowledge` | General knowledge | A bit of everything | `["#1aa6ff","#1015a8"]` | `/art/topics/general-knowledge.webp` |
-| 12 | `pop-culture` | Pop culture | TV, trends and celebrities | `["#22b4ff","#0232a3"]` | `/art/topics/pop-culture.webp` |
+| #   | id                  | name              | tagline                               | colors                  | art (static until uploaded)          |
+| --- | ------------------- | ----------------- | ------------------------------------- | ----------------------- | ------------------------------------ |
+| 1   | `bible`             | Bible             | Stories, verses and wisdom            | `["#ffb52c","#5a2014"]` | `/art/topics/bible.webp`             |
+| 2   | `quran`             | Quran             | Surahs, verses and teachings          | `["#25c08c","#053b33"]` | `/art/topics/quran.svg`              |
+| 3   | `geography`         | Geography         | Places, maps and landmarks            | `["#26c15f","#023c3c"]` | `/art/topics/geography.webp`         |
+| 4   | `history`           | History           | Moments that shaped the world         | `["#ff4b3e","#6a0b34"]` | `/art/topics/history.webp`           |
+| 5   | `science`           | Science           | How the world works                   | `["#1f9dff","#062585"]` | `/art/topics/science.webp`           |
+| 6   | `animals`           | Animals           | Wildlife from every habitat           | `["#f2a93b","#3f2a0a"]` | `/art/topics/animals.svg`            |
+| 7   | `football`          | Football          | Clubs, players and the beautiful game | `["#ff8a1f","#6b1228"]` | `/art/topics/football.webp`          |
+| 8   | `movies`            | Movies            | Film, screen and cinema               | `["#8f3cff","#2a0580"]` | `/art/topics/movies.webp`            |
+| 9   | `music`             | Music             | Artists, genres and songs             | `["#de45ff","#5e0480"]` | `/art/topics/music.webp`             |
+| 10  | `nigerian-culture`  | Nigerian culture  | Language, food and tradition          | `["#2fc44a","#012e2e"]` | `/art/topics/nigerian-culture.webp`  |
+| 11  | `general-knowledge` | General knowledge | A bit of everything                   | `["#1aa6ff","#1015a8"]` | `/art/topics/general-knowledge.webp` |
+| 12  | `pop-culture`       | Pop culture       | TV, trends and celebrities            | `["#22b4ff","#0232a3"]` | `/art/topics/pop-culture.webp`       |
 
 `art`/`art_type` stay `NULL` at seed — the built-in static file serves as artwork until an
 admin uploads a replacement (§8). Grid order after the change = `sort_order` (this replaces
@@ -131,13 +131,13 @@ Mirrors `settings.ts`/`bank.ts`:
 
 ```ts
 const CACHE_MS = 15_000;
-export async function getTopics(env): Promise<TopicRow[]>   // ORDER BY sort_order
-export function forgetTopics(): void                        // clears the cache
-export function isKnown(topics, id): boolean
-export function slugify(name): string                       // §4 slug rules
-export function nextSlug(env, name): Promise<string>        // collision → biology-2, -3, …
-export function hasQuestions(env, id): Promise<boolean>      // §10
-export async function playableCounts(env, bank, topics): Promise<Record<string, Levels>>
+export async function getTopics(env): Promise<TopicRow[]>; // ORDER BY sort_order
+export function forgetTopics(): void; // clears the cache
+export function isKnown(topics, id): boolean;
+export function slugify(name): string; // §4 slug rules
+export function nextSlug(env, name): Promise<string>; // collision → biology-2, -3, …
+export function hasQuestions(env, id): Promise<boolean>; // §10
+export async function playableCounts(env, bank, topics): Promise<Record<string, Levels>>;
 ```
 
 - `getTopics`: `SELECT * FROM topics ORDER BY sort_order`. Success with ≥1 row → D1 only.
@@ -155,13 +155,18 @@ export async function playableCounts(env, bank, topics): Promise<Record<string, 
 **`GET /api/quiz/categories`** — `apps/server/src/index.ts:93` extended:
 
 ```jsonc
-{ "categories": [ {
-    "id": "bible", "name": "Bible",
-    "tagline": "Stories, verses and wisdom",
-    "colors": ["#ffb52c", "#5a2014"],
-    "art": "/art/topics/bible.webp",          // or "/api/topics/bible/art?v=3", or generic
-    "questions": { "easy": 170, "medium": 170, "hard": 170 }   // PLAYABLE counts (§10)
-} ] }
+{
+  "categories": [
+    {
+      "id": "bible",
+      "name": "Bible",
+      "tagline": "Stories, verses and wisdom",
+      "colors": ["#ffb52c", "#5a2014"],
+      "art": "/art/topics/bible.webp", // or "/api/topics/bible/art?v=3", or generic
+      "questions": { "easy": 170, "medium": 170, "hard": 170 }, // PLAYABLE counts (§10)
+    },
+  ],
+}
 ```
 
 - Rows from `getTopics()` (fallback applies per §3.1), `ORDER BY sort_order`, filtered to
@@ -176,19 +181,19 @@ export async function playableCounts(env, bank, topics): Promise<Record<string, 
 **`GET /api/topics/:id/art`** (new route in the `index.ts` route table):
 
 - Row has `art` → `200`, `Content-Type: image/webp`, `Cache-Control: public, max-age=31536000,
-  immutable` (URL changes via `?v=` on replace), `X-Content-Type-Options: nosniff`.
+immutable` (URL changes via `?v=` on replace), `X-Content-Type-Options: nosniff`.
 - No blob → `302` to the built-in static file (`/art/topics/<id>.webp|svg`) if the shipped
   constant has one, else to the generic `/art/games/quiz.webp`. Never 404s.
 
 ### Admin (all `requireAdmin`; mutations also `requireSameOrigin`, matching `adminQuestions`)
 
-| Route | Behaviour |
-|---|---|
-| `GET /api/admin/topics` | Full catalogue **including off topics**: `{ topics: [{ id, name, tagline, colors, sortOrder, art, artVersion, off, questionCount }] }`, `Cache-Control: no-store`. `questionCount` = any question in bank ∪ `custom_questions` (§10) — drives the delete affordance. |
-| `POST /api/admin/topics` | Body `{ name, tagline?, colors? }`. Server generates the slug from `name` (`slugify` + collision `…-2`, `-3`); `sort_order = MAX(sort_order)+1`; default colours `["#6d5bff","#1a1747"]` and generic art when not given. `201 { topic }`. `forgetTopics()` before responding. |
-| `PATCH /api/admin/topics/:id` | Body any of `{ name?, tagline?, colors? }`. `name` ≤ 40 chars, non-empty after trim; `tagline` ≤ 80; `colors` = exactly two `/^#[0-9a-fA-F]{6}$/`. **`id` never changes.** `200 { topic }`. `forgetTopics()` first. |
-| `PUT /api/admin/topics/:id/art` | Raw WebP body (validated server-side, §8). `art_version + 1`. `200 { topic }`. `forgetTopics()` first. |
-| `DELETE /api/admin/topics/:id` | Empty (§10) → delete row; strip the id from `site_settings.topics_off`; if `quizDefaults.category === id` reset it to `DEFAULT_QUIZ_SETTINGS.category`; `forgetTopics()` + `forgetSettings()`; `logAdmin("topic:delete")`. Non-empty → **`409 topic_has_questions`**, message: *"That topic has questions — delete them first."* **No cascade of any kind.** |
+| Route                           | Behaviour                                                                                                                                                                                                                                                                                                                                                    |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `GET /api/admin/topics`         | Full catalogue **including off topics**: `{ topics: [{ id, name, tagline, colors, sortOrder, art, artVersion, off, questionCount }] }`, `Cache-Control: no-store`. `questionCount` = any question in bank ∪ `custom_questions` (§10) — drives the delete affordance.                                                                                         |
+| `POST /api/admin/topics`        | Body `{ name, tagline?, colors? }`. Server generates the slug from `name` (`slugify` + collision `…-2`, `-3`); `sort_order = MAX(sort_order)+1`; default colours `["#6d5bff","#1a1747"]` and generic art when not given. `201 { topic }`. `forgetTopics()` before responding.                                                                                |
+| `PATCH /api/admin/topics/:id`   | Body any of `{ name?, tagline?, colors? }`. `name` ≤ 40 chars, non-empty after trim; `tagline` ≤ 80; `colors` = exactly two `/^#[0-9a-fA-F]{6}$/`. **`id` never changes.** `200 { topic }`. `forgetTopics()` first.                                                                                                                                          |
+| `PUT /api/admin/topics/:id/art` | Raw WebP body (validated server-side, §8). `art_version + 1`. `200 { topic }`. `forgetTopics()` first.                                                                                                                                                                                                                                                       |
+| `DELETE /api/admin/topics/:id`  | Empty (§10) → delete row; strip the id from `site_settings.topics_off`; if `quizDefaults.category === id` reset it to `DEFAULT_QUIZ_SETTINGS.category`; `forgetTopics()` + `forgetSettings()`; `logAdmin("topic:delete")`. Non-empty → **`409 topic_has_questions`**, message: _"That topic has questions — delete them first."_ **No cascade of any kind.** |
 
 `logAdmin` actions: `topic:create`, `topic:edit`, `topic:art`, `topic:delete` (target = id).
 
@@ -221,40 +226,40 @@ unchanged id (`custom_questions.category`, `matches.category`, `daily_counts` me
 
 ## 9. Server-side validation audit (amendment §5 — every site)
 
-| Site | Today | Change |
-|---|---|---|
-| `game-core …/quiz/settings.ts:46` `quizSettingsSchema.category` | `z.enum(12)` | Bounded patterned string (§5). Shape only. |
-| `content/src/schema.ts:17` `storedQuestionSchema.category` | `z.enum(12)` | Same shape constraint. **Critical:** `bank.ts:47 fromRow` drops rows that fail this schema — without widening, every custom question for a new topic would silently vanish from `loadBank`. Membership was already enforced at write time. |
-| `adminQuestions.ts:257` `newSchema.category` | `z.enum(12)` | Shape in zod; handler checks `isKnown(getTopics(env), category)` → `400 invalid_question "Pick a topic."` |
-| `adminQuestions.ts` PATCH/edit | keeps `existing.category` | Unchanged — renames can't orphan questions. |
-| `adminImport.ts:269` `categoryOf` + `:241` error | static list | `categoryOf(value, topics)` takes the **live catalogue** (normalised id *or* name match); error lists live topic names. Callers (`rowToQuestion` etc.) receive `topics` explicitly; unit tests pass `QUIZ_CATEGORIES`. |
-| `adminSettings.ts:20` `TOPIC_IDS` (`topicsOff`) | `z.array(z.enum(12))` | Shape (`z.array(z.string())` + bounds) then membership check against the live catalogue per element → `400`. Unknown/deleted ids are rejected on write; `DELETE topic` also cleans them out of stored `topics_off`. |
-| `adminSettings.ts:83` `quizDefaults` (`quizSettingsSchema.partial()`) | enum inside | Shape via §5 + membership check on `quizDefaults.category` when present. |
-| `gameRules.ts:39` `newRoomSettings` fallback | `[topicOf(admin), …12 ids].find(!off)` | Signature gains `topicIds: readonly string[]` (live catalogue). After the existing `safeParse` try-loop: if the resulting topic is **not in the catalogue or is off**, swap to the first id in `[topicOf(admin), …topicIds]` that is in the catalogue and on; else `DEFAULT_QUIZ_SETTINGS.category`. Presets with unknown topics (createRoom stores settings unvalidated) land here. |
-| `room.ts:265` `configure` | checks `topicsOff` only | Also check catalogue membership → `bad_settings` with `"That topic isn't available. Pick another."` (preserves today's behaviour where the enum rejected unknown ids). |
-| `room.ts:275` `handleStart` | `topicsOff` check | Also reject topics no longer in the catalogue (belt-and-braces; delete-when-non-empty makes this near-impossible). |
-| `index.ts:158` activity-log topic | `QUIZ_CATEGORIES.some(…)` | `getTopics` membership; else default topic (unchanged behaviour). |
-| `index.ts:97` `quizCategories` | maps `QUIZ_CATEGORIES` | Maps `getTopics()` (§7). |
-| `adminGames.ts:48` topics list | `QUIZ_CATEGORIES.map` | `getTopics().map` (ids/counts stay; labels come from `GET /api/admin/topics`, §12). |
-| Content draw path (`room.ts:504`) | derives category from room settings | **No new check needed**: `contentNeeded` builds the request from settings, which are catalogue-gated at configure/switch/start. An unknown category draws zero questions anyway — no bypass. |
-| Stats / game results (server) | `community.ts`, `stats.ts`, `matches`, `daily_counts` `topic:<id>` | Audit result: all string-generic — no 12-assumption. `questionStats`/`question_reports` keyed by question id — unaffected. Content rules that special-case ids (`"bible"` verse, `"quran"` reference) stay id-based and untouched — rename-safe by rule. |
-| Label/art/colour lookups (client) | scattered `QUIZ_CATEGORIES.find(…)` / `TOPIC_STYLES[…]` — complete list: `matchInfo.ts:20`, `StatsPage.tsx:43,46,332`, `RoomScreen.tsx:594,652`, `FriendsScreen.tsx:533`, `admin/{Analytics,Dashboard,Rooms,Reports,Games,questionParts,Content}`, `games/quiz/{QuizScreen,EliminationScreen,TopicPicker}` | Single client lookup with the chain: live catalogue → shipped constant → raw id (`?? id`, the pattern already used in `Reports.tsx:21`, `Rooms.tsx:21`, `questionParts.tsx:11`). `StatsPage.tsx:332`'s per-topic chart rows must map the live catalogue so new topics appear. |
+| Site                                                                  | Today                                                                                                                                                                                                                                                                                                      | Change                                                                                                                                                                                                                                                                                                                                                                               |
+| --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `game-core …/quiz/settings.ts:46` `quizSettingsSchema.category`       | `z.enum(12)`                                                                                                                                                                                                                                                                                               | Bounded patterned string (§5). Shape only.                                                                                                                                                                                                                                                                                                                                           |
+| `content/src/schema.ts:17` `storedQuestionSchema.category`            | `z.enum(12)`                                                                                                                                                                                                                                                                                               | Same shape constraint. **Critical:** `bank.ts:47 fromRow` drops rows that fail this schema — without widening, every custom question for a new topic would silently vanish from `loadBank`. Membership was already enforced at write time.                                                                                                                                           |
+| `adminQuestions.ts:257` `newSchema.category`                          | `z.enum(12)`                                                                                                                                                                                                                                                                                               | Shape in zod; handler checks `isKnown(getTopics(env), category)` → `400 invalid_question "Pick a topic."`                                                                                                                                                                                                                                                                            |
+| `adminQuestions.ts` PATCH/edit                                        | keeps `existing.category`                                                                                                                                                                                                                                                                                  | Unchanged — renames can't orphan questions.                                                                                                                                                                                                                                                                                                                                          |
+| `adminImport.ts:269` `categoryOf` + `:241` error                      | static list                                                                                                                                                                                                                                                                                                | `categoryOf(value, topics)` takes the **live catalogue** (normalised id _or_ name match); error lists live topic names. Callers (`rowToQuestion` etc.) receive `topics` explicitly; unit tests pass `QUIZ_CATEGORIES`.                                                                                                                                                               |
+| `adminSettings.ts:20` `TOPIC_IDS` (`topicsOff`)                       | `z.array(z.enum(12))`                                                                                                                                                                                                                                                                                      | Shape (`z.array(z.string())` + bounds) then membership check against the live catalogue per element → `400`. Unknown/deleted ids are rejected on write; `DELETE topic` also cleans them out of stored `topics_off`.                                                                                                                                                                  |
+| `adminSettings.ts:83` `quizDefaults` (`quizSettingsSchema.partial()`) | enum inside                                                                                                                                                                                                                                                                                                | Shape via §5 + membership check on `quizDefaults.category` when present.                                                                                                                                                                                                                                                                                                             |
+| `gameRules.ts:39` `newRoomSettings` fallback                          | `[topicOf(admin), …12 ids].find(!off)`                                                                                                                                                                                                                                                                     | Signature gains `topicIds: readonly string[]` (live catalogue). After the existing `safeParse` try-loop: if the resulting topic is **not in the catalogue or is off**, swap to the first id in `[topicOf(admin), …topicIds]` that is in the catalogue and on; else `DEFAULT_QUIZ_SETTINGS.category`. Presets with unknown topics (createRoom stores settings unvalidated) land here. |
+| `room.ts:265` `configure`                                             | checks `topicsOff` only                                                                                                                                                                                                                                                                                    | Also check catalogue membership → `bad_settings` with `"That topic isn't available. Pick another."` (preserves today's behaviour where the enum rejected unknown ids).                                                                                                                                                                                                               |
+| `room.ts:275` `handleStart`                                           | `topicsOff` check                                                                                                                                                                                                                                                                                          | Also reject topics no longer in the catalogue (belt-and-braces; delete-when-non-empty makes this near-impossible).                                                                                                                                                                                                                                                                   |
+| `index.ts:158` activity-log topic                                     | `QUIZ_CATEGORIES.some(…)`                                                                                                                                                                                                                                                                                  | `getTopics` membership; else default topic (unchanged behaviour).                                                                                                                                                                                                                                                                                                                    |
+| `index.ts:97` `quizCategories`                                        | maps `QUIZ_CATEGORIES`                                                                                                                                                                                                                                                                                     | Maps `getTopics()` (§7).                                                                                                                                                                                                                                                                                                                                                             |
+| `adminGames.ts:48` topics list                                        | `QUIZ_CATEGORIES.map`                                                                                                                                                                                                                                                                                      | `getTopics().map` (ids/counts stay; labels come from `GET /api/admin/topics`, §12).                                                                                                                                                                                                                                                                                                  |
+| Content draw path (`room.ts:504`)                                     | derives category from room settings                                                                                                                                                                                                                                                                        | **No new check needed**: `contentNeeded` builds the request from settings, which are catalogue-gated at configure/switch/start. An unknown category draws zero questions anyway — no bypass.                                                                                                                                                                                         |
+| Stats / game results (server)                                         | `community.ts`, `stats.ts`, `matches`, `daily_counts` `topic:<id>`                                                                                                                                                                                                                                         | Audit result: all string-generic — no 12-assumption. `questionStats`/`question_reports` keyed by question id — unaffected. Content rules that special-case ids (`"bible"` verse, `"quran"` reference) stay id-based and untouched — rename-safe by rule.                                                                                                                             |
+| Label/art/colour lookups (client)                                     | scattered `QUIZ_CATEGORIES.find(…)` / `TOPIC_STYLES[…]` — complete list: `matchInfo.ts:20`, `StatsPage.tsx:43,46,332`, `RoomScreen.tsx:594,652`, `FriendsScreen.tsx:533`, `admin/{Analytics,Dashboard,Rooms,Reports,Games,questionParts,Content}`, `games/quiz/{QuizScreen,EliminationScreen,TopicPicker}` | Single client lookup with the chain: live catalogue → shipped constant → raw id (`?? id`, the pattern already used in `Reports.tsx:21`, `Rooms.tsx:21`, `questionParts.tsx:11`). `StatsPage.tsx:332`'s per-topic chart rows must map the live catalogue so new topics appear.                                                                                                        |
 
 `DEFAULT_QUIZ_SETTINGS.category = "bible"` stays valid (seeded).
 
 ## 10. Empty topic (explicit definition)
 
-**Playable/empty (browse `Coming soon`, playable counts):** a topic is *empty* when it has
+**Playable/empty (browse `Coming soon`, playable counts):** a topic is _empty_ when it has
 **zero in-play questions** across **both** sources — the shipped bank merged with
 `custom_questions` (`loadBank`) — after removing questions out of play under the **existing**
 lifecycle only (`outOfPlay`: admin-retired + reported-out; `adminQuestions.ts:103`
 `play === "in_play"`). No new status/draft/disabled concepts are invented.
 
-**Deletion guard:** a topic *has questions* when —
+**Deletion guard:** a topic _has questions_ when —
 `EXISTS (SELECT 1 FROM custom_questions WHERE category = ?)` **OR** the shipped bank
 contains any question with that category. Deliberately both tables/sources: a schema-rejected
 custom row must not make a topic look deletable, and shipped questions are in code, not D1.
-Any hit → `409`, no cascade. (Retired/out-of-play questions still count as *associated* —
+Any hit → `409`, no cascade. (Retired/out-of-play questions still count as _associated_ —
 they are content history, not deletable-when-empty.)
 
 The browse UI shows `Coming soon` (disabled) **iff** playable count is 0. `TopicPicker`'s
@@ -304,7 +309,7 @@ already in the `Icon` set).
   read-only.
 - **Replace artwork**: file input → browser resize/colour-extract (§8) → `PUT`.
 - **Delete**: enabled only when `questionCount === 0` (otherwise disabled with "Has
-  questions"); confirms; surfaces a `409` as an inline error. 
+  questions"); confirms; surfaces a `409` as an inline error.
 - Every mutation: `invalidateTopics()` + refetch → **the new topic is selectable in the
   question editor immediately, no deployment needed** (both screens read the same live
   catalogue; admin endpoints are `no-store`).
@@ -347,7 +352,7 @@ a game starts with it.
 7. **Validation** — live ids pass; unknown ids rejected on `addQuestion`, import,
    `topicsOff`, `quizDefaults`, `configure`; `storedQuestionSchema` accepts a new-topic
    category (regression for the `fromRow` drop); `quizSettingsSchema` rejects empty/
-   overlong/non-pattern strings; old hardcoded ids are not *required* anywhere.
+   overlong/non-pattern strings; old hardcoded ids are not _required_ anywhere.
 8. **Existing updates** — `gameRules.test.ts` (new `topicIds` argument + unknown-topic
    swap cases), `adminImport.test.ts` (explicit topics argument), `content` tests
    (`QUESTION_FILES` exhaustiveness over the shipped 12), any test asserting a static
@@ -398,5 +403,5 @@ the deployment, then StackDiary `report_session`.
    removing it (`quran` becomes visible).
 6. Delete guard counts retired/out-of-play questions as associated (history is not
    "empty"), while `Coming soon` uses only playable questions.
-7. Message strings: 409 body *"That topic has questions — delete them first."*; configure
-   unknown-topic *"That topic isn't available. Pick another."*
+7. Message strings: 409 body _"That topic has questions — delete them first."_; configure
+   unknown-topic _"That topic isn't available. Pick another."_

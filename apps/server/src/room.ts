@@ -140,7 +140,12 @@ export class Room extends DurableObject<Env> {
     if (await this.load()) return false;
     const state = { ...createRoomState(code, Date.now()), game: defaultGameConfig(gameId) };
     const [site, rows] = await Promise.all([siteSettings(this.env), getTopics(this.env)]);
-    const settings = newRoomSettings(state, site, gameSettings, rows.map((row) => row.id));
+    const settings = newRoomSettings(
+      state,
+      site,
+      gameSettings,
+      rows.map((row) => row.id),
+    );
     await this.save({ ...state, game: { ...state.game, settings } });
     return true;
   }
@@ -270,7 +275,12 @@ export class Room extends DurableObject<Env> {
           const result = chooseGame(state, playerId, game);
           if (!result.ok || result.state === state) return result;
           // Admins' defaults and topics that are off apply here too, as for a new room.
-          const settings = newRoomSettings(result.state, site, null, rows.map((row) => row.id));
+          const settings = newRoomSettings(
+            result.state,
+            site,
+            null,
+            rows.map((row) => row.id),
+          );
           return { ok: true, state: { ...result.state, game: { id: game, settings } } };
         });
         return;

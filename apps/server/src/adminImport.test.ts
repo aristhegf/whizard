@@ -73,13 +73,19 @@ function flat(over: Record<string, unknown> = {}): Record<string, unknown> {
   };
 }
 
-function questionOf(data: unknown, topics: readonly { id: string; name: string }[] = QUIZ_CATEGORIES): StoredQuestion {
+function questionOf(
+  data: unknown,
+  topics: readonly { id: string; name: string }[] = QUIZ_CATEGORIES,
+): StoredQuestion {
   const built = rowToQuestion(data, topics);
   if ("error" in built) throw new Error(built.error);
   return built.question;
 }
 
-function errorOf(data: unknown, topics: readonly { id: string; name: string }[] = QUIZ_CATEGORIES): string {
+function errorOf(
+  data: unknown,
+  topics: readonly { id: string; name: string }[] = QUIZ_CATEGORIES,
+): string {
   const built = rowToQuestion(data, topics);
   return "error" in built ? built.error : "expected an error, got a question";
 }
@@ -303,7 +309,11 @@ describe("planning an import", () => {
   });
 
   it("skips a row the file already asked", () => {
-    const plan = planImport([row(stored(), 1), row(stored({ id: "whizard-easy-002" }), 2)], [], QUIZ_CATEGORIES);
+    const plan = planImport(
+      [row(stored(), 1), row(stored({ id: "whizard-easy-002" }), 2)],
+      [],
+      QUIZ_CATEGORIES,
+    );
     expect(plan.add).toHaveLength(1);
     expect(plan.skipped).toEqual([{ row: 2, message: "Already asked as bible-001." }]);
   });
@@ -344,7 +354,11 @@ describe("planning an import", () => {
   });
 
   it("reports rows to fix with their number, and still adds the good ones", () => {
-    const plan = planImport([row(flat(), 1), row(stored({ difficulty: "brutal" }), 2)], [], QUIZ_CATEGORIES);
+    const plan = planImport(
+      [row(flat(), 1), row(stored({ difficulty: "brutal" }), 2)],
+      [],
+      QUIZ_CATEGORIES,
+    );
     expect(plan.add).toHaveLength(1);
     expect(plan.skipped).toEqual([]);
     expect(plan.errors).toHaveLength(1);
@@ -420,9 +434,7 @@ describe("import against the live catalogue", () => {
     expect(body.added).toBe(2); // the new name and the id both matched the live topic
     expect(body.errors).toHaveLength(1);
     expect(body.errors[0]!.row).toBe(3);
-    expect(body.errors[0]!.message).toMatch(
-      /^Unknown topic “Life sciences”\. Topics are: Bible, /,
-    );
+    expect(body.errors[0]!.message).toMatch(/^Unknown topic “Life sciences”\. Topics are: Bible, /);
     expect(body.errors[0]!.message).toContain("Natural sciences"); // live names, not the old ones
     expect(body.errors[0]!.message).not.toContain("Biology");
   });

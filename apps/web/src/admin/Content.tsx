@@ -275,9 +275,7 @@ function Browser() {
             return (
               <li key={q.id}>
                 <a className="content-row" {...linkTo(editPath(q.id))}>
-                  <span className="rank-art">
-                    {art && <img src={art} alt="" loading="lazy" />}
-                  </span>
+                  <span className="rank-art">{art && <img src={art} alt="" loading="lazy" />}</span>
                   <span className="content-text">
                     <strong>{q.prompt}</strong>
                     <span className="report-answer">✓ {q.choices[0]}</span>
