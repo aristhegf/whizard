@@ -1,6 +1,6 @@
 # Adding questions
 
-Quiz questions live in `packages/content/src/questions/`, one JSON file per category. They ship with the app, and the test suite checks every one on every push. This guide is the standard for every new batch.
+Quiz questions live in `packages/content/src/questions/`, one JSON file per category. They ship with the app, and the test suite checks every one on every push. This guide is the standard for every new batch. The category list itself is the topic catalogue admins edit (see [ARCHITECTURE.md](ARCHITECTURE.md#topics)); questions for a topic an admin added live in the database only, never in these files.
 
 ## Format
 
@@ -77,7 +77,7 @@ The same **Content** page takes a whole file of new questions: **Import file**, 
 }
 ```
 
-- **`category`** may be the category's id or its name, in any case: `bible`, `Bible` and `POP CULTURE` all work. **`difficulty`** is `easy`, `medium` or `hard`, and blank means easy.
+- **`category`** may be the category's id or its name, in any case: `bible`, `Bible` and `POP CULTURE` all work. The list is the live topic catalogue, so a topic an admin has added works the same way. **`difficulty`** is `easy`, `medium` or `hard`, and blank means easy.
 - **`choices`** is exactly four, the first correct. **`reference`** may be left out. Any **`id`** in the file is ignored: each question is numbered where that topic's and level's own sequence left off — skipping numbers other levels of the topic already use — so imports join the bank's numbering (`bible-511`, `bible-512`, …) instead of restarting it, and the next import continues after that. Questions added one by hand continue the same sequence.
 - **CSV** carries the same fields as columns: `id,category,topic,difficulty,prompt,choice_1,choice_2,choice_3,choice_4,explanation,reference`, with `reference` optional and any `id` column ignored.
 - Every row runs through the same checks as a question typed by hand. Rows that fail come back numbered ("Row 7: …") with what to fix; rows that repeat a question the bank or an earlier row in the file already asks are skipped rather than refused, so one repeat doesn't hold up the rest. One file may carry up to 1,000 questions.
