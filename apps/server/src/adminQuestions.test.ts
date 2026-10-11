@@ -121,3 +121,37 @@ describe("topic membership on question writes", () => {
     expect(detail.category).toBe("mars");
   });
 });
+
+describe("the questions summary", () => {
+  beforeEach(() => {
+    forgetTopics();
+    forgetBank();
+    forgetSettings();
+  });
+
+  it("covers every live catalogue topic, custom ones included", async () => {
+    const { env, headers } = await adminEnv();
+    await env.DB.prepare(MARS_TOPIC).run();
+    forgetTopics();
+    const created = await call(env, "/api/admin/questions", {
+      method: "POST",
+      ...jsonBody(headers, question()),
+    });
+    expect(created.status).toBe(201);
+
+    const summary = await call(env, "/api/admin/questions/summary", { headers });
+    expect(summary.status).toBe(200);
+    const body = (await summary.json()) as {
+      coverage: { category: string; easy: number; medium: number; hard: number }[];
+    };
+    const ids = body.coverage.map((row) => row.category);
+    expect(ids).toContain("mars"); // the created topic gets a row
+    expect(ids).toContain("bible"); // shipped topics keep theirs
+    expect(body.coverage.find((row) => row.category === "mars")).toEqual({
+      category: "mars",
+      easy: 1,
+      medium: 0,
+      hard: 0,
+    });
+  });
+});

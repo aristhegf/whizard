@@ -8,7 +8,7 @@ import {
   repeatsAcrossCategories,
   type StoredQuestion,
 } from "@whizard/content";
-import { QUIZ_CATEGORIES, QUIZ_DIFFICULTIES, topicIdSchema } from "@whizard/game-core";
+import { QUIZ_DIFFICULTIES, topicIdSchema } from "@whizard/game-core";
 import {
   QUESTION_FILTERS,
   QUESTION_SORTS,
@@ -141,10 +141,11 @@ export async function getQuestionsSummary(context: RequestContext): Promise<Resp
       outOfPlay: questions.length - inPlay.length,
       answers: questions.reduce((sum, q) => sum + answers(q), 0),
     },
-    coverage: QUIZ_CATEGORIES.map((c) => {
-      const mine = inPlay.filter((q) => q.category === c.id);
+    // The live catalogue, so admin-created topics get a row too.
+    coverage: (await getTopics(context.env)).map((topic) => {
+      const mine = inPlay.filter((q) => q.category === topic.id);
       const n = (level: string) => mine.filter((q) => q.difficulty === level).length;
-      return { category: c.id, easy: n("easy"), medium: n("medium"), hard: n("hard") };
+      return { category: topic.id, easy: n("easy"), medium: n("medium"), hard: n("hard") };
     }),
     // Kept apart, so a question with few answers can't be in both lists.
     hardest: byShare.filter((q) => rightShare(q)! < 0.5).slice(0, RANKED),

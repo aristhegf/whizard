@@ -2,6 +2,7 @@ import type { AdminQuestionsSummary } from "@whizard/protocol";
 import { fetchQuestionsSummary } from "../api";
 import { formatNumber } from "../format";
 import { linkTo } from "../router";
+import { useTopics } from "../topics";
 import { KpiTiles, PanelHead, useRefreshing } from "./parts";
 import { LEVEL_NAMES, LEVELS, QuestionLine, topicArt, topicName } from "./questionParts";
 
@@ -103,6 +104,10 @@ export function Questions() {
 }
 
 function Coverage({ data }: { data: AdminQuestionsSummary | null }) {
+  const { topics: catalogue } = useTopics("admin");
+  /** A row's topic: the admin catalogue first — it knows uploaded art and new names. */
+  const nameOf = (id: string) => catalogue.find((c) => c.id === id)?.name ?? topicName(id);
+  const artOf = (id: string) => catalogue.find((c) => c.id === id)?.art ?? topicArt(id);
   const rows = data?.coverage ?? [];
   const most = Math.max(1, ...rows.flatMap((r) => [r.easy, r.medium, r.hard]));
   return (
@@ -137,9 +142,9 @@ function Coverage({ data }: { data: AdminQuestionsSummary | null }) {
             <tr key={r.category}>
               <th scope="row">
                 <span className="rank-art">
-                  {topicArt(r.category) && <img src={topicArt(r.category)} alt="" loading="lazy" />}
+                  {artOf(r.category) && <img src={artOf(r.category)} alt="" loading="lazy" />}
                 </span>
-                {topicName(r.category)}
+                {nameOf(r.category)}
               </th>
               {LEVELS.map((l) => (
                 <td key={l}>
