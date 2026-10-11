@@ -82,6 +82,11 @@ function Browser() {
     null,
   );
   const [importProblem, setImportProblem] = useState<string | null>(null);
+  const [picked, setPicked] = useState<ReadonlySet<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleteNote, setDeleteNote] = useState<string | null>(null);
+  const [deleteProblem, setDeleteProblem] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -141,7 +146,56 @@ function Browser() {
     (v: T) => {
       set(v);
       setPages(1);
+      setPicked(new Set());
+      setConfirmDelete(false);
+      setDeleteNote(null);
+      setDeleteProblem(null);
     };
+
+  /** Only admin-added questions can go; shipped ones are permanent and only ever revert. */
+  const selectableIds = (data?.questions ?? [])
+    .filter((q) => q.origin === "added")
+    .map((q) => q.id);
+
+  const togglePick = (id: string) => {
+    setDeleteNote(null);
+    setDeleteProblem(null);
+    setPicked((p) => {
+      const next = new Set(p);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  /** Deletes every picked question, one request each, and reports honestly if some failed. */
+  const bulkDelete = async () => {
+    const ids = [...picked];
+    setDeleting(true);
+    setConfirmDelete(false);
+    setDeleteNote(null);
+    setDeleteProblem(null);
+    let done = 0;
+    let lastError: string | null = null;
+    for (const id of ids) {
+      try {
+        await revertQuestion(id);
+        done += 1;
+      } catch (e) {
+        lastError = e instanceof Error ? e.message : String(e);
+      }
+    }
+    setDeleting(false);
+    setPicked(new Set());
+    setReload((n) => n + 1);
+    if (done === ids.length) {
+      setDeleteNote(`Deleted ${done} ${done === 1 ? "question" : "questions"}.`);
+    } else if (done > 0) {
+      setDeleteNote(`Deleted ${done} of ${ids.length}. ${lastError ?? ""}`.trim());
+    } else {
+      setDeleteProblem(lastError ?? "Couldn’t delete the selected questions.");
+    }
+  };
 
   return (
     <div className={data ? "admin-grid" : "admin-grid loading"}>
@@ -262,6 +316,78 @@ function Browser() {
           ))}
         </div>
 
+        {selectableIds.length > 0 && (
+          <div className="content-bulk" role="group" aria-label="Bulk delete">
+            <label className="content-check">
+              <input
+                type="checkbox"
+                checked={
+                  picked.size > 0 &&
+                  picked.size === selectableIds.length &&
+                  selectableIds.every((id) => picked.has(id))
+                }
+                disabled={deleting}
+                aria-label="Select all added questions shown"
+                onChange={() =>
+                  setPicked(
+                    picked.size > 0 &&
+                      picked.size === selectableIds.length &&
+                      selectableIds.every((id) => picked.has(id))
+                      ? new Set()
+                      : new Set(selectableIds),
+                  )
+                }
+              />
+            </label>
+            <span>{picked.size > 0 ? `${picked.size} selected` : "Select all added"}</span>
+            {picked.size > 0 &&
+              (confirmDelete ? (
+                <>
+                  <button
+                    className="btn btn-small btn-danger"
+                    disabled={deleting}
+                    onClick={() => void bulkDelete()}
+                  >
+                    {deleting ? "Deleting…" : `Yes, delete ${picked.size}`}
+                  </button>
+                  <button
+                    className="btn btn-small"
+                    disabled={deleting}
+                    onClick={() => setConfirmDelete(false)}
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="btn btn-small btn-danger"
+                    onClick={() => {
+                      setConfirmDelete(true);
+                      setDeleteNote(null);
+                      setDeleteProblem(null);
+                    }}
+                  >
+                    Delete selected
+                  </button>
+                  <button className="btn btn-small" onClick={() => setPicked(new Set())}>
+                    Clear
+                  </button>
+                </>
+              ))}
+          </div>
+        )}
+        {deleteNote && (
+          <p className="form-saved" role="status">
+            {deleteNote}
+          </p>
+        )}
+        {deleteProblem && (
+          <p className="error" role="alert">
+            {deleteProblem}
+          </p>
+        )}
+
         {error && !data && (
           <p className="error" role="alert">
             Couldn’t load the questions. {error}
@@ -272,28 +398,46 @@ function Browser() {
           {(data?.questions ?? []).map((q) => {
             const share = rightShare(q);
             const art = artOf(q.category);
+            const row = (
+              <a className="content-row" {...linkTo(editPath(q.id))}>
+                <span className="rank-art">{art && <img src={art} alt="" loading="lazy" />}</span>
+                <span className="content-text">
+                  <strong>{q.prompt}</strong>
+                  <span className="report-answer">✓ {q.choices[0]}</span>
+                  <span className="content-meta">
+                    {q.id} · {nameOf(q.category)} · {LEVEL_NAMES[q.difficulty]} · {q.topic}
+                  </span>
+                </span>
+                <span className="content-share">
+                  {share === null ? "–" : formatPercent(share)}
+                  <span>{formatNumber(answersOf(q))} answers</span>
+                </span>
+                <span className="content-status">
+                  {ORIGIN[q.origin] && (
+                    <span className="status-pill status-admin">{ORIGIN[q.origin]}</span>
+                  )}
+                  <span className={`status-pill ${PLAY[q.play].tone}`}>{PLAY[q.play].label}</span>
+                </span>
+              </a>
+            );
             return (
               <li key={q.id}>
-                <a className="content-row" {...linkTo(editPath(q.id))}>
-                  <span className="rank-art">{art && <img src={art} alt="" loading="lazy" />}</span>
-                  <span className="content-text">
-                    <strong>{q.prompt}</strong>
-                    <span className="report-answer">✓ {q.choices[0]}</span>
-                    <span className="content-meta">
-                      {q.id} · {nameOf(q.category)} · {LEVEL_NAMES[q.difficulty]} · {q.topic}
-                    </span>
-                  </span>
-                  <span className="content-share">
-                    {share === null ? "–" : formatPercent(share)}
-                    <span>{formatNumber(answersOf(q))} answers</span>
-                  </span>
-                  <span className="content-status">
-                    {ORIGIN[q.origin] && (
-                      <span className="status-pill status-admin">{ORIGIN[q.origin]}</span>
-                    )}
-                    <span className={`status-pill ${PLAY[q.play].tone}`}>{PLAY[q.play].label}</span>
-                  </span>
-                </a>
+                {q.origin === "added" ? (
+                  <div className="content-item">
+                    <label className="content-check">
+                      <input
+                        type="checkbox"
+                        checked={picked.has(q.id)}
+                        disabled={deleting}
+                        aria-label={`Select ${q.prompt}`}
+                        onChange={() => togglePick(q.id)}
+                      />
+                    </label>
+                    {row}
+                  </div>
+                ) : (
+                  row
+                )}
               </li>
             );
           })}

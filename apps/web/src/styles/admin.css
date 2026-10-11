@@ -1518,6 +1518,35 @@
   justify-content: flex-start;
 }
 
+/* Bulk delete: a checkbox column in front of admin-added rows, and its action bar. */
+.content-item {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+}
+
+.content-check {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.content-check input {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: #8b5cf6;
+  cursor: pointer;
+}
+
+.content-bulk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 2px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .content-tools {
   display: grid;
   grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
