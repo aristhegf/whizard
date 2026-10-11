@@ -18,3 +18,5 @@ skills-lock.json
 apps/web/src/components/cult/
 # The taste skill (npx skills add leonxlnx/taste-skill), kept as published.
 .claude/skills/design-taste-frontend/
+# Superpowers session artifacts (gitignored planning/review working files).
+.superpowers/
