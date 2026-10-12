@@ -27,7 +27,7 @@ export function HomePage() {
   const [group, setGroup] = useState<GameGroup | "all">("all");
   const [page, setPage] = useState(0);
   // Phones show only the featured game; a kind of game opens its games in a sheet instead.
-  const [sheet, setSheet] = useState<GameGroup | "all" | null>(null);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
   const paged = useMediaQuery("(min-width: 1100px)");
 
   const games = CATALOG.filter((g) => group === "all" || g.groups.includes(group)).sort(
@@ -57,32 +57,50 @@ export function HomePage() {
             {GAME_GROUPS.map((g) => (
               <button
                 key={g.id}
-                className={`play-chip${sheet === g.id ? " is-open" : ""}`}
-                aria-pressed={paged ? group === g.id : undefined}
-                aria-haspopup={paged ? undefined : "dialog"}
+                className={group === g.id ? "play-chip is-open" : "play-chip"}
+                aria-pressed={group === g.id}
                 onClick={() => {
-                  if (!paged) return setSheet(g.id);
                   setGroup(g.id);
                   setPage(0);
                 }}
               >
-                {g.icon && <Icon name={g.icon} size={paged ? 20 : 16} />}
+                {g.icon && <Icon name={g.icon} size={20} />}
                 {g.name}
               </button>
             ))}
           </div>
+          {!paged && (
+            <button
+              className="play-mobile-categories"
+              aria-haspopup="dialog"
+              onClick={() => setCategoriesOpen(true)}
+            >
+              <Icon name="grid" size={18} />
+              Categories
+              <span>{GAME_GROUPS.find((g) => g.id === group)?.name ?? "All"}</span>
+              <Icon name="chevronDown" size={18} />
+            </button>
+          )}
         </header>
-        {!paged && sheet && <GameSheet group={sheet} onClose={() => setSheet(null)} />}
+        {!paged && categoriesOpen && (
+          <CategorySheet
+            selected={group}
+            onSelect={(next) => {
+              setGroup(next);
+              setPage(0);
+              setCategoriesOpen(false);
+            }}
+            onClose={() => setCategoriesOpen(false)}
+          />
+        )}
 
         <div className="play-body">
           {!paged && (
             <div className="play-mobile-shelf">
               <ul className="play-mobile-cards" aria-label="Games to play">
-                {[...CATALOG]
-                  .sort((a, b) => Number(isPlayable(b)) - Number(isPlayable(a)))
-                  .map((game) => (
-                    <GameCard key={game.id} game={game} />
-                  ))}
+                {games.map((game) => (
+                  <GameCard key={game.id} game={game} />
+                ))}
               </ul>
             </div>
           )}
@@ -132,59 +150,43 @@ export function HomePage() {
 }
 
 /** A kind of game's games, in a sheet from the bottom, one card at a time to swipe through. */
-function GameSheet({ group, onClose }: { group: GameGroup | "all"; onClose: () => void }) {
-  const info = GAME_GROUPS.find((g) => g.id === group)!;
-  const games = CATALOG.filter((g) => group === "all" || g.groups.includes(group)).sort(
-    (a, b) => Number(isPlayable(b)) - Number(isPlayable(a)),
-  );
-  const [at, setAt] = useState(0);
-
+function CategorySheet({
+  selected,
+  onSelect,
+  onClose,
+}: {
+  selected: GameGroup | "all";
+  onSelect: (group: GameGroup | "all") => void;
+  onClose: () => void;
+}) {
   return (
     <BottomSheet
-      labelledBy="game-sheet-title"
-      className="game-sheet"
+      labelledBy="category-sheet-title"
+      className="category-sheet"
       onClose={onClose}
       header={(close) => (
-        <div className="game-sheet-head">
-          <h2 id="game-sheet-title" className="game-sheet-title">
-            {info.icon && <Icon name={info.icon} size={20} />}
-            {group === "all" ? "All games" : info.name}
-          </h2>
-          <span className="game-sheet-count">{games.length}</span>
-          <button className="game-sheet-close" aria-label="Close" onClick={close}>
+        <div className="category-sheet-head">
+          <h2 id="category-sheet-title">Game Categories</h2>
+          <button className="game-sheet-close" aria-label="Close categories" onClick={close}>
             <Icon name="close" size={20} stroke={2.4} />
           </button>
         </div>
       )}
     >
-      {games.length === 0 ? (
-        <p className="muted play-empty">No games of this kind yet.</p>
-      ) : (
-        <>
-          <ul
-            className="game-sheet-cards"
-            aria-label="Games"
-            onScroll={(event) => {
-              const list = event.currentTarget;
-              const step = (list.firstElementChild as HTMLElement | null)?.offsetWidth ?? 1;
-              // The last card can't snap to the start, so the end of the row counts as it.
-              const end = list.scrollLeft + list.clientWidth >= list.scrollWidth - 2;
-              setAt(end ? games.length - 1 : Math.round(list.scrollLeft / (step + 12)));
-            }}
+      <div className="category-options" role="group" aria-label="Game Categories">
+        {GAME_GROUPS.map((g) => (
+          <button
+            key={g.id}
+            className="category-option"
+            aria-pressed={selected === g.id}
+            onClick={() => onSelect(g.id)}
           >
-            {games.map((g) => (
-              <GameCard key={g.id} game={g} />
-            ))}
-          </ul>
-          {games.length > 1 && (
-            <span className="play-dots game-sheet-dots" aria-hidden="true">
-              {games.map((g, i) => (
-                <span key={g.id} className={i === at ? "on" : undefined} />
-              ))}
-            </span>
-          )}
-        </>
-      )}
+            {g.icon ? <Icon name={g.icon} size={20} /> : <Icon name="grid" size={20} />}
+            <span>{g.name === "All" ? "All Games" : g.name}</span>
+            {selected === g.id && <Icon name="check" size={18} />}
+          </button>
+        ))}
+      </div>
     </BottomSheet>
   );
 }
