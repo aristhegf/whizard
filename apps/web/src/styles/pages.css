@@ -1283,3 +1283,75 @@ button.topic-tile {
     grid-area: subtitle;
   }
 }
+
+/* Mobile discovery uses the same catalogue cards in a compact swipeable rail. */
+.play-mobile-shelf {
+  min-width: 0;
+  margin-inline: calc(-1 * var(--gutter));
+}
+
+.play-mobile-cards {
+  display: flex;
+  gap: 14px;
+  margin: 0;
+  padding: 2px var(--gutter) 18px;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+}
+
+.play-mobile-cards::-webkit-scrollbar {
+  display: none;
+}
+
+.play-mobile-cards > .play-card {
+  flex: 0 0 min(72vw, 310px);
+  grid-template-rows: 160px auto auto auto;
+  align-self: stretch;
+  scroll-snap-align: start;
+}
+
+@media (max-width: 380px) {
+  .play-mobile-cards > .play-card {
+    flex-basis: 78vw;
+    grid-template-rows: 140px auto auto auto;
+  }
+}
+
+@media (min-width: 1100px) {
+  .play-mobile-shelf {
+    display: none;
+  }
+}
+
+@media (max-width: 1099px) {
+  .play-page .play {
+    min-height: 0;
+    gap: 12px;
+  }
+
+  .play-page .play-body {
+    min-width: 0;
+    overflow: visible;
+  }
+
+  .play-page .play-head {
+    gap: 10px;
+  }
+
+  .play-page .play-subtitle {
+    max-width: 38ch;
+  }
+
+  .play-page .game-sheet-title {
+    font-size: clamp(1.05rem, 4.4vw, 1.3rem);
+  }
+
+  .play-page .game-sheet-cards {
+    padding-inline: 16px;
+    scroll-padding-inline: 16px;
+  }
+}
