@@ -955,7 +955,6 @@ button.topic-tile {
   padding: 24px 20px;
 }
 
-
 /* Whizard game discovery: glossy cards, a compact hero and a single-screen desktop grid. */
 .play-page .play {
   gap: 14px;
@@ -1271,7 +1270,6 @@ button.topic-tile {
     transition: none;
   }
 }
-
 
 .play-page .play-subtitle {
   margin: -4px 0 0;
