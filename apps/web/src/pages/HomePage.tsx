@@ -43,7 +43,13 @@ export function HomePage() {
       <section className="play" aria-labelledby="play-title">
         <header className="play-head">
           <LiveCount />
-          <img className="play-hero-art" src="/art/mascot/hero.webp" alt="" width={866} height={857} />
+          <img
+            className="play-hero-art"
+            src="/art/mascot/hero.webp"
+            alt=""
+            width={866}
+            height={857}
+          />
           <h1 id="play-title" className="display play-title">
             What do you want to <span className="gold-text">play?</span>
           </h1>
