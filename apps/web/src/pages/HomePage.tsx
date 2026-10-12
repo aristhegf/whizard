@@ -47,6 +47,7 @@ export function HomePage() {
           <h1 id="play-title" className="display play-title">
             What do you want to <span className="gold-text">play?</span>
           </h1>
+          <p className="play-subtitle">Pick a game, invite your friends, and let the fun begin.</p>
           <div className="play-chips" role="group" aria-label="Kinds of game">
             {GAME_GROUPS.map((g) => (
               <button
