@@ -15,14 +15,10 @@ import { Icon } from "../ui/Icon";
 import { LiveCount } from "../ui/LiveCount";
 import { useToast } from "../ui/toast";
 
-/** The most played game gets the big card; the rest share the grid beside it. */
+/** Quiz remains the featured game on phones; desktop uses the full catalogue grid. */
 const FEATURED = CATALOG.find((g) => g.id === "quiz")!;
-/** Games ready to play come first, the ones still being made after them. */
-const OTHERS = CATALOG.filter((g) => g !== FEATURED).sort(
-  (a, b) => Number(isPlayable(b)) - Number(isPlayable(a)),
-);
-/** Cards per page on laptops and computers, where the screen doesn't scroll. */
-const PAGE_SIZE = 6;
+/** Eight cards fit the intended two-row desktop layout. */
+const PAGE_SIZE = 8;
 const GROUP_NAMES: Partial<Record<GameGroup, string>> = Object.fromEntries(
   GAME_GROUPS.map((g) => [g.id, g.name]),
 );
@@ -35,7 +31,9 @@ export function HomePage() {
   const [sheet, setSheet] = useState<GameGroup | "all" | null>(null);
   const paged = useMediaQuery("(min-width: 1100px)");
 
-  const games = OTHERS.filter((g) => group === "all" || g.groups.includes(group));
+  const games = CATALOG.filter((g) => group === "all" || g.groups.includes(group)).sort(
+    (a, b) => Number(isPlayable(b)) - Number(isPlayable(a)),
+  );
   const pages = Math.max(1, Math.ceil(games.length / PAGE_SIZE));
   const current = Math.min(page, pages - 1);
   const shown = games.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
@@ -45,6 +43,7 @@ export function HomePage() {
       <section className="play" aria-labelledby="play-title">
         <header className="play-head">
           <LiveCount />
+          <img className="play-hero-art" src="/art/mascot/hero.webp" alt="" width={866} height={857} />
           <h1 id="play-title" className="display play-title">
             What do you want to <span className="gold-text">play?</span>
           </h1>
@@ -70,7 +69,7 @@ export function HomePage() {
         {!paged && sheet && <GameSheet group={sheet} onClose={() => setSheet(null)} />}
 
         <div className="play-body">
-          <Featured game={FEATURED} />
+          {!paged && <Featured game={FEATURED} />}
 
           {paged && (
             <div className="play-shelf">
