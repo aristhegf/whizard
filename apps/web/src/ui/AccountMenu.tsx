@@ -84,6 +84,7 @@ export function AccountMenu({ variant }: { variant: "bar" | "tab" }) {
               </p>
               {link("/account", "user", "My profile")}
               {link("/friends", "users", "Friends")}
+              {link("/banks", "layers", "Question banks")}
             </>
           ) : (
             link("/account", "user", "Sign in")

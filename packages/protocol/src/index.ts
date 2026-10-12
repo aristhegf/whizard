@@ -145,6 +145,7 @@ export function encode(message: ClientMessage | ServerMessage): string {
 }
 
 export * from "./accounts";
+export * from "./banks";
 export * from "./presence";
 export * from "./stats";
 export * from "./reports";

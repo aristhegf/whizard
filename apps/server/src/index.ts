@@ -69,6 +69,16 @@ import {
   updateQuestion,
 } from "./adminQuestions";
 import { createTopic, deleteTopic, listTopics, updateTopic, uploadTopicArt } from "./adminTopics";
+import {
+  addBankQuestion,
+  createBank,
+  deleteBank,
+  deleteBankQuestion,
+  getBank,
+  listBanks,
+  updateBank,
+  updateBankQuestion,
+} from "./banks";
 import { loadBank } from "./bank";
 import { getPhoto, uploadPhoto } from "./photos";
 import { getSite, siteSettings } from "./settings";
@@ -337,6 +347,15 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["PATCH", /^\/api\/groups\/([^/]+)$/, updateGroup],
   ["DELETE", /^\/api\/groups\/([^/]+)$/, deleteGroup],
   ["GET", /^\/api\/groups\/([^/]+)\/leaderboard$/, getGroupLeaderboard],
+
+  ["GET", /^\/api\/banks$/, listBanks],
+  ["POST", /^\/api\/banks$/, createBank],
+  ["GET", /^\/api\/banks\/([^/]+)$/, getBank],
+  ["PATCH", /^\/api\/banks\/([^/]+)$/, updateBank],
+  ["DELETE", /^\/api\/banks\/([^/]+)$/, deleteBank],
+  ["POST", /^\/api\/banks\/([^/]+)\/questions$/, addBankQuestion],
+  ["PATCH", /^\/api\/banks\/([^/]+)\/questions\/([^/]+)$/, updateBankQuestion],
+  ["DELETE", /^\/api\/banks\/([^/]+)\/questions\/([^/]+)$/, deleteBankQuestion],
 ];
 
 async function route(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {

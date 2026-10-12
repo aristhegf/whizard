@@ -10,6 +10,7 @@ import {
   type UsernameCheck,
 } from "@whizard/protocol";
 import { HttpError, readJson, requireSameOrigin, type RequestContext } from "./http";
+import { deleteBankStatements, exportBanks } from "./banks";
 import { exportSocial } from "./friends";
 import { exportMatches } from "./matches";
 import { recordName, requireAllowedName } from "./moderation";
@@ -223,6 +224,8 @@ export async function deleteAccount(db: D1Database, userId: string): Promise<voi
         "UPDATE question_reports SET reporter = 'x:' || lower(hex(randomblob(8))) WHERE reporter = ?",
       )
       .bind(`u:${userId}`),
+    // Their question banks and the questions in them go with the account.
+    ...deleteBankStatements(db, userId),
     db.prepare("DELETE FROM users WHERE id = ?").bind(userId),
   ]);
 }
@@ -237,6 +240,7 @@ export async function exportMe(context: RequestContext): Promise<Response> {
     passkeys,
     matches: await exportMatches(context.env, user.id),
     ...(await exportSocial(context.env, user.id)),
+    ...(await exportBanks(context.env, user.id)),
     questionsSeen: (
       await context.env.DB.prepare(
         "SELECT question_id, seen_at FROM seen_questions WHERE viewer = ? ORDER BY seen_at DESC",
