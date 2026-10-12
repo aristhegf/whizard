@@ -88,20 +88,27 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   expect(await labels(page, "Main")).toEqual(["How it works", "Pricing", "Stats"]);
 });
 
-test("mobile Games page shows a compact catalogue rail without the oversized featured card", async ({ page }) => {
+test("mobile Games screen stays within one viewport and categories fit without scrolling", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/games");
 
   await expect(page.getByRole("heading", { name: "What do you want to play?" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Categories/ })).toBeVisible();
+  await expect(page.getByRole("list", { name: "Games to play" }).getByRole("listitem").first()).toBeVisible();
   await expect(page.locator(".play-featured")).toHaveCount(0);
-  const cards = page.getByRole("list", { name: "Games to play" }).getByRole("listitem");
-  await expect(cards.first()).toBeVisible();
-  await expect(cards.first().getByRole("heading", { level: 3 })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(844);
 
-  await page.getByRole("button", { name: "Brain Games" }).click();
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Brain Games", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Brain Games games", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: /Categories/ }).click();
+  const sheet = page.getByRole("dialog", { name: "Game Categories" });
+  await expect(sheet).toBeVisible();
+  await expect(sheet.getByRole("button", { name: "All Games" })).toBeVisible();
+  await expect(sheet.getByRole("button", { name: "Couples" })).toBeVisible();
+  await expect(sheet.getByRole("button", { name: "Brain Games" })).toBeVisible();
+  await expect(sheet.locator(".category-options")).not.toHaveCSS("overflow-y", "auto");
+  await sheet.getByRole("button", { name: "Brain Games" }).click();
+  await expect(sheet).toBeHidden();
+  await expect(page.getByRole("button", { name: /Categories.*Brain Games/ })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(844);
 });
 
 test("phones get Play, Create, Leaderboard, Stats and Me at the bottom", async ({ page }) => {
