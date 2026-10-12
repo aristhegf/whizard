@@ -50,6 +50,8 @@ const FriendsScreen = lazy(() =>
   import("./FriendsScreen").then((m) => ({ default: m.FriendsScreen })),
 );
 const GroupScreen = lazy(() => import("./FriendsScreen").then((m) => ({ default: m.GroupScreen })));
+const BanksScreen = lazy(() => import("./BanksScreen").then((m) => ({ default: m.BanksScreen })));
+const BankScreen = lazy(() => import("./BanksScreen").then((m) => ({ default: m.BankScreen })));
 
 /** Guests get the page that introduces Whizard; people signed in go straight to the games. Blank
  * for the moment it takes to find out, so neither flashes up first. */
@@ -94,6 +96,10 @@ export function App() {
             <AvatarCreator />
           ) : route.name === "friends" ? (
             <FriendsScreen />
+          ) : route.name === "banks" ? (
+            <BanksScreen />
+          ) : route.name === "bank" ? (
+            <BankScreen key={route.id} id={route.id} />
           ) : route.name === "add" ? (
             <AddFriendScreen key={route.username} username={route.username} />
           ) : route.name === "group" ? (

@@ -11,4 +11,6 @@ export interface Env {
   REPORT_LIMIT: RateLimit;
   /** Room connections (joins and reconnects). */
   JOIN_LIMIT: RateLimit;
+  /** Bank and question writes: create, rename, add, edit, delete. */
+  BANK_LIMIT: RateLimit;
 }

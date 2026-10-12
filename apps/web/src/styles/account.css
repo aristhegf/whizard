@@ -167,6 +167,20 @@
   background: rgb(22 21 64 / 70%);
 }
 
+/* Question-bank rows: the whole list row is a link; questions flex beside their actions. */
+.bank-link {
+  display: grid;
+  gap: 2px;
+  text-decoration: none;
+}
+
+.bank-q {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
 fieldset {
   border: none;
   margin: 0;

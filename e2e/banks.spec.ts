@@ -1,0 +1,82 @@
+import { expect, test } from "@playwright/test";
+import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
+
+test.describe.configure({ timeout: 90_000 });
+
+test("offers a guest the way in before their banks", async ({ page }) => {
+  await page.goto("/banks");
+  await expect(page.getByRole("heading", { name: "Question banks", level: 1 })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Sign in or create an account" })).toBeVisible();
+});
+
+test("makes a bank, writes a question, renames and clears up after itself", async ({ page }) => {
+  await withPasskeys(page);
+  await signUp(page, uniqueUsername());
+
+  // The banks live in the menu under the avatar.
+  await page.getByRole("button", { name: "Me", exact: true }).click();
+  await page
+    .getByRole("group", { name: "Menu" })
+    .getByRole("link", { name: "Question banks" })
+    .click();
+  await expect(page).toHaveURL(/\/banks$/);
+  await expect(page.getByText("No banks yet. Make one above.")).toBeVisible();
+
+  // Make one, with its optional labels.
+  await page.getByLabel("Name").fill("Biology jumpstart");
+  await page.getByLabel("Exam").fill("WAEC");
+  await page.getByLabel("Subject").fill("Biology");
+  await page.getByRole("button", { name: "Create a bank", exact: true }).click();
+  await expect(page).toHaveURL(/\/banks\/b_[A-Za-z0-9_-]+$/);
+  await expect(page.getByRole("heading", { name: "Biology jumpstart", level: 1 })).toBeVisible();
+
+  // It shows in the list with its count.
+  await page.getByRole("link", { name: /All banks/ }).click();
+  const row = page.locator(".people li").filter({ hasText: "Biology jumpstart" });
+  await expect(row).toContainText("WAEC · Biology · 0 questions");
+  await row.getByRole("link").click();
+  await expect(page).toHaveURL(/\/banks\/b_[A-Za-z0-9_-]+$/);
+
+  // The first question: the form says so before it will take it.
+  await page.getByRole("button", { name: "Add a question", exact: true }).click();
+  // The questions section is labelled "Questions (…)", which would also catch a label match.
+  const field = (name: string) => page.getByRole("textbox", { name });
+  await field("Question").fill("Which planet is known as the Red Planet?");
+  await field("Correct answer").fill("Mars");
+  await field("Wrong answer 1").fill("Venus");
+  await field("Wrong answer 2").fill("Jupiter");
+  await page.getByRole("button", { name: "Add question", exact: true }).click();
+  await expect(
+    page.getByText("Fill in the question, all four answers and the explanation."),
+  ).toBeVisible();
+
+  await field("Wrong answer 3").fill("Saturn");
+  await field("Explanation").fill("Mars is red from the iron oxide on its surface.");
+  await page.getByRole("button", { name: "Add question", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Questions (1)", level: 2 })).toBeVisible();
+  await expect(page.getByText("Correct: Mars")).toBeVisible();
+
+  // Edit it, in place.
+  await page.getByRole("button", { name: "Edit", exact: true }).click();
+  await field("Question").fill("Which planet do we call the Red Planet?");
+  await page.getByRole("button", { name: "Save question", exact: true }).click();
+  await expect(page.getByText("Which planet do we call the Red Planet?")).toBeVisible();
+
+  // Rename the bank; the heading follows.
+  await page.getByLabel("Name").fill("Biology revision");
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByText("Bank saved")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Biology revision", level: 1 })).toBeVisible();
+
+  // The question goes, after being sure.
+  await page.getByRole("button", { name: "Delete", exact: true }).click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Delete question" }).click();
+  await expect(page.getByText("No questions yet. Add the first one.")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Questions (0)", level: 2 })).toBeVisible();
+
+  // And the bank itself, which lands back on an empty list.
+  await page.getByRole("button", { name: "Delete bank", exact: true }).click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Delete bank" }).click();
+  await expect(page).toHaveURL(/\/banks$/);
+  await expect(page.getByText("No banks yet. Make one above.")).toBeVisible();
+});

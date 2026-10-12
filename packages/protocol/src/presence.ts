@@ -23,6 +23,8 @@ export const PAGE_NAMES = [
   "stats",
   "pricing",
   "about",
+  "banks",
+  "bank",
   "admin",
   "other",
 ] as const;
