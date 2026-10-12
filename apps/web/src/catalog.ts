@@ -1,15 +1,16 @@
 import type { GameId } from "@whizard/game-core";
 import type { IconName } from "./ui/Icon";
 
-export type GameGroup = "knowledge" | "skill" | "puzzle" | "social" | "couples";
+export type GameGroup = "quiz" | "brain" | "skill" | "puzzle" | "party" | "couples";
 
 /** The kinds of game on the Play screen, each with its chip's icon. */
 export const GAME_GROUPS: { id: GameGroup | "all"; name: string; icon: IconName | null }[] = [
   { id: "all", name: "All", icon: null },
-  { id: "knowledge", name: "Knowledge", icon: "bulb" },
-  { id: "skill", name: "Skill", icon: "bolt" },
-  { id: "puzzle", name: "Puzzle", icon: "puzzle" },
-  { id: "social", name: "Social", icon: "users" },
+  { id: "quiz", name: "Quiz", icon: "bulb" },
+  { id: "brain", name: "Brain Games", icon: "bulb" },
+  { id: "puzzle", name: "Puzzles", icon: "puzzle" },
+  { id: "skill", name: "Word & Skill", icon: "bolt" },
+  { id: "party", name: "Party & Social", icon: "users" },
   { id: "couples", name: "Couples", icon: "heart" },
 ];
 
@@ -18,7 +19,11 @@ export interface CatalogGame {
   name: string;
   description: string;
   players: string;
-  groups: GameGroup[];
+  /**
+   * Categories for discovery. The first group is the primary category; an optional
+   * second group is a secondary category. Keep this list to at most two entries.
+   */
+  groups: [GameGroup] | [GameGroup, GameGroup];
   art: string;
   /** Top and bottom of the card's colour wash. */
   colors: [string, string];
@@ -37,7 +42,7 @@ export const CATALOG: CatalogGame[] = [
     name: "Quiz",
     description: "Test your knowledge across fun topics",
     players: "1-20 players",
-    groups: ["knowledge", "social"],
+    groups: ["quiz", "party"],
     art: "/art/games/quiz.webp",
     colors: ["#ff8c1a", "#4a1530"],
     href: "/games/quiz",
@@ -57,7 +62,7 @@ export const CATALOG: CatalogGame[] = [
     name: "Word Rush",
     description: "Unscramble and fill in words fast",
     players: "1-20 players",
-    groups: ["knowledge", "skill"],
+    groups: ["skill"],
     art: "/art/games/word-rush.webp",
     colors: ["#6b45ff", "#23145a"],
     href: null,
@@ -68,7 +73,7 @@ export const CATALOG: CatalogGame[] = [
     name: "Memory",
     description: "Remember, match and win",
     players: "1-12 players",
-    groups: ["puzzle"],
+    groups: ["skill", "puzzle"],
     art: "/art/games/memory.webp",
     colors: ["#15b58c", "#0b2a3c"],
     href: null,
@@ -79,7 +84,7 @@ export const CATALOG: CatalogGame[] = [
     name: "Logic",
     description: "Crack the grid with clues and clear thinking",
     players: "1-20 players",
-    groups: ["puzzle"],
+    groups: ["puzzle", "brain"],
     art: "/art/games/logic.webp",
     colors: ["#1aa6ff", "#0c1d5c"],
     href: null,
@@ -90,7 +95,7 @@ export const CATALOG: CatalogGame[] = [
     name: "Connections",
     description: "Find the four groups hiding in sixteen words",
     players: "1-20 players",
-    groups: ["knowledge", "puzzle"],
+    groups: ["puzzle", "brain"],
     art: "/art/games/connections.webp",
     colors: ["#b05bff", "#2a0f5c"],
     href: null,
@@ -112,7 +117,7 @@ export const CATALOG: CatalogGame[] = [
     name: "Spot It",
     description: "Spot the odd one out before time runs out",
     players: "1-20 players",
-    groups: ["puzzle", "skill"],
+    groups: ["skill", "puzzle"],
     art: "/art/games/spot-it.webp",
     colors: ["#3ccc45", "#0d3230"],
     href: null,
@@ -123,7 +128,7 @@ export const CATALOG: CatalogGame[] = [
     name: "Most Likely To",
     description: "Hilarious questions about your group",
     players: "3-20 players",
-    groups: ["social"],
+    groups: ["party"],
     art: "/art/games/most-likely-to.webp",
     colors: ["#ff4545", "#4a0c26"],
     href: null,
@@ -133,7 +138,7 @@ export const CATALOG: CatalogGame[] = [
     name: "How Well Do You Know Me?",
     description: "Find out who really knows you",
     players: "3-20 players",
-    groups: ["social", "couples"],
+    groups: ["couples", "party"],
     art: "/art/games/how-well.webp",
     colors: ["#a347ff", "#2d0d5c"],
     href: null,
@@ -143,7 +148,7 @@ export const CATALOG: CatalogGame[] = [
     name: "Impostor",
     description: "Find the impostor before it’s too late",
     players: "4-12 players",
-    groups: ["social"],
+    groups: ["party"],
     art: "/art/games/impostor.webp",
     colors: ["#5b3cf0", "#171456"],
     href: null,
