@@ -88,6 +88,22 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   expect(await labels(page, "Main")).toEqual(["How it works", "Pricing", "Stats"]);
 });
 
+test("mobile Games page shows a compact catalogue rail without the oversized featured card", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/games");
+
+  await expect(page.getByRole("heading", { name: "What do you want to play?" })).toBeVisible();
+  await expect(page.locator(".play-featured")).toHaveCount(0);
+  const cards = page.getByRole("list", { name: "Games to play" }).getByRole("listitem");
+  await expect(cards.first()).toBeVisible();
+  await expect(cards.first().getByRole("heading", { level: 3 })).toBeVisible();
+
+  await page.getByRole("button", { name: "Brain Games" }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Brain Games", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Brain Games games", exact: true })).toHaveCount(0);
+});
+
 test("phones get Play, Create, Leaderboard, Stats and Me at the bottom", async ({ page }) => {
   await page.goto("/");
   expect(await labels(page, "Sections")).toEqual(["Play", "Create", "Leaderboard", "Stats", "Me"]);
