@@ -1562,6 +1562,11 @@ button.topic-tile {
     max-height: min(42dvh, 390px);
   }
 
+  /* While the category sheet is open, shrink the card rail so the card stays fully above it. */
+  .play-page:has(.category-sheet[open]) .play-body {
+    padding-bottom: min(42dvh, 390px);
+  }
+
   .category-sheet .category-option {
     min-height: clamp(30px, 4.25dvh, 36px);
     font-size: clamp(0.72rem, 2.4vw, 0.82rem);
@@ -1585,7 +1590,20 @@ button.topic-tile {
     max-height: min(44dvh, 390px);
   }
 
+  .play-page:has(.category-sheet[open]) .play-body {
+    padding-bottom: min(44dvh, 390px);
+  }
+
+  /* All seven rows have to fit the short sheet without scrolling. */
+  .category-sheet .sheet-handle {
+    display: none;
+  }
+
   .category-sheet .category-option {
-    min-height: 30px;
+    min-height: 28px;
+  }
+
+  .category-sheet .category-options {
+    gap: 3px;
   }
 }

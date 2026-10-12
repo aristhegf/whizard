@@ -18,9 +18,6 @@ import { useToast } from "../ui/toast";
 /** Desktop uses the full catalogue grid; phones use a compact swipeable game rail. */
 /** Eight cards fit the intended two-row desktop layout. */
 const PAGE_SIZE = 8;
-const GROUP_NAMES: Partial<Record<GameGroup, string>> = Object.fromEntries(
-  GAME_GROUPS.map((g) => [g.id, g.name]),
-);
 
 /** The home screen: what to play, all on one screen on laptops and computers. */
 export function HomePage() {
@@ -77,7 +74,7 @@ export function HomePage() {
             >
               <Icon name="grid" size={18} />
               Categories
-              <span>{GAME_GROUPS.find((g) => g.id === group)?.name ?? "All"}</span>
+              <span>{GAME_GROUPS.find((g) => g.id === group)?.name ?? "All Games"}</span>
               <Icon name="chevronDown" size={18} />
             </button>
           )}
