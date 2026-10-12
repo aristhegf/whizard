@@ -22,8 +22,6 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - name: Diagnose Prettier output for game docs
-        run: pnpm exec prettier docs/GAMES.md | diff -u docs/GAMES.md - || true
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
