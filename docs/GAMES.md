@@ -112,16 +112,18 @@ The catalogue has seven discovery views in this order: **All**, **Quiz**, **Brai
 
 Each game has one primary category and may have at most one secondary category. The primary category reflects the game's main purpose; the secondary category is optional and should only be used when it meaningfully improves discovery. A game can appear in multiple category views, but it remains one catalogue entry with one canonical ID and implementation. The All view includes every implemented catalogue game exactly once.
 
-- **Quiz:** Quiz; secondary: Party & Social
-- **Jigsaw:** Puzzles
-- **Word Rush:** Word & Skill
-- **Memory:** Word & Skill; secondary: Puzzles
-- **Logic:** Puzzles; secondary: Brain Games
-- **Connections:** Puzzles; secondary: Brain Games
-- **Reaction:** Word & Skill
-- **Spot It:** Word & Skill; secondary: Puzzles
-- **Most Likely To:** Party & Social
-- **How Well Do You Know Me?:** Couples; secondary: Party & Social
-- **Impostor:** Party & Social
+| Current catalogue game   | Primary category | Optional secondary category |
+| ------------------------ | ---------------- | -------------------------- |
+| Quiz                     | Quiz             | Party & Social             |
+| Jigsaw                   | Puzzles          | —                          |
+| Word Rush                | Word & Skill     | —                          |
+| Memory                   | Word & Skill     | Puzzles                    |
+| Logic                    | Puzzles          | Brain Games                |
+| Connections              | Puzzles          | Brain Games                |
+| Reaction                 | Word & Skill     | —                          |
+| Spot It                  | Word & Skill     | Puzzles                    |
+| Most Likely To           | Party & Social   | —                          |
+| How Well Do You Know Me? | Couples          | Party & Social             |
+| Impostor                 | Party & Social   | —                          |
 
 Future game concepts should receive category assignments when they are actually implemented and added to the live catalogue.
