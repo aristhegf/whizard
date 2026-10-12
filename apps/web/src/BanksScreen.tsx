@@ -5,19 +5,36 @@ import {
   BANK_NAME_MAX,
   BANK_PROMPT_MAX,
   BANK_REFERENCE_MAX,
+  type BankImportRow,
   type PlayerBank,
+  type PlayerBankImport,
   type PlayerBankQuestion,
 } from "@whizard/protocol";
-import { useCallback, useState, type FormEvent, type ReactNode } from "react";
-import { useAccount } from "./account";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type ReactNode,
+} from "react";
+import { ApiError, useAccount } from "./account";
 import {
   addQuestion,
+  answerBankImport,
+  bankExportHref,
+  commitBankImport,
   createBank,
   deleteBank,
   deleteQuestion,
+  discardBankImport,
   editQuestion,
   fetchBank,
   fetchBanks,
+  fetchImportDraft,
+  patchBankImport,
+  startBankImport,
   updateBank,
   type QuestionForm,
 } from "./banks";
@@ -237,6 +254,7 @@ function BankDetail({ id }: { id: string }) {
   const save = useAction(setSaveError);
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
   if (loaded && !seeded) {
     setName(loaded.name);
     setExam(loaded.exam ?? "");
@@ -364,6 +382,36 @@ function BankDetail({ id }: { id: string }) {
               </div>
             </form>
           </section>
+
+          <section className="stack" aria-labelledby="import-export-title">
+            <h2 id="import-export-title" className="section-title">
+              Import &amp; export
+            </h2>
+            <p className="muted small">
+              Take this bank out as a CSV, or bring questions in from one. A file’s columns are
+              question, option1–option4, answer, explanation, reference.
+            </p>
+            <div className="row-actions">
+              <a className="btn" href={bankExportHref(id)} download>
+                Export CSV
+              </a>
+              {importOpen ? null : (
+                <button className="btn" type="button" onClick={() => setImportOpen(true)}>
+                  Import CSV
+                </button>
+              )}
+            </div>
+          </section>
+
+          {importOpen && (
+            <ImportPanel
+              bankId={id}
+              onDone={() => {
+                setImportOpen(false);
+                reload();
+              }}
+            />
+          )}
 
           <section className="stack" aria-labelledby="questions-title">
             <h2 id="questions-title" className="section-title">
@@ -548,5 +596,417 @@ function QuestionFields({
         </button>
       </div>
     </form>
+  );
+}
+
+// The import panel -------------------------------------------------------------------------------
+
+/**
+ * A staged CSV import under review: counts at the top, the rows still needing a person below,
+ * and the buttons that answer, accept or commit them. Nothing here reaches the bank until the
+ * owner confirms, and the AI runs server-side in batches while this screen watches the counts.
+ */
+function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void }) {
+  const [draft, setDraft] = useState<PlayerBankImport | null | undefined>(undefined);
+  const [error, setError] = useState<string | null>(null);
+  const [fileBusy, setFileBusy] = useState(false);
+  const [patchBusy, setPatchBusy] = useState(false);
+  const [commitBusy, setCommitBusy] = useState(false);
+  const aiBusy = useRef(false);
+  const [aiStopped, setAiStopped] = useState(false);
+  const [aiNote, setAiNote] = useState<string | null>(null);
+  const [aiTick, setAiTick] = useState(0);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [bulkAnswer, setBulkAnswer] = useState(0);
+  const [bulkExplanation, setBulkExplanation] = useState("");
+  const toast = useToast();
+  const ask = useConfirm();
+  const action = useToastAction();
+
+  // Pick up an import that was already started for this bank, so a refresh doesn't lose it.
+  useEffect(() => {
+    let live = true;
+    fetchImportDraft(bankId).then(
+      (found) => live && setDraft(found),
+      (e: unknown) => live && setError(errorText(e)),
+    );
+    return () => {
+      live = false;
+    };
+  }, [bankId]);
+
+  // Ask the AI for the next batch while some rows are still waiting on an answer. The in-flight
+  // call is kept in a ref, so a re-render mid-call can't start a second one.
+  useEffect(() => {
+    if (!draft || draft.counts.pending === 0 || aiStopped || aiBusy.current) return;
+    let live = true;
+    aiBusy.current = true;
+    answerBankImport(bankId, draft.id).then(
+      (next) => {
+        aiBusy.current = false;
+        if (!live) return;
+        setDraft(next);
+        setAiNote(null);
+      },
+      (e: unknown) => {
+        aiBusy.current = false;
+        if (!live) return;
+        if (e instanceof ApiError && e.code === "ai_busy") {
+          setAiNote("The answer service is busy — trying again shortly.");
+          window.setTimeout(() => {
+            if (live) setAiTick((tick) => tick + 1);
+          }, 8000);
+        } else {
+          setAiStopped(true);
+          setAiNote(errorText(e));
+        }
+      },
+    );
+    return () => {
+      live = false;
+    };
+  }, [draft, bankId, aiStopped, aiTick]);
+
+  const handleFile = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setFileBusy(true);
+    setError(null);
+    file.text().then(
+      (csv) => {
+        startBankImport(bankId, csv).then(
+          (imported) => {
+            setDraft(imported);
+            setFileBusy(false);
+            setAiStopped(false);
+            setAiNote(null);
+            setSelected(new Set());
+            setBulkExplanation("");
+          },
+          (e: unknown) => {
+            setFileBusy(false);
+            setError(errorText(e));
+          },
+        );
+      },
+      () => {
+        setFileBusy(false);
+        setError("Couldn’t read that file. Try saving it as CSV and picking it again.");
+      },
+    );
+  };
+
+  const applyPatch = (patch: Parameters<typeof patchBankImport>[2]) => {
+    if (!draft || patchBusy) return;
+    setPatchBusy(true);
+    patchBankImport(bankId, draft.id, patch).then(
+      (next) => {
+        setDraft(next);
+        setPatchBusy(false);
+        setSelected(new Set());
+      },
+      (e: unknown) => {
+        setPatchBusy(false);
+        setError(errorText(e));
+      },
+    );
+  };
+
+  const flagged = draft?.flagged ?? [];
+  const aiFlagged = flagged.filter((row) => row.source === "ai" && row.review);
+
+  const applyBulk = () => {
+    const explanation = bulkExplanation.trim() || "Imported without an explanation.";
+    applyPatch({
+      set: [...selected].map((idx) => ({ idx, answerIndex: bulkAnswer, explanation })),
+    });
+  };
+
+  const confirmCommit = () => {
+    if (!draft) return;
+    ask({
+      title: "Add these questions?",
+      text: `${draft.counts.total} questions go into this bank. They stay in the file’s order.`,
+      yes: `Add ${draft.counts.total} questions`,
+      run: () => {
+        setCommitBusy(true);
+        commitBankImport(bankId, draft.id).then(
+          (added) => {
+            toast.show({
+              title: `${added} ${added === 1 ? "question" : "questions"} added`,
+              status: "success",
+            });
+            onDone();
+          },
+          (e: unknown) => {
+            setCommitBusy(false);
+            setError(errorText(e));
+          },
+        );
+      },
+    });
+  };
+
+  const confirmDiscard = () => {
+    if (!draft) return;
+    ask({
+      title: "Discard this import?",
+      text: "The staged questions are thrown away. The bank itself isn’t touched.",
+      yes: "Discard import",
+      run: () => {
+        void action.run(async () => {
+          await discardBankImport(bankId, draft.id);
+          onDone();
+        });
+      },
+    });
+  };
+
+  if (draft === undefined) {
+    return (
+      <section className="stack" aria-label="Import CSV">
+        <Loading />
+      </section>
+    );
+  }
+
+  const counts = draft?.counts;
+
+  return (
+    <section className="stack" aria-labelledby="import-title">
+      <h3 id="import-title" className="section-title">
+        Import questions
+      </h3>
+      <label className="form-field">
+        <span className="form-label">CSV file</span>
+        <input type="file" accept=".csv,text/csv" onChange={handleFile} disabled={fileBusy} />
+        <span className="form-hint">
+          {draft
+            ? "Choosing a file replaces the import you have going for this bank."
+            : "Rows without an answer get one from the AI, or from you in the review."}
+        </span>
+      </label>
+
+      {draft && counts ? (
+        <>
+          <p className="muted small" data-testid="import-counts">
+            {counts.total} rows · {counts.ready} ready · {counts.withKey} from your answer key ·{" "}
+            {counts.aiAnswered} from the AI · {counts.needsReview} need review
+          </p>
+          {aiNote && (
+            <p className="muted small" role="status">
+              {aiNote}
+            </p>
+          )}
+          {draft.invalid && draft.invalid.count > 0 && (
+            <details>
+              <summary>
+                {draft.invalid.count} {draft.invalid.count === 1 ? "row" : "rows"} couldn’t be read
+              </summary>
+              <ul className="people">
+                {draft.invalid.notes.map((note) => (
+                  <li key={note.row} className="small">
+                    Line {note.row}: {note.message}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
+
+          {counts.needsReview > 0 ? (
+            <>
+              {aiFlagged.length > 0 && (
+                <button
+                  className="btn"
+                  type="button"
+                  disabled={patchBusy}
+                  onClick={() => applyPatch({ acceptAi: true })}
+                >
+                  Accept the AI’s {aiFlagged.length} flagged{" "}
+                  {aiFlagged.length === 1 ? "answer" : "answers"}
+                </button>
+              )}
+              <div className="form-row two">
+                <Field label="Answer for the rows you tick">
+                  <select
+                    value={bulkAnswer}
+                    onChange={(event) => setBulkAnswer(Number(event.target.value))}
+                  >
+                    <option value={0}>Option 1</option>
+                    <option value={1}>Option 2</option>
+                    <option value={2}>Option 3</option>
+                    <option value={3}>Option 4</option>
+                  </select>
+                </Field>
+                <Field label="Explanation for those rows">
+                  <input
+                    placeholder="Imported without an explanation."
+                    maxLength={BANK_EXPLANATION_MAX}
+                    value={bulkExplanation}
+                    onChange={(event) => setBulkExplanation(event.target.value)}
+                  />
+                </Field>
+              </div>
+              <ul className="people">
+                {flagged.map((row) => (
+                  <li key={row.idx}>
+                    <ImportFlaggedRow
+                      row={row}
+                      disabled={patchBusy}
+                      selected={selected.has(row.idx)}
+                      onSelected={(on) =>
+                        setSelected((all) => {
+                          const next = new Set(all);
+                          if (on) next.add(row.idx);
+                          else next.delete(row.idx);
+                          return next;
+                        })
+                      }
+                      onSave={(change) =>
+                        patchBankImport(bankId, draft.id, { set: [change] }).then((next) => {
+                          setDraft(next);
+                          setSelected((all) => {
+                            const rest = new Set(all);
+                            rest.delete(change.idx);
+                            return rest;
+                          });
+                        })
+                      }
+                    />
+                  </li>
+                ))}
+              </ul>
+              <div className="row-actions">
+                <button
+                  className="btn"
+                  type="button"
+                  disabled={patchBusy || selected.size === 0}
+                  onClick={applyBulk}
+                >
+                  Set {selected.size} {selected.size === 1 ? "row" : "rows"} to that answer
+                </button>
+              </div>
+            </>
+          ) : (
+            <p className="muted">Every row is ready to import.</p>
+          )}
+
+          <ErrorLine error={error} />
+          <div className="row-actions">
+            <button
+              className="btn btn-primary"
+              type="button"
+              disabled={commitBusy || patchBusy || counts.pending > 0 || counts.needsReview > 0}
+              onClick={confirmCommit}
+            >
+              {commitBusy
+                ? "Adding…"
+                : `Add ${counts.total} ${counts.total === 1 ? "question" : "questions"} to the bank`}
+            </button>
+            <button
+              className="btn-link danger"
+              type="button"
+              disabled={commitBusy || action.busy}
+              onClick={confirmDiscard}
+            >
+              Discard import
+            </button>
+          </div>
+        </>
+      ) : (
+        <ErrorLine error={error} />
+      )}
+    </section>
+  );
+}
+
+/** One row in the review list: the question, why it's here, and the four options to pick from. */
+function ImportFlaggedRow({
+  row,
+  disabled,
+  selected,
+  onSelected,
+  onSave,
+}: {
+  row: BankImportRow;
+  disabled: boolean;
+  selected: boolean;
+  onSelected: (on: boolean) => void;
+  onSave: (change: { idx: number; answerIndex: number; explanation: string }) => Promise<void>;
+}) {
+  const [answerIndex, setAnswerIndex] = useState(row.answerIndex ?? 0);
+  const [explanation, setExplanation] = useState(row.explanation);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const save = () => {
+    if (busy) return;
+    const clean = explanation.trim();
+    if (!clean) {
+      setError("Add a short explanation with the answer.");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    onSave({ idx: row.idx, answerIndex, explanation: clean }).catch((e: unknown) => {
+      setBusy(false);
+      setError(errorText(e));
+    });
+  };
+
+  return (
+    <div className="bank-q">
+      <label className="form-field">
+        <span className="form-label">
+          <input
+            type="checkbox"
+            checked={selected}
+            disabled={disabled || busy}
+            onChange={(event) => onSelected(event.target.checked)}
+          />{" "}
+          Line {row.row}: {row.prompt}
+        </span>
+      </label>
+      {row.review && (
+        <p className="muted small" role="status">
+          {row.review}
+        </p>
+      )}
+      {row.aiExplanation && <p className="muted small">AI explanation: {row.aiExplanation}</p>}
+      <fieldset style={{ border: "none", padding: 0, margin: 0 }}>
+        <legend className="form-label">Correct answer</legend>
+        {row.choices.map((choice, index) => (
+          <label key={index} className="small">
+            <input
+              type="radio"
+              name={`import-row-${row.idx}`}
+              value={index}
+              checked={answerIndex === index}
+              disabled={disabled || busy}
+              onChange={() => setAnswerIndex(index)}
+            />{" "}
+            {choice}
+          </label>
+        ))}
+      </fieldset>
+      <Field label="Explanation">
+        <input
+          maxLength={BANK_EXPLANATION_MAX}
+          value={explanation}
+          disabled={disabled || busy}
+          onChange={(event) => {
+            setExplanation(event.target.value);
+            setError(null);
+          }}
+        />
+      </Field>
+      <ErrorLine error={error} />
+      <div className="row-actions">
+        <button className="btn btn-small" type="button" disabled={disabled || busy} onClick={save}>
+          {busy ? "Saving…" : "Save answer"}
+        </button>
+      </div>
+    </div>
   );
 }

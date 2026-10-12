@@ -79,6 +79,16 @@ import {
   updateBank,
   updateBankQuestion,
 } from "./banks";
+import {
+  commitImport,
+  discardImport,
+  exportBankCsv,
+  getImport,
+  latestImport,
+  patchImportRows,
+  processImportAnswers,
+  startImport,
+} from "./bankImport";
 import { loadBank } from "./bank";
 import { getPhoto, uploadPhoto } from "./photos";
 import { getSite, siteSettings } from "./settings";
@@ -356,6 +366,14 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["POST", /^\/api\/banks\/([^/]+)\/questions$/, addBankQuestion],
   ["PATCH", /^\/api\/banks\/([^/]+)\/questions\/([^/]+)$/, updateBankQuestion],
   ["DELETE", /^\/api\/banks\/([^/]+)\/questions\/([^/]+)$/, deleteBankQuestion],
+  ["GET", /^\/api\/banks\/([^/]+)\/export$/, exportBankCsv],
+  ["GET", /^\/api\/banks\/([^/]+)\/imports$/, latestImport],
+  ["POST", /^\/api\/banks\/([^/]+)\/imports$/, startImport],
+  ["GET", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)$/, getImport],
+  ["DELETE", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)$/, discardImport],
+  ["POST", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)\/answers$/, processImportAnswers],
+  ["PATCH", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)\/rows$/, patchImportRows],
+  ["POST", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)\/commit$/, commitImport],
 ];
 
 async function route(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {

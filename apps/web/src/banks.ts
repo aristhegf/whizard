@@ -1,4 +1,10 @@
-import type { PlayerBank, PlayerBankDetail, PlayerBankQuestion } from "@whizard/protocol";
+import type {
+  BankImportPatch,
+  PlayerBank,
+  PlayerBankDetail,
+  PlayerBankImport,
+  PlayerBankQuestion,
+} from "@whizard/protocol";
 import { api } from "./account";
 
 /** The signed-in player's question banks, most recently touched first. */
@@ -65,6 +71,71 @@ export const editQuestion = async (
 export const deleteQuestion = async (bankId: string, questionId: string): Promise<void> => {
   await api<{ ok: true }>(
     `/api/banks/${encodeURIComponent(bankId)}/questions/${encodeURIComponent(questionId)}`,
+    { method: "DELETE" },
+  );
+};
+
+// CSV import and export -------------------------------------------------------------------------
+
+/** Where the browser downloads a bank's own CSV, ready to re-import. */
+export const bankExportHref = (bankId: string): string =>
+  `/api/banks/${encodeURIComponent(bankId)}/export`;
+
+/** The bank's unfinished import draft, or null when there's nothing to continue. */
+export const fetchImportDraft = async (bankId: string): Promise<PlayerBankImport | null> =>
+  (
+    await api<{ import: PlayerBankImport | null }>(
+      `/api/banks/${encodeURIComponent(bankId)}/imports`,
+    )
+  ).import;
+
+/** Stages a CSV for review, replacing any draft this bank already had. */
+export const startBankImport = async (bankId: string, csv: string): Promise<PlayerBankImport> =>
+  (
+    await api<{ import: PlayerBankImport }>(`/api/banks/${encodeURIComponent(bankId)}/imports`, {
+      method: "POST",
+      body: { csv },
+    })
+  ).import;
+
+/** Asks the AI for the next batch of answers; the app loops until nothing is left. */
+export const answerBankImport = async (
+  bankId: string,
+  importId: string,
+): Promise<PlayerBankImport> =>
+  (
+    await api<{ import: PlayerBankImport }>(
+      `/api/banks/${encodeURIComponent(bankId)}/imports/${encodeURIComponent(importId)}/answers`,
+      { method: "POST" },
+    )
+  ).import;
+
+/** Accepts the AI's flagged answers and/or sets answers on rows by hand. */
+export const patchBankImport = async (
+  bankId: string,
+  importId: string,
+  patch: BankImportPatch,
+): Promise<PlayerBankImport> =>
+  (
+    await api<{ import: PlayerBankImport }>(
+      `/api/banks/${encodeURIComponent(bankId)}/imports/${encodeURIComponent(importId)}/rows`,
+      { method: "PATCH", body: patch },
+    )
+  ).import;
+
+/** Puts the whole reviewed import into the bank, or nothing at all. */
+export const commitBankImport = async (bankId: string, importId: string): Promise<number> =>
+  (
+    await api<{ added: number }>(
+      `/api/banks/${encodeURIComponent(bankId)}/imports/${encodeURIComponent(importId)}/commit`,
+      { method: "POST" },
+    )
+  ).added;
+
+/** Throws the staged import away without touching the bank. */
+export const discardBankImport = async (bankId: string, importId: string): Promise<void> => {
+  await api<{ ok: true }>(
+    `/api/banks/${encodeURIComponent(bankId)}/imports/${encodeURIComponent(importId)}`,
     { method: "DELETE" },
   );
 };

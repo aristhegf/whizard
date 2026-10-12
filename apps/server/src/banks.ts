@@ -69,7 +69,7 @@ const toQuestion = (row: QuestionRow): PlayerBankQuestion => ({
 });
 
 /** The signed-in user's bank, or a 404 — whether it's missing or somebody else's. */
-async function ownedBank(env: Env, bankId: string, ownerId: string): Promise<BankRow> {
+export async function ownedBank(env: Env, bankId: string, ownerId: string): Promise<BankRow> {
   const row = await env.DB.prepare("SELECT * FROM user_banks WHERE id = ? AND owner_id = ?")
     .bind(bankId, ownerId)
     .first<BankRow>();
@@ -78,7 +78,7 @@ async function ownedBank(env: Env, bankId: string, ownerId: string): Promise<Ban
 }
 
 /** Bank writes go through one per-address limit, like room creation and reports. */
-async function withinWriteLimit(context: RequestContext): Promise<void> {
+export async function withinWriteLimit(context: RequestContext): Promise<void> {
   if (!(await withinLimit(context.env.BANK_LIMIT, context.request))) {
     throw new HttpError(
       429,
@@ -220,6 +220,11 @@ export async function deleteBank(context: RequestContext): Promise<Response> {
   await withinWriteLimit(context);
   const bank = await ownedBank(context.env, decodeURIComponent(context.params[0] ?? ""), user.id);
   await context.env.DB.batch([
+    // Imports first, so nothing outlives the bank they were staged for.
+    context.env.DB.prepare(
+      "DELETE FROM user_bank_import_rows WHERE import_id IN (SELECT id FROM user_bank_imports WHERE bank_id = ?)",
+    ).bind(bank.id),
+    context.env.DB.prepare("DELETE FROM user_bank_imports WHERE bank_id = ?").bind(bank.id),
     context.env.DB.prepare("DELETE FROM user_bank_questions WHERE bank_id = ?").bind(bank.id),
     context.env.DB.prepare("DELETE FROM user_banks WHERE id = ? AND owner_id = ?").bind(
       bank.id,
@@ -472,9 +477,15 @@ export async function exportBanks(
   };
 }
 
-/** Deleting an account takes its banks and their questions with it. */
+/** Deleting an account takes its banks, their questions and their staged imports with it. */
 export function deleteBankStatements(db: D1Database, userId: string) {
   return [
+    db
+      .prepare(
+        "DELETE FROM user_bank_import_rows WHERE import_id IN (SELECT id FROM user_bank_imports WHERE owner_id = ?)",
+      )
+      .bind(userId),
+    db.prepare("DELETE FROM user_bank_imports WHERE owner_id = ?").bind(userId),
     db
       .prepare(
         "DELETE FROM user_bank_questions WHERE bank_id IN (SELECT id FROM user_banks WHERE owner_id = ?)",

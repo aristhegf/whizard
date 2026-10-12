@@ -13,4 +13,8 @@ export interface Env {
   JOIN_LIMIT: RateLimit;
   /** Bank and question writes: create, rename, add, edit, delete. */
   BANK_LIMIT: RateLimit;
+  /** Google Gemini, for answering key-less CSV imports. Absent when not configured. */
+  GEMINI_API_KEY?: string;
+  /** Which Gemini model answers imports; defaults to a current Flash model. */
+  GEMINI_MODEL?: string;
 }
