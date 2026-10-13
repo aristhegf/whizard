@@ -538,7 +538,9 @@ button.topic-tile {
   padding: 0 18px 16px;
   border: 1px solid rgb(190 163 255 / 24%);
   border-radius: 24px;
-  background: linear-gradient(180deg, rgb(45 25 104 / 96%) 0%, rgb(27 18 73 / 98%) 58%, rgb(17 13 51 / 99%) 100%);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgb(126 74 255 / 22%), transparent 48%),
+    linear-gradient(180deg, rgb(45 25 104 / 96%) 0%, rgb(27 18 73 / 98%) 58%, rgb(17 13 51 / 99%) 100%);
   box-shadow:
     0 16px 34px rgb(3 2 20 / 42%),
     inset 0 1px 0 rgb(255 255 255 / 12%);
@@ -551,25 +553,14 @@ button.topic-tile {
     box-shadow 180ms ease;
 }
 
-.play-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: var(--card-art-height);
-  z-index: -1;
-  background:
-    radial-gradient(80% 90% at 50% 30%, color-mix(in oklab, var(--wash) 74%, transparent), transparent 82%),
-    linear-gradient(180deg, rgb(255 255 255 / 7%), transparent 78%);
-  pointer-events: none;
-}
-
 .play-card::after {
   content: "";
   position: absolute;
   inset: var(--card-art-height) 0 auto;
-  z-index: -1;
+  z-index: 1;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgb(255 212 63 / 40%), transparent);
+  pointer-events: none;
 }
 
 .play-card-art {
