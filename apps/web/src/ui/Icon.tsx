@@ -3,6 +3,7 @@ import {
   ArrowRight,
   Bell,
   Calendar,
+  CaseUpper,
   ChartColumn,
   Check,
   ChevronDown,
@@ -131,6 +132,7 @@ const ICONS = {
   puzzle: Puzzle,
   star: Star,
   lock: Lock,
+  letters: CaseUpper,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;

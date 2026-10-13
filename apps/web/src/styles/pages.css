@@ -66,6 +66,12 @@ p .btn-link {
   white-space: nowrap;
 }
 
+.play-card .players,
+.play-card-players {
+  border: 0;
+  background: none;
+}
+
 button.topic-tile {
   transition:
     transform 140ms ease,
@@ -529,100 +535,181 @@ button.topic-tile {
 .play-card {
   position: relative;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto auto auto;
-  justify-items: center;
-  gap: 4px;
+  grid-template-rows: auto auto;
+  gap: 0;
   min-height: 0;
-  padding: 12px 10px 10px;
-  border-radius: 20px;
-  border: 1.5px solid rgb(255 255 255 / 16%);
-  background: var(--wash);
-  box-shadow: var(--shadow);
-  text-align: center;
+  padding: 0;
+  border-radius: 26px;
+  border: 2.5px solid rgb(170 92 255 / 85%);
+  background: linear-gradient(180deg, #2b1658 0%, #180c32 100%);
+  box-shadow:
+    0 0 18px rgb(155 81 255 / 32%),
+    0 0 42px rgb(130 55 255 / 14%),
+    0 12px 28px rgb(4 0 15 / 30%);
+  text-align: left;
   overflow: hidden;
   isolation: isolate;
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
 }
 
-.play-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(180deg, transparent 35%, rgb(14 8 44 / 85%) 100%);
+.play-card-art-wrap {
+  min-height: 0;
+  overflow: hidden;
 }
 
 .play-card-art {
+  display: block;
   width: 100%;
   height: 100%;
-  min-height: 80px;
-  max-height: 110px;
-  object-fit: contain;
-  filter: drop-shadow(0 10px 16px rgb(0 0 0 / 40%));
+  min-height: 0;
+  max-height: none;
+  aspect-ratio: 1;
+  object-fit: cover;
+  filter: none;
+}
+
+.play-card-panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto;
+  grid-template-areas:
+    "badge name action"
+    "pill pill action"
+    "players players action";
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 8px;
+  padding: 12px 13px 13px;
+  border-radius: 22px 22px 0 0;
+  border: 0;
+  background: linear-gradient(180deg, rgb(64 32 124 / 92%), rgb(38 18 78 / 96%));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.play-card-badge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  grid-area: badge;
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  border: 0;
+  background: linear-gradient(160deg, #8b5cf6, #6430c9);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 25%),
+    0 4px 10px rgb(40 10 90 / 40%);
+  color: #ffd34d;
+}
+
+.play-card-crown {
+  position: absolute;
+  top: -7px;
+  right: -6px;
+  color: #ffd43f;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 45%));
 }
 
 .play-card-name {
-  margin: 0;
-  font-family: var(--display);
-  font-weight: 800;
-  font-size: 1.15rem;
-  line-height: 1.15;
-  text-transform: uppercase;
-  text-shadow: 0 3px 0 rgb(30 10 70 / 70%);
-}
-
-.play-card-desc {
-  display: -webkit-box;
+  grid-area: name;
   margin: 0;
   overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  font-size: 0.85rem;
-  line-height: 1.3;
-  color: #e6e0ff;
-}
-
-.play-card-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 6px 8px;
-  margin-top: 4px;
-}
-
-.play-card .players {
-  padding: 3px 10px;
-  font-size: 0.78rem;
-}
-
-.play-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 38px;
-  padding: 0 16px;
-  border: 0;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #9a4dff, #6f35ff);
-  box-shadow: 0 6px 16px rgb(122 58 255 / 45%);
-  color: #fff;
+  color: var(--gold-deep);
   font-family: var(--display);
   font-weight: 800;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  text-decoration: none;
-  cursor: pointer;
+  font-size: clamp(1.25rem, 1.5vw, 1.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 0 14px rgb(255 171 44 / 30%);
 }
 
-.play-btn.soon {
+.play-card-desc-pill {
+  grid-area: pill;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 10%);
+  background: rgb(16 8 40 / 55%);
+  color: #e2d5ff;
+  font-size: 0.75rem;
+  line-height: 1.3;
   white-space: nowrap;
-  background: rgb(12 8 40 / 60%);
-  box-shadow: none;
+}
+
+.play-card-desc-pill svg {
+  flex: none;
+  color: #c4b5fd;
+}
+
+.play-card-desc-pill span {
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+
+.play-card-play,
+.play-card-soon {
+  grid-area: action;
+  align-self: center;
+}
+
+.play-card-play {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  border: 2px solid rgb(216 180 254 / 85%);
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ffe36b, #ff9c08);
+  box-shadow:
+    0 0 0 3px rgb(168 85 247 / 55%),
+    0 0 16px rgb(168 85 247 / 60%),
+    0 0 34px rgb(168 85 247 / 28%),
+    inset 0 2px 3px rgb(255 255 255 / 55%);
+  color: #241005;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.play-card-play svg {
+  width: 24px;
+  height: 24px;
+}
+
+.play-card-soon {
+  padding: 7px 12px;
   border: 1.5px solid rgb(255 224 122 / 45%);
+  border-radius: 999px;
+  background: rgb(12 8 40 / 60%);
   color: #ffe07a;
-  font-size: 0.72rem;
-  cursor: default;
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.play-card .players,
+.play-card-players {
+  grid-area: players;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  color: #b9a8dd;
+  font-size: 0.7rem;
+  white-space: nowrap;
 }
 
 .play-card.unavailable .play-card-art {
@@ -635,9 +722,10 @@ button.topic-tile {
     border-color: rgb(200 170 255 / 80%);
   }
 
-  a.play-btn:hover,
-  button.play-btn:hover:not(:disabled) {
-    filter: brightness(1.12);
+  a.play-card-play:hover,
+  button.play-card-play:hover:not(:disabled) {
+    filter: brightness(1.08);
+    transform: scale(1.05);
   }
 }
 
@@ -767,11 +855,7 @@ button.topic-tile {
   }
 
   .play-card {
-    padding: 14px 12px 12px;
-  }
-
-  .play-card-foot {
-    flex-wrap: nowrap;
+    min-height: 0;
   }
 
   .play-card-art {
@@ -780,7 +864,7 @@ button.topic-tile {
   }
 
   .play-card-name {
-    font-size: clamp(1rem, 1.35vw, 1.4rem);
+    font-size: clamp(1.15rem, 1.8vw, 1.35rem);
   }
 }
 
@@ -798,9 +882,8 @@ button.topic-tile {
     gap: 8px;
   }
 
-  .play-card-desc {
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
+  .play-card-panel {
+    padding: 10px 11px 11px;
   }
 }
 
@@ -934,18 +1017,6 @@ button.topic-tile {
   scrollbar-width: none;
 }
 
-.game-sheet-cards > .play-card {
-  flex: 0 0 min(72vw, 290px);
-  grid-template-rows: 150px auto auto auto;
-  gap: 6px;
-  padding: 16px 14px 14px;
-  scroll-snap-align: start;
-}
-
-.game-sheet-cards .play-card-art {
-  max-height: 150px;
-}
-
 .game-sheet-dots {
   justify-content: center;
   margin-top: 8px;
@@ -971,6 +1042,7 @@ button.topic-tile {
 .play-page .live-count {
   display: inline-flex;
   align-items: center;
+  justify-self: center;
   gap: 12px;
   min-height: 34px;
   margin: 0;
@@ -1019,113 +1091,6 @@ button.topic-tile {
   display: none;
 }
 
-.play-page .play-card {
-  grid-template-rows: minmax(0, 1fr) auto auto auto;
-  justify-items: stretch;
-  gap: 5px;
-  padding: 0 0 12px;
-  border: 1px solid rgb(168 90 255 / 34%);
-  border-radius: 20px;
-  background: linear-gradient(160deg, #321064 0%, #1b0c34 62%, #13091f 100%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 9%),
-    0 10px 24px rgb(4 0 15 / 24%);
-  text-align: left;
-  transition:
-    border-color 160ms ease,
-    transform 160ms ease,
-    box-shadow 160ms ease;
-}
-
-.play-page .play-card::after {
-  display: none;
-}
-
-.play-page .play-card-art {
-  display: block;
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  max-height: none;
-  aspect-ratio: 1.18;
-  padding: 0;
-  border-radius: 19px 19px 0 0;
-  object-fit: cover;
-  filter: none;
-}
-
-.play-page .play-card-name {
-  padding: 3px 13px 0;
-  color: #ffd34d;
-  font-size: clamp(0.94rem, 1.1vw, 1.2rem);
-  line-height: 1.15;
-  letter-spacing: -0.015em;
-  text-transform: none;
-  text-shadow: none;
-}
-
-.play-page .play-card-desc {
-  padding: 0 13px;
-  color: #d8c7f2;
-  font-size: 0.78rem;
-  line-height: 1.25;
-}
-
-.play-page .play-card-foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin: 2px 0 0;
-  padding: 0 10px 0 13px;
-}
-
-.play-page .play-card .players {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0;
-  color: #dfd0f5;
-  font-size: 0.72rem;
-  white-space: nowrap;
-}
-
-.play-page .play-btn:not(.soon) {
-  display: inline-grid;
-  place-items: center;
-  flex: 0 0 48px;
-  width: 48px;
-  min-height: 48px;
-  padding: 0;
-  border: 3px solid #ff55e6;
-  border-radius: 50%;
-  background: linear-gradient(145deg, #ffe36b, #ff9c08);
-  box-shadow:
-    0 0 0 3px rgb(255 198 61 / 20%),
-    0 0 16px rgb(255 65 225 / 28%),
-    inset 0 2px 3px rgb(255 255 255 / 55%);
-  color: #301047;
-  font-size: 0;
-  text-transform: none;
-}
-
-.play-page .play-btn:not(.soon) svg {
-  width: 21px;
-  height: 21px;
-  stroke-width: 3;
-}
-
-.play-page .play-btn.soon {
-  min-height: 34px;
-  padding-inline: 10px;
-  border-radius: 999px;
-  font-size: 0.68rem;
-}
-
-.play-page .play-card.unavailable .play-card-art {
-  opacity: 0.88;
-}
-
 .play-page .play-pager {
   min-height: 38px;
 }
@@ -1133,34 +1098,36 @@ button.topic-tile {
 @media (hover: hover) {
   .play-page .play-card:hover {
     transform: translateY(-3px);
-    border-color: rgb(255 82 230 / 75%);
+    border-color: rgb(216 160 255 / 95%);
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 12%),
-      0 14px 30px rgb(5 0 18 / 36%),
-      0 0 18px rgb(170 55 255 / 14%);
-  }
-
-  .play-page .play-btn:not(.soon):hover {
-    filter: brightness(1.08);
-    transform: scale(1.04);
+      0 0 24px rgb(168 85 247 / 48%),
+      0 0 52px rgb(140 60 255 / 24%),
+      0 16px 32px rgb(5 0 18 / 38%);
   }
 }
 
 @media (min-width: 1100px) {
+  /* Fixed-size cards in one row, so the page grows vertically instead of shrinking them. */
   .play-page.page.app-screen {
     max-width: 1680px;
+    min-height: 100dvh;
+    height: auto;
+    grid-template-rows: auto auto auto;
+    overflow: visible;
     padding-top: 12px;
   }
 
+  /* The room screen's .play sets a tall min-height; this page sizes to its content. */
   .play-page .play {
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto auto;
     gap: 14px;
+    min-height: 0;
   }
 
   .play-page .play-head {
     grid-template-columns: minmax(0, 1fr) 300px;
     grid-template-areas:
-      "count hero"
+      "count count"
       "title hero"
       "subtitle hero"
       "chips chips";
@@ -1171,6 +1138,7 @@ button.topic-tile {
 
   .play-page .live-count {
     grid-area: count;
+    justify-self: center;
   }
 
   .play-page .play-title {
@@ -1205,33 +1173,33 @@ button.topic-tile {
   }
 
   .play-page .play-shelf {
-    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
     min-height: 0;
   }
 
+  /* One centered row of whole cards; the count adapts to the shelf width (see HomePage). */
   .play-page .play-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: 12px 14px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
     min-height: 0;
   }
 
   .play-page .play-card {
-    grid-template-rows: minmax(0, 1fr) auto auto auto;
+    flex: 0 0 var(--play-card-w, 300px);
+    width: var(--play-card-w, 300px);
+    grid-template-rows: auto auto;
     min-height: 0;
   }
 
   .play-page .play-card-art {
+    height: auto;
     min-height: 0;
     max-height: none;
   }
 
-  .play-page .play-card-foot {
-    flex-wrap: nowrap;
-  }
-
-  .play-page .play-card .players {
-    font-size: clamp(0.65rem, 0.72vw, 0.78rem);
+  .play-page .play-card-players {
+    font-size: clamp(0.65rem, 0.72vw, 0.75rem);
   }
 }
 
@@ -1256,17 +1224,13 @@ button.topic-tile {
   }
 
   .play-page .play-card {
-    grid-template-rows: 150px auto auto auto;
-  }
-
-  .play-page .play-card-art {
-    max-height: 150px;
+    grid-template-rows: minmax(0, 1fr) auto;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .play-page .play-card,
-  .play-page .play-btn {
+  .play-page .play-card-play {
     transition: none;
   }
 }
@@ -1284,19 +1248,26 @@ button.topic-tile {
   }
 }
 
-/* Mobile discovery uses the same catalogue cards in a compact swipeable rail. */
+/* Mobile discovery: one full-width card per swipe page, with dots underneath. */
 .play-mobile-shelf {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 10px;
+  min-height: 0;
   min-width: 0;
   margin-inline: calc(-1 * var(--gutter));
 }
 
 .play-mobile-cards {
   display: flex;
-  gap: 14px;
+  align-items: stretch;
+  gap: 12px;
+  min-height: 0;
   margin: 0;
-  padding: 2px var(--gutter) 18px;
+  padding: 2px var(--gutter) 4px;
   list-style: none;
   overflow-x: auto;
+  overflow-y: hidden;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
   scroll-padding-inline: var(--gutter);
@@ -1308,16 +1279,52 @@ button.topic-tile {
 }
 
 .play-mobile-cards > .play-card {
-  flex: 0 0 min(72vw, 310px);
-  grid-template-rows: 160px auto auto auto;
-  align-self: stretch;
+  flex: 0 0 100%;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-height: 0;
   scroll-snap-align: start;
 }
 
+.play-mobile-cards .play-card-art {
+  min-height: 0;
+  max-height: none;
+  aspect-ratio: auto;
+}
+
+.play-mobile-cards .play-card-name {
+  font-size: clamp(1.2rem, 4.8vw, 1.45rem);
+}
+
+.play-mobile-cards .play-card-desc-pill {
+  font-size: 0.78rem;
+}
+
+.play-mobile-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 var(--gutter) 6px;
+}
+
+.play-mobile-dots button {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 25%);
+  cursor: pointer;
+}
+
+.play-mobile-dots button.on {
+  width: 26px;
+  border-radius: 999px;
+  background: var(--gold);
+}
+
 @media (max-width: 380px) {
-  .play-mobile-cards > .play-card {
-    flex-basis: 78vw;
-    grid-template-rows: 140px auto auto auto;
+  .play-mobile-cards .play-card-name {
+    font-size: 0.98rem;
   }
 }
 
@@ -1357,13 +1364,25 @@ button.topic-tile {
 }
 
 /* Mobile Games screen: one compact card rail and a dedicated category picker. */
+.play-page {
+  /* The sheet and the card-area reservation share this height. */
+  --category-sheet-h: min(32dvh, 320px);
+}
+
 .play-mobile-categories {
   display: none;
 }
 
 .category-sheet {
-  max-height: min(42dvh, 390px);
+  max-height: var(--category-sheet-h, min(32dvh, 320px));
   padding-bottom: calc(8px + env(safe-area-inset-bottom));
+}
+
+/* The home page keeps its cards visible behind the picker: no dim, no blur. */
+.category-sheet::backdrop {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .category-sheet .sheet-grip {
@@ -1506,65 +1525,45 @@ button.topic-tile {
     overflow: hidden;
   }
 
-  .play-mobile-shelf {
-    display: grid;
-    grid-template-rows: minmax(0, 1fr) auto;
-    min-height: 0;
-    margin-inline: calc(-1 * var(--gutter));
+  /* While the category sheet is open, shrink the card area so the card stays fully above it. */
+  .play-page:has(.category-sheet[open]) .play-body {
+    padding-bottom: var(--category-sheet-h, min(32dvh, 320px));
   }
 
-  .play-mobile-cards {
-    display: flex;
-    align-items: stretch;
-    gap: 12px;
+  /* Picking a category: the head folds away so the card rises above the sheet. */
+  .play-page .play-head {
+    transition: gap 300ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .play-page.is-picking .play-head {
+    gap: 0;
+  }
+
+  .play-page .live-count,
+  .play-page .play-title,
+  .play-page .play-subtitle,
+  .play-page .play-mobile-categories {
+    max-height: 220px;
+    overflow: hidden;
+    opacity: 1;
+    transition:
+      max-height 300ms cubic-bezier(0.32, 0.72, 0, 1),
+      opacity 200ms ease,
+      margin 300ms cubic-bezier(0.32, 0.72, 0, 1),
+      padding 300ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .play-page.is-picking .live-count,
+  .play-page.is-picking .play-title,
+  .play-page.is-picking .play-subtitle,
+  .play-page.is-picking .play-mobile-categories {
+    max-height: 0;
     min-height: 0;
     margin: 0;
-    padding: 2px var(--gutter) 4px;
-    list-style: none;
-    overflow-x: auto;
-    overflow-y: hidden;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: var(--gutter);
-    scrollbar-width: none;
-  }
-
-  .play-mobile-cards::-webkit-scrollbar {
-    display: none;
-  }
-
-  .play-mobile-cards > .play-card {
-    flex: 0 0 min(82vw, 360px);
-    grid-template-rows: minmax(0, 1fr) auto auto auto;
-    min-height: 0;
-    padding: 10px 10px 9px;
-    scroll-snap-align: start;
-  }
-
-  .play-mobile-cards .play-card-art {
-    min-height: 0;
-    max-height: none;
-  }
-
-  .play-mobile-cards .play-card-name {
-    font-size: clamp(1rem, 4.2vw, 1.2rem);
-  }
-
-  .play-mobile-cards .play-card-desc {
-    font-size: 0.75rem;
-  }
-
-  .play-mobile-cards .play-card-foot {
-    margin-top: 2px;
-  }
-
-  .category-sheet {
-    max-height: min(42dvh, 390px);
-  }
-
-  /* While the category sheet is open, shrink the card rail so the card stays fully above it. */
-  .play-page:has(.category-sheet[open]) .play-body {
-    padding-bottom: min(42dvh, 390px);
+    padding-block: 0;
+    border-width: 0;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .category-sheet .category-option {
@@ -1574,6 +1573,10 @@ button.topic-tile {
 }
 
 @media (max-width: 380px) and (min-height: 560px) {
+  .play-page {
+    --category-sheet-h: min(30dvh, 210px);
+  }
+
   .play-page .play-title {
     font-size: 1.6rem;
   }
@@ -1586,15 +1589,7 @@ button.topic-tile {
     min-height: 36px;
   }
 
-  .category-sheet {
-    max-height: min(44dvh, 390px);
-  }
-
-  .play-page:has(.category-sheet[open]) .play-body {
-    padding-bottom: min(44dvh, 390px);
-  }
-
-  /* All seven rows have to fit the short sheet without scrolling. */
+  /* All seven rows fit the short sheet without scrolling. */
   .category-sheet .sheet-handle {
     display: none;
   }
@@ -1605,5 +1600,15 @@ button.topic-tile {
 
   .category-sheet .category-options {
     gap: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .play-page .play-head,
+  .play-page .live-count,
+  .play-page .play-title,
+  .play-page .play-subtitle,
+  .play-page .play-mobile-categories {
+    transition: none;
   }
 }
