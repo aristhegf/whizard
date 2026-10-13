@@ -96,9 +96,14 @@ jobs:
         run: |
           set -o pipefail
           pnpm exec wrangler versions upload 2>&1 | tee upload.log
-          url=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' upload.log | head -1)
+          url=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' upload.log | head -1 || true)
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Preview: $url" >> "$GITHUB_STEP_SUMMARY"
+          if [ -z "$url" ]; then
+            version=$(grep -oE 'Worker Version ID: .*' upload.log | head -1 || true)
+            echo "::error::Upload succeeded but no preview URL was printed ($version). Check that preview_urls is enabled for the worker."
+            exit 1
+          fi
       - name: Comment the preview URL on the PR
         if: steps.credentials.outputs.ready && steps.upload.outputs.url != ''
         uses: actions/github-script@v8

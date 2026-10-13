@@ -3,6 +3,8 @@
   "name": "whizard",
   "main": "src/index.ts",
   "compatibility_date": "2026-09-01",
+  // Each uploaded version gets a public preview URL, so PRs can be tried before merging.
+  "preview_urls": true,
   "assets": {
     "not_found_handling": "single-page-application",
     "run_worker_first": ["/api/*"],
