@@ -89,6 +89,18 @@ jobs:
       - name: Build the app
         if: steps.credentials.outputs.ready
         run: pnpm build
+      - name: Enable version preview URLs
+        if: steps.credentials.outputs.ready
+        run: |
+          # Version previews are a worker-level setting that versions upload doesn't apply;
+          # set it directly so every uploaded version gets a public preview URL.
+          resp=$(curl -fsS -X PUT \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/whizard/subdomain" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"enabled":true,"previews_enabled":true}')
+          echo "$resp"
+          echo "$resp" | grep -q '"success":true'
       - name: Upload the preview version
         id: upload
         if: steps.credentials.outputs.ready
