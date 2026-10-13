@@ -196,8 +196,7 @@ function GameCard({ game }: { game: CatalogGame }) {
 
   const action = game.href ? (
     <a className="play-btn" aria-label={label} {...linkTo(game.href)}>
-      Play
-      <Icon name="arrowRight" size={18} stroke={2.6} />
+      <Icon name="arrowRight" size={22} stroke={2.8} />
     </a>
   ) : game.starts ? (
     // Games without a page of their own open a room straight away.
@@ -214,8 +213,7 @@ function GameCard({ game }: { game: CatalogGame }) {
         });
       }}
     >
-      {opening ? "Opening…" : "Play"}
-      {!opening && <Icon name="arrowRight" size={18} stroke={2.6} />}
+      <Icon name="arrowRight" size={22} stroke={2.8} />
     </button>
   ) : (
     <span className="play-btn soon">Coming soon</span>
