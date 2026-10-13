@@ -53,8 +53,8 @@ jobs:
           path: test-results/
           retention-days: 7
 
-  # Uploads an unreleased worker version for each PR so it can be previewed live.
-  # Production keeps serving the old version until the deploy job on main runs.
+  # Deploys each PR to a separate disposable worker so it can be previewed live.
+  # Production keeps serving the deploy job on main, which is untouched here.
   preview:
     needs: [check]
     if: github.event_name == 'pull_request'
@@ -89,33 +89,26 @@ jobs:
       - name: Build the app
         if: steps.credentials.outputs.ready
         run: pnpm build
-      - name: Enable version preview URLs
-        if: steps.credentials.outputs.ready
-        run: |
-          # Version previews are a worker-level setting that versions upload doesn't apply;
-          # set it directly so every uploaded version gets a public preview URL.
-          resp=$(curl -fsS -X PUT \
-            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/whizard/subdomain" \
-            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            -H "Content-Type: application/json" \
-            -d '{"enabled":true,"previews_enabled":true}')
-          echo "$resp"
-          echo "$resp" | grep -q '"success":true'
-      - name: Upload the preview version
+      # Version preview URLs aren't generated for workers with Durable Objects, so each PR
+      # deploys to a separate disposable worker instead. The production worker is untouched.
+      - name: Deploy the preview worker
         id: upload
         if: steps.credentials.outputs.ready
         working-directory: apps/web
         run: |
           set -o pipefail
-          pnpm exec wrangler versions upload 2>&1 | tee upload.log
-          url=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' upload.log | head -1 || true)
+          pnpm exec wrangler delete whizard-pr-preview --force 2> /dev/null || true
+          pnpm exec wrangler deploy --name whizard-pr-preview 2>&1 | tee deploy.log
+          url=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' deploy.log | head -1 || true)
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Preview: $url" >> "$GITHUB_STEP_SUMMARY"
           if [ -z "$url" ]; then
-            version=$(grep -oE 'Worker Version ID: .*' upload.log | head -1 || true)
-            echo "::error::Upload succeeded but no preview URL was printed ($version). Check that preview_urls is enabled for the worker."
+            echo "::error::Preview deploy finished but no URL was printed."
             exit 1
           fi
+          curl -fsS --retry 5 --retry-delay 3 --retry-all-errors "$url/" | grep -q "<title>Whizard</title>"
+          curl -fsS --retry 3 --retry-delay 3 --retry-all-errors "$url/api/health" | grep -q '"ok":true'
+          echo "Preview live at $url"
       - name: Comment the preview URL on the PR
         if: steps.credentials.outputs.ready && steps.upload.outputs.url != ''
         uses: actions/github-script@v8
@@ -123,7 +116,7 @@ jobs:
           script: |
             const marker = "<!-- whizard-preview -->";
             const url = "${{ steps.upload.outputs.url }}";
-            const body = `${marker}\n**Preview deployment:** ${url}\n\n_Uploaded as an unreleased Cloudflare Workers version — production is untouched until this merges to main._`;
+            const body = `${marker}\n**Preview deployment:** ${url}\n\n_Deployed as a separate disposable Cloudflare worker — production is untouched. It shares the production database, so anything you create in the preview is live._`;
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
