@@ -88,6 +88,61 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   expect(await labels(page, "Main")).toEqual(["How it works", "Pricing", "Stats"]);
 });
 
+for (const viewport of [
+  { width: 390, height: 844 },
+  { width: 375, height: 667 },
+]) {
+  test(`mobile Games screen fits one ${viewport.width}x${viewport.height} viewport and categories fit without scrolling`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.goto("/games");
+
+    await expect(page.getByRole("heading", { name: "What do you want to play?" })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Categories/ })).toBeVisible();
+    const card = page.getByRole("list", { name: "Games to play" }).getByRole("listitem").first();
+    await expect(card).toBeVisible();
+    await expect(page.locator(".play-featured")).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
+      viewport.height,
+    );
+
+    await page.getByRole("button", { name: /Categories/ }).click();
+    const sheet = page.getByRole("dialog", { name: "Game Categories" });
+    await expect(sheet).toBeVisible();
+    await expect(sheet.getByRole("button", { name: "All Games" })).toBeVisible();
+    await expect(sheet.getByRole("button", { name: "Couples" })).toBeVisible();
+    await expect(sheet.getByRole("button", { name: "Brain Games" })).toBeVisible();
+    await expect(sheet.locator(".category-options")).toHaveCSS("overflow-y", "hidden");
+
+    // Once the sheet's slide-in has settled, every row fits: the sheet stays inside the
+    // viewport, and the game card stays fully above it.
+    await sheet.evaluate(async (el) => {
+      const running = el.getAnimations();
+      if (running.length) await Promise.all(running.map((a) => a.finished.catch(() => {})));
+    });
+    const cardBox = await card.boundingBox();
+    const sheetBox = await sheet.boundingBox();
+    const couplesBox = await sheet.getByRole("button", { name: "Couples" }).boundingBox();
+    expect(cardBox).not.toBeNull();
+    expect(sheetBox).not.toBeNull();
+    expect(couplesBox).not.toBeNull();
+    await expect(card).toBeInViewport();
+    expect(cardBox!.y + cardBox!.height).toBeLessThanOrEqual(sheetBox!.y + 1);
+    expect(sheetBox!.y + sheetBox!.height).toBeLessThanOrEqual(viewport.height + 1);
+    expect(couplesBox!.y + couplesBox!.height).toBeLessThanOrEqual(
+      sheetBox!.y + sheetBox!.height + 1,
+    );
+
+    await sheet.getByRole("button", { name: "Brain Games" }).click();
+    await expect(sheet).toBeHidden();
+    await expect(page.getByRole("button", { name: /Categories.*Brain Games/ })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
+      viewport.height,
+    );
+  });
+}
+
 test("phones get Play, Create, Leaderboard, Stats and Me at the bottom", async ({ page }) => {
   await page.goto("/");
   expect(await labels(page, "Sections")).toEqual(["Play", "Create", "Leaderboard", "Stats", "Me"]);

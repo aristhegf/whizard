@@ -1283,3 +1283,327 @@ button.topic-tile {
     grid-area: subtitle;
   }
 }
+
+/* Mobile discovery uses the same catalogue cards in a compact swipeable rail. */
+.play-mobile-shelf {
+  min-width: 0;
+  margin-inline: calc(-1 * var(--gutter));
+}
+
+.play-mobile-cards {
+  display: flex;
+  gap: 14px;
+  margin: 0;
+  padding: 2px var(--gutter) 18px;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+}
+
+.play-mobile-cards::-webkit-scrollbar {
+  display: none;
+}
+
+.play-mobile-cards > .play-card {
+  flex: 0 0 min(72vw, 310px);
+  grid-template-rows: 160px auto auto auto;
+  align-self: stretch;
+  scroll-snap-align: start;
+}
+
+@media (max-width: 380px) {
+  .play-mobile-cards > .play-card {
+    flex-basis: 78vw;
+    grid-template-rows: 140px auto auto auto;
+  }
+}
+
+@media (min-width: 1100px) {
+  .play-mobile-shelf {
+    display: none;
+  }
+}
+
+@media (max-width: 1099px) {
+  .play-page .play {
+    min-height: 0;
+    gap: 12px;
+  }
+
+  .play-page .play-body {
+    min-width: 0;
+    overflow: visible;
+  }
+
+  .play-page .play-head {
+    gap: 10px;
+  }
+
+  .play-page .play-subtitle {
+    max-width: 38ch;
+  }
+
+  .play-page .game-sheet-title {
+    font-size: clamp(1.05rem, 4.4vw, 1.3rem);
+  }
+
+  .play-page .game-sheet-cards {
+    padding-inline: 16px;
+    scroll-padding-inline: 16px;
+  }
+}
+
+/* Mobile Games screen: one compact card rail and a dedicated category picker. */
+.play-mobile-categories {
+  display: none;
+}
+
+.category-sheet {
+  max-height: min(42dvh, 390px);
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+}
+
+.category-sheet .sheet-grip {
+  flex: none;
+  padding: 8px 18px 6px;
+}
+
+.category-sheet .sheet-handle {
+  margin-bottom: 8px;
+}
+
+.category-sheet-head {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  gap: 12px;
+}
+
+.category-sheet-head h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.15rem;
+  font-weight: 850;
+}
+
+.category-options {
+  display: grid;
+  gap: 4px;
+  padding: 0 14px;
+  overflow: hidden;
+}
+
+.category-option {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 12px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: rgb(18 12 48 / 72%);
+  color: #e8d9ff;
+  font: inherit;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.category-option > svg:first-child {
+  color: #d1a7ff;
+}
+
+.category-option[aria-pressed="true"] {
+  background: linear-gradient(135deg, #ffe36b, #ffab20);
+  color: #321344;
+  font-weight: 800;
+}
+
+.category-option[aria-pressed="true"] > svg {
+  color: inherit;
+}
+
+@media (max-width: 1099px) {
+  .play-page.page.app-screen {
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100dvh;
+    min-height: 0;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
+    overflow: hidden;
+  }
+
+  .play-page.page.app-screen .site-footer.slim {
+    display: none;
+  }
+
+  .play-page .play {
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .play-page .play-head {
+    gap: 7px;
+    padding-top: 0;
+  }
+
+  .play-page .play-hero-art {
+    display: none;
+  }
+
+  .play-page .live-count {
+    min-height: 30px;
+    padding: 4px 10px;
+    font-size: 0.72rem;
+  }
+
+  .play-page .play-title {
+    font-size: clamp(1.65rem, 6vw, 2.2rem);
+    line-height: 1.02;
+  }
+
+  .play-page .play-subtitle {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.25;
+  }
+
+  .play-page .play-chips {
+    display: none;
+  }
+
+  .play-page .play-mobile-categories {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    min-height: 40px;
+    padding: 0 13px;
+    border: 1px solid rgb(169 107 255 / 30%);
+    border-radius: 13px;
+    background: linear-gradient(180deg, rgb(43 20 74 / 95%), rgb(24 11 45 / 95%));
+    color: #fff;
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 800;
+    text-align: left;
+  }
+
+  .play-mobile-categories span {
+    margin-left: auto;
+    color: #d9c2f5;
+    font-weight: 600;
+  }
+
+  .play-page .play-body {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .play-mobile-shelf {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-height: 0;
+    margin-inline: calc(-1 * var(--gutter));
+  }
+
+  .play-mobile-cards {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    min-height: 0;
+    margin: 0;
+    padding: 2px var(--gutter) 4px;
+    list-style: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .play-mobile-cards::-webkit-scrollbar {
+    display: none;
+  }
+
+  .play-mobile-cards > .play-card {
+    flex: 0 0 min(82vw, 360px);
+    grid-template-rows: minmax(0, 1fr) auto auto auto;
+    min-height: 0;
+    padding: 10px 10px 9px;
+    scroll-snap-align: start;
+  }
+
+  .play-mobile-cards .play-card-art {
+    min-height: 0;
+    max-height: none;
+  }
+
+  .play-mobile-cards .play-card-name {
+    font-size: clamp(1rem, 4.2vw, 1.2rem);
+  }
+
+  .play-mobile-cards .play-card-desc {
+    font-size: 0.75rem;
+  }
+
+  .play-mobile-cards .play-card-foot {
+    margin-top: 2px;
+  }
+
+  .category-sheet {
+    max-height: min(42dvh, 390px);
+  }
+
+  /* While the category sheet is open, shrink the card rail so the card stays fully above it. */
+  .play-page:has(.category-sheet[open]) .play-body {
+    padding-bottom: min(42dvh, 390px);
+  }
+
+  .category-sheet .category-option {
+    min-height: clamp(30px, 4.25dvh, 36px);
+    font-size: clamp(0.72rem, 2.4vw, 0.82rem);
+  }
+}
+
+@media (max-width: 380px) and (min-height: 560px) {
+  .play-page .play-title {
+    font-size: 1.6rem;
+  }
+
+  .play-page .play-subtitle {
+    font-size: 0.76rem;
+  }
+
+  .play-page .play-mobile-categories {
+    min-height: 36px;
+  }
+
+  .category-sheet {
+    max-height: min(44dvh, 390px);
+  }
+
+  .play-page:has(.category-sheet[open]) .play-body {
+    padding-bottom: min(44dvh, 390px);
+  }
+
+  /* All seven rows have to fit the short sheet without scrolling. */
+  .category-sheet .sheet-handle {
+    display: none;
+  }
+
+  .category-sheet .category-option {
+    min-height: 28px;
+  }
+
+  .category-sheet .category-options {
+    gap: 3px;
+  }
+}
