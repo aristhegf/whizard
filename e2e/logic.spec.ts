@@ -80,11 +80,6 @@ async function start(page: Page, size: "4" | "6" | "9", button: RegExp) {
 
 test("one player cracks a grid, with a wrong number on the way", async ({ page }) => {
   await page.goto("/games");
-  // On phones the games are in a sheet, opened from the kinds of game.
-  await page
-    .getByRole("group", { name: "Kinds of game" })
-    .getByRole("button", { name: "All" })
-    .click();
   await page.getByRole("button", { name: "Play Logic" }).click();
   await joinAs(page, "Ada");
   await expect(page.getByRole("heading", { name: "Logic" })).toBeVisible();
@@ -118,11 +113,6 @@ test("one player cracks a grid, with a wrong number on the way", async ({ page }
 test("two players race on the same grid, and the faster one wins", async ({ browser }) => {
   const host = await newPlayer(browser);
   await host.goto("/games");
-  // On phones the games are in a sheet, opened from the kinds of game.
-  await host
-    .getByRole("group", { name: "Kinds of game" })
-    .getByRole("button", { name: "All" })
-    .click();
   await host.getByRole("button", { name: "Play Logic" }).click();
   await joinAs(host, "Ada");
 
@@ -161,11 +151,6 @@ test("two players race on the same grid, and the faster one wins", async ({ brow
 /** Opens Logic from the games page and joins its new room. */
 async function openLogic(page: Page, nickname: string) {
   await page.goto("/games");
-  // On phones the games are in a sheet, opened from the kinds of game.
-  await page
-    .getByRole("group", { name: "Kinds of game" })
-    .getByRole("button", { name: "All" })
-    .click();
   await page.getByRole("button", { name: "Play Logic" }).click();
   await joinAs(page, nickname);
 }

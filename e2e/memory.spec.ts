@@ -16,11 +16,6 @@ async function joinAs(page: Page, nickname: string) {
 /** Opens Memory from the games page and joins its new room. */
 async function openMemory(page: Page, nickname: string) {
   await page.goto("/games");
-  // On phones the games are in a sheet, opened from the kinds of game.
-  await page
-    .getByRole("group", { name: "Kinds of game" })
-    .getByRole("button", { name: "All" })
-    .click();
   await page.getByRole("button", { name: "Play Memory" }).click();
   await joinAs(page, nickname);
 }
