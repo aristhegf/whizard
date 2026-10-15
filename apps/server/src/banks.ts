@@ -5,10 +5,12 @@ import {
   BANK_EXPLANATION_MAX,
   BANK_PROMPT_MAX,
   BANK_REFERENCE_MAX,
+  bankBulkDeleteSchema,
   bankCreateSchema,
   bankUpdateSchema,
   MAX_BANKS_PER_USER,
   MAX_QUESTIONS_PER_BANK,
+  type BankBulkDelete,
   type BankCreate,
   type BankUpdate,
   type PlayerBank,
@@ -33,6 +35,7 @@ interface BankRow {
   name: string;
   exam: string | null;
   subject: string | null;
+  is_public?: number;
   created_at: number;
   updated_at: number;
 }
@@ -46,6 +49,7 @@ interface QuestionRow {
   choices: string;
   explanation: string;
   reference: string | null;
+  source?: string;
   created_at: number;
   updated_at: number;
 }
@@ -56,6 +60,7 @@ const toSummary = (row: BankRow & { question_count?: number | null }): PlayerBan
   exam: row.exam,
   subject: row.subject,
   questionCount: Number(row.question_count ?? 0),
+  isPublic: Boolean(row.is_public),
   createdAt: row.created_at,
   updatedAt: row.updated_at,
 });
@@ -66,6 +71,7 @@ const toQuestion = (row: QuestionRow): PlayerBankQuestion => ({
   choices: JSON.parse(row.choices) as string[],
   explanation: row.explanation,
   reference: row.reference,
+  source: (row.source as PlayerBankQuestion["source"]) ?? "manual",
 });
 
 /** The signed-in user's bank, or a 404 — whether it's missing or somebody else's. */
@@ -115,7 +121,7 @@ async function readBody<T>(
 export async function listBanks(context: RequestContext): Promise<Response> {
   const { user } = await requireUser(context);
   const { results } = await context.env.DB.prepare(
-    `SELECT b.id, b.name, b.exam, b.subject, b.created_at, b.updated_at,
+    `SELECT b.id, b.name, b.exam, b.subject, b.is_public, b.created_at, b.updated_at,
             (SELECT COUNT(*) FROM user_bank_questions q WHERE q.bank_id = b.id) AS question_count
        FROM user_banks b
       WHERE b.owner_id = ?
@@ -129,7 +135,7 @@ export async function listBanks(context: RequestContext): Promise<Response> {
   );
 }
 
-/** `POST /api/banks` with `{ name, exam?, subject? }`: a new, empty bank. */
+/** `POST /api/banks` with `{ name, exam?, subject?, isPublic? }`: a new, empty bank. */
 export async function createBank(context: RequestContext): Promise<Response> {
   requireSameOrigin(context);
   const { user } = await requireUser(context);
@@ -150,28 +156,45 @@ export async function createBank(context: RequestContext): Promise<Response> {
   }
 
   const now = Date.now();
+  const isPublic = input.isPublic ? 1 : 0;
   const row: BankRow = {
     id: `b_${randomToken(9)}`,
     owner_id: user.id,
     name: input.name,
     exam: input.exam ?? null,
     subject: input.subject ?? null,
+    is_public: isPublic,
     created_at: now,
     updated_at: now,
   };
   await context.env.DB.prepare(
-    `INSERT INTO user_banks (id, owner_id, name, exam, subject, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO user_banks (id, owner_id, name, exam, subject, is_public, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
   )
-    .bind(row.id, row.owner_id, row.name, row.exam, row.subject, now, now)
+    .bind(row.id, row.owner_id, row.name, row.exam, row.subject, isPublic, now, now)
     .run();
   return Response.json({ bank: toSummary({ ...row, question_count: 0 }) }, { status: 201 });
 }
 
 /** `GET /api/banks/:id`: one bank with its questions, in order. */
 export async function getBank(context: RequestContext): Promise<Response> {
-  const { user } = await requireUser(context);
-  const bank = await ownedBank(context.env, decodeURIComponent(context.params[0] ?? ""), user.id);
+  const bankId = decodeURIComponent(context.params[0] ?? "");
+  let bank: BankRow | null = null;
+  try {
+    const { user } = await requireUser(context);
+    bank = await ownedBank(context.env, bankId, user.id);
+  } catch {
+    // If not authenticated or not owner, see if bank is public
+  }
+  if (!bank) {
+    bank = await context.env.DB.prepare("SELECT * FROM user_banks WHERE id = ?")
+      .bind(bankId)
+      .first<BankRow>();
+    if (!bank || !bank.is_public) {
+      throw new HttpError(404, "not_found", "That bank doesn’t exist.");
+    }
+  }
+
   const questions = (
     await context.env.DB.prepare(
       "SELECT * FROM user_bank_questions WHERE bank_id = ? ORDER BY position",
@@ -188,7 +211,7 @@ export async function getBank(context: RequestContext): Promise<Response> {
   return Response.json({ bank: body }, { headers: { "Cache-Control": "no-store" } });
 }
 
-/** `PATCH /api/banks/:id` with any of `{ name, exam, subject }`: rename or relabel. */
+/** `PATCH /api/banks/:id` with any of `{ name, exam, subject, isPublic }`: rename, relabel, or toggle visibility. */
 export async function updateBank(context: RequestContext): Promise<Response> {
   requireSameOrigin(context);
   const { user } = await requireUser(context);
@@ -199,11 +222,13 @@ export async function updateBank(context: RequestContext): Promise<Response> {
     name: update.name ?? bank.name,
     exam: update.exam === undefined ? bank.exam : update.exam,
     subject: update.subject === undefined ? bank.subject : update.subject,
+    is_public:
+      update.isPublic === undefined ? Number(bank.is_public ?? 0) : update.isPublic ? 1 : 0,
   };
   await context.env.DB.prepare(
-    "UPDATE user_banks SET name = ?, exam = ?, subject = ?, updated_at = ? WHERE id = ? AND owner_id = ?",
+    "UPDATE user_banks SET name = ?, exam = ?, subject = ?, is_public = ?, updated_at = ? WHERE id = ? AND owner_id = ?",
   )
-    .bind(next.name, next.exam, next.subject, Date.now(), bank.id, user.id)
+    .bind(next.name, next.exam, next.subject, next.is_public, Date.now(), bank.id, user.id)
     .run();
   return Response.json({
     bank: toSummary({ ...bank, ...next, updated_at: Date.now() }),
@@ -347,14 +372,15 @@ export async function addBankQuestion(context: RequestContext): Promise<Response
     choices: JSON.stringify(input.choices),
     explanation: input.explanation,
     reference: input.reference,
+    source: "manual",
     created_at: now,
     updated_at: now,
   };
   await context.env.DB.batch([
     context.env.DB.prepare(
       `INSERT INTO user_bank_questions
-           (id, bank_id, position, prompt, choices, explanation, reference, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           (id, bank_id, position, prompt, choices, explanation, reference, source, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).bind(
       row.id,
       row.bank_id,
@@ -363,6 +389,7 @@ export async function addBankQuestion(context: RequestContext): Promise<Response
       row.choices,
       row.explanation,
       row.reference,
+      "manual",
       now,
       now,
     ),
@@ -444,6 +471,86 @@ export async function deleteBankQuestion(context: RequestContext): Promise<Respo
     context.env.DB.prepare("UPDATE user_banks SET updated_at = ? WHERE id = ?").bind(now, bankId),
   ]);
   return Response.json({ ok: true });
+}
+
+/** `POST /api/banks/:id/questions/bulk-delete`: delete multiple questions at once. */
+export async function bulkDeleteBankQuestions(context: RequestContext): Promise<Response> {
+  requireSameOrigin(context);
+  const { user } = await requireUser(context);
+  await withinWriteLimit(context);
+  const bank = await ownedBank(context.env, decodeURIComponent(context.params[0] ?? ""), user.id);
+  const input = await readBody<BankBulkDelete>(
+    context,
+    bankBulkDeleteSchema,
+    "invalid_bulk_delete",
+  );
+
+  if (input.questionIds.length === 0) {
+    return Response.json({ ok: true, deleted: 0 });
+  }
+
+  const now = Date.now();
+  await context.env.DB.batch([
+    ...input.questionIds.map((qid) =>
+      context.env.DB.prepare("DELETE FROM user_bank_questions WHERE id = ? AND bank_id = ?").bind(
+        qid,
+        bank.id,
+      ),
+    ),
+    context.env.DB.prepare("UPDATE user_banks SET updated_at = ? WHERE id = ?").bind(now, bank.id),
+  ]);
+  return Response.json({ ok: true, deleted: input.questionIds.length });
+}
+
+/** `GET /api/banks/:id/duplicates`: finds questions in this bank that exist in other user banks. */
+export async function checkBankDuplicates(context: RequestContext): Promise<Response> {
+  const { user } = await requireUser(context);
+  const bank = await ownedBank(context.env, decodeURIComponent(context.params[0] ?? ""), user.id);
+  const currentQuestions = (
+    await context.env.DB.prepare("SELECT id, prompt FROM user_bank_questions WHERE bank_id = ?")
+      .bind(bank.id)
+      .all<{ id: string; prompt: string }>()
+  ).results;
+
+  const otherQuestions = (
+    await context.env.DB.prepare(
+      `SELECT q.id, q.prompt, b.id AS other_bank_id, b.name AS other_bank_name
+         FROM user_bank_questions q
+         JOIN user_banks b ON b.id = q.bank_id
+        WHERE b.owner_id = ? AND b.id != ?`,
+    )
+      .bind(user.id, bank.id)
+      .all<{ id: string; prompt: string; other_bank_id: string; other_bank_name: string }>()
+  ).results;
+
+  const otherMap = new Map<string, { bankId: string; bankName: string }>();
+  for (const oq of otherQuestions) {
+    otherMap.set(oq.prompt.trim().toLowerCase(), {
+      bankId: oq.other_bank_id,
+      bankName: oq.other_bank_name,
+    });
+  }
+
+  const duplicates: {
+    questionId: string;
+    prompt: string;
+    otherBankId: string;
+    otherBankName: string;
+  }[] = [];
+
+  for (const cq of currentQuestions) {
+    const match = otherMap.get(cq.prompt.trim().toLowerCase());
+    if (match) {
+      duplicates.push({
+        questionId: cq.id,
+        prompt: cq.prompt,
+        otherBankId: match.bankId,
+        otherBankName: match.bankName,
+      });
+    }
+  }
+
+  return Response.json({ duplicates });
 }
 
 /** The signed-in player's banks with their questions, for the account's data export. */

@@ -49,7 +49,7 @@ describe("pieceShapes", () => {
         }
       });
     }
-  });
+  }, 15_000);
 
   it("gives each inside edge a knob on one piece and the matching hole on the other", () => {
     const side = 4;

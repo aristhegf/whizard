@@ -470,11 +470,20 @@ export async function getImport(context: RequestContext): Promise<Response> {
   return Response.json({ import: payload }, { headers: { "Cache-Control": "no-store" } });
 }
 
+/** Hashes a question prompt and its choices to identify duplicate or cached questions. */
+export function aiQuestionHash(prompt: string, choices: readonly string[]): string {
+  const normPrompt = prompt.trim().toLowerCase();
+  const normChoices = choices
+    .map((c) => c.trim().toLowerCase())
+    .sort()
+    .join("::");
+  return `${normPrompt}:::${normChoices}`;
+}
+
 /**
  * `POST /api/banks/:id/imports/:impId/answers`: answer the next batch of key-less rows with
- * the AI — one Gemini call for this request. The web app loops until nothing is left; a busy
- * key comes back as 429 to try again, and a broken one flags the batch for a person rather
- * than losing it.
+ * the AI — one Gemini call for this request. Checks identical question cache first to avoid
+ * redundant API calls and save latency/quota.
  */
 export async function processImportAnswers(context: RequestContext): Promise<Response> {
   requireSameOrigin(context);
@@ -487,13 +496,6 @@ export async function processImportAnswers(context: RequestContext): Promise<Res
     decodeURIComponent(context.params[1] ?? ""),
     user.id,
   );
-  if (!context.env.GEMINI_API_KEY) {
-    throw new HttpError(
-      503,
-      "ai_not_configured",
-      "AI answers aren’t set up on this server yet. Give every question an answer yourself.",
-    );
-  }
 
   const all = await rowsOf(context.env, record.id);
   const batch = all.filter((row) => row.answer_index === null).slice(0, AI_BATCH_SIZE);
@@ -501,38 +503,109 @@ export async function processImportAnswers(context: RequestContext): Promise<Res
     return Response.json({ import: toPayload(record, all) });
   }
 
-  const questions: BatchQuestion[] = batch.map((row) => ({
-    id: `q${row.idx}`,
-    prompt: row.prompt,
-    choices: JSON.parse(row.choices) as string[],
-  }));
-  let answers: Map<
+  // Check cache for identical questions previously answered
+  const hashes = batch.map((row) =>
+    aiQuestionHash(row.prompt, JSON.parse(row.choices) as string[]),
+  );
+  const placeholders = hashes.map(() => "?").join(",");
+  const { results: cachedRows } = await context.env.DB.prepare(
+    `SELECT prompt_hash, answer_index, explanation FROM user_bank_ai_cache WHERE prompt_hash IN (${placeholders})`,
+  )
+    .bind(...hashes)
+    .all<{ prompt_hash: string; answer_index: number; explanation: string }>();
+
+  const cacheMap = new Map(cachedRows.map((r) => [r.prompt_hash, r]));
+  const uncachedRows = batch.filter(
+    (row) => !cacheMap.has(aiQuestionHash(row.prompt, JSON.parse(row.choices) as string[])),
+  );
+
+  let answers = new Map<
     string,
     { answerIndex: number | null; explanation: string; reviewNeeded: boolean }
-  >;
-  try {
-    answers = await answerBatch(context.env, questions);
-  } catch (error) {
-    if (error instanceof AiBusyError) {
-      throw new HttpError(429, "ai_busy", "The answer service is busy. Trying again shortly.");
+  >();
+
+  if (uncachedRows.length > 0) {
+    if (!context.env.GEMINI_API_KEY) {
+      throw new HttpError(
+        503,
+        "ai_not_configured",
+        "AI answers aren’t set up on this server yet. Give every question an answer yourself.",
+      );
     }
-    // The provider failed; flag the batch, keeping every row, so a retry can still happen.
-    const failed = batch.map((row) => ({
-      ...row,
-      review: "The AI couldn’t answer this one. Pick an answer yourself.",
+    const questions: BatchQuestion[] = uncachedRows.map((row) => ({
+      id: `q${row.idx}`,
+      prompt: row.prompt,
+      choices: JSON.parse(row.choices) as string[],
     }));
+    try {
+      answers = await answerBatch(context.env, questions);
+    } catch (error) {
+      if (error instanceof AiBusyError) {
+        throw new HttpError(429, "ai_busy", "The answer service is busy. Trying again shortly.");
+      }
+      // The provider failed; flag the batch, keeping every row, so a retry can still happen.
+      const failed = uncachedRows.map((row) => ({
+        ...row,
+        review: "The AI couldn’t answer this one. Pick an answer yourself.",
+      }));
+      await context.env.DB.batch(
+        failed.map((row) =>
+          context.env.DB.prepare(
+            "UPDATE user_bank_import_rows SET review = ? WHERE import_id = ? AND idx = ?",
+          ).bind(row.review, record.id, row.idx),
+        ),
+      );
+      const next = all.map((row) => failed.find((f) => f.idx === row.idx) ?? row);
+      return Response.json({ import: toPayload(record, next) });
+    }
+  }
+
+  // Save newly returned high-confidence answers to cache
+  const cacheInserts = uncachedRows
+    .map((row) => {
+      const answer = answers.get(`q${row.idx}`);
+      if (
+        answer &&
+        answer.answerIndex !== null &&
+        answer.answerIndex >= 0 &&
+        answer.answerIndex <= 3 &&
+        !answer.reviewNeeded
+      ) {
+        const hash = aiQuestionHash(row.prompt, JSON.parse(row.choices) as string[]);
+        return { hash, answerIndex: answer.answerIndex, explanation: answer.explanation };
+      }
+      return null;
+    })
+    .filter(
+      (item): item is { hash: string; answerIndex: number; explanation: string } => item !== null,
+    );
+
+  if (cacheInserts.length > 0) {
     await context.env.DB.batch(
-      failed.map((row) =>
+      cacheInserts.map((item) =>
         context.env.DB.prepare(
-          "UPDATE user_bank_import_rows SET review = ? WHERE import_id = ? AND idx = ?",
-        ).bind(row.review, record.id, row.idx),
+          `INSERT OR REPLACE INTO user_bank_ai_cache (prompt_hash, answer_index, explanation, created_at)
+           VALUES (?, ?, ?, ?)`,
+        ).bind(item.hash, item.answerIndex, item.explanation, Date.now()),
       ),
     );
-    const next = all.map((row) => failed.find((f) => f.idx === row.idx) ?? row);
-    return Response.json({ import: toPayload(record, next) });
   }
 
   const updates: ImportRowRecord[] = batch.map((row) => {
+    const hash = aiQuestionHash(row.prompt, JSON.parse(row.choices) as string[]);
+    const cached = cacheMap.get(hash);
+    if (cached) {
+      const aiExplanation = cached.explanation.slice(0, BANK_EXPLANATION_MAX);
+      return {
+        ...row,
+        answer_index: cached.answer_index,
+        source: "ai",
+        review: "",
+        ai_explanation: aiExplanation,
+        explanation: row.explanation || aiExplanation || "Answered by AI.",
+      };
+    }
+
     const answer = answers.get(`q${row.idx}`);
     const usable =
       answer && answer.answerIndex !== null && answer.answerIndex >= 0 && answer.answerIndex <= 3;
@@ -683,8 +756,8 @@ export async function commitImport(context: RequestContext): Promise<Response> {
     const answerIndex = row.answer_index ?? 0;
     return context.env.DB.prepare(
       `INSERT INTO user_bank_questions
-         (id, bank_id, position, prompt, choices, explanation, reference, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+         (id, bank_id, position, prompt, choices, explanation, reference, source, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).bind(
       `q_${randomToken(9)}`,
       bankId,
@@ -693,6 +766,7 @@ export async function commitImport(context: RequestContext): Promise<Response> {
       JSON.stringify(normalizedChoices(choices, answerIndex)),
       row.explanation,
       row.reference,
+      row.source || "manual",
       now,
       now,
     );
@@ -765,6 +839,54 @@ export async function exportBankCsv(context: RequestContext): Promise<Response> 
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
       "Content-Disposition": `attachment; filename="${filename}"`,
+      "Cache-Control": "no-store",
+    },
+  });
+}
+
+/**
+ * `GET /api/banks/export`: exports every question across every bank owned by the signed-in player.
+ */
+export async function exportAllBanksCsv(context: RequestContext): Promise<Response> {
+  const { user } = await requireUser(context);
+  const { results } = await context.env.DB.prepare(
+    `SELECT b.name AS bank_name, q.prompt, q.choices, q.explanation, q.reference
+       FROM user_bank_questions q
+       JOIN user_banks b ON b.id = q.bank_id
+      WHERE b.owner_id = ?
+      ORDER BY b.updated_at DESC, q.position ASC`,
+  )
+    .bind(user.id)
+    .all<{
+      bank_name: string;
+      prompt: string;
+      choices: string;
+      explanation: string;
+      reference: string | null;
+    }>();
+
+  const columns = ["bank_name", ...IMPORT_COLUMNS];
+  const lines = [columns.join(",")];
+  for (const row of results) {
+    const choices = JSON.parse(row.choices) as string[];
+    lines.push(
+      [
+        csvCell(row.bank_name),
+        csvCell(row.prompt),
+        csvCell(choices[0] ?? ""),
+        csvCell(choices[1] ?? ""),
+        csvCell(choices[2] ?? ""),
+        csvCell(choices[3] ?? ""),
+        csvCell(choices[0] ?? ""),
+        csvCell(row.explanation),
+        csvCell(row.reference ?? ""),
+      ].join(","),
+    );
+  }
+  return new Response(`${lines.join("\n")}\n`, {
+    headers: {
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": 'attachment; filename="whizard-all-banks.csv"',
       "Cache-Control": "no-store",
     },
   });

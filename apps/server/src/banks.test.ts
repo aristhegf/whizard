@@ -336,3 +336,98 @@ describe("the account's data", () => {
     expect(questions!.n).toBe(0);
   });
 });
+
+describe("advanced bank management", () => {
+  it("allows reading public banks without authentication", async () => {
+    const { env, headers: adaHeaders } = await playerEnv("ada");
+    const id = await makeBank(env, adaHeaders, "Public Bank");
+
+    // Make bank public
+    const updated = await call(env, `/api/banks/${id}`, {
+      method: "PATCH",
+      ...jsonBody(adaHeaders, { isPublic: true }),
+    });
+    expect(updated.status).toBe(200);
+
+    // Read by unauthenticated visitor
+    const guestRes = await call(env, `/api/banks/${id}`);
+    expect(guestRes.status).toBe(200);
+    const body = (await guestRes.json()) as { bank: { name: string; isPublic: boolean } };
+    expect(body.bank.name).toBe("Public Bank");
+    expect(body.bank.isPublic).toBe(true);
+
+    // Private bank 404s for others
+    const privateId = await makeBank(env, adaHeaders, "Private Bank");
+    const privateGuestRes = await call(env, `/api/banks/${privateId}`);
+    expect(privateGuestRes.status).toBe(404);
+  });
+
+  it("deletes multiple questions in one request", async () => {
+    const { env, headers } = await playerEnv("ada");
+    const id = await makeBank(env, headers);
+    const q1Res = await call(env, `/api/banks/${id}/questions`, {
+      method: "POST",
+      ...jsonBody(headers, question({ prompt: "Question one?" })),
+    });
+    const q1 = ((await q1Res.json()) as { question: { id: string } }).question;
+
+    const q2Res = await call(env, `/api/banks/${id}/questions`, {
+      method: "POST",
+      ...jsonBody(headers, question({ prompt: "Question two?" })),
+    });
+    const q2 = ((await q2Res.json()) as { question: { id: string } }).question;
+
+    const bulkDel = await call(env, `/api/banks/${id}/questions/bulk-delete`, {
+      method: "POST",
+      ...jsonBody(headers, { questionIds: [q1.id, q2.id] }),
+    });
+    expect(bulkDel.status).toBe(200);
+    const body = (await bulkDel.json()) as { ok: boolean; deleted: number };
+    expect(body.deleted).toBe(2);
+
+    const detail = await call(env, `/api/banks/${id}`, { headers });
+    const detailBody = (await detail.json()) as { bank: { questions: unknown[] } };
+    expect(detailBody.bank.questions).toHaveLength(0);
+  });
+
+  it("detects identical questions across user banks", async () => {
+    const { env, headers } = await playerEnv("ada");
+    const bank1 = await makeBank(env, headers, "Bank 1");
+    const bank2 = await makeBank(env, headers, "Bank 2");
+
+    await call(env, `/api/banks/${bank1}/questions`, {
+      method: "POST",
+      ...jsonBody(headers, question({ prompt: "Shared prompt across banks?" })),
+    });
+
+    await call(env, `/api/banks/${bank2}/questions`, {
+      method: "POST",
+      ...jsonBody(headers, question({ prompt: "Shared prompt across banks?" })),
+    });
+
+    const check = await call(env, `/api/banks/${bank2}/duplicates`, { headers });
+    expect(check.status).toBe(200);
+    const body = (await check.json()) as {
+      duplicates: { prompt: string; otherBankName: string }[];
+    };
+    expect(body.duplicates).toHaveLength(1);
+    expect(body.duplicates[0]!.prompt).toBe("Shared prompt across banks?");
+    expect(body.duplicates[0]!.otherBankName).toBe("Bank 1");
+  });
+
+  it("exports all banks into one consolidated CSV", async () => {
+    const { env, headers } = await playerEnv("ada");
+    const bank1 = await makeBank(env, headers, "WAEC Deck");
+    await call(env, `/api/banks/${bank1}/questions`, {
+      method: "POST",
+      ...jsonBody(headers, question({ prompt: "First deck question?" })),
+    });
+
+    const exported = await call(env, "/api/banks/export", { headers });
+    expect(exported.status).toBe(200);
+    const text = await exported.text();
+    expect(text).toContain("bank_name,question,option1");
+    expect(text).toContain("WAEC Deck");
+    expect(text).toContain("First deck question?");
+  });
+});

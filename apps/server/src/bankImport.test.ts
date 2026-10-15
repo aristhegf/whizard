@@ -46,10 +46,14 @@ async function errorOf(response: Response): Promise<{ code: string; message: str
 }
 
 /** Creates a bank and returns its id. */
-async function makeBank(env: Env, headers: Record<string, string>): Promise<string> {
+async function makeBank(
+  env: Env,
+  headers: Record<string, string>,
+  name = "Import bank",
+): Promise<string> {
   const created = await call(env, "/api/banks", {
     method: "POST",
-    ...jsonBody(headers, { name: "Import bank" }),
+    ...jsonBody(headers, { name }),
   });
   expect(created.status).toBe(201);
   const { bank } = (await created.json()) as { bank: { id: string } };
@@ -62,6 +66,13 @@ const KEYED_CSV = [
   'Which planet is known as the Red Planet?,Mars,Venus,Jupiter,Saturn,Mars,"Iron oxide dust makes Mars red.",',
   'Which gas do plants absorb?,Oxygen,Carbon dioxide,Nitrogen,Helium,B,"Photosynthesis takes in carbon dioxide.",',
   '"What is ""the largest ocean""?",Atlantic,Pacific,Indian,Arctic,Pacific,"It covers about a third of the planet.",',
+].join("\n");
+
+/** A small unkeyed CSV: two rows waiting for answers. */
+const UNKEYED_CSV = [
+  "question,option1,option2,option3,option4,answer,explanation",
+  "First?,Alpha,Beta,Gamma,Delta,,,",
+  "Second?,Alpha,Beta,Gamma,Delta,,,",
 ].join("\n");
 
 /** Stubs the Gemini endpoint; the handler is given the ids the server asked about. */
@@ -236,12 +247,6 @@ describe("staging a CSV import", () => {
 });
 
 describe("answering rows with the AI", () => {
-  const UNKEYED_CSV = [
-    "question,option1,option2,option3,option4,answer,explanation",
-    "First?,Alpha,Beta,Gamma,Delta,,,",
-    "Second?,Alpha,Beta,Gamma,Delta,,,",
-  ].join("\n");
-
   it("says so plainly when the server has no key configured", async () => {
     const { env, headers } = await playerEnv("ada");
     const bankId = await makeBank(env, headers);
@@ -710,4 +715,68 @@ describe("a thousand questions", () => {
       expect(question.choices[0]).toBe(`Yes${i}`);
     }
   }, 30_000);
+
+  it("serves repeated identical questions from cache without re-invoking Gemini", async () => {
+    stubGemini((ids) => ({ items: ids.map(confident) }));
+    const { env, headers } = await playerEnv("ada", { GEMINI_API_KEY: "test-key" } as Partial<Env>);
+    const bankId1 = await makeBank(env, headers, "Bank 1");
+    const { import: staged1 } = await asImport(
+      await call(env, `/api/banks/${bankId1}/imports`, {
+        method: "POST",
+        ...jsonBody(headers, { csv: UNKEYED_CSV }),
+      }),
+    );
+
+    // First import calls Gemini
+    const ans1 = await call(env, `/api/banks/${bankId1}/imports/${staged1.id}/answers`, {
+      method: "POST",
+      headers,
+    });
+    expect(ans1.status).toBe(200);
+    expect(fetch).toHaveBeenCalledTimes(1);
+
+    // Second import with identical questions
+    const bankId2 = await makeBank(env, headers, "Bank 2");
+    const { import: staged2 } = await asImport(
+      await call(env, `/api/banks/${bankId2}/imports`, {
+        method: "POST",
+        ...jsonBody(headers, { csv: UNKEYED_CSV }),
+      }),
+    );
+
+    // Second import should be fulfilled from cache: fetch not called again!
+    const ans2 = await call(env, `/api/banks/${bankId2}/imports/${staged2.id}/answers`, {
+      method: "POST",
+      headers,
+    });
+    expect(ans2.status).toBe(200);
+    const { import: next2 } = await asImport(ans2);
+    expect(next2.counts.ready).toBe(2);
+    expect(next2.counts.pending).toBe(0);
+    expect(fetch).toHaveBeenCalledTimes(1); // Still 1! Cache hit!
+  });
+
+  it("stores question source on committed questions", async () => {
+    stubGemini((ids) => ({ items: ids.map(confident) }));
+    const { env, headers } = await playerEnv("ada", { GEMINI_API_KEY: "test-key" } as Partial<Env>);
+    const bankId = await makeBank(env, headers);
+    const { import: staged } = await asImport(
+      await call(env, `/api/banks/${bankId}/imports`, {
+        method: "POST",
+        ...jsonBody(headers, { csv: UNKEYED_CSV }),
+      }),
+    );
+    await call(env, `/api/banks/${bankId}/imports/${staged.id}/answers`, {
+      method: "POST",
+      headers,
+    });
+    await call(env, `/api/banks/${bankId}/imports/${staged.id}/commit`, {
+      method: "POST",
+      headers,
+    });
+
+    const res = await call(env, `/api/banks/${bankId}`, { headers });
+    const body = (await res.json()) as { bank: { questions: { source: string }[] } };
+    expect(body.bank.questions[0]!.source).toBe("ai");
+  });
 });

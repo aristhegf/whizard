@@ -33,6 +33,7 @@ export interface PlayerBankQuestion {
   choices: string[];
   explanation: string;
   reference: string | null;
+  source?: ImportRowSource;
 }
 
 /** A bank as the list shows it: its labels and how many questions it holds. */
@@ -42,6 +43,7 @@ export interface PlayerBank {
   exam: string | null;
   subject: string | null;
   questionCount: number;
+  isPublic?: boolean;
   createdAt: number;
   updatedAt: number;
 }
@@ -70,17 +72,23 @@ export const bankCreateSchema = z.object({
   name: trimmed("The bank’s name", BANK_NAME_MAX),
   exam: label.optional(),
   subject: label.optional(),
+  isPublic: z.boolean().optional(),
 });
 
-/** `PATCH /api/banks/:id`: whatever of the three fields is being changed. */
+/** `PATCH /api/banks/:id`: whatever of the fields is being changed. */
 export const bankUpdateSchema = z
   .object({
     name: trimmed("The bank’s name", BANK_NAME_MAX).optional(),
     exam: label.optional(),
     subject: label.optional(),
+    isPublic: z.boolean().optional(),
   })
   .refine(
-    (body) => body.name !== undefined || body.exam !== undefined || body.subject !== undefined,
+    (body) =>
+      body.name !== undefined ||
+      body.exam !== undefined ||
+      body.subject !== undefined ||
+      body.isPublic !== undefined,
     { message: "Nothing to change." },
   );
 
@@ -176,3 +184,13 @@ export const bankImportPatchSchema = z
   });
 
 export type BankImportPatch = z.infer<typeof bankImportPatchSchema>;
+
+/** `POST /api/banks/:id/questions/bulk-delete`: delete multiple questions at once. */
+export const bankBulkDeleteSchema = z.object({
+  questionIds: z
+    .array(z.string().min(1))
+    .min(1, "Select at least one question to delete.")
+    .max(MAX_QUESTIONS_PER_BANK),
+});
+
+export type BankBulkDelete = z.infer<typeof bankBulkDeleteSchema>;

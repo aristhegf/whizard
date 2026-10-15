@@ -71,6 +71,8 @@ import {
 import { createTopic, deleteTopic, listTopics, updateTopic, uploadTopicArt } from "./adminTopics";
 import {
   addBankQuestion,
+  bulkDeleteBankQuestions,
+  checkBankDuplicates,
   createBank,
   deleteBank,
   deleteBankQuestion,
@@ -82,6 +84,7 @@ import {
 import {
   commitImport,
   discardImport,
+  exportAllBanksCsv,
   exportBankCsv,
   getImport,
   latestImport,
@@ -358,11 +361,14 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["DELETE", /^\/api\/groups\/([^/]+)$/, deleteGroup],
   ["GET", /^\/api\/groups\/([^/]+)\/leaderboard$/, getGroupLeaderboard],
 
+  ["GET", /^\/api\/banks\/export$/, exportAllBanksCsv],
   ["GET", /^\/api\/banks$/, listBanks],
   ["POST", /^\/api\/banks$/, createBank],
   ["GET", /^\/api\/banks\/([^/]+)$/, getBank],
   ["PATCH", /^\/api\/banks\/([^/]+)$/, updateBank],
   ["DELETE", /^\/api\/banks\/([^/]+)$/, deleteBank],
+  ["GET", /^\/api\/banks\/([^/]+)\/duplicates$/, checkBankDuplicates],
+  ["POST", /^\/api\/banks\/([^/]+)\/questions\/bulk-delete$/, bulkDeleteBankQuestions],
   ["POST", /^\/api\/banks\/([^/]+)\/questions$/, addBankQuestion],
   ["PATCH", /^\/api\/banks\/([^/]+)\/questions\/([^/]+)$/, updateBankQuestion],
   ["DELETE", /^\/api\/banks\/([^/]+)\/questions\/([^/]+)$/, deleteBankQuestion],

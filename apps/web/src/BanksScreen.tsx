@@ -22,8 +22,10 @@ import {
 import { ApiError, useAccount } from "./account";
 import {
   addQuestion,
+  allBanksExportHref,
   answerBankImport,
   bankExportHref,
+  bulkDeleteQuestions,
   commitBankImport,
   createBank,
   deleteBank,
@@ -31,6 +33,7 @@ import {
   discardBankImport,
   editQuestion,
   fetchBank,
+  fetchBankDuplicates,
   fetchBanks,
   fetchImportDraft,
   patchBankImport,
@@ -201,9 +204,16 @@ function BankList() {
       <ErrorLine error={banks.error} />
 
       <section className="stack" aria-labelledby="your-banks-title">
-        <h2 id="your-banks-title" className="section-title">
-          Your banks
-        </h2>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <h2 id="your-banks-title" className="section-title">
+            Your banks
+          </h2>
+          {banks.data && banks.data.length > 0 && (
+            <a className="btn btn-small" href={allBanksExportHref} download>
+              Export all banks
+            </a>
+          )}
+        </div>
         {banks.data === null ? (
           banks.error ? null : (
             <Loading />
@@ -249,20 +259,40 @@ function BankDetail({ id }: { id: string }) {
   const [name, setName] = useState(loaded?.name ?? "");
   const [exam, setExam] = useState(loaded?.exam ?? "");
   const [subject, setSubject] = useState(loaded?.subject ?? "");
+  const [isPublic, setIsPublic] = useState(loaded?.isPublic ?? false);
   const [seeded, setSeeded] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const save = useAction(setSaveError);
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [importOpen, setImportOpen] = useState(false);
+  const [duplicates, setDuplicates] = useState<
+    { questionId: string; prompt: string; otherBankId: string; otherBankName: string }[]
+  >([]);
+  const [selectedQIds, setSelectedQIds] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
+
   if (loaded && !seeded) {
     setName(loaded.name);
     setExam(loaded.exam ?? "");
     setSubject(loaded.subject ?? "");
+    setIsPublic(loaded.isPublic ?? false);
     setSeeded(true);
   }
 
   const reload = () => bank.reload();
+
+  useEffect(() => {
+    let live = true;
+    fetchBankDuplicates(id)
+      .then((found) => {
+        if (live) setDuplicates(found);
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [id, loaded?.questionCount]);
 
   const handleSave = (event: FormEvent) => {
     event.preventDefault();
@@ -273,6 +303,7 @@ function BankDetail({ id }: { id: string }) {
         name: trimmed,
         exam: exam.trim() || null,
         subject: subject.trim() || null,
+        isPublic,
       });
       toast.show({ title: "Bank saved", status: "success" });
       reload();
@@ -312,6 +343,47 @@ function BankDetail({ id }: { id: string }) {
       yes: "Delete question",
       run: () => {
         void action.run(() => deleteQuestion(id, question.id).then(reload));
+      },
+    });
+  };
+
+  const toggleSelectAll = (checked: boolean) => {
+    if (checked && loaded) {
+      setSelectedQIds(new Set(loaded.questions.map((q) => q.id)));
+    } else {
+      setSelectedQIds(new Set());
+    }
+  };
+
+  const toggleSelectQ = (questionId: string, checked: boolean) => {
+    setSelectedQIds((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(questionId);
+      else next.delete(questionId);
+      return next;
+    });
+  };
+
+  const confirmBulkDelete = () => {
+    if (selectedQIds.size === 0) return;
+    ask({
+      title: `Delete ${selectedQIds.size} ${selectedQIds.size === 1 ? "question" : "questions"}?`,
+      text: "These questions will be permanently removed from this bank.",
+      yes: `Delete ${selectedQIds.size} questions`,
+      run: () => {
+        setBulkBusy(true);
+        bulkDeleteQuestions(id, [...selectedQIds]).then(
+          () => {
+            setSelectedQIds(new Set());
+            setBulkBusy(false);
+            toast.show({ title: "Questions deleted", status: "success" });
+            reload();
+          },
+          (e: unknown) => {
+            setBulkBusy(false);
+            toast.show({ title: errorText(e), status: "error" });
+          },
+        );
       },
     });
   };
@@ -362,6 +434,19 @@ function BankDetail({ id }: { id: string }) {
                   />
                 </Field>
               </div>
+              <label
+                className="form-field"
+                style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}
+              >
+                <input
+                  type="checkbox"
+                  checked={isPublic}
+                  onChange={(event) => setIsPublic(event.target.checked)}
+                />
+                <span className="small">
+                  Public bank (anyone with the link can view and practice)
+                </span>
+              </label>
               <ErrorLine error={saveError} />
               <div className="row-actions">
                 <button
@@ -382,6 +467,37 @@ function BankDetail({ id }: { id: string }) {
               </div>
             </form>
           </section>
+
+          {duplicates.length > 0 && (
+            <details
+              className="muted small"
+              style={{
+                padding: "10px 14px",
+                background: "rgb(245 158 11 / 10%)",
+                borderRadius: "var(--radius)",
+                border: "1px solid rgb(245 158 11 / 30%)",
+              }}
+            >
+              <summary style={{ cursor: "pointer", color: "#fcd34d", fontWeight: 600 }}>
+                ⚠️ {duplicates.length} {duplicates.length === 1 ? "question" : "questions"} in this
+                bank also exist in other banks
+              </summary>
+              <ul style={{ margin: "8px 0 4px", paddingLeft: 20 }}>
+                {duplicates.map((d) => (
+                  <li key={d.questionId}>
+                    “{d.prompt}” (also in{" "}
+                    <a
+                      className="btn-link"
+                      {...linkTo(`/banks/${encodeURIComponent(d.otherBankId)}`)}
+                    >
+                      {d.otherBankName}
+                    </a>
+                    )
+                  </li>
+                ))}
+              </ul>
+            </details>
+          )}
 
           <section className="stack" aria-labelledby="import-export-title">
             <h2 id="import-export-title" className="section-title">
@@ -414,9 +530,51 @@ function BankDetail({ id }: { id: string }) {
           )}
 
           <section className="stack" aria-labelledby="questions-title">
-            <h2 id="questions-title" className="section-title">
-              Questions ({detail.questions.length})
-            </h2>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: 8,
+              }}
+            >
+              <h2 id="questions-title" className="section-title">
+                Questions ({detail.questions.length})
+              </h2>
+              {detail.questions.length > 0 && (
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <label
+                    className="small muted"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      cursor: "pointer",
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={
+                        selectedQIds.size > 0 && selectedQIds.size === detail.questions.length
+                      }
+                      onChange={(e) => toggleSelectAll(e.target.checked)}
+                    />
+                    Select all
+                  </label>
+                  {selectedQIds.size > 0 && (
+                    <button
+                      className="btn btn-small danger"
+                      type="button"
+                      disabled={bulkBusy}
+                      onClick={confirmBulkDelete}
+                    >
+                      Delete {selectedQIds.size} selected
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
             {detail.questions.length === 0 && !adding && (
               <p className="muted">No questions yet. Add the first one.</p>
             )}
@@ -436,8 +594,21 @@ function BankDetail({ id }: { id: string }) {
                     ) : (
                       <>
                         <div className="person bank-q">
-                          <span className="person-name">{question.prompt}</span>
-                          <span className="muted small">Correct: {question.choices[0]}</span>
+                          <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                            <input
+                              type="checkbox"
+                              checked={selectedQIds.has(question.id)}
+                              onChange={(e) => toggleSelectQ(question.id, e.target.checked)}
+                              style={{ marginTop: 3 }}
+                            />
+                            <div>
+                              <span className="person-name">
+                                {question.prompt}
+                                {question.source === "ai" && <span className="bank-badge">AI</span>}
+                              </span>
+                              <span className="muted small">Correct: {question.choices[0]}</span>
+                            </div>
+                          </div>
                         </div>
                         <div className="row-actions">
                           <button
@@ -601,6 +772,24 @@ function QuestionFields({
 
 // The import panel -------------------------------------------------------------------------------
 
+const CSV_TEMPLATE =
+  "question,option1,option2,option3,option4,answer,explanation,reference\n" +
+  '"Which planet is known as the Red Planet?","Mars","Venus","Jupiter","Mercury","Mars","Mars appears reddish due to iron oxide on its surface.",""\n' +
+  '"What is the chemical symbol for water?","H2O","CO2","O2","NaCl","H2O","Water consists of two hydrogen atoms and one oxygen atom.",""\n' +
+  '"What is the largest ocean on Earth?","Pacific","Atlantic","Indian","Arctic","Pacific","The Pacific Ocean is the largest and deepest ocean.",""\n';
+
+function downloadCsvTemplate() {
+  const blob = new Blob([CSV_TEMPLATE], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", "whizard-bank-template.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
 /**
  * A staged CSV import under review: counts at the top, the rows still needing a person below,
  * and the buttons that answer, accept or commit them. Nothing here reaches the bank until the
@@ -612,7 +801,9 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
   const [fileBusy, setFileBusy] = useState(false);
   const [patchBusy, setPatchBusy] = useState(false);
   const [commitBusy, setCommitBusy] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const aiBusy = useRef(false);
+  const retryAttempts = useRef(0);
   const [aiStopped, setAiStopped] = useState(false);
   const [aiNote, setAiNote] = useState<string | null>(null);
   const [aiTick, setAiTick] = useState(0);
@@ -644,6 +835,7 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
     answerBankImport(bankId, draft.id).then(
       (next) => {
         aiBusy.current = false;
+        retryAttempts.current = 0;
         if (!live) return;
         setDraft(next);
         setAiNote(null);
@@ -652,10 +844,17 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
         aiBusy.current = false;
         if (!live) return;
         if (e instanceof ApiError && e.code === "ai_busy") {
-          setAiNote("The answer service is busy — trying again shortly.");
+          retryAttempts.current += 1;
+          const delay = Math.min(
+            30000,
+            Math.round(
+              4000 * Math.pow(1.5, Math.min(retryAttempts.current, 5)) + Math.random() * 3000,
+            ),
+          );
+          setAiNote(`The answer service is busy — retrying in ${Math.round(delay / 1000)}s.`);
           window.setTimeout(() => {
             if (live) setAiTick((tick) => tick + 1);
-          }, 8000);
+          }, delay);
         } else {
           setAiStopped(true);
           setAiNote(errorText(e));
@@ -667,10 +866,7 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
     };
   }, [draft, bankId, aiStopped, aiTick]);
 
-  const handleFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
+  const processFile = (file: File) => {
     setFileBusy(true);
     setError(null);
     file.text().then(
@@ -695,6 +891,33 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
         setError("Couldn’t read that file. Try saving it as CSV and picking it again.");
       },
     );
+  };
+
+  const handleFile = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (file) processFile(file);
+  };
+
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!fileBusy) setDragging(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDragging(false);
+  };
+
+  const handleDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDragging(false);
+    if (fileBusy) return;
+    const file = event.dataTransfer.files?.[0];
+    if (file) processFile(file);
   };
 
   const applyPatch = (patch: Parameters<typeof patchBankImport>[2]) => {
@@ -772,24 +995,63 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
   }
 
   const counts = draft?.counts;
+  const answeredCount = counts ? counts.total - counts.pending : 0;
+  const progressPct =
+    counts && counts.total > 0 ? Math.round((answeredCount / counts.total) * 100) : 0;
 
   return (
     <section className="stack" aria-labelledby="import-title">
       <h3 id="import-title" className="section-title">
         Import questions
       </h3>
-      <label className="form-field">
-        <span className="form-label">CSV file</span>
-        <input type="file" accept=".csv,text/csv" onChange={handleFile} disabled={fileBusy} />
-        <span className="form-hint">
-          {draft
-            ? "Choosing a file replaces the import you have going for this bank."
-            : "Rows without an answer get one from the AI, or from you in the review."}
-        </span>
-      </label>
+      <div
+        className={`import-dropzone${dragging ? " dragging" : ""}`}
+        onDragOver={handleDragOver}
+        onDragEnter={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <label className="form-field" style={{ margin: 0 }}>
+          <span className="form-label">CSV file</span>
+          <input type="file" accept=".csv,text/csv" onChange={handleFile} disabled={fileBusy} />
+          <span className="form-hint">
+            {draft
+              ? "Choosing or dropping a file replaces the import you have going for this bank."
+              : "Drag and drop your CSV file here, or click to choose one. Rows without an answer get one from the AI."}
+          </span>
+        </label>
+        <div>
+          <button
+            type="button"
+            className="btn-link small"
+            onClick={downloadCsvTemplate}
+            style={{ padding: 0 }}
+          >
+            Download sample CSV template
+          </button>
+        </div>
+      </div>
 
       {draft && counts ? (
         <>
+          <div
+            className="import-progress-container"
+            role="progressbar"
+            aria-valuenow={progressPct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Import progress"
+          >
+            <div className="import-progress-track">
+              <div className="import-progress-fill" style={{ width: `${progressPct}%` }} />
+            </div>
+            <p className="muted small" style={{ margin: 0 }}>
+              {counts.pending > 0
+                ? `Answering questions with AI… ${answeredCount} of ${counts.total} ready (${progressPct}%)`
+                : `All ${counts.total} questions answered (100%)`}
+            </p>
+          </div>
+
           <p className="muted small" data-testid="import-counts">
             {counts.total} rows · {counts.ready} ready · {counts.withKey} from your answer key ·{" "}
             {counts.aiAnswered} from the AI · {counts.needsReview} need review
@@ -966,11 +1228,13 @@ function ImportFlaggedRow({
             onChange={(event) => onSelected(event.target.checked)}
           />{" "}
           Line {row.row}: {row.prompt}
+          {row.source === "ai" && <span className="bank-badge">AI Suggested</span>}
+          {row.source === "key" && <span className="bank-badge ready">Keyed</span>}
         </span>
       </label>
       {row.review && (
         <p className="muted small" role="status">
-          {row.review}
+          <span className="bank-badge warning">Needs review</span> {row.review}
         </p>
       )}
       {row.aiExplanation && <p className="muted small">AI explanation: {row.aiExplanation}</p>}

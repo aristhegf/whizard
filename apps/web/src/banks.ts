@@ -19,12 +19,13 @@ export const createBank = async (input: {
   name: string;
   exam?: string | null;
   subject?: string | null;
+  isPublic?: boolean;
 }): Promise<PlayerBank> =>
   (await api<{ bank: PlayerBank }>("/api/banks", { method: "POST", body: input })).bank;
 
 export const updateBank = async (
   id: string,
-  input: { name?: string; exam?: string | null; subject?: string | null },
+  input: { name?: string; exam?: string | null; subject?: string | null; isPublic?: boolean },
 ): Promise<PlayerBank> =>
   (
     await api<{ bank: PlayerBank }>(`/api/banks/${encodeURIComponent(id)}`, {
@@ -36,6 +37,30 @@ export const updateBank = async (
 export const deleteBank = async (id: string): Promise<void> => {
   await api<{ ok: true }>(`/api/banks/${encodeURIComponent(id)}`, { method: "DELETE" });
 };
+
+/** Deletes multiple questions from a bank in one request. */
+export const bulkDeleteQuestions = async (bankId: string, questionIds: string[]): Promise<number> =>
+  (
+    await api<{ ok: true; deleted: number }>(
+      `/api/banks/${encodeURIComponent(bankId)}/questions/bulk-delete`,
+      { method: "POST", body: { questionIds } },
+    )
+  ).deleted;
+
+/** Finds questions in this bank that also exist in other banks owned by this player. */
+export const fetchBankDuplicates = async (
+  bankId: string,
+): Promise<{ questionId: string; prompt: string; otherBankId: string; otherBankName: string }[]> =>
+  (
+    await api<{
+      duplicates: {
+        questionId: string;
+        prompt: string;
+        otherBankId: string;
+        otherBankName: string;
+      }[];
+    }>(`/api/banks/${encodeURIComponent(bankId)}/duplicates`)
+  ).duplicates;
 
 /** The body a question form sends: four choices, the first correct. */
 export interface QuestionForm {
@@ -80,6 +105,9 @@ export const deleteQuestion = async (bankId: string, questionId: string): Promis
 /** Where the browser downloads a bank's own CSV, ready to re-import. */
 export const bankExportHref = (bankId: string): string =>
   `/api/banks/${encodeURIComponent(bankId)}/export`;
+
+/** Where the browser downloads all of the player's banks in one CSV. */
+export const allBanksExportHref = "/api/banks/export";
 
 /** The bank's unfinished import draft, or null when there's nothing to continue. */
 export const fetchImportDraft = async (bankId: string): Promise<PlayerBankImport | null> =>
