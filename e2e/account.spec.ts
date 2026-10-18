@@ -361,18 +361,14 @@ test("pings a friend from the friends page and the lobby", async ({ browser }) =
   await expect(quiet).toHaveAttribute("aria-checked", "true");
 });
 
-test("players choose whether they appear on the public leaderboard", async ({ page }) => {
+test("signed-in players appear on the leaderboard without an opt-out toggle in settings", async ({
+  page,
+}) => {
   await withPasskeys(page);
   await signUp(page, uniqueUsername());
 
   await page.goto("/account/settings");
-  const setting = page.getByRole("switch", { name: "Show me on the leaderboard" });
-  await expect(setting).toHaveAttribute("aria-checked", "false");
-  await setting.click();
-  await expect(setting).toHaveAttribute("aria-checked", "true");
-
-  await page.reload();
-  await expect(setting).toHaveAttribute("aria-checked", "true");
+  await expect(page.getByRole("switch", { name: "Show me on the leaderboard" })).toHaveCount(0);
 });
 
 test("the profile signs out and opens settings from the top, and settings can't sign out", async ({

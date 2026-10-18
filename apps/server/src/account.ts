@@ -79,10 +79,7 @@ export async function updateMe(context: RequestContext): Promise<Response> {
       update.quietHours === undefined ? user.quiet_start : (update.quietHours?.start ?? null),
     quiet_end: update.quietHours === undefined ? user.quiet_end : (update.quietHours?.end ?? null),
     time_zone: update.timeZone === undefined ? user.time_zone : validTimeZone(update.timeZone),
-    public_leaderboard:
-      update.publicLeaderboard === undefined
-        ? user.public_leaderboard
-        : Number(update.publicLeaderboard),
+    public_leaderboard: 1,
   };
 
   await context.env.DB.prepare(
