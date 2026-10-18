@@ -60,13 +60,11 @@ export function PrivacyScreen() {
               your record against them and your place on group leaderboards.
             </li>
             <li>
-              If you turn on the public leaderboard in your settings: your name, avatar and number
-              of wins are shown to everyone on the{" "}
+              Your name, avatar and number of wins are shown on the{" "}
               <a className="btn-link" {...linkTo("/stats")}>
                 stats page
-              </a>
-              . It’s off unless you turn it on, and turning it off takes you off within a few
-              minutes.
+              </a>{" "}
+              leaderboard when you win games with friends.
             </li>
           </ul>
           <p>
