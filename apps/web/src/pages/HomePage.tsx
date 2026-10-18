@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import {
   CATALOG,
   GAME_GROUPS,
@@ -15,10 +15,8 @@ import { Icon } from "../ui/Icon";
 import { LiveCount } from "../ui/LiveCount";
 import { useToast } from "../ui/toast";
 
-/** Desktop cards keep this fixed size; the shelf shows as many whole cards as fit its width. */
-const CARD_W = 300;
-/** Keep in sync with the flex gap on `.play-page .play-grid` in pages.css. */
-const CARD_GAP = 14;
+/** Eight cards fit the intended two-row desktop layout. */
+const PAGE_SIZE = 8;
 
 /** The home screen: what to play, all on one screen on laptops and computers. */
 export function HomePage() {
@@ -28,31 +26,14 @@ export function HomePage() {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [mobileIndex, setMobileIndex] = useState(0);
   const shelfRef = useRef<HTMLUListElement>(null);
-  // Desktop measures its shelf so each page holds one row of whole fixed-size cards.
-  const shelfBoxRef = useRef<HTMLDivElement>(null);
-  const [perPage, setPerPage] = useState(4);
   const paged = useMediaQuery("(min-width: 1100px)");
 
   const games = CATALOG.filter((g) => group === "all" || g.groups.includes(group)).sort(
     (a, b) => Number(isPlayable(b)) - Number(isPlayable(a)),
   );
-  const pages = Math.max(1, Math.ceil(games.length / perPage));
+  const pages = Math.max(1, Math.ceil(games.length / PAGE_SIZE));
   const current = Math.min(page, pages - 1);
-  const shown = games.slice(current * perPage, (current + 1) * perPage);
-
-  useEffect(() => {
-    if (!paged) return;
-    const box = shelfBoxRef.current;
-    if (!box) return;
-    const measure = () => {
-      const width = box.clientWidth;
-      setPerPage(Math.max(1, Math.floor((width + CARD_GAP) / (CARD_W + CARD_GAP))));
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(box);
-    return () => observer.disconnect();
-  }, [paged]);
+  const shown = games.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
 
   const chooseGroup = (next: GameGroup | "all") => {
     setGroup(next);
@@ -165,11 +146,7 @@ export function HomePage() {
           )}
 
           {paged && (
-            <div
-              ref={shelfBoxRef}
-              className="play-shelf"
-              style={{ "--play-card-w": `${CARD_W}px` } as CSSProperties}
-            >
+            <div className="play-shelf">
               {shown.length === 0 ? (
                 <p className="muted play-empty">No other games of this kind yet.</p>
               ) : (
@@ -261,13 +238,14 @@ function GameCard({ game }: { game: CatalogGame }) {
   const label = `Play ${game.name}`;
 
   const action = game.href ? (
-    <a className="play-card-play" aria-label={label} {...linkTo(game.href)}>
-      <Icon name="play" size={20} fill stroke={1.5} />
+    <a className="play-btn" aria-label={label} {...linkTo(game.href)}>
+      Play
+      <Icon name="arrowRight" size={16} stroke={2.6} />
     </a>
   ) : game.starts ? (
     // Games without a page of their own open a room straight away.
     <button
-      className="play-card-play"
+      className="play-btn"
       aria-label={label}
       aria-busy={opening}
       disabled={opening}
@@ -279,14 +257,11 @@ function GameCard({ game }: { game: CatalogGame }) {
         });
       }}
     >
-      {opening ? (
-        <Icon name="repeat" size={20} />
-      ) : (
-        <Icon name="play" size={20} fill stroke={1.5} />
-      )}
+      {opening ? "Opening…" : "Play"}
+      {!opening && <Icon name="arrowRight" size={16} stroke={2.6} />}
     </button>
   ) : (
-    <span className="play-card-soon">Coming soon</span>
+    <span className="play-btn soon">Coming soon</span>
   );
 
   return (
@@ -294,21 +269,16 @@ function GameCard({ game }: { game: CatalogGame }) {
       <div className="play-card-art-wrap">
         <img className="play-card-art" src={game.art} alt="" />
       </div>
-      <div className="play-card-panel">
-        <span className="play-card-badge" aria-hidden="true">
-          <Icon name={game.icon} size={20} />
-          <Icon name="crown" size={13} fill className="play-card-crown" />
-        </span>
+      <div className="play-card-body">
         <h3 className="play-card-name">{game.name}</h3>
-        {action}
-        <span className="play-card-desc-pill">
-          <Icon name={game.icon} size={13} />
-          <span>{game.description}</span>
-        </span>
-        <p className="players play-card-players">
-          <Icon name="users" size={13} />
-          {game.players}
-        </p>
+        <p className="play-card-desc">{game.description}</p>
+        <div className="play-card-foot">
+          <span className="players">
+            <Icon name="users" size={14} />
+            {game.players}
+          </span>
+          {action}
+        </div>
       </div>
     </li>
   );
