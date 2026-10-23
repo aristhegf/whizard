@@ -25,6 +25,8 @@ export interface CatalogGame {
    */
   groups: [GameGroup] | [GameGroup, GameGroup];
   art: string;
+  /** The glyph on the card's badge. */
+  icon: IconName;
   /** Top and bottom of the card's colour wash. */
   colors: [string, string];
   /** Where the card goes, or null if it opens a room straight away or is still being made. */
@@ -44,6 +46,7 @@ export const CATALOG: CatalogGame[] = [
     players: "1-20 players",
     groups: ["quiz", "party"],
     art: "/art/games/quiz.webp",
+    icon: "help",
     colors: ["#ff8c1a", "#4a1530"],
     href: "/games/quiz",
   },
@@ -54,6 +57,7 @@ export const CATALOG: CatalogGame[] = [
     players: "1-20 players",
     groups: ["puzzle"],
     art: "/art/games/jigsaw.webp",
+    icon: "puzzle",
     colors: ["#ffb52c", "#3d1a6e"],
     href: "/games/jigsaw",
   },
@@ -64,6 +68,7 @@ export const CATALOG: CatalogGame[] = [
     players: "1-20 players",
     groups: ["skill"],
     art: "/art/games/word-rush.webp",
+    icon: "letters",
     colors: ["#6b45ff", "#23145a"],
     href: null,
     starts: "word-rush",
@@ -75,6 +80,7 @@ export const CATALOG: CatalogGame[] = [
     players: "1-12 players",
     groups: ["skill", "puzzle"],
     art: "/art/games/memory.webp",
+    icon: "star",
     colors: ["#15b58c", "#0b2a3c"],
     href: null,
     starts: "memory",
@@ -86,6 +92,7 @@ export const CATALOG: CatalogGame[] = [
     players: "1-20 players",
     groups: ["puzzle", "brain"],
     art: "/art/games/logic.webp",
+    icon: "grid",
     colors: ["#1aa6ff", "#0c1d5c"],
     href: null,
     starts: "logic",
@@ -97,6 +104,7 @@ export const CATALOG: CatalogGame[] = [
     players: "1-20 players",
     groups: ["puzzle", "brain"],
     art: "/art/games/connections.webp",
+    icon: "link2",
     colors: ["#b05bff", "#2a0f5c"],
     href: null,
     starts: "connections",
@@ -108,6 +116,7 @@ export const CATALOG: CatalogGame[] = [
     players: "1-20 players",
     groups: ["skill"],
     art: "/art/games/reaction.webp",
+    icon: "bolt",
     colors: ["#2f78ff", "#101c5e"],
     href: null,
     starts: "reaction",
@@ -119,6 +128,7 @@ export const CATALOG: CatalogGame[] = [
     players: "1-20 players",
     groups: ["skill", "puzzle"],
     art: "/art/games/spot-it.webp",
+    icon: "search",
     colors: ["#3ccc45", "#0d3230"],
     href: null,
     starts: "spot-it",
@@ -130,6 +140,7 @@ export const CATALOG: CatalogGame[] = [
     players: "3-20 players",
     groups: ["party"],
     art: "/art/games/most-likely-to.webp",
+    icon: "users",
     colors: ["#ff4545", "#4a0c26"],
     href: null,
   },
@@ -140,6 +151,7 @@ export const CATALOG: CatalogGame[] = [
     players: "3-20 players",
     groups: ["couples", "party"],
     art: "/art/games/how-well.webp",
+    icon: "heart",
     colors: ["#a347ff", "#2d0d5c"],
     href: null,
   },
@@ -150,6 +162,7 @@ export const CATALOG: CatalogGame[] = [
     players: "4-12 players",
     groups: ["party"],
     art: "/art/games/impostor.webp",
+    icon: "shield",
     colors: ["#5b3cf0", "#171456"],
     href: null,
   },
