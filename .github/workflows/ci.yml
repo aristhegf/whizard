@@ -53,6 +53,96 @@ jobs:
           path: test-results/
           retention-days: 7
 
+  # Deploys each PR to a separate disposable worker so it can be previewed live.
+  # Production keeps serving the deploy job on main, which is untouched here.
+  preview:
+    needs: [check]
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Check for Cloudflare credentials
+        id: credentials
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Skipping preview: add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID as repository secrets."
+          fi
+      - uses: actions/checkout@v7
+        if: steps.credentials.outputs.ready
+      - uses: pnpm/action-setup@v6
+        if: steps.credentials.outputs.ready
+      - uses: actions/setup-node@v7
+        if: steps.credentials.outputs.ready
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+        if: steps.credentials.outputs.ready
+      - name: Point at the remote database
+        if: steps.credentials.outputs.ready
+        working-directory: apps/server
+        run: ./scripts/use-remote-db.sh
+      - name: Build the app
+        if: steps.credentials.outputs.ready
+        run: pnpm build
+      # Version preview URLs aren't generated for workers with Durable Objects, so each PR
+      # deploys to a separate disposable worker instead. The production worker is untouched.
+      - name: Deploy the preview worker
+        id: upload
+        if: steps.credentials.outputs.ready
+        working-directory: apps/web
+        run: |
+          set -o pipefail
+          pnpm exec wrangler delete whizard-pr-preview --force 2> /dev/null || true
+          pnpm exec wrangler deploy --name whizard-pr-preview 2>&1 | tee deploy.log
+          url=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' deploy.log | head -1 || true)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Preview: $url" >> "$GITHUB_STEP_SUMMARY"
+          if [ -z "$url" ]; then
+            echo "::error::Preview deploy finished but no URL was printed."
+            exit 1
+          fi
+          curl -fsS --retry 5 --retry-delay 3 --retry-all-errors "$url/" | grep -q "<title>Whizard</title>"
+          curl -fsS --retry 3 --retry-delay 3 --retry-all-errors "$url/api/health" | grep -q '"ok":true'
+          echo "Preview live at $url"
+      - name: Comment the preview URL on the PR
+        if: steps.credentials.outputs.ready && steps.upload.outputs.url != ''
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const marker = "<!-- whizard-preview -->";
+            const url = "${{ steps.upload.outputs.url }}";
+            const body = `${marker}\n**Preview deployment:** ${url}\n\n_Deployed as a separate disposable Cloudflare worker — production is untouched. It shares the production database, so anything you create in the preview is live._`;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
   deploy:
     needs: [check, e2e]
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'

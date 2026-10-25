@@ -86,7 +86,7 @@ function Settings({ user }: { user: AccountUser }) {
       <PlayingSettings user={user} />
       <PingSettings user={user} />
       <Group id="privacy" title="Privacy">
-        <PrivacySettings user={user} />
+        <PrivacySettings />
       </Group>
       <Group id="sign-in" title="Sign-in">
         <Passkeys />
@@ -487,27 +487,12 @@ function PingSettings({ user }: { user: AccountUser }) {
 
 // Privacy, sign-in and data -----------------------------------------------------------------------
 
-function PrivacySettings({ user }: { user: AccountUser }) {
-  const { busy, save } = useAccountSetting();
+function PrivacySettings() {
   return (
-    <>
-      <Row
-        name="Show me on the leaderboard"
-        nameId="pref-leaderboard"
-        control={
-          <Switch
-            checked={user.publicLeaderboard}
-            disabled={busy}
-            onChange={(on) => save({ publicLeaderboard: on })}
-            labelledBy="pref-leaderboard"
-          />
-        }
-      />
-      <a className="pref pref-link" {...linkTo("/privacy")}>
-        <span className="pref-name">Privacy policy</span>
-        <Icon name="chevronRight" size={18} stroke={2.4} />
-      </a>
-    </>
+    <a className="pref pref-link" {...linkTo("/privacy")}>
+      <span className="pref-name">Privacy policy</span>
+      <Icon name="chevronRight" size={18} stroke={2.4} />
+    </a>
   );
 }
 

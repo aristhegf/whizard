@@ -13,3 +13,5 @@ playwright-report/
 
 # Python bytecode, from running the banana skill scripts.
 __pycache__/
+
+.gemini/

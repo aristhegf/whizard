@@ -50,7 +50,7 @@ export function toAccountUser(row: UserRow): AccountUser {
       row.quiet_start === null || row.quiet_end === null
         ? null
         : { start: row.quiet_start, end: row.quiet_end },
-    publicLeaderboard: row.public_leaderboard === 1,
+    publicLeaderboard: true,
     createdAt: row.created_at,
     admin: row.is_admin === 1,
   };
