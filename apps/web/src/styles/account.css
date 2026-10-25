@@ -328,3 +328,36 @@ fieldset {
   color: #6ee7b7;
   border-color: rgb(16 185 129 / 35%);
 }
+
+.bank-practice-card {
+  padding: 20px 22px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgb(139 92 246 / 15%), rgb(236 72 153 / 10%)), var(--panel);
+  border: 1.5px solid rgb(139 92 246 / 40%);
+  box-shadow: var(--shadow);
+}
+
+.bank-practice-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.bank-practice-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .bank-practice-actions {
+    width: 100%;
+  }
+
+  .bank-practice-actions .btn {
+    flex: 1;
+    justify-content: center;
+  }
+}

@@ -591,7 +591,7 @@ function settingsSummary({
   }
   if (settings) {
     const variant = QUIZ_VARIANTS.find((v) => v.id === settings.variant)?.name;
-    const topic = topicName(settings.category);
+    const topic = settings.bankName ? `${settings.bankName} (Bank)` : topicName(settings.category);
     const level = settings.difficulty[0]!.toUpperCase() + settings.difficulty.slice(1);
     const count = `${settings.count} questions${settings.variant === "elimination" ? " a round" : ""}`;
     const time = settings.variant === "classic" ? "" : `, ${settings.timeLimitSeconds}s each`;
@@ -678,7 +678,11 @@ function Lobby({
     joined.current = connected.length;
   }, [connected.length]);
 
-  const title = settings ? `${topicName(settings.category)} Quiz` : (game?.name ?? "Quiz");
+  const title = settings
+    ? settings.bankName
+      ? `${settings.bankName} Quiz`
+      : `${topicName(settings.category)} Quiz`
+    : (game?.name ?? "Quiz");
   const art =
     (jigsaw?.picture === "photo" && jigsaw.photo
       ? photoPicture(room.code, jigsaw.photo).src

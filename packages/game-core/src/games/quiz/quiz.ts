@@ -350,6 +350,7 @@ export const quizGame: GameModule<
   contentNeeded: (settings, players) => ({
     kind: "quiz-questions",
     category: settings.category,
+    bankId: settings.bankId ?? null,
     // Elimination keeps a few back for sudden death.
     levels:
       settings.variant === "elimination"

@@ -45,7 +45,10 @@ export function newRoomSettings(
   const topic = topicOf(settings);
   const usable = (id: string | null): id is string =>
     !!id && topicIds.includes(id) && !site.topicsOff.includes(id);
-  if (topic && !usable(topic)) {
+  const isBank =
+    typeof (settings as { bankId?: unknown })?.bankId === "string" &&
+    Boolean((settings as { bankId?: unknown }).bankId);
+  if (!isBank && topic && !usable(topic)) {
     const fallback = [topicOf(admin), ...topicIds].find(usable) ?? DEFAULT_QUIZ_SETTINGS.category;
     settings = { ...settings, category: fallback };
   }

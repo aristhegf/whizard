@@ -187,6 +187,25 @@ async function createRoom({ env, request, ctx }: RequestContext): Promise<Respon
       return jsonError(503, "game_off", `${name} is turned off for now. Try again soon.`);
     }
   }
+  const bankId = (settings as { bankId?: unknown } | undefined)?.bankId;
+  if (typeof bankId === "string" && bankId.length > 0) {
+    const bank = await env.DB.prepare("SELECT id, owner_id, is_public FROM user_banks WHERE id = ?")
+      .bind(bankId)
+      .first<{ id: string; owner_id: string; is_public: number }>();
+    if (!bank) {
+      return jsonError(404, "not_found", "That question bank does not exist.");
+    }
+    if (!bank.is_public) {
+      const signedIn = await currentSession(request, env, Date.now());
+      if (!signedIn || signedIn.user.id !== bank.owner_id) {
+        return jsonError(
+          403,
+          "not_yours",
+          "Only the owner can create a room from this private bank.",
+        );
+      }
+    }
+  }
   for (let attempt = 0; attempt < CREATE_ATTEMPTS; attempt++) {
     const code = generateRoomCode();
     if (await env.ROOMS.getByName(code).create(code, settings, game)) {
