@@ -20,6 +20,7 @@
     "clsx": "^2.1.1",
     "img-fx": "^0.5.1",
     "lucide-react": "^1.48.0",
+    "mammoth": "^1.13.0",
     "motion": "^13.4.4",
     "qrcode-generator": "^2.0.4",
     "react": "^19.3.0",
