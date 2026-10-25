@@ -1,4 +1,4 @@
--- Migration 0023: Bank improvements
+-- Migration 0024: Bank improvements
 -- Adds question provenance (source) to user_bank_questions,
 -- adds is_public visibility flag to user_banks,
 -- and creates user_bank_ai_cache for caching AI generated answers.
