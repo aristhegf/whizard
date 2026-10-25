@@ -36,5 +36,7 @@
   ],
   // Daily tidy-up of expired sign-ins and old guest details.
   "triggers": { "crons": ["17 3 * * *"] },
+  // GEMINI_API_KEY is a secret (wrangler secret put GEMINI_API_KEY); the model is a plain var.
+  "vars": { "GEMINI_MODEL": "gemini-2.5-flash" },
   "observability": { "enabled": true },
 }

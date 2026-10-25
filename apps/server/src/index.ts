@@ -71,6 +71,8 @@ import {
 import { createTopic, deleteTopic, listTopics, updateTopic, uploadTopicArt } from "./adminTopics";
 import {
   addBankQuestion,
+  bulkDeleteBankQuestions,
+  checkBankDuplicates,
   createBank,
   deleteBank,
   deleteBankQuestion,
@@ -79,6 +81,17 @@ import {
   updateBank,
   updateBankQuestion,
 } from "./banks";
+import {
+  commitImport,
+  discardImport,
+  exportAllBanksCsv,
+  exportBankCsv,
+  getImport,
+  latestImport,
+  patchImportRows,
+  processImportAnswers,
+  startImport,
+} from "./bankImport";
 import { loadBank } from "./bank";
 import { getPhoto, uploadPhoto } from "./photos";
 import { getSite, siteSettings } from "./settings";
@@ -348,14 +361,25 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["DELETE", /^\/api\/groups\/([^/]+)$/, deleteGroup],
   ["GET", /^\/api\/groups\/([^/]+)\/leaderboard$/, getGroupLeaderboard],
 
+  ["GET", /^\/api\/banks\/export$/, exportAllBanksCsv],
   ["GET", /^\/api\/banks$/, listBanks],
   ["POST", /^\/api\/banks$/, createBank],
   ["GET", /^\/api\/banks\/([^/]+)$/, getBank],
   ["PATCH", /^\/api\/banks\/([^/]+)$/, updateBank],
   ["DELETE", /^\/api\/banks\/([^/]+)$/, deleteBank],
+  ["GET", /^\/api\/banks\/([^/]+)\/duplicates$/, checkBankDuplicates],
+  ["POST", /^\/api\/banks\/([^/]+)\/questions\/bulk-delete$/, bulkDeleteBankQuestions],
   ["POST", /^\/api\/banks\/([^/]+)\/questions$/, addBankQuestion],
   ["PATCH", /^\/api\/banks\/([^/]+)\/questions\/([^/]+)$/, updateBankQuestion],
   ["DELETE", /^\/api\/banks\/([^/]+)\/questions\/([^/]+)$/, deleteBankQuestion],
+  ["GET", /^\/api\/banks\/([^/]+)\/export$/, exportBankCsv],
+  ["GET", /^\/api\/banks\/([^/]+)\/imports$/, latestImport],
+  ["POST", /^\/api\/banks\/([^/]+)\/imports$/, startImport],
+  ["GET", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)$/, getImport],
+  ["DELETE", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)$/, discardImport],
+  ["POST", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)\/answers$/, processImportAnswers],
+  ["PATCH", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)\/rows$/, patchImportRows],
+  ["POST", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)\/commit$/, commitImport],
 ];
 
 async function route(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
