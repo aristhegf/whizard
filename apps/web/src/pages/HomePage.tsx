@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import {
   CATALOG,
   GAME_GROUPS,
@@ -15,7 +15,6 @@ import { Icon } from "../ui/Icon";
 import { LiveCount } from "../ui/LiveCount";
 import { useToast } from "../ui/toast";
 
-/** Desktop uses the full catalogue grid; phones use a compact swipeable game rail. */
 /** Eight cards fit the intended two-row desktop layout. */
 const PAGE_SIZE = 8;
 
@@ -23,8 +22,10 @@ const PAGE_SIZE = 8;
 export function HomePage() {
   const [group, setGroup] = useState<GameGroup | "all">("all");
   const [page, setPage] = useState(0);
-  // Phones show only the featured game; a kind of game opens its games in a sheet instead.
+  // Phones show one featured game at a time; a kind of game opens its games in a sheet instead.
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [mobileIndex, setMobileIndex] = useState(0);
+  const shelfRef = useRef<HTMLUListElement>(null);
   const paged = useMediaQuery("(min-width: 1100px)");
 
   const games = CATALOG.filter((g) => group === "all" || g.groups.includes(group)).sort(
@@ -34,8 +35,36 @@ export function HomePage() {
   const current = Math.min(page, pages - 1);
   const shown = games.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
 
+  const chooseGroup = (next: GameGroup | "all") => {
+    setGroup(next);
+    setPage(0);
+    setMobileIndex(0);
+    shelfRef.current?.scrollTo({ left: 0 });
+  };
+
+  const onShelfScroll = () => {
+    const shelf = shelfRef.current;
+    const card = shelf?.firstElementChild as HTMLElement | null;
+    if (!shelf || !card) return;
+    const gap = parseFloat(getComputedStyle(shelf).columnGap || "0");
+    setMobileIndex(Math.round(shelf.scrollLeft / (card.offsetWidth + gap)));
+  };
+
+  const goToGame = (index: number) => {
+    const shelf = shelfRef.current;
+    const card = shelf?.children[index] as HTMLElement | undefined;
+    if (!shelf || !card) return;
+    const gap = parseFloat(getComputedStyle(shelf).columnGap || "0");
+    shelf.scrollTo({ left: index * (card.offsetWidth + gap), behavior: "smooth" });
+  };
+
   return (
-    <TopLayout active="home" className="play-page" screen reveal>
+    <TopLayout
+      active="home"
+      className={categoriesOpen ? "play-page is-picking" : "play-page"}
+      screen
+      reveal
+    >
       <section className="play" aria-labelledby="play-title">
         <header className="play-head">
           <LiveCount />
@@ -56,10 +85,7 @@ export function HomePage() {
                 key={g.id}
                 className={group === g.id ? "play-chip is-open" : "play-chip"}
                 aria-pressed={group === g.id}
-                onClick={() => {
-                  setGroup(g.id);
-                  setPage(0);
-                }}
+                onClick={() => chooseGroup(g.id)}
               >
                 {g.icon && <Icon name={g.icon} size={20} />}
                 {g.name}
@@ -83,8 +109,7 @@ export function HomePage() {
           <CategorySheet
             selected={group}
             onSelect={(next) => {
-              setGroup(next);
-              setPage(0);
+              chooseGroup(next);
               setCategoriesOpen(false);
             }}
             onClose={() => setCategoriesOpen(false)}
@@ -94,11 +119,29 @@ export function HomePage() {
         <div className="play-body">
           {!paged && (
             <div className="play-mobile-shelf">
-              <ul className="play-mobile-cards" aria-label="Games to play">
+              <ul
+                ref={shelfRef}
+                className="play-mobile-cards"
+                aria-label="Games to play"
+                onScroll={onShelfScroll}
+              >
                 {games.map((game) => (
                   <GameCard key={game.id} game={game} />
                 ))}
               </ul>
+              {games.length > 1 && (
+                <div className="play-mobile-dots" role="group" aria-label="Game pages">
+                  {games.map((game, i) => (
+                    <button
+                      key={game.id}
+                      className={i === mobileIndex ? "on" : undefined}
+                      aria-label={`Show ${game.name}`}
+                      aria-current={i === mobileIndex}
+                      onClick={() => goToGame(i)}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -197,7 +240,7 @@ function GameCard({ game }: { game: CatalogGame }) {
   const action = game.href ? (
     <a className="play-btn" aria-label={label} {...linkTo(game.href)}>
       Play
-      <Icon name="arrowRight" size={18} stroke={2.6} />
+      <Icon name="arrowRight" size={16} stroke={2.6} />
     </a>
   ) : game.starts ? (
     // Games without a page of their own open a room straight away.
@@ -215,7 +258,7 @@ function GameCard({ game }: { game: CatalogGame }) {
       }}
     >
       {opening ? "Opening…" : "Play"}
-      {!opening && <Icon name="arrowRight" size={18} stroke={2.6} />}
+      {!opening && <Icon name="arrowRight" size={16} stroke={2.6} />}
     </button>
   ) : (
     <span className="play-btn soon">Coming soon</span>
@@ -223,15 +266,19 @@ function GameCard({ game }: { game: CatalogGame }) {
 
   return (
     <li className={`play-card${isPlayable(game) ? "" : " unavailable"}`} style={style}>
-      <img className="play-card-art" src={game.art} alt="" />
-      <h3 className="play-card-name">{game.name}</h3>
-      <p className="play-card-desc">{game.description}</p>
-      <div className="play-card-foot">
-        <span className="players">
-          <Icon name="users" size={18} />
-          {game.players}
-        </span>
-        {action}
+      <div className="play-card-art-wrap">
+        <img className="play-card-art" src={game.art} alt="" />
+      </div>
+      <div className="play-card-body">
+        <h3 className="play-card-name">{game.name}</h3>
+        <p className="play-card-desc">{game.description}</p>
+        <div className="play-card-foot">
+          <span className="players">
+            <Icon name="users" size={14} />
+            {game.players}
+          </span>
+          {action}
+        </div>
       </div>
     </li>
   );

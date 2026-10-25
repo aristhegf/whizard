@@ -17,7 +17,7 @@ function entries(rows: Row[] | undefined): StatsEntry[] {
   return (rows ?? []).map((r) => ({ name: String(r.name), count: num(r.count) }));
 }
 
-async function buildCommunityStats(db: D1Database, now: number): Promise<CommunityStats> {
+export async function buildCommunityStats(db: D1Database, now: number): Promise<CommunityStats> {
   const [totals, rooms, games, topics, countries, trending, leaders] = await db.batch<Row>([
     db.prepare(
       `SELECT COUNT(*) AS games, SUM(player_count) AS players,
@@ -51,7 +51,7 @@ async function buildCommunityStats(db: D1Database, now: number): Promise<Communi
          FROM match_players mp
          JOIN matches m ON m.id = mp.match_id
          JOIN users u ON u.id = mp.user_id
-        WHERE mp.placing = 1 AND m.player_count >= 2 AND u.public_leaderboard = 1
+        WHERE mp.placing = 1 AND m.player_count >= 2
           AND u.suspended_at IS NULL
         GROUP BY u.id
         ORDER BY wins DESC, MIN(m.finished_at) ASC
