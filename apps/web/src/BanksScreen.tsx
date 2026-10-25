@@ -20,6 +20,7 @@ import {
   type ReactNode,
 } from "react";
 import { ApiError, useAccount } from "./account";
+import { createRoom } from "./api";
 import {
   addQuestion,
   allBanksExportHref,
@@ -41,11 +42,12 @@ import {
   updateBank,
   type QuestionForm,
 } from "./banks";
-import { linkTo, navigate } from "./router";
+import { linkTo, navigate, roomPath } from "./router";
 import { TopLayout } from "./ui/Chrome";
 import { errorText, useAction, useLoaded } from "./ui/common";
 import { useConfirm } from "./ui/ConfirmDialog";
 import { Loading } from "./ui/Loading";
+import { Icon } from "./ui/Icon";
 import { useToast, useToastAction } from "./ui/toast";
 
 /** Wraps a screen that needs an account, offering sign-in first. */
@@ -271,6 +273,36 @@ function BankDetail({ id }: { id: string }) {
   >([]);
   const [selectedQIds, setSelectedQIds] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
+  const [practicing, setPracticing] = useState(false);
+
+  const handlePractice = async () => {
+    if (!loaded || loaded.questionCount === 0 || practicing) return;
+    setPracticing(true);
+    try {
+      const count =
+        loaded.questionCount >= 20
+          ? 20
+          : loaded.questionCount >= 15
+            ? 15
+            : loaded.questionCount >= 10
+              ? 10
+              : 5;
+      const code = await createRoom(
+        {
+          bankId: id,
+          bankName: loaded.name,
+          category: "general-knowledge",
+          difficulty: "easy",
+          count,
+        },
+        "quiz",
+      );
+      navigate(roomPath(code));
+    } catch (e) {
+      setPracticing(false);
+      toast.show({ title: errorText(e), status: "error" });
+    }
+  };
 
   if (loaded && !seeded) {
     setName(loaded.name);
@@ -405,6 +437,39 @@ function BankDetail({ id }: { id: string }) {
         )
       ) : (
         <>
+          <section className="bank-practice-card" aria-label="Practice">
+            <div className="bank-practice-content">
+              <div>
+                <h2 className="section-title" style={{ margin: 0 }}>
+                  Practice with this bank
+                </h2>
+                <p className="small muted" style={{ margin: "4px 0 0" }}>
+                  {detail.questionCount === 0
+                    ? "Add or import questions below to start practicing."
+                    : `${detail.questionCount} ${detail.questionCount === 1 ? "question" : "questions"} ready. Practice solo or share the room code with friends.`}
+                </p>
+              </div>
+              <div className="bank-practice-actions">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  disabled={detail.questionCount === 0 || practicing}
+                  onClick={() => void handlePractice()}
+                >
+                  <Icon name="play" /> Practice solo
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  disabled={detail.questionCount === 0 || practicing}
+                  onClick={() => void handlePractice()}
+                >
+                  <Icon name="users" /> Play with friends
+                </button>
+              </div>
+            </div>
+          </section>
+
           <section className="stack" aria-label="Bank details">
             <h2 className="section-title">Bank details</h2>
             <form className="question-form" onSubmit={handleSave}>

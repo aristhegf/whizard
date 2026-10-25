@@ -430,4 +430,27 @@ describe("advanced bank management", () => {
     expect(text).toContain("WAEC Deck");
     expect(text).toContain("First deck question?");
   });
+
+  it("enforces privacy when creating a room with a bank", async () => {
+    const { env, headers } = await playerEnv("ada");
+    const bankId = await makeBank(env, headers, "Ada's Secrets");
+    env.ROOMS = {
+      getByName: () => ({
+        create: async () => true,
+      }),
+    } as unknown as Env["ROOMS"];
+
+    const resAda = await call(env, "/api/rooms", {
+      method: "POST",
+      ...jsonBody(headers, { settings: { bankId, category: "bible" }, game: "quiz" }),
+    });
+    expect(resAda.status).toBe(201);
+
+    const { headers: headersTolu } = await playerEnv("tolu");
+    const resTolu = await call(env, "/api/rooms", {
+      method: "POST",
+      ...jsonBody(headersTolu, { settings: { bankId, category: "bible" }, game: "quiz" }),
+    });
+    expect(resTolu.status).toBe(403);
+  });
 });

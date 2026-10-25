@@ -80,3 +80,44 @@ test("makes a bank, writes a question, renames and clears up after itself", asyn
   await expect(page).toHaveURL(/\/banks$/);
   await expect(page.getByText("No banks yet. Make one above.")).toBeVisible();
 });
+
+test("starts solo practice room from a custom bank", async ({ page }) => {
+  await withPasskeys(page);
+  await signUp(page, uniqueUsername());
+
+  await page.goto("/banks");
+  await page.getByLabel("Name").fill("Physics Drills");
+  await page.getByRole("button", { name: "Create a bank", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Practice with this bank", level: 2 }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Practice solo" })).toBeDisabled();
+
+  // Add one question
+  await page.getByRole("button", { name: "Add a question", exact: true }).click();
+  const field = (name: string) => page.getByRole("textbox", { name });
+  await field("Question").fill("What is the speed of light in vacuum?");
+  await field("Correct answer").fill("300,000 km/s");
+  await field("Wrong answer 1").fill("150,000 km/s");
+  await field("Wrong answer 2").fill("3,000 km/s");
+  await field("Wrong answer 3").fill("Infinity");
+  await field("Explanation").fill("Light travels at approximately 299,792 km/s in vacuum.");
+  await page.getByRole("button", { name: "Add question", exact: true }).click();
+
+  await expect(page.getByRole("button", { name: "Practice solo" })).toBeEnabled();
+  await page.getByRole("button", { name: "Practice solo" }).click();
+  await expect(page).toHaveURL(/\/r\/[A-Z0-9]+$/);
+  await expect(page.getByRole("heading", { name: "Physics Drills Quiz" })).toBeVisible();
+
+  // Start the game solo
+  await page.getByRole("button", { name: /play solo/i }).press("Enter");
+  await expect(
+    page.getByText("What is the speed of light in vacuum?", { exact: false }),
+  ).toBeVisible({ timeout: 15_000 });
+  await page.getByRole("button", { name: "300,000 km/s" }).click();
+  await expect(page.getByRole("heading", { name: "Game Results" })).toBeVisible();
+  await expect(page.getByText("1 of 1 correct")).toBeVisible();
+  await expect(
+    page.getByText("Light travels at approximately 299,792 km/s in vacuum."),
+  ).toBeVisible();
+});

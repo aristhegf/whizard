@@ -121,7 +121,13 @@ export function isKnown(topics: readonly { id: string }[], id: string): boolean 
  */
 export async function settingsTopicProblems(env: Env, settings: unknown): Promise<string[]> {
   if (settings === null || settings === undefined) return [];
-  const record = settings as { category?: unknown; topics?: unknown };
+  const record = settings as { category?: unknown; topics?: unknown; bankId?: unknown };
+  if (typeof record.bankId === "string" && record.bankId.length > 0) {
+    const bank = await env.DB.prepare("SELECT id FROM user_banks WHERE id = ?")
+      .bind(record.bankId)
+      .first();
+    return bank ? [] : ["bank_not_found"];
+  }
   const candidates: unknown[] = [record.category];
   if (Array.isArray(record.topics)) candidates.push(...record.topics);
   if (!candidates.some((value) => typeof value === "string")) return [];

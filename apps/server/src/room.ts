@@ -528,13 +528,46 @@ export class Room extends DurableObject<Env> {
       .filter((p) => connected.has(p.id))
       .flatMap((p) => viewerKey(p) ?? []);
     const bank = await loadBank(this.env);
-    const history = request && historyCategory(request);
+    const history =
+      request &&
+      (request.kind === "quiz-questions" && request.bankId
+        ? `bank:${request.bankId}`
+        : historyCategory(request));
     const [seen, retired] = await Promise.all([
       history ? loadSeen(this.env, viewers, history) : new Map(),
-      request?.kind === "quiz-questions"
+      request?.kind === "quiz-questions" && !request.bankId
         ? retiredQuestions(this.env, request.category, bank)
         : new Set<string>(),
     ]);
+
+    let bankQuestions = bank.questions;
+    if (request?.kind === "quiz-questions" && request.bankId) {
+      const { results } = await this.env.DB.prepare(
+        "SELECT id, prompt, choices, explanation, reference FROM user_bank_questions WHERE bank_id = ? ORDER BY position",
+      )
+        .bind(request.bankId)
+        .all<{
+          id: string;
+          prompt: string;
+          choices: string;
+          explanation: string;
+          reference: string | null;
+        }>();
+      if (results.length > 0) {
+        bankQuestions = results.map((r) => ({
+          id: r.id,
+          category: request.category,
+          topic: request.category,
+          difficulty: "easy",
+          prompt: r.prompt,
+          choices: JSON.parse(r.choices) as string[],
+          explanation: r.explanation,
+          ...(r.reference ? { reference: r.reference } : {}),
+        }));
+      } else {
+        bankQuestions = [];
+      }
+    }
 
     let drawn: string[] = [];
     const started = await this.handleGame(ws, (state, playerId, now) =>
@@ -549,7 +582,7 @@ export class Room extends DurableObject<Env> {
           req,
           seed,
           { recent: room.recent, seen, retired },
-          bank.questions,
+          bankQuestions,
         );
         drawn = content.map((q) => (q as { id: string }).id);
         return content;

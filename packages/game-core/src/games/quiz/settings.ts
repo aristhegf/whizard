@@ -134,6 +134,8 @@ export const QUIZ_TIME_LIMITS_SECONDS = [10, 20, 30] as const;
 
 export const quizSettingsSchema = z.object({
   category: topicIdSchema,
+  bankId: z.string().nullable().optional(),
+  bankName: z.string().nullable().optional(),
   difficulty: z.enum(LEVEL_CHOICES),
   count: z.literal(QUIZ_QUESTION_COUNTS),
   variant: z.enum(QUIZ_VARIANTS.map((v) => v.id) as [QuizVariant, ...QuizVariant[]]),
@@ -156,6 +158,7 @@ export interface QuizContentRequest {
   kind: "quiz-questions";
   category: QuizCategory;
   levels: QuizDifficulty[];
+  bankId?: string | null;
 }
 
 /** A question as stored in the content bank. `choices[0]` is the correct answer. */
