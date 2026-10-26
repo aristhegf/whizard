@@ -228,14 +228,14 @@ async function memberIds(env: Env, ownerId: string, usernames: string[]): Promis
   return results.map((r) => r.id);
 }
 
-interface GroupRow {
+export interface GroupRow {
   id: string;
   name: string;
   owner_id: string;
 }
 
 /** The group, if this user is in it. */
-async function groupFor(env: Env, groupId: string, userId: string): Promise<GroupRow> {
+export async function groupFor(env: Env, groupId: string, userId: string): Promise<GroupRow> {
   const row = await env.DB.prepare(
     `SELECT g.id, g.name, g.owner_id FROM friend_groups g
        JOIN friend_group_members m ON m.group_id = g.id

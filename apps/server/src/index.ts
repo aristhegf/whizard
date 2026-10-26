@@ -22,6 +22,14 @@ import {
 import { count, countryCode, logActivity, networkPrefix } from "./analytics";
 import type { Env } from "./env";
 import {
+  completeGroupAssignment,
+  createGroupAssignment,
+  deleteGroupAssignment,
+  getGroup,
+  getGroupAssignments,
+  joinGroup,
+} from "./assignments";
+import {
   addFriend,
   createGroup,
   deleteGroup,
@@ -379,9 +387,15 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["DELETE", /^\/api\/push\/subscriptions$/, removeSubscription],
   ["GET", /^\/api\/groups$/, getGroups],
   ["POST", /^\/api\/groups$/, createGroup],
+  ["GET", /^\/api\/groups\/([^/]+)$/, getGroup],
   ["PATCH", /^\/api\/groups\/([^/]+)$/, updateGroup],
   ["DELETE", /^\/api\/groups\/([^/]+)$/, deleteGroup],
+  ["POST", /^\/api\/groups\/([^/]+)\/join$/, joinGroup],
   ["GET", /^\/api\/groups\/([^/]+)\/leaderboard$/, getGroupLeaderboard],
+  ["GET", /^\/api\/groups\/([^/]+)\/assignments$/, getGroupAssignments],
+  ["POST", /^\/api\/groups\/([^/]+)\/assignments$/, createGroupAssignment],
+  ["DELETE", /^\/api\/groups\/([^/]+)\/assignments\/([^/]+)$/, deleteGroupAssignment],
+  ["POST", /^\/api\/groups\/([^/]+)\/assignments\/([^/]+)\/complete$/, completeGroupAssignment],
 
   ["GET", /^\/api\/banks\/export$/, exportAllBanksCsv],
   ["GET", /^\/api\/banks\/public$/, listPublicBanks],

@@ -365,6 +365,51 @@ export interface GroupStanding extends PublicUser {
   wins: number;
 }
 
+export interface AssignmentCompletion {
+  score: number;
+  totalQuestions: number;
+  accuracyPercent: number;
+  attemptsCount: number;
+  completedAt: number;
+}
+
+export interface AssignmentCompletionWithUser extends AssignmentCompletion {
+  user: PublicUser;
+}
+
+export interface GroupAssignment {
+  id: string;
+  groupId: string;
+  bankId: string;
+  bankName: string;
+  exam: string | null;
+  subject: string | null;
+  questionCount: number;
+  assignedBy: PublicUser;
+  targetScore: number | null;
+  dueAt: number | null;
+  notes: string | null;
+  createdAt: number;
+  myCompletion: AssignmentCompletion | null;
+  completions: AssignmentCompletionWithUser[];
+}
+
+export const createAssignmentSchema = z.object({
+  bankId: z.string().min(1),
+  targetScore: z.number().int().min(1).max(100).nullable().optional(),
+  dueAt: z.number().int().positive().nullable().optional(),
+  notes: z.string().max(300).nullable().optional(),
+});
+
+export type CreateAssignmentInput = z.infer<typeof createAssignmentSchema>;
+
+export const completeAssignmentSchema = z.object({
+  score: z.number().int().min(0),
+  totalQuestions: z.number().int().min(1),
+});
+
+export type CompleteAssignmentInput = z.infer<typeof completeAssignmentSchema>;
+
 export const groupRequestSchema = z.object({
   name: z.string().max(100),
   /** Usernames, not counting the owner. They must all be the owner's friends. */

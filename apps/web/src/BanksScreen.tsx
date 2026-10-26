@@ -46,6 +46,7 @@ import {
   type QuestionForm,
 } from "./banks";
 import { linkTo, navigate, roomPath } from "./router";
+import { createGroupAssignment, fetchGroups } from "./social";
 import { getBankMistakes } from "./storage";
 import { TopLayout } from "./ui/Chrome";
 import { errorText, useAction, useLoaded } from "./ui/common";
@@ -541,6 +542,43 @@ function BankDetail({ id, accountUser }: { id: string; accountUser: AccountUser 
     }
   };
 
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [assignGroupId, setAssignGroupId] = useState("");
+  const [assignTargetScore, setAssignTargetScore] = useState("");
+  const [assignDueDate, setAssignDueDate] = useState("");
+  const [assignNotes, setAssignNotes] = useState("");
+  const [assigning, setAssigning] = useState(false);
+  const myGroups = useLoaded(fetchGroups);
+
+  const handleAssignToGroup = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!assignGroupId) {
+      toast.show({ title: "Please select a group.", status: "error" });
+      return;
+    }
+    setAssigning(true);
+    try {
+      const parsedTarget = assignTargetScore ? parseInt(assignTargetScore, 10) : null;
+      const parsedDue = assignDueDate ? new Date(`${assignDueDate}T23:59:59`).getTime() : null;
+      await createGroupAssignment(assignGroupId, {
+        bankId: id,
+        targetScore: parsedTarget && !isNaN(parsedTarget) ? parsedTarget : null,
+        dueAt: parsedDue && !isNaN(parsedDue) ? parsedDue : null,
+        notes: assignNotes.trim() || null,
+      });
+      setShowAssignModal(false);
+      setAssigning(false);
+      setAssignGroupId("");
+      setAssignTargetScore("");
+      setAssignDueDate("");
+      setAssignNotes("");
+      toast.show({ title: "Assigned bank to group!", status: "success" });
+    } catch (e) {
+      setAssigning(false);
+      toast.show({ title: errorText(e), status: "error" });
+    }
+  };
+
   if (loaded && !seeded) {
     setName(loaded.name);
     setExam(loaded.exam ?? "");
@@ -784,9 +822,112 @@ function BankDetail({ id, accountUser }: { id: string; accountUser: AccountUser 
                 >
                   <Icon name="users" /> Play with friends
                 </button>
+                {accountUser && (
+                  <button
+                    type="button"
+                    className="btn"
+                    disabled={detail.questionCount === 0}
+                    onClick={() => setShowAssignModal(true)}
+                  >
+                    <Icon name="link" /> Assign to Study Group
+                  </button>
+                )}
               </div>
             </div>
           </section>
+
+          {showAssignModal && (
+            <section
+              className="stack"
+              aria-label="Assign to Study Group"
+              style={{ border: "2px solid #8b5cf6" }}
+            >
+              <div
+                style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+              >
+                <h2 className="section-title" style={{ margin: 0 }}>
+                  Assign to Study Group
+                </h2>
+                <button
+                  type="button"
+                  className="btn-link"
+                  onClick={() => setShowAssignModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+              <form onSubmit={handleAssignToGroup} className="question-form">
+                <div className="setting">
+                  <label className="setting-name" htmlFor="select-group">
+                    Group
+                  </label>
+                  <select
+                    id="select-group"
+                    required
+                    value={assignGroupId}
+                    onChange={(e) => setAssignGroupId(e.target.value)}
+                  >
+                    <option value="">Select study group…</option>
+                    {myGroups.data?.groups.map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.name} ({g.members.length} members)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="setting">
+                  <label className="setting-name" htmlFor="target-score">
+                    Target score (%)
+                  </label>
+                  <input
+                    id="target-score"
+                    type="number"
+                    min="1"
+                    max="100"
+                    placeholder="e.g. 80"
+                    value={assignTargetScore}
+                    onChange={(e) => setAssignTargetScore(e.target.value)}
+                  />
+                </div>
+                <div className="setting">
+                  <label className="setting-name" htmlFor="due-date">
+                    Due date
+                  </label>
+                  <input
+                    id="due-date"
+                    type="date"
+                    value={assignDueDate}
+                    onChange={(e) => setAssignDueDate(e.target.value)}
+                  />
+                </div>
+                <div className="setting">
+                  <label className="setting-name" htmlFor="assign-notes">
+                    Notes
+                  </label>
+                  <textarea
+                    id="assign-notes"
+                    maxLength={300}
+                    rows={2}
+                    placeholder="Instructions for students (e.g. Complete before Thursday class)"
+                    value={assignNotes}
+                    onChange={(e) => setAssignNotes(e.target.value)}
+                  />
+                </div>
+                <div className="link-row" style={{ marginTop: 14 }}>
+                  <button type="submit" className="btn btn-primary" disabled={assigning}>
+                    {assigning ? "Assigning…" : "Assign bank to group"}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-link"
+                    onClick={() => setShowAssignModal(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </section>
+          )}
 
           {isOwner ? (
             <>

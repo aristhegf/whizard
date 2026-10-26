@@ -35,6 +35,8 @@ import { play } from "../../sounds";
 import { Podium } from "../../ui/Podium";
 import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
+import { completeGroupAssignment } from "../../social";
+import { linkTo } from "../../router";
 
 type QuestionStage = Extract<QuizStage, { kind: "question" }>;
 type AnswerStage = Extract<QuizStage, { kind: "answer" }>;
@@ -437,6 +439,29 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
   const [drillingMistakes, setDrillingMistakes] = useState(false);
   const settings = parseQuizSettings(room.game.settings);
   const bankId = settings?.bankId;
+  const [assignmentSubmitted, setAssignmentSubmitted] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const stored =
+        typeof sessionStorage !== "undefined"
+          ? sessionStorage.getItem("whizard_active_assignment")
+          : null;
+      if (stored && view.me) {
+        const { groupId, assignmentId } = JSON.parse(stored) as {
+          groupId: string;
+          assignmentId: string;
+        };
+        if (groupId && assignmentId) {
+          void completeGroupAssignment(groupId, assignmentId, view.me.correctCount, view.total);
+          sessionStorage.removeItem("whizard_active_assignment");
+          setAssignmentSubmitted(groupId);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, [view.me, view.total]);
 
   useEffect(() => {
     if (view.final) play("fanfare");
@@ -526,6 +551,23 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
               {categoryName} • {view.total} Questions
             </span>
           </div>
+
+          {assignmentSubmitted && (
+            <div
+              className="bank-practice-card"
+              style={{ margin: "14px 0", width: "100%", textAlign: "center" }}
+            >
+              <p style={{ margin: "0 0 8px", fontWeight: 700, color: "#6ee7b7" }}>
+                🎯 Practice result recorded on your Study Group leaderboard!
+              </p>
+              <a
+                className="btn btn-primary"
+                {...linkTo(`/groups/${encodeURIComponent(assignmentSubmitted)}`)}
+              >
+                View Study Group
+              </a>
+            </div>
+          )}
 
           {solo && view.me ? (
             <div className="panel solo-score">
