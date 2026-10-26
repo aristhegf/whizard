@@ -20,6 +20,7 @@ import type { z } from "zod";
 import { parseCsvLines } from "./adminImport";
 import { ownedBank, withinWriteLimit } from "./banks";
 import { requireUser } from "./account";
+import { isProUser } from "./payments";
 import type { Env } from "./env";
 import { AiBusyError, answerBatch, type BatchQuestion } from "./gemini";
 import { HttpError, requireSameOrigin, type RequestContext } from "./http";
@@ -341,6 +342,14 @@ export async function startImport(context: RequestContext): Promise<Response> {
   const { user } = await requireUser(context);
   await withinWriteLimit(context);
   const bank = await bankOf(context, user);
+  const isPro = await isProUser(context.env.DB, user.id);
+  if (!isPro) {
+    throw new HttpError(
+      403,
+      "pro_required",
+      "Importing documents and CSV files is a Whizard Pro feature. Free accounts can author questions manually.",
+    );
+  }
   const input = await readImportBody(context, bankImportSchema, "invalid_import");
 
   const { rows, invalid } = parseBankCsv(input.csv);
@@ -444,6 +453,10 @@ export async function startImport(context: RequestContext): Promise<Response> {
 export async function latestImport(context: RequestContext): Promise<Response> {
   const { user } = await requireUser(context);
   const bank = await bankOf(context, user);
+  const isPro = await isProUser(context.env.DB, user.id);
+  if (!isPro) {
+    return Response.json({ import: null });
+  }
   const record = await context.env.DB.prepare(
     `SELECT * FROM user_bank_imports
       WHERE bank_id = ? AND owner_id = ? AND expires_at > ?
@@ -813,6 +826,10 @@ function csvCell(value: string): string {
 export async function exportBankCsv(context: RequestContext): Promise<Response> {
   const { user } = await requireUser(context);
   const bank = await bankOf(context, user);
+  const isPro = await isProUser(context.env.DB, user.id);
+  if (!isPro) {
+    return Response.json({ import: null });
+  }
   const { results } = await context.env.DB.prepare(
     "SELECT prompt, choices, explanation, reference FROM user_bank_questions WHERE bank_id = ? ORDER BY position",
   )

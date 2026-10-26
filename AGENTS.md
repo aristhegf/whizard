@@ -39,6 +39,7 @@ pnpm build           # production build (vite + Cloudflare plugin)
 - **PR #66 is this handoff PR** — adds this file only. Merge only with the user's approval.
 - Recently merged and deployed: #58 (game taxonomy), #59 (first card redesign round), #60 (mobile Games page discovery layout). `main` was green/live at the last verified point; recheck CI before relying on that statement.
 - `docs/OPENCODE_HANDOFF.md` (branch `docs/opencode-whizard-handoff`) is an older handoff document; where it conflicts with this file, this file wins.
+
 ## Working agreement
 
 - Inspect `git status` / `git diff` first. Never discard, reset, stash or checkout over the user's local changes.

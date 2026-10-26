@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
+import { grantPro, signUp, uniqueUsername, withPasskeys } from "./passkeys";
 
 test.describe.configure({ timeout: 90_000 });
 
@@ -25,9 +25,29 @@ async function makeBank(page: import("@playwright/test").Page, name: string) {
   return /\/banks\/(b_[A-Za-z0-9_-]+)/.exec(page.url())![1]!;
 }
 
-test("imports a keyed CSV, exports it, and re-imports the answers intact", async ({ page }) => {
+test("free accounts are prompted to upgrade when attempting document or CSV import", async ({
+  page,
+}) => {
   await withPasskeys(page);
   await signUp(page, uniqueUsername());
+  await makeBank(page, "Free Bank");
+
+  await page.getByRole("button", { name: /Import (questions|CSV)/ }).click();
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "questions.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from(KEYED_CSV),
+  });
+  await expect(page.getByText("Word & CSV Import is a Pro Feature")).toBeVisible();
+  await expect(page.getByRole("link", { name: /View Pro Plans/ })).toBeVisible();
+});
+
+test("imports a keyed CSV, exports it, and re-imports the answers intact", async ({ page }) => {
+  await withPasskeys(page);
+  const username = uniqueUsername();
+  await signUp(page, username);
+  grantPro(username);
+  await page.reload();
   const bankId = await makeBank(page, "CSV round trip");
 
   // Stage the file; every row has its own answer key.
@@ -86,7 +106,10 @@ test("imports a keyed CSV, exports it, and re-imports the answers intact", async
 
 test("answers key-less rows by hand when the AI isn’t configured", async ({ page }) => {
   await withPasskeys(page);
-  await signUp(page, uniqueUsername());
+  const username = uniqueUsername();
+  await signUp(page, username);
+  grantPro(username);
+  await page.reload();
   await makeBank(page, "CSV by hand");
 
   await page.getByRole("button", { name: /Import (questions|CSV)/ }).click();
@@ -124,7 +147,10 @@ test("answers key-less rows by hand when the AI isn’t configured", async ({ pa
 
 test("imports questions from a document with answer keys", async ({ page }) => {
   await withPasskeys(page);
-  await signUp(page, uniqueUsername());
+  const username = uniqueUsername();
+  await signUp(page, username);
+  grantPro(username);
+  await page.reload();
   await makeBank(page, "Doc Import Bank");
 
   await page.getByRole("button", { name: /Import (questions|CSV)/ }).click();

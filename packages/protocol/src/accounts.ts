@@ -158,6 +158,10 @@ export interface AccountUser {
   createdAt: number;
   /** Can open the admin dashboard. */
   admin: boolean;
+  /** Active Whizard Pro subscriber (unlimited banks, document/CSV import, solo stats). */
+  isPro?: boolean;
+  /** When Pro expires, or null if lifetime/unending. */
+  proUntil?: number | null;
 }
 
 export interface QuietHours {

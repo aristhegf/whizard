@@ -31,6 +31,11 @@ async function playerEnv(
 ): Promise<{ env: Env; headers: Record<string, string> }> {
   const env = { DB: await testDb(), ...extra } as unknown as Env;
   await addUser(env.DB, id);
+  await env.DB.prepare(
+    "INSERT INTO pro_memberships (user_id, since, until, source, updated_at) VALUES (?, ?, NULL, 'paid', ?)",
+  )
+    .bind(id, Date.now(), Date.now())
+    .run();
   const cookie = (await createSession(env, id, Date.now())).split(";")[0]!;
   return { env, headers: { Cookie: cookie, Origin: "http://localhost" } };
 }
@@ -143,6 +148,20 @@ afterEach(() => {
 });
 
 describe("staging a CSV import", () => {
+  it("refuses import for free (non-pro) accounts", async () => {
+    const env = { DB: await testDb() } as unknown as Env;
+    await addUser(env.DB, "freebie");
+    const cookie = (await createSession(env, "freebie", Date.now())).split(";")[0]!;
+    const headers = { Cookie: cookie, Origin: "http://localhost" };
+    const bankId = await makeBank(env, headers);
+    const res = await call(env, `/api/banks/${bankId}/imports`, {
+      method: "POST",
+      ...jsonBody(headers, { csv: "question,option1,option2,option3,option4,answer\nQ,A,B,C,D,A" }),
+    });
+    expect(res.status).toBe(403);
+    const error = await errorOf(res);
+    expect(error.code).toBe("pro_required");
+  });
   it("readies keyed rows, flags the rest, and reports what it refused", async () => {
     const { env, headers } = await playerEnv("ada");
     const bankId = await makeBank(env, headers);

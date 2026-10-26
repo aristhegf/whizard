@@ -862,6 +862,9 @@ function downloadCsvTemplate() {
  * owner confirms, and the AI runs server-side in batches while this screen watches the counts.
  */
 function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void }) {
+  const account = useAccount();
+  const isPro = account.status === "ready" && Boolean(account.user?.isPro);
+  const [showProModal, setShowProModal] = useState(false);
   const [draft, setDraft] = useState<PlayerBankImport | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [fileBusy, setFileBusy] = useState(false);
@@ -933,6 +936,10 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
   }, [draft, bankId, aiStopped, aiTick]);
 
   const processFile = (file: File) => {
+    if (!isPro) {
+      setShowProModal(true);
+      return;
+    }
     setFileBusy(true);
     setError(null);
     const parsePromise = (async () => {
@@ -954,7 +961,11 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
           },
           (e: unknown) => {
             setFileBusy(false);
-            setError(errorText(e));
+            if (e instanceof ApiError && e.code === "pro_required") {
+              setShowProModal(true);
+            } else {
+              setError(errorText(e));
+            }
           },
         );
       },
@@ -1073,8 +1084,17 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
 
   return (
     <section className="stack" aria-labelledby="import-title">
-      <h3 id="import-title" className="section-title">
+      <h3
+        id="import-title"
+        className="section-title"
+        style={{ display: "flex", alignItems: "center", gap: 8 }}
+      >
         Import questions
+        {!isPro && (
+          <span className="plan-badge" style={{ fontSize: "0.75rem", padding: "2px 8px" }}>
+            <Icon name="crown" size={14} fill /> Pro
+          </span>
+        )}
       </h3>
       <div
         className={`import-dropzone${dragging ? " dragging" : ""}`}
@@ -1255,6 +1275,61 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
         </>
       ) : (
         <ErrorLine error={error} />
+      )}
+      {showProModal && (
+        <div
+          className="dialog-backdrop"
+          onClick={() => setShowProModal(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0, 0, 0, 0.75)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: 16,
+          }}
+        >
+          <div
+            className="dialog panel"
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: 460, width: "100%", padding: 24, textAlign: "center" }}
+          >
+            <div
+              style={{
+                display: "inline-flex",
+                padding: 12,
+                borderRadius: "50%",
+                background: "rgb(255 215 0 / 15%)",
+                color: "var(--gold)",
+                marginBottom: 12,
+              }}
+            >
+              <Icon name="crown" size={32} fill />
+            </div>
+            <h3 style={{ margin: "0 0 8px" }}>Word & CSV Import is a Pro Feature</h3>
+            <p className="muted" style={{ margin: "0 0 16px", fontSize: "0.95rem" }}>
+              Upgrade to Whizard Pro to automatically extract questions from Word documents (.docx,
+              .doc, .txt) and CSV files.
+            </p>
+            <p className="small muted" style={{ margin: "0 0 20px" }}>
+              Free accounts can author unlimited questions manually in your banks.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <a className="btn btn-gold btn-block" {...linkTo("/pricing")}>
+                View Pro Plans (₦5,000 / $5 / mo)
+              </a>
+              <button
+                type="button"
+                className="btn btn-block"
+                onClick={() => setShowProModal(false)}
+              >
+                Continue Authoring Manually
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );

@@ -15,8 +15,15 @@ test("the pricing page shows the three plans and answers questions", async ({ pa
   for (const plan of ["Free", "Pro", "Organizations & Events"]) {
     await expect(page.getByRole("heading", { name: plan, exact: true })).toBeVisible();
   }
+
+  // Currency toggle lets visitors switch between NGN and USD
+  await page.getByRole("button", { name: "₦ NGN" }).click();
   await expect(page.getByText("₦0", { exact: true })).toBeVisible();
   await expect(page.getByText("₦5,000", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "$ USD" }).click();
+  await expect(page.getByText("$0", { exact: true })).toBeVisible();
+  await expect(page.getByText("$5", { exact: true })).toBeVisible();
   await expect(page.getByText("Custom pricing", { exact: true })).toBeVisible();
 
   // On phones the plans slide sideways, and the dots show and pick which one is in view.
@@ -27,10 +34,12 @@ test("the pricing page shows the three plans and answers questions", async ({ pa
   await expect(dot("Organizations & Events")).toHaveAttribute("aria-current", "true");
   await expect(dot("Free")).not.toHaveAttribute("aria-current");
 
-  // Pro can't be bought yet, so the button says it's coming.
+  // Upgrade button prompts sign-in when not signed in
   await page.getByRole("button", { name: "Upgrade to Pro" }).click();
-  // Filtered, since a site announcement is a status too.
-  await expect(page.getByRole("status").filter({ hasText: /Pro is coming soon/ })).toBeVisible();
+  await expect(page).toHaveURL(/\/account\?next=%2Fpricing$/);
+
+  // Return to pricing for FAQ and WhatsApp links
+  await page.goto("/pricing");
 
   // Organizations reach us on WhatsApp with a message ready to send.
   const talk = page.getByRole("link", { name: "Talk to Us" });

@@ -17,6 +17,7 @@ const naira = (amount: number) => `₦${formatNumber(amount)}`;
 const METHODS: Record<PaymentMethod, string> = {
   transfer: "Bank transfer",
   cash: "Cash",
+  bachs: "Bachs (Online)",
   other: "Other",
 };
 

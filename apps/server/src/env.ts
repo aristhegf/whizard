@@ -17,4 +17,10 @@ export interface Env {
   GEMINI_API_KEY?: string;
   /** Which Gemini model answers imports; defaults to a current Flash model. */
   GEMINI_MODEL?: string;
+  /** Bachs API key (sk_live_... or sk_sandbox_...) for checkout sessions. */
+  BACHS_API_KEY?: string;
+  /** Bachs webhook secret for verifying incoming webhook signatures. */
+  BACHS_WEBHOOK_SECRET?: string;
+  /** Optional override for Bachs API base URL. */
+  BACHS_API_URL?: string;
 }

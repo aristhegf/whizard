@@ -103,6 +103,7 @@ import { categoriesPayload, getTopics, isKnown, topicArt } from "./topics";
 import { getSiteStats } from "./stats";
 import { getCommunityStats } from "./community";
 import { currentSession, hasSessionCookie } from "./sessions";
+import { createBachsCheckout, getGeo, handleBachsWebhook } from "./payments";
 
 export { Presence } from "./presence";
 export { Room } from "./room";
@@ -399,6 +400,9 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["POST", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)\/answers$/, processImportAnswers],
   ["PATCH", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)\/rows$/, patchImportRows],
   ["POST", /^\/api\/banks\/([^/]+)\/imports\/([^/]+)\/commit$/, commitImport],
+  ["GET", /^\/api\/geo$/, getGeo],
+  ["POST", /^\/api\/payments\/bachs\/checkout$/, createBachsCheckout],
+  ["POST", /^\/api\/payments\/bachs[/.]webhook$/, handleBachsWebhook],
 ];
 
 async function route(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
