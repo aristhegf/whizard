@@ -31,7 +31,7 @@ test("imports a keyed CSV, exports it, and re-imports the answers intact", async
   const bankId = await makeBank(page, "CSV round trip");
 
   // Stage the file; every row has its own answer key.
-  await page.getByRole("button", { name: "Import CSV", exact: true }).click();
+  await page.getByRole("button", { name: /Import (questions|CSV)/ }).click();
   await page.locator('input[type="file"]').setInputFiles({
     name: "questions.csv",
     mimeType: "text/csv",
@@ -61,7 +61,7 @@ test("imports a keyed CSV, exports it, and re-imports the answers intact", async
 
   // The exported file imports into a fresh bank with every answer intact.
   const secondId = await makeBank(page, "CSV round trip, again");
-  await page.getByRole("button", { name: "Import CSV", exact: true }).click();
+  await page.getByRole("button", { name: /Import (questions|CSV)/ }).click();
   await page.locator('input[type="file"]').setInputFiles({
     name: "exported.csv",
     mimeType: "text/csv",
@@ -89,7 +89,7 @@ test("answers key-less rows by hand when the AI isn’t configured", async ({ pa
   await signUp(page, uniqueUsername());
   await makeBank(page, "CSV by hand");
 
-  await page.getByRole("button", { name: "Import CSV", exact: true }).click();
+  await page.getByRole("button", { name: /Import (questions|CSV)/ }).click();
   await page.locator('input[type="file"]').setInputFiles({
     name: "unkeyed.csv",
     mimeType: "text/csv",
@@ -107,7 +107,7 @@ test("answers key-less rows by hand when the AI isn’t configured", async ({ pa
   ).toBeVisible();
 
   // Tick both rows and set them to the same answer in one move.
-  const ticks = page.getByRole("checkbox");
+  const ticks = page.getByRole("list").getByRole("checkbox");
   await ticks.nth(0).check();
   await ticks.nth(1).check();
   await page.getByLabel("Answer for the rows you tick").selectOption("0");
@@ -120,4 +120,45 @@ test("answers key-less rows by hand when the AI isn’t configured", async ({ pa
   await page.getByRole("alertdialog").getByRole("button", { name: "Add 2 questions" }).click();
   await expect(page.getByRole("heading", { name: "Questions (2)", level: 2 })).toBeVisible();
   await expect(page.getByText("Correct: Alpha")).toHaveCount(2);
+});
+
+test("imports questions from a document with answer keys", async ({ page }) => {
+  await withPasskeys(page);
+  await signUp(page, uniqueUsername());
+  await makeBank(page, "Doc Import Bank");
+
+  await page.getByRole("button", { name: /Import (questions|CSV)/ }).click();
+  const docText = [
+    "1. What is the speed of sound in dry air at 20°C?",
+    "A. 343 m/s",
+    "B. 1500 m/s",
+    "C. 3000 m/s",
+    "D. 300,000 km/s",
+    "Answer: A",
+    "Explanation: Sound travels at about 343 metres per second in air at 20 degrees Celsius.",
+    "",
+    "2. Which gas is most abundant in Earth's atmosphere?",
+    "A. Oxygen",
+    "B. Nitrogen",
+    "C. Carbon dioxide",
+    "D. Argon",
+    "Ans: B",
+    "Explanation: Nitrogen makes up about 78% of Earth's atmosphere.",
+  ].join("\n");
+
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "sample-questions.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.from(docText),
+  });
+
+  await expect(page.getByTestId("import-counts")).toContainText(
+    "2 rows · 2 ready · 2 from your answer key · 0 from the AI · 0 need review",
+  );
+
+  await page.getByRole("button", { name: "Add 2 questions to the bank", exact: true }).click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Add 2 questions" }).click();
+  await expect(page.getByRole("heading", { name: "Questions (2)", level: 2 })).toBeVisible();
+  await expect(page.getByText("Correct: 343 m/s")).toBeVisible();
+  await expect(page.getByText("Correct: Nitrogen")).toBeVisible();
 });

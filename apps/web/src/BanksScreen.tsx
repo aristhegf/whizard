@@ -48,6 +48,7 @@ import { errorText, useAction, useLoaded } from "./ui/common";
 import { useConfirm } from "./ui/ConfirmDialog";
 import { Loading } from "./ui/Loading";
 import { Icon } from "./ui/Icon";
+import { parseDocxFile, parseDocumentToCsv } from "./documentImport";
 import { useToast, useToastAction } from "./ui/toast";
 
 /** Wraps a screen that needs an account, offering sign-in first. */
@@ -569,8 +570,8 @@ function BankDetail({ id }: { id: string }) {
               Import &amp; export
             </h2>
             <p className="muted small">
-              Take this bank out as a CSV, or bring questions in from one. A file’s columns are
-              question, option1–option4, answer, explanation, reference.
+              Take this bank out as a CSV, or bring questions in from a CSV, Word document (.docx),
+              or text file. Questions, options, and answer keys are detected automatically.
             </p>
             <div className="row-actions">
               <a className="btn" href={bankExportHref(id)} download>
@@ -578,7 +579,7 @@ function BankDetail({ id }: { id: string }) {
               </a>
               {importOpen ? null : (
                 <button className="btn" type="button" onClick={() => setImportOpen(true)}>
-                  Import CSV
+                  Import questions
                 </button>
               )}
             </div>
@@ -934,7 +935,13 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
   const processFile = (file: File) => {
     setFileBusy(true);
     setError(null);
-    file.text().then(
+    const parsePromise = (async () => {
+      const name = file.name.toLowerCase();
+      if (name.endsWith(".docx") || name.endsWith(".doc")) return parseDocxFile(file);
+      if (name.endsWith(".txt")) return parseDocumentToCsv(await file.text());
+      return file.text();
+    })();
+    parsePromise.then(
       (csv) => {
         startBankImport(bankId, csv).then(
           (imported) => {
@@ -951,9 +958,9 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
           },
         );
       },
-      () => {
+      (err: unknown) => {
         setFileBusy(false);
-        setError("Couldn’t read that file. Try saving it as CSV and picking it again.");
+        setError(errorText(err));
       },
     );
   };
@@ -1077,12 +1084,17 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
         onDrop={handleDrop}
       >
         <label className="form-field" style={{ margin: 0 }}>
-          <span className="form-label">CSV file</span>
-          <input type="file" accept=".csv,text/csv" onChange={handleFile} disabled={fileBusy} />
+          <span className="form-label">CSV or Word document (.docx)</span>
+          <input
+            type="file"
+            accept=".csv,.docx,.doc,.txt,text/csv,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword"
+            onChange={handleFile}
+            disabled={fileBusy}
+          />
           <span className="form-hint">
             {draft
               ? "Choosing or dropping a file replaces the import you have going for this bank."
-              : "Drag and drop your CSV file here, or click to choose one. Rows without an answer get one from the AI."}
+              : "Drag and drop your CSV or Word document (.docx) here, or click to choose one. Multiple-choice questions and answers are detected automatically."}
           </span>
         </label>
         <div>
