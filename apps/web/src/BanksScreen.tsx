@@ -48,6 +48,7 @@ import {
 import { linkTo, navigate, roomPath } from "./router";
 import { createGroupAssignment, fetchGroups } from "./social";
 import { getBankMistakes } from "./storage";
+import { CbtExamScreen } from "./games/quiz/CbtExamScreen";
 import { TopLayout } from "./ui/Chrome";
 import { errorText, useAction, useLoaded } from "./ui/common";
 import { useConfirm } from "./ui/ConfirmDialog";
@@ -466,6 +467,39 @@ export function BankScreen({ id }: { id: string }) {
   );
 }
 
+/** `/banks/:id/exam`: timed exam simulation mode (CBT practice) for a question bank. */
+export function BankExamScreen({ id }: { id: string }) {
+  const load = useCallback(() => fetchBank(id), [id]);
+  const bank = useLoaded(load);
+
+  if (bank.error) {
+    return (
+      <TopLayout active={null} className="account-page" column>
+        <div className="screen">
+          <a className="btn-link" {...linkTo(`/banks/${encodeURIComponent(id)}`)}>
+            ← Back to bank
+          </a>
+          <h1 className="page-title">Exam simulation</h1>
+          <p className="page-sub">Could not load this question bank for exam simulation.</p>
+          <ErrorLine error={bank.error} />
+        </div>
+      </TopLayout>
+    );
+  }
+
+  if (!bank.data) {
+    return (
+      <TopLayout active={null} className="account-page" column>
+        <Loading />
+      </TopLayout>
+    );
+  }
+
+  return (
+    <CbtExamScreen bank={bank.data} onExit={() => navigate(`/banks/${encodeURIComponent(id)}`)} />
+  );
+}
+
 function BankDetail({ id, accountUser }: { id: string; accountUser: AccountUser | null }) {
   const load = useCallback(() => fetchBank(id), [id]);
   const bank = useLoaded(load);
@@ -813,6 +847,14 @@ function BankDetail({ id, accountUser }: { id: string; accountUser: AccountUser 
                   onClick={() => void handlePractice()}
                 >
                   <Icon name="play" /> Practice solo
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-cbt"
+                  disabled={detail.questionCount === 0}
+                  onClick={() => navigate(`/banks/${encodeURIComponent(id)}/exam`)}
+                >
+                  <Icon name="clock" /> Timed CBT Exam
                 </button>
                 <button
                   type="button"

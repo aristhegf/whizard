@@ -16,6 +16,7 @@ export type Route =
   /** One of the player's own question banks. */
   | { name: "banks" }
   | { name: "bank"; id: string }
+  | { name: "bankExam"; id: string }
   /** Another player's profile. */
   | { name: "player"; username: string }
   | { name: "group"; id: string }
@@ -46,6 +47,8 @@ export function useRoute(): Route {
   if (/^\/avatar\/?$/.test(path)) return { name: "avatar" };
   if (/^\/friends\/?$/.test(path)) return { name: "friends" };
   if (/^\/banks\/?$/.test(path)) return { name: "banks" };
+  const bankExam = /^\/banks\/([^/]+)\/exam\/?$/.exec(path);
+  if (bankExam) return { name: "bankExam", id: decodeURIComponent(bankExam[1] ?? "") };
   const bank = /^\/banks\/([^/]+)\/?$/.exec(path);
   if (bank) return { name: "bank", id: decodeURIComponent(bank[1] ?? "") };
   const add = /^\/add\/([^/]+)\/?$/.exec(path);

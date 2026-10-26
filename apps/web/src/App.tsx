@@ -52,6 +52,9 @@ const FriendsScreen = lazy(() =>
 const GroupScreen = lazy(() => import("./FriendsScreen").then((m) => ({ default: m.GroupScreen })));
 const BanksScreen = lazy(() => import("./BanksScreen").then((m) => ({ default: m.BanksScreen })));
 const BankScreen = lazy(() => import("./BanksScreen").then((m) => ({ default: m.BankScreen })));
+const BankExamScreen = lazy(() =>
+  import("./BanksScreen").then((m) => ({ default: m.BankExamScreen })),
+);
 const DashboardPage = lazy(() =>
   import("./pages/DashboardPage").then((m) => ({ default: m.DashboardPage })),
 );
@@ -103,6 +106,8 @@ export function App() {
             <BanksScreen />
           ) : route.name === "bank" ? (
             <BankScreen key={route.id} id={route.id} />
+          ) : route.name === "bankExam" ? (
+            <BankExamScreen key={route.id} id={route.id} />
           ) : route.name === "add" ? (
             <AddFriendScreen key={route.username} username={route.username} />
           ) : route.name === "group" ? (

@@ -940,6 +940,23 @@ function GroupDetail({
 
                   <button
                     type="button"
+                    className="btn btn-cbt"
+                    disabled={assignment.questionCount === 0}
+                    onClick={() => {
+                      sessionStorage.setItem(
+                        "whizard_active_assignment",
+                        JSON.stringify({ groupId: id, assignmentId: assignment.id }),
+                      );
+                      navigate(
+                        `/banks/${encodeURIComponent(assignment.bankId)}/exam?group=${encodeURIComponent(id)}&assignment=${encodeURIComponent(assignment.id)}`,
+                      );
+                    }}
+                  >
+                    <Icon name="clock" size={16} /> Timed CBT Exam
+                  </button>
+
+                  <button
+                    type="button"
                     className="btn"
                     onClick={() => void copyAssignmentLink(assignment.id)}
                   >
