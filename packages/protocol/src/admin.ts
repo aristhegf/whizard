@@ -82,6 +82,8 @@ export interface AdminUser {
   createdAt: number;
   admin: boolean;
   suspended: boolean;
+  isPro?: boolean;
+  proUntil?: number | null;
   /** Finished games saved to the account's history. */
   games: number;
   /** First place in games with two or more players. */

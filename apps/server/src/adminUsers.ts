@@ -30,6 +30,8 @@ interface Row {
   created_at: number;
   is_admin: number;
   suspended_at: number | null;
+  is_pro: number;
+  pro_until: number | null;
   games: number;
   wins: number;
   last_day: string | null;
@@ -53,16 +55,19 @@ export async function getAdminUsers(context: RequestContext): Promise<Response> 
       .prepare(
         `SELECT u.id, u.username, u.display_name, u.avatar, u.created_at, u.is_admin,
                 u.suspended_at,
+                (pm.user_id IS NOT NULL AND (pm.until IS NULL OR pm.until > ?4)) AS is_pro,
+                pm.until AS pro_until,
                 (SELECT COUNT(*) FROM match_players mp WHERE mp.user_id = u.id) AS games,
                 (SELECT COUNT(*) FROM match_players mp JOIN matches m ON m.id = mp.match_id
                   WHERE mp.user_id = u.id AND mp.placing = 1 AND m.player_count >= 2) AS wins,
                 (SELECT MAX(day) FROM player_days p WHERE p.viewer = 'u:' || u.id) AS last_day
            FROM users u
+           LEFT JOIN pro_memberships pm ON pm.user_id = u.id
           WHERE ?1 = '' OR instr(u.username, ?1) > 0 OR instr(lower(u.display_name), ?1) > 0
           ORDER BY ${ORDER[sort]}
           LIMIT ?2 OFFSET ?3`,
       )
-      .bind(q, PAGE + 1, offset),
+      .bind(q, PAGE + 1, offset, now),
     db
       .prepare(
         `SELECT COUNT(*) AS accounts,
@@ -85,6 +90,8 @@ export async function getAdminUsers(context: RequestContext): Promise<Response> 
     createdAt: r.created_at,
     admin: r.is_admin === 1,
     suspended: r.suspended_at !== null,
+    isPro: r.is_pro === 1,
+    proUntil: r.pro_until ?? null,
     games: r.games,
     wins: r.wins,
     lastPlayed: r.last_day,

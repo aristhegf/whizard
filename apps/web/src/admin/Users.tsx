@@ -1,4 +1,5 @@
 import {
+  PRO_DURATIONS,
   USER_SORTS,
   type AdminUser,
   type AdminUsers,
@@ -6,7 +7,7 @@ import {
   type UserSort,
 } from "@whizard/protocol";
 import { useEffect, useState } from "react";
-import { fetchAdminUsers, manageUser } from "../api";
+import { endPro, fetchAdminUsers, giveProFree, manageUser } from "../api";
 import { formatNumber, shortDate } from "../format";
 import { Avatar } from "../ui/Avatar";
 import { KpiTiles, PanelHead } from "./parts";
@@ -19,6 +20,24 @@ const SORT_LABELS: Record<UserSort, string> = {
 
 const joined = (at: number) =>
   new Date(at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
+const durationName = (months: number) =>
+  months === 0 ? "Lifetime (No end)" : months === 1 ? "1 month" : `${months} months`;
+
+const proDate = (at: number | null | undefined) =>
+  at
+    ? new Date(at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    : "Lifetime";
+
+const proPillText = (isPro?: boolean, proUntil?: number | null) => {
+  if (!isPro) return "Free";
+  if (!proUntil) return "👑 Lifetime";
+  const dateStr = new Date(proUntil).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+  return `👑 Pro · ${dateStr}`;
+};
 
 /** `/admin/users`: accounts, with suspend and delete for abusive ones. */
 export function Users() {
@@ -153,6 +172,8 @@ export function Users() {
 
 function UserRow({ user, onChanged }: { user: AdminUser; onChanged: () => void }) {
   const [confirming, setConfirming] = useState(false);
+  const [proMode, setProMode] = useState<"idle" | "grant" | "end">("idle");
+  const [proMonths, setProMonths] = useState(1);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState<string | null>(null);
 
@@ -167,6 +188,34 @@ function UserRow({ user, onChanged }: { user: AdminUser; onChanged: () => void }
     } finally {
       setBusy(false);
       setConfirming(false);
+    }
+  };
+
+  const submitPro = async () => {
+    setBusy(true);
+    setFailed(null);
+    try {
+      await giveProFree(user.username, proMonths);
+      setProMode("idle");
+      onChanged();
+    } catch (e) {
+      setFailed(e instanceof Error ? e.message : "Couldn’t grant Pro.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const submitEndPro = async () => {
+    setBusy(true);
+    setFailed(null);
+    try {
+      await endPro(user.id);
+      setProMode("idle");
+      onChanged();
+    } catch (e) {
+      setFailed(e instanceof Error ? e.message : "Couldn’t end Pro.");
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -195,15 +244,82 @@ function UserRow({ user, onChanged }: { user: AdminUser; onChanged: () => void }
           <dd>{user.lastPlayed ? shortDate(user.lastPlayed) : "–"}</dd>
         </div>
       </dl>
-      <span
-        className={`status-pill ${
-          user.admin ? "status-admin" : user.suspended ? "status-out" : "status-kept"
-        }`}
-      >
-        {user.admin ? "Admin" : user.suspended ? "Suspended" : "Active"}
-      </span>
+      <div className="user-status-badges">
+        <span
+          className={`status-pill ${
+            user.admin ? "status-admin" : user.suspended ? "status-out" : "status-kept"
+          }`}
+        >
+          {user.admin ? "Admin" : user.suspended ? "Suspended" : "Active"}
+        </span>
+        <span
+          className={`status-pill ${user.isPro ? "status-pro" : "status-free"}`}
+          title={
+            user.isPro
+              ? user.proUntil
+                ? `Pro active until ${proDate(user.proUntil)}`
+                : "Lifetime Pro membership"
+              : "Free membership (manual question entry only)"
+          }
+        >
+          {proPillText(user.isPro, user.proUntil)}
+        </span>
+      </div>
       <div className="user-actions">
-        {user.admin ? null : confirming ? (
+        {proMode === "grant" ? (
+          <div className="pro-action-inline">
+            <select
+              className="pro-duration-select"
+              value={proMonths}
+              disabled={busy}
+              onChange={(e) => setProMonths(Number(e.target.value))}
+              aria-label="Pro duration"
+            >
+              {PRO_DURATIONS.map((m) => (
+                <option key={m} value={m}>
+                  {user.isPro
+                    ? m === 0
+                      ? "Lifetime (No end)"
+                      : `+${durationName(m)}`
+                    : durationName(m)}
+                </option>
+              ))}
+            </select>
+            <button
+              className="btn btn-small btn-primary"
+              disabled={busy}
+              onClick={() => void submitPro()}
+            >
+              {user.isPro ? "Extend" : "Grant Pro"}
+            </button>
+            {user.isPro && (
+              <button
+                className="btn btn-small btn-danger"
+                disabled={busy}
+                onClick={() => setProMode("end")}
+              >
+                End Pro
+              </button>
+            )}
+            <button className="btn btn-small" disabled={busy} onClick={() => setProMode("idle")}>
+              Cancel
+            </button>
+          </div>
+        ) : proMode === "end" ? (
+          <div className="pro-action-inline">
+            <span className="pro-confirm-hint">End Pro for @{user.username}?</span>
+            <button
+              className="btn btn-small btn-danger"
+              disabled={busy}
+              onClick={() => void submitEndPro()}
+            >
+              Confirm End
+            </button>
+            <button className="btn btn-small" disabled={busy} onClick={() => setProMode("idle")}>
+              Cancel
+            </button>
+          </div>
+        ) : confirming ? (
           <>
             <button
               className="btn btn-small btn-danger"
@@ -219,19 +335,33 @@ function UserRow({ user, onChanged }: { user: AdminUser; onChanged: () => void }
         ) : (
           <>
             <button
-              className="btn btn-small"
+              className={`btn btn-small ${user.isPro ? "btn-pro-manage" : "btn-pro-grant"}`}
               disabled={busy}
-              onClick={() => void act(user.suspended ? "unsuspend" : "suspend")}
+              onClick={() => {
+                setProMonths(1);
+                setProMode("grant");
+              }}
             >
-              {user.suspended ? "Unsuspend" : "Suspend"}
+              {user.isPro ? "👑 Manage Pro" : "👑 Give Pro"}
             </button>
-            <button
-              className="btn btn-small btn-danger"
-              disabled={busy}
-              onClick={() => setConfirming(true)}
-            >
-              Delete
-            </button>
+            {user.admin ? null : (
+              <>
+                <button
+                  className="btn btn-small"
+                  disabled={busy}
+                  onClick={() => void act(user.suspended ? "unsuspend" : "suspend")}
+                >
+                  {user.suspended ? "Unsuspend" : "Suspend"}
+                </button>
+                <button
+                  className="btn btn-small btn-danger"
+                  disabled={busy}
+                  onClick={() => setConfirming(true)}
+                >
+                  Delete
+                </button>
+              </>
+            )}
           </>
         )}
       </div>
