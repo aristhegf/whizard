@@ -135,3 +135,46 @@ export function markHintSeen(id: string): void {
   const seen = read<string[]>(SEEN_HINTS_KEY) ?? [];
   if (!seen.includes(id)) write(SEEN_HINTS_KEY, [...seen, id]);
 }
+
+const BANK_MISTAKES_PREFIX = "whizard:bank-mistakes:";
+
+/** Question IDs the player answered incorrectly in a question bank. */
+export function getBankMistakes(bankId: string): string[] {
+  return read<string[]>(`${BANK_MISTAKES_PREFIX}${bankId}`) ?? [];
+}
+
+export function saveBankMistakes(bankId: string, questionIds: string[]): void {
+  const existing = new Set(getBankMistakes(bankId));
+  for (const id of questionIds) existing.add(id);
+  write(`${BANK_MISTAKES_PREFIX}${bankId}`, [...existing]);
+}
+
+export function clearBankMistakes(bankId: string, questionIds?: string[]): void {
+  if (!questionIds) {
+    write(`${BANK_MISTAKES_PREFIX}${bankId}`, []);
+    return;
+  }
+  const existing = new Set(getBankMistakes(bankId));
+  for (const id of questionIds) existing.delete(id);
+  write(`${BANK_MISTAKES_PREFIX}${bankId}`, [...existing]);
+}
+
+/** Total count of unmastered mistakes across all banks for the study dashboard. */
+export function getAllBankMistakes(): Record<string, string[]> {
+  const result: Record<string, string[]> = {};
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith(BANK_MISTAKES_PREFIX)) {
+        const bankId = key.slice(BANK_MISTAKES_PREFIX.length);
+        const mistakes = read<string[]>(key) ?? [];
+        if (mistakes.length > 0) {
+          result[bankId] = mistakes;
+        }
+      }
+    }
+  } catch {
+    // localStorage blocked
+  }
+  return result;
+}

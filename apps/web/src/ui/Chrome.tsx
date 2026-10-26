@@ -14,7 +14,16 @@ import { useToast } from "./toast";
 import { usePageReveal } from "./usePageReveal";
 
 export type Section =
-  "home" | "games" | "topics" | "friends" | "profile" | "pricing" | "about" | "stats" | null;
+  | "home"
+  | "games"
+  | "topics"
+  | "friends"
+  | "profile"
+  | "pricing"
+  | "about"
+  | "stats"
+  | "dashboard"
+  | null;
 
 export function Backdrop() {
   return <div className="backdrop" aria-hidden="true" />;

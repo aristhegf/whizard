@@ -23,6 +23,7 @@ export type Route =
   | { name: "stats" }
   | { name: "pricing" }
   | { name: "about" }
+  | { name: "dashboard" }
   /** `item` is one thing in the section, e.g. the question being edited. */
   | { name: "admin"; section: string; item: string | null };
 
@@ -57,6 +58,7 @@ export function useRoute(): Route {
   if (/^\/stats\/?$/.test(path)) return { name: "stats" };
   if (/^\/pricing\/?$/.test(path)) return { name: "pricing" };
   if (/^\/about\/?$/.test(path)) return { name: "about" };
+  if (/^\/dashboard\/?$/.test(path)) return { name: "dashboard" };
   const admin = /^\/admin(?:\/([a-z-]+)(?:\/([a-z0-9_-]+))?)?\/?$/.exec(path);
   if (admin) return { name: "admin", section: admin[1] ?? "dashboard", item: admin[2] ?? null };
   return { name: "home" };

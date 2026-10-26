@@ -43,6 +43,7 @@ import {
   type QuestionForm,
 } from "./banks";
 import { linkTo, navigate, roomPath } from "./router";
+import { getBankMistakes } from "./storage";
 import { TopLayout } from "./ui/Chrome";
 import { errorText, useAction, useLoaded } from "./ui/common";
 import { useConfirm } from "./ui/ConfirmDialog";
@@ -110,6 +111,7 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
 /** One bank as the list shows it: its name, labels and question count. */
 function BankRow({ bank }: { bank: PlayerBank }) {
   const labels = [bank.exam, bank.subject].filter(Boolean).join(" · ");
+  const mistakes = getBankMistakes(bank.id);
   return (
     <li>
       <a className="person bank-link" {...linkTo(`/banks/${encodeURIComponent(bank.id)}`)}>
@@ -117,6 +119,7 @@ function BankRow({ bank }: { bank: PlayerBank }) {
         <span className="muted small">
           {labels && `${labels} · `}
           {bank.questionCount} {bank.questionCount === 1 ? "question" : "questions"}
+          {mistakes.length > 0 && ` · ⚠️ ${mistakes.length} to review`}
         </span>
       </a>
     </li>
@@ -449,6 +452,16 @@ function BankDetail({ id }: { id: string }) {
                     ? "Add or import questions below to start practicing."
                     : `${detail.questionCount} ${detail.questionCount === 1 ? "question" : "questions"} ready. Practice solo or share the room code with friends.`}
                 </p>
+                {getBankMistakes(id).length > 0 && (
+                  <p
+                    className="small"
+                    style={{ margin: "4px 0 0", color: "#ff9aaa", fontWeight: 700 }}
+                  >
+                    ⚠️ {getBankMistakes(id).length}{" "}
+                    {getBankMistakes(id).length === 1 ? "question" : "questions"} marked for mistake
+                    review from recent solo practice.
+                  </p>
+                )}
               </div>
               <div className="bank-practice-actions">
                 <button

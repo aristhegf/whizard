@@ -52,6 +52,9 @@ const FriendsScreen = lazy(() =>
 const GroupScreen = lazy(() => import("./FriendsScreen").then((m) => ({ default: m.GroupScreen })));
 const BanksScreen = lazy(() => import("./BanksScreen").then((m) => ({ default: m.BanksScreen })));
 const BankScreen = lazy(() => import("./BanksScreen").then((m) => ({ default: m.BankScreen })));
+const DashboardPage = lazy(() =>
+  import("./pages/DashboardPage").then((m) => ({ default: m.DashboardPage })),
+);
 
 /** Guests get the page that introduces Whizard; people signed in go straight to the games. Blank
  * for the moment it takes to find out, so neither flashes up first. */
@@ -114,6 +117,8 @@ export function App() {
             <PricingPage />
           ) : route.name === "about" ? (
             <AboutPage />
+          ) : route.name === "dashboard" ? (
+            <DashboardPage />
           ) : (
             <HomeRoute />
           )}

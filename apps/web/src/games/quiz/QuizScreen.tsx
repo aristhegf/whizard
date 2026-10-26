@@ -29,6 +29,7 @@ import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { parseQuizSettings } from "./QuizSettingsPanel";
 import { EliminationScreen } from "./EliminationScreen";
+import { MistakeMastery } from "./MistakeMastery";
 import { ReportQuestion } from "./ReportQuestion";
 import { play } from "../../sounds";
 import { Podium } from "../../ui/Podium";
@@ -432,6 +433,11 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
   const solo = view.playerCount === 1;
   const podium = view.final && !solo ? view.standings.filter((s) => !s.left).slice(0, 3) : [];
   const usernames = room.players.flatMap((p) => (p.username ? [p.username] : []));
+  const missed = review.filter((item) => !item.correct);
+  const [drillingMistakes, setDrillingMistakes] = useState(false);
+  const settings = parseQuizSettings(room.game.settings);
+  const bankId = settings?.bankId;
+
   useEffect(() => {
     if (view.final) play("fanfare");
   }, [view.final]);
@@ -439,7 +445,6 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
   const text = view.me
     ? `I scored ${view.me.score.toLocaleString()} in a ${categoryName} quiz on Whizard!`
     : `Play a ${categoryName} quiz with me on Whizard!`;
-  const settings = parseQuizSettings(room.game.settings);
   const topic = context.categoryId ? topicStyle(context.categoryId) : null;
   const level = settings ? LEVEL_NAMES[settings.difficulty] : "";
   const { open: share, dialog: shareDialog } = useShareResults(
@@ -476,6 +481,18 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
     }),
     text,
   );
+
+  if (drillingMistakes && missed.length > 0) {
+    return (
+      <MistakeMastery
+        items={missed}
+        categoryName={categoryName}
+        bankId={bankId}
+        onDone={() => setDrillingMistakes(false)}
+        onExit={() => setDrillingMistakes(false)}
+      />
+    );
+  }
 
   return (
     <div className="results">
@@ -517,6 +534,17 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
               <p className="muted">
                 {view.me.correctCount} of {view.total} correct
               </p>
+              {missed.length > 0 ? (
+                <div className="mistakes-counter-badge">
+                  <span>
+                    ⚠️ {missed.length} {missed.length === 1 ? "mistake" : "mistakes"} to review
+                  </span>
+                </div>
+              ) : (
+                <div className="mastery-counter-badge">
+                  <span>⭐ 100% Mastered</span>
+                </div>
+              )}
             </div>
           ) : podium.length > 0 ? (
             <Podium
@@ -530,7 +558,19 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
           {view.final &&
             (isHost ? (
               <div className="results-actions">
-                <button className="btn btn-primary" onClick={() => client.startGame()}>
+                {solo && missed.length > 0 && (
+                  <button
+                    className="btn btn-primary btn-practice-mistakes"
+                    onClick={() => setDrillingMistakes(true)}
+                  >
+                    <Icon name="repeat" size={20} />
+                    Practice Missed ({missed.length})
+                  </button>
+                )}
+                <button
+                  className={solo && missed.length > 0 ? "btn" : "btn btn-primary"}
+                  onClick={() => client.startGame()}
+                >
                   <Icon name="play" size={20} fill />
                   Play Again
                 </button>
