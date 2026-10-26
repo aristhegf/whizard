@@ -453,4 +453,88 @@ describe("advanced bank management", () => {
     });
     expect(resTolu.status).toBe(403);
   });
+
+  it("discovers public banks and respects privacy", async () => {
+    const { env, headers: adaHeaders } = await playerEnv("ada");
+    await addUser(env.DB, "tolu");
+    const toluCookie = (await createSession(env, "tolu", Date.now())).split(";")[0]!;
+    const toluHeaders = { Cookie: toluCookie, Origin: "http://localhost" };
+
+    const pubBankId = await makeBank(env, adaHeaders, "JAMB Physics");
+    await call(env, `/api/banks/${pubBankId}`, {
+      method: "PATCH",
+      ...jsonBody(adaHeaders, { isPublic: true, exam: "JAMB", subject: "Physics" }),
+    });
+    await call(env, `/api/banks/${pubBankId}/questions`, {
+      method: "POST",
+      ...jsonBody(adaHeaders, question({ prompt: "What is velocity?" })),
+    });
+
+    const privBankId = await makeBank(env, toluHeaders, "Tolu Private");
+    await call(env, `/api/banks/${privBankId}/questions`, {
+      method: "POST",
+      ...jsonBody(toluHeaders, question({ prompt: "Secret question?" })),
+    });
+
+    // Public feed
+    const res = await call(env, "/api/banks/public");
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as {
+      banks: { id: string; name: string; ownerUsername: string; isPublic: boolean }[];
+    };
+    expect(body.banks.some((b) => b.id === pubBankId)).toBe(true);
+    expect(body.banks.some((b) => b.id === privBankId)).toBe(false);
+
+    const found = body.banks.find((b) => b.id === pubBankId)!;
+    expect(found.name).toBe("JAMB Physics");
+    expect(found.ownerUsername).toBe("ada");
+    expect(found.isPublic).toBe(true);
+
+    // Search filter
+    const searchRes = await call(env, "/api/banks/public?search=Physics");
+    const searchBody = (await searchRes.json()) as { banks: { id: string }[] };
+    expect(searchBody.banks.some((b) => b.id === pubBankId)).toBe(true);
+
+    const searchMismatch = await call(env, "/api/banks/public?search=Biology");
+    const mismatchBody = (await searchMismatch.json()) as { banks: { id: string }[] };
+    expect(mismatchBody.banks.some((b) => b.id === pubBankId)).toBe(false);
+  });
+
+  it("forks a public bank into own collection with all questions", async () => {
+    const { env, headers: adaHeaders } = await playerEnv("ada");
+    await addUser(env.DB, "tolu");
+    const toluCookie = (await createSession(env, "tolu", Date.now())).split(";")[0]!;
+    const toluHeaders = { Cookie: toluCookie, Origin: "http://localhost" };
+
+    const pubBankId = await makeBank(env, adaHeaders, "WAEC Chemistry");
+    await call(env, `/api/banks/${pubBankId}`, {
+      method: "PATCH",
+      ...jsonBody(adaHeaders, { isPublic: true, exam: "WAEC", subject: "Chemistry" }),
+    });
+    await call(env, `/api/banks/${pubBankId}/questions`, {
+      method: "POST",
+      ...jsonBody(adaHeaders, question({ prompt: "What is an electron?" })),
+    });
+
+    // Tolu forks Ada's bank
+    const forkRes = await call(env, `/api/banks/${pubBankId}/fork`, {
+      method: "POST",
+      headers: toluHeaders,
+    });
+    expect(forkRes.status).toBe(201);
+    const forked = (await forkRes.json()) as {
+      bank: { id: string; name: string; questionCount: number; isPublic: boolean };
+    };
+    expect(forked.bank.name).toBe("WAEC Chemistry (Copy)");
+    expect(forked.bank.questionCount).toBe(1);
+    expect(forked.bank.isPublic).toBe(false); // starts private for the cloner
+
+    // Verify questions inside forked bank
+    const detailRes = await call(env, `/api/banks/${forked.bank.id}`, { headers: toluHeaders });
+    const detail = (await detailRes.json()) as {
+      bank: { questions: { prompt: string }[]; isOwner: boolean };
+    };
+    expect(detail.bank.isOwner).toBe(true);
+    expect(detail.bank.questions[0]?.prompt).toBe("What is an electron?");
+  });
 });

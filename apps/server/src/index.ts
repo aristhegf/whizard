@@ -76,8 +76,10 @@ import {
   createBank,
   deleteBank,
   deleteBankQuestion,
+  forkBank,
   getBank,
   listBanks,
+  listPublicBanks,
   updateBank,
   updateBankQuestion,
 } from "./banks";
@@ -382,8 +384,10 @@ const ROUTES: [Method, RegExp, Handler][] = [
   ["GET", /^\/api\/groups\/([^/]+)\/leaderboard$/, getGroupLeaderboard],
 
   ["GET", /^\/api\/banks\/export$/, exportAllBanksCsv],
+  ["GET", /^\/api\/banks\/public$/, listPublicBanks],
   ["GET", /^\/api\/banks$/, listBanks],
   ["POST", /^\/api\/banks$/, createBank],
+  ["POST", /^\/api\/banks\/([^/]+)\/fork$/, forkBank],
   ["GET", /^\/api\/banks\/([^/]+)$/, getBank],
   ["PATCH", /^\/api\/banks\/([^/]+)$/, updateBank],
   ["DELETE", /^\/api\/banks\/([^/]+)$/, deleteBank],

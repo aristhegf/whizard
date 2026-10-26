@@ -44,6 +44,10 @@ export interface PlayerBank {
   subject: string | null;
   questionCount: number;
   isPublic?: boolean;
+  ownerId?: string;
+  ownerUsername?: string;
+  ownerDisplayName?: string;
+  ownerAvatar?: string | null;
   createdAt: number;
   updatedAt: number;
 }
@@ -51,6 +55,7 @@ export interface PlayerBank {
 /** A bank with its questions, in playing order. */
 export interface PlayerBankDetail extends PlayerBank {
   questions: PlayerBankQuestion[];
+  isOwner?: boolean;
 }
 
 const trimmed = (label: string, max: number) =>

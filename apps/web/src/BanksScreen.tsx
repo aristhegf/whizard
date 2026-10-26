@@ -5,6 +5,7 @@ import {
   BANK_NAME_MAX,
   BANK_PROMPT_MAX,
   BANK_REFERENCE_MAX,
+  type AccountUser,
   type BankImportRow,
   type PlayerBank,
   type PlayerBankImport,
@@ -37,6 +38,8 @@ import {
   fetchBankDuplicates,
   fetchBanks,
   fetchImportDraft,
+  fetchPublicBanks,
+  forkBank,
   patchBankImport,
   startBankImport,
   updateBank,
@@ -49,45 +52,9 @@ import { errorText, useAction, useLoaded } from "./ui/common";
 import { useConfirm } from "./ui/ConfirmDialog";
 import { Loading } from "./ui/Loading";
 import { Icon } from "./ui/Icon";
+import { Avatar } from "./ui/Avatar";
 import { parseDocxFile, parseDocumentToCsv } from "./documentImport";
 import { useToast, useToastAction } from "./ui/toast";
-
-/** Wraps a screen that needs an account, offering sign-in first. */
-function SignedInOnly({
-  title,
-  next,
-  message,
-  children,
-}: {
-  title: string;
-  next: string;
-  message: string;
-  children: () => ReactNode;
-}) {
-  const account = useAccount();
-  return (
-    <TopLayout active={null} className="account-page" column>
-      {account.status === "loading" ? (
-        <Loading />
-      ) : account.user ? (
-        children()
-      ) : (
-        <div className="screen">
-          <header>
-            <h1 className="page-title">{title}</h1>
-            <p className="page-sub">{message}</p>
-          </header>
-          <a
-            className="btn btn-primary btn-block"
-            {...linkTo(`/account?next=${encodeURIComponent(next)}`)}
-          >
-            Sign in or create an account
-          </a>
-        </div>
-      )}
-    </TopLayout>
-  );
-}
 
 function ErrorLine({ error }: { error: string | null }) {
   return error ? (
@@ -115,7 +82,10 @@ function BankRow({ bank }: { bank: PlayerBank }) {
   return (
     <li>
       <a className="person bank-link" {...linkTo(`/banks/${encodeURIComponent(bank.id)}`)}>
-        <span className="person-name">{bank.name}</span>
+        <span className="person-name">
+          {bank.name}
+          {bank.isPublic && <span className="bank-badge ready">Public</span>}
+        </span>
         <span className="muted small">
           {labels && `${labels} · `}
           {bank.questionCount} {bank.questionCount === 1 ? "question" : "questions"}
@@ -126,18 +96,258 @@ function BankRow({ bank }: { bank: PlayerBank }) {
   );
 }
 
+const EXAM_PRESETS = ["JAMB", "WAEC", "NECO", "GMAT", "ICAN"] as const;
+
+function CommunityBankRow({
+  bank,
+  onFork,
+  busyFork,
+}: {
+  bank: PlayerBank;
+  onFork: () => void;
+  busyFork: boolean;
+}) {
+  const labels = [bank.exam, bank.subject].filter(Boolean).join(" · ");
+  const owner =
+    bank.ownerDisplayName || (bank.ownerUsername ? `@${bank.ownerUsername}` : "Creator");
+
+  return (
+    <li>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, minWidth: 0 }}>
+        <Avatar
+          id={bank.ownerAvatar}
+          name={bank.ownerDisplayName || bank.ownerUsername || "Owner"}
+          size={38}
+        />
+        <a
+          className="person bank-link"
+          style={{ flex: 1, minWidth: 0 }}
+          {...linkTo(`/banks/${encodeURIComponent(bank.id)}`)}
+        >
+          <span className="person-name">{bank.name}</span>
+          <span className="muted small">
+            by {owner} · {bank.questionCount} {bank.questionCount === 1 ? "question" : "questions"}
+            {labels && ` · ${labels}`}
+          </span>
+        </a>
+      </div>
+      <div className="row-actions">
+        <button
+          type="button"
+          className="btn btn-small"
+          disabled={busyFork}
+          onClick={(e) => {
+            e.preventDefault();
+            onFork();
+          }}
+          title="Clone to your collection"
+        >
+          <Icon name="copy" /> {busyFork ? "Cloning…" : "Clone"}
+        </button>
+        <a
+          className="btn btn-small btn-primary"
+          {...linkTo(`/banks/${encodeURIComponent(bank.id)}`)}
+          title="Practice with this bank"
+        >
+          <Icon name="play" />
+        </a>
+      </div>
+    </li>
+  );
+}
+
+function CommunityBanksList({ accountUser }: { accountUser: AccountUser | null }) {
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [exam, setExam] = useState("");
+  const [busyForkId, setBusyForkId] = useState<string | null>(null);
+  const toast = useToast();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const load = useCallback(
+    () =>
+      fetchPublicBanks({
+        search: debouncedSearch.trim() || undefined,
+        exam: exam || undefined,
+      }),
+    [debouncedSearch, exam],
+  );
+
+  const publicBanks = useLoaded(load);
+  const banks = publicBanks.data;
+  const loading = banks === null && !publicBanks.error;
+
+  const handleFork = async (bank: PlayerBank) => {
+    if (!accountUser) {
+      navigate(`/account?next=${encodeURIComponent("/banks?tab=community")}`);
+      return;
+    }
+    if (busyForkId) return;
+    setBusyForkId(bank.id);
+    try {
+      const forked = await forkBank(bank.id);
+      toast.show({
+        title: `Cloned "${forked.name}" to your collection!`,
+        status: "success",
+      });
+      navigate(`/banks/${encodeURIComponent(forked.id)}`);
+    } catch (e) {
+      setBusyForkId(null);
+      toast.show({ title: errorText(e), status: "error" });
+    }
+  };
+
+  return (
+    <section className="stack" aria-label="Community question banks">
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ position: "relative" }}>
+          <input
+            style={{ width: "100%", paddingLeft: 38 }}
+            placeholder="Search community banks by title, exam, or subject…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <div
+            style={{
+              position: "absolute",
+              left: 12,
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "var(--muted)",
+              pointerEvents: "none",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Icon name="search" />
+          </div>
+        </div>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
+          <span className="small muted">Exam:</span>
+          <button
+            type="button"
+            className={`btn btn-small ${!exam ? "btn-primary" : ""}`}
+            style={{ padding: "4px 10px", fontSize: "0.8rem", minHeight: 28 }}
+            onClick={() => setExam("")}
+          >
+            All
+          </button>
+          {EXAM_PRESETS.map((preset) => (
+            <button
+              key={preset}
+              type="button"
+              className={`btn btn-small ${exam === preset ? "btn-primary" : ""}`}
+              style={{ padding: "4px 10px", fontSize: "0.8rem", minHeight: 28 }}
+              onClick={() => setExam(exam === preset ? "" : preset)}
+            >
+              {preset}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <ErrorLine error={publicBanks.error} />
+
+      {loading ? (
+        <Loading />
+      ) : banks && banks.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "32px 16px" }}>
+          <p className="muted">
+            {search || exam
+              ? "No community question banks found matching your search."
+              : 'No public question banks published yet. Be the first to share one by checking "Public bank" in your bank details!'}
+          </p>
+        </div>
+      ) : (
+        <ul className="people">
+          {banks?.map((bank) => (
+            <CommunityBankRow
+              key={bank.id}
+              bank={bank}
+              onFork={() => void handleFork(bank)}
+              busyFork={busyForkId === bank.id}
+            />
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 // The list ----------------------------------------------------------------------------------------
 
-/** `/banks`: every bank the player owns, with a form to make another. */
+/** `/banks`: personal question banks, plus discovery of community banks. */
 export function BanksScreen() {
+  const account = useAccount();
+  const [tab, setTab] = useState<"mine" | "community">(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("tab") === "community") return "community";
+    }
+    return "mine";
+  });
+
   return (
-    <SignedInOnly
-      title="Question banks"
-      next="/banks"
-      message="Sign in to build your own question banks."
-    >
-      {() => <BankList />}
-    </SignedInOnly>
+    <TopLayout active={null} className="account-page" column>
+      <div className="screen">
+        <header>
+          <h1 className="page-title">Question banks</h1>
+          <p className="page-sub">
+            Create your own study banks, or explore and clone public community banks.
+          </p>
+        </header>
+
+        <div
+          className="segmented"
+          role="group"
+          aria-label="Question bank view"
+          style={{ margin: "16px 0 24px" }}
+        >
+          <button type="button" aria-pressed={tab === "mine"} onClick={() => setTab("mine")}>
+            My banks
+          </button>
+          <button
+            type="button"
+            aria-pressed={tab === "community"}
+            onClick={() => setTab("community")}
+          >
+            Community
+          </button>
+        </div>
+
+        {tab === "mine" ? (
+          account.status === "loading" ? (
+            <Loading />
+          ) : account.user ? (
+            <BankList />
+          ) : (
+            <div className="stack" style={{ textAlign: "center", padding: "32px 16px" }}>
+              <h2 className="section-title">Build your own banks</h2>
+              <p className="muted" style={{ maxWidth: 440, margin: "0 auto 16px" }}>
+                Sign in with a fast passkey to build, import, and manage your personal question
+                banks for solo practice and multiplayer rooms.
+              </p>
+              <a
+                className="btn btn-primary"
+                style={{ margin: "0 auto" }}
+                {...linkTo("/account?next=/banks")}
+              >
+                Sign in or create an account
+              </a>
+            </div>
+          )
+        ) : (
+          <CommunityBanksList accountUser={account.status === "ready" ? account.user : null} />
+        )}
+      </div>
+    </TopLayout>
   );
 }
 
@@ -164,9 +374,7 @@ function BankList() {
   };
 
   return (
-    <div className="screen">
-      <h1 className="page-title">Question banks</h1>
-
+    <>
       <section className="stack" aria-label="New bank">
         <h2 className="section-title">Start a bank</h2>
         <form className="question-form" onSubmit={handleCreate}>
@@ -234,7 +442,7 @@ function BankList() {
           </ul>
         )}
       </section>
-    </div>
+    </>
   );
 }
 
@@ -242,18 +450,22 @@ function BankList() {
 
 /** `/banks/:id`: one bank, its questions, and the forms that change them. */
 export function BankScreen({ id }: { id: string }) {
+  const account = useAccount();
+  if (account.status === "loading") {
+    return (
+      <TopLayout active={null} className="account-page" column>
+        <Loading />
+      </TopLayout>
+    );
+  }
   return (
-    <SignedInOnly
-      title="Question banks"
-      next={`/banks/${encodeURIComponent(id)}`}
-      message="Sign in to see your question banks."
-    >
-      {() => <BankDetail id={id} />}
-    </SignedInOnly>
+    <TopLayout active={null} className="account-page" column>
+      <BankDetail id={id} accountUser={account.user} />
+    </TopLayout>
   );
 }
 
-function BankDetail({ id }: { id: string }) {
+function BankDetail({ id, accountUser }: { id: string; accountUser: AccountUser | null }) {
   const load = useCallback(() => fetchBank(id), [id]);
   const bank = useLoaded(load);
   const toast = useToast();
@@ -278,6 +490,7 @@ function BankDetail({ id }: { id: string }) {
   const [selectedQIds, setSelectedQIds] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
   const [practicing, setPracticing] = useState(false);
+  const [forking, setForking] = useState(false);
 
   const handlePractice = async () => {
     if (!loaded || loaded.questionCount === 0 || practicing) return;
@@ -308,6 +521,26 @@ function BankDetail({ id }: { id: string }) {
     }
   };
 
+  const handleFork = async () => {
+    if (!accountUser) {
+      navigate(`/account?next=${encodeURIComponent(`/banks/${encodeURIComponent(id)}`)}`);
+      return;
+    }
+    if (forking) return;
+    setForking(true);
+    try {
+      const forked = await forkBank(id);
+      toast.show({
+        title: `Cloned "${forked.name}" to your collection!`,
+        status: "success",
+      });
+      navigate(`/banks/${encodeURIComponent(forked.id)}`);
+    } catch (e) {
+      setForking(false);
+      toast.show({ title: errorText(e), status: "error" });
+    }
+  };
+
   if (loaded && !seeded) {
     setName(loaded.name);
     setExam(loaded.exam ?? "");
@@ -320,15 +553,17 @@ function BankDetail({ id }: { id: string }) {
 
   useEffect(() => {
     let live = true;
-    fetchBankDuplicates(id)
-      .then((found) => {
-        if (live) setDuplicates(found);
-      })
-      .catch(() => {});
+    if (loaded && loaded.isOwner !== false) {
+      fetchBankDuplicates(id)
+        .then((found) => {
+          if (live) setDuplicates(found);
+        })
+        .catch(() => {});
+    }
     return () => {
       live = false;
     };
-  }, [id, loaded?.questionCount]);
+  }, [id, loaded]);
 
   const handleSave = (event: FormEvent) => {
     event.preventDefault();
@@ -426,6 +661,27 @@ function BankDetail({ id }: { id: string }) {
 
   const detail = bank.data;
 
+  if (bank.error && !accountUser) {
+    return (
+      <div className="screen">
+        <header>
+          <h1 className="page-title">Question bank</h1>
+          <p className="page-sub">
+            This question bank is private or does not exist. Sign in to access your personal banks.
+          </p>
+        </header>
+        <a
+          className="btn btn-primary btn-block"
+          {...linkTo(`/account?next=${encodeURIComponent(`/banks/${encodeURIComponent(id)}`)}`)}
+        >
+          Sign in or create an account
+        </a>
+      </div>
+    );
+  }
+
+  const isOwner = detail?.isOwner !== false;
+
   return (
     <div className="screen">
       <a className="btn-link" {...linkTo("/banks")}>
@@ -441,6 +697,54 @@ function BankDetail({ id }: { id: string }) {
         )
       ) : (
         <>
+          {!isOwner && (
+            <div
+              className="community-banner"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                gap: 12,
+                padding: "14px 18px",
+                background: "var(--panel)",
+                border: "1.5px solid var(--line)",
+                borderRadius: "var(--radius)",
+                marginBottom: 20,
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <Avatar
+                  id={detail.ownerAvatar}
+                  name={detail.ownerDisplayName || detail.ownerUsername || "Creator"}
+                  size={38}
+                />
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                    <span style={{ fontWeight: 800 }}>
+                      {detail.ownerDisplayName ||
+                        (detail.ownerUsername ? `@${detail.ownerUsername}` : "Creator")}
+                    </span>
+                    <span className="bank-badge ready">Public Bank</span>
+                    {detail.exam && <span className="bank-badge">{detail.exam}</span>}
+                    {detail.subject && <span className="bank-badge">{detail.subject}</span>}
+                  </div>
+                  <span className="muted small">
+                    Community question bank shared with all Whizard players
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={forking}
+                onClick={() => void handleFork()}
+              >
+                <Icon name="copy" /> {forking ? "Cloning…" : "Clone to my collection"}
+              </button>
+            </div>
+          )}
+
           <section className="bank-practice-card" aria-label="Practice">
             <div className="bank-practice-content">
               <div>
@@ -484,246 +788,369 @@ function BankDetail({ id }: { id: string }) {
             </div>
           </section>
 
-          <section className="stack" aria-label="Bank details">
-            <h2 className="section-title">Bank details</h2>
-            <form className="question-form" onSubmit={handleSave}>
-              <Field label="Name">
-                <input
-                  maxLength={BANK_NAME_MAX}
-                  value={name}
-                  onChange={(event) => {
-                    setName(event.target.value);
-                    setSaveError(null);
-                  }}
-                />
-              </Field>
-              <div className="form-row two">
-                <Field label="Exam" hint="Optional">
-                  <input
-                    maxLength={BANK_LABEL_MAX}
-                    value={exam}
-                    onChange={(event) => setExam(event.target.value)}
-                  />
-                </Field>
-                <Field label="Subject" hint="Optional">
-                  <input
-                    maxLength={BANK_LABEL_MAX}
-                    value={subject}
-                    onChange={(event) => setSubject(event.target.value)}
-                  />
-                </Field>
-              </div>
-              <label
-                className="form-field"
-                style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}
-              >
-                <input
-                  type="checkbox"
-                  checked={isPublic}
-                  onChange={(event) => setIsPublic(event.target.checked)}
-                />
-                <span className="small">
-                  Public bank (anyone with the link can view and practice)
-                </span>
-              </label>
-              <ErrorLine error={saveError} />
-              <div className="row-actions">
-                <button
-                  className="btn btn-primary"
-                  type="submit"
-                  disabled={save.busy || !name.trim()}
-                >
-                  {save.busy ? "Saving…" : "Save"}
-                </button>
-                <button
-                  className="btn-link danger"
-                  type="button"
-                  disabled={action.busy}
-                  onClick={confirmDeleteBank}
-                >
-                  Delete bank
-                </button>
-              </div>
-            </form>
-          </section>
-
-          {duplicates.length > 0 && (
-            <details
-              className="muted small"
-              style={{
-                padding: "10px 14px",
-                background: "rgb(245 158 11 / 10%)",
-                borderRadius: "var(--radius)",
-                border: "1px solid rgb(245 158 11 / 30%)",
-              }}
-            >
-              <summary style={{ cursor: "pointer", color: "#fcd34d", fontWeight: 600 }}>
-                ⚠️ {duplicates.length} {duplicates.length === 1 ? "question" : "questions"} in this
-                bank also exist in other banks
-              </summary>
-              <ul style={{ margin: "8px 0 4px", paddingLeft: 20 }}>
-                {duplicates.map((d) => (
-                  <li key={d.questionId}>
-                    “{d.prompt}” (also in{" "}
-                    <a
-                      className="btn-link"
-                      {...linkTo(`/banks/${encodeURIComponent(d.otherBankId)}`)}
-                    >
-                      {d.otherBankName}
-                    </a>
-                    )
-                  </li>
-                ))}
-              </ul>
-            </details>
-          )}
-
-          <section className="stack" aria-labelledby="import-export-title">
-            <h2 id="import-export-title" className="section-title">
-              Import &amp; export
-            </h2>
-            <p className="muted small">
-              Take this bank out as a CSV, or bring questions in from a CSV, Word document (.docx),
-              or text file. Questions, options, and answer keys are detected automatically.
-            </p>
-            <div className="row-actions">
-              <a className="btn" href={bankExportHref(id)} download>
-                Export CSV
-              </a>
-              {importOpen ? null : (
-                <button className="btn" type="button" onClick={() => setImportOpen(true)}>
-                  Import questions
-                </button>
-              )}
-            </div>
-          </section>
-
-          {importOpen && (
-            <ImportPanel
-              bankId={id}
-              onDone={() => {
-                setImportOpen(false);
-                reload();
-              }}
-            />
-          )}
-
-          <section className="stack" aria-labelledby="questions-title">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: 8,
-              }}
-            >
-              <h2 id="questions-title" className="section-title">
-                Questions ({detail.questions.length})
-              </h2>
-              {detail.questions.length > 0 && (
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {isOwner ? (
+            <>
+              <section className="stack" aria-label="Bank details">
+                <h2 className="section-title">Bank details</h2>
+                <form className="question-form" onSubmit={handleSave}>
+                  <Field label="Name">
+                    <input
+                      maxLength={BANK_NAME_MAX}
+                      value={name}
+                      onChange={(event) => {
+                        setName(event.target.value);
+                        setSaveError(null);
+                      }}
+                    />
+                  </Field>
+                  <div className="form-row two">
+                    <Field label="Exam" hint="Optional">
+                      <input
+                        maxLength={BANK_LABEL_MAX}
+                        value={exam}
+                        onChange={(event) => setExam(event.target.value)}
+                      />
+                    </Field>
+                    <Field label="Subject" hint="Optional">
+                      <input
+                        maxLength={BANK_LABEL_MAX}
+                        value={subject}
+                        onChange={(event) => setSubject(event.target.value)}
+                      />
+                    </Field>
+                  </div>
                   <label
-                    className="small muted"
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 6,
-                      cursor: "pointer",
-                    }}
+                    className="form-field"
+                    style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}
                   >
                     <input
                       type="checkbox"
-                      checked={
-                        selectedQIds.size > 0 && selectedQIds.size === detail.questions.length
-                      }
-                      onChange={(e) => toggleSelectAll(e.target.checked)}
+                      checked={isPublic}
+                      onChange={(event) => setIsPublic(event.target.checked)}
                     />
-                    Select all
+                    <span className="small">
+                      Public bank (anyone with the link can view and practice)
+                    </span>
                   </label>
-                  {selectedQIds.size > 0 && (
+                  <ErrorLine error={saveError} />
+                  <div className="row-actions">
                     <button
-                      className="btn btn-small danger"
-                      type="button"
-                      disabled={bulkBusy}
-                      onClick={confirmBulkDelete}
+                      className="btn btn-primary"
+                      type="submit"
+                      disabled={save.busy || !name.trim()}
                     >
-                      Delete {selectedQIds.size} selected
+                      {save.busy ? "Saving…" : "Save"}
+                    </button>
+                    <button
+                      className="btn"
+                      type="button"
+                      disabled={forking}
+                      onClick={() => void handleFork()}
+                      title="Make an independent copy of this bank"
+                    >
+                      <Icon name="copy" /> {forking ? "Duplicating…" : "Duplicate bank"}
+                    </button>
+                    <button
+                      className="btn-link danger"
+                      type="button"
+                      disabled={action.busy}
+                      onClick={confirmDeleteBank}
+                    >
+                      Delete bank
+                    </button>
+                  </div>
+                </form>
+              </section>
+
+              {duplicates.length > 0 && (
+                <details
+                  className="muted small"
+                  style={{
+                    padding: "10px 14px",
+                    background: "rgb(245 158 11 / 10%)",
+                    borderRadius: "var(--radius)",
+                    border: "1px solid rgb(245 158 11 / 30%)",
+                  }}
+                >
+                  <summary style={{ cursor: "pointer", color: "#fcd34d", fontWeight: 600 }}>
+                    ⚠️ {duplicates.length} {duplicates.length === 1 ? "question" : "questions"} in
+                    this bank also exist in other banks
+                  </summary>
+                  <ul style={{ margin: "8px 0 4px", paddingLeft: 20 }}>
+                    {duplicates.map((d) => (
+                      <li key={d.questionId}>
+                        “{d.prompt}” (also in{" "}
+                        <a
+                          className="btn-link"
+                          {...linkTo(`/banks/${encodeURIComponent(d.otherBankId)}`)}
+                        >
+                          {d.otherBankName}
+                        </a>
+                        )
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )}
+
+              <section className="stack" aria-labelledby="import-export-title">
+                <h2 id="import-export-title" className="section-title">
+                  Import &amp; export
+                </h2>
+                <p className="muted small">
+                  Take this bank out as a CSV, or bring questions in from a CSV, Word document
+                  (.docx), or text file. Questions, options, and answer keys are detected
+                  automatically.
+                </p>
+                <div className="row-actions">
+                  <a className="btn" href={bankExportHref(id)} download>
+                    Export CSV
+                  </a>
+                  {importOpen ? null : (
+                    <button className="btn" type="button" onClick={() => setImportOpen(true)}>
+                      Import questions
                     </button>
                   )}
                 </div>
-              )}
-            </div>
-            {detail.questions.length === 0 && !adding && (
-              <p className="muted">No questions yet. Add the first one.</p>
-            )}
-            {detail.questions.length > 0 && (
-              <ul className="people">
-                {detail.questions.map((question) => (
-                  <li key={question.id}>
-                    {editingId === question.id ? (
-                      <div className="bank-q">
-                        <QuestionFields
-                          initial={question}
-                          submitLabel="Save question"
-                          onSubmit={(input) => handleEdit(question.id, input)}
-                          onCancel={() => setEditingId(null)}
-                        />
-                      </div>
-                    ) : (
-                      <>
-                        <div className="person bank-q">
-                          <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-                            <input
-                              type="checkbox"
-                              checked={selectedQIds.has(question.id)}
-                              onChange={(e) => toggleSelectQ(question.id, e.target.checked)}
-                              style={{ marginTop: 3 }}
-                            />
-                            <div>
-                              <span className="person-name">
-                                {question.prompt}
-                                {question.source === "ai" && <span className="bank-badge">AI</span>}
-                              </span>
-                              <span className="muted small">Correct: {question.choices[0]}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="row-actions">
-                          <button
-                            className="btn btn-small"
-                            disabled={action.busy}
-                            onClick={() => setEditingId(question.id)}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="btn-link"
-                            disabled={action.busy}
-                            onClick={() => confirmDeleteQuestion(question)}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
+              </section>
 
-            {adding ? (
-              <QuestionFields
-                submitLabel="Add question"
-                onSubmit={handleAdd}
-                onCancel={() => setAdding(false)}
-              />
-            ) : (
-              <button className="btn" type="button" onClick={() => setAdding(true)}>
-                Add a question
-              </button>
-            )}
-          </section>
+              {importOpen && (
+                <ImportPanel
+                  bankId={id}
+                  onDone={() => {
+                    setImportOpen(false);
+                    reload();
+                  }}
+                />
+              )}
+
+              <section className="stack" aria-labelledby="questions-title">
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: 8,
+                  }}
+                >
+                  <h2 id="questions-title" className="section-title">
+                    Questions ({detail.questions.length})
+                  </h2>
+                  {detail.questions.length > 0 && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                      <label
+                        className="small muted"
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 6,
+                          cursor: "pointer",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={
+                            selectedQIds.size > 0 && selectedQIds.size === detail.questions.length
+                          }
+                          onChange={(e) => toggleSelectAll(e.target.checked)}
+                        />
+                        Select all
+                      </label>
+                      {selectedQIds.size > 0 && (
+                        <button
+                          className="btn btn-small danger"
+                          type="button"
+                          disabled={bulkBusy}
+                          onClick={confirmBulkDelete}
+                        >
+                          Delete {selectedQIds.size} selected
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {detail.questions.length === 0 && !adding && (
+                  <p className="muted">No questions yet. Add the first one.</p>
+                )}
+                {detail.questions.length > 0 && (
+                  <ul className="people">
+                    {detail.questions.map((question) => (
+                      <li key={question.id}>
+                        {editingId === question.id ? (
+                          <div className="bank-q">
+                            <QuestionFields
+                              initial={question}
+                              submitLabel="Save question"
+                              onSubmit={(input) => handleEdit(question.id, input)}
+                              onCancel={() => setEditingId(null)}
+                            />
+                          </div>
+                        ) : (
+                          <>
+                            <div className="person bank-q">
+                              <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                                <input
+                                  type="checkbox"
+                                  checked={selectedQIds.has(question.id)}
+                                  onChange={(e) => toggleSelectQ(question.id, e.target.checked)}
+                                  style={{ marginTop: 3 }}
+                                />
+                                <div>
+                                  <span className="person-name">
+                                    {question.prompt}
+                                    {question.source === "ai" && (
+                                      <span className="bank-badge">AI</span>
+                                    )}
+                                  </span>
+                                  <span className="muted small">
+                                    Correct: {question.choices[0]}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="row-actions">
+                              <button
+                                className="btn btn-small"
+                                disabled={action.busy}
+                                onClick={() => setEditingId(question.id)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                className="btn-link"
+                                disabled={action.busy}
+                                onClick={() => confirmDeleteQuestion(question)}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {adding ? (
+                  <QuestionFields
+                    submitLabel="Add question"
+                    onSubmit={handleAdd}
+                    onCancel={() => setAdding(false)}
+                  />
+                ) : (
+                  <button className="btn" type="button" onClick={() => setAdding(true)}>
+                    Add a question
+                  </button>
+                )}
+              </section>
+            </>
+          ) : (
+            <section className="stack" aria-labelledby="questions-title">
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 8,
+                }}
+              >
+                <h2 id="questions-title" className="section-title">
+                  Questions ({detail.questions.length})
+                </h2>
+                <button
+                  type="button"
+                  className="btn btn-small"
+                  disabled={forking}
+                  onClick={() => void handleFork()}
+                >
+                  <Icon name="copy" /> {forking ? "Cloning…" : "Clone bank"}
+                </button>
+              </div>
+              {detail.questions.length === 0 ? (
+                <p className="muted">This bank has no questions yet.</p>
+              ) : (
+                <ul className="people">
+                  {detail.questions.map((question, idx) => (
+                    <li key={question.id} style={{ alignItems: "flex-start", padding: "14px 0" }}>
+                      <div className="bank-q" style={{ gap: 6 }}>
+                        <span className="person-name" style={{ fontSize: "1rem" }}>
+                          {idx + 1}. {question.prompt}
+                          {question.source === "ai" && <span className="bank-badge">AI</span>}
+                        </span>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 4,
+                            marginTop: 4,
+                          }}
+                        >
+                          {question.choices.map((choice, cIdx) => (
+                            <div
+                              key={cIdx}
+                              className="small"
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 8,
+                                color: cIdx === 0 ? "#34d399" : "var(--muted)",
+                                fontWeight: cIdx === 0 ? 700 : 400,
+                              }}
+                            >
+                              <span
+                                style={{
+                                  display: "inline-grid",
+                                  placeItems: "center",
+                                  width: 20,
+                                  height: 20,
+                                  borderRadius: "50%",
+                                  fontSize: "0.75rem",
+                                  background: cIdx === 0 ? "rgb(16 185 129 / 20%)" : "var(--field)",
+                                  border: `1px solid ${cIdx === 0 ? "#10b981" : "var(--line)"}`,
+                                  color: cIdx === 0 ? "#34d399" : "inherit",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                {String.fromCharCode(65 + cIdx)}
+                              </span>
+                              <span>{choice}</span>
+                              {cIdx === 0 && (
+                                <span className="bank-badge ready" style={{ marginLeft: 4 }}>
+                                  Correct
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        {question.explanation && (
+                          <p
+                            className="muted small"
+                            style={{ margin: "6px 0 0", fontStyle: "italic" }}
+                          >
+                            💡 {question.explanation}
+                          </p>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {detail.questions.length > 5 && (
+                <div style={{ marginTop: 16, textAlign: "center" }}>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    disabled={forking}
+                    onClick={() => void handleFork()}
+                  >
+                    <Icon name="copy" /> {forking ? "Cloning…" : "Clone to my collection"}
+                  </button>
+                </div>
+              )}
+            </section>
+          )}
         </>
       )}
     </div>

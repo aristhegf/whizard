@@ -121,3 +121,79 @@ test("starts solo practice room from a custom bank", async ({ page }) => {
     page.getByText("Light travels at approximately 299,792 km/s in vacuum."),
   ).toBeVisible();
 });
+
+test("publishes a bank to community, discovers it, and forks it", async ({ page, browser }) => {
+  await withPasskeys(page);
+  const author = uniqueUsername();
+  await signUp(page, author);
+
+  const bankTitle = `Chemistry ${Math.random().toString(36).slice(2, 8)}`;
+  await page.goto("/banks");
+  await page.getByLabel("Name").fill(bankTitle);
+  await page.getByLabel("Exam").fill("JAMB");
+  await page.getByLabel("Subject").fill("Chemistry");
+  await page.getByRole("button", { name: "Create a bank", exact: true }).click();
+
+  // Add a question
+  await page.getByRole("button", { name: "Add a question", exact: true }).click();
+  const field = (name: string) => page.getByRole("textbox", { name });
+  await field("Question").fill("What is the atomic number of carbon?");
+  await field("Correct answer").fill("6");
+  await field("Wrong answer 1").fill("12");
+  await field("Wrong answer 2").fill("14");
+  await field("Wrong answer 3").fill("8");
+  await field("Explanation").fill("Carbon has 6 protons in its nucleus.");
+  await page.getByRole("button", { name: "Add question", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Questions (1)", level: 2 })).toBeVisible();
+
+  // Make it public
+  await page.getByRole("checkbox", { name: /Public bank/i }).check();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByText("Bank saved")).toBeVisible();
+
+  // Switch to community tab to verify it appears
+  await page.getByRole("link", { name: /All banks/ }).click();
+  await page.getByRole("button", { name: "Community" }).click();
+  const communityRow = page.locator(".people li").filter({ hasText: bankTitle });
+  await expect(communityRow).toBeVisible();
+  await expect(communityRow).toContainText("by Ada");
+
+  // Now a second user signs in and forks the bank
+  const secondContext = await browser.newContext();
+  const secondPage = await secondContext.newPage();
+  try {
+    await withPasskeys(secondPage);
+    const student = uniqueUsername();
+    await signUp(secondPage, student, "Student Marie");
+
+    await secondPage.goto("/banks?tab=community");
+    const studentRow = secondPage.locator(".people li").filter({ hasText: bankTitle });
+    await expect(studentRow).toBeVisible();
+
+    // Click on the bank to view community preview
+    await studentRow.getByRole("link").first().click();
+    await expect(
+      secondPage.getByText("Community question bank shared with all Whizard players"),
+    ).toBeVisible();
+    await expect(secondPage.getByText("What is the atomic number of carbon?")).toBeVisible();
+    await expect(secondPage.getByText("6", { exact: true })).toBeVisible();
+
+    // Click Clone to my collection
+    await secondPage
+      .getByRole("button", { name: /Clone to my collection/i })
+      .first()
+      .click();
+    await expect(
+      secondPage.getByText(new RegExp(`Cloned "${bankTitle} \\(Copy\\)" to your collection!`, "i")),
+    ).toBeVisible();
+    await expect(
+      secondPage.getByRole("heading", { name: `${bankTitle} (Copy)`, level: 1 }),
+    ).toBeVisible();
+
+    // The cloned bank is in the student's personal banks
+    await secondPage.getByRole("link", { name: /All banks/ }).click();
+    await expect(secondPage.getByText(`${bankTitle} (Copy)`)).toBeVisible();
+  } finally {
+    await secondContext.close();
+  }
+});

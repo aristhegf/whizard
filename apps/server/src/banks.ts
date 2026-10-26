@@ -3,6 +3,7 @@ import { randomToken } from "@whizard/game-core";
 import {
   BANK_CHOICE_MAX,
   BANK_EXPLANATION_MAX,
+  BANK_NAME_MAX,
   BANK_PROMPT_MAX,
   BANK_REFERENCE_MAX,
   bankBulkDeleteSchema,
@@ -54,13 +55,24 @@ interface QuestionRow {
   updated_at: number;
 }
 
-const toSummary = (row: BankRow & { question_count?: number | null }): PlayerBank => ({
+const toSummary = (
+  row: BankRow & {
+    question_count?: number | null;
+    owner_username?: string | null;
+    owner_display_name?: string | null;
+    owner_avatar?: string | null;
+  },
+): PlayerBank => ({
   id: row.id,
   name: row.name,
   exam: row.exam,
   subject: row.subject,
   questionCount: Number(row.question_count ?? 0),
   isPublic: Boolean(row.is_public),
+  ownerId: row.owner_id,
+  ownerUsername: row.owner_username ?? undefined,
+  ownerDisplayName: row.owner_display_name ?? undefined,
+  ownerAvatar: row.owner_avatar ?? undefined,
   createdAt: row.created_at,
   updatedAt: row.updated_at,
 });
@@ -135,6 +147,55 @@ export async function listBanks(context: RequestContext): Promise<Response> {
   );
 }
 
+/** `GET /api/banks/public`: every public bank that has questions, discoverable by all. */
+export async function listPublicBanks(context: RequestContext): Promise<Response> {
+  const search = context.url.searchParams.get("search")?.trim().slice(0, 100) || "";
+  const exam = context.url.searchParams.get("exam")?.trim().slice(0, 40) || "";
+  const subject = context.url.searchParams.get("subject")?.trim().slice(0, 40) || "";
+
+  let query = `
+    SELECT b.id, b.owner_id, b.name, b.exam, b.subject, b.is_public, b.created_at, b.updated_at,
+           u.username AS owner_username, u.display_name AS owner_display_name, u.avatar AS owner_avatar,
+           (SELECT COUNT(*) FROM user_bank_questions q WHERE q.bank_id = b.id) AS question_count
+      FROM user_banks b
+      JOIN users u ON u.id = b.owner_id
+     WHERE b.is_public = 1
+  `;
+  const binds: (string | number)[] = [];
+
+  if (search) {
+    query += ` AND (b.name LIKE ? OR b.exam LIKE ? OR b.subject LIKE ?)`;
+    const term = `%${search}%`;
+    binds.push(term, term, term);
+  }
+  if (exam) {
+    query += ` AND b.exam = ?`;
+    binds.push(exam);
+  }
+  if (subject) {
+    query += ` AND b.subject = ?`;
+    binds.push(subject);
+  }
+
+  query += ` AND (SELECT COUNT(*) FROM user_bank_questions q WHERE q.bank_id = b.id) > 0`;
+  query += ` ORDER BY b.updated_at DESC LIMIT 60`;
+
+  const stmt = context.env.DB.prepare(query);
+  const { results } = await (binds.length > 0 ? stmt.bind(...binds) : stmt).all<
+    BankRow & {
+      question_count: number;
+      owner_username: string;
+      owner_display_name: string;
+      owner_avatar: string | null;
+    }
+  >();
+
+  return Response.json(
+    { banks: results.map(toSummary) },
+    { headers: { "Cache-Control": "public, max-age=15" } },
+  );
+}
+
 /** `POST /api/banks` with `{ name, exam?, subject?, isPublic? }`: a new, empty bank. */
 export async function createBank(context: RequestContext): Promise<Response> {
   requireSameOrigin(context);
@@ -179,20 +240,36 @@ export async function createBank(context: RequestContext): Promise<Response> {
 /** `GET /api/banks/:id`: one bank with its questions, in order. */
 export async function getBank(context: RequestContext): Promise<Response> {
   const bankId = decodeURIComponent(context.params[0] ?? "");
-  let bank: BankRow | null = null;
+  let currentUserId: string | null = null;
   try {
     const { user } = await requireUser(context);
-    bank = await ownedBank(context.env, bankId, user.id);
+    currentUserId = user.id;
   } catch {
-    // If not authenticated or not owner, see if bank is public
+    // Unauthenticated guest
   }
+
+  const bank = await context.env.DB.prepare(
+    `SELECT b.*, u.username AS owner_username, u.display_name AS owner_display_name, u.avatar AS owner_avatar
+       FROM user_banks b
+       JOIN users u ON u.id = b.owner_id
+      WHERE b.id = ?`,
+  )
+    .bind(bankId)
+    .first<
+      BankRow & {
+        owner_username: string;
+        owner_display_name: string;
+        owner_avatar: string | null;
+      }
+    >();
+
   if (!bank) {
-    bank = await context.env.DB.prepare("SELECT * FROM user_banks WHERE id = ?")
-      .bind(bankId)
-      .first<BankRow>();
-    if (!bank || !bank.is_public) {
-      throw new HttpError(404, "not_found", "That bank doesn’t exist.");
-    }
+    throw new HttpError(404, "not_found", "That bank doesn’t exist.");
+  }
+
+  const isOwner = currentUserId !== null && bank.owner_id === currentUserId;
+  if (!isOwner && !bank.is_public) {
+    throw new HttpError(404, "not_found", "That bank doesn’t exist.");
   }
 
   const questions = (
@@ -206,6 +283,7 @@ export async function getBank(context: RequestContext): Promise<Response> {
     ...toSummary(bank),
     // The raw row has no count beside it, and the questions are already here.
     questionCount: questions.length,
+    isOwner,
     questions,
   };
   return Response.json({ bank: body }, { headers: { "Cache-Control": "no-store" } });
@@ -257,6 +335,89 @@ export async function deleteBank(context: RequestContext): Promise<Response> {
     ),
   ]);
   return Response.json({ ok: true });
+}
+
+/** `POST /api/banks/:id/fork`: clones a public (or owned) bank into the current user's collection. */
+export async function forkBank(context: RequestContext): Promise<Response> {
+  requireSameOrigin(context);
+  const { user } = await requireUser(context);
+  await withinWriteLimit(context);
+
+  const bankId = decodeURIComponent(context.params[0] ?? "");
+  const source = await context.env.DB.prepare(
+    "SELECT * FROM user_banks WHERE id = ? AND (is_public = 1 OR owner_id = ?)",
+  )
+    .bind(bankId, user.id)
+    .first<BankRow>();
+
+  if (!source) {
+    throw new HttpError(404, "not_found", "That bank cannot be cloned.");
+  }
+
+  const { n } = (await context.env.DB.prepare(
+    "SELECT COUNT(*) AS n FROM user_banks WHERE owner_id = ?",
+  )
+    .bind(user.id)
+    .first<{ n: number }>())!;
+
+  if (n >= MAX_BANKS_PER_USER) {
+    throw new HttpError(
+      400,
+      "too_many_banks",
+      `You can keep up to ${MAX_BANKS_PER_USER} banks. Delete one to make room.`,
+    );
+  }
+
+  const sourceQuestions = (
+    await context.env.DB.prepare(
+      "SELECT * FROM user_bank_questions WHERE bank_id = ? ORDER BY position",
+    )
+      .bind(source.id)
+      .all<QuestionRow>()
+  ).results;
+
+  const now = Date.now();
+  const newBankId = `b_${randomToken(9)}`;
+  const copyName = `${source.name} (Copy)`.slice(0, BANK_NAME_MAX);
+
+  const insertBankStmt = context.env.DB.prepare(
+    `INSERT INTO user_banks (id, owner_id, name, exam, subject, is_public, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, 0, ?, ?)`,
+  ).bind(newBankId, user.id, copyName, source.exam, source.subject, now, now);
+
+  const questionStmts = sourceQuestions.map((q, idx) =>
+    context.env.DB.prepare(
+      `INSERT INTO user_bank_questions (id, bank_id, position, prompt, choices, explanation, reference, source, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).bind(
+      `q_${randomToken(9)}`,
+      newBankId,
+      idx,
+      q.prompt,
+      q.choices,
+      q.explanation,
+      q.reference,
+      q.source ?? "clone",
+      now,
+      now,
+    ),
+  );
+
+  await context.env.DB.batch([insertBankStmt, ...questionStmts]);
+
+  const newBank: PlayerBank = {
+    id: newBankId,
+    name: copyName,
+    exam: source.exam,
+    subject: source.subject,
+    questionCount: sourceQuestions.length,
+    isPublic: false,
+    ownerId: user.id,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  return Response.json({ bank: newBank }, { status: 201 });
 }
 
 /** The question body a bank accepts: the shipped bank's shape, without a topic or level. */

@@ -11,6 +11,28 @@ import { api } from "./account";
 export const fetchBanks = async (): Promise<PlayerBank[]> =>
   (await api<{ banks: PlayerBank[] }>("/api/banks")).banks;
 
+/** Public community question banks, discoverable by all players. */
+export const fetchPublicBanks = async (params?: {
+  search?: string;
+  exam?: string;
+  subject?: string;
+}): Promise<PlayerBank[]> => {
+  const query = new URLSearchParams();
+  if (params?.search) query.set("search", params.search);
+  if (params?.exam) query.set("exam", params.exam);
+  if (params?.subject) query.set("subject", params.subject);
+  const qStr = query.toString();
+  return (await api<{ banks: PlayerBank[] }>(`/api/banks/public${qStr ? `?${qStr}` : ""}`)).banks;
+};
+
+/** Clones a public bank into the signed-in player's personal collection. */
+export const forkBank = async (id: string): Promise<PlayerBank> =>
+  (
+    await api<{ bank: PlayerBank }>(`/api/banks/${encodeURIComponent(id)}/fork`, {
+      method: "POST",
+    })
+  ).bank;
+
 /** One bank with its questions, or a 404 if it isn't theirs. */
 export const fetchBank = async (id: string): Promise<PlayerBankDetail> =>
   (await api<{ bank: PlayerBankDetail }>(`/api/banks/${encodeURIComponent(id)}`)).bank;
