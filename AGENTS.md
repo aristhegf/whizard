@@ -32,12 +32,13 @@ pnpm build           # production build (vite + Cloudflare plugin)
 - `apps/server/wrangler.jsonc` must keep the placeholder D1 `database_id` (`00000000-…`) in git — CI substitutes the real id via `apps/server/scripts/use-remote-db.sh`. Never commit the real id.
 - CI secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` in Settings → Secrets and variables → Actions.
 
-## Current state (2026-10-26)
+## Current state (2026-10-27)
 
+- **PR #70 was merged into `main`** — "feat: Bachs payments & pro plan, community banks, study groups & assignments, and timed CBT exam simulation" (commit `8df4286`): includes Bachs multi-currency payments, Pro bulk import gating, solo mistake review, study dashboard, community question bank discovery & forking, study groups with tutor assignment links & leaderboards, and timed CBT exam simulation mode.
 - **PR #64 was merged** — "Redesign game cards with amber play button and responsive grid" (commit `4141585`): game cards now feature the amber pill button and compact 4x2 responsive desktop grid.
 - **PR #65 was closed** — "Polish Whizard game cards" (branch `feat/game-card-visual-redesign`): closed as superseded by #64.
-- **PR #70 is open** — "feat(payments): integrate bachs.io payment gateway and pro plan import gating" (branch `feat/bachs-payment-pro`): includes Bachs multi-currency payments, Pro bulk import gating, solo mistake review, study dashboard, and community question bank discovery & forking.
-- Recently merged and deployed: #58 (game taxonomy), #59 (first card redesign round), #60 (mobile Games page discovery layout), #64 (game cards redesign), #66 (AGENTS.md handoff), #67 (compulsory leaderboard presence), #68 (custom bank practice & multiplayer rooms), #69 (Word docx/doc/txt bulk import).
+- Recently merged: #58 (game taxonomy), #59 (first card redesign round), #60 (mobile Games page discovery layout), #64 (game cards redesign), #66 (AGENTS.md handoff), #67 (compulsory leaderboard presence), #68 (custom bank practice & multiplayer rooms), #69 (Word docx/doc/txt bulk import), #70 (payments, pro, community banks, study groups, CBT exams).
+- Note on CI: GitHub Actions runner spending limit currently needs to be raised/cleared in repository Settings → 'Billing & plans' to resume hosted CI/deploy runs. All tests, formatting, typechecking, and E2E specs pass locally (544/544 tests green).
 - `docs/OPENCODE_HANDOFF.md` (branch `docs/opencode-whizard-handoff`) is an older handoff document; where it conflicts with this file, this file wins.
 
 ## Working agreement
