@@ -1102,7 +1102,7 @@
 }
 
 .user-row {
-  grid-template-columns: 44px minmax(0, 1.2fr) minmax(0, 2fr) 104px 196px;
+  grid-template-columns: 44px minmax(0, 1.1fr) minmax(0, 1.8fr) 124px minmax(220px, 1fr);
 }
 
 .room-row {
@@ -1191,6 +1191,74 @@
 .user-row .status-pill,
 .room-row .status-pill {
   justify-self: start;
+}
+
+.user-status-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.status-pro {
+  background: rgb(255 196 61 / 20%);
+  color: #ffe3a3;
+  border: 1px solid rgb(255 196 61 / 35%);
+}
+
+.status-free {
+  background: rgb(255 255 255 / 8%);
+  color: var(--muted);
+}
+
+.btn-pro-grant {
+  border-color: rgb(255 196 61 / 40%);
+  color: #ffe3a3;
+  background: rgb(255 196 61 / 10%);
+}
+
+.btn-pro-grant:hover {
+  background: rgb(255 196 61 / 22%);
+  border-color: #ffc43d;
+  color: #fff;
+}
+
+.btn-pro-manage {
+  border-color: rgb(139 92 255 / 45%);
+  color: #cdb8ff;
+  background: rgb(139 92 255 / 12%);
+}
+
+.btn-pro-manage:hover {
+  background: rgb(139 92 255 / 25%);
+  border-color: #8b5cff;
+  color: #fff;
+}
+
+.pro-action-inline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.pro-duration-select {
+  min-height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: #171026;
+  border: 1.5px solid var(--line-strong);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.pro-confirm-hint {
+  font-size: 0.82rem;
+  color: #ff9aaa;
+  margin-right: 4px;
 }
 
 .user-actions {

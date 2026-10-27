@@ -16,6 +16,7 @@ export type Route =
   /** One of the player's own question banks. */
   | { name: "banks" }
   | { name: "bank"; id: string }
+  | { name: "bankExam"; id: string }
   /** Another player's profile. */
   | { name: "player"; username: string }
   | { name: "group"; id: string }
@@ -23,6 +24,7 @@ export type Route =
   | { name: "stats" }
   | { name: "pricing" }
   | { name: "about" }
+  | { name: "dashboard" }
   /** `item` is one thing in the section, e.g. the question being edited. */
   | { name: "admin"; section: string; item: string | null };
 
@@ -45,6 +47,8 @@ export function useRoute(): Route {
   if (/^\/avatar\/?$/.test(path)) return { name: "avatar" };
   if (/^\/friends\/?$/.test(path)) return { name: "friends" };
   if (/^\/banks\/?$/.test(path)) return { name: "banks" };
+  const bankExam = /^\/banks\/([^/]+)\/exam\/?$/.exec(path);
+  if (bankExam) return { name: "bankExam", id: decodeURIComponent(bankExam[1] ?? "") };
   const bank = /^\/banks\/([^/]+)\/?$/.exec(path);
   if (bank) return { name: "bank", id: decodeURIComponent(bank[1] ?? "") };
   const add = /^\/add\/([^/]+)\/?$/.exec(path);
@@ -57,6 +61,7 @@ export function useRoute(): Route {
   if (/^\/stats\/?$/.test(path)) return { name: "stats" };
   if (/^\/pricing\/?$/.test(path)) return { name: "pricing" };
   if (/^\/about\/?$/.test(path)) return { name: "about" };
+  if (/^\/dashboard\/?$/.test(path)) return { name: "dashboard" };
   const admin = /^\/admin(?:\/([a-z-]+)(?:\/([a-z0-9_-]+))?)?\/?$/.exec(path);
   if (admin) return { name: "admin", section: admin[1] ?? "dashboard", item: admin[2] ?? null };
   return { name: "home" };

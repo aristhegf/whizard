@@ -1,4 +1,5 @@
 import { expect, type Page } from "@playwright/test";
+import { execFileSync } from "node:child_process";
 
 /** Gives the page a virtual authenticator that approves every passkey prompt. */
 export async function withPasskeys(page: Page) {
@@ -26,4 +27,12 @@ export async function signUp(page: Page, username: string, name = "Ada") {
   await page.getByRole("button", { name: "Create account" }).click();
   await expect(page.getByRole("heading", { name, level: 1 })).toBeVisible();
   await expect(page.getByText(`@${username}`)).toBeVisible();
+}
+
+export function grantPro(username: string) {
+  execFileSync("node", ["scripts/set-pro.mjs", username, "grant"], {
+    cwd: "apps/server",
+    env: { ...process.env, STATS_LOCAL: "1" },
+    stdio: "ignore",
+  });
 }

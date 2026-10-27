@@ -1,8 +1,10 @@
 import { MAX_PLAYERS } from "@whizard/game-core";
+import type { CheckoutResponse } from "@whizard/protocol";
 import { ActionSwapCascadeText } from "@/components/motion/action-swap-cascade";
-import { useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { api, useAccount } from "../account";
 import { prefersStill } from "../display";
-import { linkTo } from "../router";
+import { linkTo, navigate } from "../router";
 import { TopLayout } from "../ui/Chrome";
 import { Icon, type IconName } from "../ui/Icon";
 
@@ -31,25 +33,24 @@ interface Feature {
 }
 
 const FREE_FEATURES: Feature[] = [
+  { text: "Manual question entry in banks" },
   { text: "Join public games" },
   { text: "Create private rooms" },
   { text: `Up to ${MAX_PLAYERS} players per room` },
   { text: "Play all public game modes" },
-  { text: "Create custom quizzes manually", tag: "Limited" },
   { text: "Basic leaderboard and results" },
   { text: "Works on any device" },
 ];
 
 const PRO_FEATURES: Feature[] = [
-  { text: "Unlimited custom quizzes" },
-  { text: "CSV question import" },
-  { text: "Bulk question import and export" },
-  { text: "Unlimited question bank" },
+  { text: "Word document import (.docx, .doc, .txt)" },
+  { text: "CSV question import & export" },
+  { text: "Unlimited custom question banks" },
+  { text: "Host study rooms with friends" },
+  { text: "Solo mastery practice & retries" },
   { text: "Save and organize question sets" },
-  { text: "Add images to questions" },
-  { text: "Reuse and duplicate quizzes" },
-  { text: "Advanced game settings" },
   { text: "Detailed results and analytics" },
+  { text: "Pro Crown badge on profile" },
   { text: "Early access to new creator features" },
 ];
 
@@ -68,12 +69,11 @@ const COMPARISON: { label: string; free: boolean | string; pro: boolean | string
   { label: "Play public games", free: true, pro: true },
   { label: "Create rooms", free: true, pro: true },
   { label: "Players per room", free: String(MAX_PLAYERS), pro: "Higher limits later" },
-  { label: "Custom quizzes", free: "Limited", pro: "Unlimited" },
-  { label: "CSV import", free: false, pro: true },
-  { label: "Question bank", free: "Limited", pro: "Unlimited" },
-  { label: "Images", free: false, pro: true },
-  { label: "Duplicate quizzes", free: false, pro: true },
-  { label: "Advanced settings", free: false, pro: true },
+  { label: "Manual question entry", free: true, pro: true },
+  { label: "Word (.docx) & CSV import", free: false, pro: true },
+  { label: "Question banks", free: "Limited", pro: "Unlimited" },
+  { label: "Solo practice & review", free: true, pro: true },
+  { label: "Custom game rooms", free: true, pro: true },
   { label: "Detailed analytics", free: false, pro: true },
 ];
 
@@ -83,12 +83,12 @@ const FAQ: { q: string; a: string }[] = [
     a: "No. Anyone can join and play Whizard for free.",
   },
   {
-    q: "Can I create my own quiz for free?",
-    a: "Yes, a limited number of quizzes you write by hand. Pro unlocks unlimited custom quizzes and bigger creator tools.",
+    q: "Can I create questions for free?",
+    a: "Yes! Free accounts can author questions manually in their question banks. Pro unlocks instant Word and CSV document imports.",
   },
   {
-    q: "Can I upload questions from Excel or Google Sheets?",
-    a: "Yes, with Pro. Save your sheet as a CSV file and upload it to Whizard.",
+    q: "Can I upload questions from Word or Excel?",
+    a: "Yes, with Pro. Upload Word documents (.docx, .doc) or CSV files, and Whizard automatically extracts questions, answers, and explanations.",
   },
   {
     q: "Do my friends need a Whizard account to play?",
@@ -105,9 +105,60 @@ const FAQ: { q: string; a: string }[] = [
 ];
 
 export function PricingPage() {
+  const [currency, setCurrency] = useState<"NGN" | "USD">(() => {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz && (tz.includes("Lagos") || tz.includes("Africa/Lagos"))) return "NGN";
+    } catch {
+      // Default to USD when timezone detection fails
+    }
+    return "USD";
+  });
+
+  useEffect(() => {
+    fetch("/api/geo")
+      .then((res) => (res.ok ? (res.json() as Promise<{ currency?: "NGN" | "USD" }>) : null))
+      .then((data) => {
+        if (data?.currency === "NGN" || data?.currency === "USD") {
+          setCurrency(data.currency);
+        }
+      })
+      .catch(() => {
+        // Fallback to initial currency if geo lookup fails
+      });
+  }, []);
+
+  const searchParams =
+    typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+  const paymentStatus = searchParams?.get("payment");
+
+  const proPrice = currency === "NGN" ? "₦5,000" : "$5";
+
   return (
     <TopLayout active="pricing">
       <div className="pricing">
+        {paymentStatus === "success" && (
+          <aside className="pricing-banner pricing-banner-success" aria-label="Payment successful">
+            <Icon name="crown" size={30} fill />
+            <div>
+              <strong>Welcome to Whizard Pro! 👑</strong>
+              <p>
+                Your membership is active. You now have unlimited custom question banks, Word & CSV
+                document extraction, and solo mastery practice.
+              </p>
+            </div>
+            <a className="btn btn-gold btn-sm" {...linkTo("/banks")}>
+              My Question Banks
+            </a>
+          </aside>
+        )}
+
+        {paymentStatus === "cancelled" && (
+          <aside className="pricing-banner pricing-banner-cancelled" aria-label="Payment cancelled">
+            <p>Checkout was cancelled. Your card or account was not charged.</p>
+          </aside>
+        )}
+
         <section className="pricing-hero" aria-labelledby="pricing-title">
           <div className="pricing-hero-copy">
             <p className="pill pricing-pill">
@@ -121,7 +172,7 @@ export function PricingPage() {
             </h1>
             <p className="pricing-lead">
               Whizard is free for everyone. Play games, create rooms and invite your friends.
-              Upgrade when you want to bring your own questions and build your own games.
+              Upgrade when you want to import your own past questions and study documents.
             </p>
           </div>
           <img
@@ -133,13 +184,35 @@ export function PricingPage() {
           />
         </section>
 
+        <div className="pricing-currency-bar">
+          <span className="muted small">Currency:</span>
+          <div className="currency-toggle" role="group" aria-label="Select currency">
+            <button
+              type="button"
+              className="currency-btn"
+              aria-pressed={currency === "NGN"}
+              onClick={() => setCurrency("NGN")}
+            >
+              ₦ NGN
+            </button>
+            <button
+              type="button"
+              className="currency-btn"
+              aria-pressed={currency === "USD"}
+              onClick={() => setCurrency("USD")}
+            >
+              $ USD
+            </button>
+          </div>
+        </div>
+
         <PlanSlider names={["Free", "Pro", "Organizations & Events"]}>
           <Plan
             id="free"
             icon="games"
             name="Free"
             tagline="Play Whizard with your friends."
-            price="₦0"
+            price={currency === "NGN" ? "₦0" : "$0"}
             period="Forever"
             blurb="Everything you need to join games, create rooms and play with friends. No card needed."
             action={
@@ -156,10 +229,10 @@ export function PricingPage() {
             icon="crown"
             name="Pro"
             tagline="Create your own Whizard games."
-            price="₦5,000"
+            price={proPrice}
             period="/ month"
-            blurb="Bring your own questions to Whizard. For creators, teachers, groups and quiz lovers."
-            action={<ProButton />}
+            blurb="Bring your own questions to Whizard. For students, tutors, creators and quiz lovers."
+            action={<ProButton currency={currency} />}
             listTitle="Everything in Free, plus:"
             features={PRO_FEATURES}
             art={ART.pro}
@@ -246,12 +319,12 @@ export function PricingPage() {
             <div className="pricing-cta-copy">
               <h2 id="cta-title" className="pricing-cta-title">
                 <Icon name="star" size={30} fill className="cta-star" />
-                Got a game in your head?
+                Got questions ready to practice?
               </h2>
-              <p className="muted">Bring your questions. We’ll bring the competition.</p>
+              <p className="muted">Import your past papers or author questions in seconds.</p>
               <div className="pricing-cta-actions">
-                <a className="btn btn-gold plan-btn" {...linkTo("/games/quiz")}>
-                  Create a Free Quiz
+                <a className="btn btn-gold plan-btn" {...linkTo("/banks")}>
+                  Open Question Banks
                   <Icon name="arrowRight" size={20} stroke={2.4} />
                 </a>
                 <a className="btn plan-btn" {...linkTo("/games")}>
@@ -342,10 +415,6 @@ function Plan({
   );
 }
 
-/**
- * The plans. Side by side on wide screens; on phones they slide sideways, with dots above
- * that show which plan you're on and jump to the others.
- */
 function PlanSlider({ names, children }: { names: string[]; children: ReactNode }) {
   const list = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
@@ -393,28 +462,60 @@ function PlanSlider({ names, children }: { names: string[]; children: ReactNode 
   );
 }
 
-/** Pro can't be bought yet, so the button says so instead. */
-function ProButton() {
-  const [asked, setAsked] = useState(false);
-  const [flash, setFlash] = useState(false);
+/** Active checkout button via Bachs. */
+function ProButton({ currency }: { currency: "NGN" | "USD" }) {
+  const account = useAccount();
+  const user = account.status === "ready" ? account.user : null;
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  if (user?.isPro) {
+    return (
+      <div className="pro-action">
+        <div className="btn btn-gold btn-block plan-btn plan-btn-active">
+          <Icon name="crown" size={18} fill />
+          Active Pro Member
+        </div>
+      </div>
+    );
+  }
+
+  const handleUpgrade = async () => {
+    if (!user) {
+      navigate(`/account?next=${encodeURIComponent("/pricing")}`);
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await api<CheckoutResponse>("/api/payments/bachs/checkout", {
+        method: "POST",
+        body: { currency },
+      });
+      if (res.checkoutUrl) {
+        window.location.href = res.checkoutUrl;
+      } else {
+        throw new Error("Checkout URL was not received.");
+      }
+    } catch (err: unknown) {
+      setBusy(false);
+      setError(err instanceof Error ? err.message : "Could not start checkout. Please try again.");
+    }
+  };
+
   return (
     <div className="pro-action">
-      <button
-        className="btn btn-gold btn-block plan-btn"
-        onClick={() => {
-          setAsked(true);
-          setFlash(true);
-          setTimeout(() => setFlash(false), 2500);
-        }}
-      >
-        <ActionSwapCascadeText value={flash ? "soon" : "upgrade"}>
-          {flash ? "Coming soon" : "Upgrade to Pro"}
+      <button className="btn btn-gold btn-block plan-btn" onClick={handleUpgrade} disabled={busy}>
+        <ActionSwapCascadeText value={busy ? "starting" : "upgrade"}>
+          {busy ? "Starting checkout..." : "Upgrade to Pro"}
         </ActionSwapCascadeText>
         <Icon name="arrowRight" size={20} stroke={2.4} />
       </button>
-      <p className="pro-soon" role="status">
-        {asked && "Pro is coming soon. Until then, everything in Free is yours to play."}
-      </p>
+      {error && (
+        <p className="pro-error error small" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

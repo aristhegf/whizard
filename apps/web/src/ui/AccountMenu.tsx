@@ -82,9 +82,10 @@ export function AccountMenu({ variant }: { variant: "bar" | "tab" }) {
                 <strong>{user.displayName}</strong>
                 <span className="dim small">@{user.username}</span>
               </p>
+              {link("/dashboard", "chart", "Study dashboard")}
+              {link("/banks", "layers", "Question banks")}
               {link("/account", "user", "My profile")}
               {link("/friends", "users", "Friends")}
-              {link("/banks", "layers", "Question banks")}
             </>
           ) : (
             link("/account", "user", "Sign in")

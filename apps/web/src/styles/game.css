@@ -904,6 +904,129 @@ button.choice:disabled {
   text-align: center;
 }
 
+.mistakes-counter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgb(240 74 94 / 18%);
+  border: 1px solid rgb(240 74 94 / 35%);
+  color: #ff9aaa;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.mastery-counter-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgb(15 198 128 / 18%);
+  border: 1px solid rgb(15 198 128 / 35%);
+  color: #5dffb0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.btn-practice-mistakes {
+  background: linear-gradient(135deg, #f04a5e, #c42538) !important;
+  border-color: #ff7b8c !important;
+  color: #fff !important;
+  font-weight: 800;
+  box-shadow: 0 4px 20px rgb(240 74 94 / 35%);
+}
+
+.btn-practice-mistakes:hover {
+  background: linear-gradient(135deg, #ff7b8c, #d32f44) !important;
+  transform: translateY(-1px);
+}
+
+/* Mistake Mastery Drill Mode */
+.mistake-mastery-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 160px;
+}
+
+.mistake-progress-label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.mistake-progress-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 12%);
+  overflow: hidden;
+}
+
+.mistake-progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f5a623, #1bd98f);
+  transition: width 0.3s ease;
+}
+
+.mistake-remaining-badge {
+  background: rgb(255 255 255 / 10%);
+  color: #fff;
+  font-weight: 700;
+}
+
+.mistake-feedback-card {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  padding: 22px;
+  border-radius: 18px;
+  text-align: left;
+  border: 1.5px solid var(--line-strong);
+  animation: feedbackSlideIn 0.25s ease-out;
+}
+
+@keyframes feedbackSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feedback-head {
+  display: grid;
+  gap: 6px;
+}
+
+.feedback-hint {
+  margin: 0;
+  font-size: 0.96rem;
+  color: var(--text);
+}
+
+.btn-next-mistake {
+  justify-self: end;
+  min-height: 48px;
+  padding: 0 24px;
+  font-size: 1rem;
+}
+
+.choice-label {
+  color: var(--gold);
+  margin-right: 6px;
+  font-weight: 800;
+}
+
 .big-score {
   font-family: var(--display);
   font-size: 4.4rem;

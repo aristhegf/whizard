@@ -133,8 +133,7 @@ interface RawChoice {
 }
 
 function testInlineChoices(line: string): { choices: RawChoice[]; answer: string } | null {
-  const regex =
-    /(?:^|\s)\*?[([]?([A-Ea-e])[\]).:-]\s+(.*?)(?=(?:\s+\*?[([]?[A-Ea-e][\]).:-]|$))/g;
+  const regex = /(?:^|\s)\*?[([]?([A-Ea-e])[\]).:-]\s+(.*?)(?=(?:\s+\*?[([]?[A-Ea-e][\]).:-]|$))/g;
   const matches = [...line.matchAll(regex)];
   if (matches.length >= 4) {
     const choices: RawChoice[] = [];
@@ -231,10 +230,7 @@ function parseQuestionBlock(block: string): ExtractedQuestion | null {
       // Clean leading numbering from question prompt
       const cleaned =
         i === 0
-          ? line.replace(
-              /^(?:question\s*\d+[:.-]?|q\s*\d+[:.-]?|\(?\d+\s*[.)]|\d+\s*[-–])\s*/i,
-              "",
-            )
+          ? line.replace(/^(?:question\s*\d+[:.-]?|q\s*\d+[:.-]?|\(?\d+\s*[.)]|\d+\s*[-–])\s*/i, "")
           : line;
       prompt = prompt ? `${prompt} ${cleaned}` : cleaned;
     } else {

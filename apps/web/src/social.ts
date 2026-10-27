@@ -1,6 +1,8 @@
 import type {
+  AssignmentCompletion,
   FriendGroup,
   FriendsList,
+  GroupAssignment,
   GroupStanding,
   PlayerProfile,
   PublicUser,
@@ -72,6 +74,55 @@ export const fetchLeaderboard = (id: string, category: string | null) =>
     `/api/groups/${encodeURIComponent(id)}/leaderboard${
       category ? `?category=${encodeURIComponent(category)}` : ""
     }`,
+  );
+
+export const fetchGroup = (id: string) =>
+  api<{ group: FriendGroup; isMember: boolean }>(`/api/groups/${encodeURIComponent(id)}`);
+
+export const joinGroup = (id: string) =>
+  api<{ ok: boolean; joined: boolean }>(`/api/groups/${encodeURIComponent(id)}/join`, {
+    method: "POST",
+    body: {},
+  });
+
+export const fetchGroupAssignments = (groupId: string) =>
+  api<{ assignments: GroupAssignment[] }>(`/api/groups/${encodeURIComponent(groupId)}/assignments`);
+
+export const createGroupAssignment = (
+  groupId: string,
+  data: {
+    bankId: string;
+    targetScore?: number | null;
+    dueAt?: number | null;
+    notes?: string | null;
+  },
+) =>
+  api<{ id: string }>(`/api/groups/${encodeURIComponent(groupId)}/assignments`, {
+    method: "POST",
+    body: data,
+  });
+
+export const deleteGroupAssignment = (groupId: string, assignmentId: string) =>
+  api<{ ok: boolean }>(
+    `/api/groups/${encodeURIComponent(groupId)}/assignments/${encodeURIComponent(assignmentId)}`,
+    {
+      method: "DELETE",
+      body: {},
+    },
+  );
+
+export const completeGroupAssignment = (
+  groupId: string,
+  assignmentId: string,
+  score: number,
+  totalQuestions: number,
+) =>
+  api<{ ok: boolean; completion: AssignmentCompletion }>(
+    `/api/groups/${encodeURIComponent(groupId)}/assignments/${encodeURIComponent(assignmentId)}/complete`,
+    {
+      method: "POST",
+      body: { score, totalQuestions },
+    },
   );
 
 export const inviteLink = (username: string) => `${location.origin}/add/${path(username)}`;

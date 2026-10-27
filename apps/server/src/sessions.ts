@@ -36,7 +36,7 @@ export function asAvatar(value: string | null | undefined): Avatar | null {
   return isAvatarValue(value) ? value : null;
 }
 
-export function toAccountUser(row: UserRow): AccountUser {
+export function toAccountUser(row: UserRow, pro?: { until: number | null } | null): AccountUser {
   return {
     id: row.id,
     username: row.username,
@@ -53,6 +53,8 @@ export function toAccountUser(row: UserRow): AccountUser {
     publicLeaderboard: true,
     createdAt: row.created_at,
     admin: row.is_admin === 1,
+    isPro: pro !== null && pro !== undefined && (pro.until === null || pro.until > Date.now()),
+    proUntil: pro?.until ?? null,
   };
 }
 

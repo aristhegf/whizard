@@ -35,7 +35,13 @@ export async function getMe(context: RequestContext): Promise<Response> {
   const session = await currentSession(context.request, context.env, Date.now());
   const headers = new Headers({ "Cache-Control": "no-store" });
   if (session?.refreshCookie) headers.set("Set-Cookie", session.refreshCookie);
-  return Response.json({ user: session ? toAccountUser(session.user) : null }, { headers });
+  let pro: { until: number | null } | null = null;
+  if (session) {
+    pro = await context.env.DB.prepare("SELECT until FROM pro_memberships WHERE user_id = ?")
+      .bind(session.user.id)
+      .first<{ until: number | null }>();
+  }
+  return Response.json({ user: session ? toAccountUser(session.user, pro) : null }, { headers });
 }
 
 export async function updateMe(context: RequestContext): Promise<Response> {
@@ -100,7 +106,10 @@ export async function updateMe(context: RequestContext): Promise<Response> {
       user.id,
     )
     .run();
-  return Response.json({ user: toAccountUser(next) });
+  const pro = await context.env.DB.prepare("SELECT until FROM pro_memberships WHERE user_id = ?")
+    .bind(user.id)
+    .first<{ until: number | null }>();
+  return Response.json({ user: toAccountUser(next, pro) });
 }
 
 /**
@@ -169,7 +178,12 @@ export async function changeUsername(context: RequestContext): Promise<Response>
     }),
   );
   return Response.json({
-    user: toAccountUser({ ...user, username, username_changed_at: now }),
+    user: toAccountUser(
+      { ...user, username, username_changed_at: now },
+      await context.env.DB.prepare("SELECT until FROM pro_memberships WHERE user_id = ?")
+        .bind(user.id)
+        .first<{ until: number | null }>(),
+    ),
   });
 }
 

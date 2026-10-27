@@ -1,3 +1,4 @@
+import { z } from "zod";
 import type { SiteStats, StatsEntry, StatsRange } from "./stats";
 
 /** A number this period, and the same number over the period before, for the change arrow. */
@@ -81,6 +82,8 @@ export interface AdminUser {
   createdAt: number;
   admin: boolean;
   suspended: boolean;
+  isPro?: boolean;
+  proUntil?: number | null;
   /** Finished games saved to the account's history. */
   games: number;
   /** First place in games with two or more players. */
@@ -252,8 +255,11 @@ export interface QuestionImportResult {
 
 /** Pro's monthly price in naira, as on the pricing page. */
 export const PRO_MONTHLY_PRICE = 5000;
+export const PRO_MONTHLY_PRICE_NGN = 5000;
+/** Pro's monthly price in US dollars for international visitors. */
+export const PRO_MONTHLY_PRICE_USD = 5;
 
-export const PAYMENT_METHODS = ["transfer", "cash", "other"] as const;
+export const PAYMENT_METHODS = ["transfer", "cash", "bachs", "other"] as const;
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
 /** How long Pro can be recorded or given for, in months. 0 means it doesn't end. */
@@ -295,4 +301,13 @@ export interface AdminPayments {
   payments: PaymentRecord[];
   /** Whether a card payment provider is connected. Not yet. */
   provider: null;
+}
+
+export const checkoutRequestSchema = z.object({
+  currency: z.enum(["NGN", "USD"]).default("NGN"),
+});
+export type CheckoutRequest = z.infer<typeof checkoutRequestSchema>;
+
+export interface CheckoutResponse {
+  checkoutUrl: string;
 }

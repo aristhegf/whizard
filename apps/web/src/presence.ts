@@ -39,6 +39,7 @@ let pingTimer: ReturnType<typeof setInterval> | undefined;
 let source: string | null = null;
 
 export function pageOf(route: Route): PageName {
+  if (route.name === "bankExam") return "bank";
   return route.name;
 }
 
