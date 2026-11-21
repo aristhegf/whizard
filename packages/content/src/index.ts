@@ -1,6 +1,8 @@
 // Server-only: this package contains the answers, so the web app must never import it.
 import {
   type ConnectionsPuzzle,
+  type MostLikelyToPack,
+  type MostLikelyToPrompt,
   jigsawContentId,
   pickJigsawPicture,
   seededRng,
@@ -26,11 +28,14 @@ import popCulture from "./questions/pop-culture.json";
 import quran from "./questions/quran.json";
 import science from "./questions/science.json";
 import connectionsFile from "./connections/puzzles.json";
+import mostLikelyToFile from "./prompts/most-likely-to.json";
 import {
   storedConnectionsSchema,
+  storedMostLikelyToPromptSchema,
   storedQuestionSchema,
   storedWordSchema,
   type StoredConnections,
+  type StoredMostLikelyToPrompt,
   type StoredQuestion,
   type StoredWord,
 } from "./schema";
@@ -64,6 +69,10 @@ export const WORDS: readonly StoredWord[] = z.array(storedWordSchema).parse(word
 export const CONNECTIONS: readonly StoredConnections[] = z
   .array(storedConnectionsSchema)
   .parse(connectionsFile);
+
+export const MOST_LIKELY_TO_PROMPTS: readonly StoredMostLikelyToPrompt[] = z
+  .array(storedMostLikelyToPromptSchema)
+  .parse(mostLikelyToFile);
 
 export type QuestionCounts = Partial<Record<QuizCategory, Record<QuizDifficulty, number>>>;
 
@@ -229,6 +238,22 @@ export function drawConnections(
   return leastUsed(pool.length > 0 ? pool : puzzles, seededRng(seed), options).slice(0, count);
 }
 
+/**
+ * One Most Likely To prompt per round from a pack, all different, the least used first (as with
+ * questions), in an order from the seed.
+ */
+export function drawMostLikelyToPrompts(
+  pack: MostLikelyToPack,
+  count: number,
+  seed: number,
+  options: DrawOptions = {},
+  prompts: readonly StoredMostLikelyToPrompt[] = MOST_LIKELY_TO_PROMPTS,
+): MostLikelyToPrompt[] {
+  const rng = seededRng(seed);
+  const pool = prompts.filter((p) => p.pack === pack);
+  return shuffled(leastUsed(pool, rng, options).slice(0, count), rng);
+}
+
 /** `questions` is the bank to draw from: the one that ships, or it with admin edits applied. */
 export function drawContent(
   request: ContentRequest,
@@ -247,5 +272,7 @@ export function drawContent(
       return drawWords(request.levels, seed, options);
     case "connections-puzzle":
       return drawConnections(request.level, seed, options, CONNECTIONS, request.count ?? 1);
+    case "most-likely-to-prompts":
+      return drawMostLikelyToPrompts(request.pack, request.count, seed, options);
   }
 }

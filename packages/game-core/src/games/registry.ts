@@ -2,6 +2,7 @@ import { connectionsGame } from "./connections/connections";
 import { jigsawGame } from "./jigsaw/jigsaw";
 import { logicGame } from "./logic/logic";
 import { memoryGame } from "./memory/memory";
+import { mostLikelyToGame } from "./mostLikelyTo/mostLikelyTo";
 import { quizGame } from "./quiz/quiz";
 import { reactionGame } from "./reaction/reaction";
 import { spotItGame } from "./spotIt/spotIt";
@@ -19,6 +20,7 @@ export const GAMES = {
   logic: logicGame as unknown as AnyGameModule,
   memory: memoryGame as unknown as AnyGameModule,
   reaction: reactionGame as unknown as AnyGameModule,
+  "most-likely-to": mostLikelyToGame as unknown as AnyGameModule,
 } as const;
 
 export type GameId = keyof typeof GAMES;

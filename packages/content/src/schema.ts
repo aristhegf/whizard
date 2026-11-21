@@ -1,6 +1,7 @@
 import {
   CONNECTIONS_GROUP_SIZE,
   LEVELS,
+  MOST_LIKELY_TO_PACK_IDS,
   QUIZ_DIFFICULTIES,
   WORD_LEVELS,
   topicIdSchema,
@@ -66,3 +67,28 @@ export const storedConnectionsSchema = z
   });
 
 export type StoredConnections = z.infer<typeof storedConnectionsSchema>;
+
+export const MOST_LIKELY_TO_PROMPT_MAX = 60;
+
+/**
+ * A Most Likely To prompt: the end of the sentence "Most likely to …", in lower case, with no
+ * full stop ("forget their own birthday"). Its id names its pack.
+ */
+export const storedMostLikelyToPromptSchema = z
+  .object({
+    id: z.string().regex(/^mlt-[a-z]+-\d{3}$/),
+    pack: z.enum(MOST_LIKELY_TO_PACK_IDS),
+    text: z
+      .string()
+      .min(8)
+      .max(MOST_LIKELY_TO_PROMPT_MAX)
+      .regex(/^[a-z][a-zA-Z0-9 ',-]*[a-z]$/),
+  })
+  .refine((p) => p.id.startsWith(`mlt-${p.pack}-`), {
+    message: "A prompt's id must name its pack.",
+  })
+  .refine((p) => !/^most likely/i.test(p.text), {
+    message: "The screen adds “Most likely to”; the prompt is only the rest.",
+  });
+
+export type StoredMostLikelyToPrompt = z.infer<typeof storedMostLikelyToPromptSchema>;
