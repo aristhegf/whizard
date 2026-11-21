@@ -1,0 +1,331 @@
+[
+  {
+    "id": "how-well-best-friends-001",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s go-to sleepover snack?",
+    "choices": ["Crisps", "Popcorn", "Chocolate", "Suya"]
+  },
+  {
+    "id": "how-well-best-friends-002",
+    "pack": "best-friends",
+    "prompt": "What would {name} do with a free day off?",
+    "choices": ["Sleep all day", "Go shopping", "Hang out with friends", "Binge a series"]
+  },
+  {
+    "id": "how-well-best-friends-003",
+    "pack": "best-friends",
+    "prompt": "Which job would {name} secretly love?",
+    "choices": ["Chef", "Pop star", "Detective", "Pilot"]
+  },
+  {
+    "id": "how-well-best-friends-004",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s worst habit?",
+    "choices": [
+      "Always running late",
+      "Glued to their phone",
+      "Midnight snacking",
+      "Leaving people on read"
+    ]
+  },
+  {
+    "id": "how-well-best-friends-005",
+    "pack": "best-friends",
+    "prompt": "How does {name} act when they're hungry?",
+    "choices": ["Gets grumpy", "Goes quiet", "Only talks about food", "Totally fine"]
+  },
+  {
+    "id": "how-well-best-friends-006",
+    "pack": "best-friends",
+    "prompt": "What's the first thing {name} would buy with a surprise bonus?",
+    "choices": ["New clothes", "A gadget", "A trip", "Nothing, save it"]
+  },
+  {
+    "id": "how-well-best-friends-007",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s most-used emoji?",
+    "choices": ["😂", "❤️", "🙏", "💀"]
+  },
+  {
+    "id": "how-well-best-friends-008",
+    "pack": "best-friends",
+    "prompt": "Which superpower would {name} pick?",
+    "choices": ["Flying", "Invisibility", "Mind reading", "Teleporting"]
+  },
+  {
+    "id": "how-well-best-friends-009",
+    "pack": "best-friends",
+    "prompt": "How long does {name} take to reply to a message?",
+    "choices": ["Seconds", "A few hours", "A few days", "A voice note later"]
+  },
+  {
+    "id": "how-well-best-friends-010",
+    "pack": "best-friends",
+    "prompt": "What kind of karaoke song would {name} pick?",
+    "choices": ["A power ballad", "A rap verse", "An old-school hit", "They refuse to sing"]
+  },
+  {
+    "id": "how-well-best-friends-011",
+    "pack": "best-friends",
+    "prompt": "What would {name} order at a café?",
+    "choices": ["Coffee", "Hot chocolate", "A smoothie", "Just water"]
+  },
+  {
+    "id": "how-well-best-friends-012",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s ideal holiday?",
+    "choices": ["Beach and sun", "A city break", "An adventure trip", "A staycation"]
+  },
+  {
+    "id": "how-well-best-friends-013",
+    "pack": "best-friends",
+    "prompt": "What is {name} most likely to be late for?",
+    "choices": ["Work or school", "A party", "A flight", "Never late"]
+  },
+  {
+    "id": "how-well-best-friends-014",
+    "pack": "best-friends",
+    "prompt": "Which would {name} rather give up for a month?",
+    "choices": ["Social media", "Sweets", "Music", "Takeaways"]
+  },
+  {
+    "id": "how-well-best-friends-015",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s favourite way to unwind?",
+    "choices": ["Music", "Gaming", "A long bath", "A long nap"]
+  },
+  {
+    "id": "how-well-best-friends-016",
+    "pack": "best-friends",
+    "prompt": "Which reality show would {name} go on?",
+    "choices": ["A cooking show", "A dating show", "A survival show", "A talent show"]
+  },
+  {
+    "id": "how-well-best-friends-017",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s biggest fear?",
+    "choices": ["Spiders", "Heights", "Public speaking", "The dark"]
+  },
+  {
+    "id": "how-well-best-friends-018",
+    "pack": "best-friends",
+    "prompt": "How does {name} take their tea?",
+    "choices": ["Lots of sugar", "Milk, no sugar", "Plain", "They hate tea"]
+  },
+  {
+    "id": "how-well-best-friends-019",
+    "pack": "best-friends",
+    "prompt": "What would {name} do if they won the lottery?",
+    "choices": ["Travel the world", "Buy a house", "Start a business", "Share it all"]
+  },
+  {
+    "id": "how-well-best-friends-020",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s favourite type of film?",
+    "choices": ["Comedy", "Action", "Horror", "Romance"]
+  },
+  {
+    "id": "how-well-best-friends-021",
+    "pack": "best-friends",
+    "prompt": "Which pet suits {name} best?",
+    "choices": ["A dog", "A cat", "A parrot", "A goldfish"]
+  },
+  {
+    "id": "how-well-best-friends-022",
+    "pack": "best-friends",
+    "prompt": "What's {name} like in a group chat?",
+    "choices": ["Sends memes", "Long voice notes", "Silent reader", "Replies to everything"]
+  },
+  {
+    "id": "how-well-best-friends-023",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s secret talent?",
+    "choices": ["Cooking", "Dancing", "Drawing", "Doing impressions"]
+  },
+  {
+    "id": "how-well-best-friends-024",
+    "pack": "best-friends",
+    "prompt": "Where would {name} choose to eat on their birthday?",
+    "choices": ["A fancy restaurant", "Street food", "A home-cooked meal", "Fast food"]
+  },
+  {
+    "id": "how-well-best-friends-025",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s morning mood?",
+    "choices": ["Bright and chirpy", "Don't talk to me", "Coffee first", "Still asleep"]
+  },
+  {
+    "id": "how-well-best-friends-026",
+    "pack": "best-friends",
+    "prompt": "Which decade's style would {name} rock?",
+    "choices": ["The 70s", "The 80s", "The 90s", "The 2000s"]
+  },
+  {
+    "id": "how-well-best-friends-027",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s dream car?",
+    "choices": ["A sports car", "A big SUV", "An electric car", "A vintage classic"]
+  },
+  {
+    "id": "how-well-best-friends-028",
+    "pack": "best-friends",
+    "prompt": "What would {name} do on a rainy day?",
+    "choices": ["Read a book", "Watch films", "Bake something", "Sleep"]
+  },
+  {
+    "id": "how-well-best-friends-029",
+    "pack": "best-friends",
+    "prompt": "What does {name} always have in their bag?",
+    "choices": ["Snacks", "Lip balm", "A charger", "Earphones"]
+  },
+  {
+    "id": "how-well-best-friends-030",
+    "pack": "best-friends",
+    "prompt": "How does {name} react to a scary film?",
+    "choices": ["Screams", "Laughs", "Hides behind a pillow", "Falls asleep"]
+  },
+  {
+    "id": "how-well-best-friends-031",
+    "pack": "best-friends",
+    "prompt": "Which game would {name} win?",
+    "choices": ["Ludo", "Chess", "Monopoly", "FIFA"]
+  },
+  {
+    "id": "how-well-best-friends-032",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s comfort food?",
+    "choices": ["Jollof rice", "Pizza", "Noodles", "Pepper soup"]
+  },
+  {
+    "id": "how-well-best-friends-033",
+    "pack": "best-friends",
+    "prompt": "How does {name} get over a bad day?",
+    "choices": ["Sad songs", "Ice cream", "Calls a friend", "Goes out"]
+  },
+  {
+    "id": "how-well-best-friends-034",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s dream city to live in?",
+    "choices": ["London", "Lagos", "New York", "Dubai"]
+  },
+  {
+    "id": "how-well-best-friends-035",
+    "pack": "best-friends",
+    "prompt": "What would {name} be famous for?",
+    "choices": ["Their cooking", "Their jokes", "Their style", "Their singing"]
+  },
+  {
+    "id": "how-well-best-friends-036",
+    "pack": "best-friends",
+    "prompt": "How would {name} spend their last bit of cash?",
+    "choices": ["Food", "Transport", "Phone data", "Save it"]
+  },
+  {
+    "id": "how-well-best-friends-037",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s guilty pleasure?",
+    "choices": ["Reality TV", "Old cartoons", "Junk food", "Online shopping"]
+  },
+  {
+    "id": "how-well-best-friends-038",
+    "pack": "best-friends",
+    "prompt": "Which sport would {name} pick to play?",
+    "choices": ["Football", "Basketball", "Tennis", "None at all"]
+  },
+  {
+    "id": "how-well-best-friends-039",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s idea of a perfect night out?",
+    "choices": ["Dancing", "A nice dinner", "Karaoke", "The cinema"]
+  },
+  {
+    "id": "how-well-best-friends-040",
+    "pack": "best-friends",
+    "prompt": "What does {name} do when they can't sleep?",
+    "choices": ["Scroll their phone", "Read", "Snack", "Count sheep"]
+  },
+  {
+    "id": "how-well-best-friends-041",
+    "pack": "best-friends",
+    "prompt": "Which subject did {name} love at school?",
+    "choices": ["Maths", "English", "Art", "Break time"]
+  },
+  {
+    "id": "how-well-best-friends-042",
+    "pack": "best-friends",
+    "prompt": "How does {name} plan a trip?",
+    "choices": ["A full spreadsheet", "A rough list", "Wings it", "Lets you plan it"]
+  },
+  {
+    "id": "how-well-best-friends-043",
+    "pack": "best-friends",
+    "prompt": "How does {name} keep their phone?",
+    "choices": ["Always on silent", "Loud ringtone", "Vibrate only", "Their favourite song"]
+  },
+  {
+    "id": "how-well-best-friends-044",
+    "pack": "best-friends",
+    "prompt": "What does {name} spend too much money on?",
+    "choices": ["Clothes", "Food", "Gadgets", "Subscriptions"]
+  },
+  {
+    "id": "how-well-best-friends-045",
+    "pack": "best-friends",
+    "prompt": "What would {name} name a boat?",
+    "choices": ["A pun", "Their own name", "A pet's name", "Something fancy"]
+  },
+  {
+    "id": "how-well-best-friends-046",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s favourite fruit?",
+    "choices": ["Mango", "Pineapple", "Watermelon", "Banana"]
+  },
+  {
+    "id": "how-well-best-friends-047",
+    "pack": "best-friends",
+    "prompt": "How does {name} celebrate good news?",
+    "choices": ["Calls everyone", "Posts online", "Treats themselves", "Keeps it quiet"]
+  },
+  {
+    "id": "how-well-best-friends-048",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s go-to dance move?",
+    "choices": ["The two-step", "Shoulder shake", "Something viral", "They don't dance"]
+  },
+  {
+    "id": "how-well-best-friends-049",
+    "pack": "best-friends",
+    "prompt": "Who would {name} be in a zombie film?",
+    "choices": ["The leader", "The joker", "First to go", "The last survivor"]
+  },
+  {
+    "id": "how-well-best-friends-050",
+    "pack": "best-friends",
+    "prompt": "What would {name} pick for a movie night snack?",
+    "choices": ["Popcorn", "Nachos", "Chin chin", "Ice cream"]
+  },
+  {
+    "id": "how-well-best-friends-051",
+    "pack": "best-friends",
+    "prompt": "How does {name} feel about pineapple on pizza?",
+    "choices": ["Love it", "Hate it", "Will eat it", "Never tried it"]
+  },
+  {
+    "id": "how-well-best-friends-052",
+    "pack": "best-friends",
+    "prompt": "What's {name}'s dream weekend trip?",
+    "choices": ["A spa retreat", "A music festival", "Camping", "A theme park"]
+  },
+  {
+    "id": "how-well-best-friends-053",
+    "pack": "best-friends",
+    "prompt": "What's {name} most likely to lose?",
+    "choices": ["Keys", "Phone", "Earphones", "Sunglasses"]
+  },
+  {
+    "id": "how-well-best-friends-054",
+    "pack": "best-friends",
+    "prompt": "What would {name} rather be?",
+    "choices": ["Rich", "Famous", "Wise", "Always happy"]
+  }
+]

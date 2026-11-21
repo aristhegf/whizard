@@ -1,0 +1,352 @@
+[
+  {
+    "id": "how-well-couples-001",
+    "pack": "couples",
+    "prompt": "What's {name}'s idea of a perfect date night?",
+    "choices": ["Dinner out", "Movie at home", "Something adventurous", "A long walk and talk"]
+  },
+  {
+    "id": "how-well-couples-002",
+    "pack": "couples",
+    "prompt": "What's {name}'s love language?",
+    "choices": ["Kind words", "Quality time", "Thoughtful gifts", "Helping out"]
+  },
+  {
+    "id": "how-well-couples-003",
+    "pack": "couples",
+    "prompt": "Where would {name} most like a romantic getaway?",
+    "choices": ["A beach island", "A big city", "Mountains and cabins", "A road trip"]
+  },
+  {
+    "id": "how-well-couples-004",
+    "pack": "couples",
+    "prompt": "What does {name} notice first about someone?",
+    "choices": ["Their smile", "Their eyes", "Their style", "Their laugh"]
+  },
+  {
+    "id": "how-well-couples-005",
+    "pack": "couples",
+    "prompt": "What's {name}'s favourite way to say sorry?",
+    "choices": ["A heartfelt talk", "A small gift", "Cooking something nice", "A silly joke"]
+  },
+  {
+    "id": "how-well-couples-006",
+    "pack": "couples",
+    "prompt": "How does {name} feel about surprise parties?",
+    "choices": ["Love them", "Secretly love them", "Only small ones", "Please, no"]
+  },
+  {
+    "id": "how-well-couples-007",
+    "pack": "couples",
+    "prompt": "What's {name}'s ideal anniversary gift?",
+    "choices": ["Jewellery or a watch", "A trip away", "Something handmade", "A fancy dinner"]
+  },
+  {
+    "id": "how-well-couples-008",
+    "pack": "couples",
+    "prompt": "What would {name} cook to impress?",
+    "choices": ["Pasta", "A big breakfast", "Rice and stew", "They'd order in"]
+  },
+  {
+    "id": "how-well-couples-009",
+    "pack": "couples",
+    "prompt": "What film does {name} pick for a cosy night in?",
+    "choices": ["A romcom", "An action film", "A horror film", "An animated film"]
+  },
+  {
+    "id": "how-well-couples-010",
+    "pack": "couples",
+    "prompt": "How does {name} handle a disagreement?",
+    "choices": ["Talk it out now", "Need space first", "Make a joke", "Write it down"]
+  },
+  {
+    "id": "how-well-couples-011",
+    "pack": "couples",
+    "prompt": "What's {name}'s dream home?",
+    "choices": ["City apartment", "Countryside cottage", "Beach house", "Big family home"]
+  },
+  {
+    "id": "how-well-couples-012",
+    "pack": "couples",
+    "prompt": "What song would {name} pick for a first dance?",
+    "choices": [
+      "A classic love ballad",
+      "An upbeat pop hit",
+      "An afrobeats jam",
+      "A film soundtrack"
+    ]
+  },
+  {
+    "id": "how-well-couples-013",
+    "pack": "couples",
+    "prompt": "What's {name}'s favourite kind of date?",
+    "choices": ["A new restaurant", "Picnic in the park", "Game night in", "A concert or show"]
+  },
+  {
+    "id": "how-well-couples-014",
+    "pack": "couples",
+    "prompt": "What makes {name} feel most loved?",
+    "choices": ["Being listened to", "Little surprises", "Help with chores", "Lots of compliments"]
+  },
+  {
+    "id": "how-well-couples-015",
+    "pack": "couples",
+    "prompt": "What pet name would {name} use?",
+    "choices": ["Babe", "Love", "Sweetheart", "Just your name"]
+  },
+  {
+    "id": "how-well-couples-016",
+    "pack": "couples",
+    "prompt": "How would {name} plan a weekend away?",
+    "choices": ["Every hour planned", "A rough plan", "Totally spontaneous", "Let you plan it"]
+  },
+  {
+    "id": "how-well-couples-017",
+    "pack": "couples",
+    "prompt": "What's {name}'s biggest pet peeve in a partner?",
+    "choices": ["Being late", "Phone at dinner", "Leaving a mess", "Not texting back"]
+  },
+  {
+    "id": "how-well-couples-018",
+    "pack": "couples",
+    "prompt": "What would {name} rather receive?",
+    "choices": ["Flowers", "Chocolate", "A handwritten letter", "A playlist"]
+  },
+  {
+    "id": "how-well-couples-019",
+    "pack": "couples",
+    "prompt": "How does {name} like to celebrate their birthday?",
+    "choices": ["A big party", "Dinner with close friends", "A quiet day for two", "A trip"]
+  },
+  {
+    "id": "how-well-couples-020",
+    "pack": "couples",
+    "prompt": "What weather puts {name} in the best mood?",
+    "choices": ["Sunny and hot", "Cool and breezy", "Rainy days", "Chilly evenings"]
+  },
+  {
+    "id": "how-well-couples-021",
+    "pack": "couples",
+    "prompt": "What's {name}'s ideal lazy Sunday together?",
+    "choices": ["Brunch out", "Lie-in and films", "Church then lunch", "A long walk outdoors"]
+  },
+  {
+    "id": "how-well-couples-022",
+    "pack": "couples",
+    "prompt": "Which city would {name} choose for a romantic trip?",
+    "choices": ["Paris", "Zanzibar", "Santorini", "Cape Town"]
+  },
+  {
+    "id": "how-well-couples-023",
+    "pack": "couples",
+    "prompt": "How quickly does {name} reply to your texts?",
+    "choices": ["Instantly", "Within the hour", "When they remember", "They call instead"]
+  },
+  {
+    "id": "how-well-couples-024",
+    "pack": "couples",
+    "prompt": "What chore does {name} secretly hate most?",
+    "choices": ["Washing dishes", "Laundry", "Cleaning the bathroom", "Grocery shopping"]
+  },
+  {
+    "id": "how-well-couples-025",
+    "pack": "couples",
+    "prompt": "What's {name}'s favourite thing to do as a couple?",
+    "choices": ["Cook together", "Travel", "Binge a series", "Go dancing"]
+  },
+  {
+    "id": "how-well-couples-026",
+    "pack": "couples",
+    "prompt": "What would {name} say is their best quality?",
+    "choices": ["Their smile", "Their humour", "Their kindness", "Their cooking"]
+  },
+  {
+    "id": "how-well-couples-027",
+    "pack": "couples",
+    "prompt": "What's {name}'s favourite dessert to share?",
+    "choices": ["Ice cream", "Chocolate cake", "Puff-puff", "Cheesecake"]
+  },
+  {
+    "id": "how-well-couples-028",
+    "pack": "couples",
+    "prompt": "Where would {name} hide a love note for you?",
+    "choices": ["In your bag", "Under your pillow", "On the mirror", "In your phone notes"]
+  },
+  {
+    "id": "how-well-couples-029",
+    "pack": "couples",
+    "prompt": "What does {name} think is the key to a happy relationship?",
+    "choices": ["Communication", "Laughter", "Trust", "Patience"]
+  },
+  {
+    "id": "how-well-couples-030",
+    "pack": "couples",
+    "prompt": "What would {name} suggest on a rainy date day?",
+    "choices": ["Board games", "Baking together", "A film marathon", "Dancing in the rain"]
+  },
+  {
+    "id": "how-well-couples-031",
+    "pack": "couples",
+    "prompt": "How does {name} like to be comforted when sad?",
+    "choices": ["A big hug", "Their favourite food", "Quiet company", "Being made to laugh"]
+  },
+  {
+    "id": "how-well-couples-032",
+    "pack": "couples",
+    "prompt": "What's {name}'s dream couple's holiday activity?",
+    "choices": ["Snorkelling", "A food tour", "A hot-air balloon ride", "A cooking class"]
+  },
+  {
+    "id": "how-well-couples-033",
+    "pack": "couples",
+    "prompt": "What does {name} take longest over when getting ready?",
+    "choices": ["Their hair", "Picking an outfit", "Their skincare", "Ready in five minutes"]
+  },
+  {
+    "id": "how-well-couples-034",
+    "pack": "couples",
+    "prompt": "Which pet would {name} want to raise together?",
+    "choices": ["A dog", "A cat", "A fish", "No pets, thanks"]
+  },
+  {
+    "id": "how-well-couples-035",
+    "pack": "couples",
+    "prompt": "What's {name}'s favourite kind of shared memory?",
+    "choices": ["Our first date", "A trip we took", "A silly inside joke", "A quiet night in"]
+  },
+  {
+    "id": "how-well-couples-036",
+    "pack": "couples",
+    "prompt": "Which gesture would melt {name}'s heart?",
+    "choices": ["Breakfast in bed", "A surprise visit", "A slow dance", "A love letter"]
+  },
+  {
+    "id": "how-well-couples-037",
+    "pack": "couples",
+    "prompt": "How does {name} feel about matching outfits?",
+    "choices": ["Love them", "Only for events", "Maybe a little", "Absolutely not"]
+  },
+  {
+    "id": "how-well-couples-038",
+    "pack": "couples",
+    "prompt": "What would {name} order on a dinner date?",
+    "choices": ["Grilled fish", "Pasta", "Jollof and chicken", "Whatever you're having"]
+  },
+  {
+    "id": "how-well-couples-039",
+    "pack": "couples",
+    "prompt": "How does {name} wrap a present?",
+    "choices": ["Neat and fancy", "In a gift bag", "Newspaper and tape", "No wrapping at all"]
+  },
+  {
+    "id": "how-well-couples-040",
+    "pack": "couples",
+    "prompt": "When does {name} feel most romantic?",
+    "choices": ["Early morning", "At sunset", "Late at night", "On holiday"]
+  },
+  {
+    "id": "how-well-couples-041",
+    "pack": "couples",
+    "prompt": "What's {name} most likely to forget?",
+    "choices": [
+      "Special dates",
+      "Where their keys are",
+      "Your coffee order",
+      "Never forgets a thing"
+    ]
+  },
+  {
+    "id": "how-well-couples-042",
+    "pack": "couples",
+    "prompt": "What would {name} rather do for Valentine's Day?",
+    "choices": [
+      "A fancy dinner",
+      "Stay in and cook",
+      "A small getaway",
+      "Skip it, every day counts"
+    ]
+  },
+  {
+    "id": "how-well-couples-043",
+    "pack": "couples",
+    "prompt": "What would {name} spend a date budget on?",
+    "choices": ["Good food", "An experience", "A gift", "Save it for later"]
+  },
+  {
+    "id": "how-well-couples-044",
+    "pack": "couples",
+    "prompt": "How does {name} react to a romantic film?",
+    "choices": ["Cries every time", "Rolls their eyes", "Takes notes", "Falls asleep"]
+  },
+  {
+    "id": "how-well-couples-045",
+    "pack": "couples",
+    "prompt": "What makes {name} laugh hardest?",
+    "choices": ["Silly dancing", "Bad puns", "Funny voices", "Embarrassing stories"]
+  },
+  {
+    "id": "how-well-couples-046",
+    "pack": "couples",
+    "prompt": "What would {name} name a pet you shared?",
+    "choices": ["Something cute", "A food name", "A human name", "A celebrity name"]
+  },
+  {
+    "id": "how-well-couples-047",
+    "pack": "couples",
+    "prompt": "Where would {name} love to renew vows one day?",
+    "choices": ["On a beach", "In a garden", "Where we first met", "At a small chapel"]
+  },
+  {
+    "id": "how-well-couples-048",
+    "pack": "couples",
+    "prompt": "What does {name} think they cook best?",
+    "choices": ["Breakfast", "Rice dishes", "Soups and stews", "Toast, honestly"]
+  },
+  {
+    "id": "how-well-couples-049",
+    "pack": "couples",
+    "prompt": "What's {name}'s ideal date night outfit?",
+    "choices": ["Dressed to impress", "Smart casual", "Jeans and trainers", "Pyjamas at home"]
+  },
+  {
+    "id": "how-well-couples-050",
+    "pack": "couples",
+    "prompt": "What does {name} love most about weekends together?",
+    "choices": ["Sleeping in", "No alarms", "Long meals", "Going out"]
+  },
+  {
+    "id": "how-well-couples-051",
+    "pack": "couples",
+    "prompt": "What would {name} do with a surprise free afternoon together?",
+    "choices": ["Go for ice cream", "Take a nap", "Watch a series", "Explore somewhere new"]
+  },
+  {
+    "id": "how-well-couples-052",
+    "pack": "couples",
+    "prompt": "Which compliment would {name} love to hear most?",
+    "choices": ["You're so funny", "You look amazing", "You're so smart", "You're so kind"]
+  },
+  {
+    "id": "how-well-couples-053",
+    "pack": "couples",
+    "prompt": "What's {name}'s idea of a dream proposal?",
+    "choices": ["Private and simple", "In front of family", "On a trip", "With a big crowd"]
+  },
+  {
+    "id": "how-well-couples-054",
+    "pack": "couples",
+    "prompt": "What does {name} sing along to in the car?",
+    "choices": [
+      "A love song",
+      "An old-school classic",
+      "Whatever's on the radio",
+      "They never sing"
+    ]
+  },
+  {
+    "id": "how-well-couples-055",
+    "pack": "couples",
+    "prompt": "What's {name}'s favourite way to spend an evening apart?",
+    "choices": ["Gaming", "Seeing friends", "Reading", "Calling you anyway"]
+  }
+]
