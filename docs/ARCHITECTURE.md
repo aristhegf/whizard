@@ -101,7 +101,8 @@ Time is just another input. The room calls `tick` when `nextWakeAt` is reached, 
 
 This shape covers every game on the list:
 
-- **Hidden information** goes through `viewFor`. A quiz player never receives the answer before answering. In Impostor, only the impostor's view says "you are the impostor".
+- **Hidden information** goes through `viewFor`. A quiz player never receives the answer before answering. In Impostor, only the impostor's view says "you are the impostor", and theirs is the only one without the word (see [Impostor](#impostor)).
+- **Typed text** in an action, such as an Impostor clue, is named by the module's optional `typedText(action)`. The room checks it against the admins' blocked words, as it does nicknames (`blockedTypedText` in `gameRules.ts`), and refuses the action before the module sees it.
 - **Timed games** (quiz questions, Reaction, Memory, Draw & Guess) report their next deadline through `nextWakeAt`, and the room wakes them with `tick`.
 - **Solo play** needs nothing special: a game with `minPlayers: 1` can start with just the host in the room. The home screen has a "Play solo" button that creates a room and goes straight to the game settings.
 - **Social and party games** use the same actions: votes, typed answers and drawing strokes are all player actions.
@@ -148,7 +149,7 @@ Guests get the table above. This pacing is decided entirely on the player's own 
 
 **Late joiners.** By default, someone who arrives mid-game joins the running game, starting from the first question with their own countdown. The host's **Allow late join** stays on until they turn it off; with it off, a newcomer watches until the next one instead. It works because every player already moves at their own pace.
 
-**Coming back to a game.** Anyone who was in the running game can always go back into it, with their score and progress, whatever the late-join setting; late join only decides whether a _newcomer_ can enter. Someone who quit it and stayed in the room gets **Rejoin the game** (`rejoinGame`). Someone who left the room, or was dropped after 10 minutes offline, is recognised when they come back (by their account, or the browser's guest ID, against the game's roster) and returns as the same player, under the name they played with. A dropped player is marked as having left the game, so nobody is kept waiting for them. The game decides how they come back (`onPlayerJoined` with a player it already has): in the quiz, Word Rush and Spot It the question they were on starts again with a countdown, so time away doesn't count against them; Jigsaw, Connections and Logic races carry on with the puzzle on the same clock; in Reaction the round that went on without them counts as missed, and someone new comes in from the next round (straight in during the countdown); in Memory a round that went on without them counts as unanswered; in an Elimination game they're back in if no cut was made while they were away, and watch if one was.
+**Coming back to a game.** Anyone who was in the running game can always go back into it, with their score and progress, whatever the late-join setting; late join only decides whether a _newcomer_ can enter. Someone who quit it and stayed in the room gets **Rejoin the game** (`rejoinGame`). Someone who left the room, or was dropped after 10 minutes offline, is recognised when they come back (by their account, or the browser's guest ID, against the game's roster) and returns as the same player, under the name they played with. A dropped player is marked as having left the game, so nobody is kept waiting for them. The game decides how they come back (`onPlayerJoined` with a player it already has): in the quiz, Word Rush and Spot It the question they were on starts again with a countdown, so time away doesn't count against them; Jigsaw, Connections and Logic races carry on with the puzzle on the same clock; in Reaction the round that went on without them counts as missed, and someone new comes in from the next round (straight in during the countdown); in Memory a round that went on without them counts as unanswered; in Impostor they come back into the round they started (a clue turn that passed without them stays skipped), and someone new waits for the next round; in an Elimination game they're back in if no cut was made while they were away, and watch if one was.
 
 ### Elimination
 
@@ -219,6 +220,22 @@ A room draws one word per round at that round's level, avoiding words the room u
 ### Spot It
 
 Each round is a grid with exactly one cell that's different. Tap it. The grids are made from the room's seed, so everyone gets the same ones and nothing comes from the content bank. Four kinds take turns: look-alike emoji, look-alike letters (E and F, O and Q, 8 and B), a slightly different shade of a colour, and an arrow turned a little. Each level sets the grid and how subtle the difference is: easy is 4 by 4 with obvious pairs, an 18% shade and a 45° turn; medium is 5 by 5, 12% and 25°; hard is 6 by 6 with the closest look-alikes, 7% and 12°. Grids grow by one in the second half of the game, so Auto runs from 4 by 4 to 7 by 7. Three wrong taps lose the round. The result shows the grid again with the odd one marked.
+
+## Impostor
+
+The engine is built (`packages/game-core/src/games/impostor/`); its screens are still to come, so it isn't in the web catalogue yet. A round runs through phases, each ended by the room's tick or early by the players:
+
+1. **Role** (6 seconds): everyone reads their card. The crew get the category and the word; the impostor gets the category and "you're the impostor".
+2. **Clues**: one timed turn each, in an order shuffled from the seed. Typed clues are one word of up to 24 characters, checked against the blocked words by the room, never repeating one already given, and, for the crew only, never the word itself; they show to everyone as they arrive. Spoken clues are said out loud and the turn ends with "done" or the timer. A player who has left is skipped.
+3. **Vote**: everyone votes for someone else; it closes when everyone still in has voted, or on the timer. The most votes accuses; a tie or no votes lets the impostor escape.
+4. **Last chance** (20 seconds), only when the impostor is the one accused: they pick the word from eight, the word and seven others from its category.
+5. **Reveal** (10 seconds): the impostor, the word, every vote, the guess and the round's points, then the next round.
+
+- **Secrecy.** Views are built per player: the impostor's never holds the word (until the eight choices of a last chance), nobody else's says who the impostor is, and votes show only who has voted until the reveal. The tests check this by changing the hidden parts of the state and asserting that the other players' views don't change.
+- **The impostor** is picked from the seed each round: never last round's when anyone else can be, and among the rest whoever has had the role least, so a game shares it out evenly.
+- **Points:** 1,000 to each crew member who voted for the impostor, 1,500 to an impostor the vote missed, and 750 to a caught impostor who picks the word.
+- **Leaving.** The impostor leaving ends the round as a crew win (no points); the current clue-giver leaving skips their turn; fewer than three players left ends the game, and the unfinished round isn't counted.
+- **Words** come from `packages/content/src/impostor/words.json`: six categories (Food, Animals, Places, Jobs, Things at home, Sports) of 48 to 50 words each. A game draws one word per round (`drawImpostorWords`), never the same one twice and the least used first, as with questions; Mixed takes the categories in turn. The eight choices never include another round's word.
 
 ## Room lifecycle
 
@@ -309,7 +326,7 @@ A correct answer earns between 50% and 100% of the base points, depending on spe
 
 Game content is prepared ahead of time and stored, not written while players wait. That keeps games starting instantly, keeps the cost fixed however many people play, and means everything has been checked before anyone sees it.
 
-Each game that needs content gets its own set: quiz questions first, then Word Rush's words (see [Word Rush](#word-rush)), later group sets (Connections) and prompts for the social games (Most Likely To, Would You Rather, Predict Me).
+Each game that needs content gets its own set: quiz questions first, then Word Rush's words (see [Word Rush](#word-rush)), group sets (Connections), Impostor's secret words (see [Impostor](#impostor)), and later prompts for the social games (Most Likely To, Would You Rather, Predict Me).
 
 ### Where questions live
 

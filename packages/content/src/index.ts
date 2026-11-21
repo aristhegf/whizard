@@ -1,6 +1,10 @@
 // Server-only: this package contains the answers, so the web app must never import it.
 import {
   type ConnectionsPuzzle,
+  IMPOSTOR_CATEGORY_IDS,
+  IMPOSTOR_GUESS_OPTIONS,
+  type ImpostorPack,
+  type ImpostorWord,
   jigsawContentId,
   pickJigsawPicture,
   seededRng,
@@ -26,11 +30,14 @@ import popCulture from "./questions/pop-culture.json";
 import quran from "./questions/quran.json";
 import science from "./questions/science.json";
 import connectionsFile from "./connections/puzzles.json";
+import impostorFile from "./impostor/words.json";
 import {
   storedConnectionsSchema,
+  storedImpostorCategorySchema,
   storedQuestionSchema,
   storedWordSchema,
   type StoredConnections,
+  type StoredImpostorWord,
   type StoredQuestion,
   type StoredWord,
 } from "./schema";
@@ -64,6 +71,21 @@ export const WORDS: readonly StoredWord[] = z.array(storedWordSchema).parse(word
 export const CONNECTIONS: readonly StoredConnections[] = z
   .array(storedConnectionsSchema)
   .parse(connectionsFile);
+
+/** `Ice cream` → `ice-cream`, for Impostor word IDs. */
+const slug = (word: string) =>
+  word
+    .toLowerCase()
+    .replace(/[^a-z]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+/** Impostor's secret words, every category's in one list. */
+export const IMPOSTOR_WORDS: readonly StoredImpostorWord[] = z
+  .array(storedImpostorCategorySchema)
+  .parse(impostorFile)
+  .flatMap(({ category, words }) =>
+    words.map((word) => ({ id: `impostor-${category}-${slug(word)}`, category, word })),
+  );
 
 export type QuestionCounts = Partial<Record<QuizCategory, Record<QuizDifficulty, number>>>;
 
@@ -229,6 +251,50 @@ export function drawConnections(
   return leastUsed(pool.length > 0 ? pool : puzzles, seededRng(seed), options).slice(0, count);
 }
 
+/**
+ * Impostor's secret words, one per round, never the same one twice in a game, the least used
+ * first as with questions. One category's pack keeps to it; Mixed takes the categories in turn,
+ * in an order from the seed. Each word comes with seven others from its category for the caught
+ * impostor's last chance, none of them another round's word.
+ */
+export function drawImpostorWords(
+  pack: ImpostorPack,
+  count: number,
+  seed: number,
+  options: DrawOptions = {},
+  words: readonly StoredImpostorWord[] = IMPOSTOR_WORDS,
+): ImpostorWord[] {
+  const rng = seededRng(seed);
+  const categories = pack === "mixed" ? shuffled(IMPOSTOR_CATEGORY_IDS, rng) : [pack];
+  const queues = new Map(
+    categories.map((category) => [
+      category,
+      leastUsed(
+        words.filter((w) => w.category === category),
+        rng,
+        options,
+      ),
+    ]),
+  );
+  const picked: StoredImpostorWord[] = [];
+  for (let i = 0; picked.length < count && i < count * categories.length; i++) {
+    const next = queues.get(categories[i % categories.length]!)!.shift();
+    if (next) picked.push(next);
+  }
+  const used = new Set(picked.map((w) => w.id));
+  return picked.map((w) => ({
+    id: w.id,
+    category: w.category,
+    word: w.word,
+    decoys: shuffled(
+      words.filter((other) => other.category === w.category && !used.has(other.id)),
+      rng,
+    )
+      .slice(0, IMPOSTOR_GUESS_OPTIONS - 1)
+      .map((other) => other.word),
+  }));
+}
+
 /** `questions` is the bank to draw from: the one that ships, or it with admin edits applied. */
 export function drawContent(
   request: ContentRequest,
@@ -247,5 +313,7 @@ export function drawContent(
       return drawWords(request.levels, seed, options);
     case "connections-puzzle":
       return drawConnections(request.level, seed, options, CONNECTIONS, request.count ?? 1);
+    case "impostor-words":
+      return drawImpostorWords(request.pack, request.count, seed, options);
   }
 }

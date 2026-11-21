@@ -1,10 +1,25 @@
-import { DEFAULT_QUIZ_SETTINGS, gameModule, type RoomState } from "@whizard/game-core";
-import type { SiteSettings } from "@whizard/protocol";
+import { DEFAULT_QUIZ_SETTINGS, gameModule, typedTextOf, type RoomState } from "@whizard/game-core";
+import { blockedWordIn, type BlockedWord, type SiteSettings } from "@whizard/protocol";
 
 export const TOPIC_OFF_MESSAGE = "That topic is turned off for now. Pick another.";
 export const GAME_OFF_MESSAGE = "That game is turned off for now. Try again soon.";
 /** What every settings write answers with when a topic id names no live topic. */
 export const TOPIC_UNAVAILABLE_MESSAGE = "That topic isn't available. Pick another.";
+/** What a player hears when something they typed in a game (an Impostor clue) is blocked. */
+export const TEXT_BLOCKED_MESSAGE = "That word isn’t allowed here. Try another.";
+
+/**
+ * The blocked word in what a player typed in this game action, such as an Impostor clue, or
+ * null if the action has no typed text or it's fine. Checked the same way as nicknames.
+ */
+export function blockedTypedText(
+  state: RoomState,
+  action: unknown,
+  words: readonly BlockedWord[],
+): string | null {
+  const text = typedTextOf(state, action);
+  return text === null ? null : blockedWordIn(text, words);
+}
 
 /** The quiz topic in a game's settings, if it has one. */
 export function topicOf(settings: unknown): string | null {

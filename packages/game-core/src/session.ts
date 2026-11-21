@@ -202,6 +202,18 @@ export function applyGameAction(
   return { ok: true, state: withGameState(state, result, now) };
 }
 
+/**
+ * What the player typed in this action for the running game, for the room to check against the
+ * blocked words before applying it. Null when the game takes no free text or the action isn't one.
+ */
+export function typedTextOf(state: RoomState, action: unknown): string | null {
+  if (phaseOf(state) !== "playing") return null;
+  const module = gameModule(state.session!.gameId);
+  if (!module.typedText) return null;
+  const parsed = module.actionSchema.safeParse(action);
+  return parsed.success ? module.typedText(parsed.data) : null;
+}
+
 export function returnToLobby(state: RoomState, playerId: string): GameResult {
   if (state.hostId !== playerId) return fail("not_host");
   return { ok: true, state: { ...state, session: null } };

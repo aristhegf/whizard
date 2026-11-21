@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type { ConnectionsContentRequest } from "./connections/settings";
+import type { ImpostorContentRequest } from "./impostor/settings";
 import type { JigsawContentRequest } from "./jigsaw/settings";
 import type { QuizContentRequest } from "./quiz/settings";
 import type { WordsContentRequest } from "./wordRush/settings";
@@ -11,7 +12,11 @@ export interface GamePlayer {
 
 /** What a game needs from the content bank before it can start. */
 export type ContentRequest =
-  QuizContentRequest | JigsawContentRequest | WordsContentRequest | ConnectionsContentRequest;
+  | QuizContentRequest
+  | JigsawContentRequest
+  | WordsContentRequest
+  | ConnectionsContentRequest
+  | ImpostorContentRequest;
 
 /** How a finished game went, for match history. The same shape for every game. */
 export interface GameSummary {
@@ -77,6 +82,12 @@ export interface GameModule<Settings, Content, State, Action, View> {
     now: number;
   }): State;
   onAction(state: State, playerId: string, action: Action, now: number): State | Rejection;
+  /**
+   * Free text a player typed in this action (such as an Impostor clue), or null. The room checks
+   * it against the blocked words before the action reaches `onAction`, and refuses it if one
+   * matches, as it does nicknames.
+   */
+  typedText?(action: Action): string | null;
   onPlayerLeft(state: State, playerId: string, now: number): State;
   /** Someone joining a game that has already started, when the room allows it. */
   onPlayerJoined(state: State, player: GamePlayer, now: number): State;
