@@ -4,7 +4,7 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["**/dist/", "**/.wrangler/", "**/coverage/", "**/worker-configuration.d.ts"] },
+  { ignores: ["**/dist/", "**/.wrangler/", "**/coverage/", "**/worker-configuration.d.ts", ".claude/"] },
   js.configs.recommended,
   tseslint.configs.recommended,
   {
