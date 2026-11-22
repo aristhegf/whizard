@@ -683,9 +683,76 @@ button.choice:disabled {
   font-variant-numeric: tabular-nums;
 }
 
-/* Live scores: tablets and computers only. */
+/* Live scores: tablets and computers only, unless a screen has room for them on a phone too
+   (PlayBoard's `always`). */
 .live-board {
   display: none;
+}
+
+@media (min-width: 768px) {
+  .live-board {
+    display: grid;
+  }
+}
+
+.live-board.always {
+  display: grid;
+}
+
+.live-board {
+  align-content: start;
+  gap: 6px;
+  padding: 18px 16px;
+}
+
+.live-title {
+  padding: 4px 12px 10px;
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--line);
+}
+
+.live-board ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.live-board li {
+  display: grid;
+  grid-template-columns: 26px 40px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 58px;
+  padding: 0 12px;
+  border-bottom: 1px solid rgb(140 128 255 / 12%);
+  font-weight: 700;
+}
+
+.live-board li.me {
+  border-radius: 12px;
+  border-bottom-color: transparent;
+  background: linear-gradient(90deg, #4b2fe0, #5b3cf0);
+}
+
+.live-board li.gone {
+  opacity: 0.5;
+}
+
+.live-board .rank {
+  font-family: var(--display);
+  font-weight: 700;
+  text-align: center;
+}
+
+.live-board .name {
+  overflow-wrap: anywhere;
+}
+
+.live-board .pts {
+  font-variant-numeric: tabular-nums;
 }
 
 @media (min-width: 768px) {
@@ -730,63 +797,6 @@ button.choice:disabled {
     min-height: 120px;
     font-size: 1.6rem;
     border-radius: 20px;
-  }
-
-  .live-board {
-    display: grid;
-    align-content: start;
-    gap: 6px;
-    padding: 18px 16px;
-  }
-
-  .live-title {
-    padding: 4px 12px 10px;
-    font-family: var(--display);
-    font-size: 1.3rem;
-    font-weight: 700;
-    border-bottom: 1.5px solid var(--line);
-  }
-
-  .live-board ol {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-  }
-
-  .live-board li {
-    display: grid;
-    grid-template-columns: 26px 40px minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 12px;
-    min-height: 58px;
-    padding: 0 12px;
-    border-bottom: 1px solid rgb(140 128 255 / 12%);
-    font-weight: 700;
-  }
-
-  .live-board li.me {
-    border-radius: 12px;
-    border-bottom-color: transparent;
-    background: linear-gradient(90deg, #4b2fe0, #5b3cf0);
-  }
-
-  .live-board li.gone {
-    opacity: 0.5;
-  }
-
-  .live-board .rank {
-    font-family: var(--display);
-    font-weight: 700;
-    text-align: center;
-  }
-
-  .live-board .name {
-    overflow-wrap: anywhere;
-  }
-
-  .live-board .pts {
-    font-variant-numeric: tabular-nums;
   }
 }
 
@@ -1157,12 +1167,25 @@ button.choice:disabled {
   text-align: center;
 }
 
+/* The stat stays on one line, however narrow the column: the number, and its unit under it. */
 .podium-score {
+  max-width: 100%;
   font-family: var(--display);
   font-weight: 800;
   font-size: 1.5rem;
+  line-height: 1.1;
   color: var(--gold);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.podium-unit {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .place-1 .podium-score {
@@ -1223,6 +1246,10 @@ button.choice:disabled {
 
   .place-1 .podium-score {
     font-size: 3.2rem;
+  }
+
+  .podium-unit {
+    font-size: 0.85rem;
   }
 
   .place-1 .podium-block {

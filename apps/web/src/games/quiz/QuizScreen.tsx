@@ -192,26 +192,34 @@ export function Choices({
   );
 }
 
-/** The answers once the question closes: the right one green, yours red if it wasn't. */
+/**
+ * The answers once the question closes: the right one green, yours red if it wasn't. A game can
+ * mark each answer with who picked it (`marks`); an answer someone picked isn't faded.
+ */
 export function RevealedChoices({
   choices,
   correct,
   mine,
+  marks,
 }: {
   choices: string[];
   correct: number;
   mine: number | null;
+  marks?: readonly ReactNode[];
 }) {
   return (
     <div className="choices">
       {choices.map((text, i) => {
-        const tone = i === correct ? " correct" : i === mine ? " wrong" : " faded";
+        const mark = marks?.[i];
+        const tone =
+          i === correct ? " correct" : i === mine ? " wrong" : mark ? " marked" : " faded";
         return (
           <div key={i} className={`choice${tone}`}>
             <span className="choice-letter" aria-hidden="true">
               {letter(i)}
             </span>
             {text}
+            {mark && <span className="choice-marks">{mark}</span>}
           </div>
         );
       })}

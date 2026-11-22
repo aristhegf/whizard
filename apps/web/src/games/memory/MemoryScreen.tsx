@@ -13,7 +13,17 @@ import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { Podium } from "../../ui/Podium";
 import { Choices, RevealedChoices } from "../quiz/QuizScreen";
-import { PlayBoard, PlayFaces, PlayScreen, PlayTimer, rowsFrom, Staged, timerMs } from "../play";
+import {
+  PlayBoard,
+  PlayFaces,
+  PlayFrame,
+  PlayScreen,
+  PlayTimer,
+  rowsFrom,
+  Staged,
+  timerMs,
+  type Face,
+} from "../play";
 
 interface Props {
   view: MemoryView;
@@ -51,12 +61,17 @@ export function MemoryScreen(props: Props) {
   }
 }
 
-/** Everyone's score as the board and faces show it. */
-const rowsOf = ({ view, room }: Props) =>
-  rowsFrom(view.standings, room, (s) => formatPoints(s.points));
+/** Everyone's score as the board and faces show it, with a bar for how close they are to the lead. */
+const rowsOf = ({ view, room }: Props): Face[] => {
+  const top = Math.max(1, ...view.standings.map((s) => s.points));
+  return rowsFrom(view.standings, room, (s) => formatPoints(s.points)).map((row, i) => ({
+    ...row,
+    bar: view.standings[i]!.points / top,
+  }));
+};
 
 function LiveBoard(props: Props) {
-  return <PlayBoard rows={rowsOf(props)} playerId={props.playerId} label="Live scores" />;
+  return <PlayBoard rows={rowsOf(props)} playerId={props.playerId} medals />;
 }
 
 const roundLabel = (round: number, rounds: number) => (
@@ -64,6 +79,44 @@ const roundLabel = (round: number, rounds: number) => (
     Round <b>{round + 1}</b> of {rounds}
   </>
 );
+
+/**
+ * The screen every round's stage shares, in the game look (`games/play.tsx`): the round at the
+ * top left, the big timer, what to do, the play area with the scores beside it on a computer,
+ * and the faces on a phone.
+ */
+function MemoryPlay({
+  props,
+  round,
+  timer,
+  task,
+  wide = false,
+  children,
+}: {
+  props: Props;
+  round: number;
+  timer?: ReactNode;
+  task?: ReactNode;
+  /** The question and its answers take the quiz's wider column. */
+  wide?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <PlayScreen
+      label={roundLabel(round, props.view.rounds)}
+      latency={props.latency}
+      onQuit={props.onQuit}
+      className="memory-main"
+    >
+      {timer}
+      {task}
+      <Staged wide={wide} aside={<LiveBoard {...props} />}>
+        {children}
+      </Staged>
+      <PlayFaces faces={rowsOf(props)} playerId={props.playerId} />
+    </PlayScreen>
+  );
+}
 
 /** Joined too late for this round, or watching from the room: the others' game. */
 function Watching(props: Props & { message: string }) {
@@ -105,48 +158,45 @@ function RevealPhase(props: Props & { stage: CountdownStage | RevealStage }) {
 
   if (!revealed) {
     return (
-      <PlayScreen
+      <PlayFrame
         label={roundLabel(stage.round, props.view.rounds)}
         latency={props.latency}
         onQuit={props.onQuit}
       >
         <div className="countdown" aria-live="polite">
-          <img src="/art/games/memory.webp" alt="" />
+          <img className="countdown-game-art" src="/art/games/memory.webp" alt="" />
           <p className="countdown-label">Get ready</p>
           <p className="countdown-number">{countdown}</p>
+          <span className="pill pill-glow">Memory</span>
         </div>
-      </PlayScreen>
+      </PlayFrame>
     );
   }
 
   return (
-    <PlayScreen
-      label={roundLabel(stage.round, props.view.rounds)}
-      latency={props.latency}
-      onQuit={props.onQuit}
+    <MemoryPlay
+      props={props}
+      round={stage.round}
+      timer={<PlayTimer ms={timerMs(remaining)} low={remaining < 2000} />}
+      task={<p className="play-task">Remember these</p>}
     >
-      <PlayTimer ms={timerMs(remaining)} low={remaining < 2000} />
-      <p className="play-task">Remember these — the question comes when the clock runs out.</p>
-      <Staged aside={<LiveBoard {...props} />}>
-        <ul className="memory-set" aria-label="Items to remember">
-          {stage.items.map((item) => (
-            <li key={item.id} className="memory-item">
-              <span className="memory-emoji" aria-hidden="true">
-                {item.emoji}
-              </span>
-              <span className="memory-name">{item.name}</span>
-            </li>
-          ))}
-        </ul>
-      </Staged>
-      <PlayFaces faces={rowsOf(props)} playerId={props.playerId} />
-    </PlayScreen>
+      <ul className="memory-set" aria-label="Items to remember">
+        {stage.items.map((item) => (
+          <li key={item.id} className="play-tile memory-item">
+            <span className="memory-emoji" aria-hidden="true">
+              {item.emoji}
+            </span>
+            <span className="memory-name">{item.name}</span>
+          </li>
+        ))}
+      </ul>
+    </MemoryPlay>
   );
 }
 
 /** The question, with the answers to pick from. The right one is never sent before it closes. */
 function Question(props: Props & { stage: QuestionStage }) {
-  const { view, client, stage, playerId } = props;
+  const { view, client, stage } = props;
   const now = useServerNow(client.serverNow);
   const myAnswer = view.myAnswer;
   const [picked, setPicked] = useState<number | null>(myAnswer?.choice ?? null);
@@ -163,48 +213,72 @@ function Question(props: Props & { stage: QuestionStage }) {
     });
   };
 
-  const status =
-    picked !== null
-      ? view.playerCount > 1
-        ? "Locked in. Waiting for the others…"
-        : "Locked in!"
-      : remaining === 0
-        ? "Time’s up"
-        : "Pick the answer you remember";
-
   return (
-    <PlayScreen
-      label={roundLabel(stage.round, view.rounds)}
-      latency={props.latency}
-      onQuit={props.onQuit}
+    <MemoryPlay
+      props={props}
+      round={stage.round}
+      wide
+      timer={
+        <PlayTimer
+          ms={timerMs(remaining)}
+          low={remaining / (stage.deadline - stage.startsAt) < 0.25}
+        />
+      }
     >
-      <PlayTimer
-        ms={timerMs(remaining)}
-        low={remaining / (stage.deadline - stage.startsAt) < 0.25}
-      />
-      <p className="play-task">{stage.question}</p>
-      <Staged aside={<LiveBoard {...props} />}>
-        <Choices choices={stage.choices} picked={picked} disabled={locked} onPick={answer} />
-        <p className="memory-status" role="status">
-          {status}
-        </p>
-      </Staged>
-      <PlayFaces faces={rowsOf(props)} playerId={playerId} />
-    </PlayScreen>
+      <h2 className="prompt">{stage.question}</h2>
+      <Choices choices={stage.choices} picked={picked} disabled={locked} onPick={answer} />
+      <p className="play-note" role="status">
+        {picked === null && remaining === 0 ? "Time’s up" : ""}
+      </p>
+    </MemoryPlay>
   );
 }
 
-/** Between rounds: the right answer, your verdict, and everyone else's answers. */
+/** How many faces fit on one answer before the rest become "+3". */
+const MAX_PICKERS = 3;
+
+/** Who picked an answer, as their faces at the end of its tile. */
+function Pickers({ names, avatars }: { names: string[]; avatars: (string | null)[] }) {
+  const extra = names.length - MAX_PICKERS;
+  return (
+    <span className="memory-pickers" role="img" aria-label={`Picked by ${names.join(", ")}`}>
+      {names.slice(0, MAX_PICKERS).map((name, i) => (
+        <Avatar key={i} id={avatars[i]} name={name} size={28} />
+      ))}
+      {extra > 0 && <span className="memory-more">+{extra}</span>}
+    </span>
+  );
+}
+
+/** Between rounds: the right answer, your verdict, and who picked what. */
 function RoundResult(props: Props & { stage: ResultStage }) {
-  const { view, client, stage, playerId } = props;
+  const { view, client, stage, playerId, room } = props;
   const now = useServerNow(client.serverNow);
   const seconds = Math.max(0, Math.ceil((stage.endsAt - now) / 1000));
   const mine = stage.answers.find((a) => a.playerId === playerId) ?? null;
   const points = view.myAnswer?.points ?? 0;
   const verdict =
     mine?.choice === null || mine === null ? "Time’s up" : mine.correct ? "Correct" : "Wrong";
-  const names = new Map(view.standings.map((s) => [s.playerId, s.nickname]));
   const last = stage.round + 1 >= view.rounds;
+
+  // With friends, everyone's pick shows as their face on the answer they chose.
+  const names = new Map(view.standings.map((s) => [s.playerId, s.nickname]));
+  const avatars = new Map(room.players.map((p) => [p.id, p.avatar]));
+  const marks =
+    view.playerCount > 1
+      ? stage.choices.map((_, i) => {
+          const pickers = stage.answers.filter((a) => a.choice === i);
+          if (pickers.length === 0) return null;
+          return (
+            <Pickers
+              names={pickers.map((a) =>
+                a.playerId === playerId ? "You" : (names.get(a.playerId) ?? ""),
+              )}
+              avatars={pickers.map((a) => avatars.get(a.playerId) ?? null)}
+            />
+          );
+        })
+      : undefined;
 
   useEffect(() => {
     if (mine?.correct) play("correct");
@@ -213,47 +287,24 @@ function RoundResult(props: Props & { stage: ResultStage }) {
   }, []);
 
   return (
-    <PlayScreen
-      label={roundLabel(stage.round, view.rounds)}
-      latency={props.latency}
-      onQuit={props.onQuit}
-      side={<LiveBoard {...props} />}
-    >
-      <p className={`verdict ${mine?.correct ? "good" : "bad"}`} role="status">
-        {verdict}
-        {points > 0 && <span className="points">+{formatPoints(points)}</span>}
-      </p>
-      <p className="play-task">{stage.question}</p>
+    <MemoryPlay props={props} round={stage.round} wide>
+      <h2 className="prompt">{stage.question}</h2>
       <RevealedChoices
         choices={stage.choices}
         correct={stage.correct}
         mine={mine?.choice ?? null}
+        marks={marks}
       />
-      <ul className="memory-answers" aria-label={`Round ${stage.round + 1} answers`}>
-        {stage.answers.map((a) => (
-          <li key={a.playerId} className={a.playerId === playerId ? "me" : ""}>
-            <Avatar
-              id={roomAvatar(props.room, a.playerId)}
-              name={names.get(a.playerId) ?? ""}
-              size={34}
-            />
-            <span className="name">{a.playerId === playerId ? "You" : names.get(a.playerId)}</span>
-            <span className="time">
-              {a.choice === null ? "No answer" : a.correct ? `+${formatPoints(a.points)}` : "Wrong"}
-            </span>
-          </li>
-        ))}
-      </ul>
-      <p className="memory-status" role="status">
+      <p className={`verdict ${mine?.correct ? "good" : "bad"}`} role="status">
+        {verdict}
+        {points > 0 && <span className="points">+{formatPoints(points)}</span>}
+      </p>
+      <p className="play-note">
         {last ? "Results" : "Next round"} in {seconds}
       </p>
-      <PlayFaces faces={rowsOf(props)} playerId={playerId} />
-    </PlayScreen>
+    </MemoryPlay>
   );
 }
-
-const roomAvatar = (room: RoomSnapshot, playerId: string) =>
-  room.players.find((p) => p.id === playerId)?.avatar ?? null;
 
 /** The final scores: a solo card, or the podium and everyone's total. */
 function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
@@ -342,7 +393,8 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
               entries={podium.map((s) => ({
                 playerId: s.playerId,
                 nickname: s.nickname,
-                label: `${s.correct}/${view.rounds} right`,
+                label: `${s.correct}/${view.rounds}`,
+                unit: "right",
               }))}
               avatarOf={avatarOf}
             />
