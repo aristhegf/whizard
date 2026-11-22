@@ -4,6 +4,35 @@ import { forgetSettings } from "./settings";
 import { createSession } from "./sessions";
 import { addUser, testDb } from "./testDb";
 
+interface Completion {
+  user: { username: string };
+  score: number;
+  accuracyPercent: number;
+  attemptsCount: number;
+}
+interface GroupBody {
+  group: { name: string; owner: string; members: unknown[] };
+  isMember: boolean;
+}
+interface JoinBody {
+  joined: boolean;
+}
+interface IdBody {
+  id: string;
+}
+interface AssignmentsBody {
+  assignments: {
+    bankName: string;
+    targetScore: number | null;
+    myCompletion: Completion | null;
+    completions: Completion[];
+  }[];
+}
+interface CompleteBody {
+  ok: boolean;
+  completion: Completion;
+}
+
 vi.mock("cloudflare:workers", () => ({ DurableObject: class {} }));
 const app = (await import("./index")).default;
 
@@ -82,7 +111,7 @@ describe("Study Group Assignments & Links", () => {
     // Tutor checking their own group
     const tutorRes = await call(env, `/api/groups/${groupId}`, { headers: tutorHeaders });
     expect(tutorRes.status).toBe(200);
-    const tutorData = (await tutorRes.json()) as any;
+    const tutorData = (await tutorRes.json()) as GroupBody;
     expect(tutorData.group.name).toBe("JAMB Prep Group");
     expect(tutorData.group.owner).toBe("tutor_1");
     expect(tutorData.isMember).toBe(true);
@@ -95,7 +124,7 @@ describe("Study Group Assignments & Links", () => {
 
     const studentRes = await call(env, `/api/groups/${groupId}`, { headers: studentHeaders });
     expect(studentRes.status).toBe(200);
-    const studentData = (await studentRes.json()) as any;
+    const studentData = (await studentRes.json()) as GroupBody;
     expect(studentData.isMember).toBe(false);
 
     // Non-existent group
@@ -116,12 +145,12 @@ describe("Study Group Assignments & Links", () => {
       headers: studentHeaders,
     });
     expect(joinRes.status).toBe(201);
-    const joinData = (await joinRes.json()) as any;
+    const joinData = (await joinRes.json()) as JoinBody;
     expect(joinData.joined).toBe(true);
 
     // Verify membership now
     const checkRes = await call(env, `/api/groups/${groupId}`, { headers: studentHeaders });
-    const checkData = (await checkRes.json()) as any;
+    const checkData = (await checkRes.json()) as GroupBody;
     expect(checkData.isMember).toBe(true);
     expect(checkData.group.members).toHaveLength(2);
 
@@ -131,7 +160,7 @@ describe("Study Group Assignments & Links", () => {
       headers: studentHeaders,
     });
     expect(reJoinRes.status).toBe(200);
-    const reJoinData = (await reJoinRes.json()) as any;
+    const reJoinData = (await reJoinRes.json()) as JoinBody;
     expect(reJoinData.joined).toBe(false);
   });
 
@@ -151,7 +180,7 @@ describe("Study Group Assignments & Links", () => {
       }),
     });
     expect(assignRes.status).toBe(201);
-    const assignData = (await assignRes.json()) as any;
+    const assignData = (await assignRes.json()) as IdBody;
     expect(assignData.id).toMatch(/^asgn_/);
 
     // Duplicate assignment rejected
@@ -208,12 +237,12 @@ describe("Study Group Assignments & Links", () => {
       headers: studentHeaders,
     });
     expect(listBeforeRes.status).toBe(200);
-    const listBeforeData = (await listBeforeRes.json()) as any;
+    const listBeforeData = (await listBeforeRes.json()) as AssignmentsBody;
     expect(listBeforeData.assignments).toHaveLength(1);
-    expect(listBeforeData.assignments[0].bankName).toBe("Genetics Review");
-    expect(listBeforeData.assignments[0].targetScore).toBe(75);
-    expect(listBeforeData.assignments[0].myCompletion).toBeNull();
-    expect(listBeforeData.assignments[0].completions).toHaveLength(0);
+    expect(listBeforeData.assignments[0]!.bankName).toBe("Genetics Review");
+    expect(listBeforeData.assignments[0]!.targetScore).toBe(75);
+    expect(listBeforeData.assignments[0]!.myCompletion).toBeNull();
+    expect(listBeforeData.assignments[0]!.completions).toHaveLength(0);
 
     // Student completes the assignment: 15 / 20 correct (75%)
     const completeRes = await call(
@@ -225,7 +254,7 @@ describe("Study Group Assignments & Links", () => {
       },
     );
     expect(completeRes.status).toBe(200);
-    const completeData = (await completeRes.json()) as any;
+    const completeData = (await completeRes.json()) as CompleteBody;
     expect(completeData.ok).toBe(true);
     expect(completeData.completion.accuracyPercent).toBe(75);
     expect(completeData.completion.attemptsCount).toBe(1);
@@ -240,7 +269,7 @@ describe("Study Group Assignments & Links", () => {
       },
     );
     expect(retryRes.status).toBe(200);
-    const retryData = (await retryRes.json()) as any;
+    const retryData = (await retryRes.json()) as CompleteBody;
     expect(retryData.completion.score).toBe(19);
     expect(retryData.completion.accuracyPercent).toBe(95);
     expect(retryData.completion.attemptsCount).toBe(2);
@@ -249,13 +278,13 @@ describe("Study Group Assignments & Links", () => {
     const tutorCheckRes = await call(env, `/api/groups/${groupId}/assignments`, {
       headers: tutorHeaders,
     });
-    const tutorCheckData = (await tutorCheckRes.json()) as any;
-    const assignment = tutorCheckData.assignments[0];
+    const tutorCheckData = (await tutorCheckRes.json()) as AssignmentsBody;
+    const assignment = tutorCheckData.assignments[0]!;
     expect(assignment.completions).toHaveLength(1);
-    expect(assignment.completions[0].user.username).toBe("student_4");
-    expect(assignment.completions[0].score).toBe(19);
-    expect(assignment.completions[0].accuracyPercent).toBe(95);
-    expect(assignment.completions[0].attemptsCount).toBe(2);
+    expect(assignment.completions[0]!.user.username).toBe("student_4");
+    expect(assignment.completions[0]!.score).toBe(19);
+    expect(assignment.completions[0]!.accuracyPercent).toBe(95);
+    expect(assignment.completions[0]!.attemptsCount).toBe(2);
 
     // Deleting assignment
     const delRes = await call(env, `/api/groups/${groupId}/assignments/${assignmentId}`, {
@@ -267,7 +296,7 @@ describe("Study Group Assignments & Links", () => {
     const afterDelRes = await call(env, `/api/groups/${groupId}/assignments`, {
       headers: tutorHeaders,
     });
-    const afterDelData = (await afterDelRes.json()) as any;
+    const afterDelData = (await afterDelRes.json()) as AssignmentsBody;
     expect(afterDelData.assignments).toHaveLength(0);
   });
 });

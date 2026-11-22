@@ -12,7 +12,17 @@ import { Avatar } from "../../ui/Avatar";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { Podium } from "../../ui/Podium";
-import { PlayBoard, PlayFaces, PlayScreen, PlayTimer, rowsFrom, Staged, timerMs } from "../play";
+import {
+  PlayBoard,
+  PlayFaces,
+  PlayFrame,
+  PlayScreen,
+  PlayTimer,
+  rowsFrom,
+  Staged,
+  timerMs,
+  type Face,
+} from "../play";
 
 interface Props {
   view: ReactionView;
@@ -54,8 +64,16 @@ const rowsOf = ({ view, room }: Props) =>
   rowsFrom(view.standings, room, (s) => (s.avgMs === null ? "—" : formatMs(s.avgMs)));
 
 function LiveBoard(props: Props) {
-  return <PlayBoard rows={rowsOf(props)} playerId={props.playerId} label="Live scores" />;
+  // Medals once someone has a time: before that everyone is tied first.
+  const timed = props.view.standings.some((s) => s.avgMs !== null);
+  return <PlayBoard rows={rowsOf(props)} playerId={props.playerId} medals={timed} />;
 }
+
+const roundLabel = (round: number, rounds: number) => (
+  <>
+    Round <b>{round + 1}</b> of {rounds}
+  </>
+);
 
 /** Joined too late for this round, or watching from the room: the others' game. */
 function Watching(props: Props & { message: string }) {
@@ -76,9 +94,9 @@ function Watching(props: Props & { message: string }) {
 /** What the round asks for: "Tap the 🍌 Banana", over the countdown, the wait and the board. */
 function Ask({ target, big = false }: { target: CountdownStage["target"]; big?: boolean }) {
   return (
-    <p className={`reaction-ask${big ? " big" : ""}`}>
-      Tap the <span aria-hidden="true">{target.emoji}</span> <b>{target.name}</b>
-    </p>
+    <h2 className={`reaction-ask${big ? " big" : ""}`}>
+      Tap the <span aria-hidden="true">{target.emoji}</span> {target.name}
+    </h2>
   );
 }
 
@@ -132,11 +150,7 @@ function Round(props: Props & { stage: CountdownStage | WaitStage }) {
     [],
   );
 
-  const label = (
-    <>
-      Round <b>{stage.round + 1}</b> of {view.rounds}
-    </>
-  );
+  const label = roundLabel(stage.round, view.rounds);
 
   const pick = (index: number) => {
     if (locked) return;
@@ -159,94 +173,101 @@ function Round(props: Props & { stage: CountdownStage | WaitStage }) {
 
   if (!started) {
     return (
-      <PlayScreen label={label} latency={props.latency} onQuit={props.onQuit}>
+      <PlayFrame label={label} latency={props.latency} onQuit={props.onQuit}>
         <div className="countdown" aria-live="polite">
-          <img src="/art/games/reaction.webp" alt="" />
+          <img className="countdown-game-art" src="/art/games/reaction.webp" alt="" />
           <p className="countdown-label">Get ready</p>
           <p className="countdown-number">{countdown}</p>
+          <Ask target={target} big />
         </div>
-        <Ask target={target} big />
-      </PlayScreen>
+      </PlayFrame>
     );
   }
 
+  // One short line under the board: your time once it's in, otherwise only what needs saying.
   const status = myTap
     ? myTap.ms === null
-      ? view.playerCount > 1
-        ? "You missed this round."
-        : "Too slow."
-      : view.playerCount > 1
-        ? `Locked in at ${formatMs(myTap.ms)}. Waiting for the others…`
-        : `Your reaction: ${formatMs(myTap.ms)}`
+      ? "Too slow"
+      : formatMs(myTap.ms)
     : missed
-      ? "Too slow. The next round is coming."
+      ? "Too slow"
       : wrongCell !== null
-        ? "Not that one — try again!"
+        ? "Not that one"
         : shown
-          ? "Tap it!"
+          ? ""
           : "Wait for it…";
 
   return (
-    <PlayScreen label={label} latency={props.latency} onQuit={props.onQuit}>
-      {!shown ? (
-        <Staged aside={<LiveBoard {...props} />}>
-          <Ask target={target} big />
-          <p className="reaction-status" role="status">
-            {status}
-          </p>
-        </Staged>
-      ) : (
-        <>
-          <PlayTimer
-            ms={timerMs(remaining)}
-            low={remaining > 0 && remaining / view.windowMs < 0.25}
-          />
-          <Ask target={target} />
-          <Staged aside={<LiveBoard {...props} />}>
-            <div
-              className="reaction-grid"
-              role="group"
-              aria-label="Options"
-              style={{ gridTemplateColumns: `repeat(${colsOf(options.length)}, minmax(0, 1fr))` }}
-            >
-              {options.map((item, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  className={[
-                    "play-tile",
-                    "reaction-cell",
-                    wrongCell === index ? "wrong" : "",
-                    locked && item.id === target.id ? "target" : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
-                  aria-label={item.name}
-                  disabled={locked}
-                  onClick={() => pick(index)}
-                >
-                  <span className="reaction-glyph" aria-hidden="true">
-                    {item.emoji}
-                  </span>
-                </button>
-              ))}
-            </div>
-            <p className="reaction-status" role="status">
-              {status}
-            </p>
-          </Staged>
-        </>
-      )}
+    <PlayScreen
+      label={label}
+      latency={props.latency}
+      onQuit={props.onQuit}
+      className="reaction-main"
+    >
+      {/* The clock's place is held through the wait, so the board doesn't jump when it starts. */}
+      <PlayTimer
+        ms={timerMs(shown ? remaining : view.windowMs)}
+        low={shown && remaining > 0 && remaining / view.windowMs < 0.25}
+      />
+      <Ask target={target} />
+      <Staged aside={<LiveBoard {...props} />}>
+        {shown ? (
+          <div
+            className="reaction-grid"
+            role="group"
+            aria-label="Options"
+            style={{ gridTemplateColumns: `repeat(${colsOf(options.length)}, minmax(0, 1fr))` }}
+          >
+            {options.map((item, index) => (
+              <button
+                key={index}
+                type="button"
+                className={[
+                  "play-tile",
+                  "reaction-cell",
+                  wrongCell === index ? "wrong" : "",
+                  locked && item.id === target.id ? "target" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                aria-label={item.name}
+                disabled={locked}
+                onClick={() => pick(index)}
+              >
+                <span className="reaction-glyph" aria-hidden="true">
+                  {item.emoji}
+                </span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          // The wait: the board's footprint, dark, so nothing moves when it lights up.
+          <div
+            className="reaction-grid waiting"
+            aria-hidden="true"
+            style={{ gridTemplateColumns: `repeat(${colsOf(options.length)}, minmax(0, 1fr))` }}
+          >
+            {options.map((_, index) => (
+              <span key={index} className="play-tile reaction-cell" />
+            ))}
+          </div>
+        )}
+        <p className={`play-note reaction-status${myTap?.ms != null ? " good" : ""}`} role="status">
+          {status}
+        </p>
+      </Staged>
       <PlayFaces faces={rowsOf(props)} playerId={playerId} />
     </PlayScreen>
   );
 }
 
-const MEDALS = ["🥇", "🥈", "🥉"];
-
-/** Between rounds: this round's times with a medal each, and the live standings beneath. */
+/**
+ * Between rounds: your time, this round's times as a board (fastest first, medals for the top
+ * three, a 🔥 for a first-try run), and the standings beside it on a computer — places gained
+ * or lost since the last round marked — or as the faces on a phone.
+ */
 function RoundResult(props: Props & { stage: ResultStage }) {
-  const { view, client, stage, playerId } = props;
+  const { view, client, stage, playerId, room } = props;
   const now = useServerNow(client.serverNow);
   const seconds = Math.max(0, Math.ceil((stage.endsAt - now) / 1000));
   const mine = stage.times.find((t) => t.playerId === playerId) ?? null;
@@ -258,94 +279,98 @@ function RoundResult(props: Props & { stage: ResultStage }) {
       : formatMs(mine.ms);
   const good = !!mine && mine.ms !== null;
   const last = stage.round + 1 >= view.rounds;
-  // A medal for each distinct time, so equal taps share one (ties at the top both take gold).
-  const medals = new Map<number, string>();
-  for (const t of stage.times) {
-    if (t.ms !== null && !medals.has(t.ms)) medals.set(t.ms, MEDALS[medals.size] ?? "");
-  }
-  // Where everyone stood last round, so this round's arrows can show places gained or lost.
+
+  const standing = new Map(view.standings.map((s) => [s.playerId, s]));
+  const avatars = new Map(room.players.map((p) => [p.id, p.avatar]));
+  const streakTag = (playerId: string) => {
+    const streak = standing.get(playerId)?.streak ?? 0;
+    return streak >= 2 ? (
+      <span className="streak" title={`${streak} first-try rounds in a row`}>
+        🔥{streak}
+      </span>
+    ) : undefined;
+  };
+
+  // This round's times, fastest first. Equal times share a place, so a tie at the top is two golds.
+  const times: Face[] = stage.times.map((t, i) => {
+    const s = standing.get(t.playerId);
+    const ahead = stage.times.findIndex((o) => o.ms === t.ms);
+    return {
+      playerId: t.playerId,
+      nickname: s?.nickname ?? "",
+      avatar: avatars.get(t.playerId) ?? null,
+      rank: t.ms === null ? i + 1 : ahead + 1,
+      value: t.ms === null ? "—" : formatMs(t.ms),
+      gone: t.ms === null,
+      tag: streakTag(t.playerId),
+    };
+  });
+
+  // The standings now, with the places moved since the last round.
   const previous = new Map(stage.previous.map((p) => [p.playerId, p.rank]));
-  const names = new Map(view.standings.map((s) => [s.playerId, s.nickname]));
+  const standings = rowsOf(props).map((row) => {
+    const was = previous.get(row.playerId);
+    const moved = was === undefined ? 0 : was - row.rank;
+    return {
+      ...row,
+      tag:
+        moved !== 0 ? (
+          <>
+            <span className={moved > 0 ? "up" : "down"} aria-hidden="true">
+              {moved > 0 ? "▲" : "▼"}
+            </span>
+            <span className="sr-only">{moved > 0 ? `Up ${moved}` : `Down ${-moved}`}</span>
+          </>
+        ) : undefined,
+    };
+  });
 
   return (
     <PlayScreen
-      label={
-        <>
-          Round <b>{stage.round + 1}</b> of {view.rounds}
-        </>
-      }
+      label={roundLabel(stage.round, view.rounds)}
       latency={props.latency}
       onQuit={props.onQuit}
+      className="reaction-main"
     >
       <p className={`verdict ${good ? "good" : "bad"}`} role="status">
         {verdict}
         {points > 0 && <span className="points">+{points.toLocaleString("en-US")}</span>}
       </p>
-      <ul className="reaction-times" aria-label={`Round ${stage.round + 1} times`}>
-        {stage.times.map((t) => (
-          <li key={t.playerId} className={t.playerId === playerId ? "me" : ""}>
-            <Avatar
-              id={roomAvatar(props.room, t.playerId)}
-              name={names.get(t.playerId) ?? ""}
-              size={34}
-            />
-            <span className="name">{t.playerId === playerId ? "You" : names.get(t.playerId)}</span>
-            <span className="time">
-              {t.ms === null ? "—" : `${medals.get(t.ms) ?? ""} ${formatMs(t.ms)}`}
-            </span>
-          </li>
-        ))}
-      </ul>
-      {/* The leaderboard as it stands now: ranks, the places moved since last round, first-try
-          streaks and everyone's average. It's up between every round, not only at the end. */}
-      <section className="reaction-standings" aria-label="Live standings">
-        <p className="reaction-standings-title">
-          Live standings <span>after round {stage.round + 1}</span>
-        </p>
-        <ol>
-          {view.standings.map((s) => {
-            const isMe = s.playerId === playerId;
-            const was = previous.get(s.playerId);
-            const moved = was === undefined ? 0 : was - s.rank;
-            return (
-              <li key={s.playerId} className={`${isMe ? "me" : ""}${s.left ? " gone" : ""}`}>
-                <span className={`rank m${s.rank}`}>{s.rank}</span>
-                <Avatar id={roomAvatar(props.room, s.playerId)} name={s.nickname} size={34} />
-                <span className="name">{isMe ? "You" : s.nickname}</span>
-                {/* Streak and movement render every row so the columns line up; empty
-                    slots are hidden by CSS. */}
-                <span
-                  className="streak"
-                  title={s.streak >= 2 ? `${s.streak} first-try rounds in a row` : undefined}
-                >
-                  {s.streak >= 2 ? `🔥${s.streak}` : ""}
-                </span>
-                <span
-                  className={`move${moved > 0 ? " up" : moved < 0 ? " down" : ""}`}
-                  aria-hidden="true"
-                >
-                  {moved > 0 ? "▲" : moved < 0 ? "▼" : ""}
-                </span>
-                <span className="sr-only">
-                  {moved > 0 ? `Up ${moved}` : moved < 0 ? `Down ${-moved}` : ""}
-                </span>
-                <span className="avg">
-                  {s.left ? "Left" : s.avgMs === null ? "—" : formatMs(s.avgMs)}
-                </span>
-              </li>
-            );
-          })}
-        </ol>
-      </section>
-      <p className="reaction-status" role="status">
+      <Staged
+        aside={
+          <PlayBoard
+            rows={standings}
+            playerId={playerId}
+            medals
+            label="Live standings"
+            title={`After round ${stage.round + 1}`}
+          />
+        }
+      >
+        <PlayBoard
+          rows={times}
+          playerId={playerId}
+          medals
+          always
+          label={`Round ${stage.round + 1} times`}
+          title={`Round ${stage.round + 1}`}
+        />
+      </Staged>
+      <p className="play-note">
         {last ? "Results" : "Next round"} in {seconds}
       </p>
+      <PlayFaces faces={rowsOf(props)} playerId={playerId} />
     </PlayScreen>
   );
 }
 
-const roomAvatar = (room: RoomSnapshot, playerId: string) =>
-  room.players.find((p) => p.id === playerId)?.avatar ?? null;
+/** An average on the podium: the number on its line, the unit under it ("393" / "ms avg"). */
+function podiumTime(ms: number | null): { label: string; unit?: string } {
+  if (ms === null) return { label: "—" };
+  return ms >= 1000
+    ? { label: (ms / 1000).toFixed(2), unit: "s avg" }
+    : { label: String(Math.round(ms)), unit: "ms avg" };
+}
 
 /** The final times: a solo card, or the podium and everyone's average. */
 function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
@@ -446,7 +471,7 @@ function Results({ view, client, isHost, room, playerId, onQuit }: Props) {
               entries={podium.map((s) => ({
                 playerId: s.playerId,
                 nickname: s.nickname,
-                label: s.avgMs === null ? "—" : `${formatMs(s.avgMs)} avg`,
+                ...podiumTime(s.avgMs),
               }))}
               avatarOf={avatarOf}
             />

@@ -79,6 +79,8 @@ export interface Face {
   gone?: boolean;
   /** How close to the leader, 0 to 1, for a bar under the name. */
   bar?: number;
+  /** A small mark after the name on the board: a streak, a place gained. */
+  tag?: ReactNode;
 }
 
 /**
@@ -158,6 +160,7 @@ export function PlayBoard({
   title,
   label = "Live scores",
   medals = false,
+  always = false,
 }: {
   rows: Face[];
   playerId: string;
@@ -166,18 +169,26 @@ export function PlayBoard({
   label?: string;
   /** Gold, silver and bronze for the top three, and a crown for first. */
   medals?: boolean;
+  /** Shown on phones too, where a screen has room for it (between rounds). */
+  always?: boolean;
 }) {
   if (rows.length === 0) return null;
   return (
-    <aside className="panel live-board" aria-label={label}>
+    <aside className={`panel live-board${always ? " always" : ""}`} aria-label={label}>
       <h2 className="live-title">
         {title ?? `${rows.length} ${rows.length === 1 ? "player" : "players"}`}
       </h2>
       <ol>
         {rows.map((r) => {
           const mine = r.playerId === playerId;
-          const medal = medals && r.rank <= 3;
-          const name = <span className="name">{mine ? "You" : r.nickname}</span>;
+          // No medal for someone who left, or who has nothing to show for it.
+          const medal = medals && r.rank <= 3 && !r.gone;
+          const name = (
+            <span className="name">
+              {mine ? "You" : r.nickname}
+              {r.tag && <span className="tag">{r.tag}</span>}
+            </span>
+          );
           return (
             <li key={r.playerId} className={`${mine ? "me" : ""}${r.gone ? " gone" : ""}`}>
               <span className={`rank${medal ? ` medal m${r.rank}` : ""}`}>

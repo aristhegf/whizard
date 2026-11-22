@@ -91,10 +91,10 @@ test("two friends answer the same question and see the final scores", async ({ b
       });
     }
     await Promise.all([answerFirst(host), answerFirst(guest)]);
-    // Both answers are up between rounds.
+    // Both answers are up between rounds: each player's face on the answer they picked.
     if (round < 5) {
       for (const page of [host, guest]) {
-        await expect(page.locator(".memory-answers li")).toHaveCount(2, { timeout: 8_000 });
+        await expect(page.locator(".memory-pickers .avatar")).toHaveCount(2, { timeout: 8_000 });
       }
     }
   }
