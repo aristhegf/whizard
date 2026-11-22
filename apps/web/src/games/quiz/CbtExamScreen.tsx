@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo, type FormEvent } from "react";
 import type { PlayerBankDetail, PlayerBankQuestion } from "@whizard/protocol";
 import type { QuizReviewItem } from "@whizard/game-core";
-import { saveBankMistakes, clearBankMistakes } from "../../storage";
+import { saveBankMistakes } from "../../storage";
 import { completeGroupAssignment } from "../../social";
 import { play } from "../../sounds";
 import { Icon } from "../../ui/Icon";
@@ -25,7 +25,7 @@ export function prepareCbtQuestions(
   count: number,
   randomizeOrder: boolean,
 ): CbtQuestion[] {
-  let pool = rawQuestions.map((q, idx) => ({ q, originalIndex: idx }));
+  const pool = rawQuestions.map((q, idx) => ({ q, originalIndex: idx }));
   if (randomizeOrder) {
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -149,27 +149,27 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
     play("go");
   };
 
-  // Timer countdown
+  // Timer countdown. The latest submit lives in a ref, so the interval runs once
+  // per exam and still submits the answers given right up to the last second.
+  const submitRef = useRef<() => void>(() => {});
   useEffect(() => {
     if (phase !== "exam") return;
+    let left = totalTimeSeconds;
     const interval = setInterval(() => {
-      setSecondsLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setAutoSubmitted(true);
-          handleSubmitExam(true);
-          return 0;
-        }
-        if (prev === 61) {
-          play("hurry");
-        } else if (prev <= 6 && prev > 1) {
-          play("tick");
-        }
-        return prev - 1;
-      });
+      left -= 1;
+      setSecondsLeft(Math.max(0, left));
+      if (left <= 0) {
+        clearInterval(interval);
+        setAutoSubmitted(true);
+        submitRef.current();
+      } else if (left === 60) {
+        play("hurry");
+      } else if (left <= 5) {
+        play("tick");
+      }
     }, 1000);
     return () => clearInterval(interval);
-  }, [phase, examQuestions, answers]);
+  }, [phase, totalTimeSeconds]);
 
   // Handle Pick Choice
   const handleSelectChoice = (choiceIndex: number) => {
@@ -193,7 +193,7 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
   };
 
   // Submit Exam
-  const handleSubmitExam = (isAuto = false) => {
+  const handleSubmitExam = () => {
     setShowConfirmSubmit(false);
     setPhase("results");
     play("fanfare");
@@ -230,6 +230,10 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
       setAssignmentSubmitted(resolvedAssignment.groupId);
     }
   };
+
+  useEffect(() => {
+    submitRef.current = handleSubmitExam;
+  });
 
   // Calculated Results
   const answeredCount = useMemo(() => {
@@ -881,7 +885,7 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
               <button
                 type="button"
                 className="btn btn-primary btn-block"
-                onClick={() => handleSubmitExam(false)}
+                onClick={handleSubmitExam}
               >
                 Yes, Submit Exam
               </button>

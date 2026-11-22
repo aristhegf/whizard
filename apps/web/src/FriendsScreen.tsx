@@ -4,7 +4,6 @@ import {
   type Friend,
   type FriendGroup,
   type GroupAssignment,
-  type PlayerBank,
   type PublicUser,
 } from "@whizard/protocol";
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
@@ -600,6 +599,8 @@ function GroupDetail({
   const [notes, setNotes] = useState("");
   const [expandedBoards, setExpandedBoards] = useState<Set<string>>(new Set());
   const [launchingId, setLaunchingId] = useState<string | null>(null);
+  // Read once per visit, so overdue labels stay stable across re-renders.
+  const [now] = useState(() => Date.now());
 
   const targetAssignmentId =
     typeof window !== "undefined"
@@ -846,7 +847,7 @@ function GroupDetail({
           assignments.data.assignments.map((assignment) => {
             const isHighlighted = assignment.id === targetAssignmentId;
             const isBoardOpen = expandedBoards.has(assignment.id);
-            const isDueOverdue = assignment.dueAt ? assignment.dueAt < Date.now() : false;
+            const isDueOverdue = assignment.dueAt ? assignment.dueAt < now : false;
             const canDelete = owner || assignment.assignedBy.username === me;
 
             return (
