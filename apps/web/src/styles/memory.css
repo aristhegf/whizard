@@ -1,10 +1,11 @@
 /* Memory -------------------------------------------------------------------------------- */
 
-/* The six items to remember: the same flat night tiles every game's tiles are. */
+/* The six items to remember: the same flat night tiles as every game's (play.css), square,
+   3px apart, the picture large and its name small under it. */
 .memory-set {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
+  gap: 3px;
   width: 100%;
   margin: 0;
   padding: 0;
@@ -12,18 +13,16 @@
 }
 
 .memory-item {
-  display: grid;
-  place-items: center;
-  gap: 4px;
-  padding: 16px 8px;
-  border: 1.5px solid var(--line);
-  border-radius: 14px;
-  background: rgb(13 11 48 / 70%);
+  aspect-ratio: 1;
+  align-content: center;
+  gap: 6px;
+  padding: 8px;
+  cursor: default;
   text-align: center;
 }
 
 .memory-emoji {
-  font-size: clamp(1.9rem, 7vw, 2.8rem);
+  font-size: clamp(2.2rem, 11vw, 3.2rem);
   line-height: 1;
 }
 
@@ -31,55 +30,72 @@
   overflow: hidden;
   max-width: 100%;
   color: var(--muted);
-  font-size: 0.875rem;
+  font-size: 0.82rem;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* The line under the choices: what to do, then how long is left. */
-.memory-status {
+/* Points won, in the quiz's purple: gold is for first place only. */
+.memory-main .verdict {
   margin: 0;
-  min-height: 1.4em;
-  text-align: center;
-  font-weight: 700;
-  color: var(--muted);
 }
 
-/* Between rounds: everyone's answers, the scores' order. */
-.memory-answers {
-  display: grid;
-  gap: 8px;
-  width: min(420px, 100%);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.memory-main .verdict .points {
+  color: var(--accent-soft);
 }
 
-.memory-answers li {
-  display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
+/* The question takes the board's full width, centred like the quiz's. */
+.memory-main .play-stage.fit-board .play-area {
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  border: 1.5px solid var(--line);
-  border-radius: 14px;
-  background: rgb(255 255 255 / 4%);
 }
 
-.memory-answers li.me {
-  border-color: rgb(190 150 255 / 45%);
-  background: rgb(122 58 255 / 10%);
+/* Between rounds: who picked an answer, as their faces at the end of its tile. */
+.memory-main .choice-marks {
+  display: inline-flex;
+  flex: none;
+  margin-left: auto;
+  padding-left: 8px;
 }
 
-.memory-answers .name {
-  overflow: hidden;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.memory-pickers {
+  display: inline-flex;
+  align-items: center;
 }
 
-.memory-answers .time {
+.memory-pickers .avatar {
+  box-shadow: 0 0 0 2px var(--night);
+}
+
+.memory-pickers > * + * {
+  margin-left: -8px;
+}
+
+.memory-more {
+  display: grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--night);
+  color: var(--text);
+  font-size: 0.75rem;
   font-weight: 800;
-  font-variant-numeric: tabular-nums;
+}
+
+/* An answer others picked stays at full strength, so their faces read. */
+.memory-main .choice.marked {
+  background: var(--night);
+}
+
+/* Small phones (see play.css). */
+@media (max-width: 360px), (max-height: 640px) {
+  .memory-emoji {
+    font-size: 2rem;
+  }
+
+  .memory-name {
+    font-size: 0.75rem;
+  }
 }

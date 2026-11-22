@@ -38,7 +38,7 @@ export function ReactionSettingsRows({
       />
       {/* How wide Insane's field is, since the level itself only says "Insane". */}
       {settings.level === "insane" && (
-        <SettingRow icon="copy" id="insane-grid" label="Grid">
+        <SettingRow icon="grid" id="insane-grid" label="Grid">
           <SettingSelect
             id="insane-grid"
             label="Grid"
@@ -67,7 +67,7 @@ export function ReactionSettingsRows({
         }
       />
       <TimeRow
-        label="Time to tap"
+        label="Time limit"
         value={settings.tapSeconds}
         choices={[...REACTION_TAP_SECONDS]}
         unit="seconds"

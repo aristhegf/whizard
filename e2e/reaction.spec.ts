@@ -20,6 +20,13 @@ async function openReaction(page: Page, nickname: string) {
   await joinAs(page, nickname);
 }
 
+/** Between rounds: the round's times, a board on every screen. */
+const roundTimes = (page: Page, round: number) =>
+  page.getByRole("complementary", { name: `Round ${round} times` });
+
+/** Between rounds: the standings, beside the times on a computer (in the page, if hidden, on a phone). */
+const standings = (page: Page) => page.locator('[aria-label="Live standings"]');
+
 /** What this round asks for, as the announcement says it: "Tap the 🍌 Banana". */
 async function targetName(page: Page): Promise<string> {
   const ask = await page.locator(".reaction-ask").textContent();
@@ -69,9 +76,10 @@ test("a solo game: the wrong tile is turned down, the right one records the time
     await target.click();
     await expect(page.locator(".verdict")).toHaveText(/\d+ (ms|s)/, { timeout: 8_000 });
     if (round === 1) {
-      // The live standings come up under the times, one row a player.
-      await expect(page.locator(".reaction-standings li")).toHaveCount(1, { timeout: 8_000 });
-      await expect(page.locator(".reaction-standings-title")).toContainText("after round 1");
+      // The round's times come up on a board, and the standings beside it, one row a player.
+      await expect(roundTimes(page, 1).getByRole("listitem")).toHaveCount(1, { timeout: 8_000 });
+      await expect(standings(page).locator("li")).toHaveCount(1);
+      await expect(standings(page).locator(".live-title")).toHaveText("After round 1");
     }
   }
 
@@ -118,14 +126,14 @@ test("friends search the same grid and see the final times", async ({ browser })
     // Both times are up between rounds, over the standings as they stand.
     if (round < 5) {
       for (const page of [host, guest]) {
-        await expect(page.locator(".reaction-times li")).toHaveCount(2, { timeout: 8_000 });
-        await expect(page.locator(".reaction-standings li")).toHaveCount(2);
-        await expect(page.locator(".reaction-standings-title")).toContainText(
-          `after round ${round}`,
-        );
+        await expect(roundTimes(page, round).getByRole("listitem")).toHaveCount(2, {
+          timeout: 8_000,
+        });
+        await expect(standings(page).locator("li")).toHaveCount(2);
+        await expect(standings(page).locator(".live-title")).toHaveText(`After round ${round}`);
         // Every round so far found first try: the streak is on the board.
         if (round >= 2) {
-          await expect(page.locator(".reaction-standings .streak").first()).toContainText("🔥");
+          await expect(roundTimes(page, round).locator(".streak").first()).toContainText("🔥");
         }
       }
     }
