@@ -4,7 +4,6 @@ import {
   type Friend,
   type FriendGroup,
   type GroupAssignment,
-  type PlayerBank,
   type PublicUser,
 } from "@whizard/protocol";
 import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
@@ -80,6 +79,11 @@ function SignedInOnly({
       )}
     </TopLayout>
   );
+}
+
+/** Whether an assignment's due time has passed, checked against the clock at render time. */
+function isOverdue(dueAt: number | null): boolean {
+  return dueAt ? dueAt < Date.now() : false;
 }
 
 function ErrorLine({ error }: { error: string | null }) {
@@ -846,7 +850,7 @@ function GroupDetail({
           assignments.data.assignments.map((assignment) => {
             const isHighlighted = assignment.id === targetAssignmentId;
             const isBoardOpen = expandedBoards.has(assignment.id);
-            const isDueOverdue = assignment.dueAt ? assignment.dueAt < Date.now() : false;
+            const isDueOverdue = isOverdue(assignment.dueAt);
             const canDelete = owner || assignment.assignedBy.username === me;
 
             return (

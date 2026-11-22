@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, useMemo, type FormEvent } from "react";
+import { useState, useEffect, useMemo, useCallback, type FormEvent } from "react";
 import type { PlayerBankDetail, PlayerBankQuestion } from "@whizard/protocol";
 import type { QuizReviewItem } from "@whizard/game-core";
-import { saveBankMistakes, clearBankMistakes } from "../../storage";
+import { saveBankMistakes } from "../../storage";
 import { completeGroupAssignment } from "../../social";
 import { play } from "../../sounds";
 import { Icon } from "../../ui/Icon";
@@ -25,7 +25,7 @@ export function prepareCbtQuestions(
   count: number,
   randomizeOrder: boolean,
 ): CbtQuestion[] {
-  let pool = rawQuestions.map((q, idx) => ({ q, originalIndex: idx }));
+  const pool = rawQuestions.map((q, idx) => ({ q, originalIndex: idx }));
   if (randomizeOrder) {
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -149,51 +149,8 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
     play("go");
   };
 
-  // Timer countdown
-  useEffect(() => {
-    if (phase !== "exam") return;
-    const interval = setInterval(() => {
-      setSecondsLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setAutoSubmitted(true);
-          handleSubmitExam(true);
-          return 0;
-        }
-        if (prev === 61) {
-          play("hurry");
-        } else if (prev <= 6 && prev > 1) {
-          play("tick");
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [phase, examQuestions, answers]);
-
-  // Handle Pick Choice
-  const handleSelectChoice = (choiceIndex: number) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [currentIndex]: prev[currentIndex] === choiceIndex ? null : choiceIndex,
-    }));
-  };
-
-  // Toggle Flag
-  const toggleFlag = (index: number) => {
-    setFlagged((prev) => {
-      const next = new Set(prev);
-      if (next.has(index)) {
-        next.delete(index);
-      } else {
-        next.add(index);
-      }
-      return next;
-    });
-  };
-
   // Submit Exam
-  const handleSubmitExam = (isAuto = false) => {
+  const handleSubmitExam = useCallback(() => {
     setShowConfirmSubmit(false);
     setPhase("results");
     play("fanfare");
@@ -229,6 +186,49 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
       }
       setAssignmentSubmitted(resolvedAssignment.groupId);
     }
+  }, [examQuestions, answers, bank.id, resolvedAssignment]);
+
+  // Timer countdown
+  useEffect(() => {
+    if (phase !== "exam") return;
+    const interval = setInterval(() => {
+      setSecondsLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setAutoSubmitted(true);
+          handleSubmitExam();
+          return 0;
+        }
+        if (prev === 61) {
+          play("hurry");
+        } else if (prev <= 6 && prev > 1) {
+          play("tick");
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [phase, examQuestions, answers, handleSubmitExam]);
+
+  // Handle Pick Choice
+  const handleSelectChoice = (choiceIndex: number) => {
+    setAnswers((prev) => ({
+      ...prev,
+      [currentIndex]: prev[currentIndex] === choiceIndex ? null : choiceIndex,
+    }));
+  };
+
+  // Toggle Flag
+  const toggleFlag = (index: number) => {
+    setFlagged((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
   };
 
   // Calculated Results
@@ -881,7 +881,7 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
               <button
                 type="button"
                 className="btn btn-primary btn-block"
-                onClick={() => handleSubmitExam(false)}
+                onClick={() => handleSubmitExam()}
               >
                 Yes, Submit Exam
               </button>

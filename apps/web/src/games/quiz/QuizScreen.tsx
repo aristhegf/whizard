@@ -430,6 +430,24 @@ export function ScoreBoard({
   );
 }
 
+/** The study-group assignment stored when a quiz was launched from one, if any. */
+function readActiveAssignment(): { groupId: string; assignmentId: string } | null {
+  try {
+    const stored =
+      typeof sessionStorage !== "undefined"
+        ? sessionStorage.getItem("whizard_active_assignment")
+        : null;
+    if (!stored) return null;
+    const { groupId, assignmentId } = JSON.parse(stored) as {
+      groupId: string;
+      assignmentId: string;
+    };
+    return groupId && assignmentId ? { groupId, assignmentId } : null;
+  } catch {
+    return null;
+  }
+}
+
 function Results({ context, review }: { context: GameContext; review: QuizReviewItem[] }) {
   const { view, client, playerId, isHost, room, categoryName, avatarOf } = context;
   const solo = view.playerCount === 1;
@@ -439,25 +457,24 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
   const [drillingMistakes, setDrillingMistakes] = useState(false);
   const settings = parseQuizSettings(room.game.settings);
   const bankId = settings?.bankId;
-  const [assignmentSubmitted, setAssignmentSubmitted] = useState<string | null>(null);
+  // The study-group assignment this quiz was started from, read once when the results mount.
+  const [activeAssignment] = useState(readActiveAssignment);
+  // Shown once the effect below has submitted the score, which it does as soon as `view.me` exists.
+  const assignmentSubmitted = activeAssignment && view.me ? activeAssignment.groupId : null;
 
   useEffect(() => {
+    // Re-read storage rather than using `activeAssignment`: removing the entry is what stops a
+    // second submission when the effect runs again.
+    const assignment = readActiveAssignment();
+    if (!assignment || !view.me) return;
+    void completeGroupAssignment(
+      assignment.groupId,
+      assignment.assignmentId,
+      view.me.correctCount,
+      view.total,
+    );
     try {
-      const stored =
-        typeof sessionStorage !== "undefined"
-          ? sessionStorage.getItem("whizard_active_assignment")
-          : null;
-      if (stored && view.me) {
-        const { groupId, assignmentId } = JSON.parse(stored) as {
-          groupId: string;
-          assignmentId: string;
-        };
-        if (groupId && assignmentId) {
-          void completeGroupAssignment(groupId, assignmentId, view.me.correctCount, view.total);
-          sessionStorage.removeItem("whizard_active_assignment");
-          setAssignmentSubmitted(groupId);
-        }
-      }
+      sessionStorage.removeItem("whizard_active_assignment");
     } catch {
       // ignore
     }

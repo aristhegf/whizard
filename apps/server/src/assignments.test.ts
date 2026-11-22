@@ -1,3 +1,4 @@
+import type { AssignmentCompletion, FriendGroup, GroupAssignment } from "@whizard/protocol";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Env } from "./env";
 import { forgetSettings } from "./settings";
@@ -70,6 +71,26 @@ async function makeGroup(
   return data.id;
 }
 
+// Response bodies of the group and assignment endpoints in `assignments.ts`.
+interface GroupDetailResponse {
+  group: FriendGroup;
+  isMember: boolean;
+}
+interface JoinResponse {
+  ok: true;
+  joined: boolean;
+}
+interface CreateAssignmentResponse {
+  id: string;
+}
+interface AssignmentListResponse {
+  assignments: GroupAssignment[];
+}
+interface CompleteAssignmentResponse {
+  ok: true;
+  completion: AssignmentCompletion;
+}
+
 describe("Study Group Assignments & Links", () => {
   beforeEach(() => {
     forgetSettings();
@@ -82,7 +103,7 @@ describe("Study Group Assignments & Links", () => {
     // Tutor checking their own group
     const tutorRes = await call(env, `/api/groups/${groupId}`, { headers: tutorHeaders });
     expect(tutorRes.status).toBe(200);
-    const tutorData = (await tutorRes.json()) as any;
+    const tutorData = (await tutorRes.json()) as GroupDetailResponse;
     expect(tutorData.group.name).toBe("JAMB Prep Group");
     expect(tutorData.group.owner).toBe("tutor_1");
     expect(tutorData.isMember).toBe(true);
@@ -95,7 +116,7 @@ describe("Study Group Assignments & Links", () => {
 
     const studentRes = await call(env, `/api/groups/${groupId}`, { headers: studentHeaders });
     expect(studentRes.status).toBe(200);
-    const studentData = (await studentRes.json()) as any;
+    const studentData = (await studentRes.json()) as GroupDetailResponse;
     expect(studentData.isMember).toBe(false);
 
     // Non-existent group
@@ -116,12 +137,12 @@ describe("Study Group Assignments & Links", () => {
       headers: studentHeaders,
     });
     expect(joinRes.status).toBe(201);
-    const joinData = (await joinRes.json()) as any;
+    const joinData = (await joinRes.json()) as JoinResponse;
     expect(joinData.joined).toBe(true);
 
     // Verify membership now
     const checkRes = await call(env, `/api/groups/${groupId}`, { headers: studentHeaders });
-    const checkData = (await checkRes.json()) as any;
+    const checkData = (await checkRes.json()) as GroupDetailResponse;
     expect(checkData.isMember).toBe(true);
     expect(checkData.group.members).toHaveLength(2);
 
@@ -131,7 +152,7 @@ describe("Study Group Assignments & Links", () => {
       headers: studentHeaders,
     });
     expect(reJoinRes.status).toBe(200);
-    const reJoinData = (await reJoinRes.json()) as any;
+    const reJoinData = (await reJoinRes.json()) as JoinResponse;
     expect(reJoinData.joined).toBe(false);
   });
 
@@ -151,7 +172,7 @@ describe("Study Group Assignments & Links", () => {
       }),
     });
     expect(assignRes.status).toBe(201);
-    const assignData = (await assignRes.json()) as any;
+    const assignData = (await assignRes.json()) as CreateAssignmentResponse;
     expect(assignData.id).toMatch(/^asgn_/);
 
     // Duplicate assignment rejected
@@ -208,12 +229,13 @@ describe("Study Group Assignments & Links", () => {
       headers: studentHeaders,
     });
     expect(listBeforeRes.status).toBe(200);
-    const listBeforeData = (await listBeforeRes.json()) as any;
+    const listBeforeData = (await listBeforeRes.json()) as AssignmentListResponse;
     expect(listBeforeData.assignments).toHaveLength(1);
-    expect(listBeforeData.assignments[0].bankName).toBe("Genetics Review");
-    expect(listBeforeData.assignments[0].targetScore).toBe(75);
-    expect(listBeforeData.assignments[0].myCompletion).toBeNull();
-    expect(listBeforeData.assignments[0].completions).toHaveLength(0);
+    const listed = listBeforeData.assignments[0]!;
+    expect(listed.bankName).toBe("Genetics Review");
+    expect(listed.targetScore).toBe(75);
+    expect(listed.myCompletion).toBeNull();
+    expect(listed.completions).toHaveLength(0);
 
     // Student completes the assignment: 15 / 20 correct (75%)
     const completeRes = await call(
@@ -225,7 +247,7 @@ describe("Study Group Assignments & Links", () => {
       },
     );
     expect(completeRes.status).toBe(200);
-    const completeData = (await completeRes.json()) as any;
+    const completeData = (await completeRes.json()) as CompleteAssignmentResponse;
     expect(completeData.ok).toBe(true);
     expect(completeData.completion.accuracyPercent).toBe(75);
     expect(completeData.completion.attemptsCount).toBe(1);
@@ -240,7 +262,7 @@ describe("Study Group Assignments & Links", () => {
       },
     );
     expect(retryRes.status).toBe(200);
-    const retryData = (await retryRes.json()) as any;
+    const retryData = (await retryRes.json()) as CompleteAssignmentResponse;
     expect(retryData.completion.score).toBe(19);
     expect(retryData.completion.accuracyPercent).toBe(95);
     expect(retryData.completion.attemptsCount).toBe(2);
@@ -249,13 +271,13 @@ describe("Study Group Assignments & Links", () => {
     const tutorCheckRes = await call(env, `/api/groups/${groupId}/assignments`, {
       headers: tutorHeaders,
     });
-    const tutorCheckData = (await tutorCheckRes.json()) as any;
-    const assignment = tutorCheckData.assignments[0];
+    const tutorCheckData = (await tutorCheckRes.json()) as AssignmentListResponse;
+    const assignment = tutorCheckData.assignments[0]!;
     expect(assignment.completions).toHaveLength(1);
-    expect(assignment.completions[0].user.username).toBe("student_4");
-    expect(assignment.completions[0].score).toBe(19);
-    expect(assignment.completions[0].accuracyPercent).toBe(95);
-    expect(assignment.completions[0].attemptsCount).toBe(2);
+    expect(assignment.completions[0]!.user.username).toBe("student_4");
+    expect(assignment.completions[0]!.score).toBe(19);
+    expect(assignment.completions[0]!.accuracyPercent).toBe(95);
+    expect(assignment.completions[0]!.attemptsCount).toBe(2);
 
     // Deleting assignment
     const delRes = await call(env, `/api/groups/${groupId}/assignments/${assignmentId}`, {
@@ -267,7 +289,7 @@ describe("Study Group Assignments & Links", () => {
     const afterDelRes = await call(env, `/api/groups/${groupId}/assignments`, {
       headers: tutorHeaders,
     });
-    const afterDelData = (await afterDelRes.json()) as any;
+    const afterDelData = (await afterDelRes.json()) as AssignmentListResponse;
     expect(afterDelData.assignments).toHaveLength(0);
   });
 });
