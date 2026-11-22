@@ -453,9 +453,12 @@ function Results({ context, review }: { context: GameContext; review: QuizReview
           assignmentId: string;
         };
         if (groupId && assignmentId) {
-          void completeGroupAssignment(groupId, assignmentId, view.me.correctCount, view.total);
           sessionStorage.removeItem("whizard_active_assignment");
-          setAssignmentSubmitted(groupId);
+          // Confirm on screen once the group has the score.
+          completeGroupAssignment(groupId, assignmentId, view.me.correctCount, view.total).then(
+            () => setAssignmentSubmitted(groupId),
+            () => {},
+          );
         }
       }
     } catch {
