@@ -4,8 +4,10 @@ import { Icon } from "./Icon";
 export interface PodiumEntry {
   playerId: string;
   nickname: string;
-  /** What they got: points, a time. */
+  /** What they got: points, a time. Kept short ("1,240", "2/5", "393"): it sits on one line. */
   label: string;
+  /** What the number counts, set small under it: "right", "ms avg". */
+  unit?: string;
 }
 
 const PODIUM_ORDER = [1, 0, 2];
@@ -38,6 +40,7 @@ export function Podium({
             <div className="podium-block">
               <span className="podium-name">{s.nickname}</span>
               <span className="podium-score">{s.label}</span>
+              {s.unit && <span className="podium-unit">{s.unit}</span>}
             </div>
           </div>
         );

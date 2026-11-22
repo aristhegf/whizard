@@ -181,6 +181,16 @@
   color: var(--accent-soft);
 }
 
+/* What's happening, as one plain line under the play area: "Wait for it…", "Next in 3". */
+.play-note {
+  margin: 0;
+  min-height: 1.4em;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+}
+
 /* A game's own buttons (Skip, Submit, Shuffle): pills along the bottom. */
 .play-actions {
   display: flex;
@@ -294,6 +304,95 @@ button.play-tile:active:not(:disabled) {
 
 .play-tile.picked {
   background: var(--accent);
+}
+
+/* A question and its answers (Quiz, Memory): the question in display type, the answers as flat
+   night tiles, lettered. The one you pick turns purple; once it closes, the right one is green
+   and a wrong pick red. */
+.play .prompt {
+  width: 100%;
+  margin: 0;
+  font-size: clamp(1.35rem, 5.6vw, 2rem);
+  text-shadow: none;
+}
+
+.play .choices {
+  gap: 3px;
+}
+
+.play .choice {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  min-height: 60px;
+  padding: 10px 14px 10px 10px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--night-tile, #252063);
+  box-shadow: none;
+  font-size: 1.05rem;
+  text-align: left;
+  transition:
+    background 120ms ease,
+    transform 100ms ease-out;
+}
+
+@media (hover: hover) {
+  .play button.choice:hover:not(:disabled) {
+    background: var(--night-lift, #3b347f);
+  }
+}
+
+.play button.choice:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.play .choice.picked {
+  background: var(--accent, #8b3dff);
+}
+
+.play .choice.correct {
+  background: #0fae70;
+  box-shadow: none;
+}
+
+.play .choice.wrong {
+  background: #d7324a;
+  box-shadow: none;
+}
+
+.play .choice.faded {
+  opacity: 0.45;
+}
+
+/* A, B, C, D in a faint disc at the start of each answer. */
+.choice-letter {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 9%);
+  font-size: 0.95rem;
+}
+
+.play .choice.picked .choice-letter,
+.play .choice.correct .choice-letter,
+.play .choice.wrong .choice-letter {
+  background: rgb(255 255 255 / 22%);
+}
+
+@media (min-width: 768px) {
+  .play .choices {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .play .choice {
+    min-height: 76px;
+    font-size: 1.15rem;
+  }
 }
 
 /* Mistakes left (PlayMistakes): Connections, Logic. */
@@ -449,6 +548,21 @@ button.play-tile:active:not(:disabled) {
   .play-pill.square {
     flex-basis: 50px;
   }
+
+  .play .prompt {
+    font-size: 1.2rem;
+  }
+
+  .play .choice {
+    min-height: 42px;
+    padding-block: 4px;
+    font-size: 0.98rem;
+  }
+
+  .choice-letter {
+    width: 28px;
+    height: 28px;
+  }
 }
 
 @media (min-width: 768px) {
@@ -528,9 +642,45 @@ button.play-tile:active:not(:disabled) {
   }
 }
 
-@media (min-width: 768px) {
-  .play .live-board li.me {
-    background: var(--accent);
+.play .live-board li.me {
+  background: var(--accent);
+}
+
+/* A mark after a name on the board (PlayBoard's `tag`): a streak, a place gained or lost. */
+.live-board .tag {
+  margin-left: 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.live-board .tag .up {
+  color: #16d99a;
+}
+
+.live-board .tag .down {
+  color: #ff7b8c;
+}
+
+/* A board as the play area itself (Reaction between rounds): the area's width, reading from the
+   left. On a phone, where it shows too, a little tighter, so it fits with the faces. */
+.play-area > .live-board {
+  width: min(100%, 480px);
+  margin: 0;
+  text-align: left;
+}
+
+@media (max-width: 767px) {
+  .play-area > .live-board {
+    padding: 10px 10px 12px;
+  }
+
+  .play-area > .live-board .live-title {
+    font-size: 1.1rem;
+  }
+
+  .play-area > .live-board li {
+    min-height: 52px;
   }
 }
 

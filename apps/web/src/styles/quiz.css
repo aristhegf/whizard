@@ -1,86 +1,10 @@
 /* The quiz, in the game look every game shares (play.css): the question count at the top left,
-   the big timer in Speed and Elimination, the topic, the question, and its answers as flat
-   night tiles, lettered. The one you pick turns purple; once it closes, the right one is green
-   and a wrong pick red. */
+   the big timer in Speed and Elimination, the topic, the question, and its answers (play.css,
+   shared with Memory). */
 
 .quiz-topic {
   color: var(--accent-soft, #b58cff);
   font-weight: 700;
-}
-
-.quiz-main .prompt {
-  width: 100%;
-  margin: 0;
-  font-size: clamp(1.35rem, 5.6vw, 2rem);
-  text-shadow: none;
-}
-
-.quiz-main .choices {
-  gap: 3px;
-}
-
-.quiz-main .choice {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
-  min-height: 60px;
-  padding: 10px 14px 10px 10px;
-  border: 0;
-  border-radius: 14px;
-  background: var(--night-tile, #252063);
-  box-shadow: none;
-  font-size: 1.05rem;
-  text-align: left;
-  transition:
-    background 120ms ease,
-    transform 100ms ease-out;
-}
-
-@media (hover: hover) {
-  .quiz-main button.choice:hover:not(:disabled) {
-    background: var(--night-lift, #3b347f);
-  }
-}
-
-.quiz-main button.choice:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.quiz-main .choice.picked {
-  background: var(--accent, #8b3dff);
-}
-
-.quiz-main .choice.correct {
-  background: #0fae70;
-  box-shadow: none;
-}
-
-.quiz-main .choice.wrong {
-  background: #d7324a;
-  box-shadow: none;
-}
-
-.quiz-main .choice.faded {
-  opacity: 0.45;
-}
-
-/* A, B, C, D in a faint disc at the start of each answer. */
-.choice-letter {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 9%);
-  font-size: 0.95rem;
-}
-
-.quiz-main .choice.picked .choice-letter,
-.quiz-main .choice.correct .choice-letter,
-.quiz-main .choice.wrong .choice-letter {
-  background: rgb(255 255 255 / 22%);
 }
 
 /* What's happening under the answers, as plain text. */
@@ -116,35 +40,6 @@
 /* The question takes the board's full width, not pushed against the scores. */
 .quiz-main .play-stage.fit-board .play-area {
   align-items: center;
-}
-
-@media (min-width: 768px) {
-  .quiz-main .choices {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .quiz-main .choice {
-    min-height: 76px;
-    font-size: 1.15rem;
-  }
-}
-
-/* Small phones (see play.css). */
-@media (max-width: 360px), (max-height: 640px) {
-  .quiz-main .prompt {
-    font-size: 1.2rem;
-  }
-
-  .quiz-main .choice {
-    min-height: 42px;
-    padding-block: 4px;
-    font-size: 0.98rem;
-  }
-
-  .choice-letter {
-    width: 28px;
-    height: 28px;
-  }
 }
 
 /* -----------------------------------------------------------------------------

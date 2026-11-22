@@ -1,31 +1,29 @@
 /* Reaction --------------------------------------------------------------------------------- */
 
-/* What to tap: "Tap the 🍌 Banana", over the countdown, the wait and above the board. */
+/* What to tap: "Tap the 🍌 Banana", the round's question, set like the quiz's (play.css). */
 .reaction-ask {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.35em;
+  gap: 0 0.3em;
   margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.35rem, 5.6vw, 2rem);
+  font-weight: 700;
+  line-height: 1.2;
   text-align: center;
-  text-transform: uppercase;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  color: #fff;
-}
-
-.reaction-ask b {
-  letter-spacing: 0.05em;
 }
 
 .reaction-ask span {
-  font-size: 1.35em;
+  font-size: 1.3em;
   line-height: 1;
 }
 
+/* Over the countdown: a step larger, under the number. */
 .reaction-ask.big {
-  font-family: var(--display);
-  font-size: clamp(1.5rem, 7vw, 2.4rem);
+  margin-top: 8px;
+  font-size: clamp(1.6rem, 7vw, 2.4rem);
 }
 
 /* The board: the same flat tiles as Spot It's grid, sized by how many there are. */
@@ -37,6 +35,12 @@
 
 .reaction-cell {
   aspect-ratio: 1;
+}
+
+/* The wait: the board's tiles, dark and still, until it lights up. */
+.reaction-grid.waiting .reaction-cell {
+  background: var(--night);
+  cursor: default;
 }
 
 .reaction-glyph {
@@ -59,180 +63,40 @@
 
 /* A wrong tile, red on the spot; the target once the round is settled for you. */
 .reaction-cell.wrong {
-  background: rgb(229 53 76 / 85%);
+  background: #d7324a;
 }
 
 .reaction-cell.target {
-  box-shadow: inset 0 0 0 3px rgb(22 217 154 / 85%);
+  background: #0fae70;
 }
 
-/* The line under the board: wait for it, tap it, locked in, too slow. */
-.reaction-status {
-  margin: 0;
-  min-height: 1.4em;
-  text-align: center;
-  font-weight: 700;
-  color: var(--muted);
+.reaction-cell:disabled:not(.target, .wrong) {
+  opacity: 0.45;
+  cursor: default;
 }
 
-/* The standings between rounds: rank, name, first-try streak, places moved, average. */
-.reaction-standings {
-  width: min(480px, 100%);
-  margin: 0;
-  padding: 12px 14px;
-  border: 1.5px solid var(--line);
-  border-radius: 16px;
-  background: rgb(255 255 255 / 4%);
-}
-
-.reaction-standings-title {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  margin: 0 0 10px;
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.reaction-standings-title span {
-  color: var(--muted);
-  font-weight: 600;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.reaction-standings ol {
-  display: grid;
-  gap: 6px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.reaction-standings li {
-  display: grid;
-  grid-template-columns: 26px 34px minmax(0, 1fr) auto 16px auto;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 8px;
-  border-radius: 12px;
-  background: rgb(255 255 255 / 3%);
-}
-
-.reaction-standings li.me {
-  background: rgb(122 58 255 / 12%);
-}
-
-.reaction-standings li.gone {
-  opacity: 0.5;
-}
-
-.reaction-standings .rank {
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 8%);
+/* Your time, once it's in. */
+.reaction-status.good {
+  color: var(--text);
   font-family: var(--display);
-  font-size: 0.85rem;
-  font-weight: 700;
-}
-
-.reaction-standings .rank.m1 {
-  color: #2b1500;
-  background: linear-gradient(180deg, #ffe07a, #ffab1f);
-}
-
-.reaction-standings .rank.m2 {
-  color: #2b1500;
-  background: linear-gradient(180deg, #f4f5ff, #aeb6e0);
-}
-
-.reaction-standings .rank.m3 {
-  color: #2b1500;
-  background: linear-gradient(180deg, #f6b078, #c46b2e);
-}
-
-.reaction-standings .name {
-  overflow: hidden;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* The first-try run: 🔥2 only once there are two in a row. */
-.reaction-standings .streak {
-  min-width: 2.6em;
-  text-align: center;
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: #ff9d2e;
-}
-
-.reaction-standings .move {
-  text-align: center;
-  font-size: 0.7rem;
-}
-
-.reaction-standings .streak:empty,
-.reaction-standings .move:empty {
-  visibility: hidden;
-}
-
-.reaction-standings .move.up {
-  color: #16d99a;
-}
-
-.reaction-standings .move.down {
-  color: #e5354c;
-}
-
-.reaction-standings .avg {
-  color: var(--muted);
+  font-size: 1.15rem;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
-/* Between rounds: each player's time with its medal, fastest first. */
-.reaction-times {
-  display: grid;
-  gap: 8px;
-  width: min(420px, 100%);
+/* Between rounds: the verdict like the quiz's, points in purple (gold is for first place). */
+.reaction-main .verdict {
   margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.reaction-times li {
-  display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  border: 1.5px solid var(--line);
-  border-radius: 14px;
-  background: rgb(255 255 255 / 4%);
-}
-
-.reaction-times li.me {
-  border-color: rgb(190 150 255 / 45%);
-  background: rgb(122 58 255 / 10%);
-}
-
-.reaction-times .name {
-  overflow: hidden;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.reaction-times .time {
-  font-weight: 800;
   font-variant-numeric: tabular-nums;
+}
+
+.reaction-main .verdict .points {
+  color: var(--accent-soft);
+}
+
+/* A first-try run on the round's board: 🔥2 from two in a row. */
+.live-board .tag .streak {
+  color: #ff9d2e;
 }
 
 /* The payout for rounds found first try, under the final results. */
