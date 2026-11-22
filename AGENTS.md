@@ -38,7 +38,7 @@ pnpm build           # production build (vite + Cloudflare plugin)
 - **PR #64 was merged** — "Redesign game cards with amber play button and responsive grid" (commit `4141585`): game cards now feature the amber pill button and compact 4x2 responsive desktop grid.
 - **PR #65 was closed** — "Polish Whizard game cards" (branch `feat/game-card-visual-redesign`): closed as superseded by #64.
 - Recently merged: #58 (game taxonomy), #59 (first card redesign round), #60 (mobile Games page discovery layout), #64 (game cards redesign), #66 (AGENTS.md handoff), #67 (compulsory leaderboard presence), #68 (custom bank practice & multiplayer rooms), #69 (Word docx/doc/txt bulk import), #70 (payments, pro, community banks, study groups, CBT exams).
-- Note on CI: GitHub Actions runner spending limit currently needs to be raised/cleared in repository Settings → 'Billing & plans' to resume hosted CI/deploy runs. All tests, formatting, typechecking, and E2E specs pass locally (544/544 tests green).
+- Note on CI: GitHub Actions runner spending limit currently needs to be raised/cleared in repository Settings → 'Billing & plans' to resume hosted CI/deploy runs. While CI is down nothing gates merges, so run every check locally before merging: PR #70 landed with 19 `pnpm lint` errors that only CI would have caught (fixed on branch `claude/nice-thompson-a96o0w`; after that fix, format, lint, typecheck, 544/544 unit tests and the CBT/study-group E2E specs pass locally).
 - `docs/OPENCODE_HANDOFF.md` (branch `docs/opencode-whizard-handoff`) is an older handoff document; where it conflicts with this file, this file wins.
 
 ## Working agreement
