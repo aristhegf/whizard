@@ -4,6 +4,7 @@ import {
   photoPicture,
   LEVEL_NAMES,
   MAX_PLAYERS,
+  mostLikelyToGame,
   NICKNAME_INPUT_MAX_LENGTH,
   QUIZ_VARIANTS,
   ROUNDS_MODES,
@@ -13,6 +14,7 @@ import {
   type JigsawView,
   type LogicView,
   type MemoryView,
+  type MostLikelyToView,
   type QuizSettings,
   type ReactionView,
   type SpotItView,
@@ -67,6 +69,12 @@ import {
 } from "./games/logic/LogicSettingsRows";
 import { MemoryScreen } from "./games/memory/MemoryScreen";
 import { MemorySettingsRows, parseMemorySettings } from "./games/memory/MemorySettingsRows";
+import { MostLikelyToScreen } from "./games/mostLikelyTo/MostLikelyToScreen";
+import {
+  MostLikelyToSettingsRows,
+  packName,
+  parseMostLikelyToSettings,
+} from "./games/mostLikelyTo/MostLikelyToSettingsRows";
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { TopicOptions } from "./games/quiz/TopicPicker";
@@ -132,7 +140,8 @@ export function RoomScreen({ code }: { code: string }) {
         | ConnectionsView
         | LogicView
         | ReactionView
-        | MemoryView)
+        | MemoryView
+        | MostLikelyToView)
     : null;
   // Leaving mid-game can't be undone, so it asks first while you're still playing: in a
   // jigsaw until you finish, in Elimination only while you're still in it.
@@ -151,6 +160,8 @@ export function RoomScreen({ code }: { code: string }) {
     } else if (view.game === "memory") {
       // Anyone with a round still to play is mid-game; the results and the waiting screens aren't.
       midGame = view.stage.kind !== "done" && view.stage.kind !== "watching";
+    } else if (view.game === "most-likely-to") {
+      midGame = view.stage.kind !== "done" && view.status !== "watching";
     } else {
       const stage = view.stage.kind;
       const stillIn =
@@ -235,6 +246,8 @@ export function RoomScreen({ code }: { code: string }) {
           <ReactionScreen {...gameProps} view={view} />
         ) : view?.game === "memory" ? (
           <MemoryScreen {...gameProps} view={view} />
+        ) : view?.game === "most-likely-to" ? (
+          <MostLikelyToScreen {...gameProps} view={view} />
         ) : view && view.game !== "quiz" && "mode" in view ? (
           <RoundsEliminationScreen {...gameProps} view={view} />
         ) : view && view.game !== "quiz" ? (
@@ -549,6 +562,7 @@ function settingsSummary({
   logic,
   reaction,
   memory,
+  mostLikelyTo,
 }: {
   gameId: string;
   settings: ReturnType<typeof parseQuizSettings> | null;
@@ -558,6 +572,7 @@ function settingsSummary({
   logic: ReturnType<typeof parseLogicSettings> | null;
   reaction: ReturnType<typeof parseReactionSettings> | null;
   memory: ReturnType<typeof parseMemorySettings> | null;
+  mostLikelyTo: ReturnType<typeof parseMostLikelyToSettings> | null;
 }): string | null {
   // The jigsaw's own line is written with dots, for the pages that list it; here it's a list.
   if (jigsaw) return levelSummary(jigsaw).replaceAll(" · ", ", ");
@@ -580,6 +595,10 @@ function settingsSummary({
   if (memory) {
     const { rounds, revealSeconds } = memory;
     return `${rounds} rounds, ${revealSeconds}s to remember`;
+  }
+  if (mostLikelyTo) {
+    const { pack, rounds, voteSeconds, anonymousVotes } = mostLikelyTo;
+    return `${packName(pack)}, ${rounds} rounds, ${voteSeconds}s${anonymousVotes ? ", anonymous" : ""}`;
   }
   if (rounds) {
     const each =
@@ -639,6 +658,8 @@ function Lobby({
   const logic = gameId === "logic" ? parseLogicSettings(room.game.settings) : null;
   const reaction = gameId === "reaction" ? parseReactionSettings(room.game.settings) : null;
   const memory = gameId === "memory" ? parseMemorySettings(room.game.settings) : null;
+  const mostLikelyTo =
+    gameId === "most-likely-to" ? parseMostLikelyToSettings(room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
   const needMore =
@@ -649,6 +670,9 @@ function Lobby({
     logic?.mode === "elimination"
       ? Math.max(0, ELIMINATION_MIN_PLAYERS - connected.length)
       : 0;
+  // A game with a floor of its own (Most Likely To needs someone to vote for besides you).
+  const gameMin = mostLikelyTo ? mostLikelyToGame.minPlayers : 1;
+  const needForGame = gameMin > 2 ? Math.max(0, gameMin - connected.length) : 0;
   const url = `${location.origin}${roomPath(room.code)}`;
   // Arriving from Ping on the friends page opens the invites, where that ping goes out.
   const [inviting, setInviting] = useState(() => new URLSearchParams(location.search).has("ping"));
@@ -697,6 +721,7 @@ function Lobby({
     logic,
     reaction,
     memory,
+    mostLikelyTo,
   });
   const kind = GAME_GROUPS.find((g) => g.id === game?.groups[0]);
 
@@ -840,6 +865,13 @@ function Lobby({
           onChange={(next) => client.configure(next)}
         />
       )}
+      {mostLikelyTo && (
+        <MostLikelyToSettingsRows
+          settings={mostLikelyTo}
+          editable={canEdit}
+          onChange={(next) => client.configure(next)}
+        />
+      )}
       {jigsaw && (
         <JigsawSettingsRows
           settings={jigsaw}
@@ -954,6 +986,10 @@ function Lobby({
         <p className="muted center need-more" role="status">
           Elimination needs at least {ELIMINATION_MIN_PLAYERS} players. Invite {needMore} more to
           start.
+        </p>
+      ) : isHost && needForGame > 0 ? (
+        <p className="muted center need-more" role="status">
+          {game?.name} needs at least {gameMin} players. Invite {needForGame} more to start.
         </p>
       ) : isHost ? (
         <SlideToPlay

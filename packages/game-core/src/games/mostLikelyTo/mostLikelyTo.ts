@@ -23,7 +23,7 @@ export const MOST_LIKELY_TO_COUNTDOWN_MS = 3000;
 /** How long the tally and the winners stay up before the next prompt. */
 export const MOST_LIKELY_TO_REVEAL_MS = 6000;
 /** Points for a vote that read the room: one for a player who ended with the most votes. */
-export const MOST_LIKELY_TO_READ_POINTS = 1000;
+export const MOST_LIKELY_TO_READ_POINTS = 100;
 
 export const mostLikelyToActionSchema = z.object({
   type: z.literal("vote"),

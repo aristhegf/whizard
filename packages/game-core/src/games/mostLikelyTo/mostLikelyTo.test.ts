@@ -503,9 +503,9 @@ describe("most likely to: scoring and the summary", () => {
       mode: null,
       rounds: 3,
       players: [
-        { playerId: "ada", placing: 1, score: 3000, correct: 3 },
-        { playerId: "bo", placing: 2, score: 2000, correct: 2 },
-        { playerId: "cy", placing: 2, score: 2000, correct: 2 },
+        { playerId: "ada", placing: 1, score: 300, correct: 3 },
+        { playerId: "bo", placing: 2, score: 200, correct: 2 },
+        { playerId: "cy", placing: 2, score: 200, correct: 2 },
       ],
     });
   });
@@ -522,9 +522,9 @@ describe("most likely to: scoring and the summary", () => {
     expect(summary.rounds).toBe(2);
     // Equal points: rounds topped, then name, set the order, but the placing is shared.
     expect(summary.players).toEqual([
-      { playerId: "ada", placing: 1, score: 2000, correct: 2 },
-      { playerId: "cy", placing: 1, score: 2000, correct: 2 },
-      { playerId: "bo", placing: 1, score: 2000, correct: 2 },
+      { playerId: "ada", placing: 1, score: 200, correct: 2 },
+      { playerId: "cy", placing: 1, score: 200, correct: 2 },
+      { playerId: "bo", placing: 1, score: 200, correct: 2 },
     ]);
     // In the standings, the player who left ranks after everyone still in.
     expect(viewOf(s, "ada").standings.at(-1)).toMatchObject({
