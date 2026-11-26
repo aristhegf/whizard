@@ -36,11 +36,16 @@ export function ModeRow<M extends string>({
   modes,
   value,
   extra,
+  label = "Game Mode",
+  id = "game-mode",
   editable,
   onChange,
 }: {
   modes: readonly Mode<M>[];
   value: M;
+  /** "Game Mode", or a game's own kind of choice between ways to play ("Clues"). */
+  label?: string;
+  id?: string;
   /** Said after the mode's description, as how long an Elimination game will be. */
   extra?: string | null;
   editable: boolean;
@@ -50,13 +55,13 @@ export function ModeRow<M extends string>({
   return (
     <SettingRow
       icon="games"
-      id="game-mode"
-      label="Game Mode"
+      id={id}
+      label={label}
       hint={extra ? `${description} ${extra}` : description}
     >
       <SettingSelect
-        id="game-mode"
-        label="Game Mode"
+        id={id}
+        label={label}
         value={value}
         disabled={!editable}
         options={modes.map((m) => ({ value: m.id, label: m.name }))}
@@ -122,6 +127,7 @@ export function LengthRow({
 /** The clock: seconds for each question or round, or minutes for a whole puzzle. */
 export function TimeRow({
   label,
+  id = "time-limit",
   value,
   choices,
   unit,
@@ -129,6 +135,8 @@ export function TimeRow({
   onChange,
 }: {
   label: string;
+  /** For a game with two clocks (Impostor's clue and vote times), each its own. */
+  id?: string;
   value: number;
   choices: readonly number[];
   unit: "seconds" | "minutes";
@@ -136,9 +144,9 @@ export function TimeRow({
   onChange: (value: number) => void;
 }) {
   return (
-    <SettingRow icon="clock" id="time-limit" label={label}>
+    <SettingRow icon="clock" id={id} label={label}>
       <SettingSelect
-        id="time-limit"
+        id={id}
         label={label}
         value={String(value)}
         disabled={!editable}

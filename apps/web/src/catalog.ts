@@ -149,12 +149,13 @@ export const CATALOG: CatalogGame[] = [
     id: "how-well",
     name: "How Well Do You Know Me?",
     description: "Find out who really knows you",
-    players: "3-20 players",
+    players: "2-20 players",
     groups: ["couples", "party"],
     art: "/art/games/how-well.webp",
     icon: "heart",
     colors: ["#a347ff", "#2d0d5c"],
     href: null,
+    starts: "how-well",
   },
   {
     id: "impostor",
@@ -166,6 +167,7 @@ export const CATALOG: CatalogGame[] = [
     icon: "shield",
     colors: ["#5b3cf0", "#171456"],
     href: null,
+    starts: "impostor",
   },
 ];
 

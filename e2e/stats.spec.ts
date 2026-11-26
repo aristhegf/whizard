@@ -58,20 +58,15 @@ test("the stats page shows what the community plays", async ({ page }) => {
     await expect(page.getByRole("heading", { name: heading })).toBeVisible();
   }
 
-  // Games that aren't out yet say so instead of showing a count.
+  // Every game in the catalogue is out, so each one shows a count, not "Coming soon".
   const games = page.locator("section", {
     has: page.getByRole("heading", { name: "Most Played Games" }),
   });
   await expect(games.getByText("Quiz", { exact: true })).toBeVisible();
   await games.getByRole("button", { name: "View all" }).click();
   await expect(games.getByRole("listitem")).toHaveCount(11);
-  await expect(games.getByRole("listitem").filter({ hasText: "Memory" })).not.toContainText(
-    "Coming soon",
-  );
-  await expect(games.getByRole("listitem").filter({ hasText: "Impostor" })).toContainText(
-    "Coming soon",
-  );
-  await expect(games.getByRole("listitem").filter({ hasText: "Spot It" })).not.toContainText(
-    "Coming soon",
-  );
+  for (const name of ["Memory", "How Well Do You Know Me?", "Impostor", "Most Likely To"]) {
+    await expect(games.getByRole("listitem").filter({ hasText: name })).toBeVisible();
+  }
+  await expect(games.getByText("Coming soon")).toHaveCount(0);
 });

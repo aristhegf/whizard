@@ -1,10 +1,14 @@
 import {
   CONNECTIONS_GROUP_SIZE,
+  IMPOSTOR_CATEGORY_IDS,
+  HOW_WELL_NAME_PLACEHOLDER,
+  HOW_WELL_PACK_IDS,
   LEVELS,
   MOST_LIKELY_TO_PACK_IDS,
   QUIZ_DIFFICULTIES,
   WORD_LEVELS,
   topicIdSchema,
+  type ImpostorCategory,
 } from "@whizard/game-core";
 import { z } from "zod";
 
@@ -92,3 +96,54 @@ export const storedMostLikelyToPromptSchema = z
   });
 
 export type StoredMostLikelyToPrompt = z.infer<typeof storedMostLikelyToPromptSchema>;
+
+/** An Impostor word: a capital first, then letters, with single spaces or hyphens inside. */
+const impostorWord = z
+  .string()
+  .regex(/^[A-Z][a-z]*(?:[ -][A-Za-z][a-z]*)*$/)
+  .max(20);
+
+/** One Impostor category's words, as they're written in impostor/words.json. */
+export const storedImpostorCategorySchema = z.object({
+  category: z.enum(IMPOSTOR_CATEGORY_IDS),
+  words: z.array(impostorWord).min(40),
+});
+
+export type StoredImpostorCategory = z.infer<typeof storedImpostorCategorySchema>;
+
+/** A secret word for one round of Impostor, with an ID that tracks who has had it. */
+export interface StoredImpostorWord {
+  /** `impostor-<category>-<word>`, e.g. `impostor-food-ice-cream`. */
+  id: string;
+  category: ImpostorCategory;
+  word: string;
+}
+
+export const HOW_WELL_PROMPT_MAX = 90;
+export const HOW_WELL_CHOICE_MAX = 32;
+
+/**
+ * A How Well Do You Know Me? question. It has no right answer — the subject's own pick is the
+ * answer — and says `{name}` where the subject's nickname goes.
+ */
+export const storedHowWellSchema = z
+  .object({
+    id: z.string().regex(/^how-well-[a-z-]+-\d{3}$/),
+    pack: z.enum(HOW_WELL_PACK_IDS),
+    prompt: z
+      .string()
+      .min(1)
+      .max(HOW_WELL_PROMPT_MAX)
+      .refine((p) => p.includes(HOW_WELL_NAME_PLACEHOLDER), {
+        message: `The prompt must say ${HOW_WELL_NAME_PLACEHOLDER} where the subject's name goes.`,
+      }),
+    choices: z.array(z.string().min(1).max(HOW_WELL_CHOICE_MAX)).length(4),
+  })
+  .refine((q) => new Set(q.choices.map((c) => c.toLowerCase())).size === 4, {
+    message: "Every choice must be different.",
+  })
+  .refine((q) => q.id.startsWith(`how-well-${q.pack}-`), {
+    message: "The id must name the question's pack.",
+  });
+
+export type StoredHowWell = z.infer<typeof storedHowWellSchema>;
