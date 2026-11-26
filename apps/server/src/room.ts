@@ -124,6 +124,7 @@ const GAME_ERROR_MESSAGES: Record<GameError, string> = {
 function historyCategory(request: ContentRequest): string {
   if (request.kind === "quiz-questions") return request.category;
   if (request.kind === "impostor-words") return "impostor";
+  if (request.kind === "how-well-questions") return "how-well";
   return request.kind === "connections-puzzle" ? "connections" : "word-rush";
 }
 

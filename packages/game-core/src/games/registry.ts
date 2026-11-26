@@ -1,5 +1,6 @@
 import { connectionsGame } from "./connections/connections";
 import { impostorGame } from "./impostor/impostor";
+import { howWellGame } from "./howWell/howWell";
 import { jigsawGame } from "./jigsaw/jigsaw";
 import { logicGame } from "./logic/logic";
 import { memoryGame } from "./memory/memory";
@@ -21,6 +22,7 @@ export const GAMES = {
   memory: memoryGame as unknown as AnyGameModule,
   reaction: reactionGame as unknown as AnyGameModule,
   impostor: impostorGame as unknown as AnyGameModule,
+  "how-well": howWellGame as unknown as AnyGameModule,
 } as const;
 
 export type GameId = keyof typeof GAMES;

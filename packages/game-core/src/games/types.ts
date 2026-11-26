@@ -1,6 +1,7 @@
 import type { z } from "zod";
 import type { ConnectionsContentRequest } from "./connections/settings";
 import type { ImpostorContentRequest } from "./impostor/settings";
+import type { HowWellContentRequest } from "./howWell/settings";
 import type { JigsawContentRequest } from "./jigsaw/settings";
 import type { QuizContentRequest } from "./quiz/settings";
 import type { WordsContentRequest } from "./wordRush/settings";
@@ -16,7 +17,8 @@ export type ContentRequest =
   | JigsawContentRequest
   | WordsContentRequest
   | ConnectionsContentRequest
-  | ImpostorContentRequest;
+  | ImpostorContentRequest
+  | HowWellContentRequest;
 
 /** How a finished game went, for match history. The same shape for every game. */
 export interface GameSummary {

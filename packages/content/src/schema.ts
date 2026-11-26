@@ -1,6 +1,8 @@
 import {
   CONNECTIONS_GROUP_SIZE,
   IMPOSTOR_CATEGORY_IDS,
+  HOW_WELL_NAME_PLACEHOLDER,
+  HOW_WELL_PACK_IDS,
   LEVELS,
   QUIZ_DIFFICULTIES,
   WORD_LEVELS,
@@ -90,3 +92,32 @@ export interface StoredImpostorWord {
   category: ImpostorCategory;
   word: string;
 }
+
+export const HOW_WELL_PROMPT_MAX = 90;
+export const HOW_WELL_CHOICE_MAX = 32;
+
+/**
+ * A How Well Do You Know Me? question. It has no right answer — the subject's own pick is the
+ * answer — and says `{name}` where the subject's nickname goes.
+ */
+export const storedHowWellSchema = z
+  .object({
+    id: z.string().regex(/^how-well-[a-z-]+-\d{3}$/),
+    pack: z.enum(HOW_WELL_PACK_IDS),
+    prompt: z
+      .string()
+      .min(1)
+      .max(HOW_WELL_PROMPT_MAX)
+      .refine((p) => p.includes(HOW_WELL_NAME_PLACEHOLDER), {
+        message: `The prompt must say ${HOW_WELL_NAME_PLACEHOLDER} where the subject's name goes.`,
+      }),
+    choices: z.array(z.string().min(1).max(HOW_WELL_CHOICE_MAX)).length(4),
+  })
+  .refine((q) => new Set(q.choices.map((c) => c.toLowerCase())).size === 4, {
+    message: "Every choice must be different.",
+  })
+  .refine((q) => q.id.startsWith(`how-well-${q.pack}-`), {
+    message: "The id must name the question's pack.",
+  });
+
+export type StoredHowWell = z.infer<typeof storedHowWellSchema>;

@@ -2,7 +2,7 @@
 
 Whizard is a free, real-time platform for playing games with friends: a couple on a long-distance call, or a room full of people on game night. Players join a room with a nickname and a room code, everyone gets the same challenge at the same time, and results appear live.
 
-Quiz was the launch game, followed by Word Rush and Spot It, then Jigsaw, Connections, Logic, Reaction and Memory. The platform is built so that more games (social and party games) plug into the same room system. The full list is in [GAMES.md](GAMES.md).
+Quiz was the launch game, followed by Word Rush and Spot It, then Jigsaw, Connections, Logic, Reaction, Memory and How Well Do You Know Me?, the first social game. The platform is built so that more games (social and party games) plug into the same room system. The full list is in [GAMES.md](GAMES.md).
 
 This document covers the system design, the key decisions behind it, and the order we build it in.
 
@@ -109,6 +109,10 @@ This shape covers every game on the list:
 - **Randomness** comes only from the `seed`, so a game can be replayed exactly from its seed and action log. That makes bugs reproducible and tests deterministic.
 
 Each game's screens live in the web app under `src/games/<id>/`. Canvas-heavy games load Phaser on demand, so players of other games never download it.
+
+### How Well Do You Know Me?
+
+The first social game is `how-well` (rules in `packages/game-core/src/games/howWell/`, screens in `apps/web/src/games/howWell/`). The subject reads each question about themselves: `fillYou` turns “What's {name}'s ideal Saturday?” into “What's your ideal Saturday?”, and everyone else gets `fillName`; a content test checks every prompt reads right both ways. Each round one player is the **subject**: whoever has had the fewest turns, the next in seat order after the last subject, so a game turns round the room in seat order. A newcomer or a returning player is counted as having had as many turns as the rest, so they take their place in the current cycle rather than several turns in a row; players who leave drop out of the rotation. The round runs intro (3 s), answer (the host's 15, 20 or 30 s, the same clock for the subject and the guessers, closing early once everyone has answered) and reveal (6 s). `viewFor` sends only who has answered until the reveal, never the subject's pick or anyone's guess. A right guess scores 750 to 1,000 by speed (timed as in the quiz, below); the subject scores 500 for each right guess. A round is void, scoring nothing, if the subject doesn't answer in time or leaves mid-round, and the game ends if fewer than two players are left. Questions come from the content bank: one pack per game, drawn like quiz questions (below) and tracked as seen under `how-well`.
 
 ## Quiz (launch game)
 
@@ -326,7 +330,7 @@ A correct answer earns between 50% and 100% of the base points, depending on spe
 
 Game content is prepared ahead of time and stored, not written while players wait. That keeps games starting instantly, keeps the cost fixed however many people play, and means everything has been checked before anyone sees it.
 
-Each game that needs content gets its own set: quiz questions first, then Word Rush's words (see [Word Rush](#word-rush)), group sets (Connections), Impostor's secret words (see [Impostor](#impostor)), and later prompts for the social games (Most Likely To, Would You Rather, Predict Me).
+Each game that needs content gets its own set: quiz questions first, then Word Rush's words (see [Word Rush](#word-rush)), group sets (Connections), Impostor's secret words (see [Impostor](#impostor)), How Well Do You Know Me?'s question packs (`packages/content/src/howWell/`, one file per pack: Couples, Best friends, Family, Friend group, at least 50 each, every question with four choices and `{name}` where the subject's nickname goes), and later prompts for the other social games (Most Likely To, Would You Rather, Predict Me).
 
 ### Where questions live
 
