@@ -11,8 +11,10 @@ export function LiveCount({ variant = "pill" }: { variant?: "pill" | "now" }) {
   const counts = usePresence();
   const now = <>{counts ? format(counts.online) : "0"} here now</>;
   if (variant === "now") {
+    // Hidden until someone is counted, so it never says "0 playing now".
+    const shown = !!counts && counts.online > 0;
     return (
-      <p className={`live-now${counts ? "" : " loading"}`} aria-hidden={!counts}>
+      <p className={`live-now${shown ? "" : " loading"}`} aria-hidden={!shown}>
         {counts ? format(counts.online) : "0"} playing now
       </p>
     );

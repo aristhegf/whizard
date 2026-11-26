@@ -35,7 +35,6 @@ const PRO_FEATURES = [
   "Everything in Free",
   "Import Word, CSV and text files",
   "Export your banks as CSV",
-  "Unlimited question banks",
   "Detailed results",
 ];
 
