@@ -71,7 +71,10 @@ test("the stats page shows what the community plays", async ({ page }) => {
   await expect(
     games.getByRole("listitem").filter({ hasText: "How Well Do You Know Me?" }),
   ).not.toContainText("Coming soon");
-  await expect(games.getByRole("listitem").filter({ hasText: "Impostor" })).toContainText(
+  await expect(games.getByRole("listitem").filter({ hasText: "Impostor" })).not.toContainText(
+    "Coming soon",
+  );
+  await expect(games.getByRole("listitem").filter({ hasText: "Most Likely To" })).toContainText(
     "Coming soon",
   );
   await expect(games.getByRole("listitem").filter({ hasText: "Spot It" })).not.toContainText(

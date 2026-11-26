@@ -26,6 +26,7 @@ import {
   randomToken,
   returnToLobby,
   roomSettings,
+  typedTextOf,
   sameNickname,
   settle,
   startGame,
@@ -58,15 +59,17 @@ import type { Env } from "./env";
 import { count, logActivity, recordPlayerDays, sizeBucket } from "./analytics";
 import { loadBank, recordQuestionStats } from "./bank";
 import {
+  blockedTypedText,
   GAME_OFF_MESSAGE,
   newRoomSettings,
+  TEXT_BLOCKED_MESSAGE,
   TOPIC_OFF_MESSAGE,
   TOPIC_UNAVAILABLE_MESSAGE,
   topicOf,
 } from "./gameRules";
 import { liveRoomOf, removeLiveRoom, saveLiveRoom } from "./liveRooms";
 import { recordMatch } from "./matches";
-import { NAME_BLOCKED_MESSAGE, recordName, refusedName } from "./moderation";
+import { blockedWords, NAME_BLOCKED_MESSAGE, recordName, refusedName } from "./moderation";
 import { retiredQuestions } from "./reports";
 import { loadSeen, recordSeen, viewerKey } from "./seen";
 import { siteSettings } from "./settings";
@@ -120,6 +123,7 @@ const GAME_ERROR_MESSAGES: Record<GameError, string> = {
 /** What a player's history of seen content is kept under: the quiz topic, or the game. */
 function historyCategory(request: ContentRequest): string {
   if (request.kind === "quiz-questions") return request.category;
+  if (request.kind === "impostor-words") return "impostor";
   if (request.kind === "how-well-questions") return "how-well";
   return request.kind === "connections-puzzle" ? "connections" : "word-rush";
 }
@@ -306,6 +310,7 @@ export class Room extends DurableObject<Env> {
         await this.handleStart(ws);
         return;
       case "action":
+        if (await this.refusedText(ws, message.action)) return;
         await this.handleGame(ws, (state, playerId, now) =>
           applyGameAction(state, playerId, message.action, now),
         );
@@ -606,6 +611,19 @@ export class Room extends DurableObject<Env> {
         Date.now(),
       );
     }
+  }
+
+  /**
+   * Text typed in a game (an Impostor clue) is checked against the blocked words, as nicknames
+   * are, before the game sees it. Returns whether it was refused.
+   */
+  private async refusedText(ws: WebSocket, action: unknown): Promise<boolean> {
+    const state = await this.load();
+    // Only games that take typed text pay for loading the word list.
+    if (!state || typedTextOf(state, action) === null) return false;
+    if (!blockedTypedText(state, action, await blockedWords(this.env))) return false;
+    sendError(ws, ErrorCode.BadAction, TEXT_BLOCKED_MESSAGE);
+    return true;
   }
 
   /** Applies a game change from a player. Returns whether it was accepted. */
