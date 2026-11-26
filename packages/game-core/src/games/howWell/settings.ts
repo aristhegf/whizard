@@ -68,7 +68,29 @@ export interface HowWellQuestion {
   choices: string[];
 }
 
-/** A question as it reads for this subject: every `{name}` swapped for their nickname. */
+/** A question as everyone else reads it: every `{name}` swapped for the subject's nickname. */
 export function fillName(prompt: string, nickname: string): string {
   return prompt.split(HOW_WELL_NAME_PLACEHOLDER).join(nickname);
+}
+
+/**
+ * A question as the subject reads it, about themselves: "What's {name}'s ideal Saturday?" is
+ * "What's your ideal Saturday?", "How does {name} take their tea?" is "How do you take your
+ * tea?". The bank's prompts are written so that this always reads right (a test checks every
+ * one): they only ever say "they" or "their" of the subject.
+ */
+export function fillYou(prompt: string): string {
+  const name = "\\{name\\}";
+  return prompt
+    .replace(new RegExp(`\\bWhat's ${name}(?!'s)`, "g"), "What are you")
+    .replace(new RegExp(`${name}'s`, "g"), "your")
+    .replace(new RegExp(`\\b(does|is|was|has) ${name}`, "g"), (_, verb: string) => {
+      const plural: Record<string, string> = { does: "do", is: "are", was: "were", has: "have" };
+      return `${plural[verb]} you`;
+    })
+    .replace(new RegExp(name, "g"), "you")
+    .replace(/\bthey're\b/g, "you're")
+    .replace(/\bthemselves\b/g, "yourself")
+    .replace(/\btheir\b/g, "your")
+    .replace(/\b(they|them)\b/g, "you");
 }

@@ -13,6 +13,7 @@ import {
 import {
   DEFAULT_HOW_WELL_SETTINGS,
   fillName,
+  fillYou,
   howWellSettingsSchema,
   type HowWellQuestion,
   type HowWellSettings,
@@ -152,6 +153,24 @@ describe("how well do you know me: setup and registration", () => {
   it("fills in the subject's name", () => {
     expect(fillName("What's {name}'s ideal Saturday?", "Ada")).toBe("What's Ada's ideal Saturday?");
     expect(fillName("{name} or {name}?", "Bo")).toBe("Bo or Bo?");
+  });
+
+  it("asks the subject about themselves", () => {
+    expect(fillYou("What's {name}'s ideal Saturday?")).toBe("What's your ideal Saturday?");
+    expect(fillYou("How does {name} take their tea?")).toBe("How do you take your tea?");
+    expect(fillYou("What's {name} like in a group chat?")).toBe(
+      "What are you like in a group chat?",
+    );
+    expect(fillYou("Which room is {name} always found in?")).toBe(
+      "Which room are you always found in?",
+    );
+    expect(fillYou("How does {name} act when they're hungry?")).toBe(
+      "How do you act when you're hungry?",
+    );
+    expect(fillYou("What would {name} do if they were in charge?")).toBe(
+      "What would you do if you were in charge?",
+    );
+    expect(fillYou("What makes {name} laugh?")).toBe("What makes you laugh?");
   });
 });
 

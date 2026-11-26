@@ -384,6 +384,7 @@ export {
   HOW_WELL_PACKS,
   HOW_WELL_ROUNDS,
   fillName,
+  fillYou,
   howWellSettingsSchema,
   type HowWellContentRequest,
   type HowWellPack,

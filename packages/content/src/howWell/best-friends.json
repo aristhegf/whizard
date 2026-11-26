@@ -23,7 +23,7 @@
     "prompt": "What's {name}'s worst habit?",
     "choices": [
       "Always running late",
-      "Glued to their phone",
+      "Always on the phone",
       "Midnight snacking",
       "Leaving people on read"
     ]
@@ -62,7 +62,7 @@
     "id": "how-well-best-friends-010",
     "pack": "best-friends",
     "prompt": "What kind of karaoke song would {name} pick?",
-    "choices": ["A power ballad", "A rap verse", "An old-school hit", "They refuse to sing"]
+    "choices": ["A power ballad", "A rap verse", "An old-school hit", "Refuses to sing"]
   },
   {
     "id": "how-well-best-friends-011",
@@ -110,7 +110,7 @@
     "id": "how-well-best-friends-018",
     "pack": "best-friends",
     "prompt": "How does {name} take their tea?",
-    "choices": ["Lots of sugar", "Milk, no sugar", "Plain", "They hate tea"]
+    "choices": ["Lots of sugar", "Milk, no sugar", "Plain", "No tea, thanks"]
   },
   {
     "id": "how-well-best-friends-019",
@@ -212,7 +212,7 @@
     "id": "how-well-best-friends-035",
     "pack": "best-friends",
     "prompt": "What would {name} be famous for?",
-    "choices": ["Their cooking", "Their jokes", "Their style", "Their singing"]
+    "choices": ["Cooking", "Jokes", "Style", "Singing"]
   },
   {
     "id": "how-well-best-friends-036",
@@ -242,7 +242,7 @@
     "id": "how-well-best-friends-040",
     "pack": "best-friends",
     "prompt": "What does {name} do when they can't sleep?",
-    "choices": ["Scroll their phone", "Read", "Snack", "Count sheep"]
+    "choices": ["Scroll on the phone", "Read", "Snack", "Count sheep"]
   },
   {
     "id": "how-well-best-friends-041",
@@ -254,13 +254,13 @@
     "id": "how-well-best-friends-042",
     "pack": "best-friends",
     "prompt": "How does {name} plan a trip?",
-    "choices": ["A full spreadsheet", "A rough list", "Wings it", "Lets you plan it"]
+    "choices": ["A full spreadsheet", "A rough list", "Wings it", "Lets others plan it"]
   },
   {
     "id": "how-well-best-friends-043",
     "pack": "best-friends",
     "prompt": "How does {name} keep their phone?",
-    "choices": ["Always on silent", "Loud ringtone", "Vibrate only", "Their favourite song"]
+    "choices": ["Always on silent", "Loud ringtone", "Vibrate only", "A favourite song"]
   },
   {
     "id": "how-well-best-friends-044",
@@ -272,7 +272,7 @@
     "id": "how-well-best-friends-045",
     "pack": "best-friends",
     "prompt": "What would {name} name a boat?",
-    "choices": ["A pun", "Their own name", "A pet's name", "Something fancy"]
+    "choices": ["A pun", "Its owner's name", "A pet's name", "Something fancy"]
   },
   {
     "id": "how-well-best-friends-046",
@@ -284,13 +284,13 @@
     "id": "how-well-best-friends-047",
     "pack": "best-friends",
     "prompt": "How does {name} celebrate good news?",
-    "choices": ["Calls everyone", "Posts online", "Treats themselves", "Keeps it quiet"]
+    "choices": ["Calls everyone", "Posts online", "Buys a treat", "Keeps it quiet"]
   },
   {
     "id": "how-well-best-friends-048",
     "pack": "best-friends",
     "prompt": "What's {name}'s go-to dance move?",
-    "choices": ["The two-step", "Shoulder shake", "Something viral", "They don't dance"]
+    "choices": ["The two-step", "Shoulder shake", "Something viral", "No dancing"]
   },
   {
     "id": "how-well-best-friends-049",

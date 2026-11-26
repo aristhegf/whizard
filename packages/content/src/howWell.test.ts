@@ -1,5 +1,7 @@
 import {
   HOW_WELL_PACKS,
+  fillName,
+  fillYou,
   applyGameAction,
   chooseGame,
   configureGame,
@@ -50,6 +52,43 @@ describe("how well do you know me questions", () => {
       expect(q.choices, q.id).toHaveLength(4);
       expect(new Set(q.choices.map((c) => c.toLowerCase())).size, q.id).toBe(4);
       for (const c of q.choices) expect(c.trim(), q.id).toBe(c);
+    }
+  });
+});
+
+describe("how well questions in both voices", () => {
+  // Answers about someone else, where "their" isn't the subject.
+  const ABOUT_OTHERS = new Set([
+    "how-well-couples-004",
+    "how-well-couples-006",
+    "how-well-couples-037",
+    "how-well-family-036",
+  ]);
+
+  it("reads right for the subject, about themselves", () => {
+    for (const q of HOW_WELL_QUESTIONS) {
+      const mine = fillYou(q.prompt);
+      expect(mine, q.id).not.toMatch(/\{name\}|\b(they|their|them|themselves|they're)\b/i);
+      expect(mine, q.id).not.toMatch(/\b(you is|you does|you has|you was|What's you\b)/);
+      expect(mine, q.id).toMatch(/\byour?\b/);
+    }
+  });
+
+  it("reads right for everyone else, with the subject's name", () => {
+    for (const q of HOW_WELL_QUESTIONS) {
+      const theirs = fillName(q.prompt, "Tolu");
+      expect(theirs, q.id).toContain("Tolu");
+      // "You" in a prompt would mean the reader, and turn odd for the subject.
+      expect(q.prompt, q.id).not.toMatch(/\b(you|your|you're)\b/i);
+    }
+  });
+
+  it("has answers that read for both: no one is 'they' or 'you' in them", () => {
+    for (const q of HOW_WELL_QUESTIONS) {
+      for (const choice of q.choices) {
+        expect(choice, q.id).not.toMatch(/\b(your|they'd|they're|themselves)\b/i);
+        if (!ABOUT_OTHERS.has(q.id)) expect(choice, q.id).not.toMatch(/\b(they|their|them)\b/i);
+      }
     }
   });
 });

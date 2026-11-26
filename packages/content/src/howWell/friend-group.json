@@ -15,7 +15,7 @@
     "id": "how-well-friend-group-003",
     "pack": "friend-group",
     "prompt": "What would {name} bring to a party?",
-    "choices": ["Snacks", "Drinks", "Good music", "Just themselves"]
+    "choices": ["Snacks", "Drinks", "Good music", "Just good vibes"]
   },
   {
     "id": "how-well-friend-group-004",
@@ -33,7 +33,7 @@
     "id": "how-well-friend-group-006",
     "pack": "friend-group",
     "prompt": "How does {name} answer the phone?",
-    "choices": ["Hello?", "Talk to me", "They don't answer", "They text back instead"]
+    "choices": ["Hello?", "Talk to me", "Never answers", "Texts back instead"]
   },
   {
     "id": "how-well-friend-group-007",
@@ -57,7 +57,7 @@
     "id": "how-well-friend-group-010",
     "pack": "friend-group",
     "prompt": "What's {name}'s karaoke pick?",
-    "choices": ["A ballad", "A rap", "A group anthem", "They never sing"]
+    "choices": ["A ballad", "A rap", "A group anthem", "Never sings"]
   },
   {
     "id": "how-well-friend-group-011",
@@ -87,7 +87,7 @@
     "id": "how-well-friend-group-015",
     "pack": "friend-group",
     "prompt": "What's {name}'s coffee order?",
-    "choices": ["Black coffee", "A latte", "Iced coffee", "No coffee for them"]
+    "choices": ["Black coffee", "A latte", "Iced coffee", "No coffee, ever"]
   },
   {
     "id": "how-well-friend-group-016",
@@ -110,7 +110,7 @@
     "id": "how-well-friend-group-018",
     "pack": "friend-group",
     "prompt": "What is {name} always talking about?",
-    "choices": ["Food", "Football", "Music", "Their big plans"]
+    "choices": ["Food", "Football", "Music", "Big plans"]
   },
   {
     "id": "how-well-friend-group-019",
@@ -182,7 +182,7 @@
     "id": "how-well-friend-group-030",
     "pack": "friend-group",
     "prompt": "How does {name} split the bill?",
-    "choices": ["Exact to the penny", "An even split", "Pays for everyone", "Forgot their wallet"]
+    "choices": ["Exact to the penny", "An even split", "Pays for everyone", "Wallet's at home"]
   },
   {
     "id": "how-well-friend-group-031",
@@ -254,7 +254,7 @@
     "id": "how-well-friend-group-042",
     "pack": "friend-group",
     "prompt": "How does {name} get through a Monday?",
-    "choices": ["Coffee", "Music", "Complaining", "They love Mondays"]
+    "choices": ["Coffee", "Music", "Complaining", "Loves Mondays"]
   },
   {
     "id": "how-well-friend-group-043",
@@ -266,7 +266,7 @@
     "id": "how-well-friend-group-044",
     "pack": "friend-group",
     "prompt": "What's {name} most likely to leave at home?",
-    "choices": ["Their charger", "Their wallet", "Their keys", "Their umbrella"]
+    "choices": ["Charger", "Wallet", "Keys", "Umbrella"]
   },
   {
     "id": "how-well-friend-group-045",

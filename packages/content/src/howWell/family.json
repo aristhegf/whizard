@@ -27,7 +27,7 @@
     "id": "how-well-family-005",
     "pack": "family",
     "prompt": "What's {name}'s favourite holiday of the year?",
-    "choices": ["Christmas", "Eid", "Their birthday", "New Year"]
+    "choices": ["Christmas", "Eid", "Birthdays", "New Year"]
   },
   {
     "id": "how-well-family-006",
@@ -117,7 +117,7 @@
     "id": "how-well-family-020",
     "pack": "family",
     "prompt": "What does {name} always lose at home?",
-    "choices": ["The remote", "Their keys", "Their phone", "One sock"]
+    "choices": ["The remote", "Keys", "Phone", "One sock"]
   },
   {
     "id": "how-well-family-021",
@@ -141,7 +141,7 @@
     "id": "how-well-family-024",
     "pack": "family",
     "prompt": "Which room is {name} always found in?",
-    "choices": ["The kitchen", "The living room", "Their bedroom", "The garden"]
+    "choices": ["The kitchen", "The living room", "The bedroom", "The garden"]
   },
   {
     "id": "how-well-family-025",
@@ -243,7 +243,7 @@
     "id": "how-well-family-041",
     "pack": "family",
     "prompt": "Who in the family is {name} most like?",
-    "choices": ["Mum", "Dad", "A grandparent", "Nobody, they're unique"]
+    "choices": ["Mum", "Dad", "A grandparent", "Nobody, one of a kind"]
   },
   {
     "id": "how-well-family-042",
@@ -267,7 +267,7 @@
     "id": "how-well-family-045",
     "pack": "family",
     "prompt": "How does {name} wake up in the morning?",
-    "choices": ["An alarm", "Someone calls them", "All by themselves", "Hits snooze"]
+    "choices": ["An alarm", "A wake-up call", "Naturally", "Hits snooze"]
   },
   {
     "id": "how-well-family-046",
