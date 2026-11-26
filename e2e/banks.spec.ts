@@ -248,7 +248,10 @@ test("publishes a bank to community, discovers it, and forks it", async ({ page,
 
     // The copy is in the student's own banks
     await secondPage.getByRole("link", { name: "Banks", exact: true }).click();
-    await expect(secondPage.getByText(`${bankTitle} (Copy)`)).toBeVisible();
+    // Its row, not the "Copied as" toast, which can still be up.
+    await expect(
+      secondPage.getByRole("link", { name: new RegExp(`^${bankTitle} \\(Copy\\)`) }),
+    ).toBeVisible();
   } finally {
     await secondContext.close();
   }
