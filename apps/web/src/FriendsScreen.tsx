@@ -41,6 +41,15 @@ import { useErrorShake, useShakeOnError } from "./ui/errorShake";
 import { HeadingHint } from "./ui/HeadingHint";
 import { Icon } from "./ui/Icon";
 import { Loading } from "./ui/Loading";
+import {
+  AssignFields,
+  BackLink,
+  ErrorLine as StudyError,
+  Field,
+  dotted,
+  plural,
+  roomCount,
+} from "./ui/Study";
 import { useToast, useToastAction } from "./ui/toast";
 
 /** Wraps a screen that needs an account, offering sign-in first. */
@@ -487,14 +496,48 @@ function GroupForm({
 }
 
 export function GroupScreen({ id }: { id: string }) {
+  const account = useAccount();
+  const next = `/groups/${encodeURIComponent(id)}`;
   return (
-    <SignedInOnly
-      title="Study Group"
-      next={`/groups/${encodeURIComponent(id)}`}
-      message="Sign in to see this group and its assignments."
+    <TopLayout active="friends" className="study-page" column>
+      {account.status === "loading" ? (
+        <Loading />
+      ) : account.user ? (
+        <Group id={id} me={account.user.username} />
+      ) : (
+        <div className="study">
+          <h1 className="study-title">Study group</h1>
+          <p className="study-note">Sign in to see this group and its assignments.</p>
+          <a
+            className="s-btn gold big block"
+            {...linkTo(`/account?next=${encodeURIComponent(next)}`)}
+          >
+            Sign in or create an account
+          </a>
+        </div>
+      )}
+    </TopLayout>
+  );
+}
+
+/** A group's members as a row of overlapping faces. */
+function Faces({ members }: { members: FriendGroup["members"] }) {
+  const shown = members.slice(0, 8);
+  return (
+    <span
+      className="s-faces"
+      role="img"
+      aria-label={`Members: ${members.map((m) => m.displayName).join(", ")}`}
     >
-      {(me) => <Group id={id} me={me.username} />}
-    </SignedInOnly>
+      {shown.map((m) => (
+        <Avatar key={m.username} id={m.avatar} name={m.displayName} size={32} />
+      ))}
+      {members.length > shown.length && (
+        <span className="s-row-sub" style={{ marginLeft: 10 }}>
+          +{members.length - shown.length}
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -505,59 +548,52 @@ function Group({ id, me }: { id: string; me: string }) {
   const loadGroup = useCallback(() => fetchGroup(id), [id]);
   const groupQuery = useLoaded(loadGroup);
 
-  if (groupQuery.error) return <ErrorLine error={groupQuery.error} />;
+  if (groupQuery.error) {
+    return (
+      <div className="study">
+        <div className="study-top">
+          <BackLink to="/friends">Friends</BackLink>
+        </div>
+        <StudyError error={groupQuery.error} />
+      </div>
+    );
+  }
   if (!groupQuery.data) return <Loading />;
 
   const { group, isMember } = groupQuery.data;
 
   if (!isMember) {
     return (
-      <div className="screen">
-        <header className="stack">
-          <a className="btn-link back" {...linkTo("/friends")}>
-            ← Friends
-          </a>
-          <h1 className="page-title">{group.name}</h1>
-          <p className="muted small">
-            Created by @{group.owner} • {group.members.length} members
+      <div className="study">
+        <div className="study-top">
+          <BackLink to="/friends">Friends</BackLink>
+        </div>
+        <div>
+          <h1 className="study-title">{group.name}</h1>
+          <p className="study-meta">
+            Created by @{group.owner} · {plural(group.members.length, "member")}
           </p>
-        </header>
-
-        <section className="group-invite-banner" aria-label="Group Invitation">
-          <h2 style={{ margin: 0, fontSize: "1.25rem" }}>Join this Study Group</h2>
-          <p className="muted small" style={{ margin: 0, maxWidth: 440 }}>
-            You’ve been invited to join <strong>{group.name}</strong>. Members get access to shared
-            question banks, tutor assignment links, solo practice sessions, and group study
-            leaderboards.
-          </p>
-          <div className="people" style={{ justifyContent: "center" }}>
-            {group.members.map((m) => (
-              <span key={m.username} className="avatar-chip">
-                <Avatar id={m.avatar} name={m.displayName} size={28} />
-                <span className="small">{m.displayName}</span>
-              </span>
-            ))}
-          </div>
-          <button
-            type="button"
-            className="btn btn-primary"
-            style={{ minWidth: 180 }}
-            disabled={joining}
-            onClick={async () => {
-              setJoining(true);
-              try {
-                await joinGroup(id);
-                toast.show({ title: `Joined ${group.name}!`, status: "success" });
-                groupQuery.reload();
-              } catch (e) {
-                setJoining(false);
-                toast.show({ title: errorText(e), status: "error" });
-              }
-            }}
-          >
-            <Icon name="users" /> {joining ? "Joining…" : "Join Study Group"}
-          </button>
-        </section>
+        </div>
+        <Faces members={group.members} />
+        <p className="study-note">You’re invited to join this study group.</p>
+        <button
+          type="button"
+          className="s-btn gold big block"
+          disabled={joining}
+          onClick={async () => {
+            setJoining(true);
+            try {
+              await joinGroup(id);
+              toast.show({ title: `Joined ${group.name}`, status: "success" });
+              groupQuery.reload();
+            } catch (e) {
+              setJoining(false);
+              toast.show({ title: errorText(e), status: "error" });
+            }
+          }}
+        >
+          {joining ? "Joining…" : "Join group"}
+        </button>
       </div>
     );
   }
@@ -597,6 +633,8 @@ function GroupDetail({
   const [targetScore, setTargetScore] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [notes, setNotes] = useState("");
+  const [assignError, setAssignError] = useState<string | null>(null);
+  const [assignBusy, setAssignBusy] = useState(false);
   const [expandedBoards, setExpandedBoards] = useState<Set<string>>(new Set());
   const [launchingId, setLaunchingId] = useState<string | null>(null);
   // Read once per visit, so overdue labels stay stable across re-renders.
@@ -619,9 +657,10 @@ function GroupDetail({
   const handleCreateAssignment = async (event: FormEvent) => {
     event.preventDefault();
     if (!selectedBankId) {
-      toast.show({ title: "Please select a question bank.", status: "error" });
+      setAssignError("Pick a bank.");
       return;
     }
+    setAssignBusy(true);
     try {
       const parsedTarget = targetScore ? parseInt(targetScore, 10) : null;
       const parsedDue = dueDate ? new Date(`${dueDate}T23:59:59`).getTime() : null;
@@ -631,7 +670,7 @@ function GroupDetail({
         dueAt: parsedDue && !isNaN(parsedDue) ? parsedDue : null,
         notes: notes.trim() || null,
       });
-      toast.show({ title: "Assigned question bank to group!", status: "success" });
+      toast.show({ title: "Assigned to the group", status: "success" });
       setAssigning(false);
       setSelectedBankId("");
       setTargetScore("");
@@ -639,7 +678,9 @@ function GroupDetail({
       setNotes("");
       assignments.reload();
     } catch (e) {
-      toast.show({ title: errorText(e), status: "error" });
+      setAssignError(errorText(e));
+    } finally {
+      setAssignBusy(false);
     }
   };
 
@@ -653,21 +694,13 @@ function GroupDetail({
           JSON.stringify({ groupId: id, assignmentId: assignment.id }),
         );
       }
-      const count =
-        assignment.questionCount >= 20
-          ? 20
-          : assignment.questionCount >= 15
-            ? 15
-            : assignment.questionCount >= 10
-              ? 10
-              : 5;
       const code = await createRoom(
         {
           bankId: assignment.bankId,
           bankName: assignment.bankName,
           category: "general-knowledge",
           difficulty: "easy",
-          count,
+          count: roomCount(assignment.questionCount),
         },
         "quiz",
       );
@@ -691,7 +724,7 @@ function GroupDetail({
     const url = `${window.location.origin}/groups/${encodeURIComponent(id)}?assignment=${encodeURIComponent(assignmentId)}`;
     try {
       await navigator.clipboard.writeText(url);
-      toast.show({ title: "Tutor assignment link copied to clipboard!", status: "success" });
+      toast.show({ title: "Assignment link copied", status: "success" });
     } catch {
       toast.show({ title: "Could not copy link", status: "error" });
     }
@@ -701,400 +734,276 @@ function GroupDetail({
     const url = `${window.location.origin}/groups/${encodeURIComponent(id)}`;
     try {
       await navigator.clipboard.writeText(url);
-      toast.show({ title: "Group invite link copied to clipboard!", status: "success" });
+      toast.show({ title: "Invite link copied", status: "success" });
     } catch {
       toast.show({ title: "Could not copy link", status: "error" });
     }
   };
 
+  const list = assignments.data?.assignments ?? [];
+
   return (
-    <div className="screen">
-      <header className="stack">
-        <a className="btn-link back" {...linkTo("/friends")}>
-          ← Friends
-        </a>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            flexWrap: "wrap",
-            gap: 10,
-          }}
-        >
-          <div>
-            <h1 className="page-title" style={{ margin: 0 }}>
-              {group.name}
-            </h1>
-            <p className="muted small" style={{ margin: "4px 0 0" }}>
-              {owner ? "Hosted by you (Tutor)" : `Tutor: @${group.owner}`} • {group.members.length}{" "}
-              members
-            </p>
-          </div>
-          <button type="button" className="btn small" onClick={() => void copyGroupLink()}>
-            <Icon name="link" size={16} /> Copy group link
-          </button>
-        </div>
-        <p className="muted small">{group.members.map((m) => m.displayName).join(", ")}</p>
-      </header>
+    <div className="study">
+      <div className="study-top">
+        <BackLink to="/friends">Friends</BackLink>
+      </div>
+      <div>
+        <h1 className="study-title">{group.name}</h1>
+        <p className="study-meta">
+          {owner ? "Hosted by you" : `Tutor: @${group.owner}`} ·{" "}
+          {plural(group.members.length, "member")}
+        </p>
+      </div>
+      <div className="s-actions" style={{ gap: 14 }}>
+        <Faces members={group.members} />
+        <button type="button" className="s-btn small" onClick={() => void copyGroupLink()}>
+          <Icon name="link" size={16} />
+          Copy invite link
+        </button>
+      </div>
 
-      {/* Study Assignments Section */}
-      <section className="study-assignments stack" aria-label="Study Assignments">
-        <div className="study-assignments-header">
-          <div>
-            <h2 className="section-title" style={{ margin: 0 }}>
-              Study Assignments
-              {assignments.data && assignments.data.assignments.length > 0 && (
-                <span className="bank-badge ready" style={{ marginLeft: 8 }}>
-                  {assignments.data.assignments.length}
-                </span>
-              )}
-            </h2>
-            <p className="muted small" style={{ margin: "4px 0 0" }}>
-              Question banks assigned for study, practice, and mastery tracking.
-            </p>
-          </div>
-          <button type="button" className="btn btn-primary" onClick={() => setAssigning((v) => !v)}>
-            <Icon name="plus" size={16} /> Assign question bank
+      <div className="study-section-head">
+        <h2 className="study-h2" id="assignments-title">
+          Assignments
+        </h2>
+        {!assigning && (
+          <button
+            type="button"
+            className="s-link gold"
+            onClick={() => {
+              setAssignError(null);
+              setAssigning(true);
+            }}
+          >
+            Assign question bank
           </button>
-        </div>
+        )}
+      </div>
 
-        {assigning && (
-          <form className="question-form" onSubmit={handleCreateAssignment}>
-            <h3 style={{ margin: "0 0 10px", fontSize: "1.05rem" }}>Assign Question Bank</h3>
-            <div className="setting">
-              <label className="setting-name" htmlFor="assign-bank">
-                Bank
-              </label>
-              <select
-                id="assign-bank"
-                required
-                value={selectedBankId}
-                onChange={(e) => setSelectedBankId(e.target.value)}
-              >
-                <option value="">Select a question bank…</option>
-                {userBanks.data &&
-                  userBanks.data.map((b) => (
+      {assigning && (
+        <div className="s-card">
+          <AssignFields
+            picker={
+              <Field label="Bank">
+                <select
+                  id="assign-bank"
+                  value={selectedBankId}
+                  onChange={(e) => {
+                    setSelectedBankId(e.target.value);
+                    setAssignError(null);
+                  }}
+                >
+                  <option value="">Choose one of your banks</option>
+                  {userBanks.data?.map((b) => (
                     <option key={b.id} value={b.id}>
-                      {b.name} ({b.questionCount} {b.questionCount === 1 ? "question" : "questions"}
-                      {b.exam ? ` · ${b.exam}` : ""})
+                      {b.name} ({plural(b.questionCount, "question")})
                     </option>
                   ))}
-              </select>
-            </div>
-
-            <div className="setting">
-              <label className="setting-name" htmlFor="assign-target">
-                Target score (%)
-              </label>
-              <input
-                id="assign-target"
-                type="number"
-                min="1"
-                max="100"
-                placeholder="e.g. 80"
-                value={targetScore}
-                onChange={(e) => setTargetScore(e.target.value)}
-              />
-            </div>
-
-            <div className="setting">
-              <label className="setting-name" htmlFor="assign-due">
-                Due date
-              </label>
-              <input
-                id="assign-due"
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-              />
-            </div>
-
-            <div className="setting">
-              <label className="setting-name" htmlFor="assign-notes">
-                Tutor notes
-              </label>
-              <textarea
-                id="assign-notes"
-                maxLength={300}
-                rows={2}
-                placeholder="Instructions for students (e.g. Complete before Thursday class)"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-            </div>
-
-            <div className="link-row" style={{ marginTop: 12 }}>
-              <button type="submit" className="btn btn-primary">
-                Assign to group
-              </button>
-              <button type="button" className="btn-link" onClick={() => setAssigning(false)}>
-                Cancel
-              </button>
-            </div>
-          </form>
-        )}
-
-        <ErrorLine error={assignments.error} />
-        {assignments.data && assignments.data.assignments.length === 0 && !assigning && (
-          <p className="muted" style={{ padding: "12px 0" }}>
-            No study assignments yet. Click &quot;Assign question bank&quot; to assign a bank for
-            members to practice.
-          </p>
-        )}
-
-        {assignments.data &&
-          assignments.data.assignments.map((assignment) => {
-            const isHighlighted = assignment.id === targetAssignmentId;
-            const isBoardOpen = expandedBoards.has(assignment.id);
-            const isDueOverdue = assignment.dueAt ? assignment.dueAt < now : false;
-            const canDelete = owner || assignment.assignedBy.username === me;
-
-            return (
-              <div
-                key={assignment.id}
-                id={`assignment-${assignment.id}`}
-                className={`assignment-card${isHighlighted ? " highlighted" : ""}`}
-              >
-                <div className="assignment-head">
-                  <div className="assignment-title-area">
-                    <h3 className="assignment-title">
-                      <a {...linkTo(`/banks/${encodeURIComponent(assignment.bankId)}`)}>
-                        {assignment.bankName}
-                      </a>
-                    </h3>
-                    <div className="assignment-badges">
-                      {assignment.exam && <span className="bank-badge">{assignment.exam}</span>}
-                      {assignment.subject && (
-                        <span className="bank-badge">{assignment.subject}</span>
-                      )}
-                      <span className="bank-badge ready">{assignment.questionCount} questions</span>
-                      {assignment.targetScore && (
-                        <span className="bank-badge warning">
-                          🎯 Target: {assignment.targetScore}%
-                        </span>
-                      )}
-                      {assignment.dueAt && (
-                        <span
-                          className={`bank-badge ${isDueOverdue ? "warning" : ""}`}
-                          style={
-                            isDueOverdue ? { color: "#ff9aaa", borderColor: "#ff9aaa" } : undefined
-                          }
-                        >
-                          ⏰{" "}
-                          {isDueOverdue
-                            ? "Overdue"
-                            : `Due ${new Date(assignment.dueAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="assignment-meta">
-                    <span className="assignment-assigner">
-                      <Avatar
-                        id={assignment.assignedBy.avatar}
-                        name={assignment.assignedBy.displayName}
-                        size={20}
-                      />
-                      <span className="small muted">by @{assignment.assignedBy.username}</span>
-                    </span>
-                  </div>
-                </div>
-
-                {assignment.notes && (
-                  <div className="assignment-notes">
-                    <strong>💬 Tutor note:</strong> {assignment.notes}
-                  </div>
-                )}
-
-                <div
-                  className={`assignment-status-banner ${assignment.myCompletion ? "completed" : "pending"}`}
-                >
-                  {assignment.myCompletion ? (
-                    <span>
-                      ✅ <strong>Completed</strong> · Score: {assignment.myCompletion.score}/
-                      {assignment.myCompletion.totalQuestions} (
-                      {assignment.myCompletion.accuracyPercent}%)
-                      {assignment.myCompletion.attemptsCount > 1
-                        ? ` · ${assignment.myCompletion.attemptsCount} attempts`
-                        : ""}
-                    </span>
-                  ) : (
-                    <span>⏳ Not completed yet</span>
-                  )}
-                  <span className="small muted">
-                    {assignment.completions.length} of {group.members.length} members completed
-                  </span>
-                </div>
-
-                <div className="assignment-actions">
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    disabled={launchingId === assignment.id || assignment.questionCount === 0}
-                    onClick={() => void handlePractice(assignment)}
-                  >
-                    <Icon name="play" size={16} />{" "}
-                    {launchingId === assignment.id ? "Launching…" : "Practice Assignment"}
-                  </button>
-
-                  <button
-                    type="button"
-                    className="btn btn-cbt"
-                    disabled={assignment.questionCount === 0}
-                    onClick={() => {
-                      sessionStorage.setItem(
-                        "whizard_active_assignment",
-                        JSON.stringify({ groupId: id, assignmentId: assignment.id }),
-                      );
-                      navigate(
-                        `/banks/${encodeURIComponent(assignment.bankId)}/exam?group=${encodeURIComponent(id)}&assignment=${encodeURIComponent(assignment.id)}`,
-                      );
-                    }}
-                  >
-                    <Icon name="clock" size={16} /> Timed CBT Exam
-                  </button>
-
-                  <button
-                    type="button"
-                    className="btn"
-                    onClick={() => void copyAssignmentLink(assignment.id)}
-                  >
-                    <Icon name="copy" size={16} /> Copy assignment link
-                  </button>
-
-                  <button type="button" className="btn" onClick={() => toggleBoard(assignment.id)}>
-                    <Icon name="trophy" size={16} /> Leaderboard ({assignment.completions.length})
-                  </button>
-
-                  {canDelete && (
-                    <button
-                      type="button"
-                      className="btn-link danger"
-                      onClick={() =>
-                        ask({
-                          title: `Remove assignment "${assignment.bankName}"?`,
-                          text: "This removes the assignment from this group. The question bank itself is unaffected.",
-                          yes: "Remove",
-                          run: async () => {
-                            await deleteGroupAssignment(id, assignment.id);
-                            assignments.reload();
-                          },
-                        })
-                      }
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-
-                {isBoardOpen && (
-                  <div className="assignment-board">
-                    <span className="assignment-board-title">
-                      Assignment Completion Leaderboard
-                    </span>
-                    {assignment.completions.length === 0 ? (
-                      <p className="muted small" style={{ margin: "4px 0 0" }}>
-                        No members have completed this practice assignment yet.
-                      </p>
-                    ) : (
-                      <ul className="assignment-board-list">
-                        {assignment.completions.map((comp, idx) => (
-                          <li
-                            key={comp.user.username}
-                            className={`assignment-board-item ${comp.user.username === me ? "me" : ""}`}
-                          >
-                            <div className="assignment-board-user">
-                              <span className="assignment-board-rank">#{idx + 1}</span>
-                              <Avatar
-                                id={comp.user.avatar}
-                                name={comp.user.displayName}
-                                size={24}
-                              />
-                              <span style={{ fontWeight: 600 }}>{comp.user.displayName}</span>
-                            </div>
-                            <div className="assignment-board-score">
-                              <span
-                                style={{
-                                  color:
-                                    comp.accuracyPercent >= (assignment.targetScore ?? 70)
-                                      ? "#6ee7b7"
-                                      : "inherit",
-                                }}
-                              >
-                                {comp.score}/{comp.totalQuestions} ({comp.accuracyPercent}%)
-                              </span>
-                              <span className="muted small" style={{ marginLeft: 8 }}>
-                                {comp.attemptsCount}{" "}
-                                {comp.attemptsCount === 1 ? "attempt" : "attempts"}
-                              </span>
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-      </section>
-
-      {/* Shared Multiplayer Games Leaderboard */}
-      <section className="stack" aria-label="Group Games Leaderboard">
-        <h2 className="section-title" style={{ margin: 0 }}>
-          Group Games Leaderboard
-        </h2>
-        <div className="setting">
-          <label className="setting-name" htmlFor="board-category">
-            Category
-          </label>
-          <select
-            id="board-category"
-            name="category"
-            value={category ?? ""}
-            onChange={(event) => setCategory(event.target.value || null)}
-          >
-            <option value="">All categories</option>
-            {topics.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
+                </select>
+              </Field>
+            }
+            target={targetScore}
+            onTarget={setTargetScore}
+            due={dueDate}
+            onDue={setDueDate}
+            notes={notes}
+            onNotes={setNotes}
+            error={assignError}
+            busy={assignBusy}
+            submitLabel="Assign to group"
+            onSubmit={(event) => void handleCreateAssignment(event)}
+            onCancel={() => setAssigning(false)}
+          />
         </div>
+      )}
 
-        <ErrorLine error={board.error} />
-        {board.data && board.data.standings.every((s) => s.games === 0) ? (
-          <p className="muted">
-            No games together yet{category ? " in this category" : ""}. Play in the same room and
-            the leaderboard fills in.
-          </p>
-        ) : (
-          board.data && (
-            <ol className="board" aria-label="Leaderboard">
-              {board.data.standings.map((s, i) => (
-                <li
-                  key={s.username}
-                  className={[i === 0 && s.wins > 0 ? "first" : "", s.username === me ? "me" : ""]
-                    .filter(Boolean)
-                    .join(" ")}
-                >
-                  <span className="rank">{i + 1}</span>
-                  <span className="name">{s.displayName}</span>
-                  <span className="pts">
-                    {s.wins} <span className="muted small">/ {s.games}</span>
-                  </span>
+      <StudyError error={assignments.error} />
+      {assignments.data && list.length === 0 && !assigning && (
+        <p className="s-empty">No assignments yet.</p>
+      )}
+
+      {list.map((assignment) => {
+        const isHighlighted = assignment.id === targetAssignmentId;
+        const isBoardOpen = expandedBoards.has(assignment.id);
+        const isDueOverdue = assignment.dueAt ? assignment.dueAt < now : false;
+        const canDelete = owner || assignment.assignedBy.username === me;
+        const mine = assignment.myCompletion;
+
+        return (
+          <article
+            key={assignment.id}
+            id={`assignment-${assignment.id}`}
+            className={`s-assignment${isHighlighted ? " highlighted" : ""}`}
+            aria-labelledby={`assignment-title-${assignment.id}`}
+          >
+            <div>
+              <h3 className="s-assignment-name" id={`assignment-title-${assignment.id}`}>
+                <a {...linkTo(`/banks/${encodeURIComponent(assignment.bankId)}`)}>
+                  {assignment.bankName}
+                </a>
+              </h3>
+              <p className="s-row-sub" style={{ margin: "2px 0 0" }}>
+                {dotted(
+                  assignment.exam,
+                  assignment.subject,
+                  plural(assignment.questionCount, "question"),
+                  `set by @${assignment.assignedBy.username}`,
+                )}
+              </p>
+            </div>
+            <ul className="s-facts">
+              {assignment.targetScore && <li>Target {assignment.targetScore}%</li>}
+              {assignment.dueAt && (
+                <li className={isDueOverdue ? "late" : undefined}>
+                  {isDueOverdue
+                    ? "Overdue"
+                    : `Due ${new Date(assignment.dueAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`}
                 </li>
+              )}
+              <li className={mine ? "done" : undefined}>
+                {mine
+                  ? `Done · ${mine.score}/${mine.totalQuestions} (${mine.accuracyPercent}%)${mine.attemptsCount > 1 ? ` · ${mine.attemptsCount} tries` : ""}`
+                  : "Not done yet"}
+              </li>
+              <li>
+                {assignment.completions.length} of {group.members.length} done
+              </li>
+            </ul>
+            {assignment.notes && <p className="s-quote">{assignment.notes}</p>}
+
+            <div className="s-actions" style={{ gap: 6 }}>
+              <button
+                type="button"
+                className="s-btn small"
+                disabled={launchingId === assignment.id || assignment.questionCount === 0}
+                onClick={() => void handlePractice(assignment)}
+              >
+                <Icon name="play" size={16} fill />
+                {launchingId === assignment.id ? "Starting…" : "Practise"}
+              </button>
+              <button
+                type="button"
+                className="s-btn small"
+                disabled={assignment.questionCount === 0}
+                onClick={() => {
+                  sessionStorage.setItem(
+                    "whizard_active_assignment",
+                    JSON.stringify({ groupId: id, assignmentId: assignment.id }),
+                  );
+                  navigate(
+                    `/banks/${encodeURIComponent(assignment.bankId)}/exam?group=${encodeURIComponent(id)}&assignment=${encodeURIComponent(assignment.id)}`,
+                  );
+                }}
+              >
+                <Icon name="clock" size={16} />
+                Timed exam
+              </button>
+            </div>
+            <div className="s-actions">
+              <button
+                type="button"
+                className="s-link"
+                aria-expanded={isBoardOpen}
+                onClick={() => toggleBoard(assignment.id)}
+              >
+                <Icon name="trophy" size={18} />
+                Leaderboard ({assignment.completions.length})
+              </button>
+              <button
+                type="button"
+                className="s-link"
+                onClick={() => void copyAssignmentLink(assignment.id)}
+              >
+                <Icon name="copy" size={18} />
+                Copy link
+              </button>
+              {canDelete && (
+                <button
+                  type="button"
+                  className="s-link bad"
+                  onClick={() =>
+                    ask({
+                      title: `Remove “${assignment.bankName}”?`,
+                      text: "The group loses the assignment. The bank itself stays.",
+                      yes: "Remove",
+                      tone: "danger",
+                      run: async () => {
+                        await deleteGroupAssignment(id, assignment.id);
+                        assignments.reload();
+                      },
+                    })
+                  }
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+
+            {isBoardOpen &&
+              (assignment.completions.length === 0 ? (
+                <p className="study-note">Nobody has finished it yet.</p>
+              ) : (
+                <ol className="s-board" aria-label={`${assignment.bankName} leaderboard`}>
+                  {assignment.completions.map((comp, idx) => (
+                    <li
+                      key={comp.user.username}
+                      className={comp.user.username === me ? "me" : undefined}
+                    >
+                      <span className="rank">{idx + 1}</span>
+                      <Avatar id={comp.user.avatar} name={comp.user.displayName} size={28} />
+                      <span className="who">{comp.user.displayName}</span>
+                      <span
+                        className={`score${comp.accuracyPercent >= (assignment.targetScore ?? 70) ? " hit" : ""}`}
+                      >
+                        {comp.score}/{comp.totalQuestions} · {comp.accuracyPercent}%
+                      </span>
+                    </li>
+                  ))}
+                </ol>
               ))}
-            </ol>
-          )
-        )}
-        <p className="muted small">
-          Wins out of games played together. Counts games where at least two of you finished.
-        </p>
-      </section>
+          </article>
+        );
+      })}
+
+      <div className="study-section-head">
+        <h2 className="study-h2" id="games-title">
+          Games together
+        </h2>
+      </div>
+      <Field label="Category">
+        <select
+          id="board-category"
+          name="category"
+          value={category ?? ""}
+          onChange={(event) => setCategory(event.target.value || null)}
+        >
+          <option value="">All categories</option>
+          {topics.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      <StudyError error={board.error} />
+      {board.data && board.data.standings.every((s) => s.games === 0) ? (
+        <p className="s-empty">No games together yet{category ? " in this category" : ""}.</p>
+      ) : (
+        board.data && (
+          <ol className="s-board" aria-labelledby="games-title">
+            {board.data.standings.map((s, i) => (
+              <li key={s.username} className={s.username === me ? "me" : undefined}>
+                <span className="rank">{i + 1}</span>
+                <span className="who">{s.displayName}</span>
+                <span className="score">
+                  {plural(s.wins, "win")} · {plural(s.games, "game")}
+                </span>
+              </li>
+            ))}
+          </ol>
+        )
+      )}
 
       {editing && friends.data ? (
         <GroupForm
@@ -1111,20 +1020,22 @@ function GroupDetail({
           }}
         />
       ) : (
-        <div className="link-row">
+        <div className="s-actions" style={{ marginTop: 8 }}>
           {owner && (
-            <button className="btn" onClick={() => setEditing(true)}>
+            <button type="button" className="s-btn small" onClick={() => setEditing(true)}>
               Edit group
             </button>
           )}
           <button
-            className="btn-link danger"
+            type="button"
+            className="s-link bad"
             disabled={leaving.busy}
             onClick={() =>
               ask({
                 title: owner ? `Delete ${group.name}?` : `Leave ${group.name}?`,
                 text: owner ? "This can’t be undone." : undefined,
                 yes: owner ? "Delete" : "Leave",
+                tone: "danger",
                 run: () =>
                   void leaving.run(async () => {
                     await leaveGroup(group.id);

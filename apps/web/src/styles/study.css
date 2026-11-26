@@ -1,0 +1,1423 @@
+/* The study pages (question banks, the timed exam, mistake practice, study groups and the
+   dashboard) in the night and purple look of the games: flat night tiles 3px apart, one gold
+   pill for the main thing to do, quiet night pills and links for the rest, red for what can't
+   be taken back. */
+
+.study-page .page-main {
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+.study {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 0 24px;
+}
+
+/* Headings ---------------------------------------------------------------------------------- */
+
+/* The title and its gold pill share a line where there is room; on a narrow phone the pill goes
+   up to its own line above the title, as the top row of the screen. */
+.study-head {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
+.study-head > .s-btn {
+  margin-left: auto;
+}
+
+.study-title {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.9rem, 7vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.study-meta {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* A result's small heading above its big number. */
+.study-kicker {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.study-h2 {
+  margin: 0;
+  font-size: 1.06rem;
+  font-weight: 700;
+}
+
+/* A section's heading with its action (Add, Assign) at the far end. */
+.study-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.study-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* The top row: a back link at one end, the ⋯ button at the other. */
+.study-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+}
+
+.s-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  margin-left: -6px;
+  padding-right: 8px;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.s-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
+  border-radius: 999px;
+  color: var(--muted);
+}
+
+@media (hover: hover) {
+  .s-back:hover,
+  .s-icon-btn:hover {
+    color: var(--text);
+  }
+}
+
+/* Buttons ----------------------------------------------------------------------------------- */
+
+.s-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--night-tile);
+  color: var(--text);
+  font: 600 0.95rem/1.2 var(--body);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    transform 100ms ease-out;
+}
+
+.s-btn.gold {
+  background: var(--gold);
+  color: #1b1340;
+  font-weight: 700;
+}
+
+.s-btn.accent {
+  background: var(--accent);
+}
+
+.s-btn.big {
+  min-height: 56px;
+  font-size: 1.06rem;
+}
+
+.s-btn.bad {
+  color: var(--bad-text);
+}
+
+.s-btn.block {
+  width: 100%;
+}
+
+.s-btn.small {
+  min-height: 44px;
+  padding: 0 16px;
+}
+
+@media (hover: hover) {
+  .s-btn:hover:not(:disabled) {
+    background: var(--night-lift);
+  }
+
+  .s-btn.gold:hover:not(:disabled) {
+    background: #ffe066;
+  }
+
+  .s-btn.accent:hover:not(:disabled) {
+    background: #9a55ff;
+  }
+}
+
+.s-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.s-btn:disabled,
+.s-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* A quiet text action: Add, Import, Cancel. Gold for the one that adds, red for the one that
+   deletes. 44px tall, so a thumb finds it. */
+.s-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: 600 0.95rem/1.2 var(--body);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.s-link.gold {
+  color: var(--gold);
+}
+
+.s-link.bad {
+  color: var(--bad-text);
+}
+
+@media (hover: hover) {
+  .s-link:hover:not(:disabled) {
+    color: var(--text);
+  }
+
+  .s-link.gold:hover:not(:disabled) {
+    color: #ffe066;
+  }
+
+  .s-link.bad:hover:not(:disabled) {
+    color: #ff8696;
+  }
+}
+
+.s-link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.s-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+}
+
+/* The bank's three ways to play: gold Practise, then two quiet pills side by side. */
+.s-play {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.s-play > :first-child {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 768px) {
+  .s-play {
+    grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr));
+  }
+
+  .s-play > :first-child {
+    grid-column: auto;
+  }
+}
+
+/* Segmented pill: Mine / Community. */
+.s-seg {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--night);
+}
+
+.s-seg button {
+  flex: 1;
+  min-height: 40px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.s-seg button[aria-pressed="true"] {
+  background: var(--night-tile);
+  color: #fff;
+}
+
+/* Small choice pills: a filter, a question count, a time limit. */
+.s-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.s-chip {
+  position: relative;
+  min-width: 44px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--night);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.92rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A fingertip-sized target around the 40px pill. */
+.s-chip::after {
+  content: "";
+  position: absolute;
+  inset: -2px 0;
+}
+
+.s-chip[aria-pressed="true"] {
+  background: var(--accent);
+  color: #fff;
+}
+
+@media (hover: hover) {
+  .s-chip:hover:not([aria-pressed="true"]) {
+    background: var(--night-tile);
+    color: #fff;
+  }
+}
+
+/* Rows -------------------------------------------------------------------------------------- */
+
+.s-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One bank, group or assignment: name, a line under it, a number on the right. */
+.s-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 64px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--night);
+  color: var(--text);
+  text-align: left;
+  text-decoration: none;
+  transition: background-color 140ms ease;
+}
+
+a.s-row,
+button.s-row {
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  a.s-row:hover,
+  button.s-row:hover {
+    background: var(--night-tile);
+  }
+}
+
+.s-row-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.s-row-name {
+  font-weight: 600;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.s-row-sub {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.s-row-count {
+  margin-left: auto;
+  flex: none;
+  font-family: var(--display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.s-row-end {
+  margin-left: auto;
+  flex: none;
+}
+
+/* A numbered question. */
+.s-q {
+  align-items: baseline;
+  min-height: 0;
+  padding: 14px;
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.s-q-num {
+  flex: none;
+  min-width: 20px;
+  color: var(--dim);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.s-q-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.s-tag {
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--night-tile);
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  vertical-align: 1px;
+}
+
+/* A selectable question: the box sits where the number was. */
+.s-q input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  min-height: 0;
+  margin: 0;
+  flex: none;
+  align-self: center;
+  accent-color: var(--accent);
+}
+
+/* Right and wrong answers, as the exam result and a community preview show them. */
+.s-answer {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.s-answer svg {
+  flex: none;
+  margin-top: 1px;
+}
+
+.s-answer.right {
+  color: var(--ok);
+}
+
+.s-answer.wrong {
+  color: #ff8696;
+}
+
+.s-answer.skipped {
+  color: var(--dim);
+}
+
+.s-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--night);
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+/* Lines up under a numbered question's words, past its number. */
+.s-indent {
+  padding-left: 32px;
+}
+
+.s-card-why {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.s-empty {
+  margin: 0;
+  padding: 18px 14px;
+  border-radius: 12px;
+  background: var(--night);
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* "3 questions also in your other banks", opening to the list. */
+.s-dupes summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+.s-dupes summary::-webkit-details-marker {
+  display: none;
+}
+
+.s-dupes .s-list {
+  margin-top: 6px;
+}
+
+.dash-pro {
+  color: var(--gold);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Inline numbers: Right, Wrong, Skipped; Banks, Questions… */
+.s-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin: 0;
+}
+
+/* Four numbers stay on one row, even on a small phone. */
+.s-stats.four {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.s-stat {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+  margin: 0;
+}
+
+.s-stat dd {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.s-stat dt {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.s-stat.right dd {
+  color: var(--ok);
+}
+
+.s-stat.wrong dd {
+  color: var(--bad-text);
+}
+
+/* Forms ------------------------------------------------------------------------------------- */
+
+.s-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.s-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.s-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.s-field.right .s-label {
+  color: var(--ok);
+}
+
+.s-field input,
+.s-field select,
+.s-field textarea,
+.s-search input {
+  width: 100%;
+  min-height: 48px;
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  background: var(--night);
+  color: var(--text);
+  font: inherit;
+}
+
+.s-field textarea {
+  padding: 12px 16px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.s-field textarea::placeholder {
+  color: var(--dim);
+}
+
+.s-field.right input {
+  border-color: rgb(15 198 128 / 45%);
+}
+
+.s-field input:focus-visible,
+.s-field select:focus-visible,
+.s-field textarea:focus-visible,
+.s-search input:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 1px;
+}
+
+/* Inside a night card, fields sit one step lighter so they still read as fields. */
+.s-card .s-field input,
+.s-card .s-field select,
+.s-card .s-field textarea {
+  background: var(--night-tile);
+}
+
+.s-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 420px) {
+  .s-pair.stack-narrow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* A choice that is a whole row: Shuffle, Public. */
+.s-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.s-check input {
+  width: 22px;
+  height: 22px;
+  min-height: 0;
+  margin: 0;
+  flex: none;
+  accent-color: var(--accent);
+}
+
+.s-search {
+  position: relative;
+}
+
+.s-search svg {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  color: var(--dim);
+  pointer-events: none;
+}
+
+.s-search input {
+  padding-left: 44px;
+}
+
+.s-error {
+  margin: 0;
+  color: #ff8696;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+/* The ⋯ sheet ------------------------------------------------------------------------------- */
+
+.s-sheet {
+  background: var(--night);
+  border-color: rgb(140 128 255 / 18%);
+}
+
+@media (min-width: 768px) {
+  .s-sheet {
+    left: 50%;
+    right: auto;
+    width: 440px;
+    transform: translate(-50%, var(--drag, 0px));
+  }
+}
+
+.s-sheet-title {
+  margin: 0;
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.s-sheet-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 12px 8px;
+  overflow-y: auto;
+}
+
+.s-sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 12px;
+  border-radius: 12px;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.97rem;
+  text-align: left;
+  text-decoration: none;
+}
+
+.s-sheet-item svg {
+  color: var(--muted);
+}
+
+.s-sheet-item.bad,
+.s-sheet-item.bad svg {
+  color: var(--bad-text);
+}
+
+@media (hover: hover) {
+  .s-sheet-item:hover {
+    background: var(--night-tile);
+  }
+}
+
+/* Import ------------------------------------------------------------------------------------ */
+
+.s-drop {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 28px 16px;
+  border: 2px dashed rgb(140 128 255 / 35%);
+  border-radius: 16px;
+  background: var(--night);
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.s-drop.dragging,
+.s-drop:has(input:focus-visible) {
+  border-color: var(--accent);
+  background: rgb(139 61 255 / 14%);
+}
+
+.s-drop:has(input:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.s-drop svg {
+  color: var(--accent-soft);
+}
+
+.s-drop strong {
+  font-weight: 600;
+}
+
+/* The file input covers the whole tile, so a tap anywhere opens the picker. */
+.s-drop input[type="file"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.s-progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--night-tile);
+  overflow: hidden;
+}
+
+.s-progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 300ms ease;
+}
+
+.s-options {
+  display: grid;
+  gap: 3px;
+}
+
+.s-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--night-tile);
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.s-option:has(input:checked) {
+  background: var(--accent);
+}
+
+.s-option input {
+  width: 18px;
+  height: 18px;
+  min-height: 0;
+  margin: 0;
+  accent-color: #fff;
+}
+
+.s-pro {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgb(255 212 63 / 14%);
+  color: var(--gold);
+  font-size: 0.8rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+/* A small dialog in the study look: the Pro prompt. */
+.s-dialog {
+  width: min(400px, calc(100vw - 32px));
+  padding: 24px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--night);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+
+.s-dialog::backdrop {
+  background: rgb(5 4 20 / 70%);
+  backdrop-filter: blur(3px);
+}
+
+.s-dialog h2 {
+  margin: 0 0 8px;
+  font-family: var(--display);
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.s-dialog p {
+  margin: 0 0 20px;
+  color: var(--muted);
+}
+
+.s-dialog .s-actions {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+/* Assignment cards (study groups) ------------------------------------------------------------ */
+
+.s-assignment {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--night);
+  scroll-margin: 120px;
+}
+
+.s-assignment.highlighted {
+  box-shadow: inset 0 0 0 2px var(--gold);
+}
+
+.s-assignment-name {
+  margin: 0;
+  font-size: 1.06rem;
+  font-weight: 700;
+}
+
+.s-assignment-name a {
+  text-decoration: none;
+}
+
+.s-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.s-facts li {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--night-tile);
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.s-facts li.done {
+  color: var(--ok);
+}
+
+.s-facts li.late {
+  color: var(--bad-text);
+}
+
+.s-quote {
+  margin: 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--night-lift);
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.s-board {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.s-board li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: var(--night-tile);
+  font-size: 0.92rem;
+}
+
+.s-board li.me {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.s-board .rank {
+  width: 22px;
+  color: var(--dim);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.s-board .who {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.s-board .score {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.s-board .score.hit {
+  color: var(--ok);
+}
+
+/* Faces in a row, a little overlapped. */
+.s-faces {
+  display: flex;
+  align-items: center;
+  padding-left: 6px;
+}
+
+.s-faces > * {
+  margin-left: -6px;
+}
+
+/* The timed exam ----------------------------------------------------------------------------- */
+
+/* Full screen, night blue, like a game: no site chrome while the clock runs. */
+.exam {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  background: var(--night);
+  color: var(--text);
+  overflow-y: auto;
+}
+
+.exam-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.exam-bank {
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.exam-timer {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.exam-timer.low {
+  color: var(--gold);
+}
+
+.exam-timer.critical {
+  color: var(--bad-text);
+}
+
+.exam-top .s-btn {
+  justify-self: end;
+}
+
+.exam-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  width: 100%;
+  min-height: 0;
+  padding: 0 16px;
+}
+
+.exam-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.exam-count {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.exam-prompt {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.4rem, 5.6vw, 2.15rem);
+  font-weight: 700;
+  line-height: 1.18;
+  overflow-wrap: anywhere;
+}
+
+.exam-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.exam-choice {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 60px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  background: var(--night-tile);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+  transition:
+    background-color 120ms ease,
+    transform 100ms ease-out;
+}
+
+.exam-choice .letter {
+  flex: none;
+  width: 18px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.exam-choice[aria-pressed="true"] {
+  background: var(--accent);
+}
+
+.exam-choice[aria-pressed="true"] .letter {
+  color: #fff;
+}
+
+@media (hover: hover) {
+  .exam-choice:hover:not([aria-pressed="true"]) {
+    background: var(--night-lift);
+  }
+}
+
+.exam-choice:active {
+  transform: scale(0.985);
+}
+
+/* Back, Flag and Next: at the bottom of the thumb's reach on a phone. */
+.exam-nav {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  gap: 6px;
+  margin-top: auto;
+  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--night) 75%, transparent);
+}
+
+.exam-nav .grow {
+  flex: 1;
+}
+
+.exam-nav .s-btn[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 2px var(--gold);
+}
+
+.exam-nav .s-btn[aria-pressed="true"] svg {
+  color: var(--gold);
+}
+
+/* The question map: a rail on a computer, a strip that opens a sheet on a phone. */
+.exam-rail {
+  display: none;
+}
+
+.exam-map-summary {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.exam-map {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.exam-num {
+  min-height: 44px;
+  border-radius: 10px;
+  background: var(--night-tile);
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.exam-num.is-done {
+  background: var(--night-lift);
+  color: #fff;
+}
+
+.exam-num.is-flag {
+  box-shadow: inset 0 0 0 2px var(--gold);
+  color: #fff;
+}
+
+.exam-num.is-cur {
+  box-shadow: inset 0 0 0 2px #fff;
+  color: #fff;
+}
+
+.exam-num.is-cur.is-flag {
+  box-shadow:
+    inset 0 0 0 2px #fff,
+    inset 0 0 0 4px var(--gold);
+}
+
+@media (hover: hover) {
+  .exam-num:hover {
+    color: #fff;
+  }
+}
+
+/* The phone strip: one thin bar per question, tapping it opens the map. */
+.exam-strip {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 4%);
+  text-align: left;
+}
+
+.exam-strip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.exam-strip-row b {
+  color: #fff;
+  font-weight: 700;
+}
+
+.exam-bars {
+  display: flex;
+  gap: 2px;
+  height: 6px;
+}
+
+.exam-bars span {
+  flex: 1;
+  border-radius: 2px;
+  background: var(--night-tile);
+}
+
+.exam-bars span.is-done {
+  background: var(--accent-soft);
+}
+
+.exam-bars span.is-flag {
+  background: var(--gold);
+}
+
+.exam-bars span.is-cur {
+  background: #fff;
+}
+
+.exam-sheet .exam-map {
+  padding: 4px 16px 8px;
+}
+
+@media (min-width: 900px) {
+  .exam-top {
+    padding: 16px 32px;
+  }
+
+  .exam-timer {
+    font-size: 2.75rem;
+  }
+
+  .exam-body {
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 48px;
+    padding: 24px 32px 0;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .exam-main {
+    max-width: 760px;
+    gap: 20px;
+  }
+
+  .exam-choices {
+    margin-top: 8px;
+  }
+
+  .exam-choice {
+    min-height: 68px;
+    padding: 0 20px;
+    font-size: 1.12rem;
+  }
+
+  .exam-nav {
+    gap: 8px;
+    padding: 24px 0 32px;
+  }
+
+  .exam-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .exam-strip {
+    display: none;
+  }
+}
+
+/* The result -------------------------------------------------------------------------------- */
+
+.s-score {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 6px 0 0;
+}
+
+.s-score-pct {
+  font-family: var(--display);
+  font-size: clamp(4.5rem, 24vw, 6.5rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.s-score-of {
+  color: var(--muted);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Mistake practice ---------------------------------------------------------------------------- */
+
+.drill-progress {
+  width: min(36vw, 220px);
+  height: 6px;
+  border-radius: 999px;
+  background: var(--night-tile);
+  overflow: hidden;
+}
+
+.drill-progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 300ms ease;
+}
+
+.exam-choice.right {
+  background: #0fae70;
+}
+
+.exam-choice.wrong {
+  background: #d7324a;
+}
+
+.exam-choice.faded {
+  opacity: 0.45;
+}
+
+.exam-choice:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.exam-choice.faded:disabled {
+  opacity: 0.45;
+}
+
+.drill-done {
+  justify-content: center;
+  align-items: flex-start;
+  padding-bottom: 15vh;
+}
+
+.drill-verdict {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.drill-verdict.right {
+  color: var(--ok);
+}
+
+.drill-verdict.wrong {
+  color: #ff8696;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s-btn,
+  .exam-choice,
+  .s-progress > span,
+  .drill-progress > span {
+    transition: none;
+  }
+}
+
+/* On a computer, a page's lone gold pill keeps a pill's width rather than the column's. */
+@media (min-width: 768px) {
+  .study > .s-btn.block {
+    align-self: flex-start;
+    width: auto;
+    min-width: 280px;
+    padding: 0 32px;
+  }
+}

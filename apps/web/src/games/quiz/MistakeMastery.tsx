@@ -3,7 +3,7 @@ import type { QuizReviewItem } from "@whizard/game-core";
 import { clearBankMistakes, saveBankMistakes } from "../../storage";
 import { play } from "../../sounds";
 import { Icon } from "../../ui/Icon";
-import { Brand } from "../../ui/Chrome";
+import { BackButton } from "../../ui/Study";
 
 export interface MistakeMasteryProps {
   items: QuizReviewItem[];
@@ -13,6 +13,12 @@ export interface MistakeMasteryProps {
   onExit: () => void;
 }
 
+const letter = (i: number) => String.fromCharCode(65 + i);
+
+/**
+ * Practising the questions you missed, in the exam's night look: each one comes back until you
+ * get it right, and a right answer clears it from the bank's mistakes.
+ */
 export function MistakeMastery({
   items,
   categoryName,
@@ -80,46 +86,22 @@ export function MistakeMastery({
 
   if (finished) {
     return (
-      <div className="results mistake-mastery-finished">
-        <header className="results-bar">
-          <Brand />
-          <button className="btn bar-pill" onClick={onDone}>
-            <Icon name="arrowLeft" size={20} />
-            <span>Results</span>
-          </button>
+      <div className="exam">
+        <header className="exam-top">
+          <BackButton onClick={onDone}>Results</BackButton>
         </header>
-
-        <section className="results-main">
-          <img
-            className="results-mascot"
-            src="/art/mascot/podium.webp"
-            alt=""
-            width={590}
-            height={620}
-          />
-          <div className="results-head">
-            <h2 className="display results-title">Mastery Achieved! 🎉</h2>
-            <span className="pill">
-              <Icon name="trophy" size={18} />
-              {categoryName} • {totalItems} {totalItems === 1 ? "Mistake" : "Mistakes"} Mastered
-            </span>
-          </div>
-
-          <div className="panel solo-score">
-            <p className="label">Mistake Drill Complete</p>
-            <p className="big-score">100%</p>
-            <p className="muted">
-              You corrected every missed question and reinforced the right answers.
-            </p>
-          </div>
-
-          <div className="results-actions">
-            <button className="btn btn-primary" onClick={onDone}>
-              <Icon name="check" size={20} />
-              Back to Results
+        <div className="exam-body">
+          <main className="exam-main drill-done">
+            <p className="exam-count">{categoryName}</p>
+            <h1 className="exam-prompt">
+              All {totalItems} {totalItems === 1 ? "mistake" : "mistakes"} fixed
+            </h1>
+            <p className="study-note">You got every one you missed right.</p>
+            <button type="button" className="s-btn gold big" onClick={onDone}>
+              Back to results
             </button>
-          </div>
-        </section>
+          </main>
+        </div>
       </div>
     );
   }
@@ -128,93 +110,83 @@ export function MistakeMastery({
   const progressPercent = Math.min(100, Math.round((masteredCount / totalItems) * 100));
 
   return (
-    <div className="game-screen mistake-mastery-screen">
-      <header className="game-bar">
-        <button className="btn bar-pill" onClick={onExit}>
-          <Icon name="arrowLeft" size={18} />
-          <span>Exit Drill</span>
-        </button>
-        <div className="mistake-mastery-status">
-          <span className="mistake-progress-label">
-            Mastered {masteredCount} of {totalItems}
-          </span>
-          <div className="mistake-progress-track">
-            <div className="mistake-progress-bar" style={{ width: `${progressPercent}%` }} />
-          </div>
+    <div className="exam">
+      <header className="exam-top">
+        <BackButton onClick={onExit}>Done</BackButton>
+        <div
+          className="drill-progress"
+          role="progressbar"
+          aria-label="Mistakes fixed"
+          aria-valuemin={0}
+          aria-valuemax={totalItems}
+          aria-valuenow={masteredCount}
+        >
+          <span style={{ width: `${progressPercent}%` }} />
         </div>
-        <span className="pill small mistake-remaining-badge">
-          {queue.length} {queue.length === 1 ? "left" : "left"}
+        <span className="exam-bank" style={{ textAlign: "right" }}>
+          {queue.length} left
         </span>
       </header>
 
-      <main className="game-layout">
-        <section className="game-main">
-          <span className="pill">
-            <Icon name="repeat" size={18} />
-            Mistake Review · Question {masteredCount + 1}
-          </span>
+      <div className="exam-body">
+        <main className="exam-main">
+          <p className="exam-count">Missed question · {categoryName}</p>
+          <h1 className="exam-prompt">{current.prompt}</h1>
 
-          <h1 className="prompt">{current.prompt}</h1>
-
-          <div className="choices">
+          <div className="exam-choices" role="group" aria-label="Answers">
             {current.choices.map((choice, i) => {
-              let stateClass = "";
+              let state = "";
               if (answered) {
-                if (i === current.correctChoice) stateClass = " correct";
-                else if (i === selectedChoice) stateClass = " wrong";
-                else stateClass = " faded";
+                if (i === current.correctChoice) state = " right";
+                else if (i === selectedChoice) state = " wrong";
+                else state = " faded";
               }
               return (
                 <button
                   key={i}
-                  className={`choice${stateClass}`}
+                  type="button"
+                  className={`exam-choice${state}`}
                   disabled={answered}
                   onClick={() => handlePick(i)}
                 >
-                  <span className="choice-label">{["A", "B", "C", "D"][i] || i + 1}.</span> {choice}
+                  <span className="letter" aria-hidden="true">
+                    {letter(i)}
+                  </span>
+                  <span>{choice}</span>
                 </button>
               );
             })}
           </div>
 
-          {answered && (
-            <div className="mistake-feedback-card panel">
-              <div className="feedback-head">
-                <span className={`verdict ${isCorrect ? "good" : "bad"}`}>
-                  {isCorrect ? "✓ Excellent Correction!" : "✗ Needs Review"}
-                </span>
-                {!isCorrect && (
-                  <p className="feedback-hint">
-                    Correct answer:{" "}
-                    <strong>
-                      {["A", "B", "C", "D"][current.correctChoice]}.{" "}
-                      {current.choices[current.correctChoice]}
-                    </strong>
-                    . We’ll show this question again until it sticks!
+          <div aria-live="polite">
+            {answered && (
+              <div className="s-card">
+                <p className={`drill-verdict ${isCorrect ? "right" : "wrong"}`}>
+                  {isCorrect
+                    ? "Right"
+                    : `Not quite. It’s ${letter(current.correctChoice)}, ${current.choices[current.correctChoice]}. It comes back later.`}
+                </p>
+                {current.explanation && (
+                  <p className="s-card-why">
+                    {current.explanation}
+                    {current.reference && ` (${current.reference})`}
                   </p>
                 )}
               </div>
+            )}
+          </div>
 
-              {current.explanation && (
-                <p className="explanation">
-                  {current.explanation}
-                  {current.reference && (
-                    <>
-                      {" "}
-                      <span className="reference">({current.reference})</span>
-                    </>
-                  )}
-                </p>
-              )}
-
-              <button className="btn btn-primary btn-next-mistake" onClick={handleNext}>
-                {isCorrect ? "Continue" : "Got It · Next"}
-                <Icon name="arrowRight" size={18} />
+          {answered && (
+            <div className="exam-nav">
+              <span className="grow" />
+              <button type="button" className="s-btn accent" onClick={handleNext}>
+                {isCorrect ? "Next" : "Got it"}
+                <Icon name="chevronRight" size={18} stroke={2.2} />
               </button>
             </div>
           )}
-        </section>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

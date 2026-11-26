@@ -1,7 +1,49 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
 
 test.describe.configure({ timeout: 90_000 });
+
+/** Makes a bank from the list's New bank pill and leaves the page on it. */
+async function makeBank(page: Page, name: string, exam?: string, subject?: string) {
+  await page.goto("/banks");
+  await page.getByRole("link", { name: "New bank" }).click();
+  await page.getByLabel("Name").fill(name);
+  if (exam) await page.getByLabel("Exam").fill(exam);
+  if (subject) await page.getByLabel("Subject").fill(subject);
+  await page.getByRole("button", { name: "Create bank", exact: true }).click();
+  await expect(page).toHaveURL(/\/banks\/b_[A-Za-z0-9_-]+$/);
+  await expect(page.getByRole("heading", { name, level: 1 })).toBeVisible();
+}
+
+/** Opens the bank's ⋯ sheet and picks one of its choices. */
+async function fromSheet(page: Page, choice: string) {
+  await page.getByRole("button", { name: "More" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: choice, exact: true }).click();
+}
+
+/** Adds a question to a bank through the API, from the signed-in page. */
+async function seedQuestion(
+  page: Page,
+  bankId: string,
+  prompt: string,
+  choices: string[],
+  explanation: string,
+) {
+  const ok = await page.evaluate(
+    async ({ bankId, body }) =>
+      (
+        await fetch(`/api/banks/${bankId}/questions`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        })
+      ).ok,
+    { bankId, body: { prompt, choices, explanation, reference: null } },
+  );
+  expect(ok).toBe(true);
+}
+
+const field = (page: Page, name: string) => page.getByRole("textbox", { name, exact: true });
 
 test("offers a guest the way in before their banks", async ({ page }) => {
   await page.goto("/banks");
@@ -20,92 +62,116 @@ test("makes a bank, writes a question, renames and clears up after itself", asyn
     .getByRole("link", { name: "Question banks" })
     .click();
   await expect(page).toHaveURL(/\/banks$/);
-  await expect(page.getByText("No banks yet. Make one above.")).toBeVisible();
+  await expect(page.getByText("No banks yet.")).toBeVisible();
 
-  // Make one, with its optional labels.
+  // Make one, with its labels.
+  await page.getByRole("link", { name: "New bank" }).click();
   await page.getByLabel("Name").fill("Biology jumpstart");
   await page.getByLabel("Exam").fill("WAEC");
   await page.getByLabel("Subject").fill("Biology");
-  await page.getByRole("button", { name: "Create a bank", exact: true }).click();
+  await page.getByRole("button", { name: "Create bank", exact: true }).click();
   await expect(page).toHaveURL(/\/banks\/b_[A-Za-z0-9_-]+$/);
   await expect(page.getByRole("heading", { name: "Biology jumpstart", level: 1 })).toBeVisible();
+  await expect(page.getByText("WAEC · Biology · 0 questions")).toBeVisible();
 
-  // It shows in the list with its count.
-  await page.getByRole("link", { name: /All banks/ }).click();
-  const row = page.locator(".people li").filter({ hasText: "Biology jumpstart" });
-  await expect(row).toContainText("WAEC · Biology · 0 questions");
-  await row.getByRole("link").click();
+  // It shows in the list with its labels and count.
+  await page.getByRole("link", { name: "Banks", exact: true }).click();
+  const row = page.getByRole("link", { name: /Biology jumpstart/ });
+  await expect(row).toContainText("WAEC · Biology");
+  await expect(row).toContainText("0 questions");
+  await row.click();
   await expect(page).toHaveURL(/\/banks\/b_[A-Za-z0-9_-]+$/);
 
-  // The first question: the form says so before it will take it.
-  await page.getByRole("button", { name: "Add a question", exact: true }).click();
-  // The questions section is labelled "Questions (…)", which would also catch a label match.
-  const field = (name: string) => page.getByRole("textbox", { name });
-  await field("Question").fill("Which planet is known as the Red Planet?");
-  await field("Correct answer").fill("Mars");
-  await field("Wrong answer 1").fill("Venus");
-  await field("Wrong answer 2").fill("Jupiter");
+  // The first question, on its own page: the form says what's missing before it takes it.
+  await page.getByRole("button", { name: "Add a question" }).click();
+  await expect(page.getByRole("heading", { name: "New question", level: 1 })).toBeVisible();
+  await field(page, "Question").fill("Which planet is known as the Red Planet?");
+  await field(page, "Correct answer").fill("Mars");
+  await field(page, "Wrong answer 1").fill("Venus");
+  await field(page, "Wrong answer 2").fill("Jupiter");
   await page.getByRole("button", { name: "Add question", exact: true }).click();
   await expect(
     page.getByText("Fill in the question, all four answers and the explanation."),
   ).toBeVisible();
 
-  await field("Wrong answer 3").fill("Saturn");
-  await field("Explanation").fill("Mars is red from the iron oxide on its surface.");
+  await field(page, "Wrong answer 3").fill("Saturn");
+  await field(page, "Explanation").fill("Mars is red from the iron oxide on its surface.");
   await page.getByRole("button", { name: "Add question", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Questions (1)", level: 2 })).toBeVisible();
-  await expect(page.getByText("Correct: Mars")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Biology jumpstart", level: 1 })).toBeVisible();
+  await expect(page.getByText("WAEC · Biology · 1 question")).toBeVisible();
 
-  // Edit it, in place.
-  await page.getByRole("button", { name: "Edit", exact: true }).click();
-  await field("Question").fill("Which planet do we call the Red Planet?");
+  // Open it to edit it.
+  await page.getByRole("link", { name: /Which planet is known as the Red Planet\?/ }).click();
+  await expect(page.getByRole("heading", { name: "Question 1", level: 1 })).toBeVisible();
+  await expect(field(page, "Correct answer")).toHaveValue("Mars");
+  await field(page, "Question").fill("Which planet do we call the Red Planet?");
   await page.getByRole("button", { name: "Save question", exact: true }).click();
-  await expect(page.getByText("Which planet do we call the Red Planet?")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: /Which planet do we call the Red Planet\?/ }),
+  ).toBeVisible();
 
-  // Rename the bank; the heading follows.
+  // Rename the bank from the ⋯ sheet; the heading follows.
+  await fromSheet(page, "Edit details");
   await page.getByLabel("Name").fill("Biology revision");
   await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page.getByText("Bank saved")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Biology revision", level: 1 })).toBeVisible();
 
   // The question goes, after being sure.
-  await page.getByRole("button", { name: "Delete", exact: true }).click();
+  await page.getByRole("link", { name: /Which planet do we call/ }).click();
+  await page.getByRole("button", { name: "Delete question", exact: true }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Delete question" }).click();
-  await expect(page.getByText("No questions yet. Add the first one.")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Questions (0)", level: 2 })).toBeVisible();
+  await expect(page.getByText("No questions yet.")).toBeVisible();
+  await expect(page.getByText("0 questions")).toBeVisible();
 
   // And the bank itself, which lands back on an empty list.
-  await page.getByRole("button", { name: "Delete bank", exact: true }).click();
+  await fromSheet(page, "Delete bank");
   await page.getByRole("alertdialog").getByRole("button", { name: "Delete bank" }).click();
   await expect(page).toHaveURL(/\/banks$/);
-  await expect(page.getByText("No banks yet. Make one above.")).toBeVisible();
+  await expect(page.getByText("No banks yet.")).toBeVisible();
+});
+
+test("selects questions and deletes them together", async ({ page }) => {
+  await withPasskeys(page);
+  await signUp(page, uniqueUsername());
+  await makeBank(page, "Bulk tidy");
+  const url = page.url();
+  const id = /\/banks\/(b_[A-Za-z0-9_-]+)/.exec(url)![1]!;
+  for (const prompt of ["One?", "Two?", "Three?"]) {
+    await seedQuestion(page, id, prompt, ["A", "B", "C", "D"], "Because.");
+  }
+  await page.reload();
+  await expect(page.getByText("3 questions")).toBeVisible();
+
+  await fromSheet(page, "Select questions");
+  await page.getByRole("checkbox", { name: "One?" }).check();
+  await page.getByRole("checkbox", { name: "Three?" }).check();
+  await page.getByRole("button", { name: "Delete 2 questions" }).click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Delete 2 questions" }).click();
+  await expect(page.getByText("1 question", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Two\?/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /One\?/ })).toHaveCount(0);
 });
 
 test("starts solo practice room from a custom bank", async ({ page }) => {
   await withPasskeys(page);
   await signUp(page, uniqueUsername());
 
-  await page.goto("/banks");
-  await page.getByLabel("Name").fill("Physics Drills");
-  await page.getByRole("button", { name: "Create a bank", exact: true }).click();
-  await expect(
-    page.getByRole("heading", { name: "Practice with this bank", level: 2 }),
-  ).toBeVisible();
-  await expect(page.getByRole("button", { name: "Practice solo" })).toBeDisabled();
+  await makeBank(page, "Physics Drills");
+  await expect(page.getByRole("button", { name: "Practise", exact: true })).toBeDisabled();
 
   // Add one question
-  await page.getByRole("button", { name: "Add a question", exact: true }).click();
-  const field = (name: string) => page.getByRole("textbox", { name });
-  await field("Question").fill("What is the speed of light in vacuum?");
-  await field("Correct answer").fill("300,000 km/s");
-  await field("Wrong answer 1").fill("150,000 km/s");
-  await field("Wrong answer 2").fill("3,000 km/s");
-  await field("Wrong answer 3").fill("Infinity");
-  await field("Explanation").fill("Light travels at approximately 299,792 km/s in vacuum.");
+  await page.getByRole("button", { name: "Add a question" }).click();
+  await field(page, "Question").fill("What is the speed of light in vacuum?");
+  await field(page, "Correct answer").fill("300,000 km/s");
+  await field(page, "Wrong answer 1").fill("150,000 km/s");
+  await field(page, "Wrong answer 2").fill("3,000 km/s");
+  await field(page, "Wrong answer 3").fill("Infinity");
+  await field(page, "Explanation").fill("Light travels at approximately 299,792 km/s in vacuum.");
   await page.getByRole("button", { name: "Add question", exact: true }).click();
 
-  await expect(page.getByRole("button", { name: "Practice solo" })).toBeEnabled();
-  await page.getByRole("button", { name: "Practice solo" }).click();
+  await expect(page.getByRole("button", { name: "Practise", exact: true })).toBeEnabled();
+  await page.getByRole("button", { name: "Practise", exact: true }).click();
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]+$/);
   await expect(page.getByRole("heading", { name: "Physics Drills Quiz" })).toBeVisible();
 
@@ -128,33 +194,27 @@ test("publishes a bank to community, discovers it, and forks it", async ({ page,
   await signUp(page, author);
 
   const bankTitle = `Chemistry ${Math.random().toString(36).slice(2, 8)}`;
-  await page.goto("/banks");
-  await page.getByLabel("Name").fill(bankTitle);
-  await page.getByLabel("Exam").fill("JAMB");
-  await page.getByLabel("Subject").fill("Chemistry");
-  await page.getByRole("button", { name: "Create a bank", exact: true }).click();
+  await makeBank(page, bankTitle, "JAMB", "Chemistry");
 
   // Add a question
-  await page.getByRole("button", { name: "Add a question", exact: true }).click();
-  const field = (name: string) => page.getByRole("textbox", { name });
-  await field("Question").fill("What is the atomic number of carbon?");
-  await field("Correct answer").fill("6");
-  await field("Wrong answer 1").fill("12");
-  await field("Wrong answer 2").fill("14");
-  await field("Wrong answer 3").fill("8");
-  await field("Explanation").fill("Carbon has 6 protons in its nucleus.");
+  await page.getByRole("button", { name: "Add a question" }).click();
+  await field(page, "Question").fill("What is the atomic number of carbon?");
+  await field(page, "Correct answer").fill("6");
+  await field(page, "Wrong answer 1").fill("12");
+  await field(page, "Wrong answer 2").fill("14");
+  await field(page, "Wrong answer 3").fill("8");
+  await field(page, "Explanation").fill("Carbon has 6 protons in its nucleus.");
   await page.getByRole("button", { name: "Add question", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Questions (1)", level: 2 })).toBeVisible();
+  await expect(page.getByText("JAMB · Chemistry · 1 question")).toBeVisible();
 
   // Make it public
-  await page.getByRole("checkbox", { name: /Public bank/i }).check();
-  await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect(page.getByText("Bank saved")).toBeVisible();
+  await fromSheet(page, "Make public");
+  await expect(page.getByText("Anyone can find this bank now")).toBeVisible();
 
   // Switch to community tab to verify it appears
-  await page.getByRole("link", { name: /All banks/ }).click();
+  await page.getByRole("link", { name: "Banks", exact: true }).click();
   await page.getByRole("button", { name: "Community" }).click();
-  const communityRow = page.locator(".people li").filter({ hasText: bankTitle });
+  const communityRow = page.getByRole("link", { name: new RegExp(bankTitle) });
   await expect(communityRow).toBeVisible();
   await expect(communityRow).toContainText("by Ada");
 
@@ -167,31 +227,27 @@ test("publishes a bank to community, discovers it, and forks it", async ({ page,
     await signUp(secondPage, student, "Student Marie");
 
     await secondPage.goto("/banks?tab=community");
-    const studentRow = secondPage.locator(".people li").filter({ hasText: bankTitle });
+    const studentRow = secondPage.getByRole("link", { name: new RegExp(bankTitle) });
     await expect(studentRow).toBeVisible();
 
-    // Click on the bank to view community preview
-    await studentRow.getByRole("link").first().click();
-    await expect(
-      secondPage.getByText("Community question bank shared with all Whizard players"),
-    ).toBeVisible();
+    // The community preview: whose it is, its questions and their answers.
+    await studentRow.click();
+    await expect(secondPage.getByRole("heading", { name: bankTitle, level: 1 })).toBeVisible();
+    await expect(secondPage.getByText("by Ada · JAMB · Chemistry · 1 question")).toBeVisible();
     await expect(secondPage.getByText("What is the atomic number of carbon?")).toBeVisible();
-    await expect(secondPage.getByText("6", { exact: true })).toBeVisible();
+    await expect(secondPage.getByText("Right answer: 6", { exact: true })).toBeVisible();
+    await expect(secondPage.getByRole("button", { name: "More" })).toHaveCount(0);
 
-    // Click Clone to my collection
-    await secondPage
-      .getByRole("button", { name: /Clone to my collection/i })
-      .first()
-      .click();
+    await secondPage.getByRole("button", { name: "Copy to my banks" }).click();
     await expect(
-      secondPage.getByText(new RegExp(`Cloned "${bankTitle} \\(Copy\\)" to your collection!`, "i")),
+      secondPage.getByText(new RegExp(`Copied as “${bankTitle} \\(Copy\\)”`, "i")),
     ).toBeVisible();
     await expect(
       secondPage.getByRole("heading", { name: `${bankTitle} (Copy)`, level: 1 }),
     ).toBeVisible();
 
-    // The cloned bank is in the student's personal banks
-    await secondPage.getByRole("link", { name: /All banks/ }).click();
+    // The copy is in the student's own banks
+    await secondPage.getByRole("link", { name: "Banks", exact: true }).click();
     await expect(secondPage.getByText(`${bankTitle} (Copy)`)).toBeVisible();
   } finally {
     await secondContext.close();

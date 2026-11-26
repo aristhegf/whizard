@@ -1,9 +1,31 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
 
 test.describe.configure({ timeout: 90_000 });
 
-test("runs timed CBT exam simulation mode with delayed answer reveals, flagging, and comprehensive review", async ({
+/** Adds a question to a bank through the API, from the signed-in page. */
+async function seedQuestion(
+  page: Page,
+  bankId: string,
+  prompt: string,
+  choices: string[],
+  explanation: string,
+) {
+  const ok = await page.evaluate(
+    async ({ bankId, body }) =>
+      (
+        await fetch(`/api/banks/${bankId}/questions`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        })
+      ).ok,
+    { bankId, body: { prompt, choices, explanation, reference: null } },
+  );
+  expect(ok).toBe(true);
+}
+
+test("runs a timed exam: hidden answers, flagging, the question map, the result and its review", async ({
   page,
 }) => {
   await withPasskeys(page);
@@ -11,17 +33,17 @@ test("runs timed CBT exam simulation mode with delayed answer reveals, flagging,
   await signUp(page, username, "CBT Scholar");
 
   // 1. Create a question bank
-  await page.goto("/banks");
+  await page.goto("/banks?new=1");
   const uniqueBankTitle = `WAEC CBT Biology ${Math.random().toString(36).slice(2, 8)}`;
   await page.getByLabel("Name").fill(uniqueBankTitle);
   await page.getByLabel("Exam").fill("WAEC");
   await page.getByLabel("Subject").fill("Biology");
-  await page.getByRole("button", { name: "Create a bank", exact: true }).click();
+  await page.getByRole("button", { name: "Create bank", exact: true }).click();
   await expect(page.getByRole("heading", { name: uniqueBankTitle, level: 1 })).toBeVisible();
 
   // 2. Add two questions with explanations
-  await page.getByRole("button", { name: "Add a question", exact: true }).click();
-  const field = (name: string) => page.getByRole("textbox", { name });
+  const field = (name: string) => page.getByRole("textbox", { name, exact: true });
+  await page.getByRole("button", { name: "Add a question" }).click();
   await field("Question").fill("Which cell organelle is known as the powerhouse of the cell?");
   await field("Correct answer").fill("Mitochondria");
   await field("Wrong answer 1").fill("Ribosome");
@@ -32,10 +54,12 @@ test("runs timed CBT exam simulation mode with delayed answer reveals, flagging,
   );
   await page.getByRole("button", { name: "Add question", exact: true }).click();
   await expect(
-    page.getByText("Which cell organelle is known as the powerhouse of the cell?"),
+    page.getByRole("link", {
+      name: "Which cell organelle is known as the powerhouse of the cell?",
+    }),
   ).toBeVisible();
 
-  await page.getByRole("button", { name: "Add a question", exact: true }).click();
+  await page.getByRole("button", { name: "Add a question" }).click();
   await field("Question").fill(
     "What green pigment in plants absorbs light energy for photosynthesis?",
   );
@@ -48,88 +72,102 @@ test("runs timed CBT exam simulation mode with delayed answer reveals, flagging,
   );
   await page.getByRole("button", { name: "Add question", exact: true }).click();
   await expect(
-    page.getByText("What green pigment in plants absorbs light energy for photosynthesis?"),
+    page.getByRole("link", {
+      name: "What green pigment in plants absorbs light energy for photosynthesis?",
+    }),
   ).toBeVisible();
 
-  // 3. Launch Timed CBT Exam Simulation from bank detail page
-  const cbtBtn = page.getByRole("button", { name: /Timed CBT Exam/i });
-  await expect(cbtBtn).toBeVisible();
-  await cbtBtn.click();
+  // 3. The timed exam, from the bank
+  await page.getByRole("button", { name: "Timed exam" }).click();
+  await expect(page.getByRole("heading", { name: "Timed exam", level: 1 })).toBeVisible();
+  await expect(page.getByRole("button", { name: "All 2" })).toHaveAttribute("aria-pressed", "true");
 
-  // Setup phase
-  await expect(page.getByRole("heading", { name: uniqueBankTitle })).toBeVisible();
-  await expect(page.getByText("Timed CBT Simulation")).toBeVisible();
-  await expect(page.getByText("Experience real exam conditions")).toBeVisible();
+  // 4. Start it
+  await page.getByRole("button", { name: /^Start/ }).click();
+  await expect(page.getByRole("timer")).toBeVisible();
+  await expect(page.getByText("Question 1 of 2")).toBeVisible();
 
-  // Desktop viewport check & screenshot
+  // Pick an answer on question 1: it is chosen, and nothing says whether it's right.
+  const answers = page.getByRole("group", { name: "Answers" }).getByRole("button");
+  await answers.first().click();
+  await expect(answers.first()).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".exam-choice.right, .exam-choice.wrong")).toHaveCount(0);
+
+  // Flag it; the map shows it answered and flagged.
+  await page.getByRole("button", { name: "Flag", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Flagged", exact: true })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.getByRole("button", { name: /1 answered · 1 flagged/ }).click();
+  const map = page.getByRole("dialog");
+  await expect(map.getByRole("button", { name: "Question 1, answered, flagged" })).toBeVisible();
+
+  // Jump to question 2 from the map and answer it.
+  await map.getByRole("button", { name: "Question 2, not answered" }).click();
+  await expect(page.getByText("Question 2 of 2")).toBeVisible();
+  await answers.first().click();
+
+  // On a computer the map is a rail beside the question.
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.screenshot({ path: "test-results/cbt-exam-setup-desktop-1440x900.png" });
+  const rail = page.getByRole("complementary", { name: "All questions" });
+  await expect(rail.getByText("2 answered · 1 flagged")).toBeVisible();
+  await rail.getByRole("button", { name: /^Question 1,/ }).click();
+  await expect(page.getByText("Question 1 of 2")).toBeVisible();
+  await page.setViewportSize({ width: 412, height: 915 });
 
-  // 4. Start Exam
-  await page.getByRole("button", { name: /Start Exam Simulation/i }).click();
+  // Submit, after being sure.
+  await page.getByRole("button", { name: "Submit", exact: true }).click();
+  const confirm = page.getByRole("alertdialog");
+  await expect(confirm.getByRole("heading", { name: "Submit your exam?" })).toBeVisible();
+  await confirm.getByRole("button", { name: "Submit" }).click();
 
-  // Verify Active CBT Exam screen
-  await expect(page.locator(".cbt-header")).toBeVisible();
-  await expect(page.locator(".cbt-timer")).toBeVisible();
-  await expect(page.locator(".cbt-badge")).toHaveText("CBT Mode");
-  await expect(page.getByText(/Question 1 of 2/)).toBeVisible();
-
-  // Select an answer on question 1
-  const firstChoice = page.locator(".cbt-choice").first();
-  await firstChoice.click();
-  await expect(firstChoice).toHaveClass(/picked/);
-
-  // Verify NO immediate answer feedback (no green/red reveals)
-  await expect(page.locator(".choice.correct")).toHaveCount(0);
-  await expect(page.locator(".choice.wrong")).toHaveCount(0);
-
-  // Flag Question 1 for review
-  const flagBtn = page.locator(".cbt-flag-toggle");
-  await flagBtn.click();
-  await expect(flagBtn).toHaveClass(/flagged/);
-  await expect(page.locator(".palette-flag-dot")).toHaveCount(1);
-
-  // Take screenshot of active exam simulation on desktop and mobile
-  await page.screenshot({ path: "test-results/cbt-exam-active-desktop-1440x900.png" });
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.screenshot({ path: "test-results/cbt-exam-active-mobile-390x844.png" });
-  await page.setViewportSize({ width: 1440, height: 900 });
-
-  // Jump to Question 2 using palette
-  const q2PaletteBtn = page.locator(".cbt-palette-btn").nth(1);
-  await q2PaletteBtn.click();
-  await expect(page.getByText(/Question 2 of 2/)).toBeVisible();
-
-  // Answer question 2
-  await page.locator(".cbt-choice").first().click();
-
-  // Click Submit Exam
-  await page.getByRole("button", { name: "Submit Exam" }).click();
-
-  // Confirmation modal opens
-  await expect(page.getByRole("heading", { name: "Submit Exam Simulation?" })).toBeVisible();
+  // 5. The result and its review
   await expect(
-    page.locator(".cbt-modal-card").getByText("Answered", { exact: true }),
+    page.getByRole("heading", { name: /^Timed exam · done in/, level: 1 }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Yes, Submit Exam" }).click();
+  await expect(page.getByText(/^\d+%$/)).toBeVisible();
+  await expect(page.getByText(/^\d of 2$/)).toBeVisible();
+  await page.getByRole("button", { name: "All 2" }).click();
+  await expect(page.getByRole("heading", { name: "All answers", level: 2 })).toBeVisible();
+  await expect(page.locator(".exam-review-item")).toHaveCount(2);
+  await expect(
+    page.getByText(
+      "Chlorophyll is the green pigment in chloroplasts responsible for light absorption.",
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Flagged 1" })).toBeVisible();
+});
 
-  // 5. Results & Comprehensive Review
-  await expect(page.getByRole("heading", { name: "Exam Simulation Complete" })).toBeVisible();
-  await expect(page.locator(".cbt-score-card")).toBeVisible();
-  await expect(page.getByText("Question-by-Question Review & Explanations")).toBeVisible();
-  await expect(page.locator(".cbt-review-card")).toHaveCount(2);
+test("practises the questions missed in an exam until each is right", async ({ page }) => {
+  await withPasskeys(page);
+  await signUp(page, uniqueUsername());
+  await page.goto("/banks?new=1");
+  await page.getByLabel("Name").fill("Missed practice");
+  await page.getByRole("button", { name: "Create bank", exact: true }).click();
+  await expect(page).toHaveURL(/\/banks\/b_[A-Za-z0-9_-]+$/);
+  const id = /\/banks\/(b_[A-Za-z0-9_-]+)/.exec(page.url())![1]!;
+  await seedQuestion(
+    page,
+    id,
+    "Which is the largest planet?",
+    ["Jupiter", "Mars", "Venus", "Mercury"],
+    "Jupiter is more than twice the mass of the other planets together.",
+  );
 
-  // Explanation and source are present in review
-  await expect(page.locator(".cbt-review-explanation").first()).toBeVisible();
+  await page.goto(`/banks/${id}/exam`);
+  await page.getByRole("button", { name: /^Start/ }).click();
+  // Skip it, then submit: a skipped question counts as missed.
+  await page.getByRole("button", { name: "Finish" }).click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Submit" }).click();
+  await expect(page.getByText("0%")).toBeVisible();
 
-  // Screenshot Desktop Results
-  await page.screenshot({ path: "test-results/cbt-exam-results-desktop-1440x900.png" });
-
-  // Screenshot Mobile (390x844)
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.screenshot({ path: "test-results/cbt-exam-results-mobile-390x844.png" });
-
-  // Screenshot Short Mobile (375x667)
-  await page.setViewportSize({ width: 375, height: 667 });
-  await page.screenshot({ path: "test-results/cbt-exam-results-short-375x667.png" });
+  await page.getByRole("button", { name: "Practise the 1 you missed" }).click();
+  await expect(page.getByRole("heading", { name: "Which is the largest planet?" })).toBeVisible();
+  await page.getByRole("button", { name: "Jupiter" }).click();
+  await expect(page.getByText("Right", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Next" }).click();
+  await expect(page.getByRole("heading", { name: "All 1 mistake fixed" })).toBeVisible();
+  await page.getByRole("button", { name: "Back to results" }).click();
+  await expect(page.getByText("0%")).toBeVisible();
 });

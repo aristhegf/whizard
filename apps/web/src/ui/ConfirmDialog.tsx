@@ -13,6 +13,8 @@ export interface Confirmation {
    * ending a game for everyone where everyone else is only offered quitting alone.
    */
   alt?: { label: string; run: () => void };
+  /** Red for what can't be taken back, gold for the main thing on a study page. */
+  tone?: "danger" | "gold";
   run: () => void;
 }
 
@@ -48,6 +50,7 @@ function ConfirmDialog({ ask, onClose }: { ask: Confirmation; onClose: () => voi
       title={ask.title}
       description={ask.text ?? ""}
       confirmLabel={ask.yes}
+      tone={ask.tone}
       altLabel={ask.alt?.label}
       onAlt={ask.alt ? () => ask.alt!.run() : undefined}
       onConfirm={ask.run}

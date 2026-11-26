@@ -8,6 +8,7 @@ import {
   type AccountUser,
   type BankImportRow,
   type PlayerBank,
+  type PlayerBankDetail,
   type PlayerBankImport,
   type PlayerBankQuestion,
 } from "@whizard/protocol";
@@ -17,7 +18,9 @@ import {
   useRef,
   useState,
   type ChangeEvent,
+  type DragEvent,
   type FormEvent,
+  type MouseEvent,
   type ReactNode,
 } from "react";
 import { ApiError, useAccount } from "./account";
@@ -45,275 +48,99 @@ import {
   updateBank,
   type QuestionForm,
 } from "./banks";
-import { linkTo, navigate, roomPath } from "./router";
+import { linkTo, navigate, roomPath, useSearchParam } from "./router";
 import { createGroupAssignment, fetchGroups } from "./social";
 import { getBankMistakes } from "./storage";
 import { CbtExamScreen } from "./games/quiz/CbtExamScreen";
+import { BottomSheet } from "./ui/BottomSheet";
 import { TopLayout } from "./ui/Chrome";
 import { errorText, useAction, useLoaded } from "./ui/common";
 import { useConfirm } from "./ui/ConfirmDialog";
 import { Loading } from "./ui/Loading";
 import { Icon } from "./ui/Icon";
-import { Avatar } from "./ui/Avatar";
+import {
+  AssignFields,
+  Answer,
+  BackLink,
+  ErrorLine,
+  Field,
+  dotted,
+  plural,
+  roomCount,
+} from "./ui/Study";
 import { parseDocxFile, parseDocumentToCsv } from "./documentImport";
 import { useToast, useToastAction } from "./ui/toast";
 
-function ErrorLine({ error }: { error: string | null }) {
-  return error ? (
-    <p className="error small" role="alert">
-      {error}
-    </p>
-  ) : null;
-}
+const bankPath = (id: string) => `/banks/${encodeURIComponent(id)}`;
 
-/** A labelled form field, as the admin question form has it. */
-function Field({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
-  return (
-    <label className="form-field">
-      <span className="form-label">{label}</span>
-      {children}
-      {hint && <span className="form-hint">{hint}</span>}
-    </label>
+const EXAM_PRESETS = ["JAMB", "WAEC", "NECO", "GMAT", "ICAN"] as const;
+
+/** "by Ada", for a bank someone else made. */
+const ownerName = (bank: PlayerBank) =>
+  bank.ownerDisplayName || (bank.ownerUsername ? `@${bank.ownerUsername}` : "its creator");
+
+/** One bank in a list: its name, its labels under it, its question count on the right. */
+function BankRow({ bank, community = false }: { bank: PlayerBank; community?: boolean }) {
+  const mistakes = community ? 0 : getBankMistakes(bank.id).length;
+  const sub = dotted(
+    community && `by ${ownerName(bank)}`,
+    bank.exam,
+    bank.subject,
+    !community && bank.isPublic && "Public",
+    mistakes > 0 && `${mistakes} to review`,
   );
-}
-
-/** One bank as the list shows it: its name, labels and question count. */
-function BankRow({ bank }: { bank: PlayerBank }) {
-  const labels = [bank.exam, bank.subject].filter(Boolean).join(" · ");
-  const mistakes = getBankMistakes(bank.id);
   return (
     <li>
-      <a className="person bank-link" {...linkTo(`/banks/${encodeURIComponent(bank.id)}`)}>
-        <span className="person-name">
-          {bank.name}
-          {bank.isPublic && <span className="bank-badge ready">Public</span>}
+      <a className="s-row" {...linkTo(bankPath(bank.id))}>
+        <span className="s-row-main">
+          <span className="s-row-name">{bank.name}</span>
+          {sub && <span className="s-row-sub">{sub}</span>}
         </span>
-        <span className="muted small">
-          {labels && `${labels} · `}
-          {bank.questionCount} {bank.questionCount === 1 ? "question" : "questions"}
-          {mistakes.length > 0 && ` · ⚠️ ${mistakes.length} to review`}
+        <span className="s-row-count">
+          {bank.questionCount}
+          <span className="sr-only"> {bank.questionCount === 1 ? "question" : "questions"}</span>
         </span>
       </a>
     </li>
   );
 }
 
-const EXAM_PRESETS = ["JAMB", "WAEC", "NECO", "GMAT", "ICAN"] as const;
-
-function CommunityBankRow({
-  bank,
-  onFork,
-  busyFork,
-}: {
-  bank: PlayerBank;
-  onFork: () => void;
-  busyFork: boolean;
-}) {
-  const labels = [bank.exam, bank.subject].filter(Boolean).join(" · ");
-  const owner =
-    bank.ownerDisplayName || (bank.ownerUsername ? `@${bank.ownerUsername}` : "Creator");
-
-  return (
-    <li>
-      <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, minWidth: 0 }}>
-        <Avatar
-          id={bank.ownerAvatar}
-          name={bank.ownerDisplayName || bank.ownerUsername || "Owner"}
-          size={38}
-        />
-        <a
-          className="person bank-link"
-          style={{ flex: 1, minWidth: 0 }}
-          {...linkTo(`/banks/${encodeURIComponent(bank.id)}`)}
-        >
-          <span className="person-name">{bank.name}</span>
-          <span className="muted small">
-            by {owner} · {bank.questionCount} {bank.questionCount === 1 ? "question" : "questions"}
-            {labels && ` · ${labels}`}
-          </span>
-        </a>
-      </div>
-      <div className="row-actions">
-        <button
-          type="button"
-          className="btn btn-small"
-          disabled={busyFork}
-          onClick={(e) => {
-            e.preventDefault();
-            onFork();
-          }}
-          title="Clone to your collection"
-        >
-          <Icon name="copy" /> {busyFork ? "Cloning…" : "Clone"}
-        </button>
-        <a
-          className="btn btn-small btn-primary"
-          {...linkTo(`/banks/${encodeURIComponent(bank.id)}`)}
-          title="Practice with this bank"
-        >
-          <Icon name="play" />
-        </a>
-      </div>
-    </li>
-  );
-}
-
-function CommunityBanksList({ accountUser }: { accountUser: AccountUser | null }) {
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [exam, setExam] = useState("");
-  const [busyForkId, setBusyForkId] = useState<string | null>(null);
-  const toast = useToast();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 250);
-    return () => clearTimeout(timer);
-  }, [search]);
-
-  const load = useCallback(
-    () =>
-      fetchPublicBanks({
-        search: debouncedSearch.trim() || undefined,
-        exam: exam || undefined,
-      }),
-    [debouncedSearch, exam],
-  );
-
-  const publicBanks = useLoaded(load);
-  const banks = publicBanks.data;
-  const loading = banks === null && !publicBanks.error;
-
-  const handleFork = async (bank: PlayerBank) => {
-    if (!accountUser) {
-      navigate(`/account?next=${encodeURIComponent("/banks?tab=community")}`);
-      return;
-    }
-    if (busyForkId) return;
-    setBusyForkId(bank.id);
-    try {
-      const forked = await forkBank(bank.id);
-      toast.show({
-        title: `Cloned "${forked.name}" to your collection!`,
-        status: "success",
-      });
-      navigate(`/banks/${encodeURIComponent(forked.id)}`);
-    } catch (e) {
-      setBusyForkId(null);
-      toast.show({ title: errorText(e), status: "error" });
-    }
-  };
-
-  return (
-    <section className="stack" aria-label="Community question banks">
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div style={{ position: "relative" }}>
-          <input
-            style={{ width: "100%", paddingLeft: 38 }}
-            placeholder="Search community banks by title, exam, or subject…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <div
-            style={{
-              position: "absolute",
-              left: 12,
-              top: "50%",
-              transform: "translateY(-50%)",
-              color: "var(--muted)",
-              pointerEvents: "none",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Icon name="search" />
-          </div>
-        </div>
-
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
-          <span className="small muted">Exam:</span>
-          <button
-            type="button"
-            className={`btn btn-small ${!exam ? "btn-primary" : ""}`}
-            style={{ padding: "4px 10px", fontSize: "0.8rem", minHeight: 28 }}
-            onClick={() => setExam("")}
-          >
-            All
-          </button>
-          {EXAM_PRESETS.map((preset) => (
-            <button
-              key={preset}
-              type="button"
-              className={`btn btn-small ${exam === preset ? "btn-primary" : ""}`}
-              style={{ padding: "4px 10px", fontSize: "0.8rem", minHeight: 28 }}
-              onClick={() => setExam(exam === preset ? "" : preset)}
-            >
-              {preset}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <ErrorLine error={publicBanks.error} />
-
-      {loading ? (
-        <Loading />
-      ) : banks && banks.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "32px 16px" }}>
-          <p className="muted">
-            {search || exam
-              ? "No community question banks found matching your search."
-              : 'No public question banks published yet. Be the first to share one by checking "Public bank" in your bank details!'}
-          </p>
-        </div>
-      ) : (
-        <ul className="people">
-          {banks?.map((bank) => (
-            <CommunityBankRow
-              key={bank.id}
-              bank={bank}
-              onFork={() => void handleFork(bank)}
-              busyFork={busyForkId === bank.id}
-            />
-          ))}
-        </ul>
-      )}
-    </section>
-  );
-}
-
 // The list ----------------------------------------------------------------------------------------
 
-/** `/banks`: personal question banks, plus discovery of community banks. */
+/** `/banks`: your question banks, and the community's. `?new=1` makes a new one. */
 export function BanksScreen() {
   const account = useAccount();
-  const [tab, setTab] = useState<"mine" | "community">(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("tab") === "community") return "community";
-    }
-    return "mine";
-  });
+  const making = useSearchParam("new") === "1";
+  const importAfter = useSearchParam("import") === "1";
+  const [tab, setTab] = useState<"mine" | "community">(() =>
+    new URLSearchParams(location.search).get("tab") === "community" ? "community" : "mine",
+  );
+  const user = account.status === "ready" ? account.user : null;
+
+  if (making && user) {
+    return (
+      <TopLayout active={null} className="study-page" column>
+        <NewBank importAfter={importAfter} />
+      </TopLayout>
+    );
+  }
 
   return (
-    <TopLayout active={null} className="account-page" column>
-      <div className="screen">
-        <header>
-          <h1 className="page-title">Question banks</h1>
-          <p className="page-sub">
-            Create your own study banks, or explore and clone public community banks.
-          </p>
-        </header>
+    <TopLayout active={null} className="study-page" column>
+      <div className="study">
+        <div className="study-head">
+          <h1 className="study-title">Question banks</h1>
+          {user && (
+            <a className="s-btn gold" {...linkTo("/banks?new=1")}>
+              <Icon name="plus" size={18} stroke={2.4} />
+              New bank
+            </a>
+          )}
+        </div>
 
-        <div
-          className="segmented"
-          role="group"
-          aria-label="Question bank view"
-          style={{ margin: "16px 0 24px" }}
-        >
+        <div className="s-seg" role="group" aria-label="Which banks">
           <button type="button" aria-pressed={tab === "mine"} onClick={() => setTab("mine")}>
-            My banks
+            Mine
           </button>
           <button
             type="button"
@@ -324,44 +151,128 @@ export function BanksScreen() {
           </button>
         </div>
 
-        {tab === "mine" ? (
-          account.status === "loading" ? (
-            <Loading />
-          ) : account.user ? (
-            <BankList />
-          ) : (
-            <div className="stack" style={{ textAlign: "center", padding: "32px 16px" }}>
-              <h2 className="section-title">Build your own banks</h2>
-              <p className="muted" style={{ maxWidth: 440, margin: "0 auto 16px" }}>
-                Sign in with a fast passkey to build, import, and manage your personal question
-                banks for solo practice and multiplayer rooms.
-              </p>
-              <a
-                className="btn btn-primary"
-                style={{ margin: "0 auto" }}
-                {...linkTo("/account?next=/banks")}
-              >
-                Sign in or create an account
-              </a>
-            </div>
-          )
+        {tab === "community" ? (
+          <CommunityBanks />
+        ) : account.status === "loading" ? (
+          <Loading />
+        ) : user ? (
+          <MyBanks />
         ) : (
-          <CommunityBanksList accountUser={account.status === "ready" ? account.user : null} />
+          <>
+            <p className="study-note">Sign in to make banks of your own.</p>
+            <a className="s-btn gold big block" {...linkTo("/account?next=/banks")}>
+              Sign in or create an account
+            </a>
+          </>
         )}
       </div>
     </TopLayout>
   );
 }
 
-function BankList() {
+function MyBanks() {
   const banks = useLoaded(fetchBanks);
+  return (
+    <>
+      <ErrorLine error={banks.error} />
+      {banks.data === null ? (
+        banks.error ? null : (
+          <Loading />
+        )
+      ) : banks.data.length === 0 ? (
+        <p className="s-empty">No banks yet.</p>
+      ) : (
+        <ul className="s-list" aria-label="Your banks">
+          {banks.data.map((bank) => (
+            <BankRow key={bank.id} bank={bank} />
+          ))}
+        </ul>
+      )}
+      <div className="s-actions">
+        <a className="s-link" {...linkTo("/banks?new=1&import=1")}>
+          <Icon name="upload" size={18} />
+          Import a Word, CSV or text file
+        </a>
+        {banks.data && banks.data.length > 0 && (
+          <a className="s-link" href={allBanksExportHref} download>
+            Export all as CSV
+          </a>
+        )}
+      </div>
+    </>
+  );
+}
+
+function CommunityBanks() {
+  const [search, setSearch] = useState("");
+  const [debounced, setDebounced] = useState("");
+  const [exam, setExam] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(search), 250);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const load = useCallback(
+    () => fetchPublicBanks({ search: debounced.trim() || undefined, exam: exam || undefined }),
+    [debounced, exam],
+  );
+  const banks = useLoaded(load);
+
+  return (
+    <>
+      <label className="s-search">
+        <span className="sr-only">Search community banks</span>
+        <Icon name="search" size={18} />
+        <input
+          type="search"
+          placeholder="Search by name, exam or subject"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+      </label>
+      <div className="s-chips" role="group" aria-label="Exam">
+        {["", ...EXAM_PRESETS].map((preset) => (
+          <button
+            key={preset || "all"}
+            type="button"
+            className="s-chip"
+            aria-pressed={exam === preset}
+            onClick={() => setExam(preset)}
+          >
+            {preset || "All"}
+          </button>
+        ))}
+      </div>
+      <ErrorLine error={banks.error} />
+      {banks.data === null ? (
+        banks.error ? null : (
+          <Loading />
+        )
+      ) : banks.data.length === 0 ? (
+        <p className="s-empty">
+          {search || exam ? "No public banks match." : "No public banks yet."}
+        </p>
+      ) : (
+        <ul className="s-list" aria-label="Community banks">
+          {banks.data.map((bank) => (
+            <BankRow key={bank.id} bank={bank} community />
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
+
+/** `/banks?new=1`: a name and two labels, then the bank (or its import, from the import link). */
+function NewBank({ importAfter }: { importAfter: boolean }) {
   const [name, setName] = useState("");
   const [exam, setExam] = useState("");
   const [subject, setSubject] = useState("");
-  const [createError, setCreateError] = useState<string | null>(null);
-  const create = useAction(setCreateError);
+  const [error, setError] = useState<string | null>(null);
+  const create = useAction(setError);
 
-  const handleCreate = (event: FormEvent) => {
+  const submit = (event: FormEvent) => {
     event.preventDefault();
     const trimmed = name.trim();
     if (!trimmed || create.busy) return;
@@ -371,293 +282,307 @@ function BankList() {
         exam: exam.trim() || null,
         subject: subject.trim() || null,
       });
-      navigate(`/banks/${encodeURIComponent(bank.id)}`);
+      navigate(`${bankPath(bank.id)}${importAfter ? "?view=import" : ""}`, { replace: true });
     });
   };
 
   return (
-    <>
-      <section className="stack" aria-label="New bank">
-        <h2 className="section-title">Start a bank</h2>
-        <form className="question-form" onSubmit={handleCreate}>
-          <Field label="Name" hint="What are these questions for?">
+    <div className="study">
+      <div className="study-top">
+        <BackLink to="/banks">Banks</BackLink>
+      </div>
+      <h1 className="study-title">{importAfter ? "Import into a new bank" : "New bank"}</h1>
+      <form className="s-form" onSubmit={submit}>
+        <Field label="Name">
+          <input
+            autoFocus
+            required
+            placeholder="e.g. Biology jumpstart"
+            maxLength={BANK_NAME_MAX}
+            value={name}
+            onChange={(event) => {
+              setName(event.target.value);
+              setError(null);
+            }}
+          />
+        </Field>
+        <div className="s-pair">
+          <Field label="Exam">
             <input
-              autoFocus
-              placeholder="e.g. Biology jumpstart"
-              maxLength={BANK_NAME_MAX}
-              value={name}
-              onChange={(event) => {
-                setName(event.target.value);
-                setCreateError(null);
-              }}
+              placeholder="e.g. WAEC"
+              maxLength={BANK_LABEL_MAX}
+              value={exam}
+              onChange={(event) => setExam(event.target.value)}
             />
           </Field>
-          <div className="form-row two">
-            <Field label="Exam" hint="Optional">
-              <input
-                placeholder="e.g. WAEC"
-                maxLength={BANK_LABEL_MAX}
-                value={exam}
-                onChange={(event) => setExam(event.target.value)}
-              />
-            </Field>
-            <Field label="Subject" hint="Optional">
-              <input
-                placeholder="e.g. Biology"
-                maxLength={BANK_LABEL_MAX}
-                value={subject}
-                onChange={(event) => setSubject(event.target.value)}
-              />
-            </Field>
-          </div>
-          <ErrorLine error={createError} />
-          <button className="btn btn-primary" type="submit" disabled={create.busy || !name.trim()}>
-            {create.busy ? "Creating…" : "Create a bank"}
-          </button>
-        </form>
-      </section>
-
-      <ErrorLine error={banks.error} />
-
-      <section className="stack" aria-labelledby="your-banks-title">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h2 id="your-banks-title" className="section-title">
-            Your banks
-          </h2>
-          {banks.data && banks.data.length > 0 && (
-            <a className="btn btn-small" href={allBanksExportHref} download>
-              Export all banks
-            </a>
-          )}
+          <Field label="Subject">
+            <input
+              placeholder="e.g. Biology"
+              maxLength={BANK_LABEL_MAX}
+              value={subject}
+              onChange={(event) => setSubject(event.target.value)}
+            />
+          </Field>
         </div>
-        {banks.data === null ? (
-          banks.error ? null : (
-            <Loading />
-          )
-        ) : banks.data.length === 0 ? (
-          <p className="muted">No banks yet. Make one above.</p>
-        ) : (
-          <ul className="people">
-            {banks.data.map((bank) => (
-              <BankRow key={bank.id} bank={bank} />
-            ))}
-          </ul>
-        )}
-      </section>
-    </>
+        <ErrorLine error={error} />
+        <button
+          className="s-btn gold big block"
+          type="submit"
+          disabled={create.busy || !name.trim()}
+        >
+          {create.busy ? "Creating…" : importAfter ? "Create and import" : "Create bank"}
+        </button>
+      </form>
+    </div>
   );
 }
 
 // The bank ----------------------------------------------------------------------------------------
 
-/** `/banks/:id`: one bank, its questions, and the forms that change them. */
+/**
+ * `/banks/:id`: one bank. Its own focused views sit on the same address: `?q=new` or `?q=<id>`
+ * edits a question, `?view=details` the bank's name and labels, `?view=import` brings a file in
+ * and `?view=assign` sets it for a study group.
+ */
 export function BankScreen({ id }: { id: string }) {
   const account = useAccount();
-  if (account.status === "loading") {
-    return (
-      <TopLayout active={null} className="account-page" column>
-        <Loading />
-      </TopLayout>
-    );
-  }
   return (
-    <TopLayout active={null} className="account-page" column>
-      <BankDetail id={id} accountUser={account.user} />
+    <TopLayout active={null} className="study-page" column>
+      {account.status === "loading" ? (
+        <Loading />
+      ) : (
+        <BankDetail id={id} accountUser={account.user} />
+      )}
     </TopLayout>
   );
 }
 
-/** `/banks/:id/exam`: timed exam simulation mode (CBT practice) for a question bank. */
+/** `/banks/:id/exam`: the timed exam (CBT practice) for a bank. */
 export function BankExamScreen({ id }: { id: string }) {
   const load = useCallback(() => fetchBank(id), [id]);
   const bank = useLoaded(load);
 
-  if (bank.error) {
-    return (
-      <TopLayout active={null} className="account-page" column>
-        <div className="screen">
-          <a className="btn-link" {...linkTo(`/banks/${encodeURIComponent(id)}`)}>
-            ← Back to bank
-          </a>
-          <h1 className="page-title">Exam simulation</h1>
-          <p className="page-sub">Could not load this question bank for exam simulation.</p>
-          <ErrorLine error={bank.error} />
-        </div>
-      </TopLayout>
-    );
-  }
-
   if (!bank.data) {
     return (
-      <TopLayout active={null} className="account-page" column>
-        <Loading />
+      <TopLayout active={null} className="study-page" column>
+        {bank.error ? (
+          <div className="study">
+            <div className="study-top">
+              <BackLink to={bankPath(id)}>Bank</BackLink>
+            </div>
+            <h1 className="study-title">Timed exam</h1>
+            <ErrorLine error={bank.error} />
+          </div>
+        ) : (
+          <Loading />
+        )}
       </TopLayout>
     );
   }
 
-  return (
-    <CbtExamScreen bank={bank.data} onExit={() => navigate(`/banks/${encodeURIComponent(id)}`)} />
-  );
+  return <CbtExamScreen bank={bank.data} onExit={() => navigate(bankPath(id))} />;
 }
+
+/**
+ * Set when the bank opens one of its own views, so leaving the view can step back through the
+ * browser's history rather than piling up a second copy of the bank behind it.
+ */
+let openedFromBank = false;
 
 function BankDetail({ id, accountUser }: { id: string; accountUser: AccountUser | null }) {
   const load = useCallback(() => fetchBank(id), [id]);
   const bank = useLoaded(load);
+  const q = useSearchParam("q");
+  const view = useSearchParam("view");
+
+  const open = (search: string) => {
+    openedFromBank = true;
+    navigate(`${bankPath(id)}${search}`);
+  };
+  const leave = () => {
+    bank.reload();
+    if (openedFromBank) {
+      openedFromBank = false;
+      history.back();
+    } else {
+      navigate(bankPath(id), { replace: true });
+    }
+  };
+
+  const detail = bank.data;
+
+  if (!detail) {
+    if (!bank.error) return <Loading />;
+    return (
+      <div className="study">
+        <div className="study-top">
+          <BackLink to="/banks">Banks</BackLink>
+        </div>
+        <h1 className="study-title">Question bank</h1>
+        {accountUser ? (
+          <ErrorLine error={bank.error} />
+        ) : (
+          <>
+            <p className="study-note">This bank is private. Sign in if it’s yours.</p>
+            <a
+              className="s-btn gold big block"
+              {...linkTo(`/account?next=${encodeURIComponent(bankPath(id))}`)}
+            >
+              Sign in or create an account
+            </a>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  const isOwner = detail.isOwner !== false;
+  const back = (
+    <div className="study-top">
+      <a
+        className="s-back"
+        href={bankPath(id)}
+        onClick={(event: MouseEvent) => {
+          event.preventDefault();
+          leave();
+        }}
+      >
+        <Icon name="chevronLeft" size={20} stroke={2.2} />
+        {detail.name}
+      </a>
+    </div>
+  );
+
+  if (isOwner && q) {
+    return <QuestionView bank={detail} questionId={q} back={back} onLeave={leave} />;
+  }
+  if (isOwner && view === "details") {
+    return <DetailsView bank={detail} back={back} onLeave={leave} />;
+  }
+  if (isOwner && view === "import") {
+    return (
+      <div className="study">
+        {back}
+        <ImportHeading />
+        <ImportPanel bankId={id} onDone={leave} />
+      </div>
+    );
+  }
+  if (accountUser && view === "assign") {
+    return <AssignView bank={detail} back={back} onLeave={leave} />;
+  }
+  return (
+    <BankHome
+      bank={detail}
+      isOwner={isOwner}
+      signedIn={Boolean(accountUser)}
+      onOpen={open}
+      onChanged={() => bank.reload()}
+    />
+  );
+}
+
+function BankHome({
+  bank,
+  isOwner,
+  signedIn,
+  onOpen,
+  onChanged,
+}: {
+  bank: PlayerBankDetail;
+  isOwner: boolean;
+  signedIn: boolean;
+  onOpen: (search: string) => void;
+  onChanged: () => void;
+}) {
+  const id = bank.id;
   const toast = useToast();
   const action = useToastAction();
   const ask = useConfirm();
-
-  // The details form starts from the bank as it loads, then follows the person's typing.
-  const loaded = bank.data;
-  const [name, setName] = useState(loaded?.name ?? "");
-  const [exam, setExam] = useState(loaded?.exam ?? "");
-  const [subject, setSubject] = useState(loaded?.subject ?? "");
-  const [isPublic, setIsPublic] = useState(loaded?.isPublic ?? false);
-  const [seeded, setSeeded] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const save = useAction(setSaveError);
-  const [adding, setAdding] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [importOpen, setImportOpen] = useState(false);
+  const [practising, setPractising] = useState(false);
+  const [forking, setForking] = useState(false);
+  const [sheet, setSheet] = useState(false);
+  /** What to do once the sheet has slid away, so a dialog never opens under it. */
+  const afterSheet = useRef<(() => void) | null>(null);
+  const [selecting, setSelecting] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
   const [duplicates, setDuplicates] = useState<
     { questionId: string; prompt: string; otherBankId: string; otherBankName: string }[]
   >([]);
-  const [selectedQIds, setSelectedQIds] = useState<Set<string>>(new Set());
-  const [bulkBusy, setBulkBusy] = useState(false);
-  const [practicing, setPracticing] = useState(false);
-  const [forking, setForking] = useState(false);
 
-  const handlePractice = async () => {
-    if (!loaded || loaded.questionCount === 0 || practicing) return;
-    setPracticing(true);
+  useEffect(() => {
+    let live = true;
+    if (isOwner) {
+      fetchBankDuplicates(id).then(
+        (found) => live && setDuplicates(found),
+        () => {},
+      );
+    }
+    return () => {
+      live = false;
+    };
+  }, [id, isOwner, bank]);
+
+  const count = bank.questions.length;
+  const mistakes = getBankMistakes(id).length;
+
+  // Solo practice and playing with friends both open a quiz room from the bank: alone, you play
+  // solo from its lobby; with friends, you share its code.
+  const practise = async () => {
+    if (count === 0 || practising) return;
+    setPractising(true);
     try {
-      const count =
-        loaded.questionCount >= 20
-          ? 20
-          : loaded.questionCount >= 15
-            ? 15
-            : loaded.questionCount >= 10
-              ? 10
-              : 5;
       const code = await createRoom(
         {
           bankId: id,
-          bankName: loaded.name,
+          bankName: bank.name,
           category: "general-knowledge",
           difficulty: "easy",
-          count,
+          count: roomCount(bank.questionCount),
         },
         "quiz",
       );
       navigate(roomPath(code));
     } catch (e) {
-      setPracticing(false);
+      setPractising(false);
       toast.show({ title: errorText(e), status: "error" });
     }
   };
 
-  const handleFork = async () => {
-    if (!accountUser) {
-      navigate(`/account?next=${encodeURIComponent(`/banks/${encodeURIComponent(id)}`)}`);
+  const fork = async () => {
+    if (!signedIn) {
+      navigate(`/account?next=${encodeURIComponent(bankPath(id))}`);
       return;
     }
     if (forking) return;
     setForking(true);
     try {
       const forked = await forkBank(id);
-      toast.show({
-        title: `Cloned "${forked.name}" to your collection!`,
-        status: "success",
-      });
-      navigate(`/banks/${encodeURIComponent(forked.id)}`);
+      toast.show({ title: `Copied as “${forked.name}”`, status: "success" });
+      navigate(bankPath(forked.id));
     } catch (e) {
       setForking(false);
       toast.show({ title: errorText(e), status: "error" });
     }
   };
 
-  const [showAssignModal, setShowAssignModal] = useState(false);
-  const [assignGroupId, setAssignGroupId] = useState("");
-  const [assignTargetScore, setAssignTargetScore] = useState("");
-  const [assignDueDate, setAssignDueDate] = useState("");
-  const [assignNotes, setAssignNotes] = useState("");
-  const [assigning, setAssigning] = useState(false);
-  const myGroups = useLoaded(fetchGroups);
-
-  const handleAssignToGroup = async (event: FormEvent) => {
-    event.preventDefault();
-    if (!assignGroupId) {
-      toast.show({ title: "Please select a group.", status: "error" });
-      return;
-    }
-    setAssigning(true);
-    try {
-      const parsedTarget = assignTargetScore ? parseInt(assignTargetScore, 10) : null;
-      const parsedDue = assignDueDate ? new Date(`${assignDueDate}T23:59:59`).getTime() : null;
-      await createGroupAssignment(assignGroupId, {
-        bankId: id,
-        targetScore: parsedTarget && !isNaN(parsedTarget) ? parsedTarget : null,
-        dueAt: parsedDue && !isNaN(parsedDue) ? parsedDue : null,
-        notes: assignNotes.trim() || null,
+  const togglePublic = () =>
+    void action.run(async () => {
+      await updateBank(id, { isPublic: !bank.isPublic });
+      toast.show({
+        title: bank.isPublic ? "Only you can see this bank now" : "Anyone can find this bank now",
+        status: "success",
       });
-      setShowAssignModal(false);
-      setAssigning(false);
-      setAssignGroupId("");
-      setAssignTargetScore("");
-      setAssignDueDate("");
-      setAssignNotes("");
-      toast.show({ title: "Assigned bank to group!", status: "success" });
-    } catch (e) {
-      setAssigning(false);
-      toast.show({ title: errorText(e), status: "error" });
-    }
-  };
-
-  if (loaded && !seeded) {
-    setName(loaded.name);
-    setExam(loaded.exam ?? "");
-    setSubject(loaded.subject ?? "");
-    setIsPublic(loaded.isPublic ?? false);
-    setSeeded(true);
-  }
-
-  const reload = () => bank.reload();
-
-  useEffect(() => {
-    let live = true;
-    if (loaded && loaded.isOwner !== false) {
-      fetchBankDuplicates(id)
-        .then((found) => {
-          if (live) setDuplicates(found);
-        })
-        .catch(() => {});
-    }
-    return () => {
-      live = false;
-    };
-  }, [id, loaded]);
-
-  const handleSave = (event: FormEvent) => {
-    event.preventDefault();
-    const trimmed = name.trim();
-    if (!trimmed || save.busy) return;
-    void save.run(async () => {
-      await updateBank(id, {
-        name: trimmed,
-        exam: exam.trim() || null,
-        subject: subject.trim() || null,
-        isPublic,
-      });
-      toast.show({ title: "Bank saved", status: "success" });
-      reload();
+      onChanged();
     });
-  };
 
-  const confirmDeleteBank = () => {
+  const confirmDeleteBank = () =>
     ask({
       title: "Delete this bank?",
       text: "Its questions go too. This can’t be undone.",
       yes: "Delete bank",
+      tone: "danger",
       run: () => {
         void action.run(async () => {
           await deleteBank(id);
@@ -665,62 +590,24 @@ function BankDetail({ id, accountUser }: { id: string; accountUser: AccountUser 
         });
       },
     });
-  };
-
-  const handleAdd = (input: QuestionForm) =>
-    addQuestion(id, input).then(() => {
-      setAdding(false);
-      reload();
-    });
-
-  const handleEdit = (questionId: string, input: QuestionForm) =>
-    editQuestion(id, questionId, input).then(() => {
-      setEditingId(null);
-      reload();
-    });
-
-  const confirmDeleteQuestion = (question: PlayerBankQuestion) => {
-    ask({
-      title: "Delete this question?",
-      text: question.prompt,
-      yes: "Delete question",
-      run: () => {
-        void action.run(() => deleteQuestion(id, question.id).then(reload));
-      },
-    });
-  };
-
-  const toggleSelectAll = (checked: boolean) => {
-    if (checked && loaded) {
-      setSelectedQIds(new Set(loaded.questions.map((q) => q.id)));
-    } else {
-      setSelectedQIds(new Set());
-    }
-  };
-
-  const toggleSelectQ = (questionId: string, checked: boolean) => {
-    setSelectedQIds((prev) => {
-      const next = new Set(prev);
-      if (checked) next.add(questionId);
-      else next.delete(questionId);
-      return next;
-    });
-  };
 
   const confirmBulkDelete = () => {
-    if (selectedQIds.size === 0) return;
+    if (selected.size === 0) return;
+    const n = plural(selected.size, "question");
     ask({
-      title: `Delete ${selectedQIds.size} ${selectedQIds.size === 1 ? "question" : "questions"}?`,
-      text: "These questions will be permanently removed from this bank.",
-      yes: `Delete ${selectedQIds.size} questions`,
+      title: `Delete ${n}?`,
+      text: "They’re gone for good.",
+      yes: `Delete ${n}`,
+      tone: "danger",
       run: () => {
         setBulkBusy(true);
-        bulkDeleteQuestions(id, [...selectedQIds]).then(
+        bulkDeleteQuestions(id, [...selected]).then(
           () => {
-            setSelectedQIds(new Set());
+            setSelected(new Set());
+            setSelecting(false);
             setBulkBusy(false);
             toast.show({ title: "Questions deleted", status: "success" });
-            reload();
+            onChanged();
           },
           (e: unknown) => {
             setBulkBusy(false);
@@ -731,632 +618,466 @@ function BankDetail({ id, accountUser }: { id: string; accountUser: AccountUser 
     });
   };
 
-  const detail = bank.data;
-
-  if (bank.error && !accountUser) {
-    return (
-      <div className="screen">
-        <header>
-          <h1 className="page-title">Question bank</h1>
-          <p className="page-sub">
-            This question bank is private or does not exist. Sign in to access your personal banks.
-          </p>
-        </header>
-        <a
-          className="btn btn-primary btn-block"
-          {...linkTo(`/account?next=${encodeURIComponent(`/banks/${encodeURIComponent(id)}`)}`)}
-        >
-          Sign in or create an account
-        </a>
-      </div>
-    );
-  }
-
-  const isOwner = detail?.isOwner !== false;
+  /** A choice in the ⋯ sheet: it slides away, then the choice happens. */
+  const choose = (close: () => void, then: () => void) => () => {
+    afterSheet.current = then;
+    close();
+  };
 
   return (
-    <div className="screen">
-      <a className="btn-link" {...linkTo("/banks")}>
-        ← All banks
-      </a>
-      <h1 className="page-title">{detail?.name ?? "Question bank"}</h1>
+    <div className="study">
+      <div className="study-top">
+        <BackLink to="/banks">Banks</BackLink>
+        {isOwner && (
+          <button
+            type="button"
+            className="s-icon-btn"
+            aria-label="More"
+            aria-haspopup="dialog"
+            onClick={() => setSheet(true)}
+          >
+            <Icon name="more" size={22} />
+          </button>
+        )}
+      </div>
 
-      <ErrorLine error={bank.error} />
+      <div>
+        <h1 className="study-title">{bank.name}</h1>
+        <p className="study-meta">
+          {dotted(
+            !isOwner && `by ${ownerName(bank)}`,
+            bank.exam,
+            bank.subject,
+            plural(count, "question"),
+            mistakes > 0 && `${mistakes} to review`,
+          )}
+        </p>
+      </div>
 
-      {!detail ? (
-        bank.error ? null : (
-          <Loading />
-        )
-      ) : (
-        <>
-          {!isOwner && (
-            <div
-              className="community-banner"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                flexWrap: "wrap",
-                gap: 12,
-                padding: "14px 18px",
-                background: "var(--panel)",
-                border: "1.5px solid var(--line)",
-                borderRadius: "var(--radius)",
-                marginBottom: 20,
+      <div className="s-play">
+        <button
+          type="button"
+          className="s-btn gold big"
+          disabled={count === 0 || practising}
+          onClick={() => void practise()}
+        >
+          <Icon name="play" size={20} fill />
+          Practise
+        </button>
+        <button
+          type="button"
+          className="s-btn"
+          disabled={count === 0}
+          onClick={() => navigate(`${bankPath(id)}/exam`)}
+        >
+          <Icon name="clock" size={18} />
+          Timed exam
+        </button>
+        <button
+          type="button"
+          className="s-btn"
+          disabled={count === 0 || practising}
+          onClick={() => void practise()}
+        >
+          <Icon name="users" size={18} />
+          With friends
+        </button>
+      </div>
+
+      {!isOwner && (
+        <button
+          type="button"
+          className="s-link"
+          disabled={forking}
+          onClick={() => void fork()}
+          style={{ alignSelf: "flex-start" }}
+        >
+          <Icon name="copy" size={18} />
+          {forking ? "Copying…" : "Copy to my banks"}
+        </button>
+      )}
+
+      <div className="study-section-head">
+        <h2 className="study-h2" id="questions-title">
+          Questions
+        </h2>
+        {isOwner &&
+          (selecting ? (
+            <button
+              type="button"
+              className="s-link"
+              onClick={() => {
+                setSelecting(false);
+                setSelected(new Set());
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <Avatar
-                  id={detail.ownerAvatar}
-                  name={detail.ownerDisplayName || detail.ownerUsername || "Creator"}
-                  size={38}
-                />
-                <div>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                    <span style={{ fontWeight: 800 }}>
-                      {detail.ownerDisplayName ||
-                        (detail.ownerUsername ? `@${detail.ownerUsername}` : "Creator")}
-                    </span>
-                    <span className="bank-badge ready">Public Bank</span>
-                    {detail.exam && <span className="bank-badge">{detail.exam}</span>}
-                    {detail.subject && <span className="bank-badge">{detail.subject}</span>}
-                  </div>
-                  <span className="muted small">
-                    Community question bank shared with all Whizard players
+              Done
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="s-link gold"
+              aria-label="Add a question"
+              onClick={() => onOpen("?q=new")}
+            >
+              Add
+            </button>
+          ))}
+      </div>
+
+      {count === 0 ? (
+        <div>
+          <p className="s-empty">No questions yet.</p>
+          {isOwner && (
+            <button type="button" className="s-link" onClick={() => onOpen("?view=import")}>
+              <Icon name="upload" size={18} />
+              Import a Word, CSV or text file
+            </button>
+          )}
+        </div>
+      ) : !isOwner ? (
+        <ol className="s-list" aria-labelledby="questions-title">
+          {bank.questions.map((question, index) => (
+            <li key={question.id} className="s-card">
+              <span className="s-row s-q" style={{ padding: 0, background: "none" }}>
+                <span className="s-q-num">{index + 1}</span>
+                <span className="s-q-text">{question.prompt}</span>
+              </span>
+              <span className="s-indent">
+                <Answer kind="right">{question.choices[0]}</Answer>
+              </span>
+            </li>
+          ))}
+        </ol>
+      ) : selecting ? (
+        <>
+          <label className="s-check">
+            <input
+              type="checkbox"
+              checked={selected.size === count}
+              onChange={(event) =>
+                setSelected(
+                  event.target.checked ? new Set(bank.questions.map((x) => x.id)) : new Set(),
+                )
+              }
+            />
+            Select all
+          </label>
+          <ol className="s-list" aria-labelledby="questions-title">
+            {bank.questions.map((question, index) => (
+              <li key={question.id}>
+                <label className="s-row s-q">
+                  <input
+                    type="checkbox"
+                    checked={selected.has(question.id)}
+                    onChange={(event) =>
+                      setSelected((all) => {
+                        const next = new Set(all);
+                        if (event.target.checked) next.add(question.id);
+                        else next.delete(question.id);
+                        return next;
+                      })
+                    }
+                  />
+                  <span className="s-q-num" aria-hidden="true">
+                    {index + 1}
                   </span>
-                </div>
-              </div>
+                  <span className="s-q-text">{question.prompt}</span>
+                </label>
+              </li>
+            ))}
+          </ol>
+          <button
+            type="button"
+            className="s-btn bad block"
+            disabled={bulkBusy || selected.size === 0}
+            onClick={confirmBulkDelete}
+          >
+            {selected.size === 0
+              ? "Delete questions"
+              : `Delete ${plural(selected.size, "question")}`}
+          </button>
+        </>
+      ) : (
+        <ol className="s-list" aria-labelledby="questions-title">
+          {bank.questions.map((question, index) => (
+            <li key={question.id}>
+              <a
+                className="s-row s-q"
+                href={`${bankPath(id)}?q=${encodeURIComponent(question.id)}`}
+                onClick={(event) => {
+                  if (event.metaKey || event.ctrlKey) return;
+                  event.preventDefault();
+                  onOpen(`?q=${encodeURIComponent(question.id)}`);
+                }}
+              >
+                <span className="s-q-num" aria-hidden="true">
+                  {index + 1}
+                </span>
+                <span className="s-q-text">
+                  {question.prompt}
+                  {question.source === "ai" && <span className="s-tag">AI</span>}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      )}
+
+      {duplicates.length > 0 && (
+        <details className="s-dupes">
+          <summary className="s-link">
+            {plural(duplicates.length, "question")} also in your other banks
+          </summary>
+          <ul className="s-list">
+            {duplicates.map((d) => (
+              <li key={`${d.questionId}-${d.otherBankId}`} className="s-card">
+                <span>{d.prompt}</span>
+                <a className="s-row-sub" {...linkTo(bankPath(d.otherBankId))}>
+                  Also in {d.otherBankName}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+
+      {sheet && (
+        <BottomSheet
+          labelledBy="bank-sheet-title"
+          className="s-sheet"
+          onClose={() => {
+            setSheet(false);
+            const then = afterSheet.current;
+            afterSheet.current = null;
+            then?.();
+          }}
+          header={() => (
+            <h2 id="bank-sheet-title" className="s-sheet-title">
+              {bank.name}
+            </h2>
+          )}
+        >
+          {(close) => (
+            <div className="s-sheet-list">
               <button
                 type="button"
-                className="btn btn-primary"
-                disabled={forking}
-                onClick={() => void handleFork()}
+                className="s-sheet-item"
+                onClick={choose(close, () => onOpen("?view=details"))}
               >
-                <Icon name="copy" /> {forking ? "Cloning…" : "Clone to my collection"}
+                Edit details
+              </button>
+              <button
+                type="button"
+                className="s-sheet-item"
+                onClick={choose(close, () => onOpen("?view=import"))}
+              >
+                Import questions
+              </button>
+              {count > 0 && (
+                <button
+                  type="button"
+                  className="s-sheet-item"
+                  onClick={choose(close, () => setSelecting(true))}
+                >
+                  Select questions
+                </button>
+              )}
+              {count > 0 && (
+                <button
+                  type="button"
+                  className="s-sheet-item"
+                  onClick={choose(close, () => onOpen("?view=assign"))}
+                >
+                  Assign to a study group
+                </button>
+              )}
+              <a className="s-sheet-item" href={bankExportHref(id)} download onClick={close}>
+                Export CSV
+              </a>
+              <button
+                type="button"
+                className="s-sheet-item"
+                disabled={action.busy}
+                onClick={choose(close, togglePublic)}
+              >
+                {bank.isPublic ? "Make private" : "Make public"}
+              </button>
+              <button
+                type="button"
+                className="s-sheet-item"
+                disabled={forking}
+                onClick={choose(close, () => void fork())}
+              >
+                Duplicate
+              </button>
+              <button
+                type="button"
+                className="s-sheet-item bad"
+                disabled={action.busy}
+                onClick={choose(close, confirmDeleteBank)}
+              >
+                Delete bank
               </button>
             </div>
           )}
-
-          <section className="bank-practice-card" aria-label="Practice">
-            <div className="bank-practice-content">
-              <div>
-                <h2 className="section-title" style={{ margin: 0 }}>
-                  Practice with this bank
-                </h2>
-                <p className="small muted" style={{ margin: "4px 0 0" }}>
-                  {detail.questionCount === 0
-                    ? "Add or import questions below to start practicing."
-                    : `${detail.questionCount} ${detail.questionCount === 1 ? "question" : "questions"} ready. Practice solo or share the room code with friends.`}
-                </p>
-                {getBankMistakes(id).length > 0 && (
-                  <p
-                    className="small"
-                    style={{ margin: "4px 0 0", color: "#ff9aaa", fontWeight: 700 }}
-                  >
-                    ⚠️ {getBankMistakes(id).length}{" "}
-                    {getBankMistakes(id).length === 1 ? "question" : "questions"} marked for mistake
-                    review from recent solo practice.
-                  </p>
-                )}
-              </div>
-              <div className="bank-practice-actions">
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  disabled={detail.questionCount === 0 || practicing}
-                  onClick={() => void handlePractice()}
-                >
-                  <Icon name="play" /> Practice solo
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-cbt"
-                  disabled={detail.questionCount === 0}
-                  onClick={() => navigate(`/banks/${encodeURIComponent(id)}/exam`)}
-                >
-                  <Icon name="clock" /> Timed CBT Exam
-                </button>
-                <button
-                  type="button"
-                  className="btn"
-                  disabled={detail.questionCount === 0 || practicing}
-                  onClick={() => void handlePractice()}
-                >
-                  <Icon name="users" /> Play with friends
-                </button>
-                {accountUser && (
-                  <button
-                    type="button"
-                    className="btn"
-                    disabled={detail.questionCount === 0}
-                    onClick={() => setShowAssignModal(true)}
-                  >
-                    <Icon name="link" /> Assign to Study Group
-                  </button>
-                )}
-              </div>
-            </div>
-          </section>
-
-          {showAssignModal && (
-            <section
-              className="stack"
-              aria-label="Assign to Study Group"
-              style={{ border: "2px solid #8b5cf6" }}
-            >
-              <div
-                style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-              >
-                <h2 className="section-title" style={{ margin: 0 }}>
-                  Assign to Study Group
-                </h2>
-                <button
-                  type="button"
-                  className="btn-link"
-                  onClick={() => setShowAssignModal(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-              <form onSubmit={handleAssignToGroup} className="question-form">
-                <div className="setting">
-                  <label className="setting-name" htmlFor="select-group">
-                    Group
-                  </label>
-                  <select
-                    id="select-group"
-                    required
-                    value={assignGroupId}
-                    onChange={(e) => setAssignGroupId(e.target.value)}
-                  >
-                    <option value="">Select study group…</option>
-                    {myGroups.data?.groups.map((g) => (
-                      <option key={g.id} value={g.id}>
-                        {g.name} ({g.members.length} members)
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="setting">
-                  <label className="setting-name" htmlFor="target-score">
-                    Target score (%)
-                  </label>
-                  <input
-                    id="target-score"
-                    type="number"
-                    min="1"
-                    max="100"
-                    placeholder="e.g. 80"
-                    value={assignTargetScore}
-                    onChange={(e) => setAssignTargetScore(e.target.value)}
-                  />
-                </div>
-                <div className="setting">
-                  <label className="setting-name" htmlFor="due-date">
-                    Due date
-                  </label>
-                  <input
-                    id="due-date"
-                    type="date"
-                    value={assignDueDate}
-                    onChange={(e) => setAssignDueDate(e.target.value)}
-                  />
-                </div>
-                <div className="setting">
-                  <label className="setting-name" htmlFor="assign-notes">
-                    Notes
-                  </label>
-                  <textarea
-                    id="assign-notes"
-                    maxLength={300}
-                    rows={2}
-                    placeholder="Instructions for students (e.g. Complete before Thursday class)"
-                    value={assignNotes}
-                    onChange={(e) => setAssignNotes(e.target.value)}
-                  />
-                </div>
-                <div className="link-row" style={{ marginTop: 14 }}>
-                  <button type="submit" className="btn btn-primary" disabled={assigning}>
-                    {assigning ? "Assigning…" : "Assign bank to group"}
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-link"
-                    onClick={() => setShowAssignModal(false)}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </section>
-          )}
-
-          {isOwner ? (
-            <>
-              <section className="stack" aria-label="Bank details">
-                <h2 className="section-title">Bank details</h2>
-                <form className="question-form" onSubmit={handleSave}>
-                  <Field label="Name">
-                    <input
-                      maxLength={BANK_NAME_MAX}
-                      value={name}
-                      onChange={(event) => {
-                        setName(event.target.value);
-                        setSaveError(null);
-                      }}
-                    />
-                  </Field>
-                  <div className="form-row two">
-                    <Field label="Exam" hint="Optional">
-                      <input
-                        maxLength={BANK_LABEL_MAX}
-                        value={exam}
-                        onChange={(event) => setExam(event.target.value)}
-                      />
-                    </Field>
-                    <Field label="Subject" hint="Optional">
-                      <input
-                        maxLength={BANK_LABEL_MAX}
-                        value={subject}
-                        onChange={(event) => setSubject(event.target.value)}
-                      />
-                    </Field>
-                  </div>
-                  <label
-                    className="form-field"
-                    style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 8 }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isPublic}
-                      onChange={(event) => setIsPublic(event.target.checked)}
-                    />
-                    <span className="small">
-                      Public bank (anyone with the link can view and practice)
-                    </span>
-                  </label>
-                  <ErrorLine error={saveError} />
-                  <div className="row-actions">
-                    <button
-                      className="btn btn-primary"
-                      type="submit"
-                      disabled={save.busy || !name.trim()}
-                    >
-                      {save.busy ? "Saving…" : "Save"}
-                    </button>
-                    <button
-                      className="btn"
-                      type="button"
-                      disabled={forking}
-                      onClick={() => void handleFork()}
-                      title="Make an independent copy of this bank"
-                    >
-                      <Icon name="copy" /> {forking ? "Duplicating…" : "Duplicate bank"}
-                    </button>
-                    <button
-                      className="btn-link danger"
-                      type="button"
-                      disabled={action.busy}
-                      onClick={confirmDeleteBank}
-                    >
-                      Delete bank
-                    </button>
-                  </div>
-                </form>
-              </section>
-
-              {duplicates.length > 0 && (
-                <details
-                  className="muted small"
-                  style={{
-                    padding: "10px 14px",
-                    background: "rgb(245 158 11 / 10%)",
-                    borderRadius: "var(--radius)",
-                    border: "1px solid rgb(245 158 11 / 30%)",
-                  }}
-                >
-                  <summary style={{ cursor: "pointer", color: "#fcd34d", fontWeight: 600 }}>
-                    ⚠️ {duplicates.length} {duplicates.length === 1 ? "question" : "questions"} in
-                    this bank also exist in other banks
-                  </summary>
-                  <ul style={{ margin: "8px 0 4px", paddingLeft: 20 }}>
-                    {duplicates.map((d) => (
-                      <li key={d.questionId}>
-                        “{d.prompt}” (also in{" "}
-                        <a
-                          className="btn-link"
-                          {...linkTo(`/banks/${encodeURIComponent(d.otherBankId)}`)}
-                        >
-                          {d.otherBankName}
-                        </a>
-                        )
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              )}
-
-              <section className="stack" aria-labelledby="import-export-title">
-                <h2 id="import-export-title" className="section-title">
-                  Import &amp; export
-                </h2>
-                <p className="muted small">
-                  Take this bank out as a CSV, or bring questions in from a CSV, Word document
-                  (.docx), or text file. Questions, options, and answer keys are detected
-                  automatically.
-                </p>
-                <div className="row-actions">
-                  <a className="btn" href={bankExportHref(id)} download>
-                    Export CSV
-                  </a>
-                  {importOpen ? null : (
-                    <button className="btn" type="button" onClick={() => setImportOpen(true)}>
-                      Import questions
-                    </button>
-                  )}
-                </div>
-              </section>
-
-              {importOpen && (
-                <ImportPanel
-                  bankId={id}
-                  onDone={() => {
-                    setImportOpen(false);
-                    reload();
-                  }}
-                />
-              )}
-
-              <section className="stack" aria-labelledby="questions-title">
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    flexWrap: "wrap",
-                    gap: 8,
-                  }}
-                >
-                  <h2 id="questions-title" className="section-title">
-                    Questions ({detail.questions.length})
-                  </h2>
-                  {detail.questions.length > 0 && (
-                    <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      <label
-                        className="small muted"
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 6,
-                          cursor: "pointer",
-                        }}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={
-                            selectedQIds.size > 0 && selectedQIds.size === detail.questions.length
-                          }
-                          onChange={(e) => toggleSelectAll(e.target.checked)}
-                        />
-                        Select all
-                      </label>
-                      {selectedQIds.size > 0 && (
-                        <button
-                          className="btn btn-small danger"
-                          type="button"
-                          disabled={bulkBusy}
-                          onClick={confirmBulkDelete}
-                        >
-                          Delete {selectedQIds.size} selected
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-                {detail.questions.length === 0 && !adding && (
-                  <p className="muted">No questions yet. Add the first one.</p>
-                )}
-                {detail.questions.length > 0 && (
-                  <ul className="people">
-                    {detail.questions.map((question) => (
-                      <li key={question.id}>
-                        {editingId === question.id ? (
-                          <div className="bank-q">
-                            <QuestionFields
-                              initial={question}
-                              submitLabel="Save question"
-                              onSubmit={(input) => handleEdit(question.id, input)}
-                              onCancel={() => setEditingId(null)}
-                            />
-                          </div>
-                        ) : (
-                          <>
-                            <div className="person bank-q">
-                              <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-                                <input
-                                  type="checkbox"
-                                  checked={selectedQIds.has(question.id)}
-                                  onChange={(e) => toggleSelectQ(question.id, e.target.checked)}
-                                  style={{ marginTop: 3 }}
-                                />
-                                <div>
-                                  <span className="person-name">
-                                    {question.prompt}
-                                    {question.source === "ai" && (
-                                      <span className="bank-badge">AI</span>
-                                    )}
-                                  </span>
-                                  <span className="muted small">
-                                    Correct: {question.choices[0]}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="row-actions">
-                              <button
-                                className="btn btn-small"
-                                disabled={action.busy}
-                                onClick={() => setEditingId(question.id)}
-                              >
-                                Edit
-                              </button>
-                              <button
-                                className="btn-link"
-                                disabled={action.busy}
-                                onClick={() => confirmDeleteQuestion(question)}
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-
-                {adding ? (
-                  <QuestionFields
-                    submitLabel="Add question"
-                    onSubmit={handleAdd}
-                    onCancel={() => setAdding(false)}
-                  />
-                ) : (
-                  <button className="btn" type="button" onClick={() => setAdding(true)}>
-                    Add a question
-                  </button>
-                )}
-              </section>
-            </>
-          ) : (
-            <section className="stack" aria-labelledby="questions-title">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  gap: 8,
-                }}
-              >
-                <h2 id="questions-title" className="section-title">
-                  Questions ({detail.questions.length})
-                </h2>
-                <button
-                  type="button"
-                  className="btn btn-small"
-                  disabled={forking}
-                  onClick={() => void handleFork()}
-                >
-                  <Icon name="copy" /> {forking ? "Cloning…" : "Clone bank"}
-                </button>
-              </div>
-              {detail.questions.length === 0 ? (
-                <p className="muted">This bank has no questions yet.</p>
-              ) : (
-                <ul className="people">
-                  {detail.questions.map((question, idx) => (
-                    <li key={question.id} style={{ alignItems: "flex-start", padding: "14px 0" }}>
-                      <div className="bank-q" style={{ gap: 6 }}>
-                        <span className="person-name" style={{ fontSize: "1rem" }}>
-                          {idx + 1}. {question.prompt}
-                          {question.source === "ai" && <span className="bank-badge">AI</span>}
-                        </span>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 4,
-                            marginTop: 4,
-                          }}
-                        >
-                          {question.choices.map((choice, cIdx) => (
-                            <div
-                              key={cIdx}
-                              className="small"
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 8,
-                                color: cIdx === 0 ? "#34d399" : "var(--muted)",
-                                fontWeight: cIdx === 0 ? 700 : 400,
-                              }}
-                            >
-                              <span
-                                style={{
-                                  display: "inline-grid",
-                                  placeItems: "center",
-                                  width: 20,
-                                  height: 20,
-                                  borderRadius: "50%",
-                                  fontSize: "0.75rem",
-                                  background: cIdx === 0 ? "rgb(16 185 129 / 20%)" : "var(--field)",
-                                  border: `1px solid ${cIdx === 0 ? "#10b981" : "var(--line)"}`,
-                                  color: cIdx === 0 ? "#34d399" : "inherit",
-                                  flexShrink: 0,
-                                }}
-                              >
-                                {String.fromCharCode(65 + cIdx)}
-                              </span>
-                              <span>{choice}</span>
-                              {cIdx === 0 && (
-                                <span className="bank-badge ready" style={{ marginLeft: 4 }}>
-                                  Correct
-                                </span>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                        {question.explanation && (
-                          <p
-                            className="muted small"
-                            style={{ margin: "6px 0 0", fontStyle: "italic" }}
-                          >
-                            💡 {question.explanation}
-                          </p>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {detail.questions.length > 5 && (
-                <div style={{ marginTop: 16, textAlign: "center" }}>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    disabled={forking}
-                    onClick={() => void handleFork()}
-                  >
-                    <Icon name="copy" /> {forking ? "Cloning…" : "Clone to my collection"}
-                  </button>
-                </div>
-              )}
-            </section>
-          )}
-        </>
+        </BottomSheet>
       )}
     </div>
   );
 }
 
-// The question form -------------------------------------------------------------------------------
+/** `?view=details`: the bank's name and labels, on their own. */
+function DetailsView({
+  bank,
+  back,
+  onLeave,
+}: {
+  bank: PlayerBankDetail;
+  back: ReactNode;
+  onLeave: () => void;
+}) {
+  const toast = useToast();
+  const [name, setName] = useState(bank.name);
+  const [exam, setExam] = useState(bank.exam ?? "");
+  const [subject, setSubject] = useState(bank.subject ?? "");
+  const [error, setError] = useState<string | null>(null);
+  const save = useAction(setError);
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    const trimmed = name.trim();
+    if (!trimmed || save.busy) return;
+    void save.run(async () => {
+      await updateBank(bank.id, {
+        name: trimmed,
+        exam: exam.trim() || null,
+        subject: subject.trim() || null,
+      });
+      toast.show({ title: "Bank saved", status: "success" });
+      onLeave();
+    });
+  };
+
+  return (
+    <div className="study">
+      {back}
+      <h1 className="study-title">Bank details</h1>
+      <form className="s-form" onSubmit={submit}>
+        <Field label="Name">
+          <input
+            required
+            maxLength={BANK_NAME_MAX}
+            value={name}
+            onChange={(event) => {
+              setName(event.target.value);
+              setError(null);
+            }}
+          />
+        </Field>
+        <div className="s-pair">
+          <Field label="Exam">
+            <input
+              placeholder="e.g. WAEC"
+              maxLength={BANK_LABEL_MAX}
+              value={exam}
+              onChange={(event) => setExam(event.target.value)}
+            />
+          </Field>
+          <Field label="Subject">
+            <input
+              placeholder="e.g. Biology"
+              maxLength={BANK_LABEL_MAX}
+              value={subject}
+              onChange={(event) => setSubject(event.target.value)}
+            />
+          </Field>
+        </div>
+        <ErrorLine error={error} />
+        <button className="s-btn gold big block" type="submit" disabled={save.busy || !name.trim()}>
+          {save.busy ? "Saving…" : "Save"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+/** `?q=new` or `?q=<id>`: one question, on its own. */
+function QuestionView({
+  bank,
+  questionId,
+  back,
+  onLeave,
+}: {
+  bank: PlayerBankDetail;
+  questionId: string;
+  back: ReactNode;
+  onLeave: () => void;
+}) {
+  const ask = useConfirm();
+  const action = useToastAction();
+  const isNew = questionId === "new";
+  const index = bank.questions.findIndex((x) => x.id === questionId);
+  const question = index >= 0 ? bank.questions[index] : undefined;
+
+  if (!isNew && !question) {
+    return (
+      <div className="study">
+        {back}
+        <h1 className="study-title">Question</h1>
+        <p className="s-empty">This question isn’t in the bank any more.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="study">
+      {back}
+      <h1 className="study-title">{isNew ? "New question" : `Question ${index + 1}`}</h1>
+      <QuestionFields
+        key={questionId}
+        initial={question}
+        submitLabel={isNew ? "Add question" : "Save question"}
+        onSubmit={(input) =>
+          (question ? editQuestion(bank.id, question.id, input) : addQuestion(bank.id, input)).then(
+            onLeave,
+          )
+        }
+        onCancel={onLeave}
+        onDelete={
+          question &&
+          (() =>
+            ask({
+              title: "Delete this question?",
+              text: question.prompt,
+              yes: "Delete question",
+              tone: "danger",
+              run: () => {
+                void action.run(() => deleteQuestion(bank.id, question.id).then(onLeave));
+              },
+            }))
+        }
+      />
+    </div>
+  );
+}
 
 /**
- * One question, as the server accepts it: four answers, the first correct — the shipped bank's
- * shape, until gate G1 widens it. It keeps its own busy and error state, so it can sit in the
- * list beside the bank's other forms.
+ * One question, as the server takes it: four answers, the first correct. It keeps its own busy
+ * and error state.
  */
 function QuestionFields({
   initial,
   submitLabel,
   onSubmit,
   onCancel,
+  onDelete,
 }: {
   initial?: PlayerBankQuestion;
   submitLabel: string;
   onSubmit: (input: QuestionForm) => Promise<void>;
   onCancel: () => void;
+  onDelete?: () => void;
 }) {
   const [prompt, setPrompt] = useState(initial?.prompt ?? "");
   const [choices, setChoices] = useState<string[]>(initial?.choices ?? ["", "", "", ""]);
@@ -1389,9 +1110,10 @@ function QuestionFields({
     setChoices((all) => all.map((choice, i) => (i === index ? value : choice)));
 
   return (
-    <form className="question-form" onSubmit={handle}>
+    <form className="s-form" onSubmit={handle}>
       <Field label="Question">
-        <input
+        <textarea
+          rows={3}
           placeholder="e.g. Which planet is known as the Red Planet?"
           maxLength={BANK_PROMPT_MAX}
           value={prompt}
@@ -1402,24 +1124,28 @@ function QuestionFields({
         />
       </Field>
 
-      <div className="form-row two">
+      <div className="s-pair stack-narrow">
         {choices.map((choice, index) => (
           <Field
             key={index}
+            right={index === 0}
             label={index === 0 ? "Correct answer" : `Wrong answer ${index}`}
-            hint={index === 0 ? "The first answer is the right one." : undefined}
           >
             <input
               maxLength={BANK_CHOICE_MAX}
               value={choice}
-              onChange={(event) => setChoice(index, event.target.value)}
+              onChange={(event) => {
+                setChoice(index, event.target.value);
+                setError(null);
+              }}
             />
           </Field>
         ))}
       </div>
 
       <Field label="Explanation">
-        <input
+        <textarea
+          rows={2}
           placeholder="Why that’s the answer"
           maxLength={BANK_EXPLANATION_MAX}
           value={explanation}
@@ -1430,8 +1156,9 @@ function QuestionFields({
         />
       </Field>
 
-      <Field label="Reference" hint="Optional — e.g. John 3:16">
+      <Field label="Reference">
         <input
+          placeholder="e.g. John 3:16"
           maxLength={BANK_REFERENCE_MAX}
           value={reference}
           onChange={(event) => setReference(event.target.value)}
@@ -1439,12 +1166,12 @@ function QuestionFields({
       </Field>
 
       <ErrorLine error={error} />
-      <div className="row-actions">
-        <button className="btn btn-primary" type="submit" disabled={busy}>
-          {busy ? "Saving…" : submitLabel}
-        </button>
+      <button className="s-btn gold big block" type="submit" disabled={busy}>
+        {busy ? "Saving…" : submitLabel}
+      </button>
+      <div className="s-actions" style={{ justifyContent: "space-between" }}>
         <button
-          className="btn-link"
+          className="s-link"
           type="button"
           disabled={busy}
           onClick={() => {
@@ -1454,12 +1181,124 @@ function QuestionFields({
         >
           Cancel
         </button>
+        {onDelete && (
+          <button className="s-link bad" type="button" disabled={busy} onClick={onDelete}>
+            Delete question
+          </button>
+        )}
       </div>
     </form>
   );
 }
 
-// The import panel -------------------------------------------------------------------------------
+/** `?view=assign`: sets the bank for one of your study groups, with a target and a due date. */
+function AssignView({
+  bank,
+  back,
+  onLeave,
+}: {
+  bank: PlayerBankDetail;
+  back: ReactNode;
+  onLeave: () => void;
+}) {
+  const toast = useToast();
+  const groups = useLoaded(fetchGroups);
+  const [groupId, setGroupId] = useState("");
+  const [target, setTarget] = useState("");
+  const [due, setDue] = useState("");
+  const [notes, setNotes] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const assign = useAction(setError);
+
+  const submit = (event: FormEvent) => {
+    event.preventDefault();
+    if (!groupId) {
+      setError("Pick a group.");
+      return;
+    }
+    void assign.run(async () => {
+      const parsedTarget = target ? parseInt(target, 10) : null;
+      const parsedDue = due ? new Date(`${due}T23:59:59`).getTime() : null;
+      await createGroupAssignment(groupId, {
+        bankId: bank.id,
+        targetScore: parsedTarget && !isNaN(parsedTarget) ? parsedTarget : null,
+        dueAt: parsedDue && !isNaN(parsedDue) ? parsedDue : null,
+        notes: notes.trim() || null,
+      });
+      toast.show({ title: "Assigned to the group", status: "success" });
+      onLeave();
+    });
+  };
+
+  return (
+    <div className="study">
+      {back}
+      <h1 className="study-title">Assign to a study group</h1>
+      <ErrorLine error={groups.error} />
+      {!groups.data ? (
+        groups.error ? null : (
+          <Loading />
+        )
+      ) : groups.data.groups.length === 0 ? (
+        <>
+          <p className="s-empty">You’re not in a study group yet.</p>
+          <a className="s-link" {...linkTo("/friends")}>
+            Make one on the Friends page
+          </a>
+        </>
+      ) : (
+        <AssignFields
+          picker={
+            <Field label="Group">
+              <select
+                id="select-group"
+                value={groupId}
+                onChange={(event) => {
+                  setGroupId(event.target.value);
+                  setError(null);
+                }}
+              >
+                <option value="">Choose a group</option>
+                {groups.data.groups.map((g) => (
+                  <option key={g.id} value={g.id}>
+                    {g.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          }
+          target={target}
+          onTarget={setTarget}
+          due={due}
+          onDue={setDue}
+          notes={notes}
+          onNotes={setNotes}
+          error={error}
+          busy={assign.busy}
+          submitLabel="Assign"
+          onSubmit={submit}
+        />
+      )}
+    </div>
+  );
+}
+
+// Import -----------------------------------------------------------------------------------------
+
+function ImportHeading() {
+  const account = useAccount();
+  const isPro = account.status === "ready" && Boolean(account.user?.isPro);
+  return (
+    <h1 className="study-title">
+      Import questions{" "}
+      {!isPro && (
+        <span className="s-pro">
+          <Icon name="crown" size={14} fill /> Pro
+        </span>
+      )}
+    </h1>
+  );
+}
 
 const CSV_TEMPLATE =
   "question,option1,option2,option3,option4,answer,explanation,reference\n" +
@@ -1480,14 +1319,14 @@ function downloadCsvTemplate() {
 }
 
 /**
- * A staged CSV import under review: counts at the top, the rows still needing a person below,
- * and the buttons that answer, accept or commit them. Nothing here reaches the bank until the
- * owner confirms, and the AI runs server-side in batches while this screen watches the counts.
+ * A staged import under review: progress at the top, the rows still needing a person below, and
+ * the buttons that answer, accept or commit them. Nothing reaches the bank until the owner
+ * confirms, and the AI runs server-side in batches while this screen watches the counts.
  */
 function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void }) {
   const account = useAccount();
   const isPro = account.status === "ready" && Boolean(account.user?.isPro);
-  const [showProModal, setShowProModal] = useState(false);
+  const [showPro, setShowPro] = useState(false);
   const [draft, setDraft] = useState<PlayerBankImport | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [fileBusy, setFileBusy] = useState(false);
@@ -1560,7 +1399,7 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
 
   const processFile = (file: File) => {
     if (!isPro) {
-      setShowProModal(true);
+      setShowPro(true);
       return;
     }
     setFileBusy(true);
@@ -1585,7 +1424,7 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
           (e: unknown) => {
             setFileBusy(false);
             if (e instanceof ApiError && e.code === "pro_required") {
-              setShowProModal(true);
+              setShowPro(true);
             } else {
               setError(errorText(e));
             }
@@ -1605,19 +1444,19 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
     if (file) processFile(file);
   };
 
-  const handleDragOver = (event: React.DragEvent) => {
+  const handleDragOver = (event: DragEvent) => {
     event.preventDefault();
     event.stopPropagation();
     if (!fileBusy) setDragging(true);
   };
 
-  const handleDragLeave = (event: React.DragEvent) => {
+  const handleDragLeave = (event: DragEvent) => {
     event.preventDefault();
     event.stopPropagation();
     setDragging(false);
   };
 
-  const handleDrop = (event: React.DragEvent) => {
+  const handleDrop = (event: DragEvent) => {
     event.preventDefault();
     event.stopPropagation();
     setDragging(false);
@@ -1656,16 +1495,14 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
     if (!draft) return;
     ask({
       title: "Add these questions?",
-      text: `${draft.counts.total} questions go into this bank. They stay in the file’s order.`,
+      text: `${draft.counts.total} questions go into this bank, in the file’s order.`,
       yes: `Add ${draft.counts.total} questions`,
+      tone: "gold",
       run: () => {
         setCommitBusy(true);
         commitBankImport(bankId, draft.id).then(
           (added) => {
-            toast.show({
-              title: `${added} ${added === 1 ? "question" : "questions"} added`,
-              status: "success",
-            });
+            toast.show({ title: `${plural(added, "question")} added`, status: "success" });
             onDone();
           },
           (e: unknown) => {
@@ -1681,8 +1518,9 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
     if (!draft) return;
     ask({
       title: "Discard this import?",
-      text: "The staged questions are thrown away. The bank itself isn’t touched.",
+      text: "The staged questions are thrown away. The bank isn’t touched.",
       yes: "Discard import",
+      tone: "danger",
       run: () => {
         void action.run(async () => {
           await discardBankImport(bankId, draft.id);
@@ -1692,13 +1530,7 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
     });
   };
 
-  if (draft === undefined) {
-    return (
-      <section className="stack" aria-label="Import CSV">
-        <Loading />
-      </section>
-    );
-  }
+  if (draft === undefined) return <Loading />;
 
   const counts = draft?.counts;
   const answeredCount = counts ? counts.total - counts.pending : 0;
@@ -1706,89 +1538,75 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
     counts && counts.total > 0 ? Math.round((answeredCount / counts.total) * 100) : 0;
 
   return (
-    <section className="stack" aria-labelledby="import-title">
-      <h3
-        id="import-title"
-        className="section-title"
-        style={{ display: "flex", alignItems: "center", gap: 8 }}
-      >
-        Import questions
-        {!isPro && (
-          <span className="plan-badge" style={{ fontSize: "0.75rem", padding: "2px 8px" }}>
-            <Icon name="crown" size={14} fill /> Pro
-          </span>
-        )}
-      </h3>
-      <div
-        className={`import-dropzone${dragging ? " dragging" : ""}`}
+    <>
+      <label
+        className={`s-drop${dragging ? " dragging" : ""}`}
         onDragOver={handleDragOver}
         onDragEnter={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <label className="form-field" style={{ margin: 0 }}>
-          <span className="form-label">CSV or Word document (.docx)</span>
-          <input
-            type="file"
-            accept=".csv,.docx,.doc,.txt,text/csv,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword"
-            onChange={handleFile}
-            disabled={fileBusy}
-          />
-          <span className="form-hint">
-            {draft
-              ? "Choosing or dropping a file replaces the import you have going for this bank."
-              : "Drag and drop your CSV or Word document (.docx) here, or click to choose one. Multiple-choice questions and answers are detected automatically."}
-          </span>
-        </label>
-        <div>
-          <button
-            type="button"
-            className="btn-link small"
-            onClick={downloadCsvTemplate}
-            style={{ padding: 0 }}
-          >
-            Download sample CSV template
-          </button>
-        </div>
-      </div>
+        <Icon name="upload" size={28} />
+        <strong>
+          {fileBusy
+            ? "Reading the file…"
+            : draft
+              ? "Choose another file"
+              : "Choose a Word, CSV or text file"}
+        </strong>
+        <span className="study-note">
+          {draft ? "It replaces the import below." : "or drop it here"}
+        </span>
+        <input
+          type="file"
+          accept=".csv,.docx,.doc,.txt,text/csv,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword"
+          onChange={handleFile}
+          disabled={fileBusy}
+        />
+      </label>
+      <button
+        type="button"
+        className="s-link"
+        onClick={downloadCsvTemplate}
+        style={{ alignSelf: "flex-start" }}
+      >
+        Download a sample CSV
+      </button>
 
       {draft && counts ? (
         <>
           <div
-            className="import-progress-container"
+            className="s-progress"
             role="progressbar"
             aria-valuenow={progressPct}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label="Import progress"
+            aria-label="Questions answered"
           >
-            <div className="import-progress-track">
-              <div className="import-progress-fill" style={{ width: `${progressPct}%` }} />
-            </div>
-            <p className="muted small" style={{ margin: 0 }}>
-              {counts.pending > 0
-                ? `Answering questions with AI… ${answeredCount} of ${counts.total} ready (${progressPct}%)`
-                : `All ${counts.total} questions answered (100%)`}
-            </p>
+            <span style={{ width: `${progressPct}%` }} />
           </div>
-
-          <p className="muted small" data-testid="import-counts">
+          <p className="study-note">
+            {counts.pending > 0
+              ? `Answering with AI… ${answeredCount} of ${counts.total}`
+              : `${plural(counts.total, "question")} answered`}
+          </p>
+          <p className="study-note" data-testid="import-counts">
             {counts.total} rows · {counts.ready} ready · {counts.withKey} from your answer key ·{" "}
             {counts.aiAnswered} from the AI · {counts.needsReview} need review
           </p>
           {aiNote && (
-            <p className="muted small" role="status">
+            <p className="study-note" role="status">
               {aiNote}
             </p>
           )}
           {draft.invalid && draft.invalid.count > 0 && (
-            <details>
-              <summary>
-                {draft.invalid.count} {draft.invalid.count === 1 ? "row" : "rows"} couldn’t be read
+            <details className="s-dupes">
+              <summary className="s-link">
+                {plural(draft.invalid.count, "row")} couldn’t be read
               </summary>
-              <ul className="people">
+              <ul className="s-list">
                 {draft.invalid.notes.map((note) => (
-                  <li key={note.row} className="small">
+                  <li key={note.row} className="s-card">
                     Line {note.row}: {note.message}
                   </li>
                 ))}
@@ -1798,41 +1616,22 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
 
           {counts.needsReview > 0 ? (
             <>
-              {aiFlagged.length > 0 && (
-                <button
-                  className="btn"
-                  type="button"
-                  disabled={patchBusy}
-                  onClick={() => applyPatch({ acceptAi: true })}
-                >
-                  Accept the AI’s {aiFlagged.length} flagged{" "}
-                  {aiFlagged.length === 1 ? "answer" : "answers"}
-                </button>
-              )}
-              <div className="form-row two">
-                <Field label="Answer for the rows you tick">
-                  <select
-                    value={bulkAnswer}
-                    onChange={(event) => setBulkAnswer(Number(event.target.value))}
+              <div className="study-section-head">
+                <h2 className="study-h2">To answer</h2>
+                {aiFlagged.length > 0 && (
+                  <button
+                    className="s-link gold"
+                    type="button"
+                    disabled={patchBusy}
+                    onClick={() => applyPatch({ acceptAi: true })}
                   >
-                    <option value={0}>Option 1</option>
-                    <option value={1}>Option 2</option>
-                    <option value={2}>Option 3</option>
-                    <option value={3}>Option 4</option>
-                  </select>
-                </Field>
-                <Field label="Explanation for those rows">
-                  <input
-                    placeholder="Imported without an explanation."
-                    maxLength={BANK_EXPLANATION_MAX}
-                    value={bulkExplanation}
-                    onChange={(event) => setBulkExplanation(event.target.value)}
-                  />
-                </Field>
+                    Accept the AI’s {aiFlagged.length}
+                  </button>
+                )}
               </div>
-              <ul className="people">
+              <ul className="s-list">
                 {flagged.map((row) => (
-                  <li key={row.idx}>
+                  <li key={row.idx} className="s-card">
                     <ImportFlaggedRow
                       row={row}
                       disabled={patchBusy}
@@ -1859,106 +1658,106 @@ function ImportPanel({ bankId, onDone }: { bankId: string; onDone: () => void })
                   </li>
                 ))}
               </ul>
-              <div className="row-actions">
+              <div className="s-card">
+                <div className="s-pair stack-narrow">
+                  <Field label="Answer for the rows you tick">
+                    <select
+                      value={bulkAnswer}
+                      onChange={(event) => setBulkAnswer(Number(event.target.value))}
+                    >
+                      <option value={0}>Option 1</option>
+                      <option value={1}>Option 2</option>
+                      <option value={2}>Option 3</option>
+                      <option value={3}>Option 4</option>
+                    </select>
+                  </Field>
+                  <Field label="Explanation for those rows">
+                    <input
+                      placeholder="Imported without an explanation."
+                      maxLength={BANK_EXPLANATION_MAX}
+                      value={bulkExplanation}
+                      onChange={(event) => setBulkExplanation(event.target.value)}
+                    />
+                  </Field>
+                </div>
                 <button
-                  className="btn"
+                  className="s-btn"
                   type="button"
                   disabled={patchBusy || selected.size === 0}
                   onClick={applyBulk}
                 >
-                  Set {selected.size} {selected.size === 1 ? "row" : "rows"} to that answer
+                  Set {plural(selected.size, "row")} to that answer
                 </button>
               </div>
             </>
           ) : (
-            <p className="muted">Every row is ready to import.</p>
+            <p className="s-empty">Every row is ready to import.</p>
           )}
 
           <ErrorLine error={error} />
-          <div className="row-actions">
-            <button
-              className="btn btn-primary"
-              type="button"
-              disabled={commitBusy || patchBusy || counts.pending > 0 || counts.needsReview > 0}
-              onClick={confirmCommit}
-            >
-              {commitBusy
-                ? "Adding…"
-                : `Add ${counts.total} ${counts.total === 1 ? "question" : "questions"} to the bank`}
-            </button>
-            <button
-              className="btn-link danger"
-              type="button"
-              disabled={commitBusy || action.busy}
-              onClick={confirmDiscard}
-            >
-              Discard import
-            </button>
-          </div>
+          <button
+            className="s-btn gold big block"
+            type="button"
+            disabled={commitBusy || patchBusy || counts.pending > 0 || counts.needsReview > 0}
+            onClick={confirmCommit}
+          >
+            {commitBusy ? "Adding…" : `Add ${plural(counts.total, "question")} to the bank`}
+          </button>
+          <button
+            className="s-link bad"
+            type="button"
+            disabled={commitBusy || action.busy}
+            onClick={confirmDiscard}
+            style={{ alignSelf: "center" }}
+          >
+            Discard import
+          </button>
         </>
       ) : (
         <ErrorLine error={error} />
       )}
-      {showProModal && (
-        <div
-          className="dialog-backdrop"
-          onClick={() => setShowProModal(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0, 0, 0, 0.75)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: 16,
-          }}
-        >
-          <div
-            className="dialog panel"
-            onClick={(e) => e.stopPropagation()}
-            style={{ maxWidth: 460, width: "100%", padding: 24, textAlign: "center" }}
-          >
-            <div
-              style={{
-                display: "inline-flex",
-                padding: 12,
-                borderRadius: "50%",
-                background: "rgb(255 215 0 / 15%)",
-                color: "var(--gold)",
-                marginBottom: 12,
-              }}
-            >
-              <Icon name="crown" size={32} fill />
-            </div>
-            <h3 style={{ margin: "0 0 8px" }}>Word & CSV Import is a Pro Feature</h3>
-            <p className="muted" style={{ margin: "0 0 16px", fontSize: "0.95rem" }}>
-              Upgrade to Whizard Pro to automatically extract questions from Word documents (.docx,
-              .doc, .txt) and CSV files.
-            </p>
-            <p className="small muted" style={{ margin: "0 0 20px" }}>
-              Free accounts can author unlimited questions manually in your banks.
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <a className="btn btn-gold btn-block" {...linkTo("/pricing")}>
-                View Pro Plans (₦5,000 / $5 / mo)
-              </a>
-              <button
-                type="button"
-                className="btn btn-block"
-                onClick={() => setShowProModal(false)}
-              >
-                Continue Authoring Manually
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </section>
+      {showPro && <ProDialog onClose={() => setShowPro(false)} />}
+    </>
   );
 }
 
-/** One row in the review list: the question, why it's here, and the four options to pick from. */
+/** Importing is for Pro: where to get it, or carry on by hand. */
+function ProDialog({ onClose }: { onClose: () => void }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    dialog.current?.showModal();
+  }, []);
+  return (
+    <dialog
+      ref={dialog}
+      className="s-dialog"
+      aria-labelledby="pro-title"
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+      onClick={(event) => {
+        if (event.target === dialog.current) onClose();
+      }}
+    >
+      <h2 id="pro-title">Importing is a Pro feature</h2>
+      <p>
+        Pro reads Word, CSV and text files straight into your bank. You can still add questions by
+        hand.
+      </p>
+      <div className="s-actions">
+        <a className="s-btn gold big" {...linkTo("/pricing")}>
+          See Pro plans
+        </a>
+        <button type="button" className="s-btn" onClick={onClose}>
+          Not now
+        </button>
+      </div>
+    </dialog>
+  );
+}
+
+/** One row to answer: the question, why it's here, and the four options to pick from. */
 function ImportFlaggedRow({
   row,
   disabled,
@@ -1993,30 +1792,33 @@ function ImportFlaggedRow({
   };
 
   return (
-    <div className="bank-q">
-      <label className="form-field">
-        <span className="form-label">
-          <input
-            type="checkbox"
-            checked={selected}
-            disabled={disabled || busy}
-            onChange={(event) => onSelected(event.target.checked)}
-          />{" "}
-          Line {row.row}: {row.prompt}
-          {row.source === "ai" && <span className="bank-badge">AI Suggested</span>}
-          {row.source === "key" && <span className="bank-badge ready">Keyed</span>}
+    <>
+      <label className="s-check" style={{ alignItems: "flex-start", minHeight: 0 }}>
+        <input
+          type="checkbox"
+          checked={selected}
+          disabled={disabled || busy}
+          onChange={(event) => onSelected(event.target.checked)}
+          style={{ marginTop: 1 }}
+        />
+        <span>
+          <span className="s-q-num">{row.row}</span> {row.prompt}
+          {row.source === "ai" && <span className="s-tag">AI</span>}
+          {row.source === "key" && <span className="s-tag">Key</span>}
         </span>
       </label>
       {row.review && (
-        <p className="muted small" role="status">
-          <span className="bank-badge warning">Needs review</span> {row.review}
+        <p className="s-card-why" role="status">
+          {row.review}
         </p>
       )}
-      {row.aiExplanation && <p className="muted small">AI explanation: {row.aiExplanation}</p>}
-      <fieldset style={{ border: "none", padding: 0, margin: 0 }}>
-        <legend className="form-label">Correct answer</legend>
+      {row.aiExplanation && <p className="s-card-why">AI: {row.aiExplanation}</p>}
+      <fieldset className="s-options">
+        <legend className="s-label" style={{ marginBottom: 6 }}>
+          Correct answer
+        </legend>
         {row.choices.map((choice, index) => (
-          <label key={index} className="small">
+          <label key={index} className="s-option">
             <input
               type="radio"
               name={`import-row-${row.idx}`}
@@ -2024,7 +1826,7 @@ function ImportFlaggedRow({
               checked={answerIndex === index}
               disabled={disabled || busy}
               onChange={() => setAnswerIndex(index)}
-            />{" "}
+            />
             {choice}
           </label>
         ))}
@@ -2041,11 +1843,15 @@ function ImportFlaggedRow({
         />
       </Field>
       <ErrorLine error={error} />
-      <div className="row-actions">
-        <button className="btn btn-small" type="button" disabled={disabled || busy} onClick={save}>
-          {busy ? "Saving…" : "Save answer"}
-        </button>
-      </div>
-    </div>
+      <button
+        className="s-btn small"
+        type="button"
+        disabled={disabled || busy}
+        onClick={save}
+        style={{ alignSelf: "flex-start" }}
+      >
+        {busy ? "Saving…" : "Save answer"}
+      </button>
+    </>
   );
 }
