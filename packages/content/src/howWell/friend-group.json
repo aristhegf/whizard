@@ -1,0 +1,336 @@
+[
+  {
+    "id": "how-well-friend-group-001",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s ideal Saturday?",
+    "choices": ["Brunch with friends", "A lie-in till noon", "Out and about", "Sport or the gym"]
+  },
+  {
+    "id": "how-well-friend-group-002",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s role in the group?",
+    "choices": ["The planner", "The joker", "The agony aunt", "The one who's late"]
+  },
+  {
+    "id": "how-well-friend-group-003",
+    "pack": "friend-group",
+    "prompt": "What would {name} bring to a party?",
+    "choices": ["Snacks", "Drinks", "Good music", "Just good vibes"]
+  },
+  {
+    "id": "how-well-friend-group-004",
+    "pack": "friend-group",
+    "prompt": "Which holiday would {name} pick?",
+    "choices": ["A beach resort", "Backpacking", "City lights", "A cosy cabin"]
+  },
+  {
+    "id": "how-well-friend-group-005",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s go-to takeaway?",
+    "choices": ["Pizza", "Shawarma", "Chinese", "A burger"]
+  },
+  {
+    "id": "how-well-friend-group-006",
+    "pack": "friend-group",
+    "prompt": "How does {name} answer the phone?",
+    "choices": ["Hello?", "Talk to me", "Never answers", "Texts back instead"]
+  },
+  {
+    "id": "how-well-friend-group-007",
+    "pack": "friend-group",
+    "prompt": "What's {name} most likely to do at a wedding?",
+    "choices": ["Dance all night", "Cry at the vows", "Eat everything", "Leave early"]
+  },
+  {
+    "id": "how-well-friend-group-008",
+    "pack": "friend-group",
+    "prompt": "What would {name} do with a million?",
+    "choices": ["Buy a house", "Travel", "Invest it", "Treat everyone"]
+  },
+  {
+    "id": "how-well-friend-group-009",
+    "pack": "friend-group",
+    "prompt": "Which kind of TV does {name} binge?",
+    "choices": ["Crime documentaries", "Reality TV", "Anime", "Sitcoms"]
+  },
+  {
+    "id": "how-well-friend-group-010",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s karaoke pick?",
+    "choices": ["A ballad", "A rap", "A group anthem", "Never sings"]
+  },
+  {
+    "id": "how-well-friend-group-011",
+    "pack": "friend-group",
+    "prompt": "What's {name} like on a road trip?",
+    "choices": ["The DJ", "The navigator", "The sleeper", "The snack keeper"]
+  },
+  {
+    "id": "how-well-friend-group-012",
+    "pack": "friend-group",
+    "prompt": "How many alarms does {name} set?",
+    "choices": ["One", "Two or three", "Five or more", "None, wakes up naturally"]
+  },
+  {
+    "id": "how-well-friend-group-013",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s dream job?",
+    "choices": ["Travel blogger", "Business owner", "Artist", "Chef"]
+  },
+  {
+    "id": "how-well-friend-group-014",
+    "pack": "friend-group",
+    "prompt": "What would {name} order at a restaurant?",
+    "choices": ["The usual", "Something new", "The cheapest thing", "Whatever's spiciest"]
+  },
+  {
+    "id": "how-well-friend-group-015",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s coffee order?",
+    "choices": ["Black coffee", "A latte", "Iced coffee", "No coffee, ever"]
+  },
+  {
+    "id": "how-well-friend-group-016",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s holiday packing style?",
+    "choices": ["A week early", "The night before", "The morning of", "Forgets half of it"]
+  },
+  {
+    "id": "how-well-friend-group-017",
+    "pack": "friend-group",
+    "prompt": "What would {name} do first at a theme park?",
+    "choices": [
+      "The biggest rollercoaster",
+      "The water rides",
+      "Games and prizes",
+      "Hold everyone's bags"
+    ]
+  },
+  {
+    "id": "how-well-friend-group-018",
+    "pack": "friend-group",
+    "prompt": "What is {name} always talking about?",
+    "choices": ["Food", "Football", "Music", "Big plans"]
+  },
+  {
+    "id": "how-well-friend-group-019",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s camera roll mostly full of?",
+    "choices": ["Selfies", "Food", "Screenshots", "Memes"]
+  },
+  {
+    "id": "how-well-friend-group-020",
+    "pack": "friend-group",
+    "prompt": "Which sport would {name} watch?",
+    "choices": ["Football", "Basketball", "Formula 1", "Athletics"]
+  },
+  {
+    "id": "how-well-friend-group-021",
+    "pack": "friend-group",
+    "prompt": "Who would headline {name}'s dream concert?",
+    "choices": ["An afrobeats legend", "A pop superstar", "A rock band", "A gospel choir"]
+  },
+  {
+    "id": "how-well-friend-group-022",
+    "pack": "friend-group",
+    "prompt": "What does {name} do when bored?",
+    "choices": ["Scrolls", "Texts the group", "Naps", "Cleans"]
+  },
+  {
+    "id": "how-well-friend-group-023",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s comfort show?",
+    "choices": ["Friends", "The Office", "A Nollywood classic", "Cartoons"]
+  },
+  {
+    "id": "how-well-friend-group-024",
+    "pack": "friend-group",
+    "prompt": "How does {name} handle spicy food?",
+    "choices": ["The hotter the better", "A little spice", "Mild only", "Drinks the whole jug"]
+  },
+  {
+    "id": "how-well-friend-group-025",
+    "pack": "friend-group",
+    "prompt": "Who would {name} be in a heist film?",
+    "choices": ["The mastermind", "The driver", "The hacker", "First to get caught"]
+  },
+  {
+    "id": "how-well-friend-group-026",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s ideal birthday?",
+    "choices": ["A big party", "Dinner with friends", "A trip away", "A quiet day"]
+  },
+  {
+    "id": "how-well-friend-group-027",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s favourite app?",
+    "choices": ["Instagram", "TikTok", "WhatsApp", "X"]
+  },
+  {
+    "id": "how-well-friend-group-028",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s secret skill?",
+    "choices": ["Cooking", "Fixing things", "Dancing", "Remembering birthdays"]
+  },
+  {
+    "id": "how-well-friend-group-029",
+    "pack": "friend-group",
+    "prompt": "What does {name} do first on holiday?",
+    "choices": ["Hit the beach", "Find food", "Take photos", "Nap"]
+  },
+  {
+    "id": "how-well-friend-group-030",
+    "pack": "friend-group",
+    "prompt": "How does {name} split the bill?",
+    "choices": ["Exact to the penny", "An even split", "Pays for everyone", "Wallet's at home"]
+  },
+  {
+    "id": "how-well-friend-group-031",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s move on the dance floor?",
+    "choices": ["The two-step", "The latest viral move", "Air guitar", "Stays by the wall"]
+  },
+  {
+    "id": "how-well-friend-group-032",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s idea of exercise?",
+    "choices": ["The gym", "Running", "Dancing", "Walking to the fridge"]
+  },
+  {
+    "id": "how-well-friend-group-033",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s pet peeve?",
+    "choices": ["Loud chewing", "Lateness", "Slow walkers", "Bad spelling"]
+  },
+  {
+    "id": "how-well-friend-group-034",
+    "pack": "friend-group",
+    "prompt": "Who would {name} pick for a dinner guest?",
+    "choices": ["A musician", "A footballer", "A film star", "A world leader"]
+  },
+  {
+    "id": "how-well-friend-group-035",
+    "pack": "friend-group",
+    "prompt": "What does {name} bring back from holiday?",
+    "choices": ["Fridge magnets", "Clothes", "Local food", "Only photos"]
+  },
+  {
+    "id": "how-well-friend-group-036",
+    "pack": "friend-group",
+    "prompt": "What would {name} do first on a desert island?",
+    "choices": ["Build a shelter", "Go fishing", "Make a raft", "Sunbathe"]
+  },
+  {
+    "id": "how-well-friend-group-037",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s favourite card or board game?",
+    "choices": ["Uno", "Monopoly", "Ludo", "Whot"]
+  },
+  {
+    "id": "how-well-friend-group-038",
+    "pack": "friend-group",
+    "prompt": "What would {name} call their autobiography?",
+    "choices": ["Just Five More Minutes", "Hungry Again", "Trust Me", "No Regrets"]
+  },
+  {
+    "id": "how-well-friend-group-039",
+    "pack": "friend-group",
+    "prompt": "What's {name} most likely doing at 2am?",
+    "choices": ["Sleeping", "Gaming", "Snacking", "Scrolling"]
+  },
+  {
+    "id": "how-well-friend-group-040",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s ideal pizza topping?",
+    "choices": ["Pepperoni", "Chicken", "Veggie", "Extra cheese"]
+  },
+  {
+    "id": "how-well-friend-group-041",
+    "pack": "friend-group",
+    "prompt": "Where would {name} time-travel to?",
+    "choices": ["Ancient Egypt", "The 80s", "The far future", "The dinosaurs"]
+  },
+  {
+    "id": "how-well-friend-group-042",
+    "pack": "friend-group",
+    "prompt": "How does {name} get through a Monday?",
+    "choices": ["Coffee", "Music", "Complaining", "Loves Mondays"]
+  },
+  {
+    "id": "how-well-friend-group-043",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s favourite kind of party?",
+    "choices": ["A house party", "A club night", "A garden party", "A games night"]
+  },
+  {
+    "id": "how-well-friend-group-044",
+    "pack": "friend-group",
+    "prompt": "What's {name} most likely to leave at home?",
+    "choices": ["Charger", "Wallet", "Keys", "Umbrella"]
+  },
+  {
+    "id": "how-well-friend-group-045",
+    "pack": "friend-group",
+    "prompt": "How does {name} pick a film to watch?",
+    "choices": [
+      "Reads the reviews",
+      "Watches the trailer",
+      "Whatever's trending",
+      "Lets others choose"
+    ]
+  },
+  {
+    "id": "how-well-friend-group-046",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s favourite snack?",
+    "choices": ["Crisps", "Chocolate", "Nuts", "Plantain chips"]
+  },
+  {
+    "id": "how-well-friend-group-047",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s spirit animal?",
+    "choices": ["A lion", "A sloth", "A dolphin", "An owl"]
+  },
+  {
+    "id": "how-well-friend-group-048",
+    "pack": "friend-group",
+    "prompt": "What would {name} do with a day off work?",
+    "choices": ["Sleep", "Run errands", "Take a day trip", "Binge-watch"]
+  },
+  {
+    "id": "how-well-friend-group-049",
+    "pack": "friend-group",
+    "prompt": "How does {name} react to a surprise?",
+    "choices": ["Screams", "Cries", "Laughs", "Plays it cool"]
+  },
+  {
+    "id": "how-well-friend-group-050",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s go-to photo pose?",
+    "choices": ["A peace sign", "The candid look", "A jumping shot", "Hides from the camera"]
+  },
+  {
+    "id": "how-well-friend-group-051",
+    "pack": "friend-group",
+    "prompt": "What would {name} rather have for life?",
+    "choices": ["Free flights", "Free food", "Free data", "Endless sleep"]
+  },
+  {
+    "id": "how-well-friend-group-052",
+    "pack": "friend-group",
+    "prompt": "Which job would {name} be worst at?",
+    "choices": ["Waiter", "Teacher", "Bus driver", "Librarian"]
+  },
+  {
+    "id": "how-well-friend-group-053",
+    "pack": "friend-group",
+    "prompt": "What's {name}'s drink of choice at a party?",
+    "choices": ["A fizzy drink", "A mocktail", "Juice", "Water"]
+  },
+  {
+    "id": "how-well-friend-group-054",
+    "pack": "friend-group",
+    "prompt": "What would {name} do first in a new city?",
+    "choices": ["Find food", "Go sightseeing", "Go shopping", "Find the wifi"]
+  }
+]
