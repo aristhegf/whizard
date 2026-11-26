@@ -1,6 +1,8 @@
 // Server-only: this package contains the answers, so the web app must never import it.
 import {
   type ConnectionsPuzzle,
+  type HowWellPack,
+  type HowWellQuestion,
   jigsawContentId,
   pickJigsawPicture,
   seededRng,
@@ -26,11 +28,17 @@ import popCulture from "./questions/pop-culture.json";
 import quran from "./questions/quran.json";
 import science from "./questions/science.json";
 import connectionsFile from "./connections/puzzles.json";
+import howWellBestFriends from "./howWell/best-friends.json";
+import howWellCouples from "./howWell/couples.json";
+import howWellFamily from "./howWell/family.json";
+import howWellFriendGroup from "./howWell/friend-group.json";
 import {
   storedConnectionsSchema,
+  storedHowWellSchema,
   storedQuestionSchema,
   storedWordSchema,
   type StoredConnections,
+  type StoredHowWell,
   type StoredQuestion,
   type StoredWord,
 } from "./schema";
@@ -64,6 +72,18 @@ export const WORDS: readonly StoredWord[] = z.array(storedWordSchema).parse(word
 export const CONNECTIONS: readonly StoredConnections[] = z
   .array(storedConnectionsSchema)
   .parse(connectionsFile);
+
+/** How Well Do You Know Me? questions, one file per pack. */
+export const HOW_WELL_FILES: Record<HowWellPack, unknown> = {
+  couples: howWellCouples,
+  "best-friends": howWellBestFriends,
+  family: howWellFamily,
+  "friend-group": howWellFriendGroup,
+};
+
+export const HOW_WELL_QUESTIONS: readonly StoredHowWell[] = Object.values(HOW_WELL_FILES).flatMap(
+  (file) => z.array(storedHowWellSchema).parse(file),
+);
 
 export type QuestionCounts = Partial<Record<QuizCategory, Record<QuizDifficulty, number>>>;
 
@@ -229,6 +249,22 @@ export function drawConnections(
   return leastUsed(pool.length > 0 ? pool : puzzles, seededRng(seed), options).slice(0, count);
 }
 
+/**
+ * How Well Do You Know Me? questions from one pack, one per round: the least used first, all
+ * different, in an order from the seed.
+ */
+export function drawHowWell(
+  pack: HowWellPack,
+  count: number,
+  seed: number,
+  options: DrawOptions = {},
+  questions: readonly StoredHowWell[] = HOW_WELL_QUESTIONS,
+): HowWellQuestion[] {
+  const rng = seededRng(seed);
+  const pool = questions.filter((q) => q.pack === pack);
+  return shuffled(leastUsed(pool, rng, options).slice(0, count), rng);
+}
+
 /** `questions` is the bank to draw from: the one that ships, or it with admin edits applied. */
 export function drawContent(
   request: ContentRequest,
@@ -247,5 +283,7 @@ export function drawContent(
       return drawWords(request.levels, seed, options);
     case "connections-puzzle":
       return drawConnections(request.level, seed, options, CONNECTIONS, request.count ?? 1);
+    case "how-well-questions":
+      return drawHowWell(request.pack, request.count, seed, options);
   }
 }

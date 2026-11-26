@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type { ConnectionsContentRequest } from "./connections/settings";
+import type { HowWellContentRequest } from "./howWell/settings";
 import type { JigsawContentRequest } from "./jigsaw/settings";
 import type { QuizContentRequest } from "./quiz/settings";
 import type { WordsContentRequest } from "./wordRush/settings";
@@ -11,7 +12,11 @@ export interface GamePlayer {
 
 /** What a game needs from the content bank before it can start. */
 export type ContentRequest =
-  QuizContentRequest | JigsawContentRequest | WordsContentRequest | ConnectionsContentRequest;
+  | QuizContentRequest
+  | JigsawContentRequest
+  | WordsContentRequest
+  | ConnectionsContentRequest
+  | HowWellContentRequest;
 
 /** How a finished game went, for match history. The same shape for every game. */
 export interface GameSummary {

@@ -1,0 +1,320 @@
+[
+  {
+    "id": "how-well-family-001",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite family meal?",
+    "choices": ["Sunday rice", "Pepper soup", "A roast dinner", "Pancakes"]
+  },
+  {
+    "id": "how-well-family-002",
+    "pack": "family",
+    "prompt": "What chore does {name} always try to avoid?",
+    "choices": ["Washing dishes", "Taking out the bin", "Sweeping", "Making the bed"]
+  },
+  {
+    "id": "how-well-family-003",
+    "pack": "family",
+    "prompt": "Which cartoon would {name} happily watch again?",
+    "choices": ["Tom and Jerry", "SpongeBob", "Scooby-Doo", "Peppa Pig"]
+  },
+  {
+    "id": "how-well-family-004",
+    "pack": "family",
+    "prompt": "What's {name}'s role at family parties?",
+    "choices": ["The DJ", "The cook", "The dancer", "The photographer"]
+  },
+  {
+    "id": "how-well-family-005",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite holiday of the year?",
+    "choices": ["Christmas", "Eid", "Birthdays", "New Year"]
+  },
+  {
+    "id": "how-well-family-006",
+    "pack": "family",
+    "prompt": "How does {name} like their eggs?",
+    "choices": ["Fried", "Boiled", "Scrambled", "No eggs, please"]
+  },
+  {
+    "id": "how-well-family-007",
+    "pack": "family",
+    "prompt": "What would {name} be in a family band?",
+    "choices": ["Lead singer", "Drummer", "Guitarist", "Manager"]
+  },
+  {
+    "id": "how-well-family-008",
+    "pack": "family",
+    "prompt": "What's {name}'s best board game?",
+    "choices": ["Ludo", "Scrabble", "Snakes and ladders", "Monopoly"]
+  },
+  {
+    "id": "how-well-family-009",
+    "pack": "family",
+    "prompt": "Where would {name} choose for a family day out?",
+    "choices": ["The beach", "A theme park", "The zoo", "The cinema"]
+  },
+  {
+    "id": "how-well-family-010",
+    "pack": "family",
+    "prompt": "What was {name}'s favourite subject at school?",
+    "choices": ["Maths", "Science", "Art", "Sport"]
+  },
+  {
+    "id": "how-well-family-011",
+    "pack": "family",
+    "prompt": "What time does {name} get up at the weekend?",
+    "choices": ["Before 7", "Between 7 and 9", "Between 9 and 11", "After noon"]
+  },
+  {
+    "id": "how-well-family-012",
+    "pack": "family",
+    "prompt": "What's {name}'s signature dish?",
+    "choices": ["Jollof rice", "Spaghetti", "Fried plantain", "Toast"]
+  },
+  {
+    "id": "how-well-family-013",
+    "pack": "family",
+    "prompt": "What's {name} most likely to say at dinner?",
+    "choices": ["Pass the salt", "What's for dessert?", "Phones away!", "I'm full"]
+  },
+  {
+    "id": "how-well-family-014",
+    "pack": "family",
+    "prompt": "What does {name} do on a long car ride?",
+    "choices": ["Sleep", "Sing along", "Ask if we're there yet", "Play games"]
+  },
+  {
+    "id": "how-well-family-015",
+    "pack": "family",
+    "prompt": "Which animal is {name} most like?",
+    "choices": ["A lion", "A cat", "An owl", "A puppy"]
+  },
+  {
+    "id": "how-well-family-016",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite family tradition?",
+    "choices": ["Holiday meals", "Movie nights", "Road trips", "Game nights"]
+  },
+  {
+    "id": "how-well-family-017",
+    "pack": "family",
+    "prompt": "What would {name} do with a surprise day off?",
+    "choices": ["Sleep in", "Watch TV", "Visit friends", "Play outside"]
+  },
+  {
+    "id": "how-well-family-018",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite sweet treat?",
+    "choices": ["Chocolate", "Ice cream", "Biscuits", "Chin chin"]
+  },
+  {
+    "id": "how-well-family-019",
+    "pack": "family",
+    "prompt": "What did {name} dream of being as a child?",
+    "choices": ["A doctor", "A footballer", "A teacher", "An astronaut"]
+  },
+  {
+    "id": "how-well-family-020",
+    "pack": "family",
+    "prompt": "What does {name} always lose at home?",
+    "choices": ["The remote", "Keys", "Phone", "One sock"]
+  },
+  {
+    "id": "how-well-family-021",
+    "pack": "family",
+    "prompt": "What does {name} love to sing around the house?",
+    "choices": ["Church songs", "Pop songs", "Old classics", "Made-up songs"]
+  },
+  {
+    "id": "how-well-family-022",
+    "pack": "family",
+    "prompt": "How does {name} like to spend their birthday?",
+    "choices": ["A big party", "A family dinner", "Cake at home", "A quiet day"]
+  },
+  {
+    "id": "how-well-family-023",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite drink?",
+    "choices": ["Juice", "Tea", "A malt drink", "Water"]
+  },
+  {
+    "id": "how-well-family-024",
+    "pack": "family",
+    "prompt": "Which room is {name} always found in?",
+    "choices": ["The kitchen", "The living room", "The bedroom", "The garden"]
+  },
+  {
+    "id": "how-well-family-025",
+    "pack": "family",
+    "prompt": "What would {name} do with a free afternoon?",
+    "choices": ["Nap", "Read", "Cook", "Watch TV"]
+  },
+  {
+    "id": "how-well-family-026",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite animal at the zoo?",
+    "choices": ["Lions", "Monkeys", "Elephants", "Giraffes"]
+  },
+  {
+    "id": "how-well-family-027",
+    "pack": "family",
+    "prompt": "What's {name}'s superpower in the family?",
+    "choices": ["Fixing things", "Giving advice", "Making people laugh", "Cooking"]
+  },
+  {
+    "id": "how-well-family-028",
+    "pack": "family",
+    "prompt": "What's {name}'s bedtime habit?",
+    "choices": ["Reading", "Scrolling", "Saying prayers", "Asleep instantly"]
+  },
+  {
+    "id": "how-well-family-029",
+    "pack": "family",
+    "prompt": "Which would {name} rather visit?",
+    "choices": ["Grandma's house", "A big city", "The countryside", "The seaside"]
+  },
+  {
+    "id": "how-well-family-030",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite fruit?",
+    "choices": ["Orange", "Mango", "Apple", "Grapes"]
+  },
+  {
+    "id": "how-well-family-031",
+    "pack": "family",
+    "prompt": "How does {name} react to a spider in the house?",
+    "choices": ["Screams", "Catches it", "Calls for help", "Ignores it"]
+  },
+  {
+    "id": "how-well-family-032",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite thing on TV?",
+    "choices": ["Football", "A Nollywood film", "Cartoons", "A cooking show"]
+  },
+  {
+    "id": "how-well-family-033",
+    "pack": "family",
+    "prompt": "What does {name} do first when they get home?",
+    "choices": ["Change clothes", "Grab a snack", "Lie down", "Turn on the TV"]
+  },
+  {
+    "id": "how-well-family-034",
+    "pack": "family",
+    "prompt": "What would {name} pack first for a holiday?",
+    "choices": ["Snacks", "Clothes", "A phone charger", "A good book"]
+  },
+  {
+    "id": "how-well-family-035",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite breakfast?",
+    "choices": ["Bread and tea", "Cereal", "Akara and pap", "Pancakes"]
+  },
+  {
+    "id": "how-well-family-036",
+    "pack": "family",
+    "prompt": "How does {name} help when someone's poorly?",
+    "choices": ["Makes soup", "Brings medicine", "Tells jokes", "Gives them space"]
+  },
+  {
+    "id": "how-well-family-037",
+    "pack": "family",
+    "prompt": "What's {name}'s family photo pose?",
+    "choices": ["A big smile", "A silly face", "A peace sign", "Hiding at the back"]
+  },
+  {
+    "id": "how-well-family-038",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite outdoor game?",
+    "choices": ["Football", "Hide and seek", "Skipping", "Tag"]
+  },
+  {
+    "id": "how-well-family-039",
+    "pack": "family",
+    "prompt": "What does {name} save their money for?",
+    "choices": ["Gadgets", "Clothes", "Trips", "Gifts for others"]
+  },
+  {
+    "id": "how-well-family-040",
+    "pack": "family",
+    "prompt": "What is {name} famous for saying?",
+    "choices": ["I'm hungry", "Five more minutes", "It wasn't me!", "Let's go!"]
+  },
+  {
+    "id": "how-well-family-041",
+    "pack": "family",
+    "prompt": "Who in the family is {name} most like?",
+    "choices": ["Mum", "Dad", "A grandparent", "Nobody, one of a kind"]
+  },
+  {
+    "id": "how-well-family-042",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite way to travel?",
+    "choices": ["By car", "By train", "By plane", "By boat"]
+  },
+  {
+    "id": "how-well-family-043",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite colour?",
+    "choices": ["Blue", "Red", "Green", "Purple"]
+  },
+  {
+    "id": "how-well-family-044",
+    "pack": "family",
+    "prompt": "What would {name} cook for the whole family?",
+    "choices": ["Soup", "Rice", "Pasta", "Sandwiches"]
+  },
+  {
+    "id": "how-well-family-045",
+    "pack": "family",
+    "prompt": "How does {name} wake up in the morning?",
+    "choices": ["An alarm", "A wake-up call", "Naturally", "Hits snooze"]
+  },
+  {
+    "id": "how-well-family-046",
+    "pack": "family",
+    "prompt": "What makes {name} grumpy?",
+    "choices": ["Being hungry", "Being tired", "Losing a game", "Too much noise"]
+  },
+  {
+    "id": "how-well-family-047",
+    "pack": "family",
+    "prompt": "What kind of film would {name} pick for family night?",
+    "choices": ["An animated film", "An action film", "A comedy", "An old classic"]
+  },
+  {
+    "id": "how-well-family-048",
+    "pack": "family",
+    "prompt": "What gift would {name} love most?",
+    "choices": ["Clothes", "Books", "Gadgets", "Money"]
+  },
+  {
+    "id": "how-well-family-049",
+    "pack": "family",
+    "prompt": "Which job at a family picnic would {name} take?",
+    "choices": ["Cooking", "Running the games", "Eating", "Packing up"]
+  },
+  {
+    "id": "how-well-family-050",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite festive food?",
+    "choices": ["Rice and chicken", "Cake", "Cookies", "Small chops"]
+  },
+  {
+    "id": "how-well-family-051",
+    "pack": "family",
+    "prompt": "What would {name} do if they were in charge for a day?",
+    "choices": ["No bedtime", "Pizza for dinner", "A family trip", "Chores for everyone"]
+  },
+  {
+    "id": "how-well-family-052",
+    "pack": "family",
+    "prompt": "What's {name}'s favourite kind of weather?",
+    "choices": ["Sunny", "Rainy", "Windy", "Cool evenings"]
+  },
+  {
+    "id": "how-well-family-053",
+    "pack": "family",
+    "prompt": "Who would {name} call first with big news?",
+    "choices": ["Mum", "Dad", "A brother or sister", "A grandparent"]
+  }
+]

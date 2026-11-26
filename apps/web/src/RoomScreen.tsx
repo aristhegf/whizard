@@ -1,5 +1,6 @@
 import {
   ELIMINATION_MIN_PLAYERS,
+  HOW_WELL_MIN_PLAYERS,
   JIGSAW_PICTURES,
   photoPicture,
   LEVEL_NAMES,
@@ -10,6 +11,7 @@ import {
   reactionLevelName,
   type AnyQuizView,
   type ConnectionsView,
+  type HowWellView,
   type JigsawView,
   type LogicView,
   type MemoryView,
@@ -65,6 +67,12 @@ import {
   logicModeName,
   parseLogicSettings,
 } from "./games/logic/LogicSettingsRows";
+import { HowWellScreen } from "./games/howWell/HowWellScreen";
+import {
+  HowWellSettingsRows,
+  howWellSummary,
+  parseHowWellSettings,
+} from "./games/howWell/HowWellSettingsRows";
 import { MemoryScreen } from "./games/memory/MemoryScreen";
 import { MemorySettingsRows, parseMemorySettings } from "./games/memory/MemorySettingsRows";
 import { QuizScreen } from "./games/quiz/QuizScreen";
@@ -132,7 +140,8 @@ export function RoomScreen({ code }: { code: string }) {
         | ConnectionsView
         | LogicView
         | ReactionView
-        | MemoryView)
+        | MemoryView
+        | HowWellView)
     : null;
   // Leaving mid-game can't be undone, so it asks first while you're still playing: in a
   // jigsaw until you finish, in Elimination only while you're still in it.
@@ -151,6 +160,8 @@ export function RoomScreen({ code }: { code: string }) {
     } else if (view.game === "memory") {
       // Anyone with a round still to play is mid-game; the results and the waiting screens aren't.
       midGame = view.stage.kind !== "done" && view.stage.kind !== "watching";
+    } else if (view.game === "how-well") {
+      midGame = view.stage.kind !== "done";
     } else {
       const stage = view.stage.kind;
       const stillIn =
@@ -235,6 +246,8 @@ export function RoomScreen({ code }: { code: string }) {
           <ReactionScreen {...gameProps} view={view} />
         ) : view?.game === "memory" ? (
           <MemoryScreen {...gameProps} view={view} />
+        ) : view?.game === "how-well" ? (
+          <HowWellScreen {...gameProps} view={view} />
         ) : view && view.game !== "quiz" && "mode" in view ? (
           <RoundsEliminationScreen {...gameProps} view={view} />
         ) : view && view.game !== "quiz" ? (
@@ -549,6 +562,7 @@ function settingsSummary({
   logic,
   reaction,
   memory,
+  howWell,
 }: {
   gameId: string;
   settings: ReturnType<typeof parseQuizSettings> | null;
@@ -558,6 +572,7 @@ function settingsSummary({
   logic: ReturnType<typeof parseLogicSettings> | null;
   reaction: ReturnType<typeof parseReactionSettings> | null;
   memory: ReturnType<typeof parseMemorySettings> | null;
+  howWell: ReturnType<typeof parseHowWellSettings> | null;
 }): string | null {
   // The jigsaw's own line is written with dots, for the pages that list it; here it's a list.
   if (jigsaw) return levelSummary(jigsaw).replaceAll(" · ", ", ");
@@ -581,6 +596,7 @@ function settingsSummary({
     const { rounds, revealSeconds } = memory;
     return `${rounds} rounds, ${revealSeconds}s to remember`;
   }
+  if (howWell) return howWellSummary(howWell);
   if (rounds) {
     const each =
       rounds.mode === "elimination"
@@ -639,16 +655,18 @@ function Lobby({
   const logic = gameId === "logic" ? parseLogicSettings(room.game.settings) : null;
   const reaction = gameId === "reaction" ? parseReactionSettings(room.game.settings) : null;
   const memory = gameId === "memory" ? parseMemorySettings(room.game.settings) : null;
+  const howWell = gameId === "how-well" ? parseHowWellSettings(room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
-  const needMore =
+  const elimination =
     settings?.variant === "elimination" ||
     rounds?.mode === "elimination" ||
     jigsaw?.mode === "elimination" ||
     connections?.mode === "elimination" ||
-    logic?.mode === "elimination"
-      ? Math.max(0, ELIMINATION_MIN_PLAYERS - connected.length)
-      : 0;
+    logic?.mode === "elimination";
+  // Elimination needs a crowd; How Well needs someone to guess.
+  const fewest = elimination ? ELIMINATION_MIN_PLAYERS : howWell ? HOW_WELL_MIN_PLAYERS : 1;
+  const needMore = Math.max(0, fewest - connected.length);
   const url = `${location.origin}${roomPath(room.code)}`;
   // Arriving from Ping on the friends page opens the invites, where that ping goes out.
   const [inviting, setInviting] = useState(() => new URLSearchParams(location.search).has("ping"));
@@ -697,6 +715,7 @@ function Lobby({
     logic,
     reaction,
     memory,
+    howWell,
   });
   const kind = GAME_GROUPS.find((g) => g.id === game?.groups[0]);
 
@@ -840,6 +859,13 @@ function Lobby({
           onChange={(next) => client.configure(next)}
         />
       )}
+      {howWell && (
+        <HowWellSettingsRows
+          settings={howWell}
+          editable={canEdit}
+          onChange={(next) => client.configure(next)}
+        />
+      )}
       {jigsaw && (
         <JigsawSettingsRows
           settings={jigsaw}
@@ -952,8 +978,8 @@ function Lobby({
         </div>
       ) : isHost && needMore > 0 ? (
         <p className="muted center need-more" role="status">
-          Elimination needs at least {ELIMINATION_MIN_PLAYERS} players. Invite {needMore} more to
-          start.
+          {elimination ? "Elimination" : game?.name} needs at least {fewest} players. Invite{" "}
+          {needMore} more to start.
         </p>
       ) : isHost ? (
         <SlideToPlay

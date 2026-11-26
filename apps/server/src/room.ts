@@ -120,6 +120,7 @@ const GAME_ERROR_MESSAGES: Record<GameError, string> = {
 /** What a player's history of seen content is kept under: the quiz topic, or the game. */
 function historyCategory(request: ContentRequest): string {
   if (request.kind === "quiz-questions") return request.category;
+  if (request.kind === "how-well-questions") return "how-well";
   return request.kind === "connections-puzzle" ? "connections" : "word-rush";
 }
 
