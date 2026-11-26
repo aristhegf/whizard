@@ -157,9 +157,9 @@ async function joinAs(page: Page, nickname: string) {
 
 async function openRoom(page: Page) {
   await page.goto("/");
-  // Guests get the welcome page's own "Create a Room"; a signed-in page (the admin account)
+  // Guests get the welcome page's own "Create a room"; a signed-in page (the admin account)
   // gets the bar's plain "Create" instead.
-  const hero = page.getByRole("button", { name: /Create a Room/ });
+  const hero = page.getByRole("button", { name: "Create a room" });
   const nav = page.getByRole("button", { name: "Create", exact: true });
   await expect(hero.or(nav)).toBeVisible();
   await ((await hero.isVisible()) ? hero : nav).click();

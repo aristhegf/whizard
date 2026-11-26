@@ -8,13 +8,13 @@ import { linkTo, navigate, roomPath } from "../router";
 import { AccountMenu } from "./AccountMenu";
 import { Icon, type IconName } from "./Icon";
 import { JoinRoomBox } from "./JoinRoomBox";
-import { LiveCount } from "./LiveCount";
 import { LogoMark } from "./Logo";
 import { useToast } from "./toast";
 import { usePageReveal } from "./usePageReveal";
 
 export type Section =
   | "home"
+  | "welcome"
   | "games"
   | "topics"
   | "friends"
@@ -69,7 +69,16 @@ function useRemeasure() {
 }
 
 /** "Create a Room": says it's working, and offers to try again if the room couldn't be made. */
-export function CreateRoomButton({ className }: { className: string }) {
+export function CreateRoomButton({
+  className,
+  label = "Create a Room",
+  arrow = true,
+}: {
+  className: string;
+  label?: string;
+  /** The arrow after the label. */
+  arrow?: boolean;
+}) {
   const [state, setState] = useState<ButtonState>("idle");
   const toast = useToast();
   useRemeasure();
@@ -79,7 +88,7 @@ export function CreateRoomButton({ className }: { className: string }) {
       state={state}
       loadingText="Creating…"
       errorText="Try again"
-      icon={<Icon name="arrowRight" size={24} stroke={2.4} />}
+      icon={arrow ? <Icon name="arrowRight" size={24} stroke={2.4} /> : undefined}
       onClick={() => {
         setState("loading");
         startRoom().catch((error: unknown) => {
@@ -88,7 +97,7 @@ export function CreateRoomButton({ className }: { className: string }) {
         });
       }}
     >
-      Create a Room
+      {label}
     </StatefulButton>
   );
 }
@@ -106,8 +115,8 @@ const LEADERBOARD: NavLink = {
 };
 /** For guests, whose home page explains Whizard: their Play goes to the games themselves. */
 const PLAY_AS_GUEST: NavLink = { ...PLAY, href: "/games" };
-/** For guests, whose home page is the one that explains Whizard. */
-const HOW: NavLink = { label: "How it works", href: "/#how", icon: "help", section: null };
+/** The same, by name, in a guest's top bar. */
+const GAMES: NavLink = { label: "Games", href: "/games", icon: "games", section: "games" };
 const PRICING: NavLink = { label: "Pricing", href: "/pricing", icon: "wallet", section: "pricing" };
 
 /** Every link about the site, in the footer. */
@@ -117,10 +126,17 @@ const SITE_LINKS: { label: string; href: string; section?: Section }[] = [
   { label: "Privacy", href: "/privacy" },
 ];
 
-/** The games pages all belong to Play. */
-const isActive = (active: Section, section: Section) =>
-  active !== null &&
-  (active === section || (section === "home" && (active === "games" || active === "topics")));
+/**
+ * The games pages all belong to Play, and to a guest's Games link. A guest's Play tab also stays
+ * lit on the home page that introduces Whizard, as its own way into the games.
+ */
+const isActive = (active: Section, section: Section) => {
+  if (active === null || section === null) return false;
+  if (active === section) return true;
+  if (section === "home") return active === "games" || active === "topics" || active === "welcome";
+  if (section === "games") return active === "home" || active === "topics";
+  return false;
+};
 
 /** Starts a room, and says so if it couldn't. */
 function useCreateRoom() {
@@ -137,10 +153,10 @@ function useCreateRoom() {
 }
 
 /**
- * The bar across the top of every page outside a game: the logo, links in the middle (Play,
- * Create, Stats and Leaderboard once signed in; How it works, Pricing and Stats for guests), then
- * the room-code box, who's here, friend requests and the account menu on the right. Phones keep
- * the logo and the code box, with the rest in the tabs at the bottom.
+ * The bar across the top of every page outside a game: the logo, then its links (Play, Create,
+ * Stats and Leaderboard once signed in; Games, Pricing and Stats for guests), then the room-code
+ * box, friend requests and the account menu on the right. Phones keep the logo and the code box,
+ * with the rest in the tabs at the bottom.
  */
 export function TopNav({ active = null }: { active?: Section }) {
   const account = useAccount();
@@ -173,7 +189,7 @@ export function TopNav({ active = null }: { active?: Section }) {
           </>
         ) : (
           <>
-            {navLink(HOW)}
+            {navLink(GAMES)}
             {navLink(PRICING)}
             {navLink(STATS)}
           </>
@@ -182,7 +198,6 @@ export function TopNav({ active = null }: { active?: Section }) {
       <div className="topnav-end">
         <JoinRoomBox />
         <div className="nav-end">
-          <LiveCount variant="bar" />
           {signedIn && (
             <Tooltip content="Friend requests" side="bottom">
               <a className="icon-btn bell-btn" {...linkTo("/friends")} aria-label="Friend requests">

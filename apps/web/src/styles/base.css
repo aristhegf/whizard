@@ -759,7 +759,7 @@ select option {
   }
 }
 
-/* The top bar: logo, links, the room-code box, who's here and the account menu. */
+/* The top bar: logo, links, the room-code box and the account menu. */
 .topnav {
   display: flex;
   align-items: center;
@@ -778,22 +778,17 @@ select option {
   min-width: 0;
 }
 
-/* Three parts on wide screens: the logo, the links centred on the page, then the box and the
-   account. The two sides share the leftover width equally, which keeps the middle centred. */
+/* Wide screens read left to right: the logo with its links beside it, then the box and the
+   account at the far end. */
 @media (min-width: 1100px) {
   .topnav {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     min-height: 76px;
-    gap: 16px;
-  }
-
-  .topnav .brand {
-    justify-self: start;
+    gap: 24px;
   }
 
   .topnav-end {
-    justify-self: end;
+    flex: none;
+    gap: 14px;
   }
 }
 
@@ -857,7 +852,9 @@ select option {
   }
 }
 
-/* Play, Create, Stats and Leaderboard: plain words in a row, glowing gold under the pointer. */
+/* Games, Pricing and Stats (or Play, Create, Stats and Leaderboard): plain words in a row beside
+   the logo, brightening under the pointer. It takes the free width, which pushes the room-code
+   box and the account to the far end. */
 .nav-links {
   display: none;
 }
@@ -865,8 +862,10 @@ select option {
 @media (min-width: 1100px) {
   .nav-links {
     display: flex;
+    flex: 1;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
+    min-width: 0;
   }
 }
 
@@ -874,32 +873,26 @@ select option {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding: 0 14px;
+  padding: 0 12px;
   border: 0;
   background: none;
   font-family: var(--body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.95rem;
   color: var(--muted);
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition:
-    color 180ms ease-out,
-    text-shadow 180ms ease-out;
+  transition: color 150ms ease-out;
 }
 
 .nav-link[aria-current="page"] {
   color: #fff;
-  font-weight: 600;
 }
 
 @media (hover: hover) {
   .nav-link:hover:not(:disabled) {
-    color: var(--gold);
-    text-shadow:
-      0 0 10px rgb(255 212 63 / 65%),
-      0 0 22px rgb(255 171 44 / 40%);
+    color: #fff;
   }
 }
 
@@ -914,38 +907,6 @@ select option {
 /* On phones the bar keeps the logo and the room-code box; the rest is in the tabs. */
 @media (max-width: 1099px) {
   .topnav .nav-end {
-    display: none;
-  }
-}
-
-/* Visitors so far and who's here now, on two short lines. */
-.live-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  padding: 8px 14px;
-  border-radius: 14px;
-  border: 1.5px solid var(--line);
-  background: rgb(12 10 40 / 72%);
-  font-size: 0.78rem;
-  line-height: 1.25;
-  color: var(--muted);
-  transition: opacity 0.4s ease;
-}
-
-.live-bar > span:last-child {
-  display: grid;
-  white-space: nowrap;
-}
-
-.live-bar.loading {
-  opacity: 0;
-}
-
-/* The top bar is tightest on small laptops: who's here goes first. */
-@media (max-width: 1439px) {
-  .live-bar {
     display: none;
   }
 }
@@ -965,14 +926,18 @@ select option {
   margin-left: auto;
 }
 
+/* 44px tall: a slim night pill, the gold go button tucked into its right end. */
 .join-room-form {
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 3px;
   border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  background: rgb(12 10 40 / 72%);
+  border: 1px solid var(--line);
+  background: var(--night);
+  transition:
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out;
 }
 
 /* The whole pill shows focus, rather than a second ring inside it. */
@@ -993,13 +958,14 @@ select option {
 .join-room-input {
   width: 100%;
   min-width: 0;
-  min-height: 32px;
-  padding: 0 12px;
+  min-height: 36px;
+  padding: 0 8px 0 14px;
   border: 0;
   border-radius: 999px;
   background: transparent;
   color: var(--text);
   font: inherit;
+  font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1012,52 +978,21 @@ select option {
   min-width: 0;
 }
 
-/* Example codes typing themselves in while the box is empty, laid out like a typed code. Taps go
-   straight through to the box. */
-.join-room-demo {
-  position: absolute;
-  inset: 0 12px;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  pointer-events: none;
-  font-weight: 600;
-  font-style: italic;
-  letter-spacing: 0.08em;
-  white-space: nowrap;
-  color: var(--dim);
-}
-
-.join-room-caret {
-  flex: none;
-  width: 2px;
-  height: 1.1em;
-  margin-left: 2px;
-  border-radius: 1px;
-  background: var(--gold);
-  animation: join-room-caret 1s steps(1) infinite;
-}
-
-@keyframes join-room-caret {
-  50% {
-    opacity: 0;
-  }
-}
-
+/* "Room code" says what goes in the box; it never looks like a real code. */
 .join-room-input::placeholder {
-  font-weight: 500;
-  font-style: italic;
+  font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
   color: var(--dim);
+  opacity: 1;
 }
 
 .join-room-go {
   display: grid;
   flex: none;
   place-items: center;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border: 0;
   border-radius: 999px;
   position: relative;
@@ -1065,7 +1000,13 @@ select option {
   background: linear-gradient(180deg, #ffe066, var(--gold-deep));
   color: #3a1d00;
   cursor: pointer;
-  transition: color 200ms ease-out;
+  transition:
+    color 200ms ease-out,
+    transform 120ms ease-out;
+}
+
+.join-room-go:active:not(:disabled) {
+  transform: scale(0.94);
 }
 
 /* Green once the code typed is a room that can be joined. A layer fades in, as gradients can't. */
