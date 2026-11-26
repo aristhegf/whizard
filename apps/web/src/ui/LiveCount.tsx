@@ -3,32 +3,26 @@ import { usePresence } from "../presence";
 const format = (n: number) => n.toLocaleString("en-US");
 
 /**
- * "11,630 visitors so far · 91 here now": a pill on the home screen, or two short lines in the
- * top bar. It keeps its space while loading, so nothing jumps.
+ * The live counts. `pill`: "11,630 visitors so far · 91 here now", above the Games screen's
+ * title. `now`: just "91 playing now", one line of green text beside a heading on the home page.
+ * Either keeps its space while loading, so nothing jumps.
  */
-export function LiveCount({ variant = "pill" }: { variant?: "pill" | "bar" }) {
+export function LiveCount({ variant = "pill" }: { variant?: "pill" | "now" }) {
   const counts = usePresence();
-  const visitors = (
-    <>
-      {counts ? format(counts.visitors) : "0"} {counts?.visitors === 1 ? "visitor" : "visitors"} so
-      far
-    </>
-  );
   const now = <>{counts ? format(counts.online) : "0"} here now</>;
-  if (variant === "bar") {
+  if (variant === "now") {
     return (
-      <p className={`live-bar${counts ? "" : " loading"}`} aria-hidden={!counts}>
-        <span className="live-dot" aria-hidden="true" />
-        <span>
-          <span>{visitors}</span>
-          <span>{now}</span>
-        </span>
+      <p className={`live-now${counts ? "" : " loading"}`} aria-hidden={!counts}>
+        {counts ? format(counts.online) : "0"} playing now
       </p>
     );
   }
   return (
     <p className={counts ? "live-count" : "live-count loading"} aria-hidden={!counts}>
-      <span>{visitors}</span>
+      <span>
+        {counts ? format(counts.visitors) : "0"} {counts?.visitors === 1 ? "visitor" : "visitors"}{" "}
+        so far
+      </span>
       <span className="live-count-now">
         <span className="live-dot" aria-hidden="true" />
         {now}
