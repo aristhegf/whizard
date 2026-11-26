@@ -26,7 +26,7 @@ async function joinAs(page: Page, nickname: string) {
 async function openRoom(page: Page, nickname = "Ada") {
   await page.goto("/");
   // The welcome page's own button, there on phones and computers alike.
-  await page.getByRole("button", { name: /Create a Room/ }).click();
+  await page.getByRole("button", { name: "Create a room" }).click();
   await joinAs(page, nickname);
 }
 

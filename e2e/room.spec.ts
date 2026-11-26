@@ -262,7 +262,7 @@ test("explains when a room doesn’t exist", async ({ page }) => {
   await page.goto("/r/ZZZZZZ");
   await expect(page.getByRole("alert")).toHaveText(/doesn’t exist or has expired/);
   await page.getByRole("button", { name: "Back to home" }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Games\s*Are Better\s*Together/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Games are better together");
 });
 
 test("explains when a room link is malformed", async ({ page }) => {
