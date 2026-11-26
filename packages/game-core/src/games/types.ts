@@ -3,6 +3,7 @@ import type { ConnectionsContentRequest } from "./connections/settings";
 import type { ImpostorContentRequest } from "./impostor/settings";
 import type { HowWellContentRequest } from "./howWell/settings";
 import type { JigsawContentRequest } from "./jigsaw/settings";
+import type { MostLikelyToContentRequest } from "./mostLikelyTo/settings";
 import type { QuizContentRequest } from "./quiz/settings";
 import type { WordsContentRequest } from "./wordRush/settings";
 
@@ -17,6 +18,7 @@ export type ContentRequest =
   | JigsawContentRequest
   | WordsContentRequest
   | ConnectionsContentRequest
+  | MostLikelyToContentRequest
   | ImpostorContentRequest
   | HowWellContentRequest;
 
