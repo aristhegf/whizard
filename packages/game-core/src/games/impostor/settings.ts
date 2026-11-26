@@ -14,8 +14,16 @@ export const IMPOSTOR_VOTE_SECONDS = [20, 30, 45] as const;
  * for a group in the same room — the turn only shows whose go it is, with a "done" button.
  */
 export const IMPOSTOR_CLUE_MODES = [
-  { id: "typed", name: "Typed" },
-  { id: "spoken", name: "Spoken" },
+  {
+    id: "typed",
+    name: "Typed",
+    description: "Everyone types a one-word clue on their turn, and the clues show to all.",
+  },
+  {
+    id: "spoken",
+    name: "Out loud",
+    description: "For playing in the same room: say your clue out loud, then tap Done.",
+  },
 ] as const;
 export type ImpostorClueMode = (typeof IMPOSTOR_CLUE_MODES)[number]["id"];
 

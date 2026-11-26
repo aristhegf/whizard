@@ -12,6 +12,7 @@ import {
   type ConnectionsView,
   type JigsawView,
   type LogicView,
+  type ImpostorView,
   type MemoryView,
   type QuizSettings,
   type ReactionView,
@@ -65,6 +66,12 @@ import {
   logicModeName,
   parseLogicSettings,
 } from "./games/logic/LogicSettingsRows";
+import { ImpostorScreen } from "./games/impostor/ImpostorScreen";
+import {
+  ImpostorSettingsRows,
+  impostorSummary,
+  parseImpostorSettings,
+} from "./games/impostor/ImpostorSettingsRows";
 import { MemoryScreen } from "./games/memory/MemoryScreen";
 import { MemorySettingsRows, parseMemorySettings } from "./games/memory/MemorySettingsRows";
 import { QuizScreen } from "./games/quiz/QuizScreen";
@@ -132,7 +139,8 @@ export function RoomScreen({ code }: { code: string }) {
         | ConnectionsView
         | LogicView
         | ReactionView
-        | MemoryView)
+        | MemoryView
+        | ImpostorView)
     : null;
   // Leaving mid-game can't be undone, so it asks first while you're still playing: in a
   // jigsaw until you finish, in Elimination only while you're still in it.
@@ -148,7 +156,7 @@ export function RoomScreen({ code }: { code: string }) {
     } else if (view.game === "reaction") {
       // Anyone with a round still to play is mid-game; the results and the waiting screens aren't.
       midGame = view.stage.kind !== "done" && view.stage.kind !== "watching";
-    } else if (view.game === "memory") {
+    } else if (view.game === "memory" || view.game === "impostor") {
       // Anyone with a round still to play is mid-game; the results and the waiting screens aren't.
       midGame = view.stage.kind !== "done" && view.stage.kind !== "watching";
     } else {
@@ -235,6 +243,8 @@ export function RoomScreen({ code }: { code: string }) {
           <ReactionScreen {...gameProps} view={view} />
         ) : view?.game === "memory" ? (
           <MemoryScreen {...gameProps} view={view} />
+        ) : view?.game === "impostor" ? (
+          <ImpostorScreen {...gameProps} view={view} />
         ) : view && view.game !== "quiz" && "mode" in view ? (
           <RoundsEliminationScreen {...gameProps} view={view} />
         ) : view && view.game !== "quiz" ? (
@@ -549,6 +559,7 @@ function settingsSummary({
   logic,
   reaction,
   memory,
+  impostor,
 }: {
   gameId: string;
   settings: ReturnType<typeof parseQuizSettings> | null;
@@ -558,6 +569,7 @@ function settingsSummary({
   logic: ReturnType<typeof parseLogicSettings> | null;
   reaction: ReturnType<typeof parseReactionSettings> | null;
   memory: ReturnType<typeof parseMemorySettings> | null;
+  impostor: ReturnType<typeof parseImpostorSettings> | null;
 }): string | null {
   // The jigsaw's own line is written with dots, for the pages that list it; here it's a list.
   if (jigsaw) return levelSummary(jigsaw).replaceAll(" · ", ", ");
@@ -581,6 +593,7 @@ function settingsSummary({
     const { rounds, revealSeconds } = memory;
     return `${rounds} rounds, ${revealSeconds}s to remember`;
   }
+  if (impostor) return impostorSummary(impostor);
   if (rounds) {
     const each =
       rounds.mode === "elimination"
@@ -639,6 +652,7 @@ function Lobby({
   const logic = gameId === "logic" ? parseLogicSettings(room.game.settings) : null;
   const reaction = gameId === "reaction" ? parseReactionSettings(room.game.settings) : null;
   const memory = gameId === "memory" ? parseMemorySettings(room.game.settings) : null;
+  const impostor = gameId === "impostor" ? parseImpostorSettings(room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
   const alone = connected.length <= 1;
   const needMore =
@@ -697,6 +711,7 @@ function Lobby({
     logic,
     reaction,
     memory,
+    impostor,
   });
   const kind = GAME_GROUPS.find((g) => g.id === game?.groups[0]);
 
@@ -836,6 +851,13 @@ function Lobby({
       {memory && (
         <MemorySettingsRows
           settings={memory}
+          editable={canEdit}
+          onChange={(next) => client.configure(next)}
+        />
+      )}
+      {impostor && (
+        <ImpostorSettingsRows
+          settings={impostor}
           editable={canEdit}
           onChange={(next) => client.configure(next)}
         />

@@ -70,6 +70,7 @@ export class RoomClient {
   private attempts = 0;
   private stopped = true;
   private pendingNickname: string | null = null;
+  private readonly rejectionListeners = new Set<(message: string) => void>();
   private clockSamples: { rtt: number; offset: number }[] = [];
   private clockOffset = 0;
 
@@ -93,6 +94,15 @@ export class RoomClient {
   };
 
   readonly getState = (): RoomClientState => this.state;
+
+  /**
+   * Hears why the server turned down a game action, for a game that says so on screen (an
+   * Impostor clue that's a repeat or a blocked word). Other games leave these quiet.
+   */
+  readonly onRejected = (listener: (message: string) => void): (() => void) => {
+    this.rejectionListeners.add(listener);
+    return () => this.rejectionListeners.delete(listener);
+  };
 
   start(): void {
     if (!this.stopped) return;
@@ -263,6 +273,9 @@ export class RoomClient {
         return;
       }
       case "error":
+        if (message.code === ErrorCode.BadAction) {
+          for (const listener of this.rejectionListeners) listener(message.message);
+        }
         if (QUIET_ERRORS.has(message.code)) return;
         // Once in, a refused name change is a notice like any other.
         if (JOIN_ERRORS.has(message.code) && this.state.playerId === null) {

@@ -223,7 +223,7 @@ Each round is a grid with exactly one cell that's different. Tap it. The grids a
 
 ## Impostor
 
-The engine is built (`packages/game-core/src/games/impostor/`); its screens are still to come, so it isn't in the web catalogue yet. A round runs through phases, each ended by the room's tick or early by the players:
+The rules are in `packages/game-core/src/games/impostor/` and the screens in `apps/web/src/games/impostor/`, built from the shared play parts (`games/play.tsx`). A clue the server turns down (a repeat, the word itself, a blocked word) comes back as a `bad_action` error, which `RoomClient.onRejected` hands to the screen for its bottom line. A round runs through phases, each ended by the room's tick or early by the players:
 
 1. **Role** (6 seconds): everyone reads their card. The crew get the category and the word; the impostor gets the category and "you're the impostor".
 2. **Clues**: one timed turn each, in an order shuffled from the seed. Typed clues are one word of up to 24 characters, checked against the blocked words by the room, never repeating one already given, and, for the crew only, never the word itself; they show to everyone as they arrive. Spoken clues are said out loud and the turn ends with "done" or the timer. A player who has left is skipped.

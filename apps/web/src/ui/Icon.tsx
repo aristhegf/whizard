@@ -18,6 +18,8 @@ import {
   Delete,
   DoorClosed,
   Ellipsis,
+  Eye,
+  EyeOff,
   Flag,
   Flame,
   Gamepad2,
@@ -133,6 +135,8 @@ const ICONS = {
   star: Star,
   lock: Lock,
   letters: CaseUpper,
+  eye: Eye,
+  "eye-off": EyeOff,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;
