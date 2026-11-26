@@ -1,0 +1,309 @@
+/* Most Likely To -------------------------------------------------------------------------- */
+
+/* Faces here are plain circles, as in the design: no coloured ring. */
+.mlt-main .play-area .avatar,
+.mlt-main .mlt-voted .avatar {
+  box-shadow: none;
+}
+
+/* On a phone the play area runs to the bottom of the screen, so who has voted (and the reveal's
+   pill) sit at the very bottom. On a computer it's as tall as what's in it, beside the board. */
+.mlt-main .play-stage,
+.mlt-main .play-area {
+  flex: 1 1 auto;
+}
+
+.mlt-main .play-area {
+  gap: 12px;
+}
+
+/* The prompt reads from the left: a small purple lead-in, then the line itself, big. */
+.mlt-prompt {
+  width: 100%;
+  padding: 20px 4px 8px;
+  text-align: left;
+}
+
+.mlt-lead {
+  margin: 0 0 6px;
+  color: var(--accent-soft);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.mlt-line {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.6rem, 8.2vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* Everyone to vote for: two columns of flat night tiles, 3px apart; yours fills purple. */
+.mlt-picks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mlt-pick.play-tile {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font: 600 1rem/1.2 var(--body);
+  text-align: left;
+}
+
+/* Once you've voted the tiles stay at full strength, yours lit; only a player who can't vote
+   this round sees them dimmed. */
+.mlt-pick:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.mlt-picks.waiting .mlt-pick:disabled {
+  opacity: 0.55;
+}
+
+.mlt-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Who has voted, at the bottom: anyone still to vote is dimmed. */
+.mlt-voted {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: auto 0 0;
+  padding: 8px 0 0;
+  list-style: none;
+}
+
+.mlt-voted li {
+  transition: opacity 200ms ease-out;
+}
+
+.mlt-voted li.wait {
+  opacity: 0.3;
+}
+
+/* The reveal ------------------------------------------------------------------------------ */
+
+.mlt-said {
+  width: 100%;
+  margin: 8px 4px 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.mlt-winners {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  padding: 18px 0 14px;
+}
+
+.mlt-winner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  animation: mlt-crown 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+.mlt-main .mlt-winner > .avatar {
+  box-shadow: 0 0 0 6px var(--accent);
+}
+
+.mlt-winner-name {
+  max-width: 100%;
+  margin: 12px 0 0;
+  overflow: hidden;
+  font-family: var(--display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mlt-winners.tie .mlt-winner-name {
+  font-size: 1.6rem;
+}
+
+.mlt-count {
+  margin: 0;
+  color: var(--accent-soft);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.mlt-none {
+  margin: 0;
+  padding: 40px 0;
+  color: var(--muted);
+  font-family: var(--display);
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+/* Voters as a short overlapping stack of faces. */
+.mlt-stack {
+  display: inline-flex;
+  padding-left: 6px;
+}
+
+.mlt-stack .avatar {
+  margin-left: -6px;
+  box-shadow: 0 0 0 2px var(--night-tile);
+}
+
+.mlt-winner .mlt-stack {
+  margin-top: 4px;
+}
+
+.mlt-winner .mlt-stack .avatar {
+  box-shadow: 0 0 0 2px var(--bg);
+}
+
+/* Everyone else who got a vote: face, name, their voters, the count. */
+.mlt-rows {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mlt-rows li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--night-tile);
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  animation: mlt-row 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(160ms + var(--i, 0) * 50ms);
+}
+
+.mlt-rows .mlt-name {
+  flex: 1;
+}
+
+.mlt-n {
+  min-width: 24px;
+  font-family: var(--display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+/* "You read the room +100": a slim pill at the bottom. */
+.mlt-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: auto 0 0;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--night-lift);
+  font-size: 0.95rem;
+  font-weight: 600;
+  animation: mlt-row 260ms cubic-bezier(0.22, 1, 0.36, 1) 280ms both;
+}
+
+.mlt-toast span {
+  color: var(--accent-soft);
+}
+
+@keyframes mlt-crown {
+  from {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+}
+
+@keyframes mlt-row {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mlt-winner,
+  .mlt-rows li,
+  .mlt-toast {
+    animation: none;
+  }
+}
+
+/* Small phones (see play.css). */
+@media (max-width: 360px), (max-height: 680px) {
+  .mlt-prompt {
+    padding: 4px 4px 2px;
+  }
+
+  .mlt-line {
+    font-size: 1.5rem;
+  }
+
+  .mlt-pick.play-tile {
+    min-height: 52px;
+    padding: 6px 10px;
+  }
+
+  .mlt-winners {
+    padding: 8px 0 6px;
+  }
+
+  .mlt-winner-name {
+    margin-top: 8px;
+    font-size: 2rem;
+  }
+
+  .mlt-rows li {
+    min-height: 48px;
+    padding: 4px 12px;
+  }
+}
+
+/* On a computer the play area is tall enough for a party's board beside it, with who has voted
+   at its bottom, level with the board's. */
+@media (min-width: 1100px) {
+  .mlt-main .play-area {
+    min-height: 470px;
+  }
+}
+
+@media (min-width: 768px) {
+  .mlt-pick.play-tile {
+    min-height: 72px;
+    font-size: 1.05rem;
+  }
+}

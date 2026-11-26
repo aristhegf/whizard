@@ -5,6 +5,7 @@ import {
   photoPicture,
   LEVEL_NAMES,
   MAX_PLAYERS,
+  mostLikelyToGame,
   NICKNAME_INPUT_MAX_LENGTH,
   QUIZ_VARIANTS,
   ROUNDS_MODES,
@@ -16,6 +17,7 @@ import {
   type LogicView,
   type ImpostorView,
   type MemoryView,
+  type MostLikelyToView,
   type QuizSettings,
   type ReactionView,
   type SpotItView,
@@ -82,6 +84,12 @@ import {
 } from "./games/howWell/HowWellSettingsRows";
 import { MemoryScreen } from "./games/memory/MemoryScreen";
 import { MemorySettingsRows, parseMemorySettings } from "./games/memory/MemorySettingsRows";
+import { MostLikelyToScreen } from "./games/mostLikelyTo/MostLikelyToScreen";
+import {
+  MostLikelyToSettingsRows,
+  packName,
+  parseMostLikelyToSettings,
+} from "./games/mostLikelyTo/MostLikelyToSettingsRows";
 import { QuizScreen } from "./games/quiz/QuizScreen";
 import { QuizSettingsRows, parseQuizSettings } from "./games/quiz/QuizSettingsPanel";
 import { TopicOptions } from "./games/quiz/TopicPicker";
@@ -148,6 +156,7 @@ export function RoomScreen({ code }: { code: string }) {
         | LogicView
         | ReactionView
         | MemoryView
+        | MostLikelyToView
         | ImpostorView
         | HowWellView)
     : null;
@@ -168,6 +177,8 @@ export function RoomScreen({ code }: { code: string }) {
     } else if (view.game === "memory" || view.game === "impostor") {
       // Anyone with a round still to play is mid-game; the results and the waiting screens aren't.
       midGame = view.stage.kind !== "done" && view.stage.kind !== "watching";
+    } else if (view.game === "most-likely-to") {
+      midGame = view.stage.kind !== "done" && view.status !== "watching";
     } else if (view.game === "how-well") {
       midGame = view.stage.kind !== "done";
     } else {
@@ -254,6 +265,8 @@ export function RoomScreen({ code }: { code: string }) {
           <ReactionScreen {...gameProps} view={view} />
         ) : view?.game === "memory" ? (
           <MemoryScreen {...gameProps} view={view} />
+        ) : view?.game === "most-likely-to" ? (
+          <MostLikelyToScreen {...gameProps} view={view} />
         ) : view?.game === "impostor" ? (
           <ImpostorScreen {...gameProps} view={view} />
         ) : view?.game === "how-well" ? (
@@ -572,6 +585,7 @@ function settingsSummary({
   logic,
   reaction,
   memory,
+  mostLikelyTo,
   impostor,
   howWell,
 }: {
@@ -583,6 +597,7 @@ function settingsSummary({
   logic: ReturnType<typeof parseLogicSettings> | null;
   reaction: ReturnType<typeof parseReactionSettings> | null;
   memory: ReturnType<typeof parseMemorySettings> | null;
+  mostLikelyTo: ReturnType<typeof parseMostLikelyToSettings> | null;
   impostor: ReturnType<typeof parseImpostorSettings> | null;
   howWell: ReturnType<typeof parseHowWellSettings> | null;
 }): string | null {
@@ -607,6 +622,10 @@ function settingsSummary({
   if (memory) {
     const { rounds, revealSeconds } = memory;
     return `${rounds} rounds, ${revealSeconds}s to remember`;
+  }
+  if (mostLikelyTo) {
+    const { pack, rounds, voteSeconds, anonymousVotes } = mostLikelyTo;
+    return `${packName(pack)}, ${rounds} rounds, ${voteSeconds}s${anonymousVotes ? ", anonymous" : ""}`;
   }
   if (impostor) return impostorSummary(impostor);
   if (howWell) return howWellSummary(howWell);
@@ -668,6 +687,8 @@ function Lobby({
   const logic = gameId === "logic" ? parseLogicSettings(room.game.settings) : null;
   const reaction = gameId === "reaction" ? parseReactionSettings(room.game.settings) : null;
   const memory = gameId === "memory" ? parseMemorySettings(room.game.settings) : null;
+  const mostLikelyTo =
+    gameId === "most-likely-to" ? parseMostLikelyToSettings(room.game.settings) : null;
   const impostor = gameId === "impostor" ? parseImpostorSettings(room.game.settings) : null;
   const howWell = gameId === "how-well" ? parseHowWellSettings(room.game.settings) : null;
   const connected = room.players.filter((p) => p.connected);
@@ -678,8 +699,15 @@ function Lobby({
     jigsaw?.mode === "elimination" ||
     connections?.mode === "elimination" ||
     logic?.mode === "elimination";
-  // Elimination needs a crowd; How Well needs someone to guess.
-  const fewest = elimination ? ELIMINATION_MIN_PLAYERS : howWell ? HOW_WELL_MIN_PLAYERS : 1;
+  // Elimination needs a crowd; How Well needs someone to guess; Most Likely To needs someone to
+  // vote for besides you.
+  const fewest = elimination
+    ? ELIMINATION_MIN_PLAYERS
+    : howWell
+      ? HOW_WELL_MIN_PLAYERS
+      : mostLikelyTo
+        ? mostLikelyToGame.minPlayers
+        : 1;
   const needMore = Math.max(0, fewest - connected.length);
   const url = `${location.origin}${roomPath(room.code)}`;
   // Arriving from Ping on the friends page opens the invites, where that ping goes out.
@@ -729,6 +757,7 @@ function Lobby({
     logic,
     reaction,
     memory,
+    mostLikelyTo,
     impostor,
     howWell,
   });
@@ -870,6 +899,13 @@ function Lobby({
       {memory && (
         <MemorySettingsRows
           settings={memory}
+          editable={canEdit}
+          onChange={(next) => client.configure(next)}
+        />
+      )}
+      {mostLikelyTo && (
+        <MostLikelyToSettingsRows
+          settings={mostLikelyTo}
           editable={canEdit}
           onChange={(next) => client.configure(next)}
         />

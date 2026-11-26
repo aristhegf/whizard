@@ -13,8 +13,9 @@ Free to play, with no sign-up needed. An optional account keeps your stats and l
 - **Spot It:** find the odd one out in a grid, in Speed or Elimination
 - **Reaction:** the round says what to tap, then the options come up on every screen at the same instant — find the target among one tile, two, four or a grid of up to 49, and tap it fastest
 - **Memory:** the same set of items on every screen for the same beat, then the question — which one was NOT shown, what sat in position 4, how many animals did you see?
+- **Most Likely To:** a prompt comes up and everyone votes for the friend it fits best, then the votes are revealed; picking the room's choice scores
 - **Levels everywhere:** Easy, Medium, Hard, or Auto, which starts easy and gets harder round by round
-- **Coming later:** Pattern, social games like Most Likely To and How Well Do You Know Me?, and party games like Impostor and Draw & Guess
+- **Coming later:** Pattern, social games like How Well Do You Know Me?, and party games like Impostor and Draw & Guess
 
 The full list is in [docs/GAMES.md](docs/GAMES.md).
 

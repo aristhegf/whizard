@@ -1,6 +1,8 @@
 // Server-only: this package contains the answers, so the web app must never import it.
 import {
   type ConnectionsPuzzle,
+  type MostLikelyToPack,
+  type MostLikelyToPrompt,
   IMPOSTOR_CATEGORY_IDS,
   IMPOSTOR_GUESS_OPTIONS,
   type ImpostorPack,
@@ -32,20 +34,23 @@ import popCulture from "./questions/pop-culture.json";
 import quran from "./questions/quran.json";
 import science from "./questions/science.json";
 import connectionsFile from "./connections/puzzles.json";
-import impostorFile from "./impostor/words.json";
 import howWellBestFriends from "./howWell/best-friends.json";
 import howWellCouples from "./howWell/couples.json";
 import howWellFamily from "./howWell/family.json";
 import howWellFriendGroup from "./howWell/friend-group.json";
+import impostorFile from "./impostor/words.json";
+import mostLikelyToFile from "./prompts/most-likely-to.json";
 import {
   storedConnectionsSchema,
   storedHowWellSchema,
   storedImpostorCategorySchema,
+  storedMostLikelyToPromptSchema,
   storedQuestionSchema,
   storedWordSchema,
   type StoredConnections,
   type StoredHowWell,
   type StoredImpostorWord,
+  type StoredMostLikelyToPrompt,
   type StoredQuestion,
   type StoredWord,
 } from "./schema";
@@ -79,6 +84,10 @@ export const WORDS: readonly StoredWord[] = z.array(storedWordSchema).parse(word
 export const CONNECTIONS: readonly StoredConnections[] = z
   .array(storedConnectionsSchema)
   .parse(connectionsFile);
+
+export const MOST_LIKELY_TO_PROMPTS: readonly StoredMostLikelyToPrompt[] = z
+  .array(storedMostLikelyToPromptSchema)
+  .parse(mostLikelyToFile);
 
 /** `Ice cream` → `ice-cream`, for Impostor word IDs. */
 const slug = (word: string) =>
@@ -272,6 +281,22 @@ export function drawConnections(
 }
 
 /**
+ * One Most Likely To prompt per round from a pack, all different, the least used first (as with
+ * questions), in an order from the seed.
+ */
+export function drawMostLikelyToPrompts(
+  pack: MostLikelyToPack,
+  count: number,
+  seed: number,
+  options: DrawOptions = {},
+  prompts: readonly StoredMostLikelyToPrompt[] = MOST_LIKELY_TO_PROMPTS,
+): MostLikelyToPrompt[] {
+  const rng = seededRng(seed);
+  const pool = prompts.filter((p) => p.pack === pack);
+  return shuffled(leastUsed(pool, rng, options).slice(0, count), rng);
+}
+
+/**
  * Impostor's secret words, one per round, never the same one twice in a game, the least used
  * first as with questions. One category's pack keeps to it; Mixed takes the categories in turn,
  * in an order from the seed. Each word comes with seven others from its category for the caught
@@ -349,6 +374,8 @@ export function drawContent(
       return drawWords(request.levels, seed, options);
     case "connections-puzzle":
       return drawConnections(request.level, seed, options, CONNECTIONS, request.count ?? 1);
+    case "most-likely-to-prompts":
+      return drawMostLikelyToPrompts(request.pack, request.count, seed, options);
     case "impostor-words":
       return drawImpostorWords(request.pack, request.count, seed, options);
     case "how-well-questions":

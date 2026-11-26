@@ -66,7 +66,8 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   await expect(page.getByRole("button", { name: "Previous games" })).toBeDisabled();
   await page.getByRole("button", { name: "More games" }).click();
   await expect(cards).toHaveCount(3);
-  await expect(cards.filter({ hasText: "Most Likely To" })).toContainText("Coming soon");
+  // Every game in the catalogue is playable now.
+  await expect(cards.filter({ hasText: "Most Likely To" })).not.toContainText("Coming soon");
 
   // The kinds of game narrow it down.
   await page.getByRole("button", { name: "Couples" }).click();

@@ -143,6 +143,7 @@ export const CATALOG: CatalogGame[] = [
     icon: "users",
     colors: ["#ff4545", "#4a0c26"],
     href: null,
+    starts: "most-likely-to",
   },
   {
     id: "how-well",
