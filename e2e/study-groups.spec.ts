@@ -14,17 +14,17 @@ test("tutor creates study group, assigns question bank, and invites student", as
   await signUp(tutorPage, tutorUsername, "Prof Tutor");
 
   // 1. Tutor creates a question bank
-  await tutorPage.goto("/banks");
+  await tutorPage.goto("/banks?new=1");
   const uniqueBankTitle = `Mechanics ${Math.random().toString(36).slice(2, 8)}`;
   await tutorPage.getByLabel("Name").fill(uniqueBankTitle);
   await tutorPage.getByLabel("Exam").fill("JAMB");
   await tutorPage.getByLabel("Subject").fill("Physics");
-  await tutorPage.getByRole("button", { name: "Create a bank", exact: true }).click();
+  await tutorPage.getByRole("button", { name: "Create bank", exact: true }).click();
   await expect(tutorPage.getByRole("heading", { name: uniqueBankTitle, level: 1 })).toBeVisible();
 
   // Add one question so bank is playable
-  await tutorPage.getByRole("button", { name: "Add a question", exact: true }).click();
-  const field = (name: string) => tutorPage.getByRole("textbox", { name });
+  await tutorPage.getByRole("button", { name: "Add a question" }).click();
+  const field = (name: string) => tutorPage.getByRole("textbox", { name, exact: true });
   await field("Question").fill("What is the SI unit of Force?");
   await field("Correct answer").fill("Newton");
   await field("Wrong answer 1").fill("Joule");
@@ -32,7 +32,9 @@ test("tutor creates study group, assigns question bank, and invites student", as
   await field("Wrong answer 3").fill("Watt");
   await field("Explanation").fill("Force = mass * acceleration, unit is Newton.");
   await tutorPage.getByRole("button", { name: "Add question", exact: true }).click();
-  await expect(tutorPage.getByText("What is the SI unit of Force?")).toBeVisible();
+  await expect(
+    tutorPage.getByRole("link", { name: "What is the SI unit of Force?" }),
+  ).toBeVisible();
 
   // 2. Tutor creates a study group
   await tutorPage.goto("/friends");
@@ -54,13 +56,15 @@ test("tutor creates study group, assigns question bank, and invites student", as
     .fill("Review Newton's laws thoroughly before the test.");
   await tutorPage.getByRole("button", { name: "Assign to group" }).click();
 
-  // Assignment card is visible with badges
+  // The assignment shows with its target and note
   await expect(tutorPage.getByRole("heading", { name: uniqueBankTitle })).toBeVisible();
-  await expect(tutorPage.getByText("🎯 Target: 85%")).toBeVisible();
+  await expect(tutorPage.getByText("Target 85%")).toBeVisible();
   await expect(
     tutorPage.getByText("Review Newton's laws thoroughly before the test."),
   ).toBeVisible();
-  await expect(tutorPage.getByRole("button", { name: "Practice Assignment" })).toBeVisible();
+  const card = tutorPage.getByRole("article", { name: uniqueBankTitle });
+  await expect(card.getByRole("button", { name: "Practise" })).toBeVisible();
+  await expect(card.getByRole("button", { name: "Timed exam" })).toBeVisible();
 
   // Visual verifications across desktop and mobile viewports
   await tutorPage.setViewportSize({ width: 1440, height: 900 });
@@ -85,18 +89,22 @@ test("tutor creates study group, assigns question bank, and invites student", as
 
   // Student navigates to group URL
   await studentPage.goto(groupUrl);
-  await expect(studentPage.getByText("Join this Study Group")).toBeVisible();
+  await expect(studentPage.getByText("You’re invited to join this study group.")).toBeVisible();
   await expect(studentPage.getByText(`Created by @${tutorUsername}`)).toBeVisible();
 
   // Student clicks Join
-  await studentPage.getByRole("button", { name: "Join Study Group" }).click();
+  await studentPage.getByRole("button", { name: "Join group" }).click();
 
   // Student now sees the group and the assigned question bank!
   await expect(studentPage.getByRole("heading", { name: groupName, level: 1 })).toBeVisible();
   await expect(studentPage.getByText(uniqueBankTitle)).toBeVisible();
-  await expect(studentPage.getByText("🎯 Target: 85%")).toBeVisible();
-  await expect(studentPage.getByText("⏳ Not completed yet")).toBeVisible();
-  await expect(studentPage.getByRole("button", { name: "Practice Assignment" })).toBeVisible();
+  await expect(studentPage.getByText("Target 85%")).toBeVisible();
+  await expect(studentPage.getByText("Not done yet")).toBeVisible();
+  await expect(
+    studentPage
+      .getByRole("article", { name: uniqueBankTitle })
+      .getByRole("button", { name: "Practise" }),
+  ).toBeVisible();
 
   await tutorContext.close();
   await studentContext.close();

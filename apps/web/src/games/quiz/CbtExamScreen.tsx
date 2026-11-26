@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef, useMemo, type FormEvent } from "react";
 import type { PlayerBankDetail, PlayerBankQuestion } from "@whizard/protocol";
 import type { QuizReviewItem } from "@whizard/game-core";
+import { HorizontalAlert } from "@/components/styled-alert";
 import { saveBankMistakes } from "../../storage";
 import { completeGroupAssignment } from "../../social";
 import { play } from "../../sounds";
+import { BottomSheet } from "../../ui/BottomSheet";
+import { TopLayout } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
-import { LogoMark } from "../../ui/Logo";
+import { Answer, BackButton, dotted, plural } from "../../ui/Study";
 import { linkTo } from "../../router";
 import { MistakeMastery } from "./MistakeMastery";
 import { ReportQuestion } from "./ReportQuestion";
@@ -65,14 +68,8 @@ function formatTime(seconds: number): string {
 
 const letter = (i: number) => String.fromCharCode(65 + i);
 
-function Brand() {
-  return (
-    <a className="brand" translate="no" {...linkTo("/")} aria-label="Whizard home">
-      <LogoMark />
-      <span>Whizard</span>
-    </a>
-  );
-}
+const COUNT_PRESETS = [5, 10, 15, 20, 30, 40];
+const TIME_PRESETS = [5, 10, 15, 20, 30, 45, 60];
 
 export interface CbtExamScreenProps {
   bank: PlayerBankDetail;
@@ -105,10 +102,9 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [totalTimeSeconds, setTotalTimeSeconds] = useState(0);
   const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
+  const [mapOpen, setMapOpen] = useState(false);
   const [autoSubmitted, setAutoSubmitted] = useState(false);
-  const [reviewFilter, setReviewFilter] = useState<"all" | "incorrect" | "correct" | "flagged">(
-    "all",
-  );
+  const [reviewFilter, setReviewFilter] = useState<"missed" | "all" | "flagged">("missed");
   const [drillingMistakes, setDrillingMistakes] = useState(false);
   const [assignmentSubmitted, setAssignmentSubmitted] = useState<string | null>(null);
 
@@ -142,6 +138,8 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
     setCurrentIndex(0);
     setAnswers({});
     setFlagged(new Set());
+    setAutoSubmitted(false);
+    setReviewFilter("missed");
     const totalSec = timeLimitMinutes * 60;
     setSecondsLeft(totalSec);
     setTotalTimeSeconds(totalSec);
@@ -171,7 +169,7 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
     return () => clearInterval(interval);
   }, [phase, totalTimeSeconds]);
 
-  // Handle Pick Choice
+  // Handle Pick Choice: picking the chosen answer again clears it.
   const handleSelectChoice = (choiceIndex: number) => {
     setAnswers((prev) => ({
       ...prev,
@@ -194,7 +192,10 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
 
   // Submit Exam
   const handleSubmitExam = () => {
+    // Once only: the clock and the Submit button can both get here.
+    if (phase !== "exam") return;
     setShowConfirmSubmit(false);
+    setMapOpen(false);
     setPhase("results");
     play("fanfare");
 
@@ -213,6 +214,7 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
     if (missedItems.length > 0) {
       saveBankMistakes(bank.id, missedItems);
     }
+    if (missedItems.length === 0) setReviewFilter("all");
 
     // Auto submit to study group assignment if attached
     if (resolvedAssignment) {
@@ -281,143 +283,105 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
 
   // 1. SETUP PHASE
   if (phase === "setup") {
+    const counts = COUNT_PRESETS.filter((n) => n < totalAvailable);
     return (
-      <div className="cbt-container">
-        <header className="results-bar">
-          <Brand />
-          <button className="btn bar-pill" onClick={onExit}>
-            <Icon name="arrowLeft" size={20} />
-            <span>Back to Bank</span>
-          </button>
-        </header>
-
-        <section className="cbt-setup-card">
-          <div className="cbt-setup-header">
-            <span className="pill pill-glow">
-              <Icon name="clock" size={16} /> Timed CBT Simulation
-            </span>
-            <h1 className="display" style={{ margin: "12px 0 6px" }}>
-              {bank.name}
-            </h1>
-            <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
-              {bank.exam && <span className="bank-badge">{bank.exam}</span>}
-              {bank.subject && <span className="bank-badge">{bank.subject}</span>}
-              <span className="bank-badge ready">{totalAvailable} questions in bank</span>
-            </div>
-            <p
-              className="muted"
-              style={{ maxWidth: 520, margin: "12px auto 0", fontSize: "0.95rem" }}
-            >
-              Experience real exam conditions: continuous countdown timer, randomized choices, and
-              instant delayed scoring with comprehensive explanations after submission.
+      <TopLayout active={null} className="study-page" column>
+        <div className="study">
+          <div className="study-top">
+            <BackButton onClick={onExit}>{bank.name}</BackButton>
+          </div>
+          <div>
+            <h1 className="study-title">Timed exam</h1>
+            <p className="study-meta">
+              {dotted(bank.exam, bank.subject, plural(totalAvailable, "question"))}
             </p>
           </div>
 
           <form
+            className="s-form"
             onSubmit={(e: FormEvent) => {
               e.preventDefault();
               handleStartExam();
             }}
-            className="cbt-setup-form"
           >
-            <div className="setting">
-              <label htmlFor="cbt-q-count" className="setting-label">
-                <span>Number of Questions</span>
-                <span className="muted small">Max {totalAvailable}</span>
-              </label>
-              <div className="cbt-pill-selector">
-                {[5, 10, 15, 20, 30, 40]
-                  .filter((n) => n <= totalAvailable || (n === 5 && totalAvailable > 0))
-                  .map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      className={`cbt-select-pill${questionCount === n ? " selected" : ""}`}
-                      onClick={() => {
-                        setQuestionCount(Math.min(n, totalAvailable));
-                        // Update recommended time
-                        if (n <= 10) setTimeLimitMinutes(10);
-                        else if (n <= 20) setTimeLimitMinutes(20);
-                        else setTimeLimitMinutes(30);
-                      }}
-                    >
-                      {n} Questions
-                    </button>
-                  ))}
+            <fieldset className="s-field">
+              <legend className="s-label">Questions</legend>
+              <div className="s-chips">
+                {counts.map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    className="s-chip"
+                    aria-pressed={questionCount === n}
+                    onClick={() => {
+                      setQuestionCount(n);
+                      // The time that suits that many questions.
+                      if (n <= 10) setTimeLimitMinutes(10);
+                      else if (n <= 20) setTimeLimitMinutes(20);
+                      else setTimeLimitMinutes(30);
+                    }}
+                  >
+                    {n}
+                  </button>
+                ))}
                 {totalAvailable > 0 && (
                   <button
                     type="button"
-                    className={`cbt-select-pill${questionCount === totalAvailable ? " selected" : ""}`}
+                    className="s-chip"
+                    aria-pressed={Math.min(questionCount, totalAvailable) === totalAvailable}
                     onClick={() => {
                       setQuestionCount(totalAvailable);
                       setTimeLimitMinutes(Math.max(10, Math.ceil(totalAvailable * 1.0)));
                     }}
                   >
-                    All ({totalAvailable})
+                    All {totalAvailable}
                   </button>
                 )}
               </div>
-            </div>
+            </fieldset>
 
-            <div className="setting">
-              <label htmlFor="cbt-time-limit" className="setting-label">
-                <span>Time Limit</span>
-                <span className="muted small">Countdown clock</span>
-              </label>
-              <div className="cbt-pill-selector">
-                {[5, 10, 15, 20, 30, 45, 60].map((mins) => (
+            <fieldset className="s-field">
+              <legend className="s-label">Time</legend>
+              <div className="s-chips">
+                {TIME_PRESETS.map((mins) => (
                   <button
                     key={mins}
                     type="button"
-                    className={`cbt-select-pill${timeLimitMinutes === mins ? " selected" : ""}`}
+                    className="s-chip"
+                    aria-pressed={timeLimitMinutes === mins}
                     onClick={() => setTimeLimitMinutes(mins)}
                   >
-                    {mins} mins
+                    {mins} min
                   </button>
                 ))}
               </div>
-            </div>
+            </fieldset>
 
-            <div className="setting" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <label className="s-check">
               <input
                 type="checkbox"
-                id="cbt-shuffle"
                 checked={shuffleQuestions}
                 onChange={(e) => setShuffleQuestions(e.target.checked)}
-                style={{ width: 20, height: 20, accentColor: "#8b5cf6" }}
               />
-              <label htmlFor="cbt-shuffle" style={{ cursor: "pointer", fontWeight: 600 }}>
-                Shuffle question and choice order
-              </label>
-            </div>
+              Shuffle questions and answers
+            </label>
 
-            <div className="cbt-rules-callout">
-              <p style={{ margin: "0 0 6px", fontWeight: 700, color: "#facc15" }}>
-                ⚡ Exam Mode Pressure Rules:
-              </p>
-              <ul style={{ margin: 0, paddingLeft: 20, fontSize: "0.9rem", color: "var(--muted)" }}>
-                <li>Answers are locked without immediate feedback during the test.</li>
-                <li>You can flag questions and navigate back and forth at any time.</li>
-                <li>The exam will auto-submit if the timer expires.</li>
-                <li>Detailed explanations and score breakdown are revealed after submission.</li>
-              </ul>
-            </div>
+            <p className="study-note">
+              Answers stay hidden until you submit. When time runs out, it submits itself.
+            </p>
 
-            <button
-              type="submit"
-              className="btn btn-primary btn-large btn-block"
-              disabled={totalAvailable === 0}
-            >
-              <Icon name="play" size={22} fill />
-              Start Exam Simulation ({questionCount} Questions · {timeLimitMinutes} Mins)
+            <button type="submit" className="s-btn gold big block" disabled={totalAvailable === 0}>
+              <Icon name="play" size={20} fill />
+              Start · {plural(Math.min(questionCount, totalAvailable), "question")},{" "}
+              {timeLimitMinutes} min
             </button>
           </form>
-        </section>
-      </div>
+        </div>
+      </TopLayout>
     );
   }
 
-  // 2. RESULTS & IN-DEPTH REVIEW PHASE
+  // 2. RESULTS & REVIEW PHASE
   if (phase === "results") {
     if (drillingMistakes && missedReviewItems.length > 0) {
       return (
@@ -431,475 +395,334 @@ export function CbtExamScreen({ bank, onExit, assignmentContext }: CbtExamScreen
       );
     }
 
-    const filteredReviews = reviewItems.filter((item) => {
-      if (reviewFilter === "incorrect") return !item.correct;
-      if (reviewFilter === "correct") return item.correct;
-      if (reviewFilter === "flagged") return flagged.has(item.index);
-      return true;
-    });
-
-    const gradeLabel =
-      percentage >= 80
-        ? "Outstanding! Distinction 🌟"
-        : percentage >= 60
-          ? "Credit / Pass! 👍"
-          : "Needs Improvement 📚";
+    const wrongCount = missedReviewItems.filter((item) => item.myChoice !== null).length;
+    const skippedCount = missedReviewItems.length - wrongCount;
+    const shown = reviewItems.filter((item) =>
+      reviewFilter === "missed"
+        ? !item.correct
+        : reviewFilter === "flagged"
+          ? flagged.has(item.index)
+          : true,
+    );
+    const filters = [
+      { id: "missed", label: "Missed", count: missedReviewItems.length },
+      { id: "all", label: "All", count: reviewItems.length },
+      { id: "flagged", label: "Flagged", count: flagged.size },
+    ] as const;
 
     return (
-      <div className="results cbt-results-screen">
-        <header className="results-bar">
-          <Brand />
-          <span className="bar-end">
-            <button className="btn bar-pill" onClick={onExit}>
-              <Icon name="arrowLeft" size={20} />
-              <span>Question Bank</span>
-            </button>
-          </span>
-        </header>
-
-        <section className="results-main">
-          <img
-            className="results-mascot"
-            src="/art/mascot/podium.webp"
-            alt=""
-            width={590}
-            height={620}
-          />
-
-          <div className="results-head">
-            <h2 className="display results-title">
-              {autoSubmitted ? "Time’s Up! Exam Submitted" : "Exam Simulation Complete"}
-            </h2>
-            <span className="pill">
-              <Icon name="trophy" size={18} />
-              {bank.name} • {examQuestions.length} Questions
-            </span>
+      <TopLayout active={null} className="study-page" column>
+        <div className="study">
+          <div className="study-top">
+            <BackButton onClick={onExit}>{bank.name}</BackButton>
           </div>
 
-          {assignmentSubmitted && (
-            <div
-              className="bank-practice-card"
-              style={{ margin: "14px 0", width: "100%", textAlign: "center" }}
-            >
-              <p style={{ margin: "0 0 8px", fontWeight: 700, color: "#6ee7b7" }}>
-                🎯 CBT Exam result recorded on your Study Group leaderboard!
-              </p>
-              <a
-                className="btn btn-primary"
-                {...linkTo(`/groups/${encodeURIComponent(assignmentSubmitted)}`)}
-              >
-                View Study Group
-              </a>
+          <div>
+            <h1 className="study-kicker">
+              {autoSubmitted
+                ? "Timed exam · time ran out"
+                : `Timed exam · done in ${formatTime(timeUsedSeconds)}`}
+            </h1>
+            <p className="s-score">
+              <span className="s-score-pct">{percentage}%</span>
+              <span className="s-score-of">
+                {scoreCount} of {examQuestions.length}
+              </span>
+            </p>
+          </div>
+
+          <dl className="s-stats">
+            <div className="s-stat right">
+              <dt>Right</dt>
+              <dd>{scoreCount}</dd>
             </div>
+            <div className="s-stat wrong">
+              <dt>Wrong</dt>
+              <dd>{wrongCount}</dd>
+            </div>
+            <div className="s-stat">
+              <dt>Skipped</dt>
+              <dd>{skippedCount}</dd>
+            </div>
+          </dl>
+
+          {missedReviewItems.length > 0 ? (
+            <button
+              type="button"
+              className="s-btn gold big block"
+              onClick={() => setDrillingMistakes(true)}
+            >
+              Practise the {missedReviewItems.length} you missed
+            </button>
+          ) : (
+            <button type="button" className="s-btn gold big block" onClick={handleStartExam}>
+              <Icon name="repeat" size={20} />
+              Take it again
+            </button>
           )}
 
-          <div className="panel solo-score cbt-score-card">
-            <p className="label">Your CBT Score</p>
-            <p className="big-score">
-              {scoreCount}{" "}
-              <span style={{ fontSize: "1.8rem", color: "var(--muted)" }}>
-                / {examQuestions.length}
-              </span>
-            </p>
-            <p
-              style={{
-                fontSize: "1.2rem",
-                fontWeight: 700,
-                margin: "4px 0",
-                color: percentage >= 60 ? "#4ade80" : "#fb7185",
-              }}
-            >
-              {percentage}% — {gradeLabel}
-            </p>
-            <p className="muted small" style={{ margin: "4px 0 12px" }}>
-              Completed in {formatTime(timeUsedSeconds)} of {timeLimitMinutes}:00 limit
-            </p>
-
-            <div className="cbt-summary-pills">
-              <span className="cbt-stat-pill good">
-                <Icon name="check" size={16} /> {scoreCount} Correct
-              </span>
-              <span className="cbt-stat-pill bad">
-                <Icon name="close" size={16} /> {examQuestions.length - scoreCount} Incorrect
-              </span>
-              <span className="cbt-stat-pill warn">
-                <Icon name="flag" size={16} /> {flagged.size} Flagged
-              </span>
-              <span className="cbt-stat-pill muted">
-                <Icon name="clock" size={16} /> {formatTime(timeUsedSeconds)} Used
-              </span>
-            </div>
-          </div>
-
-          <div className="results-actions">
+          <div className="s-actions">
             {missedReviewItems.length > 0 && (
-              <button
-                className="btn btn-primary btn-practice-mistakes"
-                onClick={() => setDrillingMistakes(true)}
-              >
-                <Icon name="repeat" size={20} />
-                Practice Missed Questions ({missedReviewItems.length})
+              <button type="button" className="s-link" onClick={handleStartExam}>
+                <Icon name="repeat" size={18} />
+                Take it again
               </button>
             )}
-            <button className="btn" onClick={handleStartExam}>
-              <Icon name="play" size={20} fill />
-              Retake Exam Simulation
-            </button>
-            <button className="btn" onClick={onExit}>
-              <Icon name="arrowLeft" size={20} />
-              Back to Bank
-            </button>
+            {assignmentSubmitted && (
+              <a
+                className="s-link"
+                {...linkTo(`/groups/${encodeURIComponent(assignmentSubmitted)}`)}
+              >
+                <Icon name="users" size={18} />
+                Saved to your study group
+              </a>
+            )}
           </div>
-        </section>
 
-        {/* In-depth Review Section */}
-        <section className="panel review-panel" style={{ marginTop: 24 }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: 12,
-            }}
-          >
-            <h2 className="section-title" style={{ margin: 0 }}>
-              Question-by-Question Review & Explanations
+          <div className="study-section-head">
+            {/* The chips below say which answers show; the heading names them for a screen reader. */}
+            <h2 className="sr-only" id="review-title">
+              {reviewFilter === "missed"
+                ? "Missed"
+                : reviewFilter === "flagged"
+                  ? "Flagged"
+                  : "All answers"}
             </h2>
-            <div className="cbt-review-filter-tabs">
-              <button
-                type="button"
-                className={`tab-btn${reviewFilter === "all" ? " active" : ""}`}
-                onClick={() => setReviewFilter("all")}
-              >
-                All ({reviewItems.length})
-              </button>
-              <button
-                type="button"
-                className={`tab-btn${reviewFilter === "incorrect" ? " active" : ""}`}
-                onClick={() => setReviewFilter("incorrect")}
-              >
-                Incorrect ({missedReviewItems.length})
-              </button>
-              <button
-                type="button"
-                className={`tab-btn${reviewFilter === "correct" ? " active" : ""}`}
-                onClick={() => setReviewFilter("correct")}
-              >
-                Correct ({scoreCount})
-              </button>
-              {flagged.size > 0 && (
+          </div>
+          <div className="s-chips" role="group" aria-label="Show">
+            {filters
+              .filter((f) => f.id !== "flagged" || f.count > 0)
+              .map((f) => (
                 <button
+                  key={f.id}
                   type="button"
-                  className={`tab-btn${reviewFilter === "flagged" ? " active" : ""}`}
-                  onClick={() => setReviewFilter("flagged")}
+                  className="s-chip"
+                  aria-pressed={reviewFilter === f.id}
+                  onClick={() => setReviewFilter(f.id)}
                 >
-                  Flagged ({flagged.size})
+                  {f.label} {f.count}
                 </button>
-              )}
-            </div>
+              ))}
           </div>
 
-          <ol className="cbt-review-list">
-            {filteredReviews.map((item) => {
-              const isFlagged = flagged.has(item.index);
-              return (
-                <li key={item.index} className={`cbt-review-card ${item.correct ? "good" : "bad"}`}>
-                  <div className="cbt-review-card-header">
-                    <span className="cbt-review-q-num">
-                      Question {item.index + 1}
-                      {isFlagged && <span className="flag-badge">🚩 Flagged</span>}
-                    </span>
-                    <span className={`cbt-review-status-pill ${item.correct ? "good" : "bad"}`}>
-                      {item.correct
-                        ? "✓ Correct (+1)"
-                        : item.myChoice === null
-                          ? "⚠️ Unanswered"
-                          : "✗ Incorrect"}
-                    </span>
-                  </div>
-
-                  <p className="cbt-review-prompt">{item.prompt}</p>
-
-                  <div className="cbt-review-choices">
-                    {item.choices.map((choiceText, cIdx) => {
-                      const isCorrectChoice = cIdx === item.correctChoice;
-                      const isMyChoice = cIdx === item.myChoice;
-                      let toneClass = "faded";
-                      if (isCorrectChoice) toneClass = "correct";
-                      else if (isMyChoice) toneClass = "wrong";
-
-                      return (
-                        <div key={cIdx} className={`cbt-review-choice ${toneClass}`}>
-                          <span className="choice-letter" aria-hidden="true">
-                            {letter(cIdx)}
-                          </span>
-                          <span className="choice-text">{choiceText}</span>
-                          {isCorrectChoice && (
-                            <span className="indicator-badge correct">✓ Correct Answer</span>
-                          )}
-                          {isMyChoice && !isCorrectChoice && (
-                            <span className="indicator-badge wrong">✗ Your Pick</span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {item.explanation && (
-                    <div className="cbt-review-explanation">
-                      <p className="explanation-title">💡 Explanation:</p>
-                      <p className="explanation-text">{item.explanation}</p>
-                      {item.reference && (
-                        <p className="explanation-ref">Source / Reference: {item.reference}</p>
+          {shown.length === 0 ? (
+            <p className="s-empty">Nothing here.</p>
+          ) : (
+            <ol className="s-list" aria-labelledby="review-title">
+              {shown.map((item) => (
+                <li key={item.index} className="s-card exam-review-item">
+                  <p className="s-q-text" style={{ margin: 0 }}>
+                    <span className="s-q-num">{item.index + 1}</span> {item.prompt}
+                  </p>
+                  {item.correct ? (
+                    <Answer kind="right">{item.choices[item.correctChoice]}</Answer>
+                  ) : (
+                    <>
+                      {item.myChoice === null ? (
+                        <Answer kind="skipped">Skipped</Answer>
+                      ) : (
+                        <Answer kind="wrong">{item.choices[item.myChoice]}</Answer>
                       )}
-                    </div>
+                      <Answer kind="right">{item.choices[item.correctChoice]}</Answer>
+                    </>
                   )}
-
-                  <div style={{ marginTop: 8 }}>
-                    <ReportQuestion questionId={item.questionId} />
-                  </div>
+                  {item.explanation && (
+                    <p className="s-card-why">
+                      {item.explanation}
+                      {item.reference && ` (${item.reference})`}
+                    </p>
+                  )}
+                  <ReportQuestion questionId={item.questionId} />
                 </li>
-              );
-            })}
-          </ol>
-        </section>
-      </div>
+              ))}
+            </ol>
+          )}
+        </div>
+      </TopLayout>
     );
   }
 
-  // 3. ACTIVE CBT EXAM PHASE
+  // 3. THE EXAM ITSELF
   const currentQ = examQuestions[currentIndex];
   if (!currentQ) return null;
 
   const currentAnswer = answers[currentIndex] ?? null;
   const isCurrentFlagged = flagged.has(currentIndex);
+  const isLast = currentIndex === examQuestions.length - 1;
+  const summary = `${answeredCount} answered · ${flagged.size} flagged`;
 
-  const isLowTime = secondsLeft <= 180;
-  const isCriticalTime = secondsLeft <= 60;
+  const stateOf = (idx: number) => {
+    const done = answers[idx] !== null && answers[idx] !== undefined;
+    return { done, flag: flagged.has(idx), cur: idx === currentIndex };
+  };
+
+  const map = (onPick: (idx: number) => void) => (
+    <div className="exam-map">
+      {examQuestions.map((_, idx) => {
+        const s = stateOf(idx);
+        return (
+          <button
+            key={idx}
+            type="button"
+            className={`exam-num${s.done ? " is-done" : ""}${s.flag ? " is-flag" : ""}${s.cur ? " is-cur" : ""}`}
+            aria-label={[
+              `Question ${idx + 1}`,
+              s.done ? "answered" : "not answered",
+              s.flag ? "flagged" : "",
+            ]
+              .filter(Boolean)
+              .join(", ")}
+            aria-current={s.cur ? "step" : undefined}
+            onClick={() => onPick(idx)}
+          >
+            {idx + 1}
+          </button>
+        );
+      })}
+    </div>
+  );
 
   return (
-    <div className="cbt-exam-screen">
-      {/* Top CBT Navigation Bar */}
-      <header className="cbt-header">
-        <div className="cbt-header-left">
-          <span className="cbt-exam-title">{bank.name}</span>
-          <span className="cbt-badge">CBT Mode</span>
-        </div>
-
-        <div className="cbt-header-center">
-          <div
-            className={`cbt-timer${isCriticalTime ? " critical" : isLowTime ? " low" : ""}`}
-            role="timer"
-            aria-label="Remaining exam time"
-          >
-            <Icon name="clock" size={18} />
-            <span>{formatTime(secondsLeft)}</span>
-          </div>
-        </div>
-
-        <div className="cbt-header-right">
-          <button
-            type="button"
-            className="btn btn-warning-glow btn-small"
-            onClick={() => setShowConfirmSubmit(true)}
-          >
-            Submit Exam
-          </button>
-        </div>
+    <div className="exam">
+      <header className="exam-top">
+        <span className="exam-bank">{bank.name}</span>
+        <p
+          className={`exam-timer${secondsLeft <= 60 ? " critical" : secondsLeft <= 180 ? " low" : ""}`}
+          role="timer"
+          aria-label="Time left"
+        >
+          {formatTime(secondsLeft)}
+        </p>
+        <button type="button" className="s-btn gold" onClick={() => setShowConfirmSubmit(true)}>
+          Submit
+        </button>
       </header>
 
-      {/* Main Layout: Question Column + Jump Palette */}
-      <div className="cbt-layout">
-        <main className="cbt-main-panel">
-          <div className="cbt-question-header">
-            <span className="cbt-q-counter">
-              Question <b>{currentIndex + 1}</b> of {examQuestions.length}
+      <div className="exam-body">
+        <main className="exam-main">
+          <button
+            type="button"
+            className="exam-strip"
+            aria-haspopup="dialog"
+            onClick={() => setMapOpen(true)}
+          >
+            <span className="exam-strip-row">
+              <span>{summary}</span>
+              <span>
+                All questions <Icon name="grid" size={16} />
+              </span>
             </span>
-            <button
-              type="button"
-              className={`cbt-flag-toggle${isCurrentFlagged ? " flagged" : ""}`}
-              onClick={() => toggleFlag(currentIndex)}
-              aria-label="Flag question for review"
-            >
-              <Icon name="flag" size={18} fill={isCurrentFlagged} />
-              <span>{isCurrentFlagged ? "Flagged for review" : "Flag for review"}</span>
-            </button>
-          </div>
+            <span className="exam-bars" aria-hidden="true">
+              {examQuestions.map((_, idx) => {
+                const s = stateOf(idx);
+                return (
+                  <span
+                    key={idx}
+                    className={
+                      s.cur ? "is-cur" : s.flag ? "is-flag" : s.done ? "is-done" : undefined
+                    }
+                  />
+                );
+              })}
+            </span>
+          </button>
 
-          <h2 className="cbt-prompt">{currentQ.prompt}</h2>
+          <p className="exam-count">
+            Question {currentIndex + 1} of {examQuestions.length}
+          </p>
+          <h1 className="exam-prompt">{currentQ.prompt}</h1>
 
-          <div className="choices cbt-choices">
-            {currentQ.choices.map((choiceText, cIdx) => {
-              const isSelected = currentAnswer === cIdx;
-              return (
-                <button
-                  key={cIdx}
-                  type="button"
-                  className={`choice cbt-choice${isSelected ? " picked" : ""}`}
-                  onClick={() => handleSelectChoice(cIdx)}
-                >
-                  <span className="choice-letter" aria-hidden="true">
-                    {letter(cIdx)}
-                  </span>
-                  <span className="choice-text">{choiceText}</span>
-                </button>
-              );
-            })}
-          </div>
-
-          {currentAnswer !== null && (
-            <div style={{ textAlign: "center", margin: "10px 0" }}>
+          <div className="exam-choices" role="group" aria-label="Answers">
+            {currentQ.choices.map((choiceText, cIdx) => (
               <button
+                key={cIdx}
                 type="button"
-                className="btn-link small muted"
-                onClick={() =>
-                  setAnswers((prev) => ({
-                    ...prev,
-                    [currentIndex]: null,
-                  }))
-                }
+                className="exam-choice"
+                aria-pressed={currentAnswer === cIdx}
+                onClick={() => handleSelectChoice(cIdx)}
               >
-                Clear choice
+                <span className="letter" aria-hidden="true">
+                  {letter(cIdx)}
+                </span>
+                <span>{choiceText}</span>
               </button>
-            </div>
-          )}
+            ))}
+          </div>
 
-          {/* Action Row */}
-          <div className="cbt-nav-row">
+          <div className="exam-nav">
             <button
               type="button"
-              className="btn btn-nav"
+              className="s-btn"
               disabled={currentIndex === 0}
               onClick={() => setCurrentIndex((idx) => Math.max(0, idx - 1))}
             >
-              <Icon name="chevronLeft" size={20} /> Previous
+              <Icon name="chevronLeft" size={18} stroke={2.2} />
+              Back
             </button>
-
             <button
               type="button"
-              className="btn btn-nav btn-primary"
+              className="s-btn"
+              aria-pressed={isCurrentFlagged}
+              onClick={() => toggleFlag(currentIndex)}
+            >
+              <Icon name="flag" size={18} fill={isCurrentFlagged} />
+              {isCurrentFlagged ? "Flagged" : "Flag"}
+            </button>
+            <span className="grow" />
+            <button
+              type="button"
+              className="s-btn accent"
               onClick={() => {
-                if (currentIndex < examQuestions.length - 1) {
-                  setCurrentIndex((idx) => idx + 1);
-                } else {
-                  setShowConfirmSubmit(true);
-                }
+                if (isLast) setShowConfirmSubmit(true);
+                else setCurrentIndex((idx) => idx + 1);
               }}
             >
-              {currentIndex < examQuestions.length - 1 ? (
-                <>
-                  Next <Icon name="chevronRight" size={20} />
-                </>
-              ) : (
-                <>
-                  Review & Submit <Icon name="check" size={20} />
-                </>
-              )}
+              {isLast ? "Finish" : "Next"}
+              <Icon name="chevronRight" size={18} stroke={2.2} />
             </button>
           </div>
         </main>
 
-        {/* Question Jump Palette */}
-        <aside className="cbt-palette-panel">
-          <div className="cbt-palette-header">
-            <h3 style={{ margin: 0, fontSize: "1rem" }}>Questions</h3>
-            <span className="muted small">
-              {answeredCount}/{examQuestions.length} answered
-            </span>
-          </div>
-
-          <div className="cbt-palette-grid">
-            {examQuestions.map((_, idx) => {
-              const isAns = answers[idx] !== null && answers[idx] !== undefined;
-              const isFlg = flagged.has(idx);
-              const isCur = idx === currentIndex;
-
-              let statusClass = "";
-              if (isCur) statusClass += " current";
-              if (isAns) statusClass += " answered";
-              if (isFlg) statusClass += " flagged";
-
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  className={`cbt-palette-btn${statusClass}`}
-                  onClick={() => setCurrentIndex(idx)}
-                  title={`Question ${idx + 1}${isFlg ? " (Flagged)" : ""}${isAns ? " (Answered)" : ""}`}
-                >
-                  {idx + 1}
-                  {isFlg && <span className="palette-flag-dot" />}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="cbt-palette-legend">
-            <div className="legend-item">
-              <span className="legend-box answered" /> Answered ({answeredCount})
-            </div>
-            <div className="legend-item">
-              <span className="legend-box unanswered" /> Unanswered ({unansweredCount})
-            </div>
-            <div className="legend-item">
-              <span className="legend-box flagged" /> Flagged ({flagged.size})
-            </div>
-          </div>
+        <aside className="exam-rail" aria-label="All questions">
+          <p className="exam-map-summary">{summary}</p>
+          {map(setCurrentIndex)}
         </aside>
       </div>
 
-      {/* Confirmation Submit Dialog */}
-      {showConfirmSubmit && (
-        <div className="cbt-modal-backdrop" onClick={() => setShowConfirmSubmit(false)}>
-          <div className="cbt-modal-card" onClick={(e) => e.stopPropagation()}>
-            <h3 className="cbt-modal-title">Submit Exam Simulation?</h3>
-            <p className="muted" style={{ margin: "8px 0 16px" }}>
-              Are you sure you want to finish? You cannot change your answers after submission.
-            </p>
-
-            <div className="cbt-modal-stats">
-              <div className="cbt-modal-stat-box">
-                <span className="stat-num good">{answeredCount}</span>
-                <span className="stat-label">Answered</span>
-              </div>
-              <div className="cbt-modal-stat-box">
-                <span className={`stat-num ${unansweredCount > 0 ? "warn" : "muted"}`}>
-                  {unansweredCount}
-                </span>
-                <span className="stat-label">Unanswered</span>
-              </div>
-              <div className="cbt-modal-stat-box">
-                <span className="stat-num warn">{flagged.size}</span>
-                <span className="stat-label">Flagged</span>
-              </div>
-            </div>
-
-            {unansweredCount > 0 && (
-              <p className="cbt-modal-warning">
-                ⚠️ You have {unansweredCount} unanswered questions remaining.
-              </p>
-            )}
-
-            <div className="cbt-modal-actions">
-              <button
-                type="button"
-                className="btn btn-primary btn-block"
-                onClick={handleSubmitExam}
-              >
-                Yes, Submit Exam
-              </button>
-              <button
-                type="button"
-                className="btn btn-block"
-                onClick={() => setShowConfirmSubmit(false)}
-              >
-                Return to Exam
-              </button>
-            </div>
-          </div>
-        </div>
+      {mapOpen && (
+        <BottomSheet
+          labelledBy="exam-map-title"
+          className="s-sheet exam-sheet"
+          onClose={() => setMapOpen(false)}
+          header={() => (
+            <h2 id="exam-map-title" className="s-sheet-title">
+              {summary}
+            </h2>
+          )}
+        >
+          {(close) =>
+            map((idx) => {
+              setCurrentIndex(idx);
+              close();
+            })
+          }
+        </BottomSheet>
       )}
+
+      <HorizontalAlert
+        open={showConfirmSubmit}
+        onOpenChange={setShowConfirmSubmit}
+        tone="gold"
+        title="Submit your exam?"
+        description={
+          unansweredCount > 0
+            ? `${plural(unansweredCount, "question")} still unanswered. You can’t change answers after this.`
+            : "You can’t change answers after this."
+        }
+        confirmLabel="Submit"
+        cancelLabel="Keep going"
+        onConfirm={handleSubmitExam}
+      />
     </div>
   );
 }

@@ -35,6 +35,11 @@ function subscribe(listener: () => void): () => void {
   return () => window.removeEventListener("popstate", listener);
 }
 
+/** One `?name=` of the address, kept up to date as the app moves around. */
+export function useSearchParam(name: string): string | null {
+  return useSyncExternalStore(subscribe, () => new URLSearchParams(location.search).get(name));
+}
+
 export function useRoute(): Route {
   const path = useSyncExternalStore(subscribe, () => location.pathname);
   const match = ROOM_PATH.exec(path);
@@ -76,10 +81,12 @@ export function playerPath(username: string): string {
   return `/u/${encodeURIComponent(username)}`;
 }
 
-export function navigate(path: string): void {
+/** Goes to a path in the app; `replace` swaps the current history entry rather than adding one. */
+export function navigate(path: string, { replace = false }: { replace?: boolean } = {}): void {
   const [target, hash] = path.split("#");
   if (path !== location.pathname + location.search + location.hash) {
-    history.pushState(null, "", path);
+    if (replace) history.replaceState(null, "", path);
+    else history.pushState(null, "", path);
     window.dispatchEvent(new PopStateEvent("popstate"));
   }
   if (hash) {

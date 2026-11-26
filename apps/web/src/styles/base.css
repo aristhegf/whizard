@@ -23,6 +23,8 @@
   --gold-deep: #ffab2c;
   --ok: #0fc680;
   --bad: #e5354c;
+  /* Red words on night blue: Delete, a wrong answer. */
+  --bad-text: #ff5a6e;
   --focus: #ffd43f;
   /* The night and purple look of the games, the profile and settings: flat tiles on night blue,
      with Whizard purple for what you pick. */

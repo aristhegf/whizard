@@ -16,13 +16,28 @@ const UNKEYED_CSV = [
   "Second pick?,Alpha,Beta,Gamma,Delta,,,",
 ].join("\n");
 
-/** Creates a bank from the banks list and leaves the page on its detail screen. */
+/** Creates a bank and leaves the page on its detail screen. */
 async function makeBank(page: import("@playwright/test").Page, name: string) {
-  await page.goto("/banks");
+  await page.goto("/banks?new=1");
   await page.getByLabel("Name").fill(name);
-  await page.getByRole("button", { name: "Create a bank", exact: true }).click();
+  await page.getByRole("button", { name: "Create bank", exact: true }).click();
   await expect(page).toHaveURL(/\/banks\/b_[A-Za-z0-9_-]+$/);
   return /\/banks\/(b_[A-Za-z0-9_-]+)/.exec(page.url())![1]!;
+}
+
+/** The bank's ⋯ sheet, then its import. */
+async function openImport(page: import("@playwright/test").Page) {
+  await page.getByRole("button", { name: "More" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Import questions" }).click();
+  await expect(page.getByRole("heading", { name: /Import questions/, level: 1 })).toBeVisible();
+}
+
+/** Opens the bank's question at this place in the list and reads its correct answer. */
+async function correctAnswerOf(page: import("@playwright/test").Page, prompt: RegExp) {
+  await page.getByRole("link", { name: prompt }).click();
+  const answer = await page.getByRole("textbox", { name: "Correct answer" }).inputValue();
+  await page.getByRole("button", { name: "Cancel" }).click();
+  return answer;
 }
 
 test("free accounts are prompted to upgrade when attempting document or CSV import", async ({
@@ -32,14 +47,14 @@ test("free accounts are prompted to upgrade when attempting document or CSV impo
   await signUp(page, uniqueUsername());
   await makeBank(page, "Free Bank");
 
-  await page.getByRole("button", { name: /Import (questions|CSV)/ }).click();
+  await openImport(page);
   await page.locator('input[type="file"]').setInputFiles({
     name: "questions.csv",
     mimeType: "text/csv",
     buffer: Buffer.from(KEYED_CSV),
   });
-  await expect(page.getByText("Word & CSV Import is a Pro Feature")).toBeVisible();
-  await expect(page.getByRole("link", { name: /View Pro Plans/ })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Importing is a Pro feature" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "See Pro plans" })).toBeVisible();
 });
 
 test("imports a keyed CSV, exports it, and re-imports the answers intact", async ({ page }) => {
@@ -51,7 +66,7 @@ test("imports a keyed CSV, exports it, and re-imports the answers intact", async
   const bankId = await makeBank(page, "CSV round trip");
 
   // Stage the file; every row has its own answer key.
-  await page.getByRole("button", { name: /Import (questions|CSV)/ }).click();
+  await openImport(page);
   await page.locator('input[type="file"]').setInputFiles({
     name: "questions.csv",
     mimeType: "text/csv",
@@ -64,10 +79,10 @@ test("imports a keyed CSV, exports it, and re-imports the answers intact", async
   // Confirm, and the questions land in the bank.
   await page.getByRole("button", { name: "Add 3 questions to the bank", exact: true }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Add 3 questions" }).click();
-  await expect(page.getByRole("heading", { name: "Questions (3)", level: 2 })).toBeVisible();
-  await expect(page.getByText("Correct: Mars")).toBeVisible();
-  await expect(page.getByText("Correct: Carbon dioxide")).toBeVisible();
-  await expect(page.getByText("Correct: Pacific")).toBeVisible();
+  await expect(page.getByText("3 questions")).toBeVisible();
+  expect(await correctAnswerOf(page, /Red Planet/)).toBe("Mars");
+  expect(await correctAnswerOf(page, /plants absorb/)).toBe("Carbon dioxide");
+  expect(await correctAnswerOf(page, /largest ocean/)).toBe("Pacific");
 
   // Export comes back as a CSV with the right shape and the answers spelled out.
   const exported = await page.request.get(`/api/banks/${bankId}/export`);
@@ -81,7 +96,7 @@ test("imports a keyed CSV, exports it, and re-imports the answers intact", async
 
   // The exported file imports into a fresh bank with every answer intact.
   const secondId = await makeBank(page, "CSV round trip, again");
-  await page.getByRole("button", { name: /Import (questions|CSV)/ }).click();
+  await openImport(page);
   await page.locator('input[type="file"]').setInputFiles({
     name: "exported.csv",
     mimeType: "text/csv",
@@ -92,13 +107,14 @@ test("imports a keyed CSV, exports it, and re-imports the answers intact", async
   );
   await page.getByRole("button", { name: "Add 3 questions to the bank", exact: true }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Add 3 questions" }).click();
-  await expect(page.getByRole("heading", { name: "Questions (3)", level: 2 })).toBeVisible();
-  await expect(page.getByText("Correct: Mars")).toBeVisible();
-  await expect(page.getByText("Correct: Carbon dioxide")).toBeVisible();
-  await expect(page.getByText("Correct: Pacific")).toBeVisible();
+  await expect(page.getByText("3 questions")).toBeVisible();
+  expect(await correctAnswerOf(page, /Red Planet/)).toBe("Mars");
+  expect(await correctAnswerOf(page, /plants absorb/)).toBe("Carbon dioxide");
+  expect(await correctAnswerOf(page, /largest ocean/)).toBe("Pacific");
 
   // Clean up after itself.
-  await page.getByRole("button", { name: "Delete bank", exact: true }).click();
+  await page.getByRole("button", { name: "More" }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Delete bank" }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Delete bank" }).click();
   await expect(page).toHaveURL(/\/banks$/);
   void secondId;
@@ -112,7 +128,7 @@ test("answers key-less rows by hand when the AI isn’t configured", async ({ pa
   await page.reload();
   await makeBank(page, "CSV by hand");
 
-  await page.getByRole("button", { name: /Import (questions|CSV)/ }).click();
+  await openImport(page);
   await page.locator('input[type="file"]').setInputFiles({
     name: "unkeyed.csv",
     mimeType: "text/csv",
@@ -141,8 +157,9 @@ test("answers key-less rows by hand when the AI isn’t configured", async ({ pa
   );
   await page.getByRole("button", { name: "Add 2 questions to the bank", exact: true }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Add 2 questions" }).click();
-  await expect(page.getByRole("heading", { name: "Questions (2)", level: 2 })).toBeVisible();
-  await expect(page.getByText("Correct: Alpha")).toHaveCount(2);
+  await expect(page.getByText("2 questions")).toBeVisible();
+  expect(await correctAnswerOf(page, /First pick/)).toBe("Alpha");
+  expect(await correctAnswerOf(page, /Second pick/)).toBe("Alpha");
 });
 
 test("imports questions from a document with answer keys", async ({ page }) => {
@@ -153,7 +170,7 @@ test("imports questions from a document with answer keys", async ({ page }) => {
   await page.reload();
   await makeBank(page, "Doc Import Bank");
 
-  await page.getByRole("button", { name: /Import (questions|CSV)/ }).click();
+  await openImport(page);
   const docText = [
     "1. What is the speed of sound in dry air at 20°C?",
     "A. 343 m/s",
@@ -184,7 +201,7 @@ test("imports questions from a document with answer keys", async ({ page }) => {
 
   await page.getByRole("button", { name: "Add 2 questions to the bank", exact: true }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Add 2 questions" }).click();
-  await expect(page.getByRole("heading", { name: "Questions (2)", level: 2 })).toBeVisible();
-  await expect(page.getByText("Correct: 343 m/s")).toBeVisible();
-  await expect(page.getByText("Correct: Nitrogen")).toBeVisible();
+  await expect(page.getByText("2 questions")).toBeVisible();
+  expect(await correctAnswerOf(page, /speed of sound/)).toBe("343 m/s");
+  expect(await correctAnswerOf(page, /most abundant/)).toBe("Nitrogen");
 });

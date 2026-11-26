@@ -280,9 +280,9 @@ test("friends add each other, play together and see their record", async ({ brow
   await ada.getByRole("checkbox", { name: /Tolu/ }).check();
   await ada.getByRole("button", { name: "Create group" }).click();
   await expect(ada.getByRole("heading", { name: "Game night", level: 1 })).toBeVisible();
-  const board = ada.getByRole("list", { name: "Leaderboard" }).locator("li");
+  const board = ada.getByRole("list", { name: "Games together" }).locator("li");
   await expect(board).toHaveCount(2);
-  await expect(board.first()).toContainText("1 / 1");
+  await expect(board.first()).toContainText("1 win · 1 game");
 
   await tolu.goto("/friends");
   await expect(tolu.getByRole("link", { name: /Game night/ })).toBeVisible();

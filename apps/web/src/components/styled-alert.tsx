@@ -68,10 +68,10 @@ const bandTone: Record<StyledTone, string> = {
 };
 
 const cancelBtn =
-  "inline-flex h-9 items-center justify-center rounded-md border border-border bg-transparent px-4 text-sm font-medium text-foreground transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:size-4 [&_svg]:shrink-0 [&_i]:text-base [&_i]:leading-none";
+  "inline-flex h-11 items-center justify-center rounded-full border border-border bg-transparent px-4 text-sm font-medium text-foreground transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:size-4 [&_svg]:shrink-0 [&_i]:text-base [&_i]:leading-none";
 
 const confirmBtn =
-  "inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:size-4 [&_svg]:shrink-0 [&_i]:text-base [&_i]:leading-none";
+  "inline-flex h-11 items-center justify-center gap-1.5 rounded-full px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 [&_svg]:size-4 [&_svg]:shrink-0 [&_i]:text-base [&_i]:leading-none";
 
 /* The compact layout uses smaller buttons. */
 const cancelBtnSm =
@@ -447,20 +447,40 @@ export function CenteredAlert({
 }
 
 /* HorizontalAlert: the icon on the left, the words on the right, buttons bottom
-   right. The site's standard "Are you sure?" row. */
+   right. The site's standard "Are you sure?" row. `tone` makes it red for
+   something that can't be taken back, or gold for a study page's main step. */
 export function HorizontalAlert({
   title = "Save your changes?",
   description = "You have unsaved edits that will be lost if you leave now.",
   confirmLabel = "Save",
+  tone,
   ...props
-}: StyledAlertPublicProps) {
+}: StyledAlertPublicProps & { tone?: "danger" | "gold" }) {
+  const look =
+    tone === "danger"
+      ? {
+          tone: "danger" as const,
+          icon: <AlertTriangle />,
+          iconClassName: "text-danger",
+          confirmClassName: confirmTone.danger,
+        }
+      : tone === "gold"
+        ? {
+            tone: "warning" as const,
+            icon: <CheckCircle />,
+            iconClassName: "text-warning",
+            confirmClassName: confirmTone.warning,
+          }
+        : {
+            tone: "success" as const,
+            icon: <CheckCircle />,
+            iconClassName: "text-success",
+            confirmClassName: confirmTone.success,
+          };
   return (
     <StyledAlertDialog
       layout="horizontal"
-      tone="success"
-      icon={<CheckCircle />}
-      iconClassName="text-success"
-      confirmClassName={confirmTone.success}
+      {...look}
       title={title}
       description={description}
       confirmLabel={confirmLabel}
