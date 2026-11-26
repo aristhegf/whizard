@@ -1,7 +1,16 @@
-import { createRoomState, defaultGameConfig, QUIZ_CATEGORIES } from "@whizard/game-core";
+import { drawContent } from "@whizard/content";
+import {
+  createRoomState,
+  DEFAULT_IMPOSTOR_SETTINGS,
+  defaultGameConfig,
+  QUIZ_CATEGORIES,
+  startGame,
+  type ImpostorState,
+  type RoomState,
+} from "@whizard/game-core";
 import { describe, expect, it } from "vitest";
 import { addMonths } from "./adminPayments";
-import { newRoomSettings } from "./gameRules";
+import { blockedTypedText, newRoomSettings } from "./gameRules";
 import { DEFAULT_SETTINGS } from "./settings";
 
 const room = () => createRoomState("ABC234", 0);
@@ -58,6 +67,57 @@ describe("new room settings", () => {
       ...defaults,
       rounds: 5,
     });
+  });
+});
+
+describe("typed text in games", () => {
+  const BLOCKED = [{ word: "rudeword", anywhere: false }];
+  const players = ["ada", "bola", "chidi", "dayo"];
+
+  /** A room running a game of the given kind, with everyone connected. */
+  function running(game: "impostor" | "quiz"): RoomState {
+    const room: RoomState = {
+      ...createRoomState("ABC234", 0, defaultGameConfig(game)),
+      hostId: "ada",
+      players: players.map((id) => ({
+        id,
+        nickname: id,
+        sessionToken: `${id}-token`,
+        joinedAt: 0,
+        lastSeenAt: 0,
+        account: null,
+        guestId: null,
+        avatar: null,
+      })),
+    };
+    const result = startGame(room, "ada", new Set(players), 0, 5, (request, seed) =>
+      drawContent(request, seed),
+    );
+    if (!result.ok) throw new Error(result.error);
+    return result.state;
+  }
+
+  it("refuse an Impostor clue with a blocked word, the way nicknames are", () => {
+    const room = running("impostor");
+    const game = room.session!.state as ImpostorState;
+    expect(game.settings).toEqual(DEFAULT_IMPOSTOR_SETTINGS);
+    expect(game.rounds[0]!.word).toBeTruthy();
+    const clue = (text: string) => blockedTypedText(room, { type: "clue", text }, BLOCKED);
+    expect(clue("rudeword")).toBe("rudeword");
+    expect(clue(" RUDEWORD ")).toBe("rudeword");
+    // Look-alikes and stretched letters too.
+    expect(clue("rud3w0rd")).toBe("rudeword");
+    expect(clue("ruuudeword")).toBe("rudeword");
+    expect(clue("sunny")).toBeNull();
+    expect(blockedTypedText(room, { type: "vote", playerId: "bola" }, BLOCKED)).toBeNull();
+    expect(blockedTypedText(room, { type: "clue" }, BLOCKED)).toBeNull();
+  });
+
+  it("let other games' actions through untouched", () => {
+    expect(blockedTypedText(running("quiz"), { type: "clue", text: "rudeword" }, BLOCKED)).toBe(
+      null,
+    );
+    expect(blockedTypedText(room(), { type: "clue", text: "rudeword" }, BLOCKED)).toBeNull();
   });
 });
 

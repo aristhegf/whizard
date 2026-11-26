@@ -166,6 +166,7 @@ export const CATALOG: CatalogGame[] = [
     icon: "shield",
     colors: ["#5b3cf0", "#171456"],
     href: null,
+    starts: "impostor",
   },
 ];
 

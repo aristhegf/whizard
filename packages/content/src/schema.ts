@@ -1,11 +1,13 @@
 import {
   CONNECTIONS_GROUP_SIZE,
+  IMPOSTOR_CATEGORY_IDS,
   HOW_WELL_NAME_PLACEHOLDER,
   HOW_WELL_PACK_IDS,
   LEVELS,
   QUIZ_DIFFICULTIES,
   WORD_LEVELS,
   topicIdSchema,
+  type ImpostorCategory,
 } from "@whizard/game-core";
 import { z } from "zod";
 
@@ -68,6 +70,28 @@ export const storedConnectionsSchema = z
   });
 
 export type StoredConnections = z.infer<typeof storedConnectionsSchema>;
+
+/** An Impostor word: a capital first, then letters, with single spaces or hyphens inside. */
+const impostorWord = z
+  .string()
+  .regex(/^[A-Z][a-z]*(?:[ -][A-Za-z][a-z]*)*$/)
+  .max(20);
+
+/** One Impostor category's words, as they're written in impostor/words.json. */
+export const storedImpostorCategorySchema = z.object({
+  category: z.enum(IMPOSTOR_CATEGORY_IDS),
+  words: z.array(impostorWord).min(40),
+});
+
+export type StoredImpostorCategory = z.infer<typeof storedImpostorCategorySchema>;
+
+/** A secret word for one round of Impostor, with an ID that tracks who has had it. */
+export interface StoredImpostorWord {
+  /** `impostor-<category>-<word>`, e.g. `impostor-food-ice-cream`. */
+  id: string;
+  category: ImpostorCategory;
+  word: string;
+}
 
 export const HOW_WELL_PROMPT_MAX = 90;
 export const HOW_WELL_CHOICE_MAX = 32;
