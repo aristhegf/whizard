@@ -49,15 +49,15 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   await page.setViewportSize({ width: 1280, height: 720 });
   // Guests land on the page that introduces Whizard; the games are one click away.
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Games\s*Are Better\s*Together/);
-  await page.getByRole("link", { name: "Explore Games" }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Games are better together");
+  await page.getByRole("link", { name: "See all games" }).click();
   await expect(page).toHaveURL(/\/games$/);
   await expect(page.getByRole("heading", { name: "What do you want to play?" })).toBeVisible();
   const height = await page.evaluate(() => document.documentElement.scrollHeight);
   expect(height).toBeLessThanOrEqual(720);
 
   // The top bar, the same on every page.
-  expect(await labels(page, "Main")).toEqual(["How it works", "Pricing", "Stats"]);
+  expect(await labels(page, "Main")).toEqual(["Games", "Pricing", "Stats"]);
   await expect(page.getByLabel("Room code")).toBeVisible();
 
   // Desktop shows eight catalogue cards in a two-row grid, with pagination for the rest.
@@ -85,7 +85,7 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   await expect(site.getByRole("link", { name: "About" })).toBeInViewport();
   await site.getByRole("link", { name: "Privacy" }).click();
   await expect(page).toHaveURL(/\/privacy$/);
-  expect(await labels(page, "Main")).toEqual(["How it works", "Pricing", "Stats"]);
+  expect(await labels(page, "Main")).toEqual(["Games", "Pricing", "Stats"]);
 });
 
 for (const viewport of [
