@@ -262,10 +262,16 @@ function GameCard({
   } as CSSProperties;
   const label = `Play ${game.name}`;
 
+  // The round gold Play button, with a crown on top.
+  const face = (
+    <>
+      <Icon name="crown" size={22} fill className="play-btn-crown" />
+      <Icon name="play" size={24} fill className="play-btn-glyph" />
+    </>
+  );
   const action = game.href ? (
     <a className="play-btn" aria-label={label} {...linkTo(game.href)}>
-      Play
-      <Icon name="arrowRight" size={16} stroke={2.8} />
+      {face}
     </a>
   ) : game.starts ? (
     // Games without a page of their own open a room straight away.
@@ -282,8 +288,7 @@ function GameCard({
         });
       }}
     >
-      {opening ? "Opening…" : "Play"}
-      {!opening && <Icon name="arrowRight" size={16} stroke={2.8} />}
+      {face}
     </button>
   ) : (
     <span className="play-btn soon">Coming soon</span>
@@ -301,15 +306,17 @@ function GameCard({
         <img className="play-card-art" src={game.art} alt="" width={310} height={320} />
       </div>
       <div className="play-card-body">
-        <h3 className="play-card-name poster">{game.name}</h3>
+        <span className="play-card-badge" aria-hidden="true">
+          <Icon name={game.icon} size={26} stroke={2.4} />
+          <Icon name="crown" size={14} fill className="play-card-badge-crown" />
+        </span>
+        <h3 className="play-card-name">{game.name}</h3>
         <p className="play-card-desc">{game.description}</p>
-        <div className="play-card-foot">
-          <span className="players">
-            <Icon name="users" size={14} />
-            {game.players}
-          </span>
-          {action}
-        </div>
+        <span className="players">
+          <Icon name="users" size={14} />
+          {game.players}
+        </span>
+        {action}
       </div>
     </li>
   );
