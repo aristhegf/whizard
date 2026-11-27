@@ -20,3 +20,13 @@ apps/web/src/components/cult/
 .claude/skills/design-taste-frontend/
 # Superpowers session artifacts (gitignored planning/review working files).
 .superpowers/
+# Design skills (npx skills add …), kept as published.
+.claude/skills/accessibility/
+.claude/skills/apple-design/
+.claude/skills/design-review/
+.claude/skills/emil-design-eng/
+.claude/skills/frontend-design/
+.claude/skills/impeccable/
+.claude/skills/interaction-design/
+# Local agent worktrees.
+.claude/worktrees/
