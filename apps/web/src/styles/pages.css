@@ -1149,22 +1149,61 @@ button.topic-tile {
   }
 }
 
-/* Phones: a calmer Games screen. Just the title, with the kind of game as a small pill beside it,
-   then the card. The visitor count and the subtitle stay on wider screens, where there's room. */
+/* Phones: a calmer Games screen. The live count as one quiet line, the title with the kind of game
+   as a small pill beside it, then the card. The subtitle stays on wider screens. */
 @media (max-width: 1099px) {
   .play-page .play-head {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
     column-gap: 12px;
+    row-gap: 6px;
   }
 
-  .play-page .live-count,
   .play-page .play-subtitle {
     display: none;
   }
 
-  .play-page .play-title {
+  /* Who's here first, with the live dot, then the running total, dimmer. No pill. */
+  .play-page .live-count {
     grid-row: 1;
+    grid-column: 1 / -1;
+    justify-self: start;
+    gap: 0;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--dim);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .play-page .live-count > span {
+    padding: 0;
+  }
+
+  .play-page .live-count-now {
+    order: -1;
+    gap: 6px;
+    border: 0;
+    color: #e8dcff;
+  }
+
+  .play-page .live-count-now::after {
+    content: "·";
+    margin: 0 7px;
+    color: var(--dim);
+  }
+
+  .play-page .live-dot {
+    width: 6px;
+    height: 6px;
+    box-shadow: 0 0 0 2px rgb(15 198 128 / 22%);
+  }
+
+  .play-page .play-title {
+    grid-row: 2;
     grid-column: 1;
     max-width: none;
     font-size: clamp(1.75rem, 7.4vw, 2.2rem);
@@ -1173,7 +1212,7 @@ button.topic-tile {
   }
 
   .play-page .play-mobile-categories {
-    grid-row: 1;
+    grid-row: 2;
     grid-column: 2;
     justify-self: end;
     gap: 6px;
@@ -1194,5 +1233,27 @@ button.topic-tile {
 
   .play-page .play-mobile-categories svg {
     color: #c9a8ff;
+  }
+
+  /* The drifting toys sit in the header's top right, behind the words. Inside the header: the
+     page clips anything past it. */
+  .play-page .play-drift {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 64%;
+    height: 100%;
+    z-index: 0;
+    transition: opacity 300ms ease;
+  }
+
+  .play-page .play-head > :not(.play-drift) {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Picking a kind of game folds the header away; the toys go with it. */
+  .play-page.is-picking .play-drift {
+    opacity: 0;
   }
 }

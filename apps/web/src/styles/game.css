@@ -980,9 +980,40 @@ button.choice:disabled {
 }
 
 .podium-place {
+  position: relative;
+  z-index: 1;
   display: grid;
   justify-items: center;
   min-width: 0;
+}
+
+/* The 3D steps and the toy shower (podiumScene), behind the names and scores. It reaches a little
+   above the podium so the toys fall in rather than appear. */
+.podium-canvas {
+  position: absolute;
+  top: -48px;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: calc(100% + 48px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.podium.is-3d .podium-canvas {
+  opacity: 1;
+}
+
+/* Once the 3D steps are drawn, the page's blocks keep only their words. */
+.podium.is-3d .podium-block {
+  border-color: transparent;
+  background: none;
+  box-shadow: none;
+}
+
+.podium.is-3d .confetti {
+  display: none;
 }
 
 .podium-face {

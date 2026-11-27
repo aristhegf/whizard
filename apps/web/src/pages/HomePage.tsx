@@ -63,6 +63,8 @@ export function HomePage() {
       <section className="play" aria-labelledby="play-title">
         <header className="play-head">
           <LiveCount />
+          {/* Phones: three small toys drifting slowly behind the title, and no mascot. */}
+          {!paged && <ToyScene className="play-drift" layout="drift" />}
           {paged && (
             <ToyScene
               className="play-hero-art"
