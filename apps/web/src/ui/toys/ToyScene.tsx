@@ -1,4 +1,4 @@
-import type { ToyLayout } from "./toyScene";
+import type { ToyLayout } from "./heroScene";
 import { useToyCanvas, type MakeScene, type ToySceneHandle } from "./useToyCanvas";
 
 /**
@@ -22,7 +22,7 @@ export function ToyScene({
   height?: number;
 }) {
   const make: MakeScene<ToySceneHandle> = (canvas, still, onReady) =>
-    import("./toyScene").then(({ createToyScene }) =>
+    import("./heroScene").then(({ createToyScene }) =>
       createToyScene(canvas, { mascot, layout, reducedMotion: still, onReady }),
     );
   const { ref, live } = useToyCanvas(make, `${layout}:${mascot ?? ""}`);
