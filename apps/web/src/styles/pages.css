@@ -1148,3 +1148,51 @@ button.topic-tile {
     transition: none;
   }
 }
+
+/* Phones: a calmer Games screen. Just the title, with the kind of game as a small pill beside it,
+   then the card. The visitor count and the subtitle stay on wider screens, where there's room. */
+@media (max-width: 1099px) {
+  .play-page .play-head {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: 12px;
+  }
+
+  .play-page .live-count,
+  .play-page .play-subtitle {
+    display: none;
+  }
+
+  .play-page .play-title {
+    grid-row: 1;
+    grid-column: 1;
+    max-width: none;
+    font-size: clamp(1.75rem, 7.4vw, 2.2rem);
+    line-height: 0.92;
+    text-shadow: none;
+  }
+
+  .play-page .play-mobile-categories {
+    grid-row: 1;
+    grid-column: 2;
+    justify-self: end;
+    gap: 6px;
+    width: auto;
+    min-height: 40px;
+    padding: 0 12px 0 14px;
+    border-color: rgb(169 107 255 / 22%);
+    border-radius: 999px;
+    background: rgb(30 14 56 / 70%);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .play-page .play-mobile-categories span {
+    margin-left: 0;
+    color: #fff;
+  }
+
+  .play-page .play-mobile-categories svg {
+    color: #c9a8ff;
+  }
+}

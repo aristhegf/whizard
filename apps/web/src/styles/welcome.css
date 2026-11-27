@@ -15,7 +15,7 @@
 }
 
 .welcome-title {
-  font-size: clamp(3.6rem, 7.6vw, 7.4rem);
+  font-size: clamp(2.7rem, 7.6vw, 7.4rem);
   line-height: 0.86;
   text-wrap: balance;
   text-shadow: 0 5px 0 rgb(30 6 70 / 60%);
@@ -23,7 +23,7 @@
 
 .welcome-lead {
   max-width: 30ch;
-  font-size: clamp(1.0625rem, 1.4vw, 1.25rem);
+  font-size: clamp(0.98rem, 1.4vw, 1.25rem);
   line-height: 1.45;
   color: var(--muted);
 }

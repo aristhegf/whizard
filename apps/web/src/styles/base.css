@@ -1117,9 +1117,10 @@ select option {
   }
 }
 
-/* The same slim pill everywhere; only its width changes. */
+/* The same slim pill everywhere; only its width changes. On a phone it stays small, so it
+   doesn't pull the eye from the page. */
 .join-room {
-  width: min(180px, 46vw);
+  width: min(164px, 44vw);
 }
 
 @media (min-width: 1100px) {

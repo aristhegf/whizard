@@ -405,6 +405,65 @@ html[data-reduce-motion] .game-poster {
   font-size: 1.4rem;
 }
 
+/* On a phone the poster gets quieter: fainter rays, lighter type shadows, the player count as plain
+   text, and a smaller button. One card fills the screen, so it needn't shout. */
+@media (max-width: 1099px) {
+  .play-mobile-cards > .play-card::before {
+    opacity: 0.55;
+  }
+
+  .play-mobile-cards .play-card-name {
+    text-shadow: 0 2px 14px rgb(0 0 0 / 35%);
+  }
+
+  .play-mobile-cards .play-card-desc {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    color: rgb(255 255 255 / 74%);
+  }
+
+  .play-mobile-cards .play-card .players {
+    padding: 0;
+    border: 0;
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    color: rgb(255 255 255 / 80%);
+    font-weight: 600;
+  }
+
+  .play-mobile-cards .play-btn {
+    min-height: 44px;
+    padding: 0 16px 0 20px;
+    font-size: 1.2rem;
+    box-shadow:
+      0 3px 0 #c76a00,
+      inset 0 1px 0 rgb(255 255 255 / 65%);
+  }
+
+  /* Small dots: where you are, without a row of buttons under the card. Each keeps an 18px
+     target around its 6px dot. */
+  .play-mobile-dots {
+    gap: 0;
+  }
+
+  .play-mobile-dots button {
+    box-sizing: border-box;
+    width: 18px;
+    height: 18px;
+    padding: 6px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 22%);
+    background-clip: content-box;
+  }
+
+  .play-mobile-dots button.on {
+    width: 28px;
+    background: var(--gold);
+    background-clip: content-box;
+  }
+}
+
 /* A short phone: the art gives up a little so the words still fit. */
 @media (max-width: 1099px) and (max-height: 700px) {
   .play-mobile-cards > .play-card {

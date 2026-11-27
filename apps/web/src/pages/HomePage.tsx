@@ -95,10 +95,10 @@ export function HomePage() {
               aria-haspopup="dialog"
               onClick={() => setCategoriesOpen(true)}
             >
-              <Icon name="grid" size={18} />
-              Categories
+              <Icon name="grid" size={16} />
+              <span className="sr-only">Categories</span>
               <span>{GAME_GROUPS.find((g) => g.id === group)?.name ?? "All Games"}</span>
-              <Icon name="chevronDown" size={18} />
+              <Icon name="chevronDown" size={16} />
             </button>
           )}
         </header>
