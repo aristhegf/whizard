@@ -41,3 +41,17 @@
 .quiz-main .play-stage.fit-board .play-area {
   align-items: center;
 }
+
+/* The seconds until the next question, in a disc on the Skip button. */
+.skip-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  margin-left: 10px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 20%);
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+}

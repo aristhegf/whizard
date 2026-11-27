@@ -20,6 +20,7 @@ import {
   PlayFrame,
   PlayScreen,
   PlayTimer,
+  PlayVerdict,
   rowsFrom,
   Staged,
   timerMs,
@@ -108,6 +109,7 @@ function StandardQuiz(props: Props) {
           label={categoryName}
           latency={props.latency}
           onQuit={props.onQuit}
+          game="quiz"
           side={<LiveBoard context={context} />}
         >
           <p className="watching">A game is in progress. You’ll be in the next one.</p>
@@ -148,6 +150,8 @@ function QuizPlay({
       }
       latency={latency}
       onQuit={onQuit}
+      game="quiz"
+      thumb
       className="quiz-main"
     >
       {timer}
@@ -267,7 +271,12 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
   if (!visible) {
     const topic = context.categoryId ? topicStyle(context.categoryId) : null;
     return (
-      <PlayFrame label={context.categoryName} latency={context.latency} onQuit={context.onQuit}>
+      <PlayFrame
+        label={context.categoryName}
+        latency={context.latency}
+        onQuit={context.onQuit}
+        game="quiz"
+      >
         <div className="countdown" aria-live="polite">
           {topic ? (
             // The topic "generates" through the countdown, and appears for the last second.
@@ -315,7 +324,11 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
       index={stage.index}
       timer={
         view.timed && (
-          <PlayTimer ms={timerMs(remaining)} low={remaining / view.timeLimitMs < 0.25} />
+          <PlayTimer
+            ms={timerMs(remaining)}
+            low={remaining / view.timeLimitMs < 0.25}
+            totalMs={view.timeLimitMs}
+          />
         )
       }
     >
@@ -360,6 +373,7 @@ function Answer({ context, stage }: { context: GameContext; stage: AnswerStage }
   useEffect(() => play(stage.correct ? "correct" : "wrong"), [stage.correct]);
 
   const verdict = stage.myChoice === null ? "Time’s up" : stage.correct ? "Correct" : "Wrong";
+  const tone = stage.myChoice === null ? "late" : stage.correct ? "good" : "bad";
 
   return (
     <QuizPlay
@@ -368,31 +382,30 @@ function Answer({ context, stage }: { context: GameContext; stage: AnswerStage }
       actions={
         paused && (
           <div className="play-actions">
+            {/* The countdown to the next question rides in the button that skips it. */}
             <button className="play-pill go" onClick={next}>
               Skip
+              <span className="skip-count" aria-label={`, next in ${Math.ceil(left / 1000)}`}>
+                {Math.ceil(left / 1000)}
+              </span>
             </button>
           </div>
         )
       }
     >
       <h2 className="prompt">{stage.prompt}</h2>
+      <div className="quiz-result">
+        <PlayVerdict tone={tone} points={stage.points}>
+          {verdict}
+        </PlayVerdict>
+        {paused && explained && stage.explanation && <Explanation item={stage} />}
+      </div>
       <RevealedChoices
         choices={stage.choices}
         correct={stage.correctChoice}
         mine={stage.myChoice}
       />
-      <div className="quiz-result">
-        <p className={`verdict ${stage.correct ? "good" : "bad"}`} role="status">
-          {verdict}
-          {stage.points > 0 && <span className="points">+{stage.points}</span>}
-        </p>
-        {paused && explained && stage.explanation && <Explanation item={stage} />}
-        {paused && (
-          <p className="quiz-note">
-            {stage.isLast ? "Results" : "Next"} in {Math.ceil(left / 1000)}
-          </p>
-        )}
-      </div>
+      {paused && stage.isLast && <p className="quiz-note">Results next</p>}
     </QuizPlay>
   );
 }
