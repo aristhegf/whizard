@@ -20,14 +20,16 @@ import { Icon } from "../../ui/Icon";
 import { Podium } from "../../ui/Podium";
 import { Choices, RevealedChoices } from "../quiz/QuizScreen";
 import {
+  type Face,
   PlayBoard,
   PlayFrame,
   PlayScreen,
   PlayTimer,
+  PlayVerdict,
   rowsFrom,
   Staged,
   timerMs,
-  type Face,
+  type VerdictTone,
 } from "../play";
 
 interface Props {
@@ -182,7 +184,7 @@ function Question(props: Props & { stage: QuestionStage }) {
   if (!open) {
     const name = stage.subject.nickname;
     return (
-      <PlayFrame label={label} latency={props.latency} onQuit={props.onQuit}>
+      <PlayFrame label={label} latency={props.latency} onQuit={props.onQuit} game="how-well">
         <div className="countdown howwell-intro" aria-live="polite">
           <span className="howwell-intro-face">
             <Avatar
@@ -223,11 +225,14 @@ function Question(props: Props & { stage: QuestionStage }) {
       label={label}
       latency={props.latency}
       onQuit={props.onQuit}
+      game="how-well"
+      thumb
       className="howwell-main"
     >
       <PlayTimer
         ms={timerMs(remaining)}
         low={remaining / (stage.deadline - stage.startsAt) < 0.25}
+        totalMs={stage.deadline - stage.startsAt}
       />
       <Staged wide aside={<LiveBoard {...props} />}>
         <Asked props={props} stage={stage} ring="var(--accent)" />
@@ -262,33 +267,38 @@ function verdict(
   stage: RevealStage,
   playerId: string,
   nameOf: (id: string) => string,
-): { text: string; points: number } {
+): { text: string; points: number; tone: VerdictTone } {
   const name = stage.subject.nickname;
   const mine = stage.role === "subject";
-  if (stage.outcome === "subject-left") return { text: `${name} left`, points: 0 };
+  if (stage.outcome === "subject-left") return { text: `${name} left`, points: 0, tone: "info" };
   if (stage.outcome === "no-answer") {
-    return { text: mine ? "You didn’t answer" : `${name} didn’t answer`, points: 0 };
+    return {
+      text: mine ? "You didn’t answer" : `${name} didn’t answer`,
+      points: 0,
+      tone: "late",
+    };
   }
   if (mine) {
     const knew = stage.guesses.filter((g) => g.correct);
     const of = stage.guesses.length;
-    if (of === 0) return { text: "Nobody guessed this time", points: 0 };
+    if (of === 0) return { text: "Nobody guessed this time", points: 0, tone: "info" };
     if (knew.length === 0) {
       return {
         text: of === 1 ? "You kept them guessing" : "You kept them all guessing",
         points: 0,
+        tone: "info",
       };
     }
     // Just the two of you: "Tolu knows you".
     const text =
       of === 1 ? `${nameOf(knew[0]!.playerId)} knows you` : `${knew.length} of ${of} know you`;
-    return { text, points: stage.subjectPoints };
+    return { text, points: stage.subjectPoints, tone: "good" };
   }
   const guess = stage.guesses.find((g) => g.playerId === playerId);
-  if (!guess) return { text: `${name} picked it`, points: 0 };
-  if (guess.correct) return { text: `You know ${name}`, points: guess.points };
-  if (guess.choice === null) return { text: `No guess this time`, points: 0 };
-  return { text: `${name} keeps you guessing`, points: 0 };
+  if (!guess) return { text: `${name} picked it`, points: 0, tone: "info" };
+  if (guess.correct) return { text: `You know ${name}`, points: guess.points, tone: "good" };
+  if (guess.choice === null) return { text: `No guess this time`, points: 0, tone: "late" };
+  return { text: `${name} keeps you guessing`, points: 0, tone: "bad" };
 }
 
 /** The subject's answer, green, with everyone's guess as their face on the answer they picked. */
@@ -296,7 +306,7 @@ function Reveal(props: Props & { stage: RevealStage }) {
   const { view, stage, playerId, room } = props;
   const answer = stage.answer;
   const names = new Map(view.standings.map((s) => [s.playerId, s.nickname]));
-  const { text, points } = verdict(stage, playerId, (id) => names.get(id) ?? "");
+  const { text, points, tone } = verdict(stage, playerId, (id) => names.get(id) ?? "");
 
   const marks = stage.choices.map((_, i) => {
     const pickers = stage.guesses.filter((g) => g.choice === i);
@@ -322,22 +332,24 @@ function Reveal(props: Props & { stage: RevealStage }) {
       label={roundLabel(stage.round, view.rounds)}
       latency={props.latency}
       onQuit={props.onQuit}
+      game="how-well"
+      thumb
       className="howwell-main howwell-reveal"
     >
       {/* The clock's place is kept, so the question and answers don't jump at the reveal. */}
       <div className="howwell-clock-space" aria-hidden="true">
-        <PlayTimer ms={0} />
+        <PlayTimer ms={0} totalMs={1} />
       </div>
       <Staged wide aside={<LiveBoard {...props} />}>
         <Asked props={props} stage={stage} ring="var(--ok)" />
+        {/* How the round went for you, between the question and its answers. */}
+        <div className="howwell-toast">
+          <PlayVerdict tone={tone} points={points}>
+            {text}
+          </PlayVerdict>
+        </div>
         <RevealedChoices choices={stage.choices} correct={answer ?? -1} mine={null} marks={marks} />
-        {/* Holds the answer screen's note line, so the board beside it keeps its height. */}
-        <p className="play-note" aria-hidden="true" />
       </Staged>
-      <p className="howwell-toast" role="status">
-        {text}
-        {points > 0 && <span className="points">+{formatPoints(points)}</span>}
-      </p>
     </PlayScreen>
   );
 }

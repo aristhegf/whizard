@@ -99,7 +99,8 @@ export function useCountUp(value: number, ms = 650): number {
   return still ? value : shown;
 }
 
-export type VerdictTone = "good" | "bad" | "late";
+/** Right, wrong, out of time, or simply how it went (neither right nor wrong). */
+export type VerdictTone = "good" | "bad" | "late" | "info";
 
 /**
  * How your answer went, as a moment rather than a line of text: a mark that pops in, the word
@@ -116,7 +117,8 @@ export function PlayVerdict({
   points?: number;
 }) {
   const counted = useCountUp(points);
-  const icon = tone === "good" ? "check" : tone === "bad" ? "close" : "clock";
+  const icon =
+    tone === "good" ? "check" : tone === "bad" ? "close" : tone === "late" ? "clock" : "star";
   return (
     <p className={`play-verdict ${tone}`} role="status">
       <span className="play-verdict-mark" aria-hidden="true">

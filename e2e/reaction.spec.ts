@@ -74,7 +74,7 @@ test("a solo game: the wrong tile is turned down, the right one records the time
     // Solo, finding the target ends the round on the spot and shows the time (over a second,
     // as the deliberate wrong tap makes round one, it's written in seconds).
     await target.click();
-    await expect(page.locator(".verdict")).toHaveText(/\d+ (ms|s)/, { timeout: 8_000 });
+    await expect(page.locator(".play-verdict")).toHaveText(/\d+ (ms|s)/, { timeout: 8_000 });
     if (round === 1) {
       // The round's times come up on a board, and the standings beside it, one row a player.
       await expect(roundTimes(page, 1).getByRole("listitem")).toHaveCount(1, { timeout: 8_000 });

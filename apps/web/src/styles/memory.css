@@ -89,6 +89,13 @@
   background: var(--night);
 }
 
+/* Phones, in the thumb layout (play.css): the six items float in the middle of the screen. */
+@media (max-width: 767px) {
+  .memory-main.thumb .memory-set {
+    margin-block: auto;
+  }
+}
+
 /* Small phones (see play.css). */
 @media (max-width: 360px), (max-height: 640px) {
   .memory-emoji {

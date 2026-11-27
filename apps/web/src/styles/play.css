@@ -784,6 +784,11 @@ button.play-tile:active:not(:disabled) {
   box-shadow: 0 0 0 4px rgb(255 171 44 / 25%);
 }
 
+.play-verdict.info .play-verdict-mark {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px rgb(139 61 255 / 28%);
+}
+
 /* A right answer sends a ring of light out from its mark. */
 .play-verdict.good .play-verdict-mark::after {
   content: "";
@@ -818,6 +823,10 @@ button.play-tile:active:not(:disabled) {
 
 .play-verdict.late .play-verdict-word {
   color: #ffc24a;
+}
+
+.play-verdict.info .play-verdict-word {
+  color: var(--accent-soft);
 }
 
 .play-verdict-points {

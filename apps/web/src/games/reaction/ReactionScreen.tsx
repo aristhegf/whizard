@@ -13,15 +13,16 @@ import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
 import { Podium } from "../../ui/Podium";
 import {
+  type Face,
   PlayBoard,
   PlayFaces,
   PlayFrame,
   PlayScreen,
   PlayTimer,
+  PlayVerdict,
   rowsFrom,
   Staged,
   timerMs,
-  type Face,
 } from "../play";
 
 interface Props {
@@ -83,6 +84,7 @@ function Watching(props: Props & { message: string }) {
       label="Reaction"
       latency={props.latency}
       onQuit={props.onQuit}
+      game="reaction"
       side={<LiveBoard {...props} />}
     >
       <p className="watching">{message}</p>
@@ -173,7 +175,7 @@ function Round(props: Props & { stage: CountdownStage | WaitStage }) {
 
   if (!started) {
     return (
-      <PlayFrame label={label} latency={props.latency} onQuit={props.onQuit}>
+      <PlayFrame label={label} latency={props.latency} onQuit={props.onQuit} game="reaction">
         <div className="countdown" aria-live="polite">
           <img className="countdown-game-art" src="/art/games/reaction.webp" alt="" />
           <p className="countdown-label">Get ready</p>
@@ -202,12 +204,15 @@ function Round(props: Props & { stage: CountdownStage | WaitStage }) {
       label={label}
       latency={props.latency}
       onQuit={props.onQuit}
+      game="reaction"
+      thumb
       className="reaction-main"
     >
       {/* The clock's place is held through the wait, so the board doesn't jump when it starts. */}
       <PlayTimer
         ms={timerMs(shown ? remaining : view.windowMs)}
         low={shown && remaining > 0 && remaining / view.windowMs < 0.25}
+        totalMs={view.windowMs}
       />
       <Ask target={target} />
       <Staged aside={<LiveBoard {...props} />}>
@@ -330,12 +335,12 @@ function RoundResult(props: Props & { stage: ResultStage }) {
       label={roundLabel(stage.round, view.rounds)}
       latency={props.latency}
       onQuit={props.onQuit}
+      game="reaction"
       className="reaction-main"
     >
-      <p className={`verdict ${good ? "good" : "bad"}`} role="status">
+      <PlayVerdict tone={!mine ? "info" : good ? "good" : "late"} points={points}>
         {verdict}
-        {points > 0 && <span className="points">+{points.toLocaleString("en-US")}</span>}
-      </p>
+      </PlayVerdict>
       <Staged
         aside={
           <PlayBoard

@@ -14,15 +14,16 @@ import { Icon } from "../../ui/Icon";
 import { Podium } from "../../ui/Podium";
 import { Choices, RevealedChoices } from "../quiz/QuizScreen";
 import {
+  type Face,
   PlayBoard,
   PlayFaces,
   PlayFrame,
   PlayScreen,
   PlayTimer,
+  PlayVerdict,
   rowsFrom,
   Staged,
   timerMs,
-  type Face,
 } from "../play";
 
 interface Props {
@@ -106,6 +107,8 @@ function MemoryPlay({
       label={roundLabel(round, props.view.rounds)}
       latency={props.latency}
       onQuit={props.onQuit}
+      game="memory"
+      thumb
       className="memory-main"
     >
       {timer}
@@ -126,6 +129,7 @@ function Watching(props: Props & { message: string }) {
       label="Memory"
       latency={props.latency}
       onQuit={props.onQuit}
+      game="memory"
       side={<LiveBoard {...props} />}
     >
       <p className="watching">{message}</p>
@@ -162,6 +166,7 @@ function RevealPhase(props: Props & { stage: CountdownStage | RevealStage }) {
         label={roundLabel(stage.round, props.view.rounds)}
         latency={props.latency}
         onQuit={props.onQuit}
+        game="memory"
       >
         <div className="countdown" aria-live="polite">
           <img className="countdown-game-art" src="/art/games/memory.webp" alt="" />
@@ -177,7 +182,13 @@ function RevealPhase(props: Props & { stage: CountdownStage | RevealStage }) {
     <MemoryPlay
       props={props}
       round={stage.round}
-      timer={<PlayTimer ms={timerMs(remaining)} low={remaining < 2000} />}
+      timer={
+        <PlayTimer
+          ms={timerMs(remaining)}
+          low={remaining < 2000}
+          totalMs={stage.endsAt - stage.startsAt}
+        />
+      }
       task={<p className="play-task">Remember these</p>}
     >
       <ul className="memory-set" aria-label="Items to remember">
@@ -222,6 +233,7 @@ function Question(props: Props & { stage: QuestionStage }) {
         <PlayTimer
           ms={timerMs(remaining)}
           low={remaining / (stage.deadline - stage.startsAt) < 0.25}
+          totalMs={stage.deadline - stage.startsAt}
         />
       }
     >
@@ -257,8 +269,9 @@ function RoundResult(props: Props & { stage: ResultStage }) {
   const seconds = Math.max(0, Math.ceil((stage.endsAt - now) / 1000));
   const mine = stage.answers.find((a) => a.playerId === playerId) ?? null;
   const points = view.myAnswer?.points ?? 0;
-  const verdict =
-    mine?.choice === null || mine === null ? "Time’s up" : mine.correct ? "Correct" : "Wrong";
+  const late = mine?.choice === null || mine === null;
+  const verdict = late ? "Time’s up" : mine.correct ? "Correct" : "Wrong";
+  const tone = late ? "late" : mine.correct ? "good" : "bad";
   const last = stage.round + 1 >= view.rounds;
 
   // With friends, everyone's pick shows as their face on the answer they chose.
@@ -289,16 +302,15 @@ function RoundResult(props: Props & { stage: ResultStage }) {
   return (
     <MemoryPlay props={props} round={stage.round} wide>
       <h2 className="prompt">{stage.question}</h2>
+      <PlayVerdict tone={tone} points={points}>
+        {verdict}
+      </PlayVerdict>
       <RevealedChoices
         choices={stage.choices}
         correct={stage.correct}
         mine={mine?.choice ?? null}
         marks={marks}
       />
-      <p className={`verdict ${mine?.correct ? "good" : "bad"}`} role="status">
-        {verdict}
-        {points > 0 && <span className="points">+{formatPoints(points)}</span>}
-      </p>
       <p className="play-note">
         {last ? "Results" : "Next round"} in {seconds}
       </p>
