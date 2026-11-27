@@ -11,8 +11,12 @@ concurrency:
   # Never cancel a run on main part-way through, so a deploy can't be cut off.
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+# A push to main is a merged PR whose checks and browser tests already passed on the PR, so it
+# only builds and deploys (the deploy step builds the app first). Pull requests, and runs started
+# by hand, do everything.
 jobs:
   check:
+    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -29,8 +33,9 @@ jobs:
       - run: pnpm build
 
   # The browser tests, split across three machines that run side by side (about a third of the
-  # time each). The deploy waits for all three.
+  # time each). Skipped on pushes to main, where the PR already ran them.
   e2e:
+    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -143,9 +148,16 @@ jobs:
               });
             }
 
+  # On a push to main, check and e2e are skipped and the deploy goes ahead; on a run started by
+  # hand it waits for them, and any failure stops it.
   deploy:
     needs: [check, e2e]
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: >-
+      always() &&
+      github.ref == 'refs/heads/main' &&
+      github.event_name != 'pull_request' &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled')
     runs-on: ubuntu-latest
     environment:
       name: production

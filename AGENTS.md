@@ -9,7 +9,7 @@ Whizard is a live multiplayer party-games site: friends join a room by link, cod
 - `apps/server` — Cloudflare Worker: WebSockets, server-authoritative game state, Durable Objects (one per game room), D1, cron and rate limits; migrations in `apps/server/migrations/`
 - `packages/` — `protocol` (shared types), `game-core` (game logic), `content` (quiz content)
 - `e2e/` — Playwright; unit tests are colocated `*.test.ts` (Vitest)
-- CI (`.github/workflows/ci.yml`): format check, lint, typecheck, unit tests, build and three sharded E2E jobs; the `deploy` job runs only on `main`; the `preview` job deploys PR branches (see below).
+- CI (`.github/workflows/ci.yml`): on PRs, format check, lint, typecheck, unit tests, build and three sharded E2E jobs, and the `preview` job deploys the branch (see below). A push to `main` skips all of those (they ran on the PR) and only builds and deploys; a hand-started run on `main` does everything, then deploys.
 
 ## Commands
 
