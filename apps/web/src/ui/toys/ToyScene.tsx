@@ -1,28 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { usePrefersStill } from "../../display";
+import { hasGraphicsHardware } from "../graphics";
 import type { ToyLayout } from "./toyScene";
 
 /**
- * Whether this browser should draw the 3D toys: it has WebGL on a real graphics chip, and isn't
- * asking to save data. Without a graphics chip, browsers draw WebGL on the processor instead
- * (SwiftShader, llvmpipe and the like), where one frame of glossy toys takes long enough to
- * freeze the page; those keep the still picture.
+ * Whether this browser should draw the 3D toys: WebGL on a real graphics chip (drawn in software,
+ * one frame of glossy toys freezes the page), and not asking to save data.
  */
 function canRun3d(): boolean {
   const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
   if (connection?.saveData) return false;
   if ((navigator.hardwareConcurrency ?? 4) < 3) return false;
-  try {
-    const probe = document.createElement("canvas");
-    const gl = probe.getContext("webgl2") ?? probe.getContext("webgl");
-    if (!gl) return false;
-    const info = gl.getExtension("WEBGL_debug_renderer_info");
-    const renderer = info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL)) : "";
-    gl.getExtension("WEBGL_lose_context")?.loseContext();
-    return !/swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer);
-  } catch {
-    return false;
-  }
+  return hasGraphicsHardware();
 }
 
 /** Runs `task` once the browser has a quiet moment, so the page itself is drawn first. */

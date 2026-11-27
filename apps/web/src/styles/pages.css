@@ -741,8 +741,10 @@ button.topic-tile {
     grid-area: hero;
     align-self: stretch;
     width: 100%;
+    --toy-bleed-top: 40px;
+    --toy-bleed-bottom: 20px;
     min-height: 210px;
-    margin: -40px 0 -20px;
+    margin: calc(-1 * var(--toy-bleed-top)) 0 calc(-1 * var(--toy-bleed-bottom));
   }
 
   .play-page .play-chips {

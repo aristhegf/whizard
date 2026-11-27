@@ -1,27 +1,6 @@
 import CursorRingField from "../components/originkit/cursor-ring-field";
 import { usePrefersStill } from "../display";
-
-let hardware: boolean | undefined;
-
-/**
- * Whether WebGL runs on a graphics chip. Without one (acceleration turned off, a remote desktop,
- * a headless browser) it's drawn in software on the processor, and the field's tens of thousands
- * of moving points would slow the whole site to a crawl.
- */
-function hasGraphicsHardware(): boolean {
-  if (hardware !== undefined) return hardware;
-  try {
-    const gl = document.createElement("canvas").getContext("webgl");
-    if (!gl) return (hardware = false);
-    const info = gl.getExtension("WEBGL_debug_renderer_info");
-    const renderer = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
-    gl.getExtension("WEBGL_lose_context")?.loseContext();
-    hardware = !/swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer);
-  } catch {
-    hardware = false;
-  }
-  return hardware;
-}
+import { hasGraphicsHardware } from "./graphics";
 
 /**
  * The Originkit ring field filling the window behind every screen, over the site's usual glow.

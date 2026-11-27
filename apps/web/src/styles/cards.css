@@ -469,7 +469,11 @@ html[data-reduce-motion] .game-poster {
   opacity: 1;
 }
 
-/* In the band, the still mascot sits where the 3D one will: on the right. */
+/* In the band, the still mascot sits where the 3D one will: on the right. The band reaches
+   past the header (see .play-hero-art) so toys can float free, but the still picture keeps to
+   the header itself, clear of the top bar. */
 .toy-scene-band .toy-scene-still {
-  object-position: 86% 50%;
+  top: var(--toy-bleed-top, 0px);
+  height: calc(100% - var(--toy-bleed-top, 0px) - var(--toy-bleed-bottom, 0px));
+  object-position: 80% 50%;
 }
