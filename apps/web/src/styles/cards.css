@@ -1,8 +1,8 @@
 /* Game cards as posters, and the 3D toy scene. -------------------------------------------------
 
-   Each card is its game's own colours, top to bottom, with a burst of light behind the art. The
-   art fills the card and the name, big and condensed, sits over its lower edge on a shade, like a
-   film poster. On a mouse the card leans toward the pointer and a shine follows it. */
+   Each card is a frame of dark violet glass, its game's own colour glowing behind the art, with a
+   glass panel at the bottom for the name and Play. On a mouse the card leans toward the pointer
+   and a shine follows it. */
 
 .play-grid {
   display: grid;
@@ -95,13 +95,11 @@
   transition: opacity 300ms ease;
 }
 
-/* A game card: the art bursting out over the top of the frame, and a glass panel under it with
+/* A game card: the art at the top, inside the frame, and a glass panel under it with
    the game's badge, its name, what it is, how many play, and a round gold Play button. */
 .play-card {
   /* How much of the card the art may take, from the top. */
   --stage: 64%;
-  /* How far the art reaches out over the top edge. */
-  --burst: 14px;
   display: grid;
   grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   min-height: 0;
@@ -113,10 +111,9 @@
   align-self: start;
   position: relative;
   z-index: 1;
-  height: calc(var(--stage) + var(--burst));
+  height: var(--stage);
   min-height: 0;
-  margin-top: calc(-1 * var(--burst));
-  padding: 0 4px;
+  padding: 14px 14px 0;
   pointer-events: none;
 }
 
@@ -125,12 +122,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  /* Standing on the panel and growing up from it, so a big picture rises out over the top. */
-  object-position: 50% 100%;
-  scale: var(--art-scale, 1);
-  transform-origin: 50% 100%;
-  filter: drop-shadow(0 14px 16px rgb(8 2 30 / 70%))
-    drop-shadow(0 0 18px color-mix(in oklab, var(--c1) 45%, transparent));
+  filter: drop-shadow(0 12px 14px rgb(8 2 30 / 65%));
   transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -162,7 +154,7 @@
   backdrop-filter: blur(10px);
 }
 
-/* The game's badge: its glyph in gold on a violet tile, with a small crown on the corner. */
+/* The game's badge: its glyph in gold on a violet tile. */
 .play-card-badge {
   grid-area: badge;
   position: relative;
@@ -183,15 +175,6 @@
   filter: drop-shadow(0 2px 0 #b8560b);
 }
 
-.play-card-badge-crown {
-  position: absolute;
-  top: -9px;
-  right: -7px;
-  color: #ffd43f;
-  rotate: 18deg;
-  filter: drop-shadow(0 1px 0 #b8560b);
-}
-
 /* The name, chunky and gold, on the gold's own darker lip. */
 .play-card-name {
   grid-area: name;
@@ -207,9 +190,7 @@
   color: #ffd43f;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-shadow:
-    0 2px 0 #b8560b,
-    0 0 18px rgb(255 190 40 / 45%);
+  text-shadow: 0 2px 0 rgb(120 50 0 / 55%);
 }
 
 .play-card-desc {
@@ -245,7 +226,7 @@
   color: #cdb3ff;
 }
 
-/* Play: a round, glossy gold button in a violet ring, with a crown on top. It presses down. */
+/* Play: a round, glossy gold button in a thin violet ring. It presses in. */
 .play-btn {
   grid-area: play;
   position: relative;
@@ -264,11 +245,9 @@
     #e8870a 100%
   );
   box-shadow:
-    0 0 0 4px #6a2ff2,
-    0 0 0 6px rgb(200 160 255 / 55%),
-    0 0 22px 4px rgb(150 80 255 / 60%),
-    0 4px 0 6px #3f17a8,
-    inset 0 -4px 6px rgb(190 90 0 / 45%),
+    0 0 0 3px rgb(120 70 255 / 55%),
+    0 8px 18px -6px rgb(255 160 30 / 55%),
+    inset 0 -3px 5px rgb(190 90 0 / 40%),
     inset 0 2px 2px rgb(255 255 255 / 70%);
   color: #2b1300;
   text-decoration: none;
@@ -283,23 +262,12 @@
   margin-left: 3px;
 }
 
-.play-btn-crown {
-  position: absolute;
-  top: -19px;
-  right: -6px;
-  color: #ffd43f;
-  rotate: 16deg;
-  filter: drop-shadow(0 2px 0 #b8560b) drop-shadow(0 0 6px rgb(255 200 60 / 60%));
-}
-
 .play-btn:active:not(:disabled, .soon) {
-  transform: translateY(3px);
+  transform: scale(0.94);
   box-shadow:
-    0 0 0 4px #6a2ff2,
-    0 0 0 6px rgb(200 160 255 / 55%),
-    0 0 16px 2px rgb(150 80 255 / 55%),
-    0 1px 0 6px #3f17a8,
-    inset 0 -4px 6px rgb(190 90 0 / 45%),
+    0 0 0 3px rgb(120 70 255 / 55%),
+    0 3px 8px -4px rgb(255 160 30 / 55%),
+    inset 0 -3px 5px rgb(190 90 0 / 40%),
     inset 0 2px 2px rgb(255 255 255 / 70%);
 }
 
@@ -406,21 +374,17 @@ html[data-reduce-motion] .game-poster {
   }
 }
 
-/* Laptops and computers: four across, two down, each sized to fit. The art reaches a little
-   over the top, and the second row's over the gap. */
+/* Laptops and computers: four across, two down, each sized to fit. */
 @media (min-width: 1100px) {
   .play-page .play-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: 20px 16px;
+    gap: 16px;
     min-height: 0;
-    padding-top: 10px;
   }
 
   .play-page .play-card {
-    --stage: 58%;
-    --burst: 12px;
-    --art-scale: 1.1;
+    --stage: 60%;
   }
 
   .play-page .play-card-body {
@@ -442,7 +406,12 @@ html[data-reduce-motion] .game-poster {
   }
 
   .play-page .play-card-desc {
-    font-size: 0.74rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    font-size: 0.72rem;
+    white-space: normal;
   }
 
   .play-page .play-card .players {
@@ -460,12 +429,6 @@ html[data-reduce-motion] .game-poster {
     width: 20px;
     height: 20px;
   }
-
-  .play-page .play-btn-crown {
-    top: -16px;
-    width: 18px;
-    height: 18px;
-  }
 }
 
 /* Short laptop screens: the players line goes, so the art keeps its room. */
@@ -479,6 +442,10 @@ html[data-reduce-motion] .game-poster {
     font-size: 1.2rem;
   }
 
+  .play-page .play-card-desc {
+    display: none;
+  }
+
   .play-page .play-card .players {
     display: none;
   }
@@ -489,38 +456,35 @@ html[data-reduce-motion] .game-poster {
   }
 }
 
-/* Phones: one big card per swipe, its art bursting well over the top. */
+/* Phones: a card about four-fifths of the screen wide, the next one peeking in at the side, so
+   the card sits on the page rather than filling it. */
 .play-mobile-cards > .play-card {
-  --stage: 66%;
-  --burst: 22px;
-  --art-scale: 1.14;
-  flex: 0 0 100%;
-  border-radius: 28px;
+  --stage: 60%;
+  flex: 0 0 84%;
+  align-self: center;
+  aspect-ratio: 3 / 4;
+  max-height: 100%;
+  border-radius: 24px;
   scroll-snap-align: start;
   /* No lean on touch; the swipe is the motion. */
   transform: none;
 }
 
-.play-mobile-cards .play-card-body {
-  column-gap: 14px;
-  margin: 0 10px 10px;
-  padding: 14px;
-  border-radius: 22px;
-}
-
 .play-mobile-cards .play-card-badge {
-  width: 58px;
-  height: 58px;
-  border-radius: 17px;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
 }
 
-.play-mobile-cards .play-card-badge > svg:first-child {
-  width: 30px;
-  height: 30px;
+.play-mobile-cards .play-card-body {
+  column-gap: 10px;
+  margin: 0 8px 8px;
+  padding: 12px;
+  border-radius: 18px;
 }
 
 .play-mobile-cards .play-card-name {
-  font-size: clamp(1.7rem, 8vw, 2.2rem);
+  font-size: 1.55rem;
 }
 
 /* A phone has room for the whole line about the game. */
@@ -539,19 +503,8 @@ html[data-reduce-motion] .game-poster {
 }
 
 .play-mobile-cards .play-btn {
-  width: 70px;
-  height: 70px;
-}
-
-.play-mobile-cards .play-btn-glyph {
-  width: 28px;
-  height: 28px;
-}
-
-.play-mobile-cards .play-btn-crown {
-  top: -20px;
-  width: 26px;
-  height: 26px;
+  width: 52px;
+  height: 52px;
 }
 
 @media (max-width: 1099px) {
@@ -581,8 +534,7 @@ html[data-reduce-motion] .game-poster {
 /* A short phone: a smaller panel, so the art keeps its room. */
 @media (max-width: 1099px) and (max-height: 700px) {
   .play-mobile-cards > .play-card {
-    --stage: 64%;
-    --burst: 16px;
+    --stage: 56%;
   }
 
   .play-mobile-cards .play-card-body {
@@ -590,17 +542,22 @@ html[data-reduce-motion] .game-poster {
   }
 
   .play-mobile-cards .play-card-badge {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
   }
 
   .play-mobile-cards .play-card-name {
-    font-size: 1.6rem;
+    font-size: 1.35rem;
   }
 
+  /* No room for the whole line on a short phone, and half a line reads as broken: it goes. */
   .play-mobile-cards .play-card-desc {
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
+    display: none;
+  }
+
+  .play-mobile-cards .play-card-name {
+    grid-row: 1 / 3;
+    align-self: center;
   }
 
   .play-mobile-cards .play-card .players {
@@ -610,8 +567,8 @@ html[data-reduce-motion] .game-poster {
   }
 
   .play-mobile-cards .play-btn {
-    width: 58px;
-    height: 58px;
+    width: 48px;
+    height: 48px;
   }
 }
 
@@ -662,7 +619,18 @@ html[data-reduce-motion] .game-poster {
   object-position: 80% 50%;
 }
 
-/* Room above each phone card for its art to burst out over the top. */
+/* The card and its dots sit together in the middle of the space, not stretched to fill it. A
+   spacer after the last card lets it scroll to the start like the others. */
+.play-mobile-shelf {
+  grid-template-rows: minmax(0, max-content) auto;
+  align-content: center;
+}
+
 .play-mobile-cards {
-  padding-top: 24px;
+  padding-block: 8px;
+}
+
+.play-mobile-cards::after {
+  content: "";
+  flex: 0 0 calc(16% - 12px);
 }

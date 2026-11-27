@@ -262,13 +262,8 @@ function GameCard({
   } as CSSProperties;
   const label = `Play ${game.name}`;
 
-  // The round gold Play button, with a crown on top.
-  const face = (
-    <>
-      <Icon name="crown" size={22} fill className="play-btn-crown" />
-      <Icon name="play" size={24} fill className="play-btn-glyph" />
-    </>
-  );
+  // The round gold Play button.
+  const face = <Icon name="play" size={22} fill className="play-btn-glyph" />;
   const action = game.href ? (
     <a className="play-btn" aria-label={label} {...linkTo(game.href)}>
       {face}
@@ -307,8 +302,7 @@ function GameCard({
       </div>
       <div className="play-card-body">
         <span className="play-card-badge" aria-hidden="true">
-          <Icon name={game.icon} size={26} stroke={2.4} />
-          <Icon name="crown" size={14} fill className="play-card-badge-crown" />
+          <Icon name={game.icon} size={24} stroke={2.4} />
         </span>
         <h3 className="play-card-name">{game.name}</h3>
         <p className="play-card-desc">{game.description}</p>
