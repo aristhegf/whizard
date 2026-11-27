@@ -181,3 +181,84 @@
   width: 180px;
   border-radius: 28px;
 }
+
+/* Phones (PlayScreen `fill`) --------------------------------------------------------------------
+   Word Rush: the word's letters big, as wide as the screen allows for its length, floating in
+   the middle of the free space, with Check at the bottom. Spot It: the grid is the biggest
+   square the free space holds. After a round: the verdict on top, the answer, then Next. */
+@media (max-width: 767px) {
+  .play-column.fill > .spot-puzzle,
+  .play-column.fill > .word-puzzle {
+    display: contents;
+  }
+
+  .word-rush-main .play-area {
+    justify-content: center;
+    gap: 18px;
+  }
+
+  .word-rush-main .word-slots {
+    flex-wrap: nowrap;
+    gap: 5px;
+    padding: 0;
+  }
+
+  .word-rush-main .word-slot {
+    width: min(68px, (100vw - 40px - (var(--len, 6) - 1) * 5px) / var(--len, 6));
+    border-radius: 14px;
+    font-size: min(2.4rem, (100vw - 40px) / var(--len, 6) * 0.6);
+  }
+
+  .word-rush-main .word-tiles {
+    gap: 5px;
+    width: min(100%, calc(var(--cols, 4) * 92px));
+  }
+
+  .word-rush-main .word-tile {
+    border-radius: 16px;
+    font-size: clamp(1.6rem, 8.5vw, 2.4rem);
+  }
+
+  .word-rush-main .word-kind {
+    font-size: 1rem;
+  }
+
+  .word-rush-main .word-hint {
+    display: block;
+    margin-bottom: 2px;
+    font-family: var(--poster);
+    font-stretch: 75%;
+    font-size: 1.7rem;
+    line-height: 1.1;
+    text-transform: uppercase;
+    color: var(--game-c1, var(--text));
+    filter: brightness(1.4);
+  }
+
+  .word-rush-main .word-sep {
+    display: none;
+  }
+
+  .spot-it-main .spot-grid {
+    width: min(100cqw, 100cqh);
+  }
+
+  .spot-it-main .spot-cell {
+    border-radius: 14%;
+  }
+
+  /* The emoji and letters grow with their cells. */
+  .spot-it-main .spot-grid {
+    container-type: inline-size;
+  }
+
+  .spot-it-main .spot-glyph,
+  .spot-it-main .spot-grid[style*="repeat(6"] .spot-glyph,
+  .spot-it-main .spot-grid[style*="repeat(7"] .spot-glyph {
+    font-size: calc(100cqi / var(--n, 4) * 0.46);
+  }
+
+  .rounds-result .play-verdict {
+    margin-top: 6px;
+  }
+}

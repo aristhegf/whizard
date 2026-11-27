@@ -134,7 +134,8 @@ test("two players race on the same grid, and the faster one wins", async ({ brow
   for (const value of [1, 2, 3, 4].filter((n) => n !== answer[next])) {
     await place(guest, next, value);
   }
-  await expect(guest.getByText("Out of mistakes. Here’s the full grid.")).toBeVisible();
+  await expect(guest.getByRole("status").filter({ hasText: "Out of mistakes" })).toBeVisible();
+  await expect(guest.getByText("Here’s the full grid.")).toBeVisible();
 
   for (const cell of empty) await place(host, cell, answer[cell]!);
 

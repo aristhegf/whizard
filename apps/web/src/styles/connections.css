@@ -20,14 +20,16 @@
   animation: t-input-shake calc(var(--shake-dur-a) * 2 + var(--shake-dur-b) * 2) linear;
 }
 
-/* A little wider than tall, so the board, the dots and the buttons fit on a phone. */
+/* A little wider than tall. The letters are as big as the word's longest line allows across a
+   quarter of the board (`--len`, from ConnectionsScreen): short words big, long ones still on
+   one line. */
 .conn-tile {
   aspect-ratio: 5 / 4;
   padding: 4px;
   font-family: var(--display);
   font-weight: 800;
-  font-size: clamp(0.6rem, 2.9vw, 1rem);
-  line-height: 1.15;
+  font-size: clamp(0.62rem, (25cqi - 14px) / (var(--len, 8) * 0.74), 1.35rem);
+  line-height: 1.1;
   text-transform: uppercase;
   overflow-wrap: anywhere;
 }
@@ -106,6 +108,38 @@
   margin: 8px 0 4px;
 }
 
+/* Mistakes left, and how close a wrong guess was, on one line under the board. */
+.conn-status {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.conn-message:empty {
+  display: none;
+}
+
+/* How a guess went, as a pill that pops in: green for a group, gold for one away, red for a
+   miss (as the board shakes). */
+.conn-message span {
+  display: inline-block;
+  padding: 3px 14px;
+  border-radius: 999px;
+  background: rgb(255 90 120 / 16%);
+  color: #ff8fa3;
+  animation: verdict-pop 320ms cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+}
+
+.conn-message.near span {
+  background: rgb(255 194 74 / 16%);
+  color: #ffc24a;
+}
+
+.conn-message.good span {
+  background: rgb(63 240 168 / 14%);
+  color: #3ff0a8;
+}
+
 /* Small phones (see play.css): flatter tiles, so the buttons stay on the screen. */
 @media (max-width: 360px), (max-height: 640px) {
   .conn-tile {
@@ -113,8 +147,68 @@
   }
 }
 
+/* Phones (PlayScreen `fill`): the board takes the height the timer and buttons leave. Four rows
+   always: a found group takes one, the words still to sort share the rest, so the board doesn't
+   move as you play. The tiles grow to the board rather than keeping a shape. */
+@media (max-width: 767px) {
+  .conn-main .play-task {
+    max-width: 32ch;
+  }
+
+  .conn-how {
+    display: none;
+  }
+
+  .conn-main .conn-board {
+    width: 100%;
+    height: min(100cqh, 100cqw * 0.95);
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+  }
+
+  .conn-main .conn-grid {
+    grid-row: span var(--rows, 4);
+    grid-template-rows: repeat(var(--rows, 4), minmax(0, 1fr));
+  }
+
+  .conn-main .conn-tile {
+    aspect-ratio: auto;
+    border-radius: 14px;
+  }
+
+  .conn-main .conn-group {
+    min-height: 0;
+  }
+
+  .conn-main .conn-status {
+    grid-auto-flow: column;
+    align-items: center;
+    gap: 12px;
+    min-height: 28px;
+  }
+
+  .conn-main .conn-message {
+    font-size: 0.9rem;
+  }
+
+  .conn-main .conn-group strong {
+    font-size: 1.1rem;
+  }
+
+  .conn-main .conn-group span {
+    font-size: 0.95rem;
+  }
+}
+
+/* Phones with room to spare (a 15 Pro Max): the whole instruction fits too. */
+@media (max-width: 767px) and (min-height: 700px) {
+  .conn-how {
+    display: inline;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .conn-group,
+  .conn-message span,
   .conn-grid.is-shaking {
     animation: none;
   }

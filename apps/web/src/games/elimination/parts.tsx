@@ -71,6 +71,7 @@ export function EliminationFrame({
     <PlayFrame
       latency={context.latency}
       onQuit={context.onQuit}
+      game={(context.view as { game?: string }).game}
       label={
         <>
           <span className="elim-progress">{eliminationWhere(context) || context.title}</span>

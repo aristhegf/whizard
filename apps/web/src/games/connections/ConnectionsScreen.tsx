@@ -6,7 +6,7 @@ import {
   type ConnectionsStanding,
   type ConnectionsView,
 } from "@whizard/game-core";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { AddFromGame } from "../../FriendsScreen";
 import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { play } from "../../sounds";
@@ -18,10 +18,12 @@ import { Icon } from "../../ui/Icon";
 import {
   PlayBoard,
   PlayFaces,
+  PlayFit,
   PlayFrame,
   PlayMistakes,
   PlayScreen,
   PlayTimer,
+  PlayVerdict,
   rowsFrom,
   Staged,
   timerMs,
@@ -75,6 +77,7 @@ function Watching(props: Props) {
       label={roundLabel(view) ?? "Connections"}
       latency={props.latency}
       onQuit={props.onQuit}
+      game="connections"
       side={<LiveBoard {...props} />}
     >
       <p className="watching">
@@ -96,7 +99,12 @@ function Cut(props: Props & { cut: NonNullable<ConnectionsView["cut"]> }) {
   const stillIn = view.standings.filter((s) => !s.out && !s.left).length;
   const nextIsFinal = !!view.round && (view.round.index + 2 >= view.round.total || stillIn <= 2);
   return (
-    <PlayFrame label={roundLabel(view)} latency={props.latency} onQuit={props.onQuit}>
+    <PlayFrame
+      label={roundLabel(view)}
+      latency={props.latency}
+      onQuit={props.onQuit}
+      game="connections"
+    >
       <CutPanel
         client={props.client}
         playerId={props.playerId}
@@ -118,7 +126,9 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
   const [selected, setSelected] = useState<string[]>([]);
   // Your own shuffle of the board; words found since are dropped from it.
   const [order, setOrder] = useState<string[] | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ text: string; tone: "good" | "near" | "bad" } | null>(
+    null,
+  );
   const { ref: gridRef, shake } = useErrorShake<HTMLDivElement>();
   const started = now >= startsAt;
   const countdown = Math.max(1, Math.ceil((startsAt - now) / 1000));
@@ -141,7 +151,7 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
     if (view.found.length > lastFound.current) {
       play("correct");
       setSelected([]);
-      setMessage(null);
+      setMessage({ text: "Group found!", tone: "good" });
     }
     lastFound.current = view.found.length;
   }, [view.found.length]);
@@ -149,7 +159,9 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
     if (view.tried.length > lastTried.current) {
       play("wrong");
       shake();
-      setMessage(view.oneAway ? "One away…" : "Not quite.");
+      setMessage(
+        view.oneAway ? { text: "One away…", tone: "near" } : { text: "Not quite.", tone: "bad" },
+      );
     }
     lastTried.current = view.tried.length;
   }, [view.tried.length, view.oneAway, shake]);
@@ -171,7 +183,7 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
     const sorted = [...selected].sort().join("|");
     if (view.tried.some((t) => t.join("|") === sorted)) {
       shake();
-      setMessage("You’ve tried those four.");
+      setMessage({ text: "You’ve tried those four", tone: "bad" });
       return;
     }
     client.act({ type: "guess", words: selected });
@@ -189,7 +201,12 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
   const round = roundLabel(view);
   if (!started) {
     return (
-      <PlayFrame label={round ?? "Connections"} latency={props.latency} onQuit={props.onQuit}>
+      <PlayFrame
+        label={round ?? "Connections"}
+        latency={props.latency}
+        onQuit={props.onQuit}
+        game="connections"
+      >
         <div className="countdown" aria-live="polite">
           <img src="/art/games/connections.webp" alt="" />
           <p className="countdown-label">
@@ -213,6 +230,7 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
     : me?.solved
       ? "You’re through to the next round."
       : "Waiting for the round to end…";
+  const outOfMistakes = !!me && me.mistakes >= CONNECTIONS_MAX_MISTAKES;
   return (
     <PlayScreen
       label={
@@ -223,54 +241,73 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
       }
       latency={props.latency}
       onQuit={props.onQuit}
+      game="connections"
+      fill
+      className="conn-main"
     >
-      {left !== null && (
-        <PlayTimer ms={over ? (me?.timeMs ?? 0) : timerMs(left)} low={left < 30_000 && !over} />
+      {/* Once it's over, the clock stays only to show how long a solve took. */}
+      {left !== null && (!over || me?.solved) && (
+        <PlayTimer
+          ms={over ? (me?.timeMs ?? 0) : timerMs(left)}
+          low={left < 30_000 && !over}
+          totalMs={over ? undefined : view.deadline! - startsAt}
+        />
       )}
-      <p className="play-task">
-        {over
-          ? me?.solved
-            ? `Solved in ${clock(me.timeMs ?? 0)}`
-            : me && me.mistakes >= CONNECTIONS_MAX_MISTAKES
-              ? "Out of mistakes. Here’s how they fit."
-              : "Time’s up. Here’s how they fit."
-          : "Find four groups of four. Pick four words that share something, then Submit."}
-      </p>
+      {over ? (
+        <PlayVerdict tone={me?.solved ? "good" : outOfMistakes ? "bad" : "late"}>
+          {me?.solved ? "Solved" : outOfMistakes ? "Out of mistakes" : "Time’s up"}
+        </PlayVerdict>
+      ) : (
+        <p className="play-task">
+          Find four groups of four.
+          <span className="conn-how"> Pick four words that share something, then Submit.</span>
+        </p>
+      )}
       <Staged aside={<LiveBoard {...props} />}>
-        <div className="conn-board">
-          {view.found.map((group) => (
-            <GroupRow key={group.colour} group={group} />
-          ))}
-          {over ? (
-            missing.map((group) => <GroupRow key={group.colour} group={group} missed />)
-          ) : (
-            <div ref={gridRef} className="conn-grid" role="group" aria-label="Words">
-              {shown.map((word) => (
-                <button
-                  key={word}
-                  type="button"
-                  className={`play-tile conn-tile${selected.includes(word) ? " picked" : ""}`}
-                  aria-pressed={selected.includes(word)}
-                  onClick={() => toggle(word)}
-                >
-                  <span>{word}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        <PlayFit>
+          <div className="conn-board">
+            {view.found.map((group) => (
+              <GroupRow key={group.colour} group={group} />
+            ))}
+            {over ? (
+              missing.map((group) => <GroupRow key={group.colour} group={group} missed />)
+            ) : (
+              <div
+                ref={gridRef}
+                className="conn-grid"
+                role="group"
+                aria-label="Words"
+                style={{ "--rows": GROUPS - view.found.length } as CSSProperties}
+              >
+                {shown.map((word) => (
+                  <button
+                    key={word}
+                    type="button"
+                    className={`play-tile conn-tile${selected.includes(word) ? " picked" : ""}`}
+                    style={{ "--len": longestWord(word) } as CSSProperties}
+                    aria-pressed={selected.includes(word)}
+                    onClick={() => toggle(word)}
+                  >
+                    <span>{word}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </PlayFit>
         {over ? (
-          <p className="verdict good conn-wait" role="status">
-            {me?.solved ? "You found every group!" : `${view.found.length} of 4 groups found`}
-            <span className="dim small">{doneText}</span>
+          <p className="play-note conn-wait" role="status">
+            {me?.solved
+              ? `All four in ${clock(me.timeMs ?? 0)}. ${doneText}`
+              : `${view.found.length} of 4 groups found. Here’s how they fit. ${doneText}`}
           </p>
         ) : (
-          <>
+          <div className="conn-status">
             <PlayMistakes left={view.mistakesLeft} max={CONNECTIONS_MAX_MISTAKES} />
-            <p className="conn-message" role="status">
-              {message}
+            <p className={`conn-message ${message?.tone ?? ""}`.trim()} role="status">
+              {message && <span key={message.text + view.tried.length}>{message.text}</span>}
             </p>
-          </>
+          </div>
         )}
       </Staged>
       <PlayFaces faces={rowsOf(props)} playerId={props.playerId} />
@@ -298,6 +335,9 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
     </PlayScreen>
   );
 }
+
+/** A word's length for sizing its tile's letters: its longest line, as a phrase can wrap. */
+const longestWord = (text: string) => Math.max(5, ...text.split(/\s+/).map((part) => part.length));
 
 function GroupRow({ group, missed = false }: { group: ConnectionsFoundGroup; missed?: boolean }) {
   return (
