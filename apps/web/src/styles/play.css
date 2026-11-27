@@ -690,3 +690,329 @@ button.play-tile:active:not(:disabled) {
     align-items: flex-end;
   }
 }
+
+/* The game's own colours (PlayFrame `game`) --------------------------------------------------
+   A soft glow of the game's colour at the top of the screen, the way its card looks. */
+
+.play.tinted::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: 55vh;
+  background:
+    radial-gradient(
+      80% 70% at 50% -10%,
+      color-mix(in oklab, var(--game-c1) 34%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      60% 50% at 85% 0%,
+      color-mix(in oklab, var(--game-c2) 40%, transparent),
+      transparent 70%
+    );
+  pointer-events: none;
+}
+
+/* The timer's bar (PlayTimer `totalMs`): drains with the clock, red and pulsing when it's low. */
+.play-timer-bar {
+  width: min(100%, 460px);
+  height: 8px;
+  margin-top: -6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 9%);
+}
+
+.play-timer-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    var(--game-c1, var(--accent)),
+    color-mix(in oklab, var(--game-c1, var(--accent)) 55%, #fff)
+  );
+  transform-origin: left center;
+  transition: transform 1s linear;
+}
+
+.play-timer-bar.low i {
+  background: linear-gradient(90deg, #ff3d62, #ff8fa3);
+  animation: timer-pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes timer-pulse {
+  to {
+    opacity: 0.55;
+  }
+}
+
+/* How the answer went (PlayVerdict): a mark that pops, the word big, the points counting up. */
+.play-verdict {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.play-verdict-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 50%;
+  color: #fff;
+  animation: verdict-pop 420ms cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+}
+
+.play-verdict.good .play-verdict-mark {
+  background: #0fae70;
+  box-shadow: 0 0 0 4px rgb(15 198 128 / 25%);
+}
+
+.play-verdict.bad .play-verdict-mark {
+  background: #d7324a;
+  box-shadow: 0 0 0 4px rgb(229 53 76 / 25%);
+}
+
+.play-verdict.late .play-verdict-mark {
+  background: #e08a12;
+  box-shadow: 0 0 0 4px rgb(255 171 44 / 25%);
+}
+
+/* A right answer sends a ring of light out from its mark. */
+.play-verdict.good .play-verdict-mark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid #3ff0a8;
+  animation: verdict-ring 700ms ease-out 120ms both;
+}
+
+.play-verdict-word {
+  font-family: var(--poster);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 2.2rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  animation: verdict-rise 360ms cubic-bezier(0.2, 0.8, 0.2, 1) 60ms both;
+}
+
+.play-verdict.good .play-verdict-word {
+  color: #3ff0a8;
+}
+
+.play-verdict.bad .play-verdict-word {
+  color: #ff7b8c;
+  animation:
+    verdict-rise 360ms cubic-bezier(0.2, 0.8, 0.2, 1) 60ms both,
+    verdict-shake 420ms ease-in-out 380ms;
+}
+
+.play-verdict.late .play-verdict-word {
+  color: #ffc24a;
+}
+
+.play-verdict-points {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgb(255 212 63 / 14%);
+  color: var(--gold);
+  font-family: var(--poster);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  animation: verdict-pop 420ms cubic-bezier(0.2, 0.9, 0.3, 1.4) 160ms both;
+}
+
+@keyframes verdict-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+
+@keyframes verdict-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes verdict-ring {
+  from {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.3);
+  }
+}
+
+@keyframes verdict-shake {
+  20%,
+  60% {
+    transform: translateX(-7px);
+  }
+  40%,
+  80% {
+    transform: translateX(7px);
+  }
+}
+
+/* The thumb layout (PlayScreen `thumb`), on phones: the question floats in the free space, and
+   the answers sit at the bottom as big buttons, where the thumb is. */
+@media (max-width: 767px) {
+  .play-column.thumb > .play-stage {
+    flex: 1 1 auto;
+  }
+
+  .play-column.thumb .play-area {
+    flex: 1 1 auto;
+    gap: 14px;
+  }
+
+  .play-column.thumb .prompt {
+    margin-block: auto;
+    font-size: clamp(1.5rem, 6.6vw, 2.05rem);
+    line-height: 1.2;
+  }
+
+  .play-column.thumb .choices {
+    gap: 8px;
+  }
+
+  .play-column.thumb .choice {
+    min-height: 62px;
+    padding: 10px 16px 10px 10px;
+    border-radius: 16px;
+    font-size: 1.08rem;
+  }
+
+  .play-column.thumb .choice-letter {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* The bar carries the urgency, so the digits can be smaller. */
+  .play-column.thumb .play-timer {
+    font-size: 2.7rem;
+  }
+
+  .play-column.thumb .play-timer-bar {
+    margin-top: -8px;
+  }
+
+  .play-column.thumb .explanation {
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+}
+
+/* A phone with Safari's bars showing (about 660 tall), or smaller: everything a little tighter,
+   so a question, its answers and the buttons fit one screen. */
+@media (max-width: 767px) and (max-height: 760px) {
+  .play-column.thumb {
+    gap: 10px;
+  }
+
+  .play-column.thumb .play-area {
+    gap: 10px;
+  }
+
+  .play-column.thumb .prompt {
+    font-size: clamp(1.3rem, 5.8vw, 1.7rem);
+  }
+
+  .play-column.thumb .choice {
+    min-height: 54px;
+    padding-block: 6px;
+    font-size: 1.02rem;
+  }
+
+  .play-column.thumb .choice-letter {
+    width: 34px;
+    height: 34px;
+  }
+
+  .play-column.thumb .play-timer {
+    font-size: 2.3rem;
+  }
+
+  .play-column.thumb .play-verdict-word {
+    font-size: 1.9rem;
+  }
+
+  .play-column.thumb .play-verdict-mark {
+    width: 40px;
+    height: 40px;
+  }
+
+  .play-column.thumb .play-actions .play-pill {
+    min-height: 50px;
+  }
+
+  /* Once the question closes, the answers nobody needs any more give their room back. */
+  .play-column.thumb .choice.faded {
+    min-height: 40px;
+    padding-block: 2px;
+  }
+
+  .play-column.thumb .choice.faded .choice-letter {
+    width: 28px;
+    height: 28px;
+  }
+
+  .play-column.thumb .play-faces {
+    gap: 14px;
+    margin: 0;
+  }
+
+  .play-column.thumb .play-face,
+  .play-column.thumb .play-face .avatar {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* An answer's tile, as the question closes: the right one glows, a wrong pick shakes. */
+.play-column.thumb .choice.correct {
+  animation: choice-glow 800ms ease-out;
+}
+
+.play-column.thumb .choice.wrong {
+  animation: verdict-shake 420ms ease-in-out 120ms;
+}
+
+@keyframes choice-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgb(63 240 168 / 70%);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgb(63 240 168 / 0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .play-timer-bar i,
+  .play-timer-bar.low i,
+  .play-verdict-mark,
+  .play-verdict-mark::after,
+  .play-verdict-word,
+  .play-verdict-points,
+  .play-column.thumb .choice.correct,
+  .play-column.thumb .choice.wrong {
+    animation: none;
+    transition: none;
+  }
+}
