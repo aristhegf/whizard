@@ -1,6 +1,7 @@
+import type { FinishedGame } from "@whizard/game-core";
 import { describe, expect, it } from "vitest";
 import type { Env } from "./env";
-import { localDay, playerStats, streakOf } from "./matches";
+import { exportMatches, localDay, playerStats, recordMatch, streakOf } from "./matches";
 import { addGame, addUser, testDb } from "./testDb";
 
 const HOUR = 60 * 60 * 1000;
@@ -145,5 +146,56 @@ describe("a player's stats", () => {
       games: [],
       streak: { current: 0, best: 0 },
     });
+  });
+});
+
+/** A finished game: each player's placing and score, everyone signed in. */
+function finished(players: [id: string, placing: number, score: number][]): FinishedGame {
+  return {
+    gameId: "most-likely-to",
+    startedAt: 1,
+    summary: {
+      category: null,
+      difficulty: null,
+      mode: null,
+      rounds: 5,
+      players: players.map(([playerId, placing, score]) => ({
+        playerId,
+        placing,
+        score,
+        correct: null,
+      })),
+    },
+    roster: players.map(([id]) => ({
+      playerId: id,
+      nickname: id,
+      account: { userId: id, username: id },
+      guestId: null,
+    })),
+  };
+}
+
+describe("recordMatch", () => {
+  it("records a game where players tie, with the placing they share", async () => {
+    const db = await testDb();
+    for (const id of ["ada", "tolu", "kemi"]) await addUser(db, id);
+    const env = { DB: db } as unknown as Env;
+
+    // Ada and Tolu tie for first: games such as Most Likely To and Reaction share a placing.
+    await recordMatch(
+      env,
+      finished([
+        ["ada", 1, 300],
+        ["tolu", 1, 300],
+        ["kemi", 3, 100],
+      ]),
+      1000,
+    );
+
+    for (const id of ["ada", "tolu", "kemi"]) {
+      const [match] = await exportMatches(env, id);
+      expect(match, `${id}'s game is in their history`).toBeDefined();
+      expect(match!.players.map((p) => p.placing)).toEqual([1, 1, 3]);
+    }
   });
 });
