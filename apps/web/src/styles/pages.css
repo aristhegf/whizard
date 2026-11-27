@@ -66,12 +66,6 @@ p .btn-link {
   white-space: nowrap;
 }
 
-.play-card .players,
-.play-card-players {
-  border: 0;
-  background: none;
-}
-
 button.topic-tile {
   transition:
     transform 140ms ease,
@@ -395,127 +389,6 @@ button.topic-tile {
   gap: 18px;
 }
 
-/* The mascot, and the most played game's big card. */
-.play-featured {
-  position: relative;
-  display: grid;
-  padding-top: 90px;
-}
-
-.play-mascot {
-  position: absolute;
-  top: 0;
-  left: -6px;
-  z-index: 2;
-  width: 170px;
-  height: auto;
-  filter: drop-shadow(0 18px 28px rgb(20 0 60 / 55%));
-  pointer-events: none;
-}
-
-.featured-card {
-  position: relative;
-  display: grid;
-  align-content: end;
-  gap: 8px;
-  min-height: 380px;
-  padding: 22px;
-  border-radius: 24px;
-  border: 2px solid rgb(255 200 70 / 80%);
-  background: var(--wash);
-  box-shadow:
-    0 0 0 4px rgb(255 190 60 / 12%),
-    0 0 40px rgb(255 170 40 / 25%),
-    var(--shadow);
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.featured-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(180deg, transparent 30%, rgb(14 8 44 / 88%) 100%);
-}
-
-.featured-badge {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 10px;
-  background: rgb(12 8 40 / 75%);
-  border: 1.5px solid rgb(255 200 70 / 70%);
-  color: var(--gold);
-  font-family: var(--display);
-  font-weight: 800;
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.featured-art {
-  position: absolute;
-  top: 56px;
-  right: 6%;
-  z-index: -1;
-  width: 44%;
-  max-height: 42%;
-  object-fit: contain;
-  filter: drop-shadow(0 18px 24px rgb(0 0 0 / 40%));
-}
-
-.featured-title {
-  margin: 0;
-  font-family: var(--display);
-  font-weight: 800;
-  font-size: clamp(2.8rem, 5vw, 4.6rem);
-  line-height: 1;
-  text-transform: uppercase;
-  color: var(--gold);
-  text-shadow:
-    0 4px 0 #a0400c,
-    0 10px 24px rgb(0 0 0 / 45%);
-}
-
-.featured-tagline {
-  margin: 0;
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 1.2rem;
-}
-
-.featured-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.featured-tag {
-  padding: 4px 12px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 10%);
-  font-size: 0.85rem;
-  font-weight: 700;
-}
-
-.featured-play {
-  margin-left: auto;
-  min-height: 56px;
-  padding: 0 26px;
-  font-family: var(--display);
-  font-weight: 800;
-  font-size: 1.15rem;
-  text-transform: uppercase;
-}
-
 /* The other games, with arrows for the next page on laptops and computers. */
 .play-shelf {
   display: grid;
@@ -523,193 +396,10 @@ button.topic-tile {
   min-height: 0;
 }
 
-.play-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.play-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  padding: 10px 12px 12px;
-  border-radius: 20px;
-  border: 1.5px solid rgb(175 110 255 / 32%);
-  background:
-    radial-gradient(ellipse at 50% 0%, rgb(135 80 255 / 16%), transparent 55%),
-    linear-gradient(165deg, #2c1458 0%, #190c36 55%, #110726 100%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 12%),
-    0 10px 24px rgb(3 0 14 / 35%),
-    0 0 14px rgb(140 50 255 / 10%);
-  text-align: left;
-  overflow: hidden;
-  isolation: isolate;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    box-shadow 180ms ease;
-}
-
-.play-card-art-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  max-height: 116px;
-  flex: 1 1 0;
-  border-radius: 14px;
-  background: radial-gradient(
-    circle at 50% 55%,
-    var(--wash, rgb(140 70 255 / 18%)),
-    transparent 70%
-  );
-  overflow: hidden;
-}
-
-.play-card-art {
-  display: block;
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  max-height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 6px 12px rgb(0 0 0 / 32%));
-  transition: transform 220ms ease;
-}
-
-.play-card-body {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: 6px;
-}
-
-.play-card-name {
-  margin: 0;
-  color: var(--gold);
-  font-family: var(--display);
-  font-weight: 850;
-  font-size: clamp(1rem, 1.15vw, 1.25rem);
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  text-shadow: 0 2px 4px rgb(0 0 0 / 45%);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.play-card-desc {
-  margin: 0;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
-  font-size: 0.77rem;
-  line-height: 1.3;
-  color: #d6caf0;
-}
-
-.play-card-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 4px;
-}
-
-.play-card .players {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 9px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 8%);
-  border: 1px solid rgb(255 255 255 / 12%);
-  color: #dfd2f7;
-  font-size: 0.72rem;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.play-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 32px;
-  padding: 0 14px;
-  border: 0;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #ffe066 0%, #ffb703 50%, #fb8500 100%);
-  box-shadow:
-    0 3px 10px rgb(251 133 0 / 35%),
-    inset 0 1px 0 rgb(255 255 255 / 65%);
-  color: #261100;
-  font-family: var(--display);
-  font-weight: 850;
-  font-size: 0.75rem;
-  letter-spacing: 0.02em;
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    filter 160ms ease,
-    transform 160ms ease,
-    box-shadow 160ms ease;
-}
-
-.play-btn.soon {
-  min-height: 28px;
-  padding: 0 10px;
-  border: 1px solid rgb(255 214 102 / 32%);
-  border-radius: 999px;
-  background: rgb(16 10 38 / 65%);
-  box-shadow: none;
-  color: #ffd666;
-  font-size: 0.68rem;
-  font-weight: 700;
-  white-space: nowrap;
-  cursor: default;
-}
-
-.play-card.unavailable .play-card-art {
-  opacity: 0.82;
-}
-
 @media (hover: hover) {
   .play-chip:hover:not([aria-pressed="true"]),
   .play-arrow:hover:not(:disabled) {
     border-color: rgb(200 170 255 / 80%);
-  }
-
-  .play-card:hover {
-    transform: translateY(-4px);
-    border-color: rgb(255 215 75 / 55%);
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 18%),
-      0 14px 30px rgb(3 0 14 / 45%),
-      0 0 20px rgb(165 75 255 / 22%);
-  }
-
-  .play-card:hover .play-card-art {
-    transform: scale(1.04);
-  }
-
-  a.play-btn:hover,
-  button.play-btn:hover:not(:disabled) {
-    filter: brightness(1.1);
-    transform: translateY(-1px);
-    box-shadow:
-      0 5px 14px rgb(251 133 0 / 48%),
-      inset 0 1px 0 rgb(255 255 255 / 80%);
   }
 }
 
@@ -759,12 +449,6 @@ button.topic-tile {
   background: var(--gold);
 }
 
-@media (min-width: 768px) {
-  .play-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
 /* Landing screens wait for their pictures and fonts, then appear together. The screen keeps its
    size while hidden, so nothing shifts when it shows. */
 .page.reveal {
@@ -776,8 +460,8 @@ button.topic-tile {
   visibility: hidden;
 }
 
-/* Laptops and computers: the whole screen, no scrolling. The top bar, the title, then the
-   featured game beside a page of six cards, all sized to fit what's left. */
+/* Laptops and computers: the whole screen, no scrolling. The top bar, the title, then a page of
+   eight game cards, all sized to fit what's left. */
 @media (min-width: 1100px) {
   .page.app-screen {
     display: grid;
@@ -803,52 +487,8 @@ button.topic-tile {
     min-height: 0;
   }
 
-  .play-featured {
-    min-height: 0;
-    padding-top: 0;
-  }
-
-  /* The mascot peeks over the card's top-left corner. */
-  .play-mascot {
-    top: -4%;
-    left: -3%;
-    width: 52%;
-    max-width: 330px;
-  }
-
-  .featured-card {
-    min-height: 0;
-    margin-top: clamp(80px, 16vh, 170px);
-    padding: 24px 26px;
-  }
-
-  .featured-art {
-    top: 10%;
-    width: 44%;
-    max-height: 48%;
-  }
-
   .play-shelf {
     grid-template-rows: minmax(0, 1fr) auto;
-  }
-
-  .play-grid {
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    min-height: 0;
-    gap: 14px;
-  }
-
-  .play-card {
-    min-height: 0;
-  }
-
-  .play-card-art {
-    min-height: 0;
-    max-height: 100%;
-  }
-
-  .play-card-name {
-    font-size: clamp(1rem, 1.35vw, 1.25rem);
   }
 }
 
@@ -859,41 +499,11 @@ button.topic-tile {
   }
 
   .play-title {
-    font-size: 1.85rem;
+    font-size: 2.4rem;
   }
 
   .play-head {
     gap: 6px;
-  }
-
-  .play-card {
-    padding: 8px 10px 10px;
-  }
-
-  .play-card-art-wrap {
-    min-height: 36px;
-    max-height: 80px;
-  }
-
-  .play-card-body {
-    gap: 2px;
-    margin-top: 4px;
-  }
-
-  .play-card-name {
-    font-size: 1rem;
-  }
-
-  .play-card-desc {
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-    font-size: 0.73rem;
-  }
-
-  .play-btn {
-    min-height: 28px;
-    padding: 0 12px;
-    font-size: 0.72rem;
   }
 }
 
@@ -922,7 +532,7 @@ button.topic-tile {
   }
 }
 
-/* ...and one screen, no scrolling, like laptops: the title and chips, the featured game filling
+/* ...and one screen, no scrolling, like laptops: the title and chips, the game card filling
    what's left, then the links above the tab bar. Too short a screen (a phone on its side) keeps
    scrolling instead of squeezing the card. */
 @media (max-width: 1099px) and (min-height: 560px) {
@@ -951,19 +561,6 @@ button.topic-tile {
 
   .play-body {
     grid-template-rows: minmax(0, 1fr);
-    min-height: 0;
-  }
-
-  .play-featured {
-    min-height: 0;
-    padding-top: clamp(36px, 8dvh, 90px);
-  }
-
-  .play-mascot {
-    width: clamp(110px, 19dvh, 170px);
-  }
-
-  .featured-card {
     min-height: 0;
   }
 }
@@ -1066,9 +663,8 @@ button.topic-tile {
 
 .play-page .play-title {
   max-width: 18ch;
-  font-size: clamp(2rem, 3.2vw, 3.2rem);
-  letter-spacing: -0.035em;
-  text-shadow: none;
+  font-size: clamp(2.4rem, 4vw, 4rem);
+  text-shadow: 0 4px 0 rgb(30 6 70 / 55%);
 }
 
 .play-page .play-chips {
@@ -1105,17 +701,6 @@ button.topic-tile {
   min-height: 38px;
 }
 
-@media (hover: hover) {
-  .play-page .play-card:hover {
-    transform: translateY(-3px);
-    border-color: rgb(216 160 255 / 95%);
-    box-shadow:
-      0 0 24px rgb(168 85 247 / 48%),
-      0 0 52px rgb(140 60 255 / 24%),
-      0 16px 32px rgb(5 0 18 / 38%);
-  }
-}
-
 @media (min-width: 1100px) {
   .play-page.page.app-screen {
     max-width: 1680px;
@@ -1129,7 +714,7 @@ button.topic-tile {
   }
 
   .play-page .play-head {
-    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
     grid-template-areas:
       "count hero"
       "title hero"
@@ -1147,19 +732,17 @@ button.topic-tile {
   .play-page .play-title {
     grid-area: title;
     max-width: none;
-    font-size: clamp(2rem, 3vw, 3rem);
+    font-size: clamp(2.6rem, 4.2vw, 4.4rem);
   }
 
+  /* The mascot and its toys, bleeding a little past the header so they float free of it. */
   .play-page .play-hero-art {
     display: block;
     grid-area: hero;
-    align-self: center;
-    justify-self: end;
-    width: min(100%, 270px);
-    max-height: 180px;
-    object-fit: contain;
-    filter: drop-shadow(0 12px 25px rgb(120 30 255 / 30%));
-    pointer-events: none;
+    align-self: stretch;
+    width: 100%;
+    min-height: 210px;
+    margin: -40px 0 -20px;
   }
 
   .play-page .play-chips {
@@ -1190,14 +773,6 @@ button.topic-tile {
     gap: 12px 14px;
     min-height: 0;
   }
-
-  .play-page .play-card-foot {
-    flex-wrap: nowrap;
-  }
-
-  .play-page .play-card .players {
-    font-size: clamp(0.65rem, 0.72vw, 0.78rem);
-  }
 }
 
 @media (max-width: 1099px) {
@@ -1207,7 +782,7 @@ button.topic-tile {
   }
 
   .play-page .play-title {
-    font-size: clamp(1.9rem, 6vw, 2.6rem);
+    font-size: clamp(2.2rem, 9vw, 3rem);
   }
 
   .play-page .play-chips {
@@ -1218,13 +793,6 @@ button.topic-tile {
 
   .play-page .play-chip {
     min-height: 38px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .play-page .play-card,
-  .play-page .play-btn {
-    transition: none;
   }
 }
 
@@ -1271,37 +839,6 @@ button.topic-tile {
   display: none;
 }
 
-.play-mobile-cards > .play-card {
-  flex: 0 0 100%;
-  min-height: 0;
-  padding: 14px 16px 16px;
-  scroll-snap-align: start;
-}
-
-.play-mobile-cards .play-card-art-wrap {
-  flex: 1 1 0;
-  min-height: 100px;
-  max-height: 220px;
-}
-
-.play-mobile-cards .play-card-art {
-  max-height: 100%;
-}
-
-.play-mobile-cards .play-card-body {
-  flex: 0 0 auto;
-  gap: 5px;
-  margin-top: 8px;
-}
-
-.play-mobile-cards .play-card-name {
-  font-size: clamp(1.15rem, 4.4vw, 1.35rem);
-}
-
-.play-mobile-cards .play-card-desc {
-  font-size: 0.8rem;
-}
-
 .play-mobile-dots {
   display: flex;
   justify-content: center;
@@ -1323,12 +860,6 @@ button.topic-tile {
   width: 26px;
   border-radius: 999px;
   background: var(--gold);
-}
-
-@media (max-width: 380px) {
-  .play-mobile-cards .play-card-name {
-    font-size: 0.98rem;
-  }
 }
 
 @media (min-width: 1100px) {
@@ -1484,8 +1015,8 @@ button.topic-tile {
   }
 
   .play-page .play-title {
-    font-size: clamp(1.65rem, 6vw, 2.2rem);
-    line-height: 1.02;
+    font-size: clamp(2.1rem, 9.4vw, 2.7rem);
+    line-height: 0.92;
   }
 
   .play-page .play-subtitle {
@@ -1581,7 +1112,7 @@ button.topic-tile {
   }
 
   .play-page .play-title {
-    font-size: 1.6rem;
+    font-size: 2rem;
   }
 
   .play-page .play-subtitle {

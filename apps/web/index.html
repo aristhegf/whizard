@@ -11,7 +11,7 @@
     <link rel="icon" href="/favicon.png" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <!-- The two fonts, fetched with the page instead of once the words need them, so text is drawn
+    <!-- The fonts (and Bricolage's condensed poster cut), fetched with the page instead of once the words need them, so text is drawn
          in its real font the first time and doesn't jump when they arrive. -->
     <link
       rel="preload"
@@ -26,6 +26,13 @@
       type="font/woff2"
       crossorigin
       href="/node_modules/@fontsource-variable/inter/files/inter-latin-opsz-normal.woff2"
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/node_modules/@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wdth-normal.woff2"
     />
     <title>Whizard</title>
     <script>
@@ -45,18 +52,14 @@
         };
         add("/art/logo-mark.webp");
         if (path === "/") {
-          // The welcome page's hero: the same picture it will choose for this screen.
-          add(null, {
-            imagesrcset: "/art/mascot/crew-768.webp 768w, /art/mascot/crew.webp 1536w",
-            imagesizes: "(min-width: 900px) 60vw, 100vw",
-            fetchpriority: "high",
-          });
+          // The welcome page's hero: the mascot its 3D toys float around.
+          add("/art/mascot/hero.webp", { fetchpriority: "high" });
           return;
         }
-        add("/art/mascot/hero.webp", { fetchpriority: "high" });
         add("/art/games/quiz.webp");
-        // The first page of game cards, which only wider screens show.
+        // The mascot and the first page of game cards, which only wider screens show.
         if (matchMedia("(min-width: 1100px)").matches) {
+          add("/art/mascot/hero.webp");
           ["jigsaw", "word-rush", "memory", "logic", "connections", "reaction"].forEach(
             function (id) {
               add("/art/games/" + id + ".webp");

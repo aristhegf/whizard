@@ -1,18 +1,13 @@
 import { useRef, useState, type CSSProperties } from "react";
-import {
-  CATALOG,
-  GAME_GROUPS,
-  cardWash,
-  isPlayable,
-  type CatalogGame,
-  type GameGroup,
-} from "../catalog";
+import { CATALOG, GAME_GROUPS, isPlayable, type CatalogGame, type GameGroup } from "../catalog";
 import { linkTo } from "../router";
 import { BottomSheet } from "../ui/BottomSheet";
 import { createFailed, startRoom, TopLayout } from "../ui/Chrome";
 import { useMediaQuery } from "../ui/common";
 import { Icon } from "../ui/Icon";
 import { LiveCount } from "../ui/LiveCount";
+import { tilt } from "../ui/tilt";
+import { ToyScene } from "../ui/toys/ToyScene";
 import { useToast } from "../ui/toast";
 
 /** Eight cards fit the intended two-row desktop layout. */
@@ -68,14 +63,16 @@ export function HomePage() {
       <section className="play" aria-labelledby="play-title">
         <header className="play-head">
           <LiveCount />
-          <img
-            className="play-hero-art"
-            src="/art/mascot/hero.webp"
-            alt=""
-            width={866}
-            height={857}
-          />
-          <h1 id="play-title" className="display play-title">
+          {paged && (
+            <ToyScene
+              className="play-hero-art"
+              mascot="/art/mascot/hero.webp"
+              layout="band"
+              width={866}
+              height={857}
+            />
+          )}
+          <h1 id="play-title" className="poster play-title">
             What do you want to <span className="gold-text">play?</span>
           </h1>
           <p className="play-subtitle">Pick a game, invite your friends, and let the fun begin.</p>
@@ -151,8 +148,8 @@ export function HomePage() {
                 <p className="muted play-empty">No other games of this kind yet.</p>
               ) : (
                 <ul className="play-grid" aria-label="Games">
-                  {shown.map((g) => (
-                    <GameCard key={g.id} game={g} />
+                  {shown.map((g, i) => (
+                    <GameCard key={g.id} game={g} index={i} />
                   ))}
                 </ul>
               )}
@@ -231,16 +228,21 @@ function CategorySheet({
   );
 }
 
-function GameCard({ game }: { game: CatalogGame }) {
+/** One game as a poster: its own colours, its art in a burst of light, its name big. */
+function GameCard({ game, index = 0 }: { game: CatalogGame; index?: number }) {
   const toast = useToast();
   const [opening, setOpening] = useState(false);
-  const style = { "--wash": cardWash(game.colors) } as CSSProperties;
+  const style = {
+    "--c1": game.colors[0],
+    "--c2": game.colors[1],
+    "--i": index,
+  } as CSSProperties;
   const label = `Play ${game.name}`;
 
   const action = game.href ? (
     <a className="play-btn" aria-label={label} {...linkTo(game.href)}>
       Play
-      <Icon name="arrowRight" size={16} stroke={2.6} />
+      <Icon name="arrowRight" size={16} stroke={2.8} />
     </a>
   ) : game.starts ? (
     // Games without a page of their own open a room straight away.
@@ -258,19 +260,23 @@ function GameCard({ game }: { game: CatalogGame }) {
       }}
     >
       {opening ? "Opening…" : "Play"}
-      {!opening && <Icon name="arrowRight" size={16} stroke={2.6} />}
+      {!opening && <Icon name="arrowRight" size={16} stroke={2.8} />}
     </button>
   ) : (
     <span className="play-btn soon">Coming soon</span>
   );
 
   return (
-    <li className={`play-card${isPlayable(game) ? "" : " unavailable"}`} style={style}>
-      <div className="play-card-art-wrap">
-        <img className="play-card-art" src={game.art} alt="" />
+    <li
+      className={`game-poster play-card${isPlayable(game) ? "" : " unavailable"}`}
+      style={style}
+      {...tilt}
+    >
+      <div className="play-card-stage" aria-hidden="true">
+        <img className="play-card-art" src={game.art} alt="" width={310} height={320} />
       </div>
       <div className="play-card-body">
-        <h3 className="play-card-name">{game.name}</h3>
+        <h3 className="play-card-name poster">{game.name}</h3>
         <p className="play-card-desc">{game.description}</p>
         <div className="play-card-foot">
           <span className="players">

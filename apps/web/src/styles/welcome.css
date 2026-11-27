@@ -1,5 +1,6 @@
-/* The guest home page (WelcomePage): the pitch beside the crew, a strip of games to pick from,
-   and one band saying how a game gets going. Phones stack it all, the crew above the words. */
+/* The guest home page (WelcomePage): the pitch beside the mascot and its 3D toys, a strip of
+   games to pick from, and one band saying how a game gets going. Phones stack it all, the mascot
+   above the words. */
 
 .welcome-hero {
   display: grid;
@@ -14,10 +15,10 @@
 }
 
 .welcome-title {
-  font-size: clamp(2.875rem, 5.3vw, 4.75rem);
-  line-height: 0.98;
-  letter-spacing: -0.03em;
+  font-size: clamp(3.6rem, 7.6vw, 7.4rem);
+  line-height: 0.86;
   text-wrap: balance;
+  text-shadow: 0 5px 0 rgb(30 6 70 / 60%);
 }
 
 .welcome-lead {
@@ -40,27 +41,36 @@
   font-weight: 700;
 }
 
+.welcome-btn.btn-gold {
+  box-shadow:
+    0 4px 0 #c76a00,
+    0 14px 26px -10px rgb(255 160 30 / 55%),
+    inset 0 1px 0 rgb(255 255 255 / 65%);
+}
+
+.welcome-btn.btn-gold:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    0 1px 0 #c76a00,
+    inset 0 1px 0 rgb(255 255 255 / 65%);
+}
+
 .welcome-btn-quiet {
   background: var(--night);
   border-color: var(--line);
 }
 
-/* The crew on their stage. The picture's own dark background fades out at its edges into the
-   page, so it never shows as a box. */
+/* The mascot on its stage, with 3D toys floating all around it (ToyScene). */
 .welcome-art {
   order: -1;
-  display: block;
   justify-self: center;
-  width: 100%;
-  max-width: 600px;
-  height: auto;
-  max-height: 34svh;
-  object-fit: contain;
-  -webkit-mask-image: radial-gradient(ellipse 72% 70% at 50% 50%, #000 58%, transparent 100%);
-  mask-image: radial-gradient(ellipse 72% 70% at 50% 50%, #000 58%, transparent 100%);
+  width: calc(100% + 2 * var(--gutter));
+  max-width: 640px;
+  height: 36svh;
+  margin-inline: calc(-1 * var(--gutter));
 }
 
-/* A short phone keeps the crew smaller, so the buttons are still in view on arrival. */
+/* A short phone keeps the mascot smaller, so the buttons are still in view on arrival. */
 @media (max-width: 899px) and (max-height: 700px) {
   .welcome-hero,
   .welcome-copy {
@@ -68,7 +78,7 @@
   }
 
   .welcome-art {
-    max-height: 26svh;
+    height: 28svh;
   }
 }
 
@@ -83,7 +93,11 @@
   .welcome-art {
     order: 0;
     justify-self: end;
-    max-height: none;
+    width: 115%;
+    max-width: 760px;
+    height: auto;
+    aspect-ratio: 1.08;
+    margin: -40px -6% -40px -10%;
   }
 
   .welcome-actions {
@@ -111,7 +125,7 @@
 }
 
 .welcome-h2 {
-  font-size: clamp(1.625rem, 2.3vw, 2rem);
+  font-size: clamp(2.2rem, 3.4vw, 3rem);
 }
 
 /* How many are here now, as one line of green text beside the heading. It keeps its space while
@@ -144,57 +158,52 @@
 }
 
 .welcome-strip > li {
-  flex: 0 0 132px;
+  flex: 0 0 156px;
   scroll-snap-align: start;
 }
 
+/* A small poster: the art in its burst of light, the name across the bottom. */
 .welcome-card {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
   width: 100%;
-  height: 100%;
-  padding: 10px 10px 12px;
-  border-radius: 16px;
-  background: var(--night);
-  color: var(--text);
+  aspect-ratio: 3 / 4;
+  padding: 10px 12px 14px;
+  border: 0;
+  border-radius: 18px;
   font: inherit;
   text-align: start;
   text-decoration: none;
-  transition:
-    transform 160ms ease-out,
-    background-color 160ms ease-out;
+  cursor: pointer;
+  container-type: inline-size;
 }
 
 .welcome-card-art {
   display: block;
   width: 100%;
-  height: auto;
-  aspect-ratio: 1;
+  height: 100%;
+  min-height: 0;
   object-fit: contain;
-  transition: transform 200ms ease-out;
+  filter: drop-shadow(0 10px 12px color-mix(in oklab, var(--c2) 70%, #000));
+  transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* Sized to the card, so the longest one-word name (Connections) still fits on its line. */
 .welcome-card-name {
-  font-family: var(--display);
-  font-size: 1rem;
-  font-weight: 700;
-  line-height: 1.2;
+  font-size: min(2.1rem, 17.5cqi);
+  text-shadow:
+    0 3px 0 color-mix(in oklab, var(--c2) 75%, #000),
+    0 8px 22px rgb(0 0 0 / 35%);
 }
 
 @media (hover: hover) {
-  .welcome-card:hover:not(:disabled) {
-    background: var(--night-tile);
-    transform: translateY(-2px);
-  }
-
   .welcome-card:hover:not(:disabled) .welcome-card-art {
-    transform: scale(1.04);
+    transform: translateY(-6px) scale(1.07) rotate(-2deg);
   }
 }
 
 .welcome-card:active:not(:disabled) {
-  transform: scale(0.98);
+  --lift: 2px;
 }
 
 .welcome-card:disabled {
@@ -217,24 +226,19 @@
   }
 
   .welcome-strip {
-    gap: 12px;
+    gap: 16px;
     margin: 0;
-    padding: 4px 0 10px;
+    padding: 10px 0 18px;
     scroll-padding-inline: 0;
   }
 
   .welcome-strip > li {
-    flex-basis: 200px;
+    flex-basis: 212px;
   }
 
   .welcome-card {
-    gap: 10px;
-    padding: 16px 16px 18px;
-    border-radius: 20px;
-  }
-
-  .welcome-card-name {
-    font-size: 1.25rem;
+    padding: 14px 16px 18px;
+    border-radius: 22px;
   }
 }
 
@@ -316,7 +320,7 @@
   }
 }
 
-/* On arrival the words rise in, in reading order, a beat before the crew settles: the headline is
+/* On arrival the words rise in, in reading order, a beat before the mascot settles: the headline is
    what to read first. Only once the page is ready to show, and never with motion turned down. */
 @media (prefers-reduced-motion: no-preference) {
   .page.reveal.is-ready .welcome-copy > * {

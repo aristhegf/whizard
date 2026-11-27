@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { CATALOG, isPlayable, type CatalogGame } from "../catalog";
 import { linkTo } from "../router";
 import { CreateRoomButton, createFailed, startRoom, TopLayout } from "../ui/Chrome";
 import { Icon } from "../ui/Icon";
 import { LiveCount } from "../ui/LiveCount";
 import { useToast } from "../ui/toast";
+import { tilt } from "../ui/tilt";
+import { ToyScene } from "../ui/toys/ToyScene";
 
 const STEPS = ["Pick a game", "Share the code or QR", "Everyone plays at once"];
 
@@ -17,7 +19,7 @@ export function WelcomePage() {
     <TopLayout active="welcome" className="welcome-page" reveal>
       <section className="welcome-hero" aria-labelledby="welcome-title">
         <div className="welcome-copy">
-          <h1 id="welcome-title" className="display welcome-title">
+          <h1 id="welcome-title" className="poster welcome-title">
             Games are better <span className="gold-text">together</span>
           </h1>
           <p className="welcome-lead">
@@ -34,21 +36,18 @@ export function WelcomePage() {
             </a>
           </div>
         </div>
-        <img
+        <ToyScene
           className="welcome-art"
-          src="/art/mascot/crew.webp"
-          srcSet="/art/mascot/crew-768.webp 768w, /art/mascot/crew.webp 1536w"
-          sizes="(min-width: 900px) 600px, 100vw"
-          alt=""
-          width={1536}
-          height={1024}
-          fetchPriority="high"
+          mascot="/art/mascot/hero.webp"
+          layout="hero"
+          width={866}
+          height={857}
         />
       </section>
 
       <section className="welcome-pick" aria-labelledby="pick-title">
         <div className="welcome-pick-head">
-          <h2 id="pick-title" className="display welcome-h2">
+          <h2 id="pick-title" className="poster welcome-h2">
             Pick a game
           </h2>
           <LiveCount variant="now" />
@@ -85,7 +84,7 @@ export function WelcomePage() {
 }
 
 /**
- * One game in the strip: its art and name. Games with a page of their own go there; the rest
+ * One game in the strip, as a small poster: its colours, its art and its name. Games with a page of their own go there; the rest
  * open a room with that game straight away, as on the Games page.
  */
 function PickCard({ game }: { game: CatalogGame }) {
@@ -93,21 +92,26 @@ function PickCard({ game }: { game: CatalogGame }) {
   const [opening, setOpening] = useState(false);
   const body = (
     <>
-      <img className="welcome-card-art" src={game.art} alt="" width={320} height={320} />
-      <span className="welcome-card-name">{opening ? "Opening…" : game.name}</span>
+      <img className="welcome-card-art" src={game.art} alt="" width={310} height={320} />
+      <span className="welcome-card-name poster">{opening ? "Opening…" : game.name}</span>
     </>
   );
+  const look = {
+    className: "game-poster welcome-card",
+    style: { "--c1": game.colors[0], "--c2": game.colors[1] } as CSSProperties,
+    ...tilt,
+  };
 
   if (game.href) {
     return (
-      <a className="welcome-card" aria-label={`Play ${game.name}`} {...linkTo(game.href)}>
+      <a {...look} aria-label={`Play ${game.name}`} {...linkTo(game.href)}>
         {body}
       </a>
     );
   }
   return (
     <button
-      className="welcome-card"
+      {...look}
       aria-label={`Play ${game.name}`}
       aria-busy={opening}
       disabled={opening}
