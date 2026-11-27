@@ -1,0 +1,678 @@
+/* Arcade night: the room lights up in the colours of the game in front of you, and the moments
+   that matter (a countdown, a right answer, a friend arriving) land with a punch. */
+
+/* Registered, so a change of game eases from one colour to the next instead of jumping. */
+@property --glow {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #8b3dff;
+}
+
+/* The angle rays turn by: the gradient turns, not the element, so nothing grows its box. */
+@property --spin {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* RoomGlow --------------------------------------------------------------------------------- */
+
+.room-glow {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: 75dvh;
+  background:
+    radial-gradient(
+      70% 60% at 22% -8%,
+      color-mix(in oklab, var(--glow) 46%, transparent),
+      transparent 72%
+    ),
+    radial-gradient(
+      55% 50% at 88% 4%,
+      color-mix(in oklab, color-mix(in oklab, var(--glow) 55%, #ff3db8) 34%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      60% 40% at 50% 100%,
+      color-mix(in oklab, color-mix(in oklab, var(--glow) 40%, #2de2ff) 14%, transparent),
+      transparent 70%
+    );
+  pointer-events: none;
+  transition: --glow 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The kinds of game, each in a colour of its own -------------------------------------------- */
+
+[data-group] {
+  --chip: #ffd43f;
+}
+
+[data-group="quiz"] {
+  --chip: #ffa630;
+}
+
+[data-group="brain"] {
+  --chip: #c07bff;
+}
+
+[data-group="puzzle"] {
+  --chip: #3fd6ff;
+}
+
+[data-group="skill"] {
+  --chip: #8fe34b;
+}
+
+[data-group="party"] {
+  --chip: #ff6b57;
+}
+
+[data-group="couples"] {
+  --chip: #ff6fae;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .room-glow {
+    transition: none;
+  }
+}
+
+.play-mobile-categories > svg:first-child {
+  color: var(--chip, #ffd43f);
+}
+
+/* The tab bar ------------------------------------------------------------------------------
+   The tab you're on sits on a glowing candy pill, and Create is a gold arcade coin. */
+
+.tab {
+  position: relative;
+  isolation: isolate;
+  transition: color 150ms ease;
+}
+
+.tab > svg {
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tab[aria-current="page"] {
+  color: #fff;
+}
+
+.tab[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  z-index: -1;
+  width: 56px;
+  height: 32px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #a865ff, #6a2ff2);
+  box-shadow:
+    0 3px 0 #3f17a8,
+    0 8px 18px -4px rgb(139 61 255 / 80%);
+  translate: -50% 0;
+  animation: tab-on 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tab[aria-current="page"] > svg {
+  transform: translateY(-1px) scale(1.06);
+}
+
+@keyframes tab-on {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+}
+
+.tab-coin {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #ffe55c, #ffb52c);
+  box-shadow:
+    0 3px 0 #c76a00,
+    0 6px 14px -4px rgb(255 170 40 / 70%),
+    inset 0 1px 0 rgb(255 255 255 / 60%);
+  color: #2b1300;
+  transition:
+    transform 90ms ease-out,
+    box-shadow 90ms ease-out;
+}
+
+.tab-create {
+  color: #ffe27a;
+}
+
+.tab-create:active:not(:disabled) .tab-coin {
+  transform: translateY(3px);
+  box-shadow:
+    0 0 0 #c76a00,
+    0 2px 6px -2px rgb(255 170 40 / 70%),
+    inset 0 1px 0 rgb(255 255 255 / 60%);
+}
+
+.tab-create:disabled .tab-coin {
+  animation: coin-spin 700ms linear infinite;
+}
+
+@keyframes coin-spin {
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab[aria-current="page"]::before,
+  .tab-create:disabled .tab-coin {
+    animation: none;
+  }
+}
+
+/* The countdown (CountdownNumber) -----------------------------------------------------------
+   The game's focal moment: each number punches in out of a blur, gold with the poster lip, a
+   ring of light goes out from it in the game's colour, and rays turn slowly behind it. */
+
+.countdown-number {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 220px;
+  height: 220px;
+  margin: 4px 0;
+  isolation: isolate;
+  font-family: var(--poster);
+  font-stretch: 75%;
+  font-size: 9rem;
+  font-weight: 800;
+  color: var(--gold);
+  text-shadow:
+    0 7px 0 color-mix(in oklab, var(--game-c1, #8b3dff) 45%, #120530),
+    0 18px 40px rgb(0 0 0 / 45%);
+}
+
+/* The rays: thin wedges of the game's colour, fading out from the middle. */
+.countdown-number::before {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  z-index: -1;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from var(--spin),
+    color-mix(in oklab, var(--game-c1, #8b3dff) 34%, transparent) 0deg 9deg,
+    transparent 9deg 24deg
+  );
+  mask: radial-gradient(closest-side, #000 20%, transparent 100%);
+  animation: rays-turn 14s linear infinite;
+}
+
+/* A soft disc of the game's colour, so the number has something to glow against. */
+.countdown-number::after {
+  content: "";
+  position: absolute;
+  inset: 34px;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--game-c1, #8b3dff) 55%, transparent),
+    transparent 70%
+  );
+}
+
+.countdown-tick {
+  position: relative;
+  display: block;
+  line-height: 1;
+  animation: tick-in 460ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* The ring that goes out with each number. */
+.countdown-tick::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150px;
+  height: 150px;
+  border: 5px solid color-mix(in oklab, var(--game-c1, #8b3dff) 60%, #fff);
+  border-radius: 50%;
+  translate: -50% -50%;
+  opacity: 0;
+  animation: tick-ring 760ms cubic-bezier(0.16, 1, 0.3, 1) 60ms;
+}
+
+@keyframes tick-in {
+  from {
+    opacity: 0;
+    transform: scale(1.9);
+    filter: blur(8px);
+  }
+}
+
+@keyframes tick-ring {
+  from {
+    opacity: 0.95;
+    transform: scale(0.55);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@keyframes rays-turn {
+  to {
+    --spin: 360deg;
+  }
+}
+
+/* The game's art over the countdown floats gently, waiting for the off. */
+.countdown > img:first-child,
+.countdown > .countdown-game-art {
+  animation: art-bob 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes art-bob {
+  to {
+    transform: translateY(-8px) rotate(-2deg);
+  }
+}
+
+.countdown-label {
+  font-family: var(--poster);
+  font-stretch: 80%;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* A short phone: the countdown a step smaller, so it fits. */
+@media (max-height: 700px) {
+  .countdown-number {
+    width: 180px;
+    height: 180px;
+    font-size: 7.5rem;
+  }
+}
+
+/* Confetti (PlayVerdict, a right answer) ----------------------------------------------------
+   Sixteen bits of colour thrown out from the mark, turning as they fly and falling away. */
+
+.play-confetti {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  pointer-events: none;
+}
+
+.play-confetti i {
+  --a: calc(var(--k) * 22.5deg);
+  --d: 54px;
+  position: absolute;
+  width: 7px;
+  height: 11px;
+  margin: -5px 0 0 -3px;
+  border-radius: 2px;
+  background: #ffd43f;
+  opacity: 0;
+  animation: confetti-fly 900ms cubic-bezier(0.16, 1, 0.3, 1) 80ms;
+}
+
+.play-confetti i:nth-child(4n + 1) {
+  background: #3ff0a8;
+}
+
+.play-confetti i:nth-child(4n + 2) {
+  background: #ff5fae;
+  border-radius: 50%;
+  height: 7px;
+}
+
+.play-confetti i:nth-child(4n + 3) {
+  background: #3fd6ff;
+}
+
+@keyframes confetti-fly {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--a)) translateY(0) rotate(0deg);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--a)) translateY(calc(var(--d) * -1)) rotate(320deg) translateY(10px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .countdown-number::before,
+  .countdown-tick,
+  .countdown-tick::after,
+  .countdown > img:first-child,
+  .countdown > .countdown-game-art {
+    animation: none;
+  }
+
+  .play-confetti {
+    display: none;
+  }
+}
+
+/* The final's small countdown (Elimination) keeps to a plain number. */
+.countdown-number.small {
+  width: auto;
+  height: auto;
+  margin: 0;
+}
+
+.countdown-number.small::before,
+.countdown-number.small::after {
+  content: none;
+}
+
+.play-confetti i:nth-child(3n) {
+  --d: 74px;
+}
+
+.play-confetti i:nth-child(3n + 1) {
+  --d: 40px;
+}
+
+/* The lobby --------------------------------------------------------------------------------- */
+
+/* Marquee lights round the room code: a ring of warm bulbs, every other one lit, the lit ones
+   chasing round the sign. */
+.lobby-code {
+  border-color: rgb(255 212 63 / 45%);
+  background:
+    radial-gradient(
+      120% 90% at 50% 0%,
+      color-mix(in oklab, var(--glow, #8b3dff) 30%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(180deg, rgb(60 40 170 / 45%), rgb(30 20 100 / 40%));
+  box-shadow:
+    0 0 0 4px rgb(10 6 40 / 70%),
+    0 18px 40px -14px color-mix(in oklab, var(--glow, #8b3dff) 70%, transparent);
+}
+
+.marquee-bulbs {
+  position: absolute;
+  inset: 7px;
+  width: calc(100% - 14px);
+  height: calc(100% - 14px);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.marquee-bulbs rect {
+  fill: none;
+  stroke-width: 5px;
+  stroke-linecap: round;
+  stroke-dasharray: 0 3.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.bulbs-off {
+  stroke: rgb(255 212 63 / 22%);
+}
+
+.bulbs-on {
+  stroke: #ffe27a;
+  stroke-dasharray: 0 6.4;
+  filter: drop-shadow(0 0 3px rgb(255 200 60 / 90%));
+  animation: bulbs-chase 1.6s steps(2) infinite;
+}
+
+@keyframes bulbs-chase {
+  to {
+    stroke-dashoffset: -6.4;
+  }
+}
+
+.lobby-code .room-code {
+  position: relative;
+  color: #fff;
+  text-shadow:
+    0 4px 0 #3f17a8,
+    0 0 24px color-mix(in oklab, var(--glow, #8b3dff) 70%, transparent);
+}
+
+.lobby-code .code-label {
+  border-color: rgb(255 212 63 / 55%);
+  background: linear-gradient(180deg, #ffe55c, #ffb52c);
+  color: #2b1300;
+  font-weight: 800;
+  box-shadow: 0 3px 0 #c76a00;
+}
+
+/* The players: each face in a candy ring of its own, popping in as they arrive, and the empty
+   seats breathing while they wait. */
+.lobby-players .player:not(.waiting) {
+  animation: seat-pop 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.lobby-players .player {
+  --seat: #ffd43f;
+}
+
+.lobby-players .player:nth-child(6n + 2) {
+  --seat: #3fd6ff;
+}
+
+.lobby-players .player:nth-child(6n + 3) {
+  --seat: #ff5fae;
+}
+
+.lobby-players .player:nth-child(6n + 4) {
+  --seat: #8fe34b;
+}
+
+.lobby-players .player:nth-child(6n + 5) {
+  --seat: #ff8a3d;
+}
+
+.lobby-players .player:nth-child(6n) {
+  --seat: #c07bff;
+}
+
+.lobby-players .player:not(.waiting) .avatar {
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 3px var(--seat),
+    0 0 0 6px rgb(10 6 40 / 80%),
+    0 10px 24px -6px color-mix(in oklab, var(--seat) 80%, transparent);
+}
+
+.lobby-players .slot-ring {
+  animation: seat-breathe 2.2s ease-in-out infinite;
+}
+
+.lobby-players .player.waiting:nth-child(2n) .slot-ring {
+  animation-delay: -1.1s;
+}
+
+@keyframes seat-pop {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.5);
+  }
+}
+
+@keyframes seat-breathe {
+  50% {
+    border-color: rgb(200 170 255 / 95%);
+    transform: scale(0.94);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bulbs-on,
+  .lobby-players .player:not(.waiting),
+  .lobby-players .slot-ring {
+    animation: none;
+  }
+}
+
+/* The welcome page ---------------------------------------------------------------------------
+   The room's glow drifts through the games' colours, rays turn behind the mascot, and a neon
+   ribbon of the games' names runs across the page. */
+
+.welcome-page .room-glow {
+  animation: glow-tour 21s ease-in-out infinite;
+}
+
+@keyframes glow-tour {
+  0%,
+  100% {
+    --glow: #8b3dff;
+  }
+  16% {
+    --glow: #ff8c1a;
+  }
+  33% {
+    --glow: #15b58c;
+  }
+  50% {
+    --glow: #1aa6ff;
+  }
+  66% {
+    --glow: #ff4545;
+  }
+  83% {
+    --glow: #b05bff;
+  }
+}
+
+.welcome-art {
+  position: relative;
+  isolation: isolate;
+}
+
+.welcome-art::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: repeating-conic-gradient(
+    from var(--spin),
+    rgb(255 212 63 / 16%) 0deg 7deg,
+    transparent 7deg 18deg,
+    color-mix(in oklab, var(--glow, #8b3dff) 30%, transparent) 18deg 25deg,
+    transparent 25deg 36deg
+  );
+  mask: radial-gradient(closest-side, #000 18%, transparent 100%);
+  animation: rays-turn 40s linear infinite;
+  pointer-events: none;
+}
+
+/* The ribbon leans across the page; its wrapper keeps the lean from widening it. */
+.welcome-ribbon-wrap {
+  /* Edge to edge, whatever the page's column. */
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  min-width: 0;
+  padding-block: 22px 14px;
+  overflow: hidden;
+}
+
+.welcome-ribbon {
+  position: relative;
+  margin-inline: -40px;
+  overflow: hidden;
+  rotate: -2.5deg;
+  padding: 12px 0;
+  background: linear-gradient(90deg, #ff3db8, #8b3dff 35%, #2f78ff 65%, #15b58c);
+  box-shadow:
+    0 6px 0 rgb(10 6 40 / 85%),
+    0 18px 40px -12px rgb(139 61 255 / 70%);
+}
+
+/* A second, darker ribbon crossing behind it. */
+.welcome-ribbon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #120a3a;
+  rotate: 4deg;
+}
+
+.ribbon-track {
+  display: flex;
+  width: max-content;
+  animation: ribbon-run 38s linear infinite;
+}
+
+.ribbon-run {
+  display: flex;
+  flex: none;
+}
+
+.ribbon-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  padding-right: 18px;
+  font-family: var(--poster);
+  font-stretch: 75%;
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #fff;
+  text-shadow: 0 3px 0 rgb(20 6 60 / 75%);
+}
+
+.ribbon-star {
+  color: #ffd43f;
+  filter: drop-shadow(0 2px 0 rgb(20 6 60 / 75%));
+}
+
+@keyframes ribbon-run {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* "1, 2, 3": gold coins with a lip, like the buttons. */
+.welcome-step-number {
+  background: linear-gradient(180deg, #ffe55c, #ffb52c);
+  box-shadow:
+    0 3px 0 #c76a00,
+    inset 0 1px 0 rgb(255 255 255 / 60%);
+}
+
+.welcome-steps li:nth-child(2) .welcome-step-number {
+  background: linear-gradient(180deg, #7fe9ff, #2fb8ff);
+  box-shadow:
+    0 3px 0 #10689c,
+    inset 0 1px 0 rgb(255 255 255 / 60%);
+  color: #04203a;
+}
+
+.welcome-steps li:nth-child(3) .welcome-step-number {
+  background: linear-gradient(180deg, #ff9fd0, #ff4fa6);
+  box-shadow:
+    0 3px 0 #a3125c,
+    inset 0 1px 0 rgb(255 255 255 / 60%);
+  color: #3a0420;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-page .room-glow,
+  .welcome-art::before,
+  .ribbon-track {
+    animation: none;
+  }
+}

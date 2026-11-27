@@ -4,6 +4,7 @@ import { linkTo } from "../router";
 import { CreateRoomButton, createFailed, startRoom, TopLayout } from "../ui/Chrome";
 import { Icon } from "../ui/Icon";
 import { LiveCount } from "../ui/LiveCount";
+import { RoomGlow } from "../ui/RoomGlow";
 import { useToast } from "../ui/toast";
 import { tilt } from "../ui/tilt";
 import { ToyScene } from "../ui/toys/ToyScene";
@@ -17,6 +18,7 @@ const PLAYABLE = CATALOG.filter(isPlayable);
 export function WelcomePage() {
   return (
     <TopLayout active="welcome" className="welcome-page" reveal>
+      <RoomGlow game={null} />
       <section className="welcome-hero" aria-labelledby="welcome-title">
         <div className="welcome-copy">
           <h1 id="welcome-title" className="poster welcome-title">
@@ -44,6 +46,8 @@ export function WelcomePage() {
           height={857}
         />
       </section>
+
+      <Ribbon />
 
       <section className="welcome-pick" aria-labelledby="pick-title">
         <div className="welcome-pick-head">
@@ -80,6 +84,30 @@ export function WelcomePage() {
         </ol>
       </section>
     </TopLayout>
+  );
+}
+
+/**
+ * A neon ribbon across the page with the games' names running along it, each in its own
+ * colour. Twice over, so it loops without a seam; the names are in the strip below too, so
+ * screen readers skip it.
+ */
+function Ribbon() {
+  const names = PLAYABLE.map((game) => (
+    <span key={game.id} className="ribbon-name" style={{ "--c1": game.colors[0] } as CSSProperties}>
+      {game.name}
+      <Icon name="star" size={20} fill className="ribbon-star" />
+    </span>
+  ));
+  return (
+    <div className="welcome-ribbon-wrap" aria-hidden="true">
+      <div className="welcome-ribbon">
+        <div className="ribbon-track">
+          <div className="ribbon-run">{names}</div>
+          <div className="ribbon-run">{names}</div>
+        </div>
+      </div>
+    </div>
   );
 }
 

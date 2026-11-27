@@ -675,14 +675,6 @@ button.choice:disabled {
   color: var(--muted);
 }
 
-.countdown-number {
-  font-family: var(--display);
-  font-size: 7rem;
-  font-weight: 800;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
 /* Live scores: tablets and computers only, unless a screen has room for them on a phone too
    (PlayBoard's `always`). */
 .live-board {

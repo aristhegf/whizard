@@ -122,6 +122,7 @@ import { LobbyFloor, LobbyMascot } from "./ui/toys/LobbyToys";
 import { useToast } from "./ui/toast";
 import { GameNoticeContext, GameNotices } from "./ui/gameNotice";
 import { Icon } from "./ui/Icon";
+import { RoomGlow } from "./ui/RoomGlow";
 import { QrCode } from "./ui/QrCode";
 import { usePrefersStill } from "./display";
 import { reportInvite } from "./presence";
@@ -1079,6 +1080,11 @@ function Lobby({
       </h2>
       <p className="lobby-sub">Share this code with your friends to join!</p>
       <div className="code-box lobby-code">
+        {/* Marquee lights chasing round the code, like the sign over an arcade. */}
+        <svg className="marquee-bulbs" aria-hidden="true">
+          <rect className="bulbs-off" width="100%" height="100%" rx="22" pathLength="100" />
+          <rect className="bulbs-on" width="100%" height="100%" rx="22" pathLength="100" />
+        </svg>
         <span className="code-label">Room Code</span>
         <strong className="room-code" translate="no">
           {room.code}
@@ -1244,6 +1250,7 @@ function Lobby({
   return (
     // Everything in the lobby, its sheets and dialogs too, scales together.
     <div className="lobby-scale" style={{ zoom: scale, "--z": scale } as CSSProperties}>
+      <RoomGlow game={gameId} />
       {photo.element}
       {wide ? (
         <div className="lobby wide">

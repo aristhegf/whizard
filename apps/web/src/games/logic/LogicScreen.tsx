@@ -17,6 +17,7 @@ import {
   rowsFrom,
   Staged,
   timerMs,
+  CountdownNumber,
 } from "../play";
 import { Brand } from "../../ui/Chrome";
 import { Icon } from "../../ui/Icon";
@@ -191,7 +192,7 @@ function Playing(props: Props & { grid: number[]; startsAt: number }) {
             Get ready ·{" "}
             {view.round ? gridName(size) : `${logicModeName(view.mode)} · ${gridName(size)}`}
           </p>
-          <p className="countdown-number">{countdown}</p>
+          <CountdownNumber value={countdown} />
         </div>
       </PlayFrame>
     );

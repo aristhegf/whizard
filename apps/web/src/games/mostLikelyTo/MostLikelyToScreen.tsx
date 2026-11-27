@@ -21,6 +21,7 @@ import {
   Staged,
   timerMs,
   type Face,
+  CountdownNumber,
 } from "../play";
 import { packName } from "./MostLikelyToSettingsRows";
 
@@ -109,7 +110,7 @@ function Countdown(props: Props & { stage: CountdownStage }) {
       <div className="countdown" aria-live="polite">
         <img className="countdown-game-art" src={ART} alt="" />
         <p className="countdown-label">Get ready</p>
-        <p className="countdown-number">{count}</p>
+        <CountdownNumber value={count} />
         <span className="pill pill-glow">{NAME}</span>
       </div>
     </PlayFrame>

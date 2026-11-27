@@ -4,6 +4,7 @@ import { linkTo } from "../router";
 import { BottomSheet } from "../ui/BottomSheet";
 import { createFailed, startRoom, TopLayout } from "../ui/Chrome";
 import { useMediaQuery } from "../ui/common";
+import { RoomGlow } from "../ui/RoomGlow";
 import { Icon } from "../ui/Icon";
 import { LiveCount } from "../ui/LiveCount";
 import { tilt } from "../ui/tilt";
@@ -20,6 +21,8 @@ export function HomePage() {
   // Phones show one featured game at a time; a kind of game opens its games in a sheet instead.
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [mobileIndex, setMobileIndex] = useState(0);
+  // The game the room glows for: the one under the mouse on a computer.
+  const [hovered, setHovered] = useState<string | null>(null);
   const shelfRef = useRef<HTMLUListElement>(null);
   const paged = useMediaQuery("(min-width: 1100px)");
 
@@ -30,8 +33,13 @@ export function HomePage() {
   const current = Math.min(page, pages - 1);
   const shown = games.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
 
+  // The room lights up in the colours of the game in front of you: the card on a phone's screen,
+  // or the one under the mouse.
+  const spotlight = paged ? (hovered ?? shown[0]?.id) : games[mobileIndex]?.id;
+
   const chooseGroup = (next: GameGroup | "all") => {
     setGroup(next);
+    setHovered(null);
     setPage(0);
     setMobileIndex(0);
     shelfRef.current?.scrollTo({ left: 0 });
@@ -60,6 +68,7 @@ export function HomePage() {
       screen
       reveal
     >
+      <RoomGlow game={spotlight} />
       <section className="play" aria-labelledby="play-title">
         <header className="play-head">
           <LiveCount />
@@ -82,6 +91,7 @@ export function HomePage() {
             {GAME_GROUPS.map((g) => (
               <button
                 key={g.id}
+                data-group={g.id}
                 className={group === g.id ? "play-chip is-open" : "play-chip"}
                 aria-pressed={group === g.id}
                 onClick={() => chooseGroup(g.id)}
@@ -93,6 +103,7 @@ export function HomePage() {
           </div>
           {!paged && (
             <button
+              data-group={group}
               className="play-mobile-categories"
               aria-haspopup="dialog"
               onClick={() => setCategoriesOpen(true)}
@@ -151,7 +162,7 @@ export function HomePage() {
               ) : (
                 <ul className="play-grid" aria-label="Games">
                   {shown.map((g, i) => (
-                    <GameCard key={g.id} game={g} index={i} />
+                    <GameCard key={g.id} game={g} index={i} onSpotlight={setHovered} />
                   ))}
                 </ul>
               )}
@@ -216,6 +227,7 @@ function CategorySheet({
         {GAME_GROUPS.map((g) => (
           <button
             key={g.id}
+            data-group={g.id}
             className="category-option"
             aria-pressed={selected === g.id}
             onClick={() => onSelect(g.id)}
@@ -231,7 +243,16 @@ function CategorySheet({
 }
 
 /** One game as a poster: its own colours, its art in a burst of light, its name big. */
-function GameCard({ game, index = 0 }: { game: CatalogGame; index?: number }) {
+function GameCard({
+  game,
+  index = 0,
+  onSpotlight,
+}: {
+  game: CatalogGame;
+  index?: number;
+  /** Lights the room in this game's colours, while the mouse or focus is on its card. */
+  onSpotlight?: (game: string) => void;
+}) {
   const toast = useToast();
   const [opening, setOpening] = useState(false);
   const style = {
@@ -273,6 +294,8 @@ function GameCard({ game, index = 0 }: { game: CatalogGame; index?: number }) {
       className={`game-poster play-card${isPlayable(game) ? "" : " unavailable"}`}
       style={style}
       {...tilt}
+      onPointerEnter={() => onSpotlight?.(game.id)}
+      onFocus={() => onSpotlight?.(game.id)}
     >
       <div className="play-card-stage" aria-hidden="true">
         <img className="play-card-art" src={game.art} alt="" width={310} height={320} />

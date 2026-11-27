@@ -27,6 +27,7 @@ import {
   rowsFrom,
   Staged,
   timerMs,
+  CountdownNumber,
 } from "../play";
 import { Podium } from "../../ui/Podium";
 import { CATALOG } from "../../catalog";
@@ -215,7 +216,7 @@ function Playing(props: Props & { words: string[]; startsAt: number }) {
               ? LEVEL_NAMES[view.level]
               : `${connectionsModeName(view.mode)} · ${LEVEL_NAMES[view.level]}`}
           </p>
-          <p className="countdown-number">{countdown}</p>
+          <CountdownNumber value={countdown} />
         </div>
       </PlayFrame>
     );
