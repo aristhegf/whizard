@@ -22,8 +22,15 @@ import { useShareResults } from "../../share/ShareResults";
 import { levelName, modeName, parseJigsawSettings } from "./JigsawSettingsPanel";
 import { KNOB_REACH, PIECE_SIZE, pieceShapes } from "./pieceShape";
 import { InsaneBoard } from "./InsaneBoard";
-import { PlayBoard, PlayFaces, PlayTimer, PlayTop, rowsFrom, type Face } from "../play";
-import { PlayToast } from "../../ui/gameNotice";
+import {
+  type Face,
+  PlayBoard,
+  PlayFaces,
+  PlayFrame,
+  PlayTimer,
+  PlayVerdict,
+  rowsFrom,
+} from "../play";
 
 interface Props {
   view: JigsawView;
@@ -80,8 +87,12 @@ function Watching(props: Props) {
   const { view } = props;
   const out = view.me?.out;
   return (
-    <div className="game play">
-      <PlayTop latency={props.latency} onQuit={props.onQuit} label={roundLabel(view) ?? "Jigsaw"} />
+    <PlayFrame
+      latency={props.latency}
+      onQuit={props.onQuit}
+      label={roundLabel(view) ?? "Jigsaw"}
+      game="jigsaw"
+    >
       <div className="game-layout">
         <div className="game-main play-main">
           <p className="watching">
@@ -95,8 +106,7 @@ function Watching(props: Props) {
         </div>
         <LiveBoard {...props} />
       </div>
-      <PlayToast />
-    </div>
+    </PlayFrame>
   );
 }
 
@@ -109,8 +119,7 @@ function Cut(props: Props & { cut: NonNullable<JigsawView["cut"]> }) {
   const next = Math.max(0, Math.ceil((cut.nextAt - now) / 1000));
   const nextIsFinal = view.standings.filter((s) => !s.out && !s.left).length <= 2;
   return (
-    <div className="game play">
-      <PlayTop latency={props.latency} onQuit={props.onQuit} label={roundLabel(view)} />
+    <PlayFrame latency={props.latency} onQuit={props.onQuit} label={roundLabel(view)} game="jigsaw">
       <div className="game-layout">
         <div className="game-main play-main jigsaw-cut" aria-live="polite">
           <h2 className="display cut-title">
@@ -131,8 +140,7 @@ function Cut(props: Props & { cut: NonNullable<JigsawView["cut"]> }) {
         </div>
         <LiveBoard {...props} />
       </div>
-      <PlayToast />
-    </div>
+    </PlayFrame>
   );
 }
 
@@ -187,8 +195,12 @@ function Playing(props: Props & { board: number[]; startsAt: number }) {
   const round = roundLabel(view);
   if (!started) {
     return (
-      <div className="game play">
-        <PlayTop latency={props.latency} onQuit={props.onQuit} label={round ?? "Jigsaw"} />
+      <PlayFrame
+        latency={props.latency}
+        onQuit={props.onQuit}
+        label={round ?? "Jigsaw"}
+        game="jigsaw"
+      >
         <div className="countdown jigsaw-countdown" aria-live="polite">
           <img className="jigsaw-preview" src={view.picture.src} alt={view.picture.name} />
           <p className="countdown-label">
@@ -199,8 +211,7 @@ function Playing(props: Props & { board: number[]; startsAt: number }) {
           </p>
           <p className="countdown-number">{countdown}</p>
         </div>
-        <PlayToast />
-      </div>
+      </PlayFrame>
     );
   }
 
@@ -209,32 +220,48 @@ function Playing(props: Props & { board: number[]; startsAt: number }) {
       <b>{placed}</b> / {total} placed
     </>
   );
-  const help = view.tray
-    ? "Drag pieces from the tray onto their spots. Pinch to zoom, double-tap to zoom in or out"
-    : "Tap two pieces to swap them, or drag one onto another";
+  const help = view.tray ? (
+    <>
+      Drag pieces from the tray onto their spots.
+      <span className="jigsaw-how"> Pinch to zoom, double-tap to zoom in or out</span>
+    </>
+  ) : (
+    "Tap two pieces to swap them, or drag one onto another"
+  );
   const doneText = view.round
     ? view.round.final
       ? "Finished!"
       : "You’re through to the next round."
     : "Waiting for everyone to finish…";
   return (
-    <div className="game play">
-      <PlayTop latency={props.latency} onQuit={props.onQuit} label={round ?? count} />
+    <PlayFrame latency={props.latency} onQuit={props.onQuit} label={round ?? count} game="jigsaw">
       <div className="game-layout staged">
-        <div className={`game-main play-main jigsaw-main${view.tray ? " insane-main" : ""}`}>
+        <div
+          className={`game-main play-main jigsaw-main${view.tray ? " insane-main play-column fill" : ""}`}
+        >
           {/* Classic has no clock; Speed and Elimination count down. */}
           {left !== null && (
-            <PlayTimer ms={finished ? left : Math.max(0, left)} low={left < LOW_MS && !finished} />
+            <PlayTimer
+              ms={finished ? left : Math.max(0, left)}
+              low={left < LOW_MS && !finished}
+              totalMs={finished || outOfTime ? undefined : view.deadline! - startsAt}
+            />
           )}
           {finished ? (
-            <p className="play-task good" role="status">
-              Solved in {clock(view.me?.timeMs ?? 0)} · {view.moves} moves
-              <span className="jigsaw-wait">{doneText}</span>
-            </p>
+            <div className="jigsaw-done">
+              <PlayVerdict tone="good">Solved</PlayVerdict>
+              <p className="play-task good">
+                Solved in {clock(view.me?.timeMs ?? 0)} · {view.moves} moves
+                <span className="jigsaw-wait">{doneText}</span>
+              </p>
+            </div>
           ) : outOfTime ? (
-            <p className="play-task" role="status">
-              Time’s up · {placed} of {total} placed
-            </p>
+            <div className="jigsaw-done">
+              <PlayVerdict tone="late">Time’s up</PlayVerdict>
+              <p className="play-task">
+                {placed} of {total} placed
+              </p>
+            </div>
           ) : (
             <p className="play-task">
               {round && (
@@ -290,8 +317,7 @@ function Playing(props: Props & { board: number[]; startsAt: number }) {
           <PlayFaces faces={faces(props)} playerId={props.playerId} />
         </div>
       </div>
-      <PlayToast />
-    </div>
+    </PlayFrame>
   );
 }
 

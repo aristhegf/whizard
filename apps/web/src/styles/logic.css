@@ -102,24 +102,50 @@
   gap: 4px;
 }
 
-/* On a phone the grid gives way to the screen's height, so the number keys stay on it. */
+/* Phones (PlayScreen `fill`): the grid is the biggest square the free space holds, and the
+   number keys sit under it at the bottom, where the thumb is. */
 @media (max-width: 767px) {
-  .logic-grid {
-    width: min(100%, 100dvh - var(--logic-rest, 470px));
+  .logic-main .logic-grid {
+    width: min(100cqw, 100cqh);
+  }
+
+  .logic-main .logic-pad {
+    grid-template-columns: repeat(var(--size), minmax(0, 1fr));
+    gap: 4px;
+    width: 100%;
+    padding-top: 4px;
+  }
+
+  .logic-main .logic-key {
+    height: 58px;
+    border-radius: 14px;
+    font-size: 1.7rem;
+  }
+
+  .logic-main .logic-grid.size-4 .logic-cell,
+  .logic-main .logic-grid.size-6 .logic-cell {
+    border-radius: 14%;
   }
 }
 
-/* Small phones (see play.css): the rules line goes while you play, and the pad is lower. */
-@media (max-width: 360px), (max-height: 640px) {
-  .logic-grid {
-    --logic-rest: 340px;
+/* Phones with Safari's bars showing, or smaller: the rules in one line, the keys a little lower. */
+@media (max-width: 767px) and (max-height: 760px) {
+  .logic-how {
+    display: none;
   }
 
+  .logic-main .logic-key {
+    height: 52px;
+  }
+}
+
+/* Small phones (see play.css): the rules line goes while you play. */
+@media (max-width: 360px), (max-height: 640px) {
   .logic-rules {
     display: none;
   }
 
-  .logic-key {
+  .logic-main .logic-key {
     height: 48px;
   }
 }

@@ -26,10 +26,20 @@ import type { RoomClient, RoomSnapshot } from "../../roomClient";
 import { play } from "../../sounds";
 import { Brand } from "../../ui/Chrome";
 import { useErrorShake } from "../../ui/errorShake";
-import { PlayToast } from "../../ui/gameNotice";
 import { Icon } from "../../ui/Icon";
 import { useServerNow } from "../../useServerNow";
-import { PlayFaces, PlayTimer, PlayTop, Staged, timerMs, type Face } from "../play";
+import {
+  type Face,
+  type VerdictTone,
+  PlayFaces,
+  PlayFit,
+  PlayFrame,
+  PlayScreen,
+  PlayTimer,
+  PlayVerdict,
+  Staged,
+  timerMs,
+} from "../play";
 import { Podium } from "../../ui/Podium";
 import { buildCard } from "../../share/outcomes";
 import { useShareResults } from "../../share/ShareResults";
@@ -98,45 +108,33 @@ export function RoundsScreen(props: Props) {
       return <Results context={context} results={(stage as Stage<"done">).results} />;
     default:
       return (
-        <div className="game play">
-          <Top context={context} index={null} />
-          <div className="game-layout">
-            <div className="game-main play-main">
-              <p className="watching">A game is in progress. You’ll be in the next one.</p>
-              <PlayFaces faces={facesOf(context)} playerId={props.playerId} />
-            </div>
+        <PlayScreen
+          label={context.name}
+          latency={props.latency}
+          onQuit={props.onQuit}
+          game={view.game}
+          side={
             <ScoreBoard
               standings={view.standings}
               playerId={props.playerId}
               avatarOf={context.avatarOf}
             />
-          </div>
-          <PlayToast />
-        </div>
+          }
+        >
+          <p className="watching">A game is in progress. You’ll be in the next one.</p>
+          <PlayFaces faces={facesOf(context)} playerId={props.playerId} />
+        </PlayScreen>
       );
   }
 }
 
-/**
- * The top of the screen: which round, as plain text, and bare Settings and Quit icons. Before
- * the first round, the game's name.
- */
-function Top({ context, index }: { context: Context; index: number | null }) {
-  const { view, onQuit, latency } = context;
+/** Which round, as plain text at the top; before the first round, the game's name. */
+function topLabel(context: Context, index: number | null): ReactNode {
+  if (index === null) return context.name;
   return (
-    <PlayTop
-      latency={latency}
-      onQuit={onQuit}
-      label={
-        index === null ? (
-          context.name
-        ) : (
-          <>
-            Round <b>{index + 1}</b> / {view.total}
-          </>
-        )
-      }
-    />
+    <>
+      Round <b>{index + 1}</b> / {context.view.total}
+    </>
   );
 }
 
@@ -204,16 +202,19 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
 
   if (!visible) {
     return (
-      <div className="game play">
-        <Top context={context} index={null} />
+      <PlayFrame
+        label={topLabel(context, null)}
+        latency={context.latency}
+        onQuit={context.onQuit}
+        game={view.game}
+      >
         <div className="countdown" aria-live="polite">
           <img className="countdown-game-art" src={context.art} alt="" />
           <p className="countdown-label">Get ready</p>
           <p className="countdown-number">{countdown}</p>
           <span className="pill pill-glow">{context.name}</span>
         </div>
-        <PlayToast />
-      </div>
+      </PlayFrame>
     );
   }
 
@@ -234,43 +235,48 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
   );
 
   return (
-    <div className="game play">
-      <Top context={context} index={stage.index} />
-      <div className="game-layout staged">
-        <div className="game-main play-main play-column rounds-main">
-          <PlayTimer ms={timerMs(remaining)} low={remaining / view.timeLimitMs < 0.25} />
-          {view.game === "word-rush" ? (
-            <WordPuzzle
-              puzzle={stage.puzzle as WordPuzzleView}
-              tried={stage.tried as string[]}
-              triesLeft={stage.triesLeft}
-              onGuess={guess}
-              onSkip={skip}
-              aside={scores}
-            />
-          ) : (
-            <SpotPuzzle
-              grid={stage.puzzle as SpotItPuzzleView}
-              tried={stage.tried as number[]}
-              triesLeft={stage.triesLeft}
-              onTap={guess}
-              aside={scores}
-            />
-          )}
-          <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
-          {/* Word Rush's give-up sits in its own row of buttons, with Check. */}
-          {view.game === "spot-it" && (
-            <div className="play-actions">
-              <button className="play-pill" onClick={skip}>
-                <Icon name="skip" size={20} />
-                Skip this grid
-              </button>
-            </div>
-          )}
+    <PlayScreen
+      label={topLabel(context, stage.index)}
+      latency={context.latency}
+      onQuit={context.onQuit}
+      game={view.game}
+      fill
+      className={`rounds-main ${view.game}-main`}
+    >
+      <PlayTimer
+        ms={timerMs(remaining)}
+        low={remaining / view.timeLimitMs < 0.25}
+        totalMs={view.timeLimitMs}
+      />
+      {view.game === "word-rush" ? (
+        <WordPuzzle
+          puzzle={stage.puzzle as WordPuzzleView}
+          tried={stage.tried as string[]}
+          triesLeft={stage.triesLeft}
+          onGuess={guess}
+          onSkip={skip}
+          aside={scores}
+        />
+      ) : (
+        <SpotPuzzle
+          grid={stage.puzzle as SpotItPuzzleView}
+          tried={stage.tried as number[]}
+          triesLeft={stage.triesLeft}
+          onTap={guess}
+          aside={scores}
+        />
+      )}
+      <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
+      {/* Word Rush's give-up sits in its own row of buttons, with Check. */}
+      {view.game === "spot-it" && (
+        <div className="play-actions">
+          <button className="play-pill" onClick={skip}>
+            <Icon name="skip" size={20} />
+            Skip this grid
+          </button>
         </div>
-      </div>
-      <PlayToast />
-    </div>
+      )}
+    </PlayScreen>
   );
 }
 
@@ -344,7 +350,8 @@ export function WordPuzzle({
   return (
     <form className="word-puzzle" onSubmit={submit}>
       <p className="play-task word-kind">
-        <b className="word-hint">{puzzle.hint}</b> ·{" "}
+        <b className="word-hint">{puzzle.hint}</b>
+        <span className="word-sep"> · </span>
         {unscramble ? "Unscramble the word" : "Fill in the missing letters"} ·{" "}
         {LEVEL_NAMES[puzzle.level]}
       </p>
@@ -352,7 +359,12 @@ export function WordPuzzle({
         <div className="play-area">
           {/* The letters show in the slots; the field on top of them takes the typing. */}
           <div className="word-entry">
-            <div ref={slots} className="t-input word-slots" aria-hidden="true">
+            <div
+              ref={slots}
+              className="t-input word-slots"
+              style={{ "--len": length } as CSSProperties}
+              aria-hidden="true"
+            >
               {shown.map((letter, i) => (
                 <span
                   key={i}
@@ -502,7 +514,9 @@ export function SpotPuzzle({
         )}
       </p>
       <Staged aside={aside}>
-        <SpotGrid ref={board} grid={grid} tried={tried} onTap={onTap} />
+        <PlayFit>
+          <SpotGrid ref={board} grid={grid} tried={tried} onTap={onTap} />
+        </PlayFit>
       </Staged>
     </div>
   );
@@ -534,7 +548,12 @@ export function SpotGrid({
     <div
       ref={ref}
       className={`t-input spot-grid spot-${grid.kind}`}
-      style={{ gridTemplateColumns: `repeat(${grid.size}, minmax(0, 1fr))` }}
+      style={
+        {
+          gridTemplateColumns: `repeat(${grid.size}, minmax(0, 1fr))`,
+          "--n": grid.size,
+        } as CSSProperties
+      }
       role="group"
       aria-label={`${grid.size} by ${grid.size} grid`}
     >
@@ -581,6 +600,14 @@ export const VERDICTS: Record<RoundOutcome, string> = {
   skipped: "Skipped",
 };
 
+/** How a round's verdict looks: green when solved, red out of tries, gold out of time. */
+export const VERDICT_TONES: Record<RoundOutcome, VerdictTone> = {
+  solved: "good",
+  missed: "bad",
+  timeout: "late",
+  skipped: "info",
+};
+
 function Result({ context, stage }: { context: Context; stage: Stage<"result"> }) {
   const { view, client } = context;
   const sent = useRef(false);
@@ -594,38 +621,36 @@ function Result({ context, stage }: { context: Context; stage: Stage<"result"> }
   useEffect(() => play(solved ? "correct" : "wrong"), [solved]);
 
   return (
-    <div className="game play">
-      <Top context={context} index={stage.index} />
-      <div className="game-layout staged">
-        <div className="game-main play-main rounds-main">
-          <Reveal
-            game={view.game}
-            reveal={stage.reveal}
-            aside={
-              <ScoreBoard
-                standings={view.standings}
-                playerId={context.playerId}
-                avatarOf={context.avatarOf}
-              />
-            }
+    <PlayScreen
+      label={topLabel(context, stage.index)}
+      latency={context.latency}
+      onQuit={context.onQuit}
+      game={view.game}
+      fill
+      className={`rounds-main rounds-result ${view.game}-main`}
+    >
+      <PlayVerdict tone={VERDICT_TONES[stage.outcome]} points={stage.points}>
+        {VERDICTS[stage.outcome]}
+      </PlayVerdict>
+      <Reveal
+        game={view.game}
+        reveal={stage.reveal}
+        aside={
+          <ScoreBoard
+            standings={view.standings}
+            playerId={context.playerId}
+            avatarOf={context.avatarOf}
           />
-          <p className={`verdict ${solved ? "good" : "bad"}`} role="status">
-            {VERDICTS[stage.outcome]}
-            {stage.points > 0 && <span className="points">+{stage.points}</span>}
-          </p>
-          <div className="next-row">
-            <span className="muted">
-              {stage.isLast ? "Results" : "Next"} in {Math.ceil(left / 1000)}
-            </span>
-            <button className="btn" onClick={next}>
-              Next
-            </button>
-          </div>
-          <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
-        </div>
+        }
+      />
+      <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
+      <div className="play-actions">
+        <button className="play-pill go" onClick={next}>
+          {stage.isLast ? "Results" : "Next"} in {Math.ceil(left / 1000)}
+          <Icon name="arrowRight" size={20} />
+        </button>
       </div>
-      <PlayToast />
-    </div>
+    </PlayScreen>
   );
 }
 
@@ -647,7 +672,11 @@ export function Reveal({
           <b className="word-hint">{hint}</b>
         </p>
         <Staged aside={aside}>
-          <div className="word-slots revealed" aria-label={`The word was ${word}`}>
+          <div
+            className="word-slots revealed"
+            style={{ "--len": word.length } as CSSProperties}
+            aria-label={`The word was ${word}`}
+          >
             {[...word].map((letter, i) => (
               <span key={i} className="word-slot filled">
                 {letter}
@@ -663,7 +692,9 @@ export function Reveal({
     <div className="spot-puzzle">
       <p className="play-task">The odd one out</p>
       <Staged aside={aside}>
-        <SpotGrid grid={grid} odd={odd} />
+        <PlayFit>
+          <SpotGrid grid={grid} odd={odd} />
+        </PlayFit>
       </Staged>
     </div>
   );

@@ -320,6 +320,14 @@ export function Staged({
   );
 }
 
+/**
+ * The free space a board grows into on phones (PlayScreen `fill`): the board inside sizes
+ * itself to it with container units, as big a square (or a 4-by-4 of words) as fits.
+ */
+export function PlayFit({ children }: { children: ReactNode }) {
+  return <div className="play-fit">{children}</div>;
+}
+
 /** A game's own two colours, from its card in the catalogue, for its play screen. */
 function gameColors(game: string | undefined): CSSProperties | undefined {
   if (!game) return undefined;
@@ -367,6 +375,7 @@ export function PlayScreen({
   side,
   game,
   thumb = false,
+  fill = false,
   className = "",
   children,
 }: {
@@ -381,15 +390,19 @@ export function PlayScreen({
    * buttons, where the thumb is.
    */
   thumb?: boolean;
+  /**
+   * On phones, the board (inside a `PlayFit`) grows into all the height the timer, the task and
+   * the buttons leave, so a puzzle is as big as the screen allows and still fits it.
+   */
+  fill?: boolean;
   className?: string;
   children: ReactNode;
 }) {
+  const layout = `${thumb ? " thumb" : ""}${fill ? " fill" : ""}`;
   return (
     <PlayFrame label={label} latency={latency} onQuit={onQuit} game={game}>
       <div className={`game-layout${side ? "" : " staged"}`}>
-        <div
-          className={`game-main play-main play-column${thumb ? " thumb" : ""} ${className}`.trim()}
-        >
+        <div className={`game-main play-main play-column${layout} ${className}`.trim()}>
           {children}
         </div>
         {side}

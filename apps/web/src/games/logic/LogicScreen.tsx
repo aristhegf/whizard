@@ -8,10 +8,12 @@ import { Avatar } from "../../ui/Avatar";
 import {
   PlayBoard,
   PlayFaces,
+  PlayFit,
   PlayFrame,
   PlayMistakes,
   PlayScreen,
   PlayTimer,
+  PlayVerdict,
   rowsFrom,
   Staged,
   timerMs,
@@ -68,6 +70,7 @@ function Watching(props: Props) {
       label={roundLabel(view) ?? "Logic"}
       latency={props.latency}
       onQuit={props.onQuit}
+      game="logic"
       side={<LiveBoard {...props} />}
     >
       <p className="watching">
@@ -89,7 +92,7 @@ function Cut(props: Props & { cut: NonNullable<LogicView["cut"]> }) {
   const stillIn = view.standings.filter((s) => !s.out && !s.left).length;
   const nextIsFinal = !!view.round && (view.round.index + 2 >= view.round.total || stillIn <= 2);
   return (
-    <PlayFrame label={roundLabel(view)} latency={props.latency} onQuit={props.onQuit}>
+    <PlayFrame label={roundLabel(view)} latency={props.latency} onQuit={props.onQuit} game="logic">
       <CutPanel
         client={props.client}
         playerId={props.playerId}
@@ -176,7 +179,12 @@ function Playing(props: Props & { grid: number[]; startsAt: number }) {
   const round = roundLabel(view);
   if (!started) {
     return (
-      <PlayFrame label={round ?? "Logic"} latency={props.latency} onQuit={props.onQuit}>
+      <PlayFrame
+        label={round ?? "Logic"}
+        latency={props.latency}
+        onQuit={props.onQuit}
+        game="logic"
+      >
         <div className="countdown" aria-live="polite">
           <img src="/art/games/logic.webp" alt="" />
           <p className="countdown-label">
@@ -197,6 +205,7 @@ function Playing(props: Props & { grid: number[]; startsAt: number }) {
     : me?.solved
       ? "You’re through to the next round."
       : "Waiting for the round to end…";
+  const outOfMistakes = !!me && me.mistakes >= LOGIC_MAX_MISTAKES;
   const wrong =
     view.lastWrong && now - view.lastWrong.at < WRONG_FLASH_MS && !over ? view.lastWrong : null;
   const shown = over ? view.solution! : grid;
@@ -223,70 +232,82 @@ function Playing(props: Props & { grid: number[]; startsAt: number }) {
       }
       latency={props.latency}
       onQuit={props.onQuit}
+      game="logic"
+      fill
+      className="logic-main"
     >
-      {left !== null && (
-        <PlayTimer ms={over ? (me?.timeMs ?? 0) : timerMs(left)} low={left < 60_000 && !over} />
+      {/* Once it's over, the clock stays only to show how long a solve took. */}
+      {left !== null && (!over || me?.solved) && (
+        <PlayTimer
+          ms={over ? (me?.timeMs ?? 0) : timerMs(left)}
+          low={left < 60_000 && !over}
+          totalMs={over ? undefined : view.deadline! - startsAt}
+        />
       )}
-      <p className={`play-task${over ? "" : " logic-rules"}`}>
-        {over
-          ? me?.solved
-            ? `Solved in ${clock(me.timeMs ?? 0)}`
-            : me && me.mistakes >= LOGIC_MAX_MISTAKES
-              ? "Out of mistakes. Here’s the full grid."
-              : "Time’s up. Here’s the full grid."
-          : `Fill the grid so every row, column and box has 1 to ${size} once. Pick a cell, then a number.`}
-      </p>
+      {over ? (
+        <PlayVerdict tone={me?.solved ? "good" : outOfMistakes ? "bad" : "late"}>
+          {me?.solved ? "Cracked it" : outOfMistakes ? "Out of mistakes" : "Time’s up"}
+        </PlayVerdict>
+      ) : (
+        <p className="play-task logic-rules">
+          Every row, column and box has 1 to {size} once.
+          <span className="logic-how"> Pick a cell, then a number.</span>
+        </p>
+      )}
       <Staged aside={<LiveBoard {...props} />}>
-        <div
-          className={`logic-grid size-${size}`}
-          style={
-            {
-              "--size": size,
-              gridTemplateColumns: tracks(size, view.boxCols),
-              gridTemplateRows: tracks(size, view.boxRows),
-            } as CSSProperties
-          }
-          role="grid"
-          aria-label={`Grid, ${size} by ${size}`}
-        >
-          {shown.map((value, cell) => {
-            const given = view.givens[cell] !== 0;
-            const mine = !given && grid[cell] !== 0;
-            const missed = over && grid[cell] === 0;
-            const flash = wrong?.cell === cell;
-            const classes = [
-              "logic-cell",
-              given ? "given" : mine ? "mine" : "",
-              missed ? "missed" : "",
-              selected === cell ? "selected" : related(cell) ? "related" : "",
-              selectedValue && value === selectedValue && !missed ? "same" : "",
-              flash ? "wrong" : "",
-            ].filter(Boolean);
-            return (
-              <button
-                key={cell}
-                type="button"
-                role="gridcell"
-                data-cell={cell}
-                className={classes.join(" ")}
-                style={{
-                  gridColumn: track(colOf(cell), view.boxCols),
-                  gridRow: track(rowOf(cell), view.boxRows),
-                }}
-                aria-label={`Row ${rowOf(cell) + 1}, column ${colOf(cell) + 1}${value ? `, ${value}` : ", empty"}`}
-                aria-selected={selected === cell}
-                disabled={over}
-                onClick={() => setSelected(cell)}
-              >
-                {flash ? wrong.value : value || ""}
-              </button>
-            );
-          })}
-        </div>
+        <PlayFit>
+          <div
+            className={`logic-grid size-${size}`}
+            style={
+              {
+                "--size": size,
+                gridTemplateColumns: tracks(size, view.boxCols),
+                gridTemplateRows: tracks(size, view.boxRows),
+              } as CSSProperties
+            }
+            role="grid"
+            aria-label={`Grid, ${size} by ${size}`}
+          >
+            {shown.map((value, cell) => {
+              const given = view.givens[cell] !== 0;
+              const mine = !given && grid[cell] !== 0;
+              const missed = over && grid[cell] === 0;
+              const flash = wrong?.cell === cell;
+              const classes = [
+                "logic-cell",
+                given ? "given" : mine ? "mine" : "",
+                missed ? "missed" : "",
+                selected === cell ? "selected" : related(cell) ? "related" : "",
+                selectedValue && value === selectedValue && !missed ? "same" : "",
+                flash ? "wrong" : "",
+              ].filter(Boolean);
+              return (
+                <button
+                  key={cell}
+                  type="button"
+                  role="gridcell"
+                  data-cell={cell}
+                  className={classes.join(" ")}
+                  style={{
+                    gridColumn: track(colOf(cell), view.boxCols),
+                    gridRow: track(rowOf(cell), view.boxRows),
+                  }}
+                  aria-label={`Row ${rowOf(cell) + 1}, column ${colOf(cell) + 1}${value ? `, ${value}` : ", empty"}`}
+                  aria-selected={selected === cell}
+                  disabled={over}
+                  onClick={() => setSelected(cell)}
+                >
+                  {flash ? wrong.value : value || ""}
+                </button>
+              );
+            })}
+          </div>
+        </PlayFit>
         {over ? (
-          <p className="verdict good logic-wait" role="status">
-            {me?.solved ? "You cracked it!" : `${filled} of ${total} filled`}
-            <span className="dim small">{doneText}</span>
+          <p className="play-note logic-wait" role="status">
+            {me?.solved
+              ? `Solved in ${clock(me.timeMs ?? 0)}. ${doneText}`
+              : `${filled} of ${total} filled. Here’s the full grid. ${doneText}`}
           </p>
         ) : (
           <PlayMistakes left={view.mistakesLeft} max={LOGIC_MAX_MISTAKES} />

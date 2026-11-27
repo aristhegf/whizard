@@ -135,7 +135,8 @@ test("two players race: the solver wins, and running out of mistakes shows the a
     );
     if (i < 3) await expect(guest.getByLabel(`${3 - i} mistakes left`)).toBeVisible();
   }
-  await expect(guest.getByText("Out of mistakes. Here’s how they fit.")).toBeVisible();
+  await expect(guest.getByRole("status").filter({ hasText: "Out of mistakes" })).toBeVisible();
+  await expect(guest.getByText("Here’s how they fit.")).toBeVisible();
   await expect(guest.locator(".conn-group.missed")).toHaveCount(4);
 
   for (const words of groups) await pick(host, words);

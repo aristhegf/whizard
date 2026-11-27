@@ -22,7 +22,7 @@ import {
   type EliminationContext,
 } from "../elimination/parts";
 import { Icon } from "../../ui/Icon";
-import { PlayFaces, PlayTimer, Staged, timerMs } from "../play";
+import { PlayFaces, PlayFit, PlayTimer, PlayVerdict, Staged, timerMs } from "../play";
 import { elapsedSince } from "../quiz/QuizScreen";
 import {
   facesOf,
@@ -32,6 +32,7 @@ import {
   SpotGrid,
   SpotPuzzle,
   VERDICTS,
+  VERDICT_TONES,
   WordPuzzle,
 } from "./RoundsScreen";
 
@@ -151,8 +152,12 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
     <EliminationFrame context={context}>
       {/* Beside the puzzle on a computer; while waiting for the others, at the side. */}
       <div className={`game-layout${waitingOnOthers ? "" : " staged"}`}>
-        <div className="game-main play-main play-column rounds-main">
-          <PlayTimer ms={timerMs(remaining)} low={remaining / view.timeLimitMs < 0.25} />
+        <div className={`game-main play-main play-column fill rounds-main ${view.game}-main`}>
+          <PlayTimer
+            ms={timerMs(remaining)}
+            low={remaining / view.timeLimitMs < 0.25}
+            totalMs={view.timeLimitMs}
+          />
           <Watching view={view} />
           {!stage.playing ? (
             <Spectate game={view.game} puzzle={stage.puzzle} aside={board} />
@@ -166,15 +171,12 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
                 }
                 alt=""
               />
-              <p
-                className={`verdict ${stage.myResult.outcome === "solved" ? "good" : "bad"}`}
-                role="status"
+              <PlayVerdict
+                tone={VERDICT_TONES[stage.myResult.outcome]}
+                points={stage.myResult.points}
               >
                 {VERDICTS[stage.myResult.outcome]}
-                {stage.myResult.points > 0 && (
-                  <span className="points">+{stage.myResult.points}</span>
-                )}
-              </p>
+              </PlayVerdict>
             </div>
           ) : view.game === "word-rush" ? (
             <WordPuzzle
@@ -228,7 +230,9 @@ function Spectate({
       <div className="spot-puzzle">
         <p className="play-task">{SPOT_PROMPTS[grid.kind]}</p>
         <Staged aside={aside}>
-          <SpotGrid grid={grid} />
+          <PlayFit>
+            <SpotGrid grid={grid} />
+          </PlayFit>
         </Staged>
       </div>
     );
@@ -263,15 +267,16 @@ function Answer({ context, stage }: { context: Context; stage: Stage<"reveal"> }
   return (
     <EliminationFrame context={context}>
       <div className="game-layout staged">
-        <div className="game-main play-main rounds-main">
+        <div
+          className={`game-main play-main play-column fill rounds-main rounds-result ${view.game}-main`}
+        >
           <Watching view={view} />
-          <Reveal game={view.game} reveal={stage.reveal} aside={<Board context={context} />} />
           {stage.playing && result && (
-            <p className={`verdict ${solved ? "good" : "bad"}`} role="status">
+            <PlayVerdict tone={VERDICT_TONES[result.outcome]} points={result.points}>
               {VERDICTS[result.outcome]}
-              {result.points > 0 && <span className="points">+{result.points}</span>}
-            </p>
+            </PlayVerdict>
           )}
+          <Reveal game={view.game} reveal={stage.reveal} aside={<Board context={context} />} />
           <PlayFaces faces={facesOf(context)} playerId={context.playerId} />
         </div>
       </div>

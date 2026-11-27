@@ -1025,3 +1025,127 @@ button.play-tile:active:not(:disabled) {
     transition: none;
   }
 }
+
+/* The fill layout (PlayScreen `fill`), on phones: a puzzle's board grows into all the height the
+   timer, the task and the buttons leave (PlayFit), sized with container units, so it's as big as
+   the screen allows and the round still fits one screen. Wider screens size boards as before. */
+.play-fit {
+  display: contents;
+}
+
+@media (max-width: 767px) {
+  .play-column.fill .play-stage,
+  .play-column.fill .play-area {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  .play-column.fill .play-area {
+    gap: 10px;
+  }
+
+  .play-column.fill .play-fit {
+    display: grid;
+    place-items: center;
+    flex: 1 1 0;
+    width: 100%;
+    min-height: 0;
+    container-type: size;
+  }
+
+  /* The bar carries the urgency, so the digits can be smaller, as in the thumb layout. */
+  .play-column.fill .play-timer {
+    font-size: 2.7rem;
+  }
+
+  .play-column.fill .play-timer-bar {
+    margin-top: -8px;
+  }
+
+  .play-column.fill .play-task {
+    font-size: 0.92rem;
+    line-height: 1.35;
+  }
+}
+
+@media (max-width: 767px) and (max-height: 760px) {
+  .play-column.fill {
+    gap: 10px;
+  }
+
+  .play-column.fill .play-timer {
+    font-size: 2.3rem;
+  }
+
+  .play-column.fill .play-verdict-word {
+    font-size: 1.9rem;
+  }
+
+  .play-column.fill .play-verdict-mark {
+    width: 40px;
+    height: 40px;
+  }
+
+  .play-column.fill .play-actions .play-pill {
+    min-height: 50px;
+  }
+
+  .play-column.fill .play-faces {
+    gap: 14px;
+    margin: 0;
+  }
+
+  .play-column.fill .play-face,
+  .play-column.fill .play-face .avatar {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* Jigsaw on phones (PlayScreen `fill`): the picture's canvas grows into all the height the timer
+   and task leave, and the tray sits under it at the bottom, where the thumb is. */
+@media (max-width: 767px) {
+  .insane-main.fill .insane {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  .insane-main.fill .insane-view {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 240px;
+  }
+
+  .insane-main.fill .play-task {
+    max-width: 34ch;
+  }
+
+  /* Bigger pieces in the tray, easier to pick up with a thumb. */
+  .insane-main.fill .insane-tray {
+    height: 104px;
+  }
+
+  .insane-main.fill .insane-tray .insane-piece {
+    flex-basis: 88px;
+    width: 88px;
+    height: 88px;
+  }
+
+  .insane-main.fill .insane-peek {
+    flex-basis: 72px;
+    width: 72px;
+    height: 72px;
+  }
+
+  .jigsaw-done {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 767px) and (max-height: 760px) {
+  .jigsaw-how {
+    display: none;
+  }
+}
