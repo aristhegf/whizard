@@ -3,12 +3,13 @@ import { useEffect, useRef, useState } from "react";
 /** The longest to hold a screen back for its pictures and fonts: a slow connection sees it anyway. */
 const MAX_WAIT_MS = 1600;
 
-/** Both fonts, asked for now so they're loading while the screen waits. */
+/** The fonts, asked for now so they're loading while the screen waits. */
 function fontsReady(): Promise<unknown> {
   if (!document.fonts) return Promise.resolve();
   return Promise.all([
     document.fonts.load('700 1em "Bricolage Grotesque Variable"', "Whizard play"),
     document.fonts.load('500 1em "Inter Variable"', "Whizard play"),
+    document.fonts.load('800 1em "Whizard Poster"', "WHIZARD PLAY"),
   ]).catch(() => {});
 }
 

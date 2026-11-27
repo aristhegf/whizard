@@ -112,6 +112,34 @@
   z-index: 0;
   pointer-events: none;
   filter: drop-shadow(0 18px 30px rgb(20 0 60 / 55%));
+  transition: opacity 400ms ease;
+}
+
+/* Once the 3D mascot and the players' blocks are drawn (LobbyMascot), the picture only keeps its
+   place in the layout. */
+.lobby-mascot.is-hidden {
+  opacity: 0;
+}
+
+/* The 3D layer over the room's header, behind its title and code, reaching a little past it so
+   the blocks circling the mascot aren't clipped. */
+.lobby-hero > .lobby-toys {
+  position: absolute;
+  inset: -16px -96px;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.lobby-hero > .lobby-toys.is-live {
+  opacity: 1;
+}
+
+.lobby-toys canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .lobby-title {
@@ -1206,9 +1234,45 @@
   width: auto;
 }
 
-/* The spare height goes above the sheet buttons, which sit down by Start and the thumb. */
+/* The spare height goes above the sheet buttons, which sit down by Start and the thumb. The
+   players' 3D blocks (LobbyFloor) share that spare row, behind the buttons, landing just above
+   them. Both are placed in it by hand so they can share it. */
 .lobby.compact .lobby-sheets {
+  grid-row: 5;
+  grid-column: 1;
   align-self: end;
+  position: relative;
+  z-index: 1;
+}
+
+.lobby.compact .lobby-dock {
+  grid-row: 6;
+  grid-column: 1;
+}
+
+.lobby.compact .lobby-floor {
+  position: relative;
+  grid-row: 5;
+  grid-column: 1;
+  align-self: stretch;
+  min-height: 0;
+  margin-bottom: 58px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+.lobby.compact .lobby-floor.is-live {
+  opacity: 1;
+}
+
+/* Out of the layout, so the canvas never props the spare row open: it only fills what's spare. */
+.lobby-floor canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .lobby-game-chip {

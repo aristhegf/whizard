@@ -118,6 +118,7 @@ import { useShakeOnError } from "./ui/errorShake";
 import { focusSetting, SettingRow, SettingSelect } from "./ui/SettingSelect";
 import { SettingGroup } from "./games/settingRows";
 import { canGenerateArt, preloadGeneratingArt } from "./ui/GeneratingArt";
+import { LobbyFloor, LobbyMascot } from "./ui/toys/LobbyToys";
 import { useToast } from "./ui/toast";
 import { GameNoticeContext, GameNotices } from "./ui/gameNotice";
 import { Icon } from "./ui/Icon";
@@ -1052,15 +1053,27 @@ function Lobby({
     </div>
   );
 
+  // Everyone in the room, as the 3D toy blocks see them.
+  const toyPlayers = room.players.map((p) => ({ id: p.id, name: p.nickname }));
   const hero = (
     <section className="lobby-hero" aria-label="Room">
-      <img
-        className="lobby-mascot"
-        src={LOBBY_MASCOT}
-        width={LOBBY_MASCOT_SIZE.width}
-        height={LOBBY_MASCOT_SIZE.height}
-        alt=""
-      />
+      {wide ? (
+        <LobbyMascot
+          src={LOBBY_MASCOT}
+          width={LOBBY_MASCOT_SIZE.width}
+          height={LOBBY_MASCOT_SIZE.height}
+          roomCode={room.code}
+          players={toyPlayers}
+        />
+      ) : (
+        <img
+          className="lobby-mascot"
+          src={LOBBY_MASCOT}
+          width={LOBBY_MASCOT_SIZE.width}
+          height={LOBBY_MASCOT_SIZE.height}
+          alt=""
+        />
+      )}
       <h2 className="lobby-title">
         <span>Your</span> <span className="gold">Game Room</span>
       </h2>
@@ -1278,6 +1291,7 @@ function Lobby({
             </button>
           </div>
           {players}
+          <LobbyFloor roomCode={room.code} players={toyPlayers} />
           <div className="lobby-sheets">
             <button
               className="btn"
