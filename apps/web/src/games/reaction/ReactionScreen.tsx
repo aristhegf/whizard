@@ -23,6 +23,7 @@ import {
   rowsFrom,
   Staged,
   timerMs,
+  CountdownNumber,
 } from "../play";
 
 interface Props {
@@ -179,7 +180,7 @@ function Round(props: Props & { stage: CountdownStage | WaitStage }) {
         <div className="countdown" aria-live="polite">
           <img className="countdown-game-art" src="/art/games/reaction.webp" alt="" />
           <p className="countdown-label">Get ready</p>
-          <p className="countdown-number">{countdown}</p>
+          <CountdownNumber value={countdown} />
           <Ask target={target} big />
         </div>
       </PlayFrame>

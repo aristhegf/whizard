@@ -22,7 +22,15 @@ import {
   type EliminationContext,
 } from "../elimination/parts";
 import { Icon } from "../../ui/Icon";
-import { PlayFaces, PlayFit, PlayTimer, PlayVerdict, Staged, timerMs } from "../play";
+import {
+  PlayFaces,
+  PlayFit,
+  PlayTimer,
+  PlayVerdict,
+  Staged,
+  timerMs,
+  CountdownNumber,
+} from "../play";
 import { elapsedSince } from "../quiz/QuizScreen";
 import {
   facesOf,
@@ -129,7 +137,7 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
         <div className="countdown" aria-live="polite">
           <img className="countdown-game-art" src={context.art} alt="" />
           <p className="countdown-label">Get ready</p>
-          <p className="countdown-number">{countdown}</p>
+          <CountdownNumber value={countdown} />
           <span className="pill pill-glow">Elimination · {context.title}</span>
         </div>
       </EliminationFrame>

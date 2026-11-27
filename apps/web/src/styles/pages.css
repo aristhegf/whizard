@@ -369,15 +369,43 @@ button.topic-tile {
   cursor: pointer;
 }
 
+.play-chip {
+  border-color: color-mix(in oklab, var(--chip, #ffd43f) 38%, transparent);
+  transition:
+    transform 90ms ease-out,
+    box-shadow 120ms ease-out,
+    background-color 150ms ease;
+}
+
+/* Each kind of game wears its own colour (arcade.css): its icon, its edge, and the whole chip
+   once it's chosen, an arcade button with a lip. */
 .play-chip svg {
-  color: #c9a8ff;
+  color: var(--chip, #c9a8ff);
+}
+
+@media (hover: hover) {
+  .play-chip:not([aria-pressed="true"]):hover {
+    background: color-mix(in oklab, var(--chip, #ffd43f) 16%, rgb(18 14 56));
+  }
 }
 
 .play-chip[aria-pressed="true"] {
-  background: linear-gradient(180deg, #ffe066, var(--gold-deep));
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--chip, #ffd43f) 70%, #fff),
+    var(--chip, #ffd43f)
+  );
   border-color: transparent;
-  color: #3a1d00;
-  box-shadow: 0 6px 20px rgb(255 180 40 / 35%);
+  color: #1c0f33;
+  box-shadow:
+    0 4px 0 color-mix(in oklab, var(--chip, #ffd43f) 55%, #000),
+    0 10px 22px -6px color-mix(in oklab, var(--chip, #ffd43f) 70%, transparent);
+  transform: translateY(-2px);
+}
+
+.play-chip:active {
+  transform: translateY(2px);
+  box-shadow: none;
 }
 
 .play-chip[aria-pressed="true"] svg {
@@ -968,12 +996,16 @@ button.topic-tile {
 }
 
 .category-option > svg:first-child {
-  color: #d1a7ff;
+  color: var(--chip, #d1a7ff);
 }
 
 .category-option[aria-pressed="true"] {
-  background: linear-gradient(135deg, #ffe36b, #ffab20);
-  color: #321344;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--chip, #ffd43f) 70%, #fff),
+    var(--chip, #ffab20)
+  );
+  color: #1c0f33;
   font-weight: 800;
 }
 

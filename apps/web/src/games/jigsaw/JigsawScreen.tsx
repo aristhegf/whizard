@@ -30,6 +30,7 @@ import {
   PlayTimer,
   PlayVerdict,
   rowsFrom,
+  CountdownNumber,
 } from "../play";
 
 interface Props {
@@ -209,7 +210,7 @@ function Playing(props: Props & { board: number[]; startsAt: number }) {
               ? `${levelName(view.level)}`
               : `${modeName(view.mode)} · ${levelName(view.level)}`}
           </p>
-          <p className="countdown-number">{countdown}</p>
+          <CountdownNumber value={countdown} />
         </div>
       </PlayFrame>
     );

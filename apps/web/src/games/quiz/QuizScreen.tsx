@@ -24,6 +24,7 @@ import {
   rowsFrom,
   Staged,
   timerMs,
+  CountdownNumber,
 } from "../play";
 import { GeneratingArt } from "../../ui/GeneratingArt";
 import { Brand } from "../../ui/Chrome";
@@ -291,7 +292,7 @@ function Question({ context, stage }: { context: GameContext; stage: QuestionSta
             <img src="/art/mascot/run.webp" alt="" width={441} height={480} />
           )}
           <p className="countdown-label">Get ready</p>
-          <p className="countdown-number">{countdown}</p>
+          <CountdownNumber value={countdown} />
           <span className="pill pill-glow">{context.categoryName}</span>
         </div>
       </PlayFrame>

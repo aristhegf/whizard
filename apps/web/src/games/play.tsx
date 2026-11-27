@@ -36,6 +36,20 @@ export function PlayTop({
   );
 }
 
+/**
+ * The 3-2-1 before a game: each number punches in, a ring of light goes out from it in the game's
+ * colour, and rays turn slowly behind it.
+ */
+export function CountdownNumber({ value }: { value: number }) {
+  return (
+    <p className="countdown-number">
+      <span key={value} className="countdown-tick">
+        {value}
+      </span>
+    </p>
+  );
+}
+
 /** "01:24" from milliseconds. */
 export function bigClock(ms: number): string {
   const seconds = Math.max(0, Math.floor(ms / 1000));
@@ -99,6 +113,9 @@ export function useCountUp(value: number, ms = 650): number {
   return still ? value : shown;
 }
 
+/** How many bits of confetti a right answer throws. */
+const CONFETTI = 16;
+
 /** Right, wrong, out of time, or simply how it went (neither right nor wrong). */
 export type VerdictTone = "good" | "bad" | "late" | "info";
 
@@ -123,6 +140,14 @@ export function PlayVerdict({
     <p className={`play-verdict ${tone}`} role="status">
       <span className="play-verdict-mark" aria-hidden="true">
         <Icon name={icon} size={26} stroke={3} />
+        {/* A right answer bursts into confetti from its mark. */}
+        {tone === "good" && (
+          <span className="play-confetti">
+            {Array.from({ length: CONFETTI }, (_, i) => (
+              <i key={i} style={{ "--k": i } as CSSProperties} />
+            ))}
+          </span>
+        )}
       </span>
       <span className="play-verdict-word">{children}</span>
       {points > 0 && (

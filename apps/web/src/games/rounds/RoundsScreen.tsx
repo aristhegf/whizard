@@ -39,6 +39,7 @@ import {
   PlayVerdict,
   Staged,
   timerMs,
+  CountdownNumber,
 } from "../play";
 import { Podium } from "../../ui/Podium";
 import { buildCard } from "../../share/outcomes";
@@ -211,7 +212,7 @@ function Puzzle({ context, stage }: { context: Context; stage: Stage<"puzzle"> }
         <div className="countdown" aria-live="polite">
           <img className="countdown-game-art" src={context.art} alt="" />
           <p className="countdown-label">Get ready</p>
-          <p className="countdown-number">{countdown}</p>
+          <CountdownNumber value={countdown} />
           <span className="pill pill-glow">{context.name}</span>
         </div>
       </PlayFrame>

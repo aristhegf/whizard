@@ -19,7 +19,7 @@ import {
   Watching,
   type EliminationContext,
 } from "../elimination/parts";
-import { PlayFaces, PlayTimer, Staged, timerMs } from "../play";
+import { PlayFaces, PlayTimer, Staged, timerMs, CountdownNumber } from "../play";
 import { Choices, RevealedChoices } from "./QuizScreen";
 import { parseQuizSettings } from "./QuizSettingsPanel";
 import { ReportQuestion } from "./ReportQuestion";
@@ -121,7 +121,7 @@ function Question({ context, stage }: { context: Context; stage: Stage<"question
             <img src="/art/mascot/run.webp" alt="" width={441} height={480} />
           )}
           <p className="countdown-label">Get ready</p>
-          <p className="countdown-number">{countdown}</p>
+          <CountdownNumber value={countdown} />
           <span className="pill pill-glow">Elimination · {context.categoryName}</span>
         </div>
       </EliminationFrame>

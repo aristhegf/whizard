@@ -30,6 +30,7 @@ import {
   Staged,
   timerMs,
   type VerdictTone,
+  CountdownNumber,
 } from "../play";
 
 interface Props {
@@ -195,7 +196,7 @@ function Question(props: Props & { stage: QuestionStage }) {
             />
           </span>
           <p className="countdown-label">{mine ? "Your turn" : `${name}’s turn`}</p>
-          <p className="countdown-number">{countdown}</p>
+          <CountdownNumber value={countdown} />
           <span className="pill pill-glow">
             {mine ? "Everyone’s guessing about you" : `How well do you know ${name}?`}
           </span>

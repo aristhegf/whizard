@@ -24,6 +24,7 @@ import {
   rowsFrom,
   Staged,
   timerMs,
+  CountdownNumber,
 } from "../play";
 
 interface Props {
@@ -171,7 +172,7 @@ function RevealPhase(props: Props & { stage: CountdownStage | RevealStage }) {
         <div className="countdown" aria-live="polite">
           <img className="countdown-game-art" src="/art/games/memory.webp" alt="" />
           <p className="countdown-label">Get ready</p>
-          <p className="countdown-number">{countdown}</p>
+          <CountdownNumber value={countdown} />
           <span className="pill pill-glow">Memory</span>
         </div>
       </PlayFrame>

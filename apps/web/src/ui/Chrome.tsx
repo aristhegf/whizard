@@ -255,8 +255,10 @@ export function TabBar({ active = null }: { active?: Section }) {
   return (
     <nav className="tabbar" aria-label="Sections">
       {tab(signedIn ? PLAY : PLAY_AS_GUEST)}
-      <button className="tab" disabled={creating} onClick={create}>
-        <Icon name="plusCircle" size={24} />
+      <button className="tab tab-create" disabled={creating} onClick={create}>
+        <span className="tab-coin" aria-hidden="true">
+          <Icon name="plus" size={22} stroke={3} />
+        </span>
         Create
       </button>
       {tab(LEADERBOARD)}

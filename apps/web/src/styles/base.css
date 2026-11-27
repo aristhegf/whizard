@@ -434,21 +434,44 @@ body {
   flex: none;
 }
 
+/* The arcade buttons: candy on top, a darker lip underneath (the same lip as the game cards'
+   Play button), and a press that pushes the button down into it. */
 .btn-primary {
-  background: linear-gradient(135deg, #9a4dff 0%, #7a3aff 50%, #6630f5 100%);
-  border-color: rgb(190 150 255 / 55%);
+  background: linear-gradient(180deg, #a865ff 0%, #7a3aff 55%, #6a2ff2 100%);
+  border-color: transparent;
   box-shadow:
-    var(--glow-purple),
-    inset 0 1px 0 rgb(255 255 255 / 25%);
+    0 5px 0 #3f17a8,
+    0 14px 28px -8px rgb(122 58 255 / 70%),
+    inset 0 1.5px 0 rgb(255 255 255 / 32%);
 }
 
 .btn-gold {
-  background: linear-gradient(180deg, #ffe14a 0%, #ffb52c 100%);
+  background: linear-gradient(180deg, #ffe55c 0%, #ffb52c 100%);
   color: #221400;
   border-color: transparent;
   box-shadow:
-    0 10px 30px rgb(255 180 40 / 35%),
-    inset 0 1px 0 rgb(255 255 255 / 50%);
+    0 5px 0 #c76a00,
+    0 14px 28px -8px rgb(255 160 30 / 55%),
+    inset 0 1.5px 0 rgb(255 255 255 / 60%);
+}
+
+.btn-primary:active:not(:disabled),
+.btn-gold:active:not(:disabled) {
+  transform: translateY(4px);
+}
+
+.btn-primary:active:not(:disabled) {
+  box-shadow:
+    0 1px 0 #3f17a8,
+    0 4px 10px -4px rgb(122 58 255 / 60%),
+    inset 0 1.5px 0 rgb(255 255 255 / 32%);
+}
+
+.btn-gold:active:not(:disabled) {
+  box-shadow:
+    0 1px 0 #c76a00,
+    0 4px 10px -4px rgb(255 160 30 / 45%),
+    inset 0 1.5px 0 rgb(255 255 255 / 60%);
 }
 
 .btn-small {
@@ -468,10 +491,7 @@ body {
   }
 
   .btn-primary:hover:not(:disabled) {
-    background: linear-gradient(135deg, #a55dff 0%, #8547ff 50%, #6f3aff 100%);
-    box-shadow:
-      0 12px 36px rgb(122 58 255 / 60%),
-      inset 0 1px 0 rgb(255 255 255 / 25%);
+    background: linear-gradient(180deg, #b475ff 0%, #8547ff 55%, #7238ff 100%);
   }
 
   .btn-gold:hover:not(:disabled) {
@@ -484,7 +504,7 @@ body {
   }
 }
 
-.btn:active:not(:disabled) {
+.btn:active:not(:disabled, .btn-primary, .btn-gold) {
   transform: translateY(2px);
 }
 
