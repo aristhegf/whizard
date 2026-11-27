@@ -51,7 +51,7 @@ test("a solo game: the items show, the question follows, and the scores add up",
   await choices.first().click();
   await expect(choices).toHaveCount(0, { timeout: 8_000 });
   // Solo, the round ends on the spot and shows its verdict and the right answer.
-  await expect(page.locator(".verdict")).toBeVisible();
+  await expect(page.locator(".play-verdict")).toBeVisible();
   await expect(page.locator(".choice.correct")).toHaveCount(1);
 
   for (let round = 2; round <= 5; round++) {
