@@ -417,13 +417,6 @@ button.topic-tile {
   gap: 18px;
 }
 
-/* The other games, with arrows for the next page on laptops and computers. */
-.play-shelf {
-  display: grid;
-  gap: 12px;
-  min-height: 0;
-}
-
 @media (hover: hover) {
   .play-chip:hover:not([aria-pressed="true"]),
   .play-arrow:hover:not(:disabled) {
@@ -433,13 +426,6 @@ button.topic-tile {
 
 .play-empty {
   text-align: center;
-}
-
-.play-pager {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
 }
 
 .play-arrow {
@@ -457,24 +443,6 @@ button.topic-tile {
 .play-arrow:disabled {
   opacity: 0.35;
   cursor: default;
-}
-
-.play-dots {
-  display: flex;
-  gap: 8px;
-}
-
-.play-dots span {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 25%);
-}
-
-.play-dots span.on {
-  width: 26px;
-  border-radius: 999px;
-  background: var(--gold);
 }
 
 /* Landing screens wait for their pictures and fonts, then appear together. The screen keeps its
@@ -513,10 +481,6 @@ button.topic-tile {
     grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.55fr);
     gap: 24px;
     min-height: 0;
-  }
-
-  .play-shelf {
-    grid-template-rows: minmax(0, 1fr) auto;
   }
 }
 
@@ -725,10 +689,6 @@ button.topic-tile {
   display: none;
 }
 
-.play-page .play-pager {
-  min-height: 38px;
-}
-
 @media (min-width: 1100px) {
   .play-page.page.app-screen {
     max-width: 1680px;
@@ -787,21 +747,6 @@ button.topic-tile {
     grid-template-rows: minmax(0, 1fr);
     min-height: 0;
     gap: 0;
-  }
-
-  .play-page .play-shelf {
-    display: grid;
-    grid-template-rows: minmax(0, 1fr) auto;
-    gap: 10px;
-    min-height: 0;
-  }
-
-  .play-page .play-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: 12px 14px;
-    min-height: 0;
   }
 }
 
@@ -890,12 +835,6 @@ button.topic-tile {
   width: 26px;
   border-radius: 999px;
   background: var(--gold);
-}
-
-@media (min-width: 1100px) {
-  .play-mobile-shelf {
-    display: none;
-  }
 }
 
 @media (max-width: 1099px) {

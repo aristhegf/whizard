@@ -1,23 +1,8 @@
-/* Game cards as posters, and the 3D toy scene. -------------------------------------------------
+/* The welcome page's posters, the Play button, and the 3D toy scene. ----------
 
-   Each card is a frame of dark violet glass, its game's own colour glowing behind the art, with a
-   glass panel at the bottom for the name and Play. On a mouse the card leans toward the pointer
-   and a shine follows it. */
-
-.play-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-@media (min-width: 768px) {
-  .play-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
+   The Games page's cards themselves are in landscapeCard.css. The welcome page's strip keeps the
+   poster: a frame of dark violet glass, the game's colour glowing behind its art, leaning toward
+   the pointer with a shine that follows it. */
 
 /* The poster itself, shared by the Games page's cards and the welcome page's strip: a frame of
    dark violet glass with a neon edge, the game's own colour glowing behind its art. */
@@ -95,140 +80,8 @@
   transition: opacity 300ms ease;
 }
 
-/* A game card: the art at the top, inside the frame, and a glass panel under it with
-   the game's badge, its name, what it is, how many play, and a round gold Play button. */
-.play-card {
-  /* How much of the card the art may take, from the top. */
-  --stage: 64%;
-  display: grid;
-  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
-  min-height: 0;
-  text-align: left;
-}
-
-.play-card-stage {
-  grid-area: 1 / 1;
-  align-self: start;
-  position: relative;
-  z-index: 1;
-  height: var(--stage);
-  min-height: 0;
-  padding: 14px 14px 0;
-  pointer-events: none;
-}
-
-.play-card-art {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 12px 14px rgb(8 2 30 / 65%));
-  transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-/* The glass panel: badge and words on the left, Play on the right. */
-.play-card-body {
-  grid-area: 1 / 1;
-  align-self: end;
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-areas:
-    "badge name play"
-    "badge desc play"
-    "players players play";
-  align-items: center;
-  column-gap: 12px;
-  row-gap: 2px;
-  min-width: 0;
-  margin: 0 8px 8px;
-  padding: 12px 12px 12px 12px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgb(52 24 132 / 82%), rgb(24 10 70 / 92%));
-  box-shadow:
-    inset 0 0 0 1px rgb(190 150 255 / 32%),
-    inset 0 1.5px 0 rgb(255 255 255 / 18%),
-    0 -10px 24px -12px rgb(10 3 40 / 80%);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-}
-
-/* The game's badge: its glyph in gold on a violet tile. */
-.play-card-badge {
-  grid-area: badge;
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 15px;
-  background: linear-gradient(160deg, #9b5cff, #5a22d8);
-  box-shadow:
-    inset 0 0 0 1.5px rgb(220 190 255 / 55%),
-    inset 0 -4px 0 rgb(40 8 120 / 45%),
-    0 0 16px -2px rgb(155 92 255 / 70%);
-  color: #ffd43f;
-}
-
-.play-card-badge > svg:first-child {
-  filter: drop-shadow(0 2px 0 #b8560b);
-}
-
-/* The name, chunky and gold, on the gold's own darker lip. */
-.play-card-name {
-  grid-area: name;
-  align-self: end;
-  margin: 0;
-  min-width: 0;
-  overflow: hidden;
-  font-family: var(--display);
-  font-size: clamp(1.35rem, 1.7vw, 1.7rem);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.01em;
-  color: #ffd43f;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-shadow: 0 2px 0 rgb(120 50 0 / 55%);
-}
-
-.play-card-desc {
-  grid-area: desc;
-  align-self: start;
-  margin: 0;
-  min-width: 0;
-  overflow: hidden;
-  font-size: 0.82rem;
-  font-weight: 600;
-  line-height: 1.3;
-  color: #cdb3ff;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.play-card .players {
-  grid-area: players;
-  justify-self: start;
-  gap: 6px;
-  margin-top: 8px;
-  padding: 5px 12px;
-  border: 1px solid rgb(190 150 255 / 40%);
-  border-radius: 999px;
-  background: rgb(14 5 44 / 60%);
-  color: #ece2ff;
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.play-card .players svg {
-  color: #cdb3ff;
-}
-
 /* Play: a round, glossy gold button in a thin violet ring. It presses in. */
 .play-btn {
-  grid-area: play;
   position: relative;
   display: grid;
   place-items: center;
@@ -326,10 +179,6 @@
     opacity: 1;
   }
 
-  .play-card:hover .play-card-art {
-    transform: translateY(-8px) scale(1.08) rotate(-2deg);
-  }
-
   .play-btn:hover:not(:disabled, .soon) {
     filter: brightness(1.08) saturate(1.1);
   }
@@ -337,7 +186,7 @@
 
 /* Cards arrive one after another, once the page is ready to show. */
 @media (prefers-reduced-motion: no-preference) {
-  .page.reveal.is-ready .play-grid > .play-card {
+  .page.reveal.is-ready .play-mobile-cards > .play-card {
     animation: card-in 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
     animation-delay: calc(var(--i, 0) * 45ms);
   }
@@ -358,7 +207,6 @@ html[data-reduce-motion] .game-poster {
 
 @media (prefers-reduced-motion: reduce) {
   .game-poster,
-  .play-card-art,
   .play-btn {
     transition: none;
   }
@@ -366,145 +214,10 @@ html[data-reduce-motion] .game-poster {
   .game-poster {
     transform: none;
   }
-
-  .play-card:hover .play-card-art,
   .play-btn[aria-busy="true"] {
     transform: none;
     animation: none;
   }
-}
-
-/* Laptops and computers: four across, two down, each sized to fit. */
-@media (min-width: 1100px) {
-  .play-page .play-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-    min-height: 0;
-  }
-
-  .play-page .play-card {
-    --stage: 60%;
-  }
-
-  .play-page .play-card-body {
-    column-gap: 10px;
-    margin: 0 7px 7px;
-    padding: 10px;
-    border-radius: 16px;
-  }
-
-  .play-page .play-card-badge {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-  }
-
-  .play-page .play-card-badge > svg:first-child {
-    width: 22px;
-    height: 22px;
-  }
-
-  .play-page .play-card-desc {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    font-size: 0.72rem;
-    white-space: normal;
-  }
-
-  .play-page .play-card .players {
-    margin-top: 6px;
-    padding: 4px 10px;
-    font-size: 0.7rem;
-  }
-
-  .play-page .play-btn {
-    width: 50px;
-    height: 50px;
-  }
-
-  .play-page .play-btn-glyph {
-    width: 20px;
-    height: 20px;
-  }
-}
-
-/* Short laptop screens: the players line goes, so the art keeps its room. */
-@media (min-width: 1100px) and (max-height: 760px) {
-  .play-page .play-card {
-    --stage: 62%;
-    border-radius: 20px;
-  }
-
-  .play-page .play-card-name {
-    font-size: 1.2rem;
-  }
-
-  .play-page .play-card-desc {
-    display: none;
-  }
-
-  .play-page .play-card .players {
-    display: none;
-  }
-
-  .play-page .play-btn {
-    width: 44px;
-    height: 44px;
-  }
-}
-
-/* Phones: a card about four-fifths of the screen wide, the next one peeking in at the side, so
-   the card sits on the page rather than filling it. */
-.play-mobile-cards > .play-card {
-  --stage: 60%;
-  flex: 0 0 84%;
-  align-self: center;
-  aspect-ratio: 3 / 4;
-  max-height: 100%;
-  border-radius: 24px;
-  scroll-snap-align: start;
-  /* No lean on touch; the swipe is the motion. */
-  transform: none;
-}
-
-.play-mobile-cards .play-card-badge {
-  width: 44px;
-  height: 44px;
-  border-radius: 13px;
-}
-
-.play-mobile-cards .play-card-body {
-  column-gap: 10px;
-  margin: 0 8px 8px;
-  padding: 12px;
-  border-radius: 18px;
-}
-
-.play-mobile-cards .play-card-name {
-  font-size: 1.55rem;
-}
-
-/* A phone has room for the whole line about the game. */
-.play-mobile-cards .play-card-desc {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  font-size: 0.88rem;
-  white-space: normal;
-}
-
-.play-mobile-cards .play-card .players {
-  padding: 6px 12px;
-  font-size: 0.8rem;
-}
-
-.play-mobile-cards .play-btn {
-  width: 52px;
-  height: 52px;
 }
 
 @media (max-width: 1099px) {
@@ -528,47 +241,6 @@ html[data-reduce-motion] .game-poster {
     width: 28px;
     background: var(--gold);
     background-clip: content-box;
-  }
-}
-
-/* A short phone: a smaller panel, so the art keeps its room. */
-@media (max-width: 1099px) and (max-height: 700px) {
-  .play-mobile-cards > .play-card {
-    --stage: 56%;
-  }
-
-  .play-mobile-cards .play-card-body {
-    padding: 10px 12px;
-  }
-
-  .play-mobile-cards .play-card-badge {
-    width: 40px;
-    height: 40px;
-  }
-
-  .play-mobile-cards .play-card-name {
-    font-size: 1.35rem;
-  }
-
-  /* No room for the whole line on a short phone, and half a line reads as broken: it goes. */
-  .play-mobile-cards .play-card-desc {
-    display: none;
-  }
-
-  .play-mobile-cards .play-card-name {
-    grid-row: 1 / 3;
-    align-self: center;
-  }
-
-  .play-mobile-cards .play-card .players {
-    margin-top: 6px;
-    padding: 4px 10px;
-    font-size: 0.74rem;
-  }
-
-  .play-mobile-cards .play-btn {
-    width: 48px;
-    height: 48px;
   }
 }
 
@@ -619,18 +291,30 @@ html[data-reduce-motion] .game-poster {
   object-position: 80% 50%;
 }
 
-/* The card and its dots sit together in the middle of the space, not stretched to fill it. A
-   spacer after the last card lets it scroll to the start like the others. */
-.play-mobile-shelf {
-  grid-template-rows: minmax(0, max-content) auto;
-  align-content: center;
-}
-
+/* The row of games: cards at their own shape, as tall as the row, with arrows at either end of
+   the page. Room above and below for a card's lift and its shadow. */
 .play-mobile-cards {
-  padding-block: 8px;
+  padding-block: 6px 16px;
 }
 
-.play-mobile-cards::after {
-  content: "";
-  flex: 0 0 calc(16% - 12px);
+.play-shelf-track {
+  position: relative;
+  display: grid;
+  min-height: 0;
+}
+
+.play-shelf-track > .play-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 30;
+  translate: 0 -50%;
+  box-shadow: 0 8px 20px -6px rgb(5 2 25 / 80%);
+}
+
+.play-arrow-prev {
+  left: 6px;
+}
+
+.play-arrow-next {
+  right: 6px;
 }

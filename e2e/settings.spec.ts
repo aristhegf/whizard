@@ -60,14 +60,16 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   expect(await labels(page, "Main")).toEqual(["Games", "Pricing", "Stats"]);
   await expect(page.getByLabel("Room code")).toBeVisible();
 
-  // Desktop shows eight catalogue cards in a two-row grid, with pagination for the rest.
+  // Every game is in one row of cards at their own shape, with arrows at either end to move
+  // along it.
   const cards = page.getByRole("list", { name: "Games" }).getByRole("listitem");
-  await expect(cards).toHaveCount(8);
-  await expect(page.getByRole("button", { name: "Previous games" })).toBeDisabled();
+  await expect(cards).toHaveCount(11);
+  const previous = page.getByRole("button", { name: "Previous games" });
+  await expect(previous).toBeDisabled();
   await page.getByRole("button", { name: "More games" }).click();
-  await expect(cards).toHaveCount(3);
+  await expect(previous).toBeEnabled();
   // Every game in the catalogue is playable now.
-  await expect(cards.filter({ hasText: "Most Likely To" })).not.toContainText("Coming soon");
+  await expect(cards.filter({ hasText: "Most Likely To" })).not.toContainText("Soon");
 
   // The kinds of game narrow it down.
   await page.getByRole("button", { name: "Couples" }).click();

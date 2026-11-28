@@ -1,46 +1,43 @@
-import { useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { CATALOG, GAME_GROUPS, isPlayable, type CatalogGame, type GameGroup } from "../catalog";
 import { linkTo } from "../router";
 import { BottomSheet } from "../ui/BottomSheet";
+import { CardLandscape } from "../ui/CardLandscape";
 import { createFailed, startRoom, TopLayout } from "../ui/Chrome";
 import { useMediaQuery } from "../ui/common";
 import { RoomGlow } from "../ui/RoomGlow";
 import { Icon } from "../ui/Icon";
 import { LiveCount } from "../ui/LiveCount";
-import { tilt } from "../ui/tilt";
 import { ToyScene } from "../ui/toys/ToyScene";
 import { useToast } from "../ui/toast";
 
-/** Eight cards fit the intended two-row desktop layout. */
-const PAGE_SIZE = 8;
-
-/** The home screen: what to play, all on one screen on laptops and computers. */
+/**
+ * The home screen: what to play, on one screen. The games are a row of cards at their own shape,
+ * as tall as the screen allows, to swipe or page through with the arrows at either end.
+ */
 export function HomePage() {
   const [group, setGroup] = useState<GameGroup | "all">("all");
-  const [page, setPage] = useState(0);
-  // Phones show one featured game at a time; a kind of game opens its games in a sheet instead.
+  // On phones a kind of game is picked in a sheet.
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [mobileIndex, setMobileIndex] = useState(0);
   // The game the room glows for: the one under the mouse on a computer.
   const [hovered, setHovered] = useState<string | null>(null);
+  // Whether the row is at its start or its end, for the arrows.
+  const [ends, setEnds] = useState({ start: true, end: false });
   const shelfRef = useRef<HTMLUListElement>(null);
   const paged = useMediaQuery("(min-width: 1100px)");
 
   const games = CATALOG.filter((g) => group === "all" || g.groups.includes(group)).sort(
     (a, b) => Number(isPlayable(b)) - Number(isPlayable(a)),
   );
-  const pages = Math.max(1, Math.ceil(games.length / PAGE_SIZE));
-  const current = Math.min(page, pages - 1);
-  const shown = games.slice(current * PAGE_SIZE, (current + 1) * PAGE_SIZE);
 
-  // The room lights up in the colours of the game in front of you: the card on a phone's screen,
-  // or the one under the mouse.
-  const spotlight = paged ? (hovered ?? shown[0]?.id) : games[mobileIndex]?.id;
+  // The room lights up in the colours of the game in front of you: the one under the mouse, or
+  // the first one in view.
+  const spotlight = (paged && hovered) || games[mobileIndex]?.id;
 
   const chooseGroup = (next: GameGroup | "all") => {
     setGroup(next);
     setHovered(null);
-    setPage(0);
     setMobileIndex(0);
     shelfRef.current?.scrollTo({ left: 0 });
   };
@@ -51,6 +48,29 @@ export function HomePage() {
     if (!shelf || !card) return;
     const gap = parseFloat(getComputedStyle(shelf).columnGap || "0");
     setMobileIndex(Math.round(shelf.scrollLeft / (card.offsetWidth + gap)));
+    setEnds({
+      start: shelf.scrollLeft <= 2,
+      end: shelf.scrollLeft + shelf.clientWidth >= shelf.scrollWidth - 2,
+    });
+  };
+
+  // A new kind of game, or a resized window, changes how much of the row fits.
+  useEffect(() => {
+    onShelfScroll();
+    const shelf = shelfRef.current;
+    if (!shelf) return;
+    const resized = new ResizeObserver(() => onShelfScroll());
+    resized.observe(shelf);
+    return () => resized.disconnect();
+  }, [group]);
+
+  /** One card along, either way. */
+  const step = (direction: 1 | -1) => {
+    const shelf = shelfRef.current;
+    const card = shelf?.firstElementChild as HTMLElement | null;
+    if (!shelf || !card) return;
+    const gap = parseFloat(getComputedStyle(shelf).columnGap || "0");
+    shelf.scrollBy({ left: direction * (card.offsetWidth + gap), behavior: "smooth" });
   };
 
   const goToGame = (index: number) => {
@@ -127,72 +147,50 @@ export function HomePage() {
         )}
 
         <div className="play-body">
-          {!paged && (
-            <div className="play-mobile-shelf">
+          <div className="play-mobile-shelf">
+            <div className="play-shelf-track">
               <ul
                 ref={shelfRef}
                 className="play-mobile-cards"
-                aria-label="Games to play"
+                aria-label={paged ? "Games" : "Games to play"}
                 onScroll={onShelfScroll}
               >
-                {games.map((game) => (
-                  <GameCard key={game.id} game={game} />
+                {games.map((game, i) => (
+                  <GameCard key={game.id} game={game} index={i} onSpotlight={setHovered} />
                 ))}
               </ul>
-              {games.length > 1 && (
-                <div className="play-mobile-dots" role="group" aria-label="Game pages">
-                  {games.map((game, i) => (
-                    <button
-                      key={game.id}
-                      className={i === mobileIndex ? "on" : undefined}
-                      aria-label={`Show ${game.name}`}
-                      aria-current={i === mobileIndex}
-                      onClick={() => goToGame(i)}
-                    />
-                  ))}
-                </div>
-              )}
+              {/* At either end of the page: there are more games to swipe to. */}
+              <button
+                className="play-arrow play-arrow-prev"
+                aria-label="Previous games"
+                disabled={ends.start}
+                onClick={() => step(-1)}
+              >
+                <Icon name="chevronLeft" size={24} stroke={2.6} />
+              </button>
+              <button
+                className="play-arrow play-arrow-next"
+                aria-label="More games"
+                disabled={ends.end}
+                onClick={() => step(1)}
+              >
+                <Icon name="chevronRight" size={24} stroke={2.6} />
+              </button>
             </div>
-          )}
-
-          {paged && (
-            <div className="play-shelf">
-              {shown.length === 0 ? (
-                <p className="muted play-empty">No other games of this kind yet.</p>
-              ) : (
-                <ul className="play-grid" aria-label="Games">
-                  {shown.map((g, i) => (
-                    <GameCard key={g.id} game={g} index={i} onSpotlight={setHovered} />
-                  ))}
-                </ul>
-              )}
-              {pages > 1 && (
-                <div className="play-pager">
+            {games.length > 1 && (
+              <div className="play-mobile-dots" role="group" aria-label="Game pages">
+                {games.map((game, i) => (
                   <button
-                    className="play-arrow"
-                    aria-label="Previous games"
-                    disabled={current === 0}
-                    onClick={() => setPage(current - 1)}
-                  >
-                    <Icon name="chevronLeft" size={24} stroke={2.6} />
-                  </button>
-                  <span className="play-dots" aria-label={`Page ${current + 1} of ${pages}`}>
-                    {Array.from({ length: pages }, (_, i) => (
-                      <span key={i} className={i === current ? "on" : undefined} />
-                    ))}
-                  </span>
-                  <button
-                    className="play-arrow"
-                    aria-label="More games"
-                    disabled={current === pages - 1}
-                    onClick={() => setPage(current + 1)}
-                  >
-                    <Icon name="chevronRight" size={24} stroke={2.6} />
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+                    key={game.id}
+                    className={i === mobileIndex ? "on" : undefined}
+                    aria-label={`Show ${game.name}`}
+                    aria-current={i === mobileIndex}
+                    onClick={() => goToGame(i)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
     </TopLayout>
@@ -262,16 +260,13 @@ function GameCard({
   } as CSSProperties;
   const label = `Play ${game.name}`;
 
-  // The round gold Play button.
-  const face = <Icon name="play" size={22} fill className="play-btn-glyph" />;
-  const action = game.href ? (
-    <a className="play-btn" aria-label={label} {...linkTo(game.href)}>
-      {face}
-    </a>
+  // The whole card plays: a link or a button stretched over it, named for screen readers.
+  const hit = game.href ? (
+    <a className="wx-hit" aria-label={label} {...linkTo(game.href)} />
   ) : game.starts ? (
     // Games without a page of their own open a room straight away.
     <button
-      className="play-btn"
+      className="wx-hit"
       aria-label={label}
       aria-busy={opening}
       disabled={opening}
@@ -282,36 +277,52 @@ function GameCard({
           toast.show({ title: createFailed(error), status: "error" });
         });
       }}
-    >
-      {face}
-    </button>
-  ) : (
-    <span className="play-btn soon">Coming soon</span>
-  );
+    />
+  ) : null;
+  // "1-20 players" as just "1-20".
+  const players = game.players.replace(/\s*players?$/i, "");
+  // What kind of game it is, over the sky; Quiz is a kind of its own, so it shows its other one.
+  const kind =
+    game.groups
+      .map((id) => GAME_GROUPS.find((g) => g.id === id)?.name)
+      .find((name) => name && name !== game.name) ?? "";
 
+  // From Uiverse.io by KSAplay - https://uiverse.io/KSAplay/strong-donkey-70
+  // MIT License, Copyright (c) KSAplay (Kenny)
+  // The layout of the "Minimalist Weather Card": the landscape on top with what kind of game it
+  // is over the sky, then its name, what it is and how many play in rows on white.
   return (
     <li
-      className={`game-poster play-card${isPlayable(game) ? "" : " unavailable"}`}
+      className={`wx-card play-card${isPlayable(game) ? "" : " unavailable"}`}
       style={style}
-      {...tilt}
       onPointerEnter={() => onSpotlight?.(game.id)}
       onFocus={() => onSpotlight?.(game.id)}
     >
-      <div className="play-card-stage" aria-hidden="true">
-        <img className="play-card-art" src={game.art} alt="" width={310} height={320} />
+      <CardLandscape art={game.art} />
+      <div className="wx-info">
+        <div className="wx-left">
+          <span className="wx-icon" aria-hidden="true">
+            <Icon name={game.icon} size={36} stroke={1.6} />
+          </span>
+          <p>{kind}</p>
+        </div>
       </div>
-      <div className="play-card-body">
-        <span className="play-card-badge" aria-hidden="true">
-          <Icon name={game.icon} size={24} stroke={2.4} />
-        </span>
-        <h3 className="play-card-name">{game.name}</h3>
-        <p className="play-card-desc">{game.description}</p>
-        <span className="players">
-          <Icon name="users" size={14} />
-          {game.players}
-        </span>
-        {action}
-      </div>
+      <section className="wx-content">
+        <div className="wx-forecast">
+          <div>
+            <h3 className="wx-name">{game.name}</h3>
+          </div>
+          <div className="wx-separator" />
+          <div>
+            <p className="wx-desc">{game.description}</p>
+            <p className="wx-players">
+              {isPlayable(game) ? players : "Soon"}
+              {isPlayable(game) && <span className="sr-only"> players</span>}
+            </p>
+          </div>
+        </div>
+      </section>
+      {hit}
     </li>
   );
 }
