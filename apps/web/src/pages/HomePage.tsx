@@ -281,16 +281,11 @@ function GameCard({
   ) : null;
   // "1-20 players" as just "1-20".
   const players = game.players.replace(/\s*players?$/i, "");
-  // What kind of game it is, over the sky; Quiz is a kind of its own, so it shows its other one.
-  const kind =
-    game.groups
-      .map((id) => GAME_GROUPS.find((g) => g.id === id)?.name)
-      .find((name) => name && name !== game.name) ?? "";
 
   // From Uiverse.io by KSAplay - https://uiverse.io/KSAplay/strong-donkey-70
   // MIT License, Copyright (c) KSAplay (Kenny)
-  // The layout of the "Minimalist Weather Card": the landscape on top with what kind of game it
-  // is over the sky, then its name, what it is and how many play in rows on white.
+  // The layout of the "Minimalist Weather Card": the landscape on top, then the game's name, what
+  // it is and how many play in rows on white.
   return (
     <li
       className={`wx-card play-card${isPlayable(game) ? "" : " unavailable"}`}
@@ -299,14 +294,6 @@ function GameCard({
       onFocus={() => onSpotlight?.(game.id)}
     >
       <CardLandscape art={game.art} />
-      <div className="wx-info">
-        <div className="wx-left">
-          <span className="wx-icon" aria-hidden="true">
-            <Icon name={game.icon} size={36} stroke={1.6} />
-          </span>
-          <p>{kind}</p>
-        </div>
-      </div>
       <section className="wx-content">
         <div className="wx-forecast">
           <div>

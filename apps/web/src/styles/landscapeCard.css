@@ -35,7 +35,8 @@
 
 .wx-landscape {
   position: relative;
-  flex: 1 1 auto;
+  /* The original's split, at every size: 70 picture, 30 white. */
+  flex: 0 0 70%;
   width: 100%;
   min-height: 0;
   overflow: hidden;
@@ -294,7 +295,9 @@
 
 .wx-content {
   display: flex;
-  flex: none;
+  flex: 0 0 30%;
+  min-height: 0;
+  overflow: hidden;
   flex-direction: column;
   align-items: center;
   width: 100%;
@@ -305,9 +308,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  gap: 8px;
+  /* The original's 12px by 25px and 8px of a 220 by 350 card, so the rows scale with it. */
+  gap: 2.3cqh;
   width: 100%;
-  padding: 12px 25px;
+  height: 100%;
+  padding: 3.4cqh 11.4cqw;
 }
 
 .wx-forecast > div:not(.wx-separator) {
@@ -317,7 +322,7 @@
   gap: 12px;
   width: 100%;
   color: #5f6f80;
-  font-size: 9pt;
+  font-size: clamp(10px, 3.43cqh, 15px);
 }
 
 .wx-forecast p {
@@ -331,7 +336,7 @@
   overflow: hidden;
   color: #2a2f45;
   font-family: var(--body);
-  font-size: 1.15rem;
+  font-size: clamp(13px, 5.26cqh, 24px);
   font-weight: 700;
   line-height: 1.2;
   text-overflow: ellipsis;
