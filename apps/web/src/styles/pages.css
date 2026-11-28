@@ -704,7 +704,7 @@ button.topic-tile {
   .play-page .play-head {
     grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
     grid-template-areas:
-      "count hero"
+      "count count"
       "title hero"
       "subtitle hero"
       "chips chips";

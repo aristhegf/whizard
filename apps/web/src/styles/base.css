@@ -840,16 +840,24 @@ select option {
   min-width: 0;
 }
 
-/* Wide screens read left to right: the logo with its links beside it, then the box and the
-   account at the far end. */
+/* Wide screens: the logo at the start, the links in the middle, the box and the account at the
+   far end. */
 @media (min-width: 1100px) {
+  /* Three columns, the outer two equal, so the links sit in the middle of the page whatever the
+     logo and the box beside the account measure. */
   .topnav {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     min-height: 76px;
     gap: 24px;
   }
 
+  .topnav > .brand {
+    justify-self: start;
+  }
+
   .topnav-end {
-    flex: none;
+    justify-self: end;
     gap: 14px;
   }
 }
@@ -873,6 +881,45 @@ select option {
   background-clip: text;
   color: transparent;
   filter: drop-shadow(0 3px 0 rgb(80 30 10 / 55%));
+}
+
+/* The crown alone says Whizard; the word slides out from behind it only when the pointer rests
+   on the logo, or the keyboard reaches it. */
+.brand {
+  gap: 0;
+}
+
+.brand span {
+  display: inline-block;
+  max-width: 0;
+  padding-left: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  translate: -12px 0;
+  /* Room for the letters' drop shadow inside the clip. */
+  padding-bottom: 4px;
+  margin-bottom: -4px;
+  transition:
+    max-width 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    padding-left 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 200ms ease,
+    translate 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.brand:hover span,
+.brand:focus-visible span {
+  max-width: 8em;
+  padding-left: 8px;
+  opacity: 1;
+  translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand span {
+    transition: opacity 150ms ease;
+    translate: 0 0;
+  }
 }
 
 .brand .logo-mark {
@@ -914,9 +961,8 @@ select option {
   }
 }
 
-/* Games, Pricing and Stats (or Play, Create, Stats and Leaderboard): plain words in a row beside
-   the logo, brightening under the pointer. It takes the free width, which pushes the room-code
-   box and the account to the far end. */
+/* Games, Pricing and Stats (or Play, Create, Stats and Leaderboard): plain words in a row in the
+   middle of the top bar, brightening under the pointer. */
 .nav-links {
   display: none;
 }
@@ -924,7 +970,7 @@ select option {
 @media (min-width: 1100px) {
   .nav-links {
     display: flex;
-    flex: 1;
+    justify-content: center;
     align-items: center;
     gap: 4px;
     min-width: 0;
