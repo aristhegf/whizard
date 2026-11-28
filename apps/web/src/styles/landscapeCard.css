@@ -448,3 +448,24 @@
     transform: none;
   }
 }
+
+/* Phones: each card 86% of the row's height, centred, with space all round it and the next ones
+   peeking in evenly at both sides. The row is a size container: a card is 86cqh tall and so
+   27.03cqh either side of its middle (86 x 220 / 350 / 2). */
+@media (max-width: 1099px) {
+  .play-shelf-track {
+    container-type: size;
+  }
+
+  .play-mobile-cards {
+    align-items: center;
+    gap: 14px;
+    padding: 0 calc(50cqw - 27.03cqh);
+    scroll-padding-inline: 0;
+  }
+
+  .play-mobile-cards > .wx-card {
+    height: 86cqh;
+    scroll-snap-align: center;
+  }
+}
