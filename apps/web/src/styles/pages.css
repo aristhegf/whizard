@@ -857,11 +857,12 @@ button.topic-tile {
   padding-bottom: calc(8px + env(safe-area-inset-bottom));
 }
 
-/* The home page keeps its cards visible behind the picker: no dim, no blur. */
+/* The picker opens over the page like a menu: the cards stay as they are, dimmed and blurred
+   behind it. */
 .category-sheet::backdrop {
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  background: rgb(7 6 29 / 45%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .category-sheet .sheet-grip {
@@ -1006,49 +1007,6 @@ button.topic-tile {
     grid-template-rows: minmax(0, 1fr);
     min-height: 0;
     overflow: hidden;
-  }
-
-  /* While the category sheet is open, shrink the card area so the card stays fully above it. */
-  /* The sheet covers the tab bar too, whose room the page already keeps (76px), so only the
-     rest of the sheet's height is taken off, less a little gap. */
-  .play-page:has(.category-sheet[open]) .play-body {
-    padding-bottom: calc(var(--category-sheet-h, min(42dvh, 390px)) - 76px + 10px);
-  }
-
-  /* Picking a category: the head folds away so the card rises above the sheet. */
-  .play-page .play-head {
-    transition: gap 300ms cubic-bezier(0.32, 0.72, 0, 1);
-  }
-
-  .play-page.is-picking .play-head {
-    gap: 0;
-  }
-
-  .play-page .live-count,
-  .play-page .play-title,
-  .play-page .play-subtitle,
-  .play-page .play-mobile-categories {
-    max-height: 220px;
-    overflow: hidden;
-    opacity: 1;
-    transition:
-      max-height 300ms cubic-bezier(0.32, 0.72, 0, 1),
-      opacity 200ms ease,
-      margin 300ms cubic-bezier(0.32, 0.72, 0, 1),
-      padding 300ms cubic-bezier(0.32, 0.72, 0, 1);
-  }
-
-  .play-page.is-picking .live-count,
-  .play-page.is-picking .play-title,
-  .play-page.is-picking .play-subtitle,
-  .play-page.is-picking .play-mobile-categories {
-    max-height: 0;
-    min-height: 0;
-    margin: 0;
-    padding-block: 0;
-    border-width: 0;
-    opacity: 0;
-    pointer-events: none;
   }
 
   .category-sheet .category-option {

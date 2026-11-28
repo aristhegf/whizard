@@ -307,11 +307,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  /* The original's 12px by 25px and 8px of a 220 by 350 card, so the rows scale with it. */
-  gap: 2.3cqh;
+  /* Spacing in units of the card, so the rows scale with it. */
+  gap: 3cqh;
   width: 100%;
   height: 100%;
-  padding: 3.4cqh 11.4cqw;
+  padding: 3cqh 6cqw;
 }
 
 .wx-forecast > div:not(.wx-separator) {
@@ -321,7 +321,7 @@
   gap: 12px;
   width: 100%;
   color: #5f6f80;
-  font-size: clamp(10px, 3.43cqh, 15px);
+  font-size: clamp(10px, 4cqw, 15px);
 }
 
 .wx-forecast p {
@@ -335,7 +335,7 @@
   overflow: hidden;
   color: #2a2f45;
   font-family: var(--body);
-  font-size: clamp(13px, 5.26cqh, 24px);
+  font-size: clamp(13px, 5.5cqw, 20px);
   font-weight: 700;
   line-height: 1.2;
   text-overflow: ellipsis;
@@ -344,11 +344,10 @@
 
 /* What it is, then how many play at the end of the row. */
 .wx-desc {
-  display: -webkit-box;
+  min-width: 0;
   overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .wx-players {
@@ -404,36 +403,51 @@
   outline-offset: 3px;
 }
 
-/* Where the cards go ----------------------------------------------------------------------------- */
+/* Where the cards go -----------------------------------------------------------------------------
+   Two rows of cards in columns, side by side, moving a column (two games) at a time; the next
+   column peeks in at the side. Every card is the same shape (5:4) on every screen, only bigger
+   or smaller: two rows fill the row's height, 12px clear above, below and between. */
+
+.play-shelf-track {
+  container-type: size;
+}
+
+.play-mobile-cards {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, max-content);
+  align-content: center;
+  gap: 12px;
+  padding: 12px 16px;
+  scroll-padding-inline: 16px;
+}
+
+.play-mobile-cards {
+  grid-auto-columns: max-content;
+}
 
 .play-mobile-cards > .wx-card {
+  /* Two rows tall, but never so wide the next column can't peek in (16px margin, 12px gap and
+     56px of it). */
+  --card-h: min((100cqh - 24px - 12px) / 2, (100cqw - 16px - 12px - 56px) / 1.25);
+  width: calc(var(--card-h) * 1.25);
+  height: var(--card-h);
+  aspect-ratio: auto;
   scroll-snap-align: start;
 }
 
-/* A small card (a short phone while the category sheet is open): the picture and the name only,
-   so nothing is squeezed into half-words. */
-@container wx-card (max-height: 330px) {
-  .wx-left p,
+/* A small card: no line between the name and the rest, so both still fit the white part. */
+@container wx-card (max-height: 230px) {
+  .wx-separator {
+    display: none;
+  }
+}
+
+/* A very small card: the picture and the name only. */
+@container wx-card (max-height: 150px) {
   .wx-separator,
   .wx-forecast > div:has(.wx-desc) {
     display: none;
-  }
-
-  .wx-forecast {
-    padding: 8px 12px;
-  }
-
-  .wx-name {
-    font-size: 0.95rem;
-  }
-
-  .wx-info {
-    padding: 10px 10px 0;
-  }
-
-  .wx-icon svg {
-    width: 26px;
-    height: 26px;
   }
 }
 
@@ -445,27 +459,5 @@
   .wx-card:hover,
   .wx-card:has(.wx-hit:active) {
     transform: none;
-  }
-}
-
-/* Phones: the row starts at the page's side margin and fills the height between the title and
-   the tab bar, 12px clear above and below; the next card peeks in at the right. */
-@media (max-width: 1099px) {
-  .play-shelf-track {
-    container-type: size;
-  }
-
-  .play-mobile-cards {
-    gap: 12px;
-    padding: 12px 16px;
-    scroll-padding-inline: 16px;
-  }
-
-  /* As wide as the screen less the margin and 56px of the next card, as tall as the row: the
-     picture and the white panel keep their 70:30 split, whatever the phone's shape. */
-  .play-mobile-cards > .wx-card {
-    width: calc(100cqw - 16px - 12px - 56px);
-    height: calc(100cqh - 24px);
-    aspect-ratio: auto;
   }
 }

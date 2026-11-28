@@ -32,8 +32,8 @@ export function HomePage() {
   );
 
   // The room lights up in the colours of the game in front of you: the one under the mouse, or
-  // the first one in view.
-  const spotlight = (paged && hovered) || games[mobileIndex]?.id;
+  // the top one of the first column in view (two games to a column).
+  const spotlight = (paged && hovered) || games[mobileIndex * 2]?.id;
 
   const chooseGroup = (next: GameGroup | "all") => {
     setGroup(next);
