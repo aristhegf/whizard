@@ -1,19 +1,12 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import { accountMenu, createRoomFromMenu, openMenu } from "./menu";
 import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
-
-/** The words on each link or button in a navigation bar, in order. */
-async function labels(page: Page, name: string) {
-  const bar = page.getByRole("navigation", { name });
-  await expect(bar.locator("a, button").first()).toBeVisible();
-  // The words as written: the bar shows them in capitals.
-  return (await bar.locator("a, button").allTextContents()).map((t) => t.trim());
-}
 
 test("a guest can change sound and animations, and they're remembered", async ({ page }) => {
   await page.goto("/games");
-  // On phones, Settings is in the menu under "Me".
-  await page.getByRole("button", { name: "Me", exact: true }).click();
-  await page.getByRole("button", { name: "Settings", exact: true }).click();
+  // Settings is in the side strip (and the avatar's menu).
+  const panel = await openMenu(page);
+  await panel.getByRole("button", { name: "Settings", exact: true }).click();
 
   const settings = page.getByRole("dialog", { name: "Settings", exact: true });
   const sound = settings.getByRole("switch", { name: "Sound" });
@@ -32,7 +25,7 @@ test("a guest can change sound and animations, and they're remembered", async ({
   await expect(page.locator("html")).toHaveAttribute("data-reduce-motion", "");
 
   // The same settings open from the room's bar.
-  await page.getByRole("button", { name: "Create", exact: true }).click();
+  await createRoomFromMenu(page);
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   await page.getByLabel("Choose a nickname").fill("Ada");
   await page.getByRole("button", { name: "Join", exact: true }).click();
@@ -56,21 +49,34 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   const height = await page.evaluate(() => document.documentElement.scrollHeight);
   expect(height).toBeLessThanOrEqual(720);
 
-  // The top bar, the same on every page.
-  expect(await labels(page, "Main")).toEqual(["Games", "Pricing", "Stats"]);
+  // The top bar, the same on every page; everything else is in the strip down the left, with
+  // the games and their kinds first.
   await expect(page.getByLabel("Room code")).toBeVisible();
+  const panel = page.locator("#side-panel");
+  await expect(panel).toBeVisible();
+  await expect(panel.getByRole("link", { name: "Games", exact: true })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
 
-  // Desktop shows eight catalogue cards in a two-row grid, with pagination for the rest.
+  // Every game is in one row of cards at their own shape, with arrows at either end to move
+  // along it.
   const cards = page.getByRole("list", { name: "Games" }).getByRole("listitem");
-  await expect(cards).toHaveCount(8);
-  await expect(page.getByRole("button", { name: "Previous games" })).toBeDisabled();
-  await page.getByRole("button", { name: "More games" }).click();
-  await expect(cards).toHaveCount(3);
+  await expect(cards).toHaveCount(11);
+  const previous = page.getByRole("button", { name: "Previous games" });
+  await expect(previous).toBeDisabled();
+  // Where the row is wider than the screen, the arrow moves along it.
+  const more = page.getByRole("button", { name: "More games" });
+  if (await more.isEnabled()) {
+    await more.click();
+    await expect(previous).toBeEnabled();
+  }
   // Every game in the catalogue is playable now.
-  await expect(cards.filter({ hasText: "Most Likely To" })).not.toContainText("Coming soon");
+  await expect(cards.filter({ hasText: "Most Likely To" })).not.toContainText("Soon");
 
-  // The kinds of game narrow it down.
-  await page.getByRole("button", { name: "Couples" }).click();
+  // The kinds of game, under Games in the panel, narrow it down.
+  await panel.getByRole("link", { name: "Couples" }).click();
+  await expect(page).toHaveURL(/\/games\?kind=couples$/);
   await expect(cards).toHaveCount(1);
   await expect(cards).toContainText("How Well Do You Know Me?");
 
@@ -81,78 +87,71 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   await expect(menu.getByRole("button", { name: "Settings", exact: true })).toBeVisible();
   await page.keyboard.press("Escape");
 
-  // The pages about Whizard are in a row at the bottom, still on the one screen.
-  const site = page.getByRole("navigation", { name: "Site" });
-  await expect(site.getByRole("link", { name: "About" })).toBeInViewport();
-  await site.getByRole("link", { name: "Privacy" }).click();
+  // The pages about Whizard are in the strip, not along the bottom of the page.
+  await expect(page.getByRole("navigation", { name: "Site" })).toHaveCount(0);
+  await expect(panel.getByRole("link", { name: "About" })).toBeVisible();
+  await panel.getByRole("link", { name: "Privacy" }).click();
   await expect(page).toHaveURL(/\/privacy$/);
-  expect(await labels(page, "Main")).toEqual(["Games", "Pricing", "Stats"]);
+  await expect(panel.getByRole("link", { name: "Privacy" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+
+  // The button beside the logo hides the strip, and the page has the screen to itself; pressed
+  // again, the strip comes back.
+  await page.getByRole("button", { name: "Hide menu" }).click();
+  await expect(panel).toBeHidden();
+  await page.getByRole("button", { name: "Show menu" }).click();
+  await expect(panel).toBeVisible();
 });
 
 for (const viewport of [
   { width: 390, height: 844 },
   { width: 375, height: 667 },
 ]) {
-  test(`mobile Games screen fits one ${viewport.width}x${viewport.height} viewport and categories fit without scrolling`, async ({
+  test(`mobile Games screen fits one ${viewport.width}x${viewport.height} viewport, and the menu picks a kind of game`, async ({
     page,
   }) => {
     await page.setViewportSize(viewport);
     await page.goto("/games");
 
     await expect(page.getByRole("heading", { name: "What do you want to play?" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /Categories/ })).toBeVisible();
-    const card = page.getByRole("list", { name: "Games to play" }).getByRole("listitem").first();
-    await expect(card).toBeVisible();
-    await expect(page.locator(".play-featured")).toHaveCount(0);
+    const cards = page.getByRole("list", { name: "Games to play" }).getByRole("listitem");
+    await expect(cards.first()).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
       viewport.height,
     );
 
-    await page.getByRole("button", { name: /Categories/ }).click();
-    const sheet = page.getByRole("dialog", { name: "Game Categories" });
-    await expect(sheet).toBeVisible();
-    await expect(sheet.getByRole("button", { name: "All Games" })).toBeVisible();
-    await expect(sheet.getByRole("button", { name: "Couples" })).toBeVisible();
-    await expect(sheet.getByRole("button", { name: "Brain Games" })).toBeVisible();
-    await expect(sheet.locator(".category-options")).toHaveCSS("overflow-y", "hidden");
+    // The strip down the left has every kind of game.
+    const panel = await openMenu(page);
+    for (const kind of ["Quiz", "Brain Games", "Puzzles", "Word & Skill", "Party & Social"]) {
+      await expect(panel.getByRole("link", { name: kind })).toBeVisible();
+    }
+    await expect(panel.getByRole("link", { name: "Couples" })).toBeAttached();
 
-    // Once the sheet's slide-in has settled, every row fits: the sheet stays inside the
-    // viewport, and the game card stays fully above it.
-    await sheet.evaluate(async (el) => {
-      const running = el.getAnimations();
-      if (running.length) await Promise.all(running.map((a) => a.finished.catch(() => {})));
-    });
-    const cardBox = await card.boundingBox();
-    const sheetBox = await sheet.boundingBox();
-    const couplesBox = await sheet.getByRole("button", { name: "Couples" }).boundingBox();
-    expect(cardBox).not.toBeNull();
-    expect(sheetBox).not.toBeNull();
-    expect(couplesBox).not.toBeNull();
-    await expect(card).toBeInViewport();
-    expect(cardBox!.y + cardBox!.height).toBeLessThanOrEqual(sheetBox!.y + 1);
-    expect(sheetBox!.y + sheetBox!.height).toBeLessThanOrEqual(viewport.height + 1);
-    expect(couplesBox!.y + couplesBox!.height).toBeLessThanOrEqual(
-      sheetBox!.y + sheetBox!.height + 1,
-    );
-
-    await sheet.getByRole("button", { name: "Brain Games" }).click();
-    await expect(sheet).toBeHidden();
-    await expect(page.getByRole("button", { name: /Categories.*Brain Games/ })).toBeVisible();
+    // Picking one narrows the games.
+    await panel.getByRole("link", { name: "Brain Games" }).click();
+    await expect(page).toHaveURL(/kind=brain$/);
+    await expect(page.getByRole("link", { name: /Brain Games.*show all games/ })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(
       viewport.height,
     );
   });
 }
 
-test("phones get Play, Create, Leaderboard, Stats and Me at the bottom", async ({ page }) => {
+test("phones find Create, the leaderboard and stats in the menu, with no tabs at the bottom", async ({
+  page,
+}) => {
   await page.goto("/");
-  expect(await labels(page, "Sections")).toEqual(["Play", "Create", "Leaderboard", "Stats", "Me"]);
-  const tabs = page.getByRole("navigation", { name: "Sections" });
-  // A guest's home page introduces Whizard, so their Play goes on to the games themselves.
-  await tabs.getByRole("link", { name: "Play" }).click();
+  await expect(page.getByRole("navigation", { name: "Sections" })).toHaveCount(0);
+  let panel = await openMenu(page);
+  await expect(panel.getByRole("button", { name: "Create a room" })).toBeVisible();
+  await expect(panel.getByRole("link", { name: "Leaderboard" })).toBeVisible();
+  await panel.getByRole("link", { name: "Games", exact: true }).click();
   await expect(page).toHaveURL(/\/games$/);
   await expect(page.getByRole("heading", { name: "What do you want to play?" })).toBeVisible();
-  await tabs.getByRole("link", { name: "Stats" }).click();
+  panel = await openMenu(page);
+  await panel.getByRole("link", { name: "Stats" }).click();
   await expect(page).toHaveURL(/\/stats$/);
 });
 
@@ -160,15 +159,17 @@ test("signed-in players find their profile and friends in the menu", async ({ pa
   await withPasskeys(page);
   await signUp(page, uniqueUsername(), "Ada");
 
-  await page.getByRole("button", { name: "Me", exact: true }).click();
+  await accountMenu(page).click();
   const menu = page.getByRole("group", { name: "Menu" });
   await menu.getByRole("link", { name: "Friends" }).click();
   await expect(page).toHaveURL(/\/friends$/);
 
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/");
-  // Signed in, the top bar is about playing rather than explaining Whizard.
-  expect(await labels(page, "Main")).toEqual(["Play", "Create", "Stats", "Leaderboard"]);
+  // Signed in, the panel has the player's own pages.
+  const panel = page.locator("#side-panel");
+  await expect(panel.getByRole("link", { name: "My profile" })).toBeVisible();
+  await expect(panel.getByRole("link", { name: "Friends" })).toBeVisible();
   await page.getByRole("button", { name: "Menu for Ada" }).click();
   await menu.getByRole("link", { name: "My profile" }).click();
   await expect(page).toHaveURL(/\/account$/);

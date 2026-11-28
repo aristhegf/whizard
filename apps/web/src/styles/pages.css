@@ -340,92 +340,12 @@ button.topic-tile {
   text-shadow: 0 4px 0 rgb(40 10 90 / 70%);
 }
 
-/* The kinds of game: one scrolling row on phones. */
-.play-chips {
-  display: flex;
-  gap: 8px;
-  max-width: 100%;
-  padding: 4px 2px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.play-chip {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 0 18px;
-  border-radius: 999px;
-  border: 1.5px solid var(--line-strong);
-  background: rgb(18 14 56 / 80%);
-  color: #fff;
-  font-family: var(--display);
-  font-weight: 700;
-  font-size: 0.85rem;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.play-chip {
-  border-color: color-mix(in oklab, var(--chip, #ffd43f) 38%, transparent);
-  transition:
-    transform 90ms ease-out,
-    box-shadow 120ms ease-out,
-    background-color 150ms ease;
-}
-
-/* Each kind of game wears its own colour (arcade.css): its icon, its edge, and the whole chip
-   once it's chosen, an arcade button with a lip. */
-.play-chip svg {
-  color: var(--chip, #c9a8ff);
-}
-
-@media (hover: hover) {
-  .play-chip:not([aria-pressed="true"]):hover {
-    background: color-mix(in oklab, var(--chip, #ffd43f) 16%, rgb(18 14 56));
-  }
-}
-
-.play-chip[aria-pressed="true"] {
-  background: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--chip, #ffd43f) 70%, #fff),
-    var(--chip, #ffd43f)
-  );
-  border-color: transparent;
-  color: #1c0f33;
-  box-shadow:
-    0 4px 0 color-mix(in oklab, var(--chip, #ffd43f) 55%, #000),
-    0 10px 22px -6px color-mix(in oklab, var(--chip, #ffd43f) 70%, transparent);
-  transform: translateY(-2px);
-}
-
-.play-chip:active {
-  transform: translateY(2px);
-  box-shadow: none;
-}
-
-.play-chip[aria-pressed="true"] svg {
-  color: inherit;
-}
-
 .play-body {
   display: grid;
   gap: 18px;
 }
 
-/* The other games, with arrows for the next page on laptops and computers. */
-.play-shelf {
-  display: grid;
-  gap: 12px;
-  min-height: 0;
-}
-
 @media (hover: hover) {
-  .play-chip:hover:not([aria-pressed="true"]),
   .play-arrow:hover:not(:disabled) {
     border-color: rgb(200 170 255 / 80%);
   }
@@ -433,13 +353,6 @@ button.topic-tile {
 
 .play-empty {
   text-align: center;
-}
-
-.play-pager {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
 }
 
 .play-arrow {
@@ -457,24 +370,6 @@ button.topic-tile {
 .play-arrow:disabled {
   opacity: 0.35;
   cursor: default;
-}
-
-.play-dots {
-  display: flex;
-  gap: 8px;
-}
-
-.play-dots span {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 25%);
-}
-
-.play-dots span.on {
-  width: 26px;
-  border-radius: 999px;
-  background: var(--gold);
 }
 
 /* Landing screens wait for their pictures and fonts, then appear together. The screen keeps its
@@ -497,11 +392,9 @@ button.topic-tile {
     height: 100dvh;
     max-width: calc(1560px + 2 * var(--gutter));
     padding-bottom: 6px;
-    overflow: hidden;
-  }
-
-  .page.app-screen .site-footer.slim {
-    margin-top: 8px;
+    /* Clipped top and bottom only: the top bar reaches left over the side strip's column. */
+    overflow-x: visible;
+    overflow-y: clip;
   }
 
   .play {
@@ -513,10 +406,6 @@ button.topic-tile {
     grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.55fr);
     gap: 24px;
     min-height: 0;
-  }
-
-  .play-shelf {
-    grid-template-rows: minmax(0, 1fr) auto;
   }
 }
 
@@ -535,46 +424,18 @@ button.topic-tile {
   }
 }
 
-/* Phones and small tablets: smaller chips that open their games in a sheet. */
-@media (max-width: 1099px) {
-  .play-chips {
-    gap: 6px;
-  }
-
-  .play-chip {
-    gap: 6px;
-    min-height: 36px;
-    padding: 0 14px;
-    border-width: 1px;
-    font-size: 0.75rem;
-  }
-
-  .play-chip.is-open {
-    background: linear-gradient(180deg, #ffe066, var(--gold-deep));
-    border-color: transparent;
-    color: #3a1d00;
-  }
-
-  .play-chip.is-open svg {
-    color: inherit;
-  }
-}
-
 /* ...and one screen, no scrolling, like laptops: the title and chips, the game card filling
-   what's left, then the links above the tab bar. Too short a screen (a phone on its side) keeps
+   what's left, then the links under it. Too short a screen (a phone on its side) keeps
    scrolling instead of squeezing the card. */
 @media (max-width: 1099px) and (min-height: 560px) {
   .page.app-screen {
     display: grid;
     grid-template-rows: auto minmax(0, 1fr) auto;
     height: 100dvh;
-    /* Clear of the tab bar, which is about 82px tall. */
-    padding-bottom: calc(88px + env(safe-area-inset-bottom));
-    overflow: hidden;
-  }
-
-  .page.app-screen .site-footer.slim {
-    margin-top: 4px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    /* Clipped top and bottom only: the top bar reaches left over the side strip's column. */
+    overflow-x: visible;
+    overflow-y: clip;
   }
 
   .play {
@@ -695,38 +556,8 @@ button.topic-tile {
   text-shadow: 0 4px 0 rgb(30 6 70 / 55%);
 }
 
-.play-page .play-chips {
-  width: 100%;
-  gap: 8px;
-  padding: 2px 0;
-}
-
-.play-page .play-chip {
-  min-height: 42px;
-  padding-inline: 15px;
-  border-color: rgb(169 107 255 / 25%);
-  background: linear-gradient(180deg, rgb(43 20 74 / 95%), rgb(24 11 45 / 95%));
-  font-size: 0.78rem;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.play-page .play-chip[aria-pressed="true"] {
-  background: linear-gradient(135deg, #ffe77c, #ffae20);
-  color: #291343;
-  box-shadow: 0 0 22px rgb(255 179 32 / 25%);
-}
-
-.play-page .play-chip[aria-pressed="true"] svg {
-  color: #291343;
-}
-
 .play-hero-art {
   display: none;
-}
-
-.play-page .play-pager {
-  min-height: 38px;
 }
 
 @media (min-width: 1100px) {
@@ -744,7 +575,7 @@ button.topic-tile {
   .play-page .play-head {
     grid-template-columns: minmax(0, 1fr) minmax(0, 560px);
     grid-template-areas:
-      "count hero"
+      "count count"
       "title hero"
       "subtitle hero"
       "chips chips";
@@ -775,33 +606,12 @@ button.topic-tile {
     margin: calc(-1 * var(--toy-bleed-top)) 0 calc(-1 * var(--toy-bleed-bottom));
   }
 
-  .play-page .play-chips {
-    grid-area: chips;
-    flex-wrap: nowrap;
-    overflow: visible;
-  }
-
   .play-page .play-body {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr);
     min-height: 0;
     gap: 0;
-  }
-
-  .play-page .play-shelf {
-    display: grid;
-    grid-template-rows: minmax(0, 1fr) auto;
-    gap: 10px;
-    min-height: 0;
-  }
-
-  .play-page .play-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: 12px 14px;
-    min-height: 0;
   }
 }
 
@@ -813,16 +623,6 @@ button.topic-tile {
 
   .play-page .play-title {
     font-size: clamp(2.2rem, 9vw, 3rem);
-  }
-
-  .play-page .play-chips {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-  }
-
-  .play-page .play-chip {
-    min-height: 38px;
   }
 }
 
@@ -839,11 +639,10 @@ button.topic-tile {
   }
 }
 
-/* Mobile discovery: one full-width card per swipe page, with dots underneath. */
+/* The row of game cards, edge to edge of the page. */
 .play-mobile-shelf {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 10px;
+  grid-template-rows: minmax(0, 1fr);
   min-height: 0;
   min-width: 0;
   margin-inline: calc(-1 * var(--gutter));
@@ -867,35 +666,6 @@ button.topic-tile {
 
 .play-mobile-cards::-webkit-scrollbar {
   display: none;
-}
-
-.play-mobile-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 var(--gutter) 6px;
-}
-
-.play-mobile-dots button {
-  width: 10px;
-  height: 10px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 25%);
-  cursor: pointer;
-}
-
-.play-mobile-dots button.on {
-  width: 26px;
-  border-radius: 999px;
-  background: var(--gold);
-}
-
-@media (min-width: 1100px) {
-  .play-mobile-shelf {
-    display: none;
-  }
 }
 
 @media (max-width: 1099px) {
@@ -930,87 +700,6 @@ button.topic-tile {
 /* Mobile Games screen: one compact card rail and a dedicated category picker. */
 .play-page {
   /* The sheet and the card-area reservation share this height. */
-  --category-sheet-h: min(42dvh, 390px);
-}
-
-.play-mobile-categories {
-  display: none;
-}
-
-.category-sheet {
-  max-height: var(--category-sheet-h, min(42dvh, 390px));
-  padding-bottom: calc(8px + env(safe-area-inset-bottom));
-}
-
-/* The home page keeps its cards visible behind the picker: no dim, no blur. */
-.category-sheet::backdrop {
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-.category-sheet .sheet-grip {
-  flex: none;
-  padding: 8px 18px 6px;
-}
-
-.category-sheet .sheet-handle {
-  margin-bottom: 8px;
-}
-
-.category-sheet-head {
-  display: flex;
-  align-items: center;
-  min-height: 36px;
-  gap: 12px;
-}
-
-.category-sheet-head h2 {
-  margin: 0;
-  font-family: var(--display);
-  font-size: 1.15rem;
-  font-weight: 850;
-}
-
-.category-options {
-  display: grid;
-  gap: 4px;
-  padding: 0 14px;
-  overflow: hidden;
-}
-
-.category-option {
-  display: grid;
-  grid-template-columns: 24px minmax(0, 1fr) 20px;
-  align-items: center;
-  gap: 12px;
-  min-height: 36px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 10px;
-  background: rgb(18 12 48 / 72%);
-  color: #e8d9ff;
-  font: inherit;
-  font-size: 0.82rem;
-  text-align: left;
-}
-
-.category-option > svg:first-child {
-  color: var(--chip, #d1a7ff);
-}
-
-.category-option[aria-pressed="true"] {
-  background: linear-gradient(
-    135deg,
-    color-mix(in oklab, var(--chip, #ffd43f) 70%, #fff),
-    var(--chip, #ffab20)
-  );
-  color: #1c0f33;
-  font-weight: 800;
-}
-
-.category-option[aria-pressed="true"] > svg {
-  color: inherit;
 }
 
 @media (max-width: 1099px) {
@@ -1018,12 +707,10 @@ button.topic-tile {
     grid-template-rows: auto minmax(0, 1fr);
     height: 100dvh;
     min-height: 0;
-    padding-bottom: calc(76px + env(safe-area-inset-bottom));
-    overflow: hidden;
-  }
-
-  .play-page.page.app-screen .site-footer.slim {
-    display: none;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    /* Clipped top and bottom only: the top bar reaches left over the side strip's column. */
+    overflow-x: visible;
+    overflow-y: clip;
   }
 
   .play-page .play {
@@ -1059,92 +746,15 @@ button.topic-tile {
     line-height: 1.25;
   }
 
-  .play-page .play-chips {
-    display: none;
-  }
-
-  .play-page .play-mobile-categories {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    width: 100%;
-    min-height: 40px;
-    padding: 0 13px;
-    border: 1px solid rgb(169 107 255 / 30%);
-    border-radius: 13px;
-    background: linear-gradient(180deg, rgb(43 20 74 / 95%), rgb(24 11 45 / 95%));
-    color: #fff;
-    font: inherit;
-    font-size: 0.84rem;
-    font-weight: 800;
-    text-align: left;
-  }
-
-  .play-mobile-categories span {
-    margin-left: auto;
-    color: #d9c2f5;
-    font-weight: 600;
-  }
-
   .play-page .play-body {
     display: grid;
     grid-template-rows: minmax(0, 1fr);
     min-height: 0;
     overflow: hidden;
   }
-
-  /* While the category sheet is open, shrink the card area so the card stays fully above it. */
-  .play-page:has(.category-sheet[open]) .play-body {
-    padding-bottom: var(--category-sheet-h, min(42dvh, 390px));
-  }
-
-  /* Picking a category: the head folds away so the card rises above the sheet. */
-  .play-page .play-head {
-    transition: gap 300ms cubic-bezier(0.32, 0.72, 0, 1);
-  }
-
-  .play-page.is-picking .play-head {
-    gap: 0;
-  }
-
-  .play-page .live-count,
-  .play-page .play-title,
-  .play-page .play-subtitle,
-  .play-page .play-mobile-categories {
-    max-height: 220px;
-    overflow: hidden;
-    opacity: 1;
-    transition:
-      max-height 300ms cubic-bezier(0.32, 0.72, 0, 1),
-      opacity 200ms ease,
-      margin 300ms cubic-bezier(0.32, 0.72, 0, 1),
-      padding 300ms cubic-bezier(0.32, 0.72, 0, 1);
-  }
-
-  .play-page.is-picking .live-count,
-  .play-page.is-picking .play-title,
-  .play-page.is-picking .play-subtitle,
-  .play-page.is-picking .play-mobile-categories {
-    max-height: 0;
-    min-height: 0;
-    margin: 0;
-    padding-block: 0;
-    border-width: 0;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .category-sheet .category-option {
-    min-height: clamp(30px, 4.25dvh, 36px);
-    font-size: clamp(0.72rem, 2.4vw, 0.82rem);
-  }
 }
 
 @media (max-width: 380px) and (min-height: 560px) {
-  .play-page {
-    --category-sheet-h: min(44dvh, 390px);
-  }
-
   .play-page .play-title {
     font-size: 2rem;
   }
@@ -1152,31 +762,13 @@ button.topic-tile {
   .play-page .play-subtitle {
     font-size: 0.76rem;
   }
-
-  .play-page .play-mobile-categories {
-    min-height: 36px;
-  }
-
-  /* All seven rows fit the short sheet without scrolling. */
-  .category-sheet .sheet-handle {
-    display: none;
-  }
-
-  .category-sheet .category-option {
-    min-height: 28px;
-  }
-
-  .category-sheet .category-options {
-    gap: 3px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .play-page .play-head,
   .play-page .live-count,
   .play-page .play-title,
-  .play-page .play-subtitle,
-  .play-page .play-mobile-categories {
+  .play-page .play-subtitle {
     transition: none;
   }
 }
@@ -1195,11 +787,12 @@ button.topic-tile {
     display: none;
   }
 
-  /* Who's here first, with the live dot, then the running total, dimmer. No pill. */
+  /* Who's here first, with the live dot, then the running total, dimmer. No pill. Centred on the
+     screen, as it is on a computer. */
   .play-page .live-count {
     grid-row: 1;
     grid-column: 1 / -1;
-    justify-self: start;
+    justify-self: center;
     gap: 0;
     min-height: 0;
     padding: 0;
@@ -1241,30 +834,6 @@ button.topic-tile {
     font-size: clamp(1.75rem, 7.4vw, 2.2rem);
     line-height: 0.92;
     text-shadow: none;
-  }
-
-  .play-page .play-mobile-categories {
-    grid-row: 2;
-    grid-column: 2;
-    justify-self: end;
-    gap: 6px;
-    width: auto;
-    min-height: 40px;
-    padding: 0 12px 0 14px;
-    border-color: rgb(169 107 255 / 22%);
-    border-radius: 999px;
-    background: rgb(30 14 56 / 70%);
-    font-size: 0.8rem;
-    font-weight: 700;
-  }
-
-  .play-page .play-mobile-categories span {
-    margin-left: 0;
-    color: #fff;
-  }
-
-  .play-page .play-mobile-categories svg {
-    color: #c9a8ff;
   }
 
   /* The drifting toys sit in the header's top right, behind the words. Inside the header: the

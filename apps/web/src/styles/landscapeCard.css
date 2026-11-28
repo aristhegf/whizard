@@ -1,0 +1,463 @@
+/* From Uiverse.io by KSAplay - https://uiverse.io/KSAplay/strong-donkey-70
+   MIT License, Copyright (c) KSAplay (Kenny)
+
+   The "Minimalist Weather Card - Daytime" as Whizard's game card (HomePage's GameCard, with the
+   scene in CardLandscape). Classes are prefixed wx-. The scene keeps the original's look; its
+   sizes are in container units of the landscape, so the picture keeps its shape at any card
+   size. The sky takes the game's colour, and the game's art rises from behind the hills. On
+   Whizard's dark page the card has no shadow (the white panel sets it apart), and the grey text
+   is a shade darker, to read well. */
+
+.wx-card {
+  --wx-sky-top: color-mix(in oklab, var(--c1, #e96594) 70%, #e96594);
+  --wx-hill-front: color-mix(in oklab, #b77873 82%, var(--c1, #b77873));
+  --wx-hill-back: color-mix(in oklab, #a16773 82%, var(--c1, #a16773));
+  --wx-tree: var(--wx-hill-front);
+  --wx-tree-far: var(--wx-hill-back);
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  /* Always the original's shape, as tall as its row: never squeezed to fit. */
+  height: 100%;
+  aspect-ratio: 220 / 350;
+  /* Its own size decides what fits on it (see the end of this file). */
+  container: wx-card / size;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: white;
+  text-align: left;
+}
+
+/* The landscape, with everything in it placed by hand. ---------------------------------------- */
+
+.wx-landscape {
+  position: relative;
+  /* The original's split, at every size: 70 picture, 30 white. */
+  flex: 0 0 70%;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  container-type: size;
+}
+
+.wx-landscape > *,
+.wx-ocean > * {
+  position: absolute;
+}
+
+.wx-sky {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(0deg, rgb(247 225 87) 0%, var(--wx-sky-top) 100%);
+}
+
+.wx-sun {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* The original's 45px of a 220 by 245 scene: by width, or by height on a flatter card. */
+  width: min(20.45cqw, 18.37cqh);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: white;
+  bottom: 40%;
+  left: 23%;
+  filter: drop-shadow(0 0 10px white);
+}
+
+.wx-sun::after {
+  position: absolute;
+  content: "";
+  width: 118%;
+  height: 118%;
+  border-radius: 50%;
+  background-color: white;
+  opacity: 0.5;
+}
+
+.wx-sun::before {
+  position: absolute;
+  content: "";
+  width: 134%;
+  height: 134%;
+  border-radius: 50%;
+  background-color: white;
+  opacity: 0.1;
+}
+
+.wx-ocean {
+  overflow: hidden;
+  bottom: 0;
+  width: 100%;
+  height: 28%;
+  background: linear-gradient(0deg, rgb(241 192 125) 0%, rgb(247 218 150) 100%);
+}
+
+.wx-reflection {
+  background-color: white;
+  opacity: 0.5;
+  z-index: 1;
+}
+
+.wx-reflection:nth-child(1) {
+  width: 18.18cqw;
+  height: 10px;
+  clip-path: polygon(0% 0%, 100% 0%, 50% 20%);
+  top: 5%;
+  left: 32%;
+}
+
+.wx-reflection:nth-child(2) {
+  width: 36.36cqw;
+  height: 15px;
+  clip-path: polygon(0% 0%, 100% 0%, 60% 20%, 40% 20%);
+  top: 15%;
+  left: 39%;
+}
+
+.wx-reflection:nth-child(3) {
+  width: 27.27cqw;
+  height: 2px;
+  clip-path: polygon(0% 50%, 40% 0%, 60% 0%, 100% 50%, 60% 100%, 40% 100%);
+  top: 27%;
+  right: 15%;
+}
+
+.wx-reflection:nth-child(4) {
+  width: 31.82cqw;
+  height: 2px;
+  clip-path: polygon(0% 50%, 40% 0%, 60% 0%, 100% 50%, 60% 100%, 40% 100%);
+  top: 37%;
+  right: 28%;
+}
+
+.wx-reflection:nth-child(5) {
+  width: 31.82cqw;
+  height: 3px;
+  clip-path: polygon(0% 50%, 40% 0%, 60% 0%, 100% 50%, 60% 100%, 40% 100%);
+  top: 46%;
+  right: 8%;
+}
+
+.wx-hill-1 {
+  right: -25%;
+  bottom: 20%;
+  width: 68.18cqw;
+  height: 16.33cqh;
+  border-radius: 50%;
+  background-color: #e6b29d;
+}
+
+.wx-shadow-hill-1 {
+  right: -25%;
+  top: -30%;
+  width: 68.18cqw;
+  height: 16.33cqh;
+  border-radius: 50%;
+  background-color: #f1c7a0;
+}
+
+.wx-hill-2 {
+  right: -36%;
+  bottom: 10%;
+  width: 68.18cqw;
+  height: 32.65cqh;
+  border-radius: 50%;
+  background-color: #c29182;
+}
+
+.wx-shadow-hill-2 {
+  right: -36%;
+  top: -65%;
+  width: 68.18cqw;
+  height: 32.65cqh;
+  border-radius: 50%;
+  background-color: #e5bb96;
+}
+
+.wx-hill-3 {
+  left: -100%;
+  bottom: -28%;
+  width: 159.09cqw;
+  height: 61.22cqh;
+  border-radius: 50%;
+  background-color: var(--wx-hill-front);
+  z-index: 3;
+}
+
+.wx-hill-4 {
+  right: -100%;
+  bottom: -40%;
+  width: 159.09cqw;
+  height: 61.22cqh;
+  border-radius: 50%;
+  background-color: var(--wx-hill-back);
+  z-index: 3;
+}
+
+.wx-tree-1 {
+  bottom: 20%;
+  left: 3%;
+  width: 22.73cqw;
+  height: 28.57cqh;
+  z-index: 3;
+}
+
+.wx-tree-2 {
+  bottom: 14%;
+  left: 25%;
+  width: 22.73cqw;
+  height: 28.57cqh;
+  z-index: 3;
+}
+
+.wx-tree-3 {
+  bottom: 10%;
+  right: 1%;
+  width: 29.55cqw;
+  height: 32.65cqh;
+  z-index: 3;
+}
+
+.wx-landscape svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The game's art, rising from behind the front hills like a second sun. */
+.wx-art {
+  left: 50%;
+  bottom: 12%;
+  z-index: 2;
+  width: auto;
+  height: 62cqh;
+  max-width: 62cqw;
+  object-fit: contain;
+  translate: -38% 0;
+  filter: drop-shadow(0 6px 10px rgb(90 30 60 / 35%));
+}
+
+.wx-filter {
+  inset: 0;
+  background: linear-gradient(0deg, rgb(255 255 255 / 100%) 0%, rgb(255 255 255 / 0%) 40%);
+  z-index: 5;
+  opacity: 0.2;
+}
+
+/* What kind of game it is, over the sky. ------------------------------------- */
+
+.wx-info {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  padding: 15px 16px 0;
+  gap: 8px;
+  color: white;
+  text-align: center;
+  text-shadow: 0 1px 6px rgb(120 40 60 / 35%);
+  z-index: 10;
+}
+
+.wx-left {
+  display: grid;
+  justify-items: center;
+  flex: none;
+  max-width: 34%;
+  font-size: 11pt;
+  font-weight: 600;
+}
+
+.wx-left p {
+  margin: 0;
+}
+
+.wx-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wx-icon svg {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 1px 4px rgb(120 40 60 / 30%));
+}
+
+/* The rows on white. ---------------------------------------------------------------------------- */
+
+.wx-content {
+  display: flex;
+  flex: 0 0 30%;
+  min-height: 0;
+  overflow: hidden;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.wx-forecast {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  /* Spacing in units of the card, so the rows scale with it. */
+  gap: 3cqh;
+  width: 100%;
+  height: 100%;
+  padding: 3cqh 6cqw;
+}
+
+.wx-forecast > div:not(.wx-separator) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  color: #5f6f80;
+  font-size: clamp(10px, 4cqw, 15px);
+}
+
+.wx-forecast p {
+  margin: 0;
+}
+
+/* The name, in the first row. */
+.wx-name {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  color: #2a2f45;
+  font-family: var(--body);
+  font-size: clamp(13px, 5.5cqw, 20px);
+  font-weight: 700;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* What it is, then how many play at the end of the row. */
+.wx-desc {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wx-players {
+  flex: none;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* The whole card plays: a link or button stretched over it. A press pushes the card in. */
+.wx-hit {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.wx-hit[aria-busy="true"] {
+  cursor: progress;
+}
+
+.wx-card {
+  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (hover: hover) {
+  .wx-card:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.wx-card:has(.wx-hit:active) {
+  transform: scale(0.98);
+}
+
+.wx-separator {
+  width: 100%;
+  height: 2px;
+  background-color: rgb(233 233 233);
+  border-radius: 1px;
+}
+
+.wx-card.unavailable {
+  filter: saturate(0.6);
+}
+
+/* A keyboard on the card's button lights the whole card. */
+.wx-card:has(:focus-visible) {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* Where the cards go -----------------------------------------------------------------------------
+   Two rows of cards in columns, side by side, moving a column (two games) at a time; the next
+   column peeks in at the side. Every card is the same shape (5:4) on every screen, only bigger
+   or smaller: two rows fill the row's height, 12px clear above, below and between. */
+
+.play-shelf-track {
+  container-type: size;
+}
+
+.play-mobile-cards {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, max-content);
+  align-content: center;
+  gap: 12px;
+  padding: 12px 16px;
+  scroll-padding-inline: 16px;
+}
+
+.play-mobile-cards {
+  grid-auto-columns: max-content;
+}
+
+.play-mobile-cards > .wx-card {
+  /* Two rows tall, but never so wide the next column can't peek in (16px margin, 12px gap and
+     56px of it). */
+  --card-h: min((100cqh - 24px - 12px) / 2, (100cqw - 16px - 12px - 56px) / 1.25);
+  width: calc(var(--card-h) * 1.25);
+  height: var(--card-h);
+  aspect-ratio: auto;
+  scroll-snap-align: start;
+}
+
+/* A small card: no line between the name and the rest, so both still fit the white part. */
+@container wx-card (max-height: 230px) {
+  .wx-separator {
+    display: none;
+  }
+}
+
+/* A very small card: the picture and the name only. */
+@container wx-card (max-height: 150px) {
+  .wx-separator,
+  .wx-forecast > div:has(.wx-desc) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wx-card {
+    transition: none;
+  }
+
+  .wx-card:hover,
+  .wx-card:has(.wx-hit:active) {
+    transform: none;
+  }
+}

@@ -35,6 +35,8 @@ import {
   Link,
   Link2,
   LogOut,
+  ListIndentDecrease,
+  ListIndentIncrease,
   Menu,
   MessageCircleMore,
   Monitor,
@@ -97,6 +99,9 @@ const ICONS = {
   plus: Plus,
   plusCircle: CirclePlus,
   menu: Menu,
+  /** The side panel's button: lines with an arrow, pointing the way it will go. */
+  railHide: ListIndentDecrease,
+  railShow: ListIndentIncrease,
   close: X,
   invite: UserPlus,
   device: Monitor,

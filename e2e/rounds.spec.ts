@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { createRoomFromMenu } from "./menu";
 import { closeSheet, openGameCard, openSettings, chooseSetting, expectSetting } from "./lobby";
 
 test.describe.configure({ timeout: 120_000 });
@@ -172,7 +173,7 @@ test("two players race through Spot It", async ({ browser }) => {
 test("the host can switch the room to another game", async ({ browser }) => {
   const host = await newPlayer(browser);
   await host.goto("/");
-  await host.getByRole("button", { name: "Create", exact: true }).click();
+  await createRoomFromMenu(host);
   await joinAs(host, "Ada");
 
   // Only the host can change the game.

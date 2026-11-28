@@ -2,6 +2,7 @@ import { expect, test, type Browser, type Page } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { openGameCard } from "./lobby";
+import { createRoomFromMenu } from "./menu";
 import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
 
 // Every test here makes an account, an admin and topics through the form, so they get a
@@ -157,12 +158,8 @@ async function joinAs(page: Page, nickname: string) {
 
 async function openRoom(page: Page) {
   await page.goto("/");
-  // Guests get the welcome page's own "Create a room"; a signed-in page (the admin account)
-  // gets the bar's plain "Create" instead.
-  const hero = page.getByRole("button", { name: "Create a room" });
-  const nav = page.getByRole("button", { name: "Create", exact: true });
-  await expect(hero.or(nav)).toBeVisible();
-  await ((await hero.isVisible()) ? hero : nav).click();
+  // Every page has "Create a room" in the side panel.
+  await createRoomFromMenu(page);
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/, { timeout: 15_000 });
   await joinAs(page, "Ada");
 }

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { accountMenu } from "./menu";
 import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
 
 test.describe.configure({ timeout: 90_000 });
@@ -56,7 +57,7 @@ test("makes a bank, writes a question, renames and clears up after itself", asyn
   await signUp(page, uniqueUsername());
 
   // The banks live in the menu under the avatar.
-  await page.getByRole("button", { name: "Me", exact: true }).click();
+  await accountMenu(page).click();
   await page
     .getByRole("group", { name: "Menu" })
     .getByRole("link", { name: "Question banks" })

@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { createRoomFromMenu } from "./menu";
 import { execFileSync } from "node:child_process";
 import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
 
@@ -83,7 +84,7 @@ test("an admin sees open rooms and can close one", async ({ browser }) => {
 
   const host = await (await browser.newContext()).newPage();
   await host.goto("/");
-  await host.getByRole("button", { name: "Create", exact: true }).click();
+  await createRoomFromMenu(host);
   await expect(host).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   const code = host.url().slice(-6);
   await host.getByLabel("Choose a nickname").fill("Zed");
@@ -221,7 +222,7 @@ test("blocked words keep names out, and a flagged player can be removed", async 
 
   const host = await (await browser.newContext()).newPage();
   await host.goto("/");
-  await host.getByRole("button", { name: "Create", exact: true }).click();
+  await createRoomFromMenu(host);
   await expect(host).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   await host.getByLabel("Choose a nickname").fill(`Ok${tag}`);
   await host.getByRole("button", { name: "Join", exact: true }).click();

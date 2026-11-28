@@ -1,25 +1,11 @@
-/* Game cards as posters, and the 3D toy scene. -------------------------------------------------
+/* The welcome page's posters, the Play button, and the 3D toy scene. ----------
 
-   Each card is its game's own colours, top to bottom, with a burst of light behind the art. The
-   art fills the card and the name, big and condensed, sits over its lower edge on a shade, like a
-   film poster. On a mouse the card leans toward the pointer and a shine follows it. */
+   The Games page's cards themselves are in landscapeCard.css. The welcome page's strip keeps the
+   poster: a frame of dark violet glass, the game's colour glowing behind its art, leaning toward
+   the pointer with a shine that follows it. */
 
-.play-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-@media (min-width: 768px) {
-  .play-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-/* The poster itself, shared by the Games page's cards and the welcome page's strip. */
+/* The poster itself, shared by the Games page's cards and the welcome page's strip: a frame of
+   dark violet glass with a neon edge, the game's own colour glowing behind its art. */
 .game-poster {
   --c1: #8b3dff;
   --c2: #2a0f5c;
@@ -28,27 +14,25 @@
   --shine-x: 50%;
   --shine-y: 30%;
   --lift: 0px;
+  --neon: #a46bff;
   position: relative;
-  border-radius: 22px;
+  border-radius: 24px;
   color: #fff;
   background:
-    linear-gradient(180deg, transparent 38%, rgb(10 3 30 / 30%) 62%, rgb(10 3 30 / 72%) 100%),
     radial-gradient(
-      80% 62% at 50% 34%,
-      color-mix(in oklab, var(--c1) 70%, #fff 30%) 0%,
-      transparent 70%
+      75% 55% at 50% 34%,
+      color-mix(in oklab, var(--c1) 62%, transparent) 0%,
+      color-mix(in oklab, var(--c1) 18%, transparent) 55%,
+      transparent 80%
     ),
-    linear-gradient(
-      172deg,
-      var(--c1) 0%,
-      color-mix(in oklab, var(--c1) 45%, var(--c2)) 55%,
-      var(--c2) 100%
-    );
+    linear-gradient(180deg, #2b1675 0%, #1b0c52 55%, #12083a 100%);
+  /* The neon edge: a bright line, brightest along the top, and its glow. */
   box-shadow:
-    inset 0 0 0 1.5px rgb(255 255 255 / 14%),
-    inset 0 2px 0 rgb(255 255 255 / 26%),
-    0 16px 32px -14px color-mix(in oklab, var(--c2) 70%, #000);
-  overflow: hidden;
+    inset 0 0 0 1.5px color-mix(in oklab, var(--neon) 80%, #fff),
+    inset 0 2px 0 rgb(255 255 255 / 30%),
+    0 0 0 1px rgb(164 107 255 / 35%),
+    0 0 22px -2px rgb(150 80 255 / 55%),
+    0 18px 34px -16px rgb(5 2 25 / 90%);
   isolation: isolate;
   transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y))
     translateY(var(--lift));
@@ -57,19 +41,25 @@
     box-shadow 300ms ease;
 }
 
-/* The burst of light behind the art. */
+/* Sparks of light behind the art, in a burst, kept inside the frame. */
 .game-poster::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: repeating-conic-gradient(
-    from 4deg at 50% 36%,
-    rgb(255 255 255 / 11%) 0deg 6deg,
-    transparent 6deg 18deg
-  );
-  -webkit-mask-image: radial-gradient(62% 58% at 50% 36%, #000 15%, transparent 100%);
-  mask-image: radial-gradient(62% 58% at 50% 36%, #000 15%, transparent 100%);
+  border-radius: inherit;
+  background:
+    radial-gradient(2px 2px at 18% 22%, #fff 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 82% 16%, #ffe27a 50%, transparent 100%),
+    radial-gradient(2px 2px at 74% 58%, #fff 50%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 12% 64%, #ffe27a 50%, transparent 100%),
+    repeating-conic-gradient(
+      from 4deg at 50% 36%,
+      rgb(255 255 255 / 9%) 0deg 6deg,
+      transparent 6deg 18deg
+    );
+  -webkit-mask-image: radial-gradient(70% 62% at 50% 36%, #000 25%, transparent 100%);
+  mask-image: radial-gradient(70% 62% at 50% 36%, #000 25%, transparent 100%);
 }
 
 /* The shine that follows the pointer. */
@@ -77,11 +67,11 @@
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 3;
   border-radius: inherit;
   background: radial-gradient(
     55% 45% at var(--shine-x) var(--shine-y),
-    rgb(255 255 255 / 26%),
+    rgb(255 255 255 / 22%),
     transparent 70%
   );
   mix-blend-mode: soft-light;
@@ -90,137 +80,30 @@
   transition: opacity 300ms ease;
 }
 
-/* A game card: the art at the top, the words over its lower edge. */
-.play-card {
-  /* How much of the card the art may take, from the top. */
-  --stage: 80%;
-  display: grid;
-  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
-  min-height: 0;
-  text-align: left;
-}
-
-.play-card-stage {
-  grid-area: 1 / 1;
-  align-self: start;
-  position: relative;
-  height: var(--stage);
-  min-height: 0;
-  padding: 10px 10px 0;
-  pointer-events: none;
-}
-
-/* A soft pool of light for the art to stand on. */
-.play-card-stage::after {
-  content: "";
-  position: absolute;
-  left: 22%;
-  right: 22%;
-  bottom: 6%;
-  height: 14%;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(10 2 30 / 45%), transparent);
-}
-
-.play-card-art {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 12px 14px color-mix(in oklab, var(--c2) 70%, #000));
-  transform-origin: 50% 80%;
-  transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.play-card-body {
-  grid-area: 1 / 1;
-  align-self: end;
-  position: relative;
-  z-index: 1;
-  display: grid;
-  gap: 3px;
-  min-width: 0;
-  padding: 0 14px 14px;
-}
-
-.play-card-name {
-  margin: 0;
-  font-size: clamp(1.6rem, 2vw, 2.15rem);
-  text-shadow:
-    0 3px 0 color-mix(in oklab, var(--c2) 75%, #000),
-    0 8px 22px rgb(0 0 0 / 35%);
-  text-wrap: balance;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
-  /* Room for the descenders and the shadow under the last line. */
-  padding-bottom: 3px;
-}
-
-.play-card-desc {
-  margin: 0;
-  font-size: 0.8rem;
-  font-weight: 500;
-  line-height: 1.3;
-  color: rgb(255 255 255 / 84%);
-  text-shadow: 0 1px 6px rgb(0 0 0 / 40%);
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  overflow: hidden;
-}
-
-.play-card-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.play-card .players {
-  gap: 5px;
-  padding: 5px 10px;
-  border: 1px solid rgb(255 255 255 / 16%);
-  border-radius: 999px;
-  background: rgb(8 2 24 / 34%);
-  color: #fff;
-  font-size: 0.72rem;
-  font-weight: 700;
-  line-height: 1;
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
-}
-
-/* Play: a chunky amber button with a lip, that presses down. */
+/* Play: a round, glossy gold button in a thin violet ring. It presses in. */
 .play-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 38px;
-  padding: 0 14px 0 18px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  padding: 0;
   border: 0;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #ffe04d 0%, #ffb21e 100%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 30%,
+    #fff3a8 0%,
+    #ffd43f 32%,
+    #ffab1f 78%,
+    #e8870a 100%
+  );
   box-shadow:
-    0 4px 0 #c76a00,
-    0 10px 18px -6px rgb(0 0 0 / 55%),
-    inset 0 1px 0 rgb(255 255 255 / 65%);
+    0 0 0 3px rgb(120 70 255 / 55%),
+    0 8px 18px -6px rgb(255 160 30 / 55%),
+    inset 0 -3px 5px rgb(190 90 0 / 40%),
+    inset 0 2px 2px rgb(255 255 255 / 70%);
   color: #2b1300;
-  font-family: var(--poster);
-  font-stretch: 75%;
-  font-weight: 800;
-  font-size: 1.15rem;
-  letter-spacing: 0.03em;
-  line-height: 1;
-  text-transform: uppercase;
   text-decoration: none;
-  white-space: nowrap;
   cursor: pointer;
   transition:
     transform 120ms ease,
@@ -228,26 +111,44 @@
     filter 160ms ease;
 }
 
-.play-btn:active:not(:disabled, .soon) {
-  transform: translateY(3px);
-  box-shadow:
-    0 1px 0 #c76a00,
-    0 4px 10px -4px rgb(0 0 0 / 55%),
-    inset 0 1px 0 rgb(255 255 255 / 65%);
+.play-btn-glyph {
+  margin-left: 3px;
 }
 
-.play-btn:disabled {
+.play-btn:active:not(:disabled, .soon) {
+  transform: scale(0.94);
+  box-shadow:
+    0 0 0 3px rgb(120 70 255 / 55%),
+    0 3px 8px -4px rgb(255 160 30 / 55%),
+    inset 0 -3px 5px rgb(190 90 0 / 40%),
+    inset 0 2px 2px rgb(255 255 255 / 70%);
+}
+
+/* Opening a room: the ring pulses while it gets ready. */
+.play-btn[aria-busy="true"] {
   cursor: progress;
+  animation: play-btn-busy 900ms ease-in-out infinite alternate;
+}
+
+@keyframes play-btn-busy {
+  to {
+    filter: brightness(1.15);
+    transform: scale(0.94);
+  }
 }
 
 .play-btn.soon {
-  min-height: 30px;
-  padding: 0 12px;
+  width: auto;
+  height: auto;
+  padding: 6px 12px;
   border: 1px solid rgb(255 255 255 / 25%);
+  border-radius: 999px;
   background: rgb(8 2 24 / 40%);
   box-shadow: none;
   color: #ffe27a;
-  font-size: 0.95rem;
+  font-family: var(--display);
+  font-size: 0.8rem;
+  font-weight: 800;
   cursor: default;
 }
 
@@ -265,29 +166,27 @@
 @media (hover: hover) {
   .game-poster:hover {
     --lift: -6px;
+    --neon: #c79bff;
     box-shadow:
-      inset 0 0 0 1.5px rgb(255 255 255 / 30%),
-      inset 0 2px 0 rgb(255 255 255 / 34%),
-      0 26px 44px -16px color-mix(in oklab, var(--c1) 70%, #000),
-      0 0 0 1px color-mix(in oklab, var(--c1) 60%, transparent);
+      inset 0 0 0 1.5px color-mix(in oklab, var(--neon) 80%, #fff),
+      inset 0 2px 0 rgb(255 255 255 / 40%),
+      0 0 0 1px rgb(190 140 255 / 60%),
+      0 0 34px 0 color-mix(in oklab, var(--c1) 55%, rgb(150 80 255)),
+      0 26px 44px -16px rgb(5 2 25 / 90%);
   }
 
   .game-poster:hover::after {
     opacity: 1;
   }
 
-  .play-card:hover .play-card-art {
-    transform: translateY(-6px) scale(1.07) rotate(-2deg);
-  }
-
   .play-btn:hover:not(:disabled, .soon) {
-    filter: brightness(1.06) saturate(1.1);
+    filter: brightness(1.08) saturate(1.1);
   }
 }
 
 /* Cards arrive one after another, once the page is ready to show. */
 @media (prefers-reduced-motion: no-preference) {
-  .page.reveal.is-ready .play-grid > .play-card {
+  .page.reveal.is-ready .play-mobile-cards > .play-card {
     animation: card-in 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
     animation-delay: calc(var(--i, 0) * 45ms);
   }
@@ -308,7 +207,6 @@ html[data-reduce-motion] .game-poster {
 
 @media (prefers-reduced-motion: reduce) {
   .game-poster,
-  .play-card-art,
   .play-btn {
     transition: none;
   }
@@ -316,177 +214,9 @@ html[data-reduce-motion] .game-poster {
   .game-poster {
     transform: none;
   }
-
-  .play-card:hover .play-card-art {
+  .play-btn[aria-busy="true"] {
     transform: none;
-  }
-}
-
-/* Laptops and computers: four across, two down, each sized to fit. */
-@media (min-width: 1100px) {
-  .play-page .play-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-    min-height: 0;
-  }
-
-  .play-page .play-card {
-    --stage: 66%;
-  }
-}
-
-/* Short laptop screens: smaller words, so the art keeps its room. */
-@media (min-width: 1100px) and (max-height: 760px) {
-  .play-page .play-card {
-    --stage: 74%;
-    border-radius: 18px;
-  }
-
-  .play-page .play-card-body {
-    padding: 0 12px 10px;
-  }
-
-  .play-page .play-card-name {
-    font-size: 1.45rem;
-  }
-
-  .play-page .play-card-desc {
-    display: none;
-  }
-
-  .play-page .play-card-foot {
-    margin-top: 2px;
-  }
-
-  .play-page .play-btn {
-    min-height: 32px;
-    font-size: 1rem;
-  }
-}
-
-/* Phones: one big poster per swipe. */
-.play-mobile-cards > .play-card {
-  --stage: 74%;
-  flex: 0 0 100%;
-  border-radius: 26px;
-  scroll-snap-align: start;
-  /* No lean on touch; the swipe is the motion. */
-  transform: none;
-}
-
-.play-mobile-cards .play-card-stage {
-  padding: 14px 14px 0;
-}
-
-.play-mobile-cards .play-card-body {
-  gap: 5px;
-  padding: 0 18px 18px;
-}
-
-.play-mobile-cards .play-card-name {
-  font-size: clamp(2.3rem, 11vw, 3rem);
-}
-
-.play-mobile-cards .play-card-desc {
-  font-size: 0.9rem;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-}
-
-.play-mobile-cards .play-card .players {
-  padding: 7px 12px;
-  font-size: 0.8rem;
-}
-
-.play-mobile-cards .play-btn {
-  min-height: 46px;
-  padding: 0 18px 0 24px;
-  font-size: 1.4rem;
-}
-
-/* On a phone the poster gets quieter: fainter rays, lighter type shadows, the player count as plain
-   text, and a smaller button. One card fills the screen, so it needn't shout. */
-@media (max-width: 1099px) {
-  .play-mobile-cards > .play-card::before {
-    opacity: 0.55;
-  }
-
-  .play-mobile-cards .play-card-name {
-    text-shadow: 0 2px 14px rgb(0 0 0 / 35%);
-  }
-
-  .play-mobile-cards .play-card-desc {
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-    color: rgb(255 255 255 / 74%);
-  }
-
-  .play-mobile-cards .play-card .players {
-    padding: 0;
-    border: 0;
-    background: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    color: rgb(255 255 255 / 80%);
-    font-weight: 600;
-  }
-
-  .play-mobile-cards .play-btn {
-    min-height: 44px;
-    padding: 0 16px 0 20px;
-    font-size: 1.2rem;
-    box-shadow:
-      0 3px 0 #c76a00,
-      inset 0 1px 0 rgb(255 255 255 / 65%);
-  }
-
-  /* Small dots: where you are, without a row of buttons under the card. Each keeps an 18px
-     target around its 6px dot. */
-  .play-mobile-dots {
-    gap: 0;
-  }
-
-  .play-mobile-dots button {
-    box-sizing: border-box;
-    width: 18px;
-    height: 18px;
-    padding: 6px;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 22%);
-    background-clip: content-box;
-  }
-
-  .play-mobile-dots button.on {
-    width: 28px;
-    background: var(--gold);
-    background-clip: content-box;
-  }
-}
-
-/* A short phone: the art gives up a little so the words still fit. */
-@media (max-width: 1099px) and (max-height: 700px) {
-  .play-mobile-cards > .play-card {
-    --stage: 70%;
-  }
-
-  .play-mobile-cards .play-card-body {
-    padding: 0 16px 14px;
-  }
-
-  .play-mobile-cards .play-card-name {
-    font-size: 2.1rem;
-  }
-
-  .play-mobile-cards .play-card-desc {
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-    font-size: 0.82rem;
-  }
-
-  .play-mobile-cards .play-btn {
-    min-height: 40px;
-    font-size: 1.2rem;
+    animation: none;
   }
 }
 
@@ -535,4 +265,32 @@ html[data-reduce-motion] .game-poster {
   top: var(--toy-bleed-top, 0px);
   height: calc(100% - var(--toy-bleed-top, 0px) - var(--toy-bleed-bottom, 0px));
   object-position: 80% 50%;
+}
+
+/* The row of games: cards at their own shape, as tall as the row, with arrows at either end of
+   the page. Room above and below for a card's lift and its shadow. */
+.play-mobile-cards {
+  padding-block: 6px 16px;
+}
+
+.play-shelf-track {
+  position: relative;
+  display: grid;
+  min-height: 0;
+}
+
+.play-shelf-track > .play-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 30;
+  translate: 0 -50%;
+  box-shadow: 0 8px 20px -6px rgb(5 2 25 / 80%);
+}
+
+.play-arrow-prev {
+  left: 6px;
+}
+
+.play-arrow-next {
+  right: 6px;
 }
