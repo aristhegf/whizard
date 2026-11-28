@@ -4,9 +4,9 @@
    The "Minimalist Weather Card - Daytime" as Whizard's game card (HomePage's GameCard, with the
    scene in CardLandscape). Classes are prefixed wx-. The scene keeps the original's look; its
    sizes are in container units of the landscape, so the picture keeps its shape at any card
-   size. The sky takes the game's colour, and the game's art rises from behind the hills. Where
-   the card sits on Whizard's dark page, its flat offset shadow is in the game's colour instead
-   of a faint black one that wouldn't show, and the grey text is a shade darker, to read well. */
+   size. The sky takes the game's colour, and the game's art rises from behind the hills. On
+   Whizard's dark page the card has no shadow (the white panel sets it apart), and the grey text
+   is a shade darker, to read well. */
 
 .wx-card {
   --wx-sky-top: color-mix(in oklab, var(--c1, #e96594) 70%, #e96594);
@@ -26,7 +26,6 @@
   container: wx-card / size;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 12px 12px 0 color-mix(in oklab, var(--c1, #8b3dff) 30%, transparent);
   background-color: white;
   text-align: left;
 }
@@ -449,33 +448,24 @@
   }
 }
 
-/* Phones: each card 86% of the row's height, centred, with space all round it and the next ones
-   peeking in evenly at both sides. The row is a size container: a card is 86cqh tall and so
-   27.03cqh either side of its middle (86 x 220 / 350 / 2). */
+/* Phones: the row starts at the page's side margin and fills the height between the title and
+   the tab bar, 12px clear above and below; the next card peeks in at the right. */
 @media (max-width: 1099px) {
   .play-shelf-track {
     container-type: size;
   }
 
   .play-mobile-cards {
-    align-items: center;
-    gap: 14px;
-    padding: 0 calc(50cqw - 27.03cqh);
-    scroll-padding-inline: 0;
+    gap: 12px;
+    padding: 12px 16px;
+    scroll-padding-inline: 16px;
   }
 
+  /* As wide as the screen less the margin and 56px of the next card, as tall as the row: the
+     picture and the white panel keep their 70:30 split, whatever the phone's shape. */
   .play-mobile-cards > .wx-card {
-    height: 86cqh;
-    scroll-snap-align: center;
-  }
-
-  /* While the category sheet is open, the cards fill the space above it (96% of it), so there's
-     no gap between them and the sheet. */
-  .play-page.is-picking .play-mobile-cards {
-    padding-inline: calc(50cqw - 30.17cqh);
-  }
-
-  .play-page.is-picking .play-mobile-cards > .wx-card {
-    height: 96cqh;
+    width: calc(100cqw - 16px - 12px - 56px);
+    height: calc(100cqh - 24px);
+    aspect-ratio: auto;
   }
 }
