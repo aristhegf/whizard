@@ -1134,11 +1134,12 @@ button.topic-tile {
     display: none;
   }
 
-  /* Who's here first, with the live dot, then the running total, dimmer. No pill. */
+  /* Who's here first, with the live dot, then the running total, dimmer. No pill. Centred on the
+     screen, as it is on a computer. */
   .play-page .live-count {
     grid-row: 1;
     grid-column: 1 / -1;
-    justify-self: start;
+    justify-self: center;
     gap: 0;
     min-height: 0;
     padding: 0;
