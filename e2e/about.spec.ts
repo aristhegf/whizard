@@ -1,9 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { openMenu } from "./menu";
 
 test("the about page tells the story and shows the community's numbers", async ({ page }) => {
   await page.goto("/");
-  // The pages about Whizard are linked at the bottom of the screen.
-  await page.getByRole("navigation", { name: "Site" }).getByRole("link", { name: "About" }).click();
+  // The pages about Whizard are in the side strip.
+  await (await openMenu(page)).getByRole("link", { name: "About" }).click();
   await expect(page).toHaveURL(/\/about$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("More ThanJust a Quiz.");
 

@@ -134,6 +134,7 @@ export function SidePanel({
           <hr />
           {link("/about", "info", "About", active === "about")}
           {link("/privacy", "lock", "Privacy", active === "privacy")}
+          <p className="rail-label rail-copy">© {new Date().getFullYear()} Whizard</p>
         </nav>
       </aside>
       {settingsOpen && <SettingsDialog onClose={() => setSettingsOpen(false)} />}

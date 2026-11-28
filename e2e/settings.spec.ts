@@ -87,10 +87,10 @@ test("the Play screen fits a laptop screen, and pages through the games", async 
   await expect(menu.getByRole("button", { name: "Settings", exact: true })).toBeVisible();
   await page.keyboard.press("Escape");
 
-  // The pages about Whizard are in a row at the bottom, still on the one screen.
-  const site = page.getByRole("navigation", { name: "Site" });
-  await expect(site.getByRole("link", { name: "About" })).toBeInViewport();
-  await site.getByRole("link", { name: "Privacy" }).click();
+  // The pages about Whizard are in the strip, not along the bottom of the page.
+  await expect(page.getByRole("navigation", { name: "Site" })).toHaveCount(0);
+  await expect(panel.getByRole("link", { name: "About" })).toBeVisible();
+  await panel.getByRole("link", { name: "Privacy" }).click();
   await expect(page).toHaveURL(/\/privacy$/);
   await expect(panel.getByRole("link", { name: "Privacy" })).toHaveAttribute(
     "aria-current",

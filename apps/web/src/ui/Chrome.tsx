@@ -104,13 +104,6 @@ export function CreateRoomButton({
   );
 }
 
-/** Every link about the site, in the footer. */
-const SITE_LINKS: { label: string; href: string; section?: Section }[] = [
-  { label: "About", href: "/about", section: "about" },
-  { label: "Pricing", href: "/pricing", section: "pricing" },
-  { label: "Privacy", href: "/privacy", section: "privacy" },
-];
-
 /** Where a page sits in the side panel. */
 const panelSection = (active: Section): PanelSection => {
   if (active === "home" || active === "games" || active === "topics") return "games";
@@ -164,30 +157,8 @@ export function TopNav() {
 }
 
 /**
- * The links about the site: at the bottom of the pages that scroll, and as one slim row under
- * the screens that fit the window.
- */
-function SiteFooter({ active, slim = false }: { active: Section; slim?: boolean }) {
-  return (
-    <footer className={slim ? "site-footer slim" : "site-footer"}>
-      <nav aria-label="Site">
-        {SITE_LINKS.map((l) => (
-          <a
-            key={l.href}
-            aria-current={l.section && active === l.section ? "page" : undefined}
-            {...linkTo(l.href)}
-          >
-            {l.label}
-          </a>
-        ))}
-      </nav>
-      <span className="dim small">© {new Date().getFullYear()} Whizard</span>
-    </footer>
-  );
-}
-
-/**
- * Every page outside a game: the top bar, the side panel, the page and the site links.
+ * Every page outside a game: the top bar, the side panel and the page. The links about the site
+ * (About, Pricing, Privacy) are in the side panel.
  * `column` sets the page out as one column of panels, as the account and topic pages do.
  */
 export function TopLayout({
@@ -201,7 +172,7 @@ export function TopLayout({
   active: Section;
   className?: string;
   column?: boolean;
-  /** Fits the screen on laptops and computers, like an app, with a slim row of links under it. */
+  /** Fits the screen, like an app, with no scrolling. */
   screen?: boolean;
   /** Shows the screen all at once when its pictures and fonts are ready, not piece by piece. */
   reveal?: boolean;
@@ -226,7 +197,6 @@ export function TopLayout({
       >
         <TopNav />
         {column ? <div className="page-main">{children}</div> : children}
-        <SiteFooter active={active} slim={screen} />
       </div>
     </>
   );

@@ -1,12 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { openMenu } from "./menu";
 
 test("the pricing page shows the two plans and answers questions", async ({ page }) => {
   await page.goto("/");
-  // The pages about Whizard are linked at the bottom of the screen.
-  await page
-    .getByRole("navigation", { name: "Site" })
-    .getByRole("link", { name: "Pricing" })
-    .click();
+  // The pages about Whizard are in the side strip.
+  await (await openMenu(page)).getByRole("link", { name: "Pricing" }).click();
   await expect(page).toHaveURL(/\/pricing$/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Playing is free");
 

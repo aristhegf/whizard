@@ -397,10 +397,6 @@ button.topic-tile {
     overflow-y: clip;
   }
 
-  .page.app-screen .site-footer.slim {
-    margin-top: 8px;
-  }
-
   .play {
     grid-template-rows: auto minmax(0, 1fr);
     min-height: 0;
@@ -440,10 +436,6 @@ button.topic-tile {
     /* Clipped top and bottom only: the top bar reaches left over the side strip's column. */
     overflow-x: visible;
     overflow-y: clip;
-  }
-
-  .page.app-screen .site-footer.slim {
-    margin-top: 4px;
   }
 
   .play {
@@ -719,10 +711,6 @@ button.topic-tile {
     /* Clipped top and bottom only: the top bar reaches left over the side strip's column. */
     overflow-x: visible;
     overflow-y: clip;
-  }
-
-  .play-page.page.app-screen .site-footer.slim {
-    display: none;
   }
 
   .play-page .play {
