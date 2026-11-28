@@ -784,11 +784,10 @@ button.topic-tile {
   }
 }
 
-/* Mobile discovery: one full-width card per swipe page, with dots underneath. */
+/* The row of game cards, edge to edge of the page. */
 .play-mobile-shelf {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 10px;
+  grid-template-rows: minmax(0, 1fr);
   min-height: 0;
   min-width: 0;
   margin-inline: calc(-1 * var(--gutter));
@@ -812,29 +811,6 @@ button.topic-tile {
 
 .play-mobile-cards::-webkit-scrollbar {
   display: none;
-}
-
-.play-mobile-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 var(--gutter) 6px;
-}
-
-.play-mobile-dots button {
-  width: 10px;
-  height: 10px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: rgb(255 255 255 / 25%);
-  cursor: pointer;
-}
-
-.play-mobile-dots button.on {
-  width: 26px;
-  border-radius: 999px;
-  background: var(--gold);
 }
 
 @media (max-width: 1099px) {
@@ -1033,8 +1009,10 @@ button.topic-tile {
   }
 
   /* While the category sheet is open, shrink the card area so the card stays fully above it. */
+  /* The sheet covers the tab bar too, whose room the page already keeps (76px), so only the
+     rest of the sheet's height is taken off, less a little gap. */
   .play-page:has(.category-sheet[open]) .play-body {
-    padding-bottom: var(--category-sheet-h, min(42dvh, 390px));
+    padding-bottom: calc(var(--category-sheet-h, min(42dvh, 390px)) - 76px + 10px);
   }
 
   /* Picking a category: the head folds away so the card rises above the sheet. */

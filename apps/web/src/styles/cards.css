@@ -220,30 +220,6 @@ html[data-reduce-motion] .game-poster {
   }
 }
 
-@media (max-width: 1099px) {
-  /* Small dots: where you are, without a row of buttons under the card. Each keeps an 18px
-     target around its 6px dot. */
-  .play-mobile-dots {
-    gap: 0;
-  }
-
-  .play-mobile-dots button {
-    box-sizing: border-box;
-    width: 18px;
-    height: 18px;
-    padding: 6px;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 22%);
-    background-clip: content-box;
-  }
-
-  .play-mobile-dots button.on {
-    width: 28px;
-    background: var(--gold);
-    background-clip: content-box;
-  }
-}
-
 /* The 3D toy scene ------------------------------------------------------------------------------
 
    The mascot shows as a plain picture until the Three.js scene has drawn it, then the two cross

@@ -73,14 +73,6 @@ export function HomePage() {
     shelf.scrollBy({ left: direction * (card.offsetWidth + gap), behavior: "smooth" });
   };
 
-  const goToGame = (index: number) => {
-    const shelf = shelfRef.current;
-    const card = shelf?.children[index] as HTMLElement | undefined;
-    if (!shelf || !card) return;
-    const gap = parseFloat(getComputedStyle(shelf).columnGap || "0");
-    shelf.scrollTo({ left: index * (card.offsetWidth + gap), behavior: "smooth" });
-  };
-
   return (
     <TopLayout
       active="home"
@@ -177,19 +169,6 @@ export function HomePage() {
                 <Icon name="chevronRight" size={24} stroke={2.6} />
               </button>
             </div>
-            {games.length > 1 && (
-              <div className="play-mobile-dots" role="group" aria-label="Game pages">
-                {games.map((game, i) => (
-                  <button
-                    key={game.id}
-                    className={i === mobileIndex ? "on" : undefined}
-                    aria-label={`Show ${game.name}`}
-                    aria-current={i === mobileIndex}
-                    onClick={() => goToGame(i)}
-                  />
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </section>
