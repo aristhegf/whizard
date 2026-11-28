@@ -3,7 +3,7 @@ import { TopLayout } from "./ui/Chrome";
 
 export function PrivacyScreen() {
   return (
-    <TopLayout active={null} className="account-page" column>
+    <TopLayout active="privacy" className="account-page" column>
       <div className="screen">
         <header>
           <h1 className="page-title">Privacy</h1>

@@ -78,101 +78,6 @@
   }
 }
 
-.play-mobile-categories > svg:first-child {
-  color: var(--chip, #ffd43f);
-}
-
-/* The tab bar ------------------------------------------------------------------------------
-   The tab you're on sits on a glowing candy pill, and Create is a gold arcade coin. */
-
-.tab {
-  position: relative;
-  isolation: isolate;
-  transition: color 150ms ease;
-}
-
-.tab > svg {
-  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.tab[aria-current="page"] {
-  color: #fff;
-}
-
-.tab[aria-current="page"]::before {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 50%;
-  z-index: -1;
-  width: 56px;
-  height: 32px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #a865ff, #6a2ff2);
-  box-shadow:
-    0 3px 0 #3f17a8,
-    0 8px 18px -4px rgb(139 61 255 / 80%);
-  translate: -50% 0;
-  animation: tab-on 320ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.tab[aria-current="page"] > svg {
-  transform: translateY(-1px) scale(1.06);
-}
-
-@keyframes tab-on {
-  from {
-    opacity: 0;
-    scale: 0.6;
-  }
-}
-
-.tab-coin {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #ffe55c, #ffb52c);
-  box-shadow:
-    0 3px 0 #c76a00,
-    0 6px 14px -4px rgb(255 170 40 / 70%),
-    inset 0 1px 0 rgb(255 255 255 / 60%);
-  color: #2b1300;
-  transition:
-    transform 90ms ease-out,
-    box-shadow 90ms ease-out;
-}
-
-.tab-create {
-  color: #ffe27a;
-}
-
-.tab-create:active:not(:disabled) .tab-coin {
-  transform: translateY(3px);
-  box-shadow:
-    0 0 0 #c76a00,
-    0 2px 6px -2px rgb(255 170 40 / 70%),
-    inset 0 1px 0 rgb(255 255 255 / 60%);
-}
-
-.tab-create:disabled .tab-coin {
-  animation: coin-spin 700ms linear infinite;
-}
-
-@keyframes coin-spin {
-  to {
-    transform: rotateY(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tab[aria-current="page"]::before,
-  .tab-create:disabled .tab-coin {
-    animation: none;
-  }
-}
-
 /* The countdown (CountdownNumber) -----------------------------------------------------------
    The game's focal moment: each number punches in out of a blur, gold with the poster lip, a
    ring of light goes out from it in the game's colour, and rays turn slowly behind it. */
@@ -576,9 +481,8 @@
 
 /* The ribbon leans across the page; its wrapper keeps the lean from widening it. */
 .welcome-ribbon-wrap {
-  /* Edge to edge, whatever the page's column. */
-  width: 100vw;
-  margin-inline: calc(50% - 50vw);
+  /* Edge to edge of the page, up to the side strip. */
+  margin-inline: calc(-1 * var(--gutter));
   min-width: 0;
   padding-block: 22px 14px;
   overflow: hidden;
@@ -674,5 +578,35 @@
   .welcome-art::before,
   .ribbon-track {
     animation: none;
+  }
+}
+
+/* The kind of game picked in the side panel, by the Games page's title: a pill in the kind's
+   colour, with a cross to go back to all the games. */
+.play-kind {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  justify-self: start;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in oklab, var(--chip) 55%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--chip) 18%, rgb(18 14 56));
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.play-kind svg {
+  color: var(--chip);
+}
+
+@media (min-width: 1100px) {
+  .play-page .play-kind {
+    grid-area: chips;
   }
 }

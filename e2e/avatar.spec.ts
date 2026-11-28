@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { createRoomFromMenu } from "./menu";
 import { signUp, uniqueUsername, withPasskeys } from "./passkeys";
 
 test.describe.configure({ timeout: 90_000 });
@@ -38,7 +39,7 @@ async function makeAvatar(page: Page) {
 test("a guest's own avatar goes into the room, and friends see it", async ({ browser }) => {
   const host = await newPlayer(browser);
   await host.goto("/");
-  await host.getByRole("button", { name: "Create", exact: true }).click();
+  await createRoomFromMenu(host);
   await expect(host).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   const roomUrl = host.url();
 

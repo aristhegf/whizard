@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { createRoomFromMenu, accountMenu } from "./menu";
 import {
   closeSheet,
   openSettings as openRoomSettings,
@@ -11,7 +12,7 @@ test.describe.configure({ timeout: 90_000 });
 
 async function openRoom(page: Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: "Create", exact: true }).click();
+  await createRoomFromMenu(page);
   // The home page has a Join button too (for codes), so wait until the room is open.
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   // Signed in, they go straight in under their account name.
@@ -23,7 +24,7 @@ async function openRoom(page: Page) {
 
 async function playSoloGame(page: Page) {
   await page.goto("/");
-  await page.getByRole("button", { name: "Create", exact: true }).click();
+  await createRoomFromMenu(page);
   const nickname = page.getByLabel("Choose a nickname");
   const lobby = page.locator(".lobby");
   await expect(nickname.or(lobby)).toBeVisible();
@@ -53,7 +54,7 @@ test("signs up, signs out and signs back in with a passkey", async ({ page }) =>
   await page.goto("/");
   // Guests find Sign in in the menu under "Me".
   const signIn = async () => {
-    await page.getByRole("button", { name: "Me", exact: true }).click();
+    await accountMenu(page).click();
     await page.getByRole("group", { name: "Menu" }).getByRole("link", { name: "Sign in" }).click();
   };
   await signIn();
@@ -159,8 +160,11 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
 
   // Quiz settings live in the Settings dialog, saved to the account.
   const openSettings = async () => {
-    await page.getByRole("button", { name: "Me", exact: true }).click();
-    await page.getByRole("button", { name: "Settings", exact: true }).click();
+    await accountMenu(page).click();
+    await page
+      .getByRole("group", { name: "Menu" })
+      .getByRole("button", { name: "Settings", exact: true })
+      .click();
     return page.getByRole("dialog", { name: "Settings", exact: true });
   };
   let settings = await openSettings();
@@ -183,7 +187,7 @@ test("saves settings and uses the account name in rooms", async ({ page }) => {
 
   // Solo now pauses after each answer, and keeps the explanations for the end.
   await page.goto("/");
-  await page.getByRole("button", { name: "Create", exact: true }).click();
+  await createRoomFromMenu(page);
   const nickname = page.getByLabel("Choose a nickname");
   const lobby = page.locator(".lobby");
   await expect(nickname.or(lobby)).toBeVisible();
@@ -206,7 +210,8 @@ test("deletes the account", async ({ page }) => {
   await page.goto("/account/settings");
   await page.getByRole("button", { name: "Delete account" }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
-  await page.getByRole("button", { name: "Me", exact: true }).click();
+  // Signed out, the avatar's menu is a guest's.
+  await page.getByRole("button", { name: "Menu", exact: true }).click();
   await expect(
     page.getByRole("group", { name: "Menu" }).getByRole("link", { name: "Sign in" }),
   ).toBeVisible();

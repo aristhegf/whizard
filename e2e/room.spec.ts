@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { createRoomFromMenu } from "./menu";
 import { closeSheet, openSettings } from "./lobby";
 
 async function newPlayer(browser: Browser): Promise<Page> {
@@ -8,7 +9,7 @@ async function newPlayer(browser: Browser): Promise<Page> {
 
 async function createRoom(page: Page, nickname: string): Promise<string> {
   await page.goto("/");
-  await page.getByRole("button", { name: "Create", exact: true }).click();
+  await createRoomFromMenu(page);
   await expect(page).toHaveURL(/\/r\/[A-Z0-9]{6}$/);
   await joinAs(page, nickname);
   return page.url();
@@ -433,7 +434,7 @@ test("a returning player goes straight into the lobby, and can change their name
   // A first-timer sees the whole form, with Join on screen.
   const host = await newPlayer(browser);
   await host.goto("/");
-  await host.getByRole("button", { name: "Create", exact: true }).click();
+  await createRoomFromMenu(host);
   await expect(host.getByLabel("Choose a nickname")).toHaveAttribute("placeholder", "e.g. Tolu");
   await expect(host.getByRole("button", { name: "Join", exact: true })).toBeInViewport();
   await joinAs(host, "Ada");
@@ -441,7 +442,7 @@ test("a returning player goes straight into the lobby, and can change their name
 
   // The next room skips the form.
   await host.goto("/");
-  await host.getByRole("button", { name: "Create", exact: true }).click();
+  await createRoomFromMenu(host);
   await expect(playerRow(host, "Ada")).toContainText("You");
   await expect(host.getByLabel("Choose a nickname")).toHaveCount(0);
   const roomUrl = host.url();

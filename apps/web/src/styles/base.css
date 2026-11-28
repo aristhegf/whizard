@@ -812,7 +812,7 @@ select option {
   width: 100%;
   max-width: calc(var(--content) + 2 * var(--gutter));
   margin: 0 auto;
-  padding: 0 var(--gutter) calc(100px + env(safe-area-inset-bottom));
+  padding: 0 var(--gutter) calc(32px + env(safe-area-inset-bottom));
 }
 
 @media (min-width: 1100px) {
@@ -842,22 +842,25 @@ select option {
 
 /* Wide screens: the logo at the start, the links in the middle, the box and the account at the
    far end. */
+/* The menu button and the logo, together at the start of the bar. */
+.topnav-start {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+}
+
 @media (min-width: 1100px) {
-  /* Three columns, the outer two equal, so the links sit in the middle of the page whatever the
-     logo and the box beside the account measure. */
   .topnav {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     min-height: 76px;
     gap: 24px;
   }
 
-  .topnav > .brand {
-    justify-self: start;
+  .topnav-start {
+    gap: 12px;
   }
 
   .topnav-end {
-    justify-self: end;
     gap: 14px;
   }
 }
@@ -1012,10 +1015,22 @@ select option {
   gap: 12px;
 }
 
-/* On phones the bar keeps the logo and the room-code box; the rest is in the tabs. */
+/* On phones the bar keeps the menu, the logo, the room-code box and the account; friend requests
+   are in the side panel's Friends. */
 @media (max-width: 1099px) {
-  .topnav .nav-end {
+  .topnav .bell-btn {
     display: none;
+  }
+
+  .topnav .nav-end {
+    gap: 8px;
+  }
+
+  .topnav .account-chip .avatar,
+  .topnav .account-chip .guest-face {
+    --size: 40px;
+    width: 40px;
+    height: 40px;
   }
 }
 
@@ -1349,47 +1364,6 @@ select option {
   display: none;
 }
 
-/* Bottom tab bar on phones and small tablets. */
-.tabbar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 30;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
-  background: rgb(10 9 36 / 94%);
-  border-top: 1.5px solid var(--line);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
-.tab {
-  display: grid;
-  justify-items: center;
-  gap: 2px;
-  padding: 6px 0;
-  border: 0;
-  background: none;
-  font: inherit;
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--dim);
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.tab[aria-current="page"] {
-  color: #c68bff;
-}
-
-@media (min-width: 1100px) {
-  .tabbar {
-    display: none;
-  }
-}
-
 /* Pages set out as one column of panels, below the top bar. */
 .page-main {
   display: grid;
@@ -1496,11 +1470,11 @@ html[data-reduce-motion] *::after {
   scroll-behavior: auto !important;
 }
 
-/* "Return to your room", above the tab bar on phones and floating on wide screens. */
+/* "Return to your room", floating at the bottom of the screen. */
 .return-bar {
   position: fixed;
   left: 50%;
-  bottom: calc(76px + env(safe-area-inset-bottom));
+  bottom: calc(16px + env(safe-area-inset-bottom));
   z-index: 35;
   display: flex;
   align-items: center;
@@ -1581,7 +1555,7 @@ html[data-reduce-motion] *::after {
 }
 
 /* Toasts (a BeUI toast stack): top of the screen on phones, bottom right on wider screens,
-   clear of the tab bar and the "return to your room" bar. */
+   clear of the "return to your room" bar. */
 .toast-stack {
   z-index: 60;
   margin: 0;
@@ -1720,5 +1694,190 @@ html[data-reduce-motion] *::after {
   .sheet,
   .sheet::backdrop {
     animation: none;
+  }
+}
+
+/* The side panel (SidePanel), after CrazyGames' sidebar ------------------------------------------
+   A narrow strip of icons down the left, under the top bar, the page beside it. The pointer on it
+   (or the keyboard in it) widens it over the page with every item's name: nothing behind it
+   moves, dims or blurs. The button beside the logo hides it, and the page takes the room. */
+
+:root {
+  --rail-w: 52px;
+  --rail-open-w: 220px;
+  --bar-h: 68px;
+}
+
+@media (min-width: 1100px) {
+  :root {
+    --rail-w: 60px;
+    --bar-h: 76px;
+  }
+}
+
+.menu-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: var(--text);
+}
+
+@media (hover: hover) {
+  .menu-toggle:hover {
+    background: rgb(255 255 255 / 8%);
+  }
+}
+
+/* The whole height of the screen, its icons starting under the top bar's height, so the strip
+   stays put as the page scrolls; the top bar sits over its first stretch, which is see-through.
+   Below it the strip has the page's deep background, so nothing runs under the icons. */
+.side-rail {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  width: var(--rail-w);
+  padding: var(--bar-h) 0 env(safe-area-inset-bottom);
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  background: var(--bg-deep);
+  background-clip: content-box;
+  transition: width 150ms ease-in-out;
+}
+
+.side-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.side-rail[hidden] {
+  display: none;
+}
+
+/* Widened by the pointer or the keyboard: over the page, with every name. */
+@media (hover: hover) {
+  .side-rail:hover {
+    width: var(--rail-open-w);
+  }
+}
+
+.side-rail:focus-within {
+  width: var(--rail-open-w);
+}
+
+/* The top bar stays over the strip's first stretch. */
+.topnav {
+  position: relative;
+  z-index: 45;
+}
+
+.rail-nav {
+  display: grid;
+  gap: 2px;
+  width: var(--rail-open-w);
+  padding: 4px 8px 20px;
+}
+
+.rail-nav hr {
+  width: calc(var(--rail-w) - 16px);
+  margin: 6px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  transition: width 150ms ease-in-out;
+}
+
+.side-rail:hover .rail-nav hr,
+.side-rail:focus-within .rail-nav hr {
+  width: 100%;
+}
+
+.rail-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 34px;
+  padding: 0 calc((var(--rail-w) - 16px - 20px) / 2);
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.rail-item svg {
+  flex: none;
+}
+
+/* The names fade in as the strip widens. */
+.rail-label {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.side-rail:hover .rail-label,
+.side-rail:focus-within .rail-label {
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .rail-item:hover {
+    background: rgb(255 255 255 / 7%);
+    color: var(--text);
+  }
+}
+
+.rail-item[aria-current="page"] {
+  background: rgb(139 61 255 / 24%);
+  color: #fff;
+}
+
+.rail-item[aria-current="page"] svg {
+  color: var(--accent-soft);
+}
+
+/* The kinds of game, each icon in its own colour (arcade.css). */
+.rail-kind .rail-item svg {
+  color: var(--chip);
+}
+
+.rail-kind .rail-item[aria-current="page"] {
+  background: color-mix(in oklab, var(--chip) 20%, transparent);
+}
+
+.rail-create {
+  color: #ffe27a;
+}
+
+.rail-create:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+/* While the strip shows, the page sits beside it; the top bar still runs the full width. */
+html[data-rail="shown"] body {
+  padding-left: var(--rail-w);
+}
+
+html[data-rail="shown"] .topnav {
+  margin-left: calc(-1 * var(--rail-w));
+}
+
+/* The button and the logo, together at the start of the bar. */
+.topnav-start {
+  gap: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side-rail,
+  .rail-label,
+  .rail-nav hr {
+    transition: none;
   }
 }

@@ -6,9 +6,10 @@ import { useAccount } from "../account";
 import { createRoom, ServerRefusal } from "../api";
 import { linkTo, navigate, roomPath } from "../router";
 import { AccountMenu } from "./AccountMenu";
-import { Icon, type IconName } from "./Icon";
+import { Icon } from "./Icon";
 import { JoinRoomBox } from "./JoinRoomBox";
 import { LogoMark } from "./Logo";
+import { MenuButton, SidePanel, useSidePanel, type PanelSection } from "./SidePanel";
 import { useToast } from "./toast";
 import { usePageReveal } from "./usePageReveal";
 
@@ -23,6 +24,7 @@ export type Section =
   | "about"
   | "stats"
   | "dashboard"
+  | "privacy"
   | null;
 
 export function Backdrop() {
@@ -102,40 +104,18 @@ export function CreateRoomButton({
   );
 }
 
-type NavLink = { label: string; href: string; icon: IconName; section: Section };
-
-/** Play is the home screen of games; Stats and the leaderboard are on the Stats page. */
-const PLAY: NavLink = { label: "Play", href: "/", icon: "games", section: "home" };
-const STATS: NavLink = { label: "Stats", href: "/stats", icon: "chart", section: "stats" };
-const LEADERBOARD: NavLink = {
-  label: "Leaderboard",
-  href: "/stats#top-players-title",
-  icon: "trophy",
-  section: null,
-};
-/** For guests, whose home page explains Whizard: their Play goes to the games themselves. */
-const PLAY_AS_GUEST: NavLink = { ...PLAY, href: "/games" };
-/** The same, by name, in a guest's top bar. */
-const GAMES: NavLink = { label: "Games", href: "/games", icon: "games", section: "games" };
-const PRICING: NavLink = { label: "Pricing", href: "/pricing", icon: "wallet", section: "pricing" };
-
 /** Every link about the site, in the footer. */
 const SITE_LINKS: { label: string; href: string; section?: Section }[] = [
   { label: "About", href: "/about", section: "about" },
   { label: "Pricing", href: "/pricing", section: "pricing" },
-  { label: "Privacy", href: "/privacy" },
+  { label: "Privacy", href: "/privacy", section: "privacy" },
 ];
 
-/**
- * The games pages all belong to Play, and to a guest's Games link. A guest's Play tab also stays
- * lit on the home page that introduces Whizard, as its own way into the games.
- */
-const isActive = (active: Section, section: Section) => {
-  if (active === null || section === null) return false;
-  if (active === section) return true;
-  if (section === "home") return active === "games" || active === "topics" || active === "welcome";
-  if (section === "games") return active === "home" || active === "topics";
-  return false;
+/** Where a page sits in the side panel. */
+const panelSection = (active: Section): PanelSection => {
+  if (active === "home" || active === "games" || active === "topics") return "games";
+  if (active === "welcome") return null;
+  return active;
 };
 
 /** Starts a room, and says so if it couldn't. */
@@ -153,48 +133,19 @@ function useCreateRoom() {
 }
 
 /**
- * The bar across the top of every page outside a game: the logo, then its links (Play, Create,
- * Stats and Leaderboard once signed in; Games, Pricing and Stats for guests), then the room-code
- * box, friend requests and the account menu on the right. Phones keep the logo and the code box,
- * with the rest in the tabs at the bottom.
+ * The bar across the top of every page outside a game: the menu button (which opens the side
+ * panel with everything else), the logo, then the room-code box, friend requests and the
+ * account menu on the right.
  */
-export function TopNav({ active = null }: { active?: Section }) {
+export function TopNav() {
   const account = useAccount();
-  const { creating, create } = useCreateRoom();
   const signedIn = account.status === "ready" && !!account.user;
-  const navLink = (l: NavLink) => (
-    <a
-      key={l.label}
-      className="nav-link"
-      aria-current={isActive(active, l.section) ? "page" : undefined}
-      {...linkTo(l.href)}
-    >
-      {l.label}
-    </a>
-  );
-
   return (
     <header className="topnav app-bar">
-      <Brand />
-      <nav className="nav-links" aria-label="Main">
-        {/* Empty until the account is known, so neither set of links flashes up first. */}
-        {account.status === "loading" ? null : signedIn ? (
-          <>
-            {navLink(PLAY)}
-            <button className="nav-link" disabled={creating} onClick={create}>
-              Create
-            </button>
-            {navLink(STATS)}
-            {navLink(LEADERBOARD)}
-          </>
-        ) : (
-          <>
-            {navLink(GAMES)}
-            {navLink(PRICING)}
-            {navLink(STATS)}
-          </>
-        )}
-      </nav>
+      <div className="topnav-start">
+        <MenuButton />
+        <Brand />
+      </div>
       <div className="topnav-end">
         <JoinRoomBox />
         <div className="nav-end">
@@ -235,41 +186,8 @@ function SiteFooter({ active, slim = false }: { active: Section; slim?: boolean 
   );
 }
 
-/** The tabs at the bottom on phones: Play, Create, Leaderboard, Stats and the account menu. */
-export function TabBar({ active = null }: { active?: Section }) {
-  const { creating, create } = useCreateRoom();
-  const account = useAccount();
-  const signedIn = account.status === "ready" && !!account.user;
-  const tab = (l: NavLink) => (
-    <a
-      key={l.label}
-      className="tab"
-      aria-current={isActive(active, l.section) ? "page" : undefined}
-      {...linkTo(l.href)}
-    >
-      <Icon name={l.icon} size={24} />
-      {l.label}
-    </a>
-  );
-
-  return (
-    <nav className="tabbar" aria-label="Sections">
-      {tab(signedIn ? PLAY : PLAY_AS_GUEST)}
-      <button className="tab tab-create" disabled={creating} onClick={create}>
-        <span className="tab-coin" aria-hidden="true">
-          <Icon name="plus" size={22} stroke={3} />
-        </span>
-        Create
-      </button>
-      {tab(LEADERBOARD)}
-      {tab(STATS)}
-      <AccountMenu variant="tab" />
-    </nav>
-  );
-}
-
 /**
- * Every page outside a game: the top bar, the page, the site links, and the tabs on phones.
+ * Every page outside a game: the top bar, the side panel, the page and the site links.
  * `column` sets the page out as one column of panels, as the account and topic pages do.
  */
 export function TopLayout({
@@ -290,15 +208,26 @@ export function TopLayout({
   children: ReactNode;
 }) {
   const { ref, ready } = usePageReveal(reveal);
+  const { creating, create } = useCreateRoom();
+  const panelOpen = useSidePanel();
+  // The page moves over for the strip while it shows (see `html[data-rail]` in base.css).
+  useEffect(() => {
+    document.documentElement.dataset.rail = panelOpen ? "shown" : "hidden";
+    return () => {
+      delete document.documentElement.dataset.rail;
+    };
+  }, [panelOpen]);
   return (
-    <div
-      ref={ref}
-      className={`page${screen ? " app-screen" : ""}${reveal ? ` reveal${ready ? " is-ready" : ""}` : ""} ${className ?? ""}`}
-    >
-      <TopNav active={active} />
-      {column ? <div className="page-main">{children}</div> : children}
-      <SiteFooter active={active} slim={screen} />
-      <TabBar active={active} />
-    </div>
+    <>
+      <SidePanel active={panelSection(active)} onCreate={create} creating={creating} />
+      <div
+        ref={ref}
+        className={`page${screen ? " app-screen" : ""}${reveal ? ` reveal${ready ? " is-ready" : ""}` : ""} ${className ?? ""}`}
+      >
+        <TopNav />
+        {column ? <div className="page-main">{children}</div> : children}
+        <SiteFooter active={active} slim={screen} />
+      </div>
+    </>
   );
 }
