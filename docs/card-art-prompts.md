@@ -79,7 +79,7 @@ Output: one finished 16:9 illustration for the image area at the top of a digita
 - **What players do:** Players unscramble jumbled letter tiles and fill in missing letters to make words as fast as they can.
 - **Mood:** frantic, clever
 - **Core idea:** tiles tumbling and snapping into a row at speed
-- **Scene:** The orange block buddy and the green block buddy race neck and neck in the middle of the frame, both large and close to the viewer, grabbing plain blank rounded tiles (no markings) out of the air and slamming them into a neat row on a glowing board in front of them; the orange buddy wears an oversized homemade Whizard cape flapping behind it. Light swoosh trails and a small hourglass on the board. Nothing in the foreground blocks the view: no large blurry objects near the camera, no tiles close to the lens. Everyone inside the central 70 percent of the width. Whiz is exactly on-model as in the reference: a smooth, round purple head with no hair, no tuft, no ears and no horns, gold crown with pink gems, cape, W on his chest. The crew are smooth and on-model too.
+- **Scene:** The orange block buddy and the green block buddy race neck and neck in the middle of the frame, both large and close to the viewer, grabbing plain blank rounded tiles (no markings) out of the air and slamming them into a neat row on a glowing board in front of them; the orange buddy wears an oversized plain purple homemade cape with no emblem or letter on it, flapping behind it. Light swoosh trails and a small hourglass on the board. Nothing in the foreground blocks the view. The violet sky and rolling hills run all the way to every edge of the image: full-bleed, no dark bars, no borders, no frame and no vignette at the sides. Everyone inside the central 70 percent of the width. Both buddies are smooth and exactly on-model.
 - **Palette:** electric violet and deep indigo
 
 ### Memory (`memory`)
@@ -150,6 +150,6 @@ Output: one finished 16:9 illustration for the image area at the top of a digita
 
 - Quiz was made in an earlier round. Its prompt had the same template without the STORY paragraph. It already shows Whiz as a contestant, not a host, so it was kept.
 - Reaction, Spot It, Word Rush and How Well were redone in a second round. That round added a line to each scene that keeps Whiz on-model: a smooth round head with no hair, tufts, ears or horns. Word Rush also needed its view cleared, and How Well its thought bubbles kept inside the crop.
-- Word Rush's 16:9 original came back with dark bars down both sides. Its card picture is cropped from the middle, from x 226 to 1150, so the bars don't show. The W on the orange buddy's homemade cape reads as an M from behind.
+- Word Rush took a third round. The second came back with dark bars down the sides and a cape W that read as M. The final prompt asks for a full-bleed background and a plain cape.
 - Small leftover differences: the blue headphones buddy has a little tuft in Reaction and How Well.
 - Rules every picture follows: no words, letters or numbers (the W on Whiz, or a homemade W, is the only exception), no logos, UI or card frame, and Whiz is never a host.
