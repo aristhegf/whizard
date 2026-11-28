@@ -79,7 +79,7 @@ Output: one finished 16:9 illustration for the image area at the top of a digita
 - **What players do:** Players unscramble jumbled letter tiles and fill in missing letters to make words as fast as they can.
 - **Mood:** frantic, clever
 - **Core idea:** tiles tumbling and snapping into a row at speed
-- **Scene:** The orange block buddy and the green block buddy race neck and neck, grabbing plain blank rounded tiles (no markings) out of the air and slamming them into a neat row; the orange buddy wears an oversized homemade Whizard cape flapping behind it mid-dash. Swoosh motion trails, a small hourglass. Everyone is in the central 70 percent of the width.
+- **Scene:** The orange block buddy and the green block buddy race neck and neck in the middle of the frame, both large and close to the viewer, grabbing plain blank rounded tiles (no markings) out of the air and slamming them into a neat row on a glowing board in front of them; the orange buddy wears an oversized homemade Whizard cape flapping behind it. Light swoosh trails and a small hourglass on the board. Nothing in the foreground blocks the view: no large blurry objects near the camera, no tiles close to the lens. Everyone inside the central 70 percent of the width. Whiz is exactly on-model as in the reference: a smooth, round purple head with no hair, no tuft, no ears and no horns, gold crown with pink gems, cape, W on his chest. The crew are smooth and on-model too.
 - **Palette:** electric violet and deep indigo
 
 ### Memory (`memory`)
@@ -111,7 +111,7 @@ Output: one finished 16:9 illustration for the image area at the top of a digita
 - **What players do:** Players wait for the signal and tap as fast as they can; the quickest finger wins the round.
 - **Mood:** frantic, competitive
 - **Core idea:** a lightning-fast tap the instant the signal fires
-- **Scene:** Whiz and the blue headphones buddy stand side by side at two big arcade push-buttons, both slamming down with their fists at the exact moment a chunky starting light above them flips to green; a yellow lightning bolt crackles between them. Everyone is in the central 70 percent of the width.
+- **Scene:** Whiz and the blue headphones buddy stand side by side at two big arcade push-buttons, both slamming down with their fists at the exact moment a chunky starting light above them flips to green; a small yellow lightning bolt crackles between their buttons. Both characters fill most of the frame height, inside the central 70 percent of the width. Whiz is exactly on-model as in the reference: a smooth, round purple head with no hair, no tuft, no ears and no horns, gold crown with pink gems, cape, W on his chest. The crew are smooth and on-model too.
 - **Palette:** electric blue and bright yellow
 
 ### Spot It (`spot-it`)
@@ -119,7 +119,7 @@ Output: one finished 16:9 illustration for the image area at the top of a digita
 - **What players do:** Players scan a group of near-identical items to spot the odd one out before time runs out.
 - **Mood:** sharp-eyed, playful
 - **Core idea:** one different item hiding among many identical ones
-- **Scene:** The friends (Whiz, the orange block buddy and the yellow twins) peek eagerly over the edge of a sea of identical yellow toy rubber ducks; the green block buddy, holding a big magnifying glass, points triumphantly at the one odd duck that is a different colour. Everyone is in the central 70 percent of the width.
+- **Scene:** A tidy field of about twelve identical, fairly large yellow toy rubber ducks sits in the foreground; exactly one duck is a different colour (blue). Behind them, the friends (Whiz, the orange block buddy and the yellow twins) peek over eagerly, and the green block buddy holds a big magnifying glass over the blue duck and points at it triumphantly. Clean, uncluttered, everyone inside the central 70 percent of the width. Whiz is exactly on-model as in the reference: a smooth, round purple head with no hair, no tuft, no ears and no horns, gold crown with pink gems, cape, W on his chest. The crew are smooth and on-model too.
 - **Palette:** fresh lime green and deep teal
 
 ### Most Likely To (`most-likely-to`)
@@ -135,7 +135,7 @@ Output: one finished 16:9 illustration for the image area at the top of a digita
 - **What players do:** One player answers questions about themselves and the others guess their answers to see who really knows them.
 - **Mood:** warm, cozy, playful
 - **Core idea:** two friends perfectly in sync
-- **Scene:** Whiz and the blue headphones buddy, best friends sitting side by side, each with a thought bubble above their head showing the same simple picture of a pizza slice; they realise they match and go for an excited high-five. Everyone is in the central 70 percent of the width.
+- **Scene:** Whiz and the blue headphones buddy, best friends, sit close together in the centre of the frame and go for an excited high-five; directly above their heads, close together and well inside the frame, each has a small thought bubble showing the same simple picture of a pizza slice. Both thought bubbles and both characters sit inside the central 60 percent of the width, with clear space around the bubbles. Whiz is exactly on-model as in the reference: a smooth, round purple head with no hair, no tuft, no ears and no horns, gold crown with pink gems, cape, W on his chest. The crew are smooth and on-model too.
 - **Palette:** lavender purple and rose pink
 
 ### Impostor (`impostor`)
@@ -149,7 +149,7 @@ Output: one finished 16:9 illustration for the image area at the top of a digita
 ## Notes
 
 - Quiz was made in an earlier round. Its prompt had the same template without the STORY paragraph. It already shows Whiz as a contestant, not a host, so it was kept.
-- Review findings to recheck before shipping:
-  - In Reaction and Spot It, Whiz drifts a little off-model: a hair tuft in Reaction, pointed ears in Spot It.
-  - In How Well, the card crop cuts the edges of the thought bubbles.
+- Reaction, Spot It, Word Rush and How Well were redone in a second round. That round added a line to each scene that keeps Whiz on-model: a smooth round head with no hair, tufts, ears or horns. Word Rush also needed its view cleared, and How Well its thought bubbles kept inside the crop.
+- Word Rush's 16:9 original came back with dark bars down both sides. Its card picture is cropped from the middle, from x 226 to 1150, so the bars don't show. The W on the orange buddy's homemade cape reads as an M from behind.
+- Small leftover differences: the blue headphones buddy has a little tuft in Reaction and How Well.
 - Rules every picture follows: no words, letters or numbers (the W on Whiz, or a homemade W, is the only exception), no logos, UI or card frame, and Whiz is never a host.
